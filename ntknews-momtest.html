@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>NTK — Need to Know</title>
+
+<!-- ============================================================
+  GA4 TRACKING
+  1. Go to analytics.google.com
+  2. Create a property → Web → enter ntknews.org
+  3. Your Measurement ID: G-M7RXKXK3L7 (already set below)
+============================================================ -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-M7RXKXK3L7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'G-M7RXKXK3L7');
+</script>
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue:   #0798F2;
+    --amber:  #F2AE2E;
+    --terra:  #DC6550;
+    --purple: #725ABF;
+    --teal:   #01B2A7;
+    --cream:  #EAD9C5;
+    --dark:   #261F23;
+    --white:  #FFFFFF;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    background: var(--cream);
+    color: var(--dark);
+    min-height: 100vh;
+    overscroll-behavior: none;
+  }
+
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* ── DIGEST VIEW ─────────────────────────── */
+
+  .digest-header {
+    background: var(--dark);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    border-bottom: 3px solid var(--blue);
+  }
+
+  .digest-header-inner {
+    padding: 0 20px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .ntk-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    text-decoration: none;
+  }
+  .ntk-logo .rule { width: 42px; height: 2px; background: var(--white); }
+  .ntk-logo .wordmark {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: 6px;
+    color: var(--white);
+    line-height: 1;
+  }
+
+  .header-subscribe {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--blue);
+    color: var(--white);
+    border: none;
+    padding: 7px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .digest-hero {
+    background: var(--dark);
+    padding: 20px 20px 24px;
+    border-bottom: 1px solid rgba(234,217,197,0.08);
+  }
+
+  .hero-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 8px;
+  }
+
+  .hero-date {
+    font-family: 'Source Serif 4', serif;
+    font-weight: 300;
+    font-size: 22px;
+    color: var(--white);
+    line-height: 1.2;
+    margin-bottom: 16px;
+  }
+
+  .hero-date em { font-style: italic; color: var(--amber); }
+
+  .progress-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .progress-track {
+    flex: 1;
+    height: 3px;
+    background: rgba(234,217,197,0.12);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--teal);
+    border-radius: 2px;
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+
+  .progress-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: rgba(234,217,197,0.45);
+    white-space: nowrap;
+  }
+
+  .gesture-hint {
+    background: rgba(7,152,242,0.07);
+    border-bottom: 1px solid rgba(7,152,242,0.12);
+    padding: 9px 20px;
+    display: flex;
+    gap: 20px;
+  }
+
+  .hint-item {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: rgba(38,31,35,0.45);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .story-list { padding: 16px 16px 80px; }
+
+  .card-wrapper {
+    position: relative;
+    margin-bottom: 12px;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .swipe-bg {
+    position: absolute;
+    inset: 0;
+    background: var(--teal);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 28px;
+    border-radius: 10px;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .swipe-bg-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--white);
+    text-transform: uppercase;
+  }
+
+  .story-card {
+    position: relative;
+    background: var(--white);
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid rgba(38,31,35,0.07);
+    transform: translateX(0);
+    transition: transform 0.3s cubic-bezier(.25,.46,.45,.94), opacity 0.3s;
+    will-change: transform;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .story-card.swiped-away {
+    transform: translateX(110%) !important;
+    opacity: 0;
+  }
+
+  .story-card.read-dimmed { opacity: 0.55; }
+
+  .story-card-inner { padding: 18px 18px 0; }
+
+  .story-number {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(38,31,35,0.25);
+    margin-bottom: 4px;
+  }
+
+  .story-category {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--terra);
+    margin-bottom: 6px;
+  }
+
+  .story-headline {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--dark);
+    line-height: 1.3;
+    margin-bottom: 8px;
+  }
+
+  .story-card.featured-card .story-headline { font-size: 19px; }
+
+  .story-lede {
+    font-family: 'Source Serif 4', serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: rgba(38,31,35,0.68);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    margin-top: 12px;
+    border-top: 1px solid rgba(38,31,35,0.06);
+  }
+
+  .section-pills { display: flex; gap: 5px; flex-wrap: wrap; }
+
+  .pill {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 3px 7px;
+    border-radius: 20px;
+    text-transform: uppercase;
+  }
+
+  .pill.truth  { background: rgba(7,152,242,0.1);  color: var(--blue); }
+  .pill.prob   { background: rgba(114,90,191,0.1); color: var(--purple); }
+  .pill.poss   { background: rgba(1,178,167,0.1);  color: var(--teal); }
+  .pill.lies   { background: rgba(220,101,80,0.1); color: var(--terra); }
+
+  .card-read-cta {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--blue);
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    white-space: nowrap;
+  }
+
+  .card-read-cta .arr { transition: transform 0.15s; }
+  .story-card:active .arr { transform: translateX(3px); }
+
+  .read-badge {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 22px;
+    height: 22px;
+    background: var(--teal);
+    border-radius: 50%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: white;
+  }
+
+  .story-card.read-dimmed .read-badge { display: flex; }
+
+  .card-wrapper.featured-wrapper .story-card { background: var(--dark); }
+  .card-wrapper.featured-wrapper .story-number { color: rgba(234,217,197,0.2); }
+  .card-wrapper.featured-wrapper .story-category { color: var(--amber); }
+  .card-wrapper.featured-wrapper .story-headline { color: var(--white); }
+  .card-wrapper.featured-wrapper .story-lede { color: rgba(234,217,197,0.65); }
+  .card-wrapper.featured-wrapper .card-footer { border-top-color: rgba(234,217,197,0.08); }
+  .card-wrapper.featured-wrapper .card-read-cta { color: var(--blue); }
+
+  .section-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0 16px;
+    padding: 0 2px;
+  }
+
+  .section-divider-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(38,31,35,0.32);
+    white-space: nowrap;
+  }
+
+  .section-divider-line { flex: 1; height: 1px; background: rgba(38,31,35,0.1); }
+
+  .orientation-moment {
+    background: var(--dark);
+    border-radius: 10px;
+    padding: 20px 22px;
+    margin: 4px 0 12px;
+    border-left: 4px solid var(--teal);
+    display: none;
+    animation: fadeUp 0.4s ease forwards;
+  }
+
+  .orientation-moment.show { display: block; }
+
+  .orient-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 8px;
+  }
+
+  .orient-text {
+    font-family: 'Source Serif 4', serif;
+    font-size: 16px;
+    font-style: italic;
+    font-weight: 300;
+    color: var(--white);
+    line-height: 1.55;
+  }
+
+  .orient-text strong { font-style: normal; font-weight: 600; color: var(--amber); }
+
+  .completion-card {
+    background: linear-gradient(135deg, rgba(1,178,167,0.1), rgba(7,152,242,0.07));
+    border: 1px solid rgba(1,178,167,0.22);
+    border-radius: 10px;
+    padding: 28px 24px;
+    text-align: center;
+    margin-top: 8px;
+    display: none;
+    animation: fadeUp 0.5s ease forwards;
+  }
+
+  .completion-card.show { display: block; }
+
+  .completion-card h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--dark);
+    margin-bottom: 8px;
+  }
+
+  .completion-card p {
+    font-family: 'Source Serif 4', serif;
+    font-size: 15px;
+    line-height: 1.65;
+    color: rgba(38,31,35,0.6);
+  }
+
+  .completion-card .co { color: var(--teal); font-weight: 600; font-style: normal; }
+
+  /* Error state */
+  .error-state {
+    padding: 48px 24px;
+    text-align: center;
+  }
+
+  .error-state p {
+    font-family: 'Source Serif 4', serif;
+    font-size: 16px;
+    font-style: italic;
+    color: rgba(38,31,35,0.45);
+    line-height: 1.6;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── STORY VIEW ──────────────────────────── */
+
+  .story-view { min-height: 100vh; background: var(--cream); }
+
+  .story-header {
+    background: var(--dark);
+    padding: 0;
+    border-bottom: 3px solid var(--blue);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .story-header-inner {
+    padding: 0 20px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .back-btn {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--blue);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .story-header-logo {
+    margin-left: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .story-header-logo .rule { width: 32px; height: 1.5px; background: var(--white); }
+  .story-header-logo .mark {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 4px;
+    color: var(--white);
+  }
+
+  .story-hero {
+    background: var(--dark);
+    padding: 24px 20px 28px;
+  }
+
+  .story-hero-category {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 10px;
+  }
+
+  .story-hero-headline {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: clamp(20px, 5vw, 26px);
+    color: var(--white);
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+
+  .story-hero-lede {
+    font-family: 'Source Serif 4', serif;
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 1.65;
+    color: rgba(234,217,197,0.75);
+  }
+
+  .story-sections { padding: 0 0 80px; }
+
+  .story-section { border-bottom: 1px solid rgba(38,31,35,0.1); }
+
+  .section-header {
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    background: var(--white);
+    transition: background 0.15s;
+  }
+
+  .section-header:active { background: rgba(38,31,35,0.03); }
+
+  .section-header-left { display: flex; align-items: center; gap: 10px; }
+
+  .section-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  .section-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    color: var(--dark);
+  }
+
+  .section-chevron {
+    font-size: 14px;
+    color: rgba(38,31,35,0.3);
+    transition: transform 0.2s;
+  }
+
+  .story-section.open .section-chevron { transform: rotate(180deg); }
+
+  .section-body {
+    display: none;
+    padding: 0 20px 22px;
+    background: var(--white);
+  }
+
+  .story-section.open .section-body { display: block; }
+
+  .section-body p {
+    font-family: 'Source Serif 4', serif;
+    font-size: 16px;
+    line-height: 1.7;
+    color: rgba(38,31,35,0.8);
+    margin-bottom: 10px;
+  }
+
+  .section-body p:last-child { margin-bottom: 0; }
+
+  .lies-section .section-header { background: rgba(220,101,80,0.04); }
+
+  .lies-locked {
+    padding: 18px 20px 22px;
+    background: rgba(220,101,80,0.04);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+  }
+
+  .lies-locked-icon { font-size: 24px; margin-bottom: 4px; }
+
+  .lies-locked-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--terra);
+  }
+
+  .lies-locked-hint {
+    font-family: 'Source Serif 4', serif;
+    font-size: 13px;
+    font-style: italic;
+    color: rgba(38,31,35,0.45);
+    line-height: 1.5;
+  }
+
+  .lies-hold-btn {
+    margin-top: 8px;
+    padding: 10px 20px;
+    background: var(--terra);
+    color: var(--white);
+    border: none;
+    border-radius: 6px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  .lies-hold-btn::after {
+    content: '';
+    position: absolute;
+    left: 0; top: 0;
+    height: 100%;
+    width: 0%;
+    background: rgba(255,255,255,0.25);
+    transition: none;
+  }
+
+  .lies-hold-btn.holding::after {
+    width: 100%;
+    transition: width 0.8s linear;
+  }
+
+  .lies-revealed {
+    display: none;
+    padding: 4px 20px 22px;
+    background: rgba(220,101,80,0.04);
+    animation: fadeUp 0.3s ease forwards;
+  }
+
+  .lies-revealed p {
+    font-family: 'Source Serif 4', serif;
+    font-size: 16px;
+    line-height: 1.7;
+    color: rgba(38,31,35,0.8);
+    margin-bottom: 10px;
+  }
+
+  .lies-revealed p:last-child { margin-bottom: 0; }
+
+  .share-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--dark);
+    border-top: 2px solid rgba(234,217,197,0.08);
+    padding: 12px 20px;
+    display: flex;
+    gap: 10px;
+    z-index: 50;
+  }
+
+  .share-btn {
+    flex: 1;
+    padding: 11px;
+    border-radius: 6px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .share-btn.msg  { background: var(--blue);  color: var(--white); }
+  .share-btn.done { background: rgba(234,217,197,0.08); color: rgba(234,217,197,0.6); border: 1px solid rgba(234,217,197,0.1); }
+
+  .hide { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- DIGEST VIEW -->
+<div id="digestView" class="view active">
+
+  <header class="digest-header">
+    <div class="digest-header-inner">
+      <div class="ntk-logo">
+        <div class="rule"></div>
+        <div class="wordmark">NTK</div>
+        <div class="rule"></div>
+      </div>
+      <button class="header-subscribe" onclick="scrollToSubscribe()">Subscribe</button>
+    </div>
+  </header>
+
+  <div class="digest-hero">
+    <div class="hero-label">Today's Digest</div>
+    <div class="hero-date" id="heroDate">Loading...</div>
+    <div class="progress-row">
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <span class="progress-label" id="progressLabel">0 of 0 read</span>
+    </div>
+  </div>
+
+  <div class="gesture-hint">
+    <div class="hint-item"><span>👆</span> Tap to read</div>
+    <div class="hint-item"><span>→</span> Swipe right to mark read</div>
+    <div class="hint-item"><span>🔴</span> Hold to reveal Lies</div>
+  </div>
+
+  <div class="story-list" id="storyList">
+    <!-- Cards injected by JS -->
+  </div>
+</div>
+
+<!-- STORY VIEW -->
+<div id="storyView" class="view">
+  <div class="story-view">
+
+    <header class="story-header">
+      <div class="story-header-inner">
+        <button class="back-btn" onclick="closeStory()">← Digest</button>
+        <div class="story-header-logo">
+          <div class="rule"></div>
+          <div class="mark">NTK</div>
+          <div class="rule"></div>
+        </div>
+      </div>
+    </header>
+
+    <div class="story-hero">
+      <div class="story-hero-category" id="storyCategory"></div>
+      <div class="story-hero-headline" id="storyHeadline"></div>
+      <div class="story-hero-lede" id="storyLede"></div>
+    </div>
+
+    <div class="story-sections" id="storySections">
+
+      <div class="story-section open" id="sec-truth">
+        <div class="section-header" onclick="toggleSection('sec-truth', 'Truths')">
+          <div class="section-header-left">
+            <div class="section-dot" style="background:var(--blue);"></div>
+            <span class="section-title">Truths — What Happened</span>
+          </div>
+          <span class="section-chevron">▾</span>
+        </div>
+        <div class="section-body" id="truth-body"></div>
+      </div>
+
+      <div class="story-section" id="sec-prob">
+        <div class="section-header" onclick="toggleSection('sec-prob', 'Probabilities')">
+          <div class="section-header-left">
+            <div class="section-dot" style="background:var(--purple);"></div>
+            <span class="section-title">Probabilities — What Will Likely Happen</span>
+          </div>
+          <span class="section-chevron">▾</span>
+        </div>
+        <div class="section-body" id="prob-body"></div>
+      </div>
+
+      <div class="story-section" id="sec-poss">
+        <div class="section-header" onclick="toggleSection('sec-poss', 'Possibilities')">
+          <div class="section-header-left">
+            <div class="section-dot" style="background:var(--teal);"></div>
+            <span class="section-title">Possibilities — What Could Happen</span>
+          </div>
+          <span class="section-chevron">▾</span>
+        </div>
+        <div class="section-body" id="poss-body"></div>
+      </div>
+
+      <div class="story-section lies-section" id="sec-lies">
+        <div class="section-header" onclick="toggleSection('sec-lies', 'Lies')">
+          <div class="section-header-left">
+            <div class="section-dot" style="background:var(--terra);"></div>
+            <span class="section-title">Lies / Narrative Distortions</span>
+          </div>
+          <span class="section-chevron">▾</span>
+        </div>
+        <div class="section-body" id="lies-body">
+          <div class="lies-locked" id="liesLocked">
+            <div class="lies-locked-icon">🔴</div>
+            <div class="lies-locked-label">Hold to Reveal</div>
+            <div class="lies-locked-hint">What's being misrepresented about this story</div>
+            <button class="lies-hold-btn" id="liesBtn"
+              onmousedown="startHold()" onmouseup="cancelHold()" onmouseleave="cancelHold()"
+              ontouchstart="startHold(event)" ontouchend="cancelHold()" ontouchcancel="cancelHold()">
+              Hold to Reveal
+            </button>
+          </div>
+          <div class="lies-revealed" id="liesRevealed"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="share-bar">
+      <button class="share-btn msg" onclick="shareStory()">↑ Share this story</button>
+      <button class="share-btn done" onclick="closeStory()">← Back</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ================================================================
+//  HOW TO UPDATE THIS FILE EACH MORNING
+//
+//  1. Open this file in any text editor
+//  2. Find the STORIES array below (search for "DAILY CONTENT")
+//  3. Replace all story objects with today's stories
+//  4. Save the file
+//  5. Upload to Dreamhost (same filename, same location)
+//  6. The URL stays the same — participants just refresh
+//
+//  You can have 6, 7, or 8 stories. The page adapts automatically.
+//  The first story is always the featured/lead story.
+// ================================================================
+
+// ================================================================
+//  DAILY CONTENT — UPDATE THIS EACH MORNING
+// ================================================================
+const stories = [
+
+  // ── STORY 1: LEAD STORY (featured card, dark background) ──────
+  {
+    category: "Economy",              // e.g. "Economy", "Immigration", "Climate", "Housing"
+    headline: "The Fed holds rates — but signals the calculus is shifting",
+    lede: "The Federal Reserve left interest rates unchanged Wednesday, but chair Jerome Powell's language moved. Not a pivot — a lean. Markets noticed immediately.",
+    // truth: HTML string. Use <p> tags for paragraphs.
+    truth: "<p>The Federal Reserve's Open Market Committee voted unanimously to hold the federal funds rate at its current target range. This was the second consecutive hold. Powell's post-meeting statement included new language acknowledging that the balance of risks between inflation and labor market weakness has \"shifted meaningfully\" over the past quarter.</p><p>The core PCE inflation index is running at 2.6% year-over-year. The unemployment rate ticked up 0.2 points last month to 4.3% — still historically low but higher than six months ago.</p>",
+    // prob: What will likely happen. Be specific about odds/timelines where possible.
+    prob: "<p>The Fed will most likely cut rates once before year-end, probably in September. Futures markets are pricing a 68% probability of a September cut. Powell's language today was designed to signal this possibility without committing to it.</p><p>A second cut in December is considered roughly 50/50 by most analysts, depending entirely on whether inflation data continues its current trajectory.</p>",
+    // poss: Lower-probability but plausible scenarios. What could change the picture?
+    poss: "<p>If labor market conditions deteriorate faster than expected — two or three more months of rising unemployment — the Fed could cut rates at back-to-back meetings, which hasn't happened since the 2020 pandemic response.</p><p>Conversely, if inflation reaccelerates due to tariff pass-through effects, the Fed could hold through year-end entirely. This is the lower-probability scenario but not negligible.</p>",
+    // lies: What's being misrepresented. Quote the claim, then correct it.
+    lies: "<p>\"The Fed is cutting rates because the economy is in trouble.\" This framing, circulating widely after today's meeting, conflates a cautious lean toward easing with distress signaling. The Fed is not cutting rates yet — it is describing conditions under which it might.</p><p>\"Powell admitted the economy is failing.\" He said no such thing. The Fed's statement described the labor market as \"solid\" while acknowledging moderation. Characterizing moderation as failure is a distortion that serves political narratives on both left and right.</p>"
+  },
+
+  // ── STORY 2 ───────────────────────────────────────────────────
+  {
+    category: "Immigration",
+    headline: "Deportation flights resume after court injunction lifted",
+    lede: "A federal appeals court vacated a district judge's stay, allowing removals to third countries to proceed. The core legal question remains unresolved.",
+    truth: "<p>The U.S. Court of Appeals for the Fifth Circuit issued a two-sentence order vacating the district court injunction that had paused deportation flights to third countries — nations where migrants had not previously lived or sought asylum.</p><p>Within hours of the ruling, the Department of Homeland Security confirmed flights had resumed. The administration did not disclose destination countries.</p>",
+    prob: "<p>The Supreme Court is likely to be asked to weigh in within weeks. The core legal question — whether the government can remove someone to a country they have no connection to — has not been definitively ruled on at the circuit level, and the circuit split that may emerge makes Supreme Court review highly probable.</p>",
+    poss: "<p>If the Supreme Court grants an emergency stay while it considers the case, flights would pause again. This is plausible but not certain — the Court's recent emergency docket behavior has been unpredictable on immigration matters.</p><p>Congress could also act through appropriations riders, though the legislative calendar makes this unlikely before any court resolution.</p>",
+    lies: "<p>\"These are criminals being deported to their home countries.\" Third-country removal specifically means deportation to countries where migrants have no ties — this is legally and factually distinct from removal to one's country of origin. Conflating the two obscures what is actually being litigated.</p><p>\"The court said these deportations are legal.\" The Fifth Circuit vacated a procedural stay — it did not rule on the merits of whether third-country removal is lawful. That question remains open.</p>"
+  },
+
+  // ── STORY 3 ───────────────────────────────────────────────────
+  {
+    category: "Judiciary",
+    headline: "Supreme Court takes up birthright citizenship — on an expedited basis",
+    lede: "The Court agreed to hear the executive order challenge faster than normal. Urgency is clear — but the direction isn't.",
+    truth: "<p>The Supreme Court agreed to hear challenges to the executive order limiting birthright citizenship, consolidating three cases from different circuits. The Court set an expedited briefing schedule, with oral argument expected within six weeks — roughly three times faster than normal.</p><p>The Fourteenth Amendment's citizenship clause has been interpreted to grant automatic citizenship to virtually all persons born on U.S. soil since the 1898 Wong Kim Ark decision.</p>",
+    prob: "<p>Legal scholars across the ideological spectrum consider the executive order constitutionally weak given 125 years of settled precedent. The most likely outcome is a Court ruling that affirms birthright citizenship, though the vote margin and reasoning are genuinely uncertain.</p>",
+    poss: "<p>A narrow ruling could carve out an exception for children of undocumented immigrants while preserving citizenship for children of visa holders — a middle-ground outcome that would please neither side but might attract a majority of justices looking to limit rather than resolve the broader question.</p>",
+    lies: "<p>\"The Supreme Court agreed the order is constitutional.\" Accepting a case for review says nothing about how the Court will rule. The Court takes cases specifically to resolve contested questions — agreement to hear something is not agreement with any party's position.</p><p>\"Birthright citizenship was never meant to apply to illegal immigrants.\" The historical record of the Fourteenth Amendment's drafting and ratification does not support this claim.</p>"
+  },
+
+  // ── STORY 4 ───────────────────────────────────────────────────
+  {
+    category: "Housing",
+    headline: "California's housing bill clears committee — with a poison pill amendment",
+    lede: "SB 79 passed but its central mechanism was gutted. What's left may not work.",
+    truth: "<p>SB 79, which would have required cities to allow multifamily housing near transit corridors statewide, cleared the Senate Housing Committee on a 7-2 vote. However, the committee adopted an amendment exempting cities with populations under 50,000 from the preemption clause — the provision that would have overridden local zoning.</p><p>Approximately 340 of California's 482 incorporated cities have populations under 50,000.</p>",
+    prob: "<p>The bill will likely pass the full Senate in its amended form. Whether it produces meaningful housing production depends entirely on whether the exempted cities — which include many high-cost suburban communities — voluntarily comply with the spirit of the law. Historical precedent on voluntary compliance with housing mandates in California is not encouraging.</p>",
+    poss: "<p>The Governor could use his legislative influence to restore the preemption clause before a floor vote, though this would require peeling off committee members who supported the exemption. His office has not commented on the amendment.</p>",
+    lies: "<p>\"California is finally fixing its housing crisis.\" A bill that exempts 70% of cities from its core requirement is not a housing crisis fix — it is a partial measure with uncertain impact. Framing it as a solution overstates what was actually passed.</p><p>\"This bill will destroy single-family neighborhoods.\" The transit corridor requirement, even in its original form, applied only within half a mile of high-frequency transit stops — a small fraction of most cities' residential land area.</p>"
+  },
+
+  // ── STORY 5 ───────────────────────────────────────────────────
+  {
+    category: "Foreign Policy",
+    headline: "Ukraine ceasefire framework: what the U.S. proposal actually says",
+    lede: "A 20-year NATO moratorium is not a permanent bar. That distinction is doing a lot of work.",
+    truth: "<p>A framework document described by multiple officials with knowledge of the proposal includes a provision under which Ukraine would agree not to seek NATO membership for 20 years in exchange for security guarantees from a coalition of European nations plus the United States.</p><p>The document does not include any provision permanently foreclosing NATO membership. Ukraine's government has publicly rejected the moratorium framing while privately acknowledging it is engaged in negotiations.</p>",
+    prob: "<p>Negotiations will continue. Neither side is in a position to accept or reject the current framework as written — both are using the leaked document to signal positions to domestic audiences. A final agreement, if reached, will look different from what has been reported.</p>",
+    poss: "<p>A ceasefire along current lines of control — with the territorial question deferred — is possible within the next six months if both sides conclude that continued fighting offers diminishing returns. This would leave significant Ukrainian territory under Russian occupation but would stop active combat.</p>",
+    lies: "<p>\"The U.S. is forcing Ukraine to surrender.\" A security guarantee framework in exchange for a membership moratorium is a negotiating position — not a surrender demand. Ukraine retains sovereignty and the ability to reject any proposal.</p><p>\"NATO membership was never really on the table for Ukraine.\" The 2008 Bucharest Summit communiqué explicitly stated that Ukraine and Georgia \"will become members of NATO\" — the promise has been on the record for 17 years.</p>"
+  },
+
+  // ── STORY 6 ───────────────────────────────────────────────────
+  {
+    category: "Economy",
+    headline: "Tariff pause ends Friday — here's what gets more expensive",
+    lede: "The 90-day suspension expires. The administration has not signaled an extension.",
+    truth: "<p>The 90-day suspension of reciprocal tariffs on imports from countries that did not retaliate against U.S. measures expires this Friday. Unless extended by executive action, tariffs on consumer electronics, apparel, footwear, and auto parts from Southeast Asian manufacturing hubs will rise significantly.</p><p>The administration has not publicly indicated whether it plans to extend the pause, issue a partial extension, or allow the tariffs to take effect.</p>",
+    prob: "<p>Most trade economists expect a partial extension or a last-minute announcement of continued negotiations, based on the pattern from the first 90-day period. However, this administration has allowed deadlines to lapse before — the uncertainty is real.</p>",
+    poss: "<p>If tariffs take full effect Friday, consumer price impacts would likely show up in CPI data within 60-90 days, arriving during a period when the Fed is already weighing rate decisions carefully. The timing would complicate monetary policy in ways the administration may not have fully modeled.</p>",
+    lies: "<p>\"These tariffs will bring manufacturing jobs back to America immediately.\" Supply chain relocation is a multi-year process. Tariffs can influence decisions at the margin but do not produce immediate reshoring.</p><p>\"The tariff pause means free trade is back.\" A suspension is not a removal — the tariffs still exist in law and can be reimposed.</p>"
+  },
+
+  // ── STORY 7 ───────────────────────────────────────────────────
+  {
+    category: "Media",
+    headline: "NPR's funding fight enters appropriations — the timeline that matters",
+    lede: "The defunding push moved to Congress, where the rules are different.",
+    truth: "<p>The administration's effort to defund NPR and PBS has moved from executive action — where courts blocked earlier attempts — to the congressional reconciliation process. House Republicans included a provision eliminating the Corporation for Public Broadcasting's authorization in their reconciliation bill.</p><p>The Corporation for Public Broadcasting funds approximately 15% of NPR's total budget and a higher percentage of rural and small-market member station budgets.</p>",
+    prob: "<p>The reconciliation provision faces a Byrd Rule challenge in the Senate — parliamentary rules limit reconciliation to provisions with direct budgetary impact, and authorization changes are frequently ruled out of order. The Senate Parliamentarian's ruling will be decisive.</p>",
+    poss: "<p>If the Byrd Rule challenge fails or is overridden, NPR's federal funding ends. Member stations in rural markets — which depend more heavily on CPB funding than urban stations — would face the sharpest cuts. Some would likely close.</p>",
+    lies: "<p>\"NPR is state media.\" NPR is an independent nonprofit that receives indirect federal funding through CPB grants to member stations. The funding relationship is more comparable to a university receiving federal research grants than to a state broadcaster.</p><p>\"Defunding NPR saves taxpayers billions.\" The CPB's total annual appropriation is approximately $535 million — less than 0.01% of the federal budget.</p>"
+  },
+
+  // ── STORY 8 ───────────────────────────────────────────────────
+  {
+    category: "Climate",
+    headline: "The IRA rollback: what survived, what didn't, and what's still contested",
+    lede: "Six months in, some credits are proving surprisingly durable — because of where the jobs are.",
+    truth: "<p>Six months into the effort to unwind the Inflation Reduction Act's clean energy incentives, the picture is more complicated than either proponents or opponents predicted. Wind and solar production tax credits have been reduced. The EV consumer credit has been eliminated. But manufacturing tax credits — the 45X provisions supporting battery and solar panel factories — remain largely intact.</p><p>The reason: 45X-backed factories are concentrated in Republican congressional districts. Seventeen House Republicans from districts with active or planned clean energy manufacturing facilities have opposed full repeal.</p>",
+    prob: "<p>The 45X manufacturing credits will survive in some form. The political economy is too favorable — these are jobs in swing districts that Republicans won in part by promising not to kill. The clean energy consumer incentives are more vulnerable and will likely be reduced further.</p>",
+    poss: "<p>A bipartisan deal that preserves manufacturing credits while eliminating consumer subsidies is the most politically viable outcome. This would accelerate domestic manufacturing while slowing consumer adoption of EVs and heat pumps — a mixed outcome for emissions trajectories.</p>",
+    lies: "<p>\"The IRA is dead.\" A significant portion of the law's investment has already been committed or is legally protected through existing contracts. The IRA is being reduced and reshaped, but it is not being repealed wholesale.</p><p>\"Clean energy only survives because of government handouts.\" Solar and wind are now the lowest-cost sources of new electricity generation in most U.S. markets without any subsidy.</p>"
+  }
+
+  // TO ADD A STORY: copy any block above (from the opening { to the closing }),
+  // add a comma after the last story, paste it, and fill in the fields.
+  // TO REMOVE A STORY: delete the whole block including its comma.
+  // You can have 6, 7, or 8 stories total.
+
+]; // ← END OF DAILY CONTENT. Do not edit below this line.
+// ================================================================
+
+// ── State ────────────────────────────────────────────────────────
+let readStories = new Set();
+let orientShown = false;
+let holdTimer = null;
+let currentStoryIndex = 0;
+let scrollTracked25 = false;
+let scrollTracked50 = false;
+let scrollTracked90 = false;
+
+// ── GA4 event helper ─────────────────────────────────────────────
+function track(eventName, params = {}) {
+  if (typeof gtag !== 'undefined') {
+    gtag('event', eventName, params);
+  }
+}
+
+// ── Date ─────────────────────────────────────────────────────────
+const d = new Date();
+const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+document.getElementById('heroDate').innerHTML =
+  days[d.getDay()] + ', ' + months[d.getMonth()] + ' ' + d.getDate() +
+  ' — <em>What you need to know.</em>';
+
+// ── Build digest cards dynamically ───────────────────────────────
+function buildDigest() {
+  const list = document.getElementById('storyList');
+
+  if (!stories || stories.length === 0) {
+    list.innerHTML = '<div class="error-state"><p>Today\'s digest isn\'t ready yet — check back shortly.</p></div>';
+    return;
+  }
+
+  let html = '';
+  const DIVIDER_AT = Math.ceil(stories.length * 0.6); // "Also today" divider at ~60%
+
+  stories.forEach((s, i) => {
+    const isFeatured = i === 0;
+    const num = String(i + 1).padStart(2, '0');
+    const numLabel = isFeatured ? num + ' · Lead Story' : num;
+
+    if (i === DIVIDER_AT) {
+      html += `
+        <div class="section-divider">
+          <span class="section-divider-label">Also today</span>
+          <div class="section-divider-line"></div>
+        </div>`;
+    }
+
+    // Orientation moment after story 3
+    if (i === 3) {
+      html += `
+        <div class="orientation-moment" id="orientMoment">
+          <div class="orient-label">NTK · Orientation</div>
+          <div class="orient-text">Three stories in. You're paying attention. <strong>That's the first move.</strong></div>
+        </div>`;
+    }
+
+    html += `
+      <div class="card-wrapper ${isFeatured ? 'featured-wrapper' : ''}" id="wrap-${i}">
+        <div class="swipe-bg"><span class="swipe-bg-label">✓ Read</span></div>
+        <div class="story-card ${isFeatured ? 'featured-card' : ''}" id="card-${i}"
+             onclick="openStory(${i})" data-swipe="true">
+          <div class="read-badge">✓</div>
+          <div class="story-card-inner">
+            <div class="story-number">${numLabel}</div>
+            <div class="story-category">${s.category}</div>
+            <div class="story-headline">${s.headline}</div>
+            <div class="story-lede">${s.lede}</div>
+            <div class="card-footer">
+              <div class="section-pills">
+                <span class="pill truth">Truths</span>
+                <span class="pill prob">Probabilities</span>
+                <span class="pill poss">Possibilities</span>
+                <span class="pill lies">Lies</span>
+              </div>
+              <span class="card-read-cta">Read <span class="arr">→</span></span>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  });
+
+  // Completion card
+  html += `
+    <div class="completion-card" id="completionCard">
+      <h3>You've read today's digest.</h3>
+      <p>All ${stories.length} stories. You know what's happening and why it matters.<br>
+      <em class="co">Carry on regardless.</em></p>
+    </div>`;
+
+  // Subscribe
+  html += `
+    <div id="subscribeSection" style="margin-top:24px;background:var(--dark);border-radius:12px;padding:28px 20px;text-align:center;">
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--teal);margin-bottom:10px;">Stay Oriented</div>
+      <h2 style="font-family:'Source Serif 4',serif;font-weight:300;font-size:22px;color:var(--white);line-height:1.3;margin-bottom:8px;">The digest, every morning.<br><em style="color:var(--amber);">Free.</em></h2>
+      <p style="font-family:'Source Serif 4',serif;font-size:14px;color:rgba(234,217,197,0.55);line-height:1.6;margin-bottom:20px;">Context-first. Historically grounded. For people who want to feel oriented, not overwhelmed.</p>
+      <input type="email" placeholder="your@email.com" style="width:100%;padding:12px 14px;border-radius:6px;border:1px solid rgba(234,217,197,0.15);background:rgba(234,217,197,0.07);color:var(--white);font-family:'Space Grotesk',sans-serif;font-size:14px;outline:none;margin-bottom:10px;">
+      <button style="width:100%;padding:13px;background:var(--blue);color:var(--white);border:none;border-radius:6px;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Get NTK Daily</button>
+      <p style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:rgba(234,217,197,0.22);margin-top:12px;letter-spacing:0.5px;">No ads. No algorithm. Unsubscribe any time.</p>
+    </div>`;
+
+  list.innerHTML = html;
+  document.getElementById('progressLabel').textContent = '0 of ' + stories.length + ' read';
+
+  // Init swipe on all cards
+  stories.forEach((_, i) => {
+    initSwipe(document.getElementById('card-' + i), i);
+  });
+}
+
+// ── Progress ──────────────────────────────────────────────────────
+function updateProgress() {
+  const n = readStories.size;
+  const total = stories.length;
+  document.getElementById('progressFill').style.width = (n / total * 100) + '%';
+  document.getElementById('progressLabel').textContent = n + ' of ' + total + ' read';
+
+  if (n === 3 && !orientShown) {
+    orientShown = true;
+    const om = document.getElementById('orientMoment');
+    if (om) om.classList.add('show');
+  }
+
+  if (n === total) {
+    const cc = document.getElementById('completionCard');
+    if (cc) {
+      cc.classList.add('show');
+      setTimeout(() => cc.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 300);
+    }
+    track('digest_complete', { stories_count: total });
+  }
+}
+
+function markStoryRead(index) {
+  if (readStories.has(index)) return;
+  readStories.add(index);
+  const card = document.getElementById('card-' + index);
+  if (card) card.classList.add('read-dimmed');
+  updateProgress();
+}
+
+// ── Open / close story ────────────────────────────────────────────
+function openStory(index) {
+  currentStoryIndex = index;
+  const s = stories[index];
+
+  document.getElementById('storyCategory').textContent = s.category;
+  document.getElementById('storyHeadline').textContent = s.headline;
+  document.getElementById('storyLede').textContent = s.lede;
+  document.getElementById('truth-body').innerHTML = s.truth;
+  document.getElementById('prob-body').innerHTML = s.prob;
+  document.getElementById('poss-body').innerHTML = s.poss;
+  document.getElementById('liesRevealed').innerHTML = s.lies;
+
+  // Reset sections
+  ['sec-truth','sec-prob','sec-poss','sec-lies'].forEach(id => {
+    document.getElementById(id).classList.remove('open');
+  });
+  document.getElementById('sec-truth').classList.add('open');
+
+  // Reset lies
+  document.getElementById('liesLocked').style.display = 'flex';
+  document.getElementById('liesRevealed').style.display = 'none';
+
+  // Switch views
+  document.getElementById('digestView').classList.remove('active');
+  document.getElementById('storyView').classList.add('active');
+  window.scrollTo(0, 0);
+
+  // Track
+  track('story_open', {
+    story_index: index + 1,
+    story_category: s.category,
+    story_headline: s.headline
+  });
+
+  // Reset scroll tracking for this story
+  scrollTracked25 = false;
+  scrollTracked50 = false;
+  scrollTracked90 = false;
+}
+
+function closeStory() {
+  markStoryRead(currentStoryIndex);
+  document.getElementById('storyView').classList.remove('active');
+  document.getElementById('digestView').classList.add('active');
+}
+
+// ── Section toggle ────────────────────────────────────────────────
+function toggleSection(id, sectionName) {
+  const sec = document.getElementById(id);
+  const wasOpen = sec.classList.contains('open');
+  sec.classList.toggle('open');
+
+  if (!wasOpen) {
+    track('section_open', {
+      section: sectionName,
+      story_index: currentStoryIndex + 1,
+      story_headline: stories[currentStoryIndex].headline
+    });
+  }
+}
+
+// ── Lies hold-to-reveal ───────────────────────────────────────────
+function startHold(e) {
+  if (e) e.preventDefault();
+  const btn = document.getElementById('liesBtn');
+  btn.classList.add('holding');
+  holdTimer = setTimeout(revealLies, 800);
+}
+
+function cancelHold() {
+  const btn = document.getElementById('liesBtn');
+  if (btn) btn.classList.remove('holding');
+  clearTimeout(holdTimer);
+}
+
+function revealLies() {
+  document.getElementById('liesLocked').style.display = 'none';
+  document.getElementById('liesRevealed').style.display = 'block';
+  track('lies_revealed', {
+    story_index: currentStoryIndex + 1,
+    story_headline: stories[currentStoryIndex].headline
+  });
+}
+
+// ── Scroll depth tracking (story view) ───────────────────────────
+window.addEventListener('scroll', () => {
+  if (!document.getElementById('storyView').classList.contains('active')) return;
+
+  const scrollTop = window.scrollY || document.documentElement.scrollTop;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  if (docHeight <= 0) return;
+  const pct = (scrollTop / docHeight) * 100;
+
+  if (!scrollTracked25 && pct >= 25) {
+    scrollTracked25 = true;
+    track('scroll_depth', { depth: '25', story_index: currentStoryIndex + 1 });
+  }
+  if (!scrollTracked50 && pct >= 50) {
+    scrollTracked50 = true;
+    track('scroll_depth', { depth: '50', story_index: currentStoryIndex + 1 });
+  }
+  if (!scrollTracked90 && pct >= 90) {
+    scrollTracked90 = true;
+    track('scroll_depth', { depth: '90', story_index: currentStoryIndex + 1 });
+    markStoryRead(currentStoryIndex);
+  }
+}, { passive: true });
+
+// ── Swipe right to mark read ──────────────────────────────────────
+function initSwipe(cardEl, index) {
+  let startX = 0;
+  let currentX = 0;
+  let dragging = false;
+  const wrap = document.getElementById('wrap-' + index);
+  const swipeBg = wrap ? wrap.querySelector('.swipe-bg') : null;
+  const THRESHOLD = 80;
+
+  if (!cardEl || !swipeBg) return;
+
+  function onStart(e) {
+    if (readStories.has(index)) return;
+    startX = e.touches ? e.touches[0].clientX : e.clientX;
+    dragging = true;
+    cardEl.style.transition = 'none';
+  }
+
+  function onMove(e) {
+    if (!dragging) return;
+    currentX = (e.touches ? e.touches[0].clientX : e.clientX) - startX;
+    if (currentX < 0) currentX = 0;
+    cardEl.style.transform = 'translateX(' + currentX + 'px)';
+    swipeBg.style.opacity = Math.min(currentX / THRESHOLD, 1);
+  }
+
+  function onEnd() {
+    if (!dragging) return;
+    dragging = false;
+    cardEl.style.transition = '';
+
+    if (currentX >= THRESHOLD) {
+      cardEl.classList.add('swiped-away');
+      swipeBg.style.opacity = '1';
+      track('story_swiped', { story_index: index + 1 });
+      setTimeout(() => {
+        cardEl.style.transform = '';
+        cardEl.style.opacity = '';
+        cardEl.classList.remove('swiped-away');
+        cardEl.classList.add('read-dimmed');
+        swipeBg.style.opacity = '0';
+        markStoryRead(index);
+      }, 320);
+    } else {
+      cardEl.style.transform = '';
+      swipeBg.style.opacity = '0';
+    }
+    currentX = 0;
+  }
+
+  cardEl.addEventListener('touchstart', onStart, { passive: true });
+  cardEl.addEventListener('touchmove', onMove, { passive: true });
+  cardEl.addEventListener('touchend', onEnd);
+  cardEl.addEventListener('mousedown', onStart);
+  document.addEventListener('mousemove', onMove);
+  document.addEventListener('mouseup', onEnd);
+}
+
+// ── Share ─────────────────────────────────────────────────────────
+function shareStory() {
+  const s = stories[currentStoryIndex];
+  track('story_share', { story_index: currentStoryIndex + 1 });
+  if (navigator.share) {
+    navigator.share({ title: s.headline, text: s.lede, url: window.location.href });
+  } else {
+    alert('Share: ' + s.headline + '\n\nntknews.org');
+  }
+}
+
+function scrollToSubscribe() {
+  const el = document.getElementById('subscribeSection');
+  if (el) el.scrollIntoView({ behavior: 'smooth' });
+}
+
+// ── Init ──────────────────────────────────────────────────────────
+buildDigest();
+
+</script>
+</body>
+</html>
