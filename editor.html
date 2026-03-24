@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NTK Editor</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:      #0f0f0f;
+    --surface: #181818;
+    --border:  #2a2a2a;
+    --blue:    #0798F2;
+    --amber:   #F2AE2E;
+    --terra:   #DC6550;
+    --teal:    #01B2A7;
+    --cream:   #EAD9C5;
+    --muted:   #555;
+    --text:    #e8e4df;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+  }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .topbar-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    color: var(--text);
+    letter-spacing: 1px;
+  }
+
+  .topbar-logo span { color: var(--blue); }
+
+  .topbar-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .topbar-actions { display: flex; gap: 10px; }
+
+  .btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 7px 16px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+
+  .btn:hover { opacity: 0.85; }
+  .btn:active { opacity: 0.7; }
+
+  .btn-primary { background: var(--blue); color: #fff; }
+  .btn-ghost   { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+  .btn-danger  { background: transparent; color: var(--terra); border: 1px solid rgba(220,101,80,0.3); }
+
+  /* ── LAYOUT ── */
+  .layout {
+    display: grid;
+    grid-template-columns: 280px 1fr 380px;
+    height: calc(100vh - 52px);
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .sidebar-header {
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .sidebar-title {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .add-story-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    background: transparent;
+    color: var(--blue);
+    border: 1px solid rgba(7,152,242,0.3);
+    padding: 4px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: background 0.15s;
+  }
+
+  .add-story-btn:hover { background: rgba(7,152,242,0.08); }
+
+  .story-list-sidebar {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 0;
+  }
+
+  .story-list-sidebar::-webkit-scrollbar { width: 4px; }
+  .story-list-sidebar::-webkit-scrollbar-track { background: transparent; }
+  .story-list-sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .story-tab {
+    padding: 12px 20px;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: all 0.15s;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .story-tab:hover { background: rgba(255,255,255,0.03); }
+  .story-tab.active { border-left-color: var(--blue); background: rgba(7,152,242,0.06); }
+
+  .story-tab-num {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    min-width: 20px;
+    margin-top: 2px;
+  }
+
+  .story-tab.active .story-tab-num { color: var(--blue); }
+  .story-tab-num.lead { color: var(--amber) !important; }
+
+  .story-tab-info { flex: 1; min-width: 0; }
+
+  .story-tab-cat {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--terra);
+    margin-bottom: 3px;
+  }
+
+  .story-tab-headline {
+    font-size: 11px;
+    color: var(--text);
+    line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    opacity: 0.8;
+  }
+
+  .story-tab-headline.empty { color: var(--muted); font-style: italic; }
+
+  /* ── EDITOR PANEL ── */
+  .editor-panel {
+    overflow-y: auto;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .editor-panel::-webkit-scrollbar { width: 4px; }
+  .editor-panel::-webkit-scrollbar-track { background: transparent; }
+  .editor-panel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .editor-section-label {
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .editor-section-label .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .field-group { display: flex; flex-direction: column; gap: 6px; }
+
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  input[type="text"], select, textarea {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    padding: 10px 14px;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.15s;
+    resize: vertical;
+  }
+
+  input[type="text"]:focus,
+  select:focus,
+  textarea:focus { border-color: var(--blue); }
+
+  select {
+    appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23555' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px;
+  }
+
+  select option { background: #1a1a1a; }
+
+  textarea { min-height: 100px; line-height: 1.6; }
+  textarea.tall { min-height: 140px; }
+
+  .field-hint {
+    font-size: 10px;
+    color: var(--muted);
+    line-height: 1.5;
+    margin-top: 2px;
+  }
+
+  .story-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .story-position {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  .story-position .highlight { color: var(--amber); }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 4px 0;
+  }
+
+  /* ── OUTPUT PANEL ── */
+  .output-panel {
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .output-header {
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+
+  .output-title {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .copy-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    padding: 5px 14px;
+    border-radius: 3px;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: opacity 0.15s;
+  }
+
+  .copy-btn:hover { opacity: 0.85; }
+  .copy-btn.copied { background: var(--teal); }
+
+  .output-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+  }
+
+  .output-body::-webkit-scrollbar { width: 4px; }
+  .output-body::-webkit-scrollbar-track { background: transparent; }
+  .output-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  #outputCode {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    line-height: 1.7;
+    color: #888;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+
+  #outputCode .k { color: #7aa2f7; }  /* keyword */
+  #outputCode .s { color: #9ece6a; }  /* string */
+  #outputCode .p { color: #565f89; }  /* punctuation */
+  #outputCode .c { color: #444; font-style: italic; }  /* comment */
+  #outputCode .f { color: var(--amber); }  /* field name */
+
+  .output-instructions {
+    margin-top: 16px;
+    padding: 16px;
+    background: rgba(7,152,242,0.06);
+    border: 1px solid rgba(7,152,242,0.15);
+    border-radius: 6px;
+  }
+
+  .output-instructions p {
+    font-size: 11px;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+
+  .output-instructions strong { color: var(--text); }
+
+  .story-count-warning {
+    font-size: 10px;
+    letter-spacing: 1px;
+    padding: 6px 12px;
+    border-radius: 3px;
+    display: none;
+  }
+
+  .story-count-warning.show { display: inline-block; }
+  .story-count-warning.ok   { background: rgba(1,178,167,0.1); color: var(--teal); }
+  .story-count-warning.warn { background: rgba(242,174,46,0.1); color: var(--amber); }
+  .story-count-warning.err  { background: rgba(220,101,80,0.1); color: var(--terra); }
+
+  /* ── EMPTY STATE ── */
+  .empty-editor {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 12px;
+    opacity: 0.4;
+  }
+
+  .empty-editor p {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-logo">NTK <span>Editor</span></div>
+    <div class="topbar-label">Daily Digest Builder</div>
+  </div>
+  <div class="topbar-actions">
+    <span class="story-count-warning" id="countWarning"></span>
+    <button class="btn btn-ghost" onclick="clearAll()">Clear All</button>
+    <button class="btn btn-primary" onclick="generateOutput()">Generate Code →</button>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <span class="sidebar-title">Stories</span>
+      <button class="add-story-btn" onclick="addStory()">+ Add</button>
+    </div>
+    <div class="story-list-sidebar" id="storyListSidebar"></div>
+  </div>
+
+  <!-- EDITOR -->
+  <div class="editor-panel" id="editorPanel">
+    <div class="empty-editor" id="emptyEditor">
+      <p>← Select a story to edit</p>
+      <p>or click + Add to start</p>
+    </div>
+    <div id="editorFields" style="display:none; display:flex; flex-direction:column; gap:24px;">
+
+      <div class="story-controls">
+        <div class="story-position">
+          Editing story <span class="highlight" id="editingNum">—</span>
+          <span id="leadBadge" style="display:none; margin-left:8px; font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--amber);">· Lead Story</span>
+        </div>
+        <button class="btn btn-danger" onclick="removeCurrentStory()" style="font-size:10px; padding:5px 12px;">Remove</button>
+      </div>
+
+      <!-- Category + Headline -->
+      <div class="field-group">
+        <div class="editor-section-label">
+          <div class="dot" style="background:var(--terra);"></div>
+          Category & Headline
+        </div>
+        <div class="field-row">
+          <div>
+            <select id="f-category">
+              <option value="">— Category —</option>
+              <option>Economy</option>
+              <option>Immigration</option>
+              <option>Judiciary</option>
+              <option>Housing</option>
+              <option>Foreign Policy</option>
+              <option>Climate</option>
+              <option>Media</option>
+              <option>Politics</option>
+              <option>Health</option>
+              <option>Education</option>
+              <option>Technology</option>
+              <option>National Security</option>
+            </select>
+          </div>
+          <div>
+            <input type="text" id="f-category-custom" placeholder="Or type a custom category…">
+          </div>
+        </div>
+        <input type="text" id="f-headline" placeholder="Headline — active voice, names actors and stakes">
+        <div class="field-hint">No quotes needed. Keep it under ~90 characters.</div>
+      </div>
+
+      <!-- Lede -->
+      <div class="field-group">
+        <div class="editor-section-label">
+          <div class="dot" style="background:var(--cream);"></div>
+          Lede
+        </div>
+        <textarea id="f-lede" placeholder="One or two sentences. What happened and why it matters. Plain text only — no HTML tags."></textarea>
+        <div class="field-hint">Plain text only. No &lt;p&gt; tags. Aim for 1–2 sentences.</div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Truth -->
+      <div class="field-group">
+        <div class="editor-section-label">
+          <div class="dot" style="background:var(--blue);"></div>
+          Truths — What Happened
+        </div>
+        <textarea id="f-truth" class="tall" placeholder="What actually happened. Verifiable facts only. Write in plain text — paragraphs will be wrapped in &lt;p&gt; tags automatically."></textarea>
+        <div class="field-hint">Plain text. Hit Enter twice between paragraphs. No HTML needed.</div>
+      </div>
+
+      <!-- Probabilities -->
+      <div class="field-group">
+        <div class="editor-section-label">
+          <div class="dot" style="background:var(--purple, #725ABF);"></div>
+          Probabilities — What Will Likely Happen
+        </div>
+        <textarea id="f-prob" class="tall" placeholder="What's most likely to happen next. Be specific about odds and timelines where possible."></textarea>
+        <div class="field-hint">Plain text. Hit Enter twice between paragraphs.</div>
+      </div>
+
+      <!-- Possibilities -->
+      <div class="field-group">
+        <div class="editor-section-label">
+          <div class="dot" style="background:var(--teal);"></div>
+          Possibilities — What Could Happen
+        </div>
+        <textarea id="f-poss" class="tall" placeholder="Lower-probability but plausible scenarios. What could change the picture?"></textarea>
+        <div class="field-hint">Plain text. Hit Enter twice between paragraphs.</div>
+      </div>
+
+      <!-- Lies -->
+      <div class="field-group">
+        <div class="editor-section-label">
+          <div class="dot" style="background:var(--terra);"></div>
+          Lies / Narrative Distortions
+        </div>
+        <textarea id="f-lies" class="tall" placeholder='Quote the claim in "quotes", then correct it. Each distortion is its own paragraph.'></textarea>
+        <div class="field-hint">Plain text. Use regular "quote marks" — they'll be escaped automatically. Hit Enter twice between distortions.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- OUTPUT -->
+  <div class="output-panel">
+    <div class="output-header">
+      <span class="output-title">Generated Code</span>
+      <button class="copy-btn" id="copyBtn" onclick="copyOutput()">Copy</button>
+    </div>
+    <div class="output-body">
+      <pre id="outputCode"><span style="color:var(--muted); font-style:italic;">Fill in your stories, then click
+"Generate Code →" to see the output.
+
+Paste the result into the const stories = [ ]
+section of your index.html on GitHub.</span></pre>
+      <div class="output-instructions" id="outputInstructions" style="display:none;">
+        <p>
+          <strong>How to use this:</strong><br>
+          1. Click <strong>Copy</strong> above<br>
+          2. Go to <strong>github.com/maxzimbert/ntknews</strong><br>
+          3. Open <strong>index.html</strong> → click the pencil ✏️<br>
+          4. Find <code style="color:var(--blue);">const stories = [</code><br>
+          5. Select everything from the first <code style="color:var(--blue);">{</code> to the last <code style="color:var(--blue);">}</code> before the <code style="color:var(--blue);">];</code><br>
+          6. Paste → <strong>Commit changes</strong><br>
+          7. Live in ~60 seconds ✓
+        </p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── State ─────────────────────────────────────────────────────────
+let stories = [];
+let activeIndex = null;
+
+const CATEGORIES = [
+  'Economy','Immigration','Judiciary','Housing','Foreign Policy',
+  'Climate','Media','Politics','Health','Education','Technology','National Security'
+];
+
+// ── Init ──────────────────────────────────────────────────────────
+function init() {
+  // Start with one empty story
+  addStory();
+}
+
+// ── Story management ──────────────────────────────────────────────
+function addStory() {
+  if (stories.length >= 8) {
+    alert('Maximum 8 stories per digest.');
+    return;
+  }
+  stories.push({ category: '', headline: '', lede: '', truth: '', prob: '', poss: '', lies: '' });
+  activeIndex = stories.length - 1;
+  renderSidebar();
+  renderEditor();
+  updateCountWarning();
+}
+
+function removeCurrentStory() {
+  if (stories.length <= 1) {
+    alert('You need at least one story.');
+    return;
+  }
+  if (!confirm('Remove this story?')) return;
+  stories.splice(activeIndex, 1);
+  activeIndex = Math.min(activeIndex, stories.length - 1);
+  renderSidebar();
+  renderEditor();
+  updateCountWarning();
+}
+
+function selectStory(i) {
+  saveCurrentFields();
+  activeIndex = i;
+  renderSidebar();
+  renderEditor();
+}
+
+function saveCurrentFields() {
+  if (activeIndex === null || activeIndex >= stories.length) return;
+  const s = stories[activeIndex];
+  const customCat = document.getElementById('f-category-custom').value.trim();
+  const selectCat = document.getElementById('f-category').value;
+  s.category   = customCat || selectCat;
+  s.headline   = document.getElementById('f-headline').value.trim();
+  s.lede       = document.getElementById('f-lede').value.trim();
+  s.truth      = document.getElementById('f-truth').value.trim();
+  s.prob       = document.getElementById('f-prob').value.trim();
+  s.poss       = document.getElementById('f-poss').value.trim();
+  s.lies       = document.getElementById('f-lies').value.trim();
+}
+
+// Auto-save on input
+function bindAutoSave() {
+  ['f-category','f-category-custom','f-headline','f-lede','f-truth','f-prob','f-poss','f-lies'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', () => {
+      saveCurrentFields();
+      renderSidebar();
+      updateCountWarning();
+    });
+  });
+}
+
+// ── Render sidebar ────────────────────────────────────────────────
+function renderSidebar() {
+  const el = document.getElementById('storyListSidebar');
+  el.innerHTML = stories.map((s, i) => {
+    const isLead = i === 0;
+    const cat = s.category || '—';
+    const hl  = s.headline || 'Untitled story';
+    return `
+      <div class="story-tab ${i === activeIndex ? 'active' : ''}" onclick="selectStory(${i})">
+        <div class="story-tab-num ${isLead ? 'lead' : ''}">${String(i+1).padStart(2,'0')}</div>
+        <div class="story-tab-info">
+          <div class="story-tab-cat">${cat}</div>
+          <div class="story-tab-headline ${!s.headline ? 'empty' : ''}">${hl}</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ── Render editor fields ──────────────────────────────────────────
+function renderEditor() {
+  const emptyEl  = document.getElementById('emptyEditor');
+  const fieldsEl = document.getElementById('editorFields');
+
+  if (activeIndex === null) {
+    emptyEl.style.display = 'flex';
+    fieldsEl.style.display = 'none';
+    return;
+  }
+
+  emptyEl.style.display = 'none';
+  fieldsEl.style.display = 'flex';
+
+  const s = stories[activeIndex];
+  document.getElementById('editingNum').textContent = activeIndex + 1;
+  document.getElementById('leadBadge').style.display = activeIndex === 0 ? 'inline' : 'none';
+
+  // Set category
+  const sel = document.getElementById('f-category');
+  const customInput = document.getElementById('f-category-custom');
+  if (CATEGORIES.includes(s.category)) {
+    sel.value = s.category;
+    customInput.value = '';
+  } else {
+    sel.value = '';
+    customInput.value = s.category;
+  }
+
+  document.getElementById('f-headline').value = s.headline;
+  document.getElementById('f-lede').value     = s.lede;
+  document.getElementById('f-truth').value    = s.truth;
+  document.getElementById('f-prob').value     = s.prob;
+  document.getElementById('f-poss').value     = s.poss;
+  document.getElementById('f-lies').value     = s.lies;
+
+  // Rebind autosave
+  bindAutoSave();
+}
+
+// ── Count warning ─────────────────────────────────────────────────
+function updateCountWarning() {
+  const el = document.getElementById('countWarning');
+  const n  = stories.length;
+  el.classList.remove('ok','warn','err');
+  if (n >= 6 && n <= 8) {
+    el.textContent = n + ' stories ✓';
+    el.classList.add('show','ok');
+  } else if (n < 6) {
+    el.textContent = n + ' of 6 min';
+    el.classList.add('show','warn');
+  } else {
+    el.textContent = 'Max 8 stories';
+    el.classList.add('show','err');
+  }
+}
+
+// ── Text → HTML paragraphs ────────────────────────────────────────
+function textToHtml(text) {
+  if (!text) return '<p></p>';
+  return text
+    .split(/\n\n+/)
+    .map(p => p.trim())
+    .filter(p => p.length > 0)
+    .map(p => '<p>' + p.replace(/\n/g, ' ') + '</p>')
+    .join('');
+}
+
+// ── Escape for JS string ──────────────────────────────────────────
+function escapeForJs(str) {
+  return str
+    .replace(/\\/g, '\\\\')
+    .replace(/"/g, '\\"')
+    .replace(/\n/g, ' ');
+}
+
+// ── Generate output ───────────────────────────────────────────────
+function generateOutput() {
+  saveCurrentFields();
+
+  const errors = [];
+  stories.forEach((s, i) => {
+    if (!s.category) errors.push(`Story ${i+1}: missing category`);
+    if (!s.headline) errors.push(`Story ${i+1}: missing headline`);
+    if (!s.lede)     errors.push(`Story ${i+1}: missing lede`);
+    if (!s.truth)    errors.push(`Story ${i+1}: missing Truths`);
+    if (!s.prob)     errors.push(`Story ${i+1}: missing Probabilities`);
+    if (!s.poss)     errors.push(`Story ${i+1}: missing Possibilities`);
+    if (!s.lies)     errors.push(`Story ${i+1}: missing Lies`);
+  });
+
+  if (errors.length > 0) {
+    document.getElementById('outputCode').innerHTML =
+      '<span style="color:var(--terra);">⚠ Fix these before generating:\n\n' +
+      errors.join('\n') + '</span>';
+    return;
+  }
+
+  let out = '';
+  stories.forEach((s, i) => {
+    const isLead = i === 0;
+    const truthHtml  = escapeForJs(textToHtml(s.truth));
+    const probHtml   = escapeForJs(textToHtml(s.prob));
+    const possHtml   = escapeForJs(textToHtml(s.poss));
+    const liesHtml   = escapeForJs(textToHtml(s.lies));
+    const lede       = escapeForJs(s.lede);
+    const headline   = escapeForJs(s.headline);
+    const category   = escapeForJs(s.category);
+
+    out += `  {\n`;
+    out += `    category: "${category}",\n`;
+    out += `    headline: "${headline}",\n`;
+    out += `    lede: "${lede}",\n`;
+    out += `    truth: "${truthHtml}",\n`;
+    out += `    prob: "${probHtml}",\n`;
+    out += `    poss: "${possHtml}",\n`;
+    out += `    lies: "${liesHtml}"\n`;
+    out += `  }`;
+    if (i < stories.length - 1) out += ',';
+    out += '\n\n';
+  });
+
+  // Syntax highlight
+  const highlighted = out
+    .replace(/("(?:[^"\\]|\\.)*")/g, '<span class="s">$1</span>')
+    .replace(/\b(category|headline|lede|truth|prob|poss|lies)(?=:)/g, '<span class="f">$1</span>');
+
+  document.getElementById('outputCode').innerHTML = highlighted;
+  document.getElementById('outputInstructions').style.display = 'block';
+}
+
+// ── Copy ──────────────────────────────────────────────────────────
+function copyOutput() {
+  saveCurrentFields();
+
+  // Generate clean (unhighlighted) version for clipboard
+  let out = '';
+  stories.forEach((s, i) => {
+    const truthHtml = escapeForJs(textToHtml(s.truth));
+    const probHtml  = escapeForJs(textToHtml(s.prob));
+    const possHtml  = escapeForJs(textToHtml(s.poss));
+    const liesHtml  = escapeForJs(textToHtml(s.lies));
+    const lede      = escapeForJs(s.lede);
+    const headline  = escapeForJs(s.headline);
+    const category  = escapeForJs(s.category);
+
+    out += `  {\n    category: "${category}",\n    headline: "${headline}",\n    lede: "${lede}",\n    truth: "${truthHtml}",\n    prob: "${probHtml}",\n    poss: "${possHtml}",\n    lies: "${liesHtml}"\n  }`;
+    if (i < stories.length - 1) out += ',';
+    out += '\n\n';
+  });
+
+  navigator.clipboard.writeText(out).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = 'Copied ✓';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+// ── Clear all ─────────────────────────────────────────────────────
+function clearAll() {
+  if (!confirm('Clear all stories and start over?')) return;
+  stories = [];
+  activeIndex = null;
+  addStory();
+}
+
+// ── Boot ──────────────────────────────────────────────────────────
+init();
+updateCountWarning();
+</script>
+</body>
+</html>
