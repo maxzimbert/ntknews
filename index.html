@@ -302,22 +302,41 @@
   .card-read-cta .arr { transition: transform 0.15s; }
   .story-card:active .arr { transform: translateX(3px); }
 
-  .read-badge {
+  .story-num-badge {
     position: absolute;
     top: 14px;
     right: 14px;
-    width: 22px;
-    height: 22px;
-    background: var(--teal);
+    width: 26px;
+    height: 26px;
     border-radius: 50%;
-    display: none;
+    display: flex;
     align-items: center;
     justify-content: center;
+    font-family: 'Space Grotesk', sans-serif;
     font-size: 11px;
-    color: white;
+    font-weight: 700;
+    border: 1.5px solid rgba(38,31,35,0.15);
+    color: rgba(38,31,35,0.3);
+    background: transparent;
+    transition: background 0.3s, color 0.3s, border-color 0.3s;
   }
 
-  .story-card.read-dimmed .read-badge { display: flex; }
+  .story-card.read-dimmed .story-num-badge {
+    background: var(--teal);
+    color: white;
+    border-color: var(--teal);
+  }
+
+  .card-wrapper.featured-wrapper .story-num-badge {
+    border-color: rgba(234,217,197,0.2);
+    color: rgba(234,217,197,0.3);
+  }
+
+  .card-wrapper.featured-wrapper .story-card.read-dimmed .story-num-badge {
+    background: var(--teal);
+    color: white;
+    border-color: var(--teal);
+  }
 
   .card-wrapper.featured-wrapper .story-card { background: var(--dark); }
   .card-wrapper.featured-wrapper .story-number { color: rgba(234,217,197,0.2); }
@@ -677,6 +696,72 @@
   .share-btn.msg  { background: var(--blue);  color: var(--white); }
   .share-btn.done { background: rgba(234,217,197,0.08); color: rgba(234,217,197,0.6); border: 1px solid rgba(234,217,197,0.1); }
 
+
+  /* ── SUBSCRIBE MODAL ─────────────────────── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(38,31,35,0.7);
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .modal-overlay.show { display: flex; }
+
+  .modal-box {
+    background: var(--dark);
+    border-radius: 12px;
+    padding: 32px 28px;
+    text-align: center;
+    max-width: 320px;
+    width: 100%;
+    animation: fadeUp 0.25s ease forwards;
+    border: 1px solid rgba(234,217,197,0.1);
+  }
+
+  .modal-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 12px;
+  }
+
+  .modal-title {
+    font-family: 'Source Serif 4', serif;
+    font-weight: 300;
+    font-size: 22px;
+    color: var(--white);
+    line-height: 1.3;
+    margin-bottom: 10px;
+  }
+
+  .modal-title em { font-style: italic; color: var(--amber); }
+
+  .modal-body {
+    font-family: 'Source Serif 4', serif;
+    font-size: 14px;
+    color: rgba(234,217,197,0.55);
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+
+  .modal-close {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    background: rgba(234,217,197,0.08);
+    color: rgba(234,217,197,0.6);
+    border: 1px solid rgba(234,217,197,0.1);
+    padding: 10px 24px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
   .hide { display: none !important; }
 </style>
 </head>
@@ -692,7 +777,7 @@
         <div class="wordmark">NTK</div>
         <div class="rule"></div>
       </div>
-      <button class="header-subscribe" onclick="scrollToSubscribe()">Subscribe</button>
+      <button class="header-subscribe" onclick="handleSubscribeClick()">Subscribe</button>
     </div>
   </header>
 
@@ -827,7 +912,7 @@
 // ================================================================
 const stories = [
 
-    {
+{
     category: "Foreign Policy",
     headline: "War on Iran drags on with no agreeable end",
     lede: "No one can agree on anything",
@@ -910,6 +995,12 @@ const stories = [
 ]; // ← END OF DAILY CONTENT. Do not edit below this line.
 // ================================================================
 
+// ── Strip stray outer quotes from editor output ──────────────────
+function stripOuterQuotes(str) {
+  if (!str) return str;
+  return str.replace(/^[\u201C\u201D\u0022]+/, '').replace(/[\u201C\u201D\u0022]+$/, '');
+}
+
 // ── State ────────────────────────────────────────────────────────
 let readStories = new Set();
 let orientShown = false;
@@ -973,19 +1064,13 @@ function buildDigest() {
         <div class="swipe-bg"><span class="swipe-bg-label">✓ Read</span></div>
         <div class="story-card ${isFeatured ? 'featured-card' : ''}" id="card-${i}"
              onclick="openStory(${i})" data-swipe="true">
-          <div class="read-badge">✓</div>
+          <div class="story-num-badge" id="badge-${i}">${i + 1}</div>
           <div class="story-card-inner">
             <div class="story-number">${numLabel}</div>
             <div class="story-category">${s.category}</div>
             <div class="story-headline">${s.headline}</div>
             <div class="story-lede">${s.lede}</div>
             <div class="card-footer">
-              <div class="section-pills">
-                <span class="pill truth">Truths</span>
-                <span class="pill prob">Probabilities</span>
-                <span class="pill poss">Possibilities</span>
-                <span class="pill lies">Lies</span>
-              </div>
               <span class="card-read-cta">Read <span class="arr">→</span></span>
             </div>
           </div>
@@ -1001,16 +1086,7 @@ function buildDigest() {
       <em class="co">Carry on regardless.</em></p>
     </div>`;
 
-  // Subscribe
-  html += `
-    <div id="subscribeSection" style="margin-top:24px;background:var(--dark);border-radius:12px;padding:28px 20px;text-align:center;">
-      <div style="font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--teal);margin-bottom:10px;">Stay Oriented</div>
-      <h2 style="font-family:'Source Serif 4',serif;font-weight:300;font-size:22px;color:var(--white);line-height:1.3;margin-bottom:8px;">The digest, every morning.<br><em style="color:var(--amber);">Free.</em></h2>
-      <p style="font-family:'Source Serif 4',serif;font-size:14px;color:rgba(234,217,197,0.55);line-height:1.6;margin-bottom:20px;">Context-first. Historically grounded. For people who want to feel oriented, not overwhelmed.</p>
-      <input type="email" placeholder="your@email.com" style="width:100%;padding:12px 14px;border-radius:6px;border:1px solid rgba(234,217,197,0.15);background:rgba(234,217,197,0.07);color:var(--white);font-family:'Space Grotesk',sans-serif;font-size:14px;outline:none;margin-bottom:10px;">
-      <button style="width:100%;padding:13px;background:var(--blue);color:var(--white);border:none;border-radius:6px;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Get NTK Daily</button>
-      <p style="font-family:'Space Grotesk',sans-serif;font-size:10px;color:rgba(234,217,197,0.22);margin-top:12px;letter-spacing:0.5px;">No ads. No algorithm. Unsubscribe any time.</p>
-    </div>`;
+  // Subscribe section removed for Mom Test
 
   list.innerHTML = html;
   document.getElementById('progressLabel').textContent = '0 of ' + stories.length + ' read';
@@ -1060,10 +1136,10 @@ function openStory(index) {
   document.getElementById('storyCategory').textContent = s.category;
   document.getElementById('storyHeadline').textContent = s.headline;
   document.getElementById('storyLede').textContent = s.lede;
-  document.getElementById('truth-body').innerHTML = s.truth;
-  document.getElementById('prob-body').innerHTML = s.prob;
-  document.getElementById('poss-body').innerHTML = s.poss;
-  document.getElementById('liesRevealed').innerHTML = s.lies;
+  document.getElementById('truth-body').innerHTML = stripOuterQuotes(s.truth);
+  document.getElementById('prob-body').innerHTML = stripOuterQuotes(s.prob);
+  document.getElementById('poss-body').innerHTML = stripOuterQuotes(s.poss);
+  document.getElementById('liesRevealed').innerHTML = stripOuterQuotes(s.lies);
 
   // Reset sections
   ['sec-truth','sec-prob','sec-poss','sec-lies'].forEach(id => {
@@ -1230,14 +1306,32 @@ function shareStory() {
   }
 }
 
-function scrollToSubscribe() {
-  const el = document.getElementById('subscribeSection');
-  if (el) el.scrollIntoView({ behavior: 'smooth' });
+// ── Subscribe modal ──────────────────────────────────────────────
+function handleSubscribeClick() {
+  document.getElementById('subscribeModal').classList.add('show');
+  track('subscribe_click', { location: 'header' });
+}
+
+function closeSubscribeModal(e) {
+  if (e.target === document.getElementById('subscribeModal')) {
+    document.getElementById('subscribeModal').classList.remove('show');
+  }
 }
 
 // ── Init ──────────────────────────────────────────────────────────
 buildDigest();
 
 </script>
+
+<!-- SUBSCRIBE MODAL -->
+<div class="modal-overlay" id="subscribeModal" onclick="closeSubscribeModal(event)">
+  <div class="modal-box">
+    <div class="modal-label">NTK · Subscriptions</div>
+    <div class="modal-title">Coming <em>soon.</em></div>
+    <div class="modal-body">NTK is in its first week of testing. Paid subscriptions are on the way — check back shortly.</div>
+    <button class="modal-close" onclick="document.getElementById('subscribeModal').classList.remove('show')">Got it</button>
+  </div>
+</div>
+
 </body>
 </html>
