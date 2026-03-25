@@ -710,7 +710,12 @@ function textToHtml(text) {
     .split(/\n\n+/)
     .map(p => p.trim())
     .filter(p => p.length > 0)
-    .map(p => '<p>' + p.replace(/\n/g, ' ') + '</p>')
+    .map(p => {
+      let html = p.replace(/\n/g, ' ');
+      html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+      html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '<a href="$2">$1</a>');
+      return '<p>' + html + '</p>';
+    })
     .join('');
 }
 
