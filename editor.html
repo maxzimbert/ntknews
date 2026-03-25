@@ -479,6 +479,49 @@
         <div class="field-hint">Plain text only. No &lt;p&gt; tags. Aim for 1–2 sentences.</div>
       </div>
 
+      <!-- Featured Image (Story 1 only) -->
+      <div class="field-group featured-image-section" id="featuredImageSection">
+        <div class="editor-section-label">
+          <div class="dot" style="background:var(--amber);"></div>
+          Featured Image <span style="color:var(--muted);font-size:9px;margin-left:6px;">LEAD STORY ONLY</span>
+        </div>
+
+        <!-- Preview (shown after upload) -->
+        <div class="image-preview-wrap" id="imagePreviewWrap">
+          <img id="imagePreview" src="" alt="">
+          <div class="image-preview-overlay" id="imageOverlay"></div>
+          <button class="image-preview-clear" onclick="clearFeaturedImage()">✕ Remove</button>
+        </div>
+
+        <!-- Upload zone (hidden after upload) -->
+        <div class="image-upload-zone" id="imageUploadZone">
+          <input type="file" accept="image/*" id="f-image" onchange="handleImageUpload(event)">
+          <div class="image-upload-label">↑ Click to upload photo<br><span style="font-size:9px;opacity:0.5;">JPG or PNG · Will be compressed automatically</span></div>
+        </div>
+
+        <!-- Color overlay picker -->
+        <div style="margin-top:4px;">
+          <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Color Overlay</div>
+          <div class="color-picker-row">
+            <div class="color-swatch selected" style="background:#0798F2;" data-color="#0798F2" onclick="selectOverlayColor(this)" title="Blue"></div>
+            <div class="color-swatch" style="background:#F2AE2E;" data-color="#F2AE2E" onclick="selectOverlayColor(this)" title="Amber"></div>
+            <div class="color-swatch" style="background:#01B2A7;" data-color="#01B2A7" onclick="selectOverlayColor(this)" title="Teal"></div>
+            <div class="color-swatch" style="background:#DC6550;" data-color="#DC6550" onclick="selectOverlayColor(this)" title="Terra"></div>
+            <div class="color-swatch" style="background:#725ABF;" data-color="#725ABF" onclick="selectOverlayColor(this)" title="Purple"></div>
+            <div class="color-swatch" style="background:#261F23;" data-color="#261F23" onclick="selectOverlayColor(this)" title="Dark"></div>
+          </div>
+        </div>
+
+        <!-- Opacity slider -->
+        <div class="opacity-row">
+          <label>Opacity</label>
+          <input type="range" id="f-opacity" min="10" max="80" value="45" oninput="updateOpacity(this.value)">
+          <span class="opacity-val" id="opacityVal">45%</span>
+        </div>
+
+        <div class="field-hint">Landscape photos work best. The image will be cropped to fill the header.</div>
+      </div>
+
       <div class="divider"></div>
 
       <!-- Truth -->
@@ -575,7 +618,7 @@ function addStory() {
     alert('Maximum 8 stories per digest.');
     return;
   }
-  stories.push({ category: '', headline: '', lede: '', truth: '', prob: '', poss: '', lies: '' });
+  stories.push({ category: '', headline: '', lede: '', truth: '', prob: '', poss: '', lies: '', featuredImage: '', overlayColor: '#0798F2', overlayOpacity: 45 });
   activeIndex = stories.length - 1;
   renderSidebar();
   renderEditor();
@@ -614,6 +657,12 @@ function saveCurrentFields() {
   s.prob       = document.getElementById('f-prob').value.trim();
   s.poss       = document.getElementById('f-poss').value.trim();
   s.lies       = document.getElementById('f-lies').value.trim();
+  // Image fields only saved for story 0
+  if (activeIndex === 0) {
+    s.featuredImage   = currentImageBase64 || s.featuredImage || '';
+    s.overlayColor    = currentOverlayColor;
+    s.overlayOpacity  = currentOverlayOpacity;
+  }
 }
 
 // Auto-save on input
@@ -682,6 +731,33 @@ function renderEditor() {
   document.getElementById('f-poss').value     = s.poss;
   document.getElementById('f-lies').value     = s.lies;
 
+  // Show/hide featured image section for story 0 only
+  const featSec = document.getElementById('featuredImageSection');
+  if (activeIndex === 0) {
+    featSec.classList.add('visible');
+    // Restore image state
+    currentImageBase64 = s.featuredImage || '';
+    currentOverlayColor = s.overlayColor || '#0798F2';
+    currentOverlayOpacity = s.overlayOpacity || 45;
+    if (currentImageBase64) {
+      document.getElementById('imagePreview').src = currentImageBase64;
+      document.getElementById('imagePreviewWrap').classList.add('has-image');
+      document.getElementById('imageUploadZone').style.display = 'none';
+    } else {
+      document.getElementById('imagePreviewWrap').classList.remove('has-image');
+      document.getElementById('imageUploadZone').style.display = 'block';
+    }
+    updateOverlayPreview();
+    document.getElementById('f-opacity').value = currentOverlayOpacity;
+    document.getElementById('opacityVal').textContent = currentOverlayOpacity + '%';
+    // Update swatch selection
+    document.querySelectorAll('.color-swatch').forEach(sw => {
+      sw.classList.toggle('selected', sw.dataset.color === currentOverlayColor);
+    });
+  } else {
+    featSec.classList.remove('visible');
+  }
+
   // Rebind autosave
   bindAutoSave();
 }
@@ -710,12 +786,7 @@ function textToHtml(text) {
     .split(/\n\n+/)
     .map(p => p.trim())
     .filter(p => p.length > 0)
-    .map(p => {
-      let html = p.replace(/\n/g, ' ');
-      html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-      html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '<a href="$2">$1</a>');
-      return '<p>' + html + '</p>';
-    })
+    .map(p => '<p>' + p.replace(/\n/g, ' ') + '</p>')
     .join('');
 }
 
@@ -760,6 +831,7 @@ function generateOutput() {
     const headline   = escapeForJs(s.headline);
     const category   = escapeForJs(s.category);
 
+    const hasFeatImg = i === 0 && s.featuredImage;
     out += `  {\n`;
     out += `    category: "${category}",\n`;
     out += `    headline: "${headline}",\n`;
@@ -767,8 +839,14 @@ function generateOutput() {
     out += `    truth: "${truthHtml}",\n`;
     out += `    prob: "${probHtml}",\n`;
     out += `    poss: "${possHtml}",\n`;
-    out += `    lies: "${liesHtml}"\n`;
-    out += `  }`;
+    out += `    lies: "${liesHtml}"`;
+    if (hasFeatImg) {
+      const imgEsc = s.featuredImage.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+      out += `,\n    featuredImage: "${imgEsc}"`;
+      out += `,\n    overlayColor: "${s.overlayColor || '#0798F2'}"`;
+      out += `,\n    overlayOpacity: ${s.overlayOpacity || 45}`;
+    }
+    out += `\n  }`;
     if (i < stories.length - 1) out += ',';
     out += '\n\n';
   });
@@ -797,7 +875,16 @@ function copyOutput() {
     const headline  = escapeForJs(s.headline);
     const category  = escapeForJs(s.category);
 
-    out += `  {\n    category: "${category}",\n    headline: "${headline}",\n    lede: "${lede}",\n    truth: "${truthHtml}",\n    prob: "${probHtml}",\n    poss: "${possHtml}",\n    lies: "${liesHtml}"\n  }`;
+    const hasFi = i === 0 && s.featuredImage;
+    let entry = `  {\n    category: "${category}",\n    headline: "${headline}",\n    lede: "${lede}",\n    truth: "${truthHtml}",\n    prob: "${probHtml}",\n    poss: "${possHtml}",\n    lies: "${liesHtml}"`;
+    if (hasFi) {
+      const imgEsc2 = s.featuredImage.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+      entry += `,\n    featuredImage: "${imgEsc2}"`;
+      entry += `,\n    overlayColor: "${s.overlayColor || '#0798F2'}"`;
+      entry += `,\n    overlayOpacity: ${s.overlayOpacity || 45}`;
+    }
+    entry += `\n  }`;
+    out += entry;
     if (i < stories.length - 1) out += ',';
     out += '\n\n';
   });
