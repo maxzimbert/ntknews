@@ -863,6 +863,8 @@ function textToHtml(text) {
 function escapeForJs(str) {
   return str
     .replace(/\\/g, '\\\\')
+    .replace(/[\u201C\u201D]/g, '\\"')  // smart double quotes → escaped straight quotes
+    .replace(/[\u2018\u2019]/g, "\'")    // smart single quotes → escaped apostrophes
     .replace(/"/g, '\\"')
     .replace(/\n/g, ' ');
 }
