@@ -1306,6 +1306,13 @@ function buildDigest() {
   stories.forEach((_, i) => {
     initSwipe(document.getElementById('card-' + i), i);
   });
+
+  updateFeedbackBtn();
+
+  } catch(e) {
+    console.error('NTK buildDigest error:', e);
+    showErrorView(e.message || 'Unknown error in buildDigest');
+  }
 }
 
 // ── Progress ──────────────────────────────────────────────────────
@@ -1369,6 +1376,7 @@ function openStory(index) {
   document.getElementById('digestView').classList.remove('active');
   document.getElementById('storyView').classList.add('active');
   window.scrollTo(0, 0);
+  updateFeedbackBtn();
 
   // Track
   track('story_open', {
@@ -1387,6 +1395,7 @@ function closeStory() {
   markStoryRead(currentStoryIndex);
   document.getElementById('storyView').classList.remove('active');
   document.getElementById('digestView').classList.add('active');
+  updateFeedbackBtn();
 }
 
 // ── Section toggle ────────────────────────────────────────────────
@@ -1563,18 +1572,7 @@ function updateFeedbackBtn() {
   btn.style.bottom = inStory ? '80px' : '24px';
 }
 
-// Update whenever view changes
-const _origOpenStory = openStory;
-function openStory(index) {
-  _origOpenStory(index);
-  updateFeedbackBtn();
-}
-
-const _origCloseStory = closeStory;
-function closeStory() {
-  _origCloseStory();
-  updateFeedbackBtn();
-}
+// openStory and closeStory call updateFeedbackBtn directly (see function bodies above)
 
 // ── Error handling ─────────────────────────────────────────────────
 function showErrorView(message) {
@@ -1598,21 +1596,7 @@ function showErrorView(message) {
     `mailto:max.zimbert@icloud.com?subject=${subject}&body=${body}`;
 }
 
-// Wrap buildDigest with error catching
-const _origBuildDigest = buildDigest;
-function buildDigest() {
-  try {
-    if (!stories || stories.length === 0) {
-      showErrorView('Stories array is empty');
-      return;
-    }
-    _origBuildDigest();
-    updateFeedbackBtn();
-  } catch(e) {
-    console.error('NTK buildDigest error:', e);
-    showErrorView(e.message || 'Unknown error');
-  }
-}
+// Error handling is built into buildDigest directly (see above)
 
 // Global JS error catcher
 window.addEventListener('error', function(e) {
