@@ -852,6 +852,35 @@
   .featured-hero.read-dimmed { opacity: 0.6; }
 
   .hide { display: none !important; }
+
+  /* ── BULLHORN FEEDBACK BUTTON ───────────────── */
+  .feedback-btn {
+    position: fixed;
+    bottom: 24px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--dark);
+    border: 1.5px solid rgba(234,217,197,0.18);
+    color: var(--cream);
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 150;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.35);
+    transition: transform 0.15s, background 0.15s;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .feedback-btn:active {
+    transform: scale(0.92);
+    background: #1f1a1d;
+  }
+
 </style>
 </head>
 <body>
@@ -1270,6 +1299,7 @@ function openStory(index) {
   document.getElementById('digestView').classList.remove('active');
   document.getElementById('storyView').classList.add('active');
   window.scrollTo(0, 0);
+  updateFeedbackBtn();
 
   // Track
   track('story_open', {
@@ -1288,6 +1318,7 @@ function closeStory() {
   markStoryRead(currentStoryIndex);
   document.getElementById('storyView').classList.remove('active');
   document.getElementById('digestView').classList.add('active');
+  updateFeedbackBtn();
 }
 
 // ── Section toggle ────────────────────────────────────────────────
@@ -1433,8 +1464,38 @@ function closeSubscribeModal(e) {
   }
 }
 
+
+// ── Bullhorn feedback button ──────────────────────────────────────
+function buildFeedbackMailto() {
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  const inStory = document.getElementById('storyView').classList.contains('active');
+
+  let subject, body;
+  if (inStory && typeof currentStoryIndex !== 'undefined' && stories[currentStoryIndex]) {
+    const headline = stories[currentStoryIndex].headline;
+    subject = `NTK Feedback — ${dateStr} ${timeStr} — ${headline.substring(0, 50)}`;
+    body = `Date: ${dateStr}\nTime: ${timeStr}\nView: Story\nStory: ${headline}\n\nMy feedback:\n`;
+  } else {
+    subject = `NTK Feedback — ${dateStr} ${timeStr} — Digest`;
+    body = `Date: ${dateStr}\nTime: ${timeStr}\nView: Digest\n\nMy feedback:\n`;
+  }
+
+  return `mailto:max.zimbert@icloud.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+function updateFeedbackBtn() {
+  const btn = document.getElementById('feedbackBtn');
+  if (!btn) return;
+  btn.href = buildFeedbackMailto();
+  const inStory = document.getElementById('storyView').classList.contains('active');
+  btn.style.bottom = inStory ? '80px' : '24px';
+}
+
 // ── Init ──────────────────────────────────────────────────────────
 buildDigest();
+updateFeedbackBtn();
 
 </script>
 
@@ -1447,6 +1508,10 @@ buildDigest();
     <button class="modal-close" onclick="document.getElementById('subscribeModal').classList.remove('show')">Got it</button>
   </div>
 </div>
+
+
+<!-- BULLHORN FEEDBACK BUTTON -->
+<a id="feedbackBtn" href="#" class="feedback-btn" title="Send feedback">📣</a>
 
 </body>
 </html>
