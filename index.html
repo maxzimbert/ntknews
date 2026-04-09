@@ -851,6 +851,223 @@
   .featured-hero.read-dimmed .featured-hero-read-badge { display: flex; }
   .featured-hero.read-dimmed { opacity: 0.6; }
 
+
+  
+  .mot-wrap {
+    margin: 24px 0 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 16px;
+  }
+
+
+  .mot-circle.filled {
+    background: var(--teal);
+    border-color: var(--teal);
+    color: white;
+  }
+
+  /* Revealed state */
+  .mot-reveal {
+    margin-top: 20px;
+    background: var(--dark);
+    border-radius: 12px;
+    border: 1px solid rgba(1,178,167,0.25);
+    padding: 24px 20px;
+    width: 100%;
+    max-width: 360px;
+    display: none;
+    animation: motFadeUp 0.5s ease forwards;
+  }
+
+  .mot-reveal.show { display: block; }
+
+  .mot-reveal-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 6px;
+  }
+
+  .mot-reveal-subtitle {
+    font-family: 'Source Serif 4', serif;
+    font-size: 13px;
+    font-style: italic;
+    font-weight: 300;
+    color: rgba(234,217,197,0.45);
+    margin-bottom: 14px;
+  }
+
+  .mot-reveal-fact {
+    font-family: 'Source Serif 4', serif;
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 1.65;
+    color: var(--white);
+    margin-bottom: 16px;
+  }
+
+  .mot-reveal-sign {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--teal);
+  }
+
+  @keyframes motFadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── MOMENT OF THEN ─────────────────────────── */
+  .mot-wrap {
+    margin: 24px 16px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  /* The big card — same width as story cards */
+  .mot-card {
+    background: var(--dark);
+    border-radius: 10px;
+    border: 1px solid rgba(234,217,197,0.1);
+    padding: 24px 20px 20px;
+    transition: border-color 0.5s ease;
+  }
+
+  .mot-card.complete {
+    border-color: var(--teal);
+  }
+
+  .mot-card-header {
+    margin-bottom: 20px;
+  }
+
+  .mot-card-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 4px;
+  }
+
+  .mot-card-subtitle {
+    font-family: 'Source Serif 4', serif;
+    font-size: 13px;
+    font-style: italic;
+    font-weight: 300;
+    color: rgba(234,217,197,0.35);
+  }
+
+  /* Grid of numbered circles */
+  .mot-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .mot-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .mot-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(234,217,197,0.2);
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(234,217,197,0.25);
+    transition: background 0.4s ease, border-color 0.4s ease, color 0.4s ease, transform 0.3s ease;
+  }
+
+  .mot-circle.filled {
+    background: var(--teal);
+    border-color: var(--teal);
+    color: white;
+    transform: scale(1.08);
+  }
+
+  .mot-circle.animating {
+    animation: motCirclePop 0.35s ease forwards;
+  }
+
+  @keyframes motCirclePop {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.25); }
+    100% { transform: scale(1.08); }
+  }
+
+  /* Locked state — shown before completion */
+  .mot-locked {
+    text-align: center;
+    padding: 8px 0 4px;
+    transition: opacity 0.4s ease;
+  }
+
+  /* Reveal — shown after completion */
+  .mot-reveal {
+    display: none;
+    animation: motFadeUp 0.6s ease forwards;
+  }
+
+  .mot-reveal.show { display: block; }
+
+  .mot-reveal-congrats {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--teal);
+    letter-spacing: 0.3px;
+    margin-bottom: 14px;
+    line-height: 1.4;
+  }
+
+  .mot-reveal-fact {
+    font-family: 'Source Serif 4', serif;
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 1.65;
+    color: var(--white);
+  }
+
+  @keyframes motFadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Footer easter egg */
+  .mot-footer {
+    text-align: center;
+    padding: 28px 0 48px;
+  }
+
+  .mot-footer-text {
+    font-family: 'Source Serif 4', serif;
+    font-size: 12px;
+    font-style: italic;
+    font-weight: 300;
+    color: rgba(38,31,35,0.28);
+    letter-spacing: 0.3px;
+  }
+
   .hide { display: none !important; }
 
   /* ── BULLHORN FEEDBACK BUTTON ───────────────── */
@@ -1127,6 +1344,12 @@ const stories = [
   }
 
 ]; // ← END OF DAILY CONTENT. Do not edit below this line.
+
+// ── FUN FACT — update this each morning ──────────────────────────
+// One sentence. Something surprising, delightful, or humanizing.
+// Keep it short — it reveals after all stories are read.
+const funFact = "The word \"news\" originally meant \"new things\" — it wasn't until the 17th century that it came to mean a report of recent events.";
+// ─────────────────────────────────────────────────────────────────
 // ================================================================
 
 // ── Strip stray outer quotes from editor output ──────────────────
@@ -1235,12 +1458,39 @@ function buildDigest() {
       </div>`;
   });
 
-  // Completion card
+  // Moment of Then
+  const total = stories.length;
+  // Split circles into two rows: top row gets ceil(total/2), bottom gets the rest
+  const topCount = Math.ceil(total / 2);
+  let topRow = '';
+  let bottomRow = '';
+  for (let ci = 0; ci < total; ci++) {
+    const circle = `<div class="mot-circle" id="mot-c-${ci}">${ci + 1}</div>`;
+    if (ci < topCount) topRow += circle;
+    else bottomRow += circle;
+  }
+  const circlesHtml = `<div class="mot-row">${topRow}</div><div class="mot-row">${bottomRow}</div>`;
+
   html += `
-    <div class="completion-card" id="completionCard">
-      <h3>You've read today's digest.</h3>
-      <p>All ${stories.length} stories. You know what's happening and why it matters.<br>
-      <em class="co">Carry on regardless.</em></p>
+    <div class="mot-wrap" id="momentOfThen">
+      <div class="mot-card" id="motCard">
+        <div class="mot-card-header">
+          <div class="mot-card-label">Moment of Then</div>
+          <div class="mot-card-subtitle">The past is never past.</div>
+        </div>
+        <div class="mot-grid">${circlesHtml}</div>
+        <div class="mot-locked" id="motLocked">
+          <div class="mot-locked-count" id="motCount">0</div>
+          <div class="mot-locked-label">OF ${total} STORIES READ</div>
+        </div>
+        <div class="mot-reveal" id="motReveal">
+          <div class="mot-reveal-congrats">Congratulations — you completed today&#39;s Need to Know News.<br>More headlines and history tomorrow.</div>
+          <div class="mot-reveal-fact" id="motFact"></div>
+        </div>
+      </div>
+      <div class="mot-footer">
+        <div class="mot-footer-text">Carry on regardless.</div>
+      </div>
     </div>`;
 
   // Subscribe section removed for Mom Test
@@ -1267,13 +1517,13 @@ function updateProgress() {
     if (om) om.classList.add('show');
   }
 
+  // Update Moment of Then count
+  const motCount = document.getElementById('motCount');
+  if (motCount) motCount.textContent = n;
+
   if (n === total) {
-    const cc = document.getElementById('completionCard');
-    if (cc) {
-      cc.classList.add('show');
-      setTimeout(() => cc.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 300);
-    }
     track('digest_complete', { stories_count: total });
+    startMotAnimation();
   }
 }
 
@@ -1285,6 +1535,9 @@ function markStoryRead(index) {
   // Also dim featured hero if present
   const hero = document.getElementById('featured-hero-0');
   if (index === 0 && hero) hero.classList.add('read-dimmed');
+  // Fill the corresponding Moment of Then circle
+  const motCircle = document.getElementById('mot-c-' + index);
+  if (motCircle) motCircle.classList.add('filled');
   updateProgress();
 }
 
@@ -1495,6 +1748,72 @@ function closeBackstoryModal(e) {
   if (e.target === document.getElementById('backstoryModal')) {
     document.getElementById('backstoryModal').classList.remove('show');
   }
+}
+
+
+// ── Moment of Then ────────────────────────────────────────────────
+let motRevealed = false;
+let motObserver = null;
+
+function initMomentOfThen() {
+  const wrap = document.getElementById('momentOfThen');
+  if (!wrap) return;
+
+  // IntersectionObserver — triggers animation when block is in viewport
+  motObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting && readStories.size === stories.length && !motRevealed) {
+        motObserver.disconnect();
+        startMotAnimation();
+      }
+    });
+  }, { threshold: 0.3 });
+
+  motObserver.observe(wrap);
+}
+
+function startMotAnimation() {
+  if (motRevealed) return;
+  motRevealed = true;
+
+  const card = document.getElementById('motCard');
+  const locked = document.getElementById('motLocked');
+  const reveal = document.getElementById('motReveal');
+  const factEl = document.getElementById('motFact');
+
+  if (!card || !locked || !reveal || !factEl) return;
+
+  // Set fun fact
+  factEl.textContent = typeof funFact !== 'undefined'
+    ? funFact
+    : 'Did you know? History is always closer than it seems.';
+
+  // Stagger-animate all circles popping
+  const circles = document.querySelectorAll('.mot-circle');
+  circles.forEach(function(c, i) {
+    setTimeout(function() {
+      c.classList.add('filled', 'animating');
+      setTimeout(function() { c.classList.remove('animating'); }, 350);
+    }, i * 120);
+  });
+
+  // After circles finish, transition to reveal
+  const delay = circles.length * 120 + 500;
+
+  setTimeout(function() {
+    card.classList.add('complete');
+    locked.style.opacity = '0';
+    setTimeout(function() {
+      locked.style.display = 'none';
+      reveal.classList.add('show');
+      track('moment_viewed', { stories_count: stories.length });
+      track('moment_complete');
+    }, 400);
+  }, delay);
+}
+
+function motTapped() {
+  track('moment_tapped');
 }
 
 // ── Bullhorn feedback button ──────────────────────────────────────
