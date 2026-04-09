@@ -1520,14 +1520,28 @@ function buildFeedbackMailto() {
 function updateFeedbackBtn() {
   const btn = document.getElementById('feedbackBtn');
   if (!btn) return;
+  const storyView = document.getElementById('storyView');
+  const inStory = storyView ? storyView.classList.contains('active') : false;
   btn.href = buildFeedbackMailto();
-  const inStory = document.getElementById('storyView').classList.contains('active');
   btn.style.bottom = inStory ? '80px' : '24px';
 }
 
 // ── Init ──────────────────────────────────────────────────────────
 buildDigest();
 updateFeedbackBtn();
+
+// Rebuild mailto on every tap so it's always current (fixes iOS load-time href issue)
+document.addEventListener('DOMContentLoaded', function() {
+  const btn = document.getElementById('feedbackBtn');
+  if (btn) {
+    btn.addEventListener('touchstart', function() {
+      btn.href = buildFeedbackMailto();
+    }, { passive: true });
+    btn.addEventListener('mousedown', function() {
+      btn.href = buildFeedbackMailto();
+    });
+  }
+});
 
 </script>
 
