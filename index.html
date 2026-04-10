@@ -853,86 +853,20 @@
 
 
   
+  /* The big card — same width as story cards */
   .mot-wrap {
-    margin: 24px 0 40px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0 16px;
-  }
-
-
-  .mot-circle.filled {
-    background: var(--teal);
-    border-color: var(--teal);
-    color: white;
-  }
-
-  /* Revealed state */
-  .mot-reveal {
-    margin-top: 20px;
-    background: var(--dark);
-    border-radius: 12px;
-    border: 1px solid rgba(1,178,167,0.25);
-    padding: 24px 20px;
-    width: 100%;
-    max-width: 360px;
-    display: none;
-    animation: motFadeUp 0.5s ease forwards;
-  }
-
-  .mot-reveal.show { display: block; }
-
-  .mot-reveal-label {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--teal);
-    margin-bottom: 6px;
-  }
-
-  .mot-reveal-subtitle {
-    font-family: 'Source Serif 4', serif;
-    font-size: 13px;
-    font-style: italic;
-    font-weight: 300;
-    color: rgba(234,217,197,0.45);
-    margin-bottom: 14px;
-  }
-
-  .mot-reveal-fact {
-    font-family: 'Source Serif 4', serif;
-    font-size: 16px;
-    font-weight: 300;
-    line-height: 1.65;
-    color: var(--white);
-    margin-bottom: 16px;
-  }
-
-  .mot-reveal-sign {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    color: var(--teal);
-  }
-
-  @keyframes motFadeUp {
-    from { opacity: 0; transform: translateY(10px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  /* ── MOMENT OF THEN ─────────────────────────── */
-  .mot-wrap {
-    margin: 24px 16px 8px;
+    margin: 12px 0 0;
     display: flex;
     flex-direction: column;
     gap: 0;
   }
 
-  /* The big card — same width as story cards */
+  .mot-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+
   .mot-card {
     background: var(--dark);
     border-radius: 10px;
@@ -1056,7 +990,7 @@
   /* Footer easter egg */
   .mot-footer {
     text-align: center;
-    padding: 28px 0 48px;
+    padding: 24px 0 60px;
   }
 
   .mot-footer-text {
