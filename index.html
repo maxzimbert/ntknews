@@ -871,7 +871,7 @@
     background: var(--dark);
     border-radius: 10px;
     border: 1px solid rgba(234,217,197,0.1);
-    padding: 24px 20px 20px;
+    padding: 24px 20px 12px;
     transition: border-color 0.5s ease;
   }
 
@@ -893,6 +893,15 @@
     margin-bottom: 4px;
   }
 
+  .mot-card-instruction {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    color: rgba(234,217,197,0.45);
+    letter-spacing: 0.3px;
+    margin-bottom: 4px;
+  }
+
   .mot-card-subtitle {
     font-family: 'Source Serif 4', serif;
     font-size: 13px;
@@ -907,7 +916,7 @@
     flex-direction: column;
     align-items: center;
     gap: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
   }
 
   .mot-row {
@@ -952,8 +961,27 @@
   /* Locked state — shown before completion */
   .mot-locked {
     text-align: center;
-    padding: 8px 0 4px;
+    padding: 6px 0 0;
     transition: opacity 0.4s ease;
+  }
+
+  .mot-locked-header {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--teal);
+    letter-spacing: 0.2px;
+    line-height: 1.4;
+    margin-bottom: 8px;
+  }
+
+  .mot-locked-progress {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(234,217,197,0.45);
   }
 
   /* Reveal — shown after completion */
@@ -1500,7 +1528,7 @@ function buildDigest() {
       <div class="mot-card" id="motCard">
         <div class="mot-card-header">
           <div class="mot-card-label">Moment of Then</div>
-          <div class="mot-card-subtitle">The past is never past.</div>
+          <div class="mot-card-instruction">Open all stories to unlock</div>
         </div>
         <div class="mot-grid">${circlesHtml}</div>
         <div class="mot-locked" id="motLocked">
@@ -1508,8 +1536,8 @@ function buildDigest() {
           <div class="mot-locked-label">OF ${total} STORIES READ</div>
         </div>
         <div class="mot-reveal" id="motReveal">
-          <div class="mot-reveal-congrats">Congratulations — you completed today&#39;s Need to Know News.<br>More headlines and history tomorrow.</div>
           <div class="mot-reveal-fact" id="motFact"></div>
+          <div class="mot-reveal-congrats">Congratulations — you completed today's NTK News. More headlines and history tomorrow.</div>
         </div>
       </div>
       <div class="mot-footer">
