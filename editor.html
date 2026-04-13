@@ -855,18 +855,73 @@ function textToHtml(text) {
     .split(/\n\n+/)
     .map(p => p.trim())
     .filter(p => p.length > 0)
-    .map(p => '<p>' + p.replace(/\n/g, ' ') + '</p>')
+    .map(p => {
+      p = p.replace(/\n/g, ' ');
+
+      // Protect known abbreviations so their periods don't trigger sentence split
+      const ABBREVS = [
+        'U\.S\.', 'U\.K\.', 'U\.N\.', 'E\.U\.',
+        'Dr\.', 'Mr\.', 'Mrs\.', 'Ms\.', 'Prof\.',
+        'Sen\.', 'Rep\.', 'Gov\.', 'Gen\.', 'Lt\.',
+        'St\.', 'Ave\.', 'Blvd\.', 'vs\.', 'etc\.',
+        'Jan\.', 'Feb\.', 'Mar\.', 'Apr\.', 'Aug\.',
+        'Sep\.', 'Oct\.', 'Nov\.', 'Dec\.',
+      ];
+      const placeholder = '\u0000';
+      let safe = p;
+      ABBREVS.forEach(abbr => {
+        safe = safe.replace(new RegExp(abbr, 'g'), m => m.replace(/\./g, placeholder));
+      });
+
+      // Also protect initials like "J. Edgar" — single letter followed by period + space + capital
+      safe = safe.replace(/\b([A-Z])\. ([A-Z])/g, '$1' + placeholder + ' $2');
+
+      // Now find first real sentence end
+      const firstSentMatch = safe.match(/^(.+?[.!?])(?:\s|$)(.*)/s);
+
+      let result;
+      if (firstSentMatch) {
+        const first = firstSentMatch[1].replace(new RegExp(placeholder, 'g'), '.');
+        const rest  = firstSentMatch[2]
+          ? ' ' + firstSentMatch[2].replace(new RegExp(placeholder, 'g'), '.')
+          : '';
+        result = '<p><strong>' + first + '</strong>' + rest + '</p>';
+      } else {
+        result = '<p><strong>' + p.replace(new RegExp(placeholder, 'g'), '.') + '</strong></p>';
+      }
+
+      return result;
+    })
     .join('');
 }
 
 // ── Escape for JS string ──────────────────────────────────────────
 function escapeForJs(str) {
-  return str
+  if (!str) return str;
+  // Step 1: pull out all HTML tags and replace their attribute quotes
+  // so they survive the JS string escaping intact
+  const tags = [];
+  const withPlaceholders = str.replace(/<[^>]+>/g, function(tag) {
+    const idx = tags.length;
+    // Escape the tag's internal double quotes for JS, but keep it as HTML
+    tags.push(tag.replace(/"/g, '&DQUOT;'));
+    return '\u0000TAG' + idx + '\u0000';
+  });
+
+  // Step 2: escape the plain text portion
+  let escaped = withPlaceholders
     .replace(/\\/g, '\\\\')
-    .replace(/[\u201C\u201D]/g, '\\"')  // smart double quotes → escaped straight quotes
-    .replace(/[\u2018\u2019]/g, "\'")    // smart single quotes → escaped apostrophes
+    .replace(/[\u201C\u201D]/g, '\\"')
+    .replace(/[\u2018\u2019]/g, "\'")
     .replace(/"/g, '\\"')
     .replace(/\n/g, ' ');
+
+  // Step 3: restore the tags, converting &DQUOT; back to escaped quotes
+  escaped = escaped.replace(/\u0000TAG(\d+)\u0000/g, function(_, i) {
+    return tags[parseInt(i)].replace(/&DQUOT;/g, '\\"');
+  });
+
+  return escaped;
 }
 
 // ── Generate output ───────────────────────────────────────────────
@@ -917,8 +972,7 @@ function generateOutput() {
       out += `,\n    overlayColor: "${s.overlayColor || '#0798F2'}"`;
       out += `,\n    overlayOpacity: ${s.overlayOpacity || 45}`;
     }
-    out += `\n  }`;
-    if (i < stories.length - 1) out += ',';
+    out += `\n  },`;
     out += '\n\n';
   });
 
@@ -954,9 +1008,8 @@ function copyOutput() {
       entry += `,\n    overlayColor: "${s.overlayColor || '#0798F2'}"`;
       entry += `,\n    overlayOpacity: ${s.overlayOpacity || 45}`;
     }
-    entry += `\n  }`;
+    entry += `\n  },`;
     out += entry;
-    if (i < stories.length - 1) out += ',';
     out += '\n\n';
   });
 
