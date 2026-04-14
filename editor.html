@@ -851,6 +851,8 @@ function updateCountWarning() {
 // ── Text → HTML paragraphs ────────────────────────────────────────
 function textToHtml(text) {
   if (!text) return '<p></p>';
+  // Strip WordPress block editor comments
+  text = text.replace(/<!--\s*\/?wp:[^>]*-->/g, '').trim();
   return text
     .split(/\n\n+/)
     .map(p => p.trim())
