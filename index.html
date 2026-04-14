@@ -953,8 +953,21 @@
   /* Locked state — shown before completion */
   .mot-locked {
     text-align: center;
-    padding: 8px 0 4px;
+    padding: 0;
     transition: opacity 0.4s ease;
+  }
+
+  .mot-locked-instruction {
+    font-family: 'Source Serif 4', serif;
+    font-size: 13px;
+    transition: opacity 0.4s ease;
+    font-style: italic;
+    font-weight: 300;
+    color: rgba(234,217,197,0.3);
+    margin-top: 6px;
+    line-height: 1.5;
+    text-align: left;
+    padding: 0 8px;
   }
 
   /* Reveal — shown after completion */
@@ -971,8 +984,25 @@
     font-weight: 700;
     color: var(--teal);
     letter-spacing: 0.3px;
-    margin-bottom: 14px;
+    margin-bottom: 10px;
     line-height: 1.4;
+  }
+
+  .mot-reveal-congrats p {
+    margin: 0 0 4px;
+  }
+
+  .mot-reveal-congrats p:last-child {
+    margin-bottom: 0;
+  }
+
+  .mot-reveal-subtitle {
+    font-family: 'Source Serif 4', serif;
+    font-size: 13px;
+    font-style: italic;
+    font-weight: 300;
+    color: rgba(234,217,197,0.45);
+    margin-bottom: 16px;
   }
 
   .mot-reveal-fact {
@@ -1411,15 +1441,13 @@ function buildDigest() {
       <div class="mot-card" id="motCard">
         <div class="mot-card-header">
           <div class="mot-card-label">Moment of Then</div>
-          <div class="mot-card-subtitle">The past is never past.</div>
+          <div class="mot-locked-instruction" id="motInstruction">Read all stories to reveal today’s Moment of Then.</div>
         </div>
         <div class="mot-grid">${circlesHtml}</div>
         <div class="mot-locked" id="motLocked">
-          <div class="mot-locked-count" id="motCount">0</div>
-          <div class="mot-locked-label">OF ${total} STORIES READ</div>
         </div>
         <div class="mot-reveal" id="motReveal">
-          <div class="mot-reveal-congrats">Congratulations — you completed today&#39;s Need to Know News.<br>More headlines and history tomorrow.</div>
+          <div class="mot-reveal-congrats"><p>Congratulations — you completed today’s Need to Know News.</p><p>More headlines and history tomorrow.</p></div>
           <div class="mot-reveal-fact" id="motFact"></div>
         </div>
       </div>
@@ -1713,6 +1741,7 @@ function startMotAnimation() {
 
   const card = document.getElementById('motCard');
   const locked = document.getElementById('motLocked');
+  const instruction = document.getElementById('motInstruction');
   const reveal = document.getElementById('motReveal');
   const factEl = document.getElementById('motFact');
 
@@ -1738,6 +1767,7 @@ function startMotAnimation() {
   setTimeout(function() {
     card.classList.add('complete');
     locked.style.opacity = '0';
+    if (instruction) instruction.style.opacity = '0';
     setTimeout(function() {
       locked.style.display = 'none';
       reveal.classList.add('show');
