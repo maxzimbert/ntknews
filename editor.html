@@ -851,8 +851,22 @@ function updateCountWarning() {
 // ── Text → HTML paragraphs ────────────────────────────────────────
 function textToHtml(text) {
   if (!text) return '<p></p>';
+
   // Strip WordPress block editor comments
   text = text.replace(/<!--\s*\/?wp:[^>]*-->/g, '').trim();
+
+  // If the content already contains <p> tags (pasted from WP code editor),
+  // pass it through directly — just clean up empty paragraphs and whitespace
+  if (/<p[\s>]/i.test(text)) {
+    // Remove empty <p> tags and <p> tags with only whitespace/empty bold
+    text = text.replace(/<p>\s*<\/p>/gi, '');
+    text = text.replace(/<p><strong>\s*<\/strong><\/p>/gi, '');
+    // Collapse extra whitespace between tags
+    text = text.replace(/\n\s*\n/g, '\n').trim();
+    return text;
+  }
+
+  // Plain text path — split on double newlines and wrap in <p> tags
   return text
     .split(/\n\n+/)
     .map(p => p.trim())
