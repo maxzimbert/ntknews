@@ -857,43 +857,7 @@ function textToHtml(text) {
     .split(/\n\n+/)
     .map(p => p.trim())
     .filter(p => p.length > 0)
-    .map(p => {
-      p = p.replace(/\n/g, ' ');
-
-      // Protect known abbreviations so their periods don't trigger sentence split
-      const ABBREVS = [
-        'U\.S\.', 'U\.K\.', 'U\.N\.', 'E\.U\.',
-        'Dr\.', 'Mr\.', 'Mrs\.', 'Ms\.', 'Prof\.',
-        'Sen\.', 'Rep\.', 'Gov\.', 'Gen\.', 'Lt\.',
-        'St\.', 'Ave\.', 'Blvd\.', 'vs\.', 'etc\.',
-        'Jan\.', 'Feb\.', 'Mar\.', 'Apr\.', 'Aug\.',
-        'Sep\.', 'Oct\.', 'Nov\.', 'Dec\.',
-      ];
-      const placeholder = '\u0000';
-      let safe = p;
-      ABBREVS.forEach(abbr => {
-        safe = safe.replace(new RegExp(abbr, 'g'), m => m.replace(/\./g, placeholder));
-      });
-
-      // Also protect initials like "J. Edgar" — single letter followed by period + space + capital
-      safe = safe.replace(/\b([A-Z])\. ([A-Z])/g, '$1' + placeholder + ' $2');
-
-      // Now find first real sentence end
-      const firstSentMatch = safe.match(/^(.+?[.!?])(?:\s|$)(.*)/s);
-
-      let result;
-      if (firstSentMatch) {
-        const first = firstSentMatch[1].replace(new RegExp(placeholder, 'g'), '.');
-        const rest  = firstSentMatch[2]
-          ? ' ' + firstSentMatch[2].replace(new RegExp(placeholder, 'g'), '.')
-          : '';
-        result = '<p><strong>' + first + '</strong>' + rest + '</p>';
-      } else {
-        result = '<p><strong>' + p.replace(new RegExp(placeholder, 'g'), '.') + '</strong></p>';
-      }
-
-      return result;
-    })
+    .map(p => '<p>' + p.replace(/\n/g, ' ') + '</p>')
     .join('');
 }
 
