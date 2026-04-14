@@ -756,8 +756,9 @@
     position: relative;
     width: 100%;
     background: var(--dark);
-    overflow: visible;
-    margin-bottom: -2px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 12px;
   }
 
   .featured-hero-image-wrap {
@@ -1407,7 +1408,10 @@ const funFact = "The word \"news\" originally meant \"new things\" — it wasn't
 // ── Strip stray outer quotes from editor output ──────────────────
 function stripOuterQuotes(str) {
   if (!str) return str;
-  return str.replace(/^[\u201C\u201D\u0022]+/, '').replace(/[\u201C\u201D\u0022]+$/, '');
+  str = str.replace(/^[\u201C\u201D\u0022]+/, '').replace(/[\u201C\u201D\u0022]+$/, '');
+  str = str.replace(/<p>\s*<\/p>/g, '');
+  str = str.replace(/<p><strong><\/strong><\/p>/g, '');
+  return str.trim();
 }
 
 // ── State ────────────────────────────────────────────────────────
