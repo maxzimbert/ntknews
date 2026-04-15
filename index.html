@@ -1420,6 +1420,7 @@ let orientShown = false;
 let holdTimer = null;
 let currentStoryIndex = 0;
 let scrollTracked25 = false;
+let digestScrollPos = 0;
 let scrollTracked50 = false;
 let scrollTracked90 = false;
 
@@ -1620,6 +1621,9 @@ function openStory(index) {
   document.getElementById('liesLocked').style.display = 'flex';
   document.getElementById('liesRevealed').style.display = 'none';
 
+  // Save digest scroll position before switching views
+  digestScrollPos = window.scrollY || document.documentElement.scrollTop;
+
   // Switch views
   document.getElementById('digestView').classList.remove('active');
   document.getElementById('storyView').classList.add('active');
@@ -1643,6 +1647,8 @@ function closeStory() {
   markStoryRead(currentStoryIndex);
   document.getElementById('storyView').classList.remove('active');
   document.getElementById('digestView').classList.add('active');
+  // Restore digest scroll position
+  window.scrollTo(0, digestScrollPos || 0);
   updateFeedbackBtn();
 }
 
