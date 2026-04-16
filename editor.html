@@ -599,6 +599,7 @@ section of your index.html on GitHub.</span></pre>
 <script>
 // ── State ─────────────────────────────────────────────────────────
 let stories = [];
+let lastGeneratedOutput = '';
 let activeIndex = null;
 
 const CATEGORIES = [
@@ -973,6 +974,9 @@ function generateOutput() {
     out += '\n\n';
   });
 
+  // Store clean output for Copy button
+  lastGeneratedOutput = out;
+
   // Syntax highlight
   const highlighted = out
     .replace(/("(?:[^"\\]|\\.)*")/g, '<span class="s">$1</span>')
@@ -986,29 +990,12 @@ function generateOutput() {
 function copyOutput() {
   saveCurrentFields();
 
-  // Generate clean (unhighlighted) version for clipboard
-  let out = '';
-  stories.forEach((s, i) => {
-    const truthHtml = escapeForJs(textToHtml(s.truth));
-    const probHtml  = escapeForJs(textToHtml(s.prob));
-    const possHtml  = escapeForJs(textToHtml(s.poss));
-    const liesHtml  = escapeForJs(textToHtml(s.lies));
-    const lede      = escapeForJs(s.lede);
-    const headline  = escapeForJs(s.headline);
-    const category  = escapeForJs(s.category);
-
-    const hasFi = i === 0 && s.featuredImage;
-    let entry = `  {\n    category: "${category}",\n    headline: "${headline}",\n    lede: "${lede}",\n    truth: "${truthHtml}",\n    prob: "${probHtml}",\n    poss: "${possHtml}",\n    lies: "${liesHtml}"`;
-    if (hasFi) {
-      const imgEsc2 = s.featuredImage.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
-      entry += `,\n    featuredImage: "${imgEsc2}"`;
-      entry += `,\n    overlayColor: "${s.overlayColor || '#0798F2'}"`;
-      entry += `,\n    overlayOpacity: ${s.overlayOpacity || 45}`;
-    }
-    entry += `\n  },`;
-    out += entry;
-    out += '\n\n';
-  });
+  // Use the already-generated output if available — avoids double-processing
+  // which can cause inconsistent results when content has mixed formats
+  if (!lastGeneratedOutput) {
+    generateOutput();
+  }
+  const out = lastGeneratedOutput;
 
   navigator.clipboard.writeText(out).then(() => {
     const btn = document.getElementById('copyBtn');
