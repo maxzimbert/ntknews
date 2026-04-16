@@ -855,23 +855,40 @@ function textToHtml(text) {
   // Strip WordPress block editor comments
   text = text.replace(/<!--\s*\/?wp:[^>]*-->/g, '').trim();
 
+  // Convert **markdown bold** to <strong> tags
+  function convertBold(str) {
+    return str.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  }
+
+  // Convert [text](url) markdown links to <a href> tags
+  // Handles ([text](url)) citation format — keeps parens outside the tag
+  function convertLinks(str) {
+    return str
+      .replace(/\(\[([^\]]+)\]\(([^)]+)\)\)/g, '(<a href="$2">$1</a>)')
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+  }
+
+  // Apply both conversions
+  function convertMarkdown(str) {
+    return convertBold(convertLinks(str));
+  }
+
   // If the content already contains <p> tags (pasted from WP code editor),
-  // pass it through directly — just clean up empty paragraphs and whitespace
+  // pass it through — clean up empty tags, then convert markdown
   if (/<p[\s>]/i.test(text)) {
-    // Remove empty <p> tags and <p> tags with only whitespace/empty bold
     text = text.replace(/<p>\s*<\/p>/gi, '');
     text = text.replace(/<p><strong>\s*<\/strong><\/p>/gi, '');
-    // Collapse extra whitespace between tags
     text = text.replace(/\n\s*\n/g, '\n').trim();
+    text = convertMarkdown(text);
     return text;
   }
 
-  // Plain text path — split on double newlines and wrap in <p> tags
+  // Plain text path — split on double newlines, wrap in <p>, convert markdown
   return text
     .split(/\n\n+/)
     .map(p => p.trim())
     .filter(p => p.length > 0)
-    .map(p => '<p>' + p.replace(/\n/g, ' ') + '</p>')
+    .map(p => '<p>' + convertMarkdown(p.replace(/\n/g, ' ')) + '</p>')
     .join('');
 }
 
