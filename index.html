@@ -756,9 +756,9 @@
     position: relative;
     width: 100%;
     background: var(--dark);
-    border-radius: 10px;
+    border-radius: 0;
     overflow: hidden;
-    margin-bottom: 12px;
+    margin-bottom: 0;
   }
 
   .featured-hero-image-wrap {
@@ -1196,7 +1196,7 @@
   <div class="gesture-hint">
     <div class="hint-item"><span>👆</span> Tap to read</div>
     <div class="hint-item"><span>→</span> Swipe right to mark read</div>
-    <div class="hint-item"><span>🔴</span> Hold to reveal Lies</div>
+    <div class="hint-item"><span>🏁</span> View the Moment of Then</div>
   </div>
 
   <div class="story-list" id="storyList">
@@ -1398,9 +1398,6 @@ const stories = [
     lies: "<p><strong>\"The economy is strong and will definitely bounce back from the war\"</strong></p><p>White House officials including Treasury Secretary Scott Bessent and National Economic Council Director Kevin Hassett have repeatedly insisted the U.S. economy will grow 4-5% this year despite mounting evidence of strain (<a href=\"https://www.nytimes.com/2026/04/16/us/politics/trump-economy-iran-war.html\">The New York Times</a>). For the administration, this feels reassuring—they promised Americans prosperity. But functionally, it's a lie designed to deflect accountability for a war that exceeded Trump's own timeline and now threatens midterm prospects. The beneficiaries are clear: political survival depends on voters believing economic pain is temporary, not the predictable consequence of policy choices. Goldman Sachs projects slower growth and 4.6% unemployment; economists surveyed by the Wall Street Journal downgraded 2026 growth to 2% and raised year-end inflation forecasts to 3.2% (<a href=\"https://www.wsj.com/economy/inflation-growth-and-jobs-all-look-worse-with-the-war-cc9263e5\">The Wall Street Journal</a>). The pattern echoes <a href=\"https://en.wikipedia.org/wiki/Light_at_the_end_of_the_tunnel\">Vietnam-era \"light at the end of the tunnel\" rhetoric</a>—optimistic projections that delay political reckoning while costs compound.</p><p><strong>\"Gas prices will be much lower by Election Day\"</strong></p><p>President Trump told Fox Business that gas would be \"much lower\" by November, contradicting his own admission days earlier that prices \"could be the same or maybe a little bit higher\" (<a href=\"https://www.nytimes.com/2026/04/16/us/politics/trump-economy-iran-war.html\">The New York Times</a>). For anxious voters, the promise offers hope. But it functions as classic pre-election manipulation—making unfounded guarantees to shape voter behavior while creating plausible deniability if prices don't fall. The beneficiary is Trump's party facing tough midterms with gas averaging $4.10 per gallon, more than $1 higher than pre-war. Economists forecast oil easing to $79.66 by year-end, but that still leaves core inflation at 2.9%—and assumes the fragile cease-fire holds (<a href=\"https://www.wsj.com/economy/inflation-growth-and-jobs-all-look-worse-with-the-war-cc9263e5\">The Wall Street Journal</a>).</p><p><strong>\"Markets hitting records means the war's economic impact is minimal\"</strong></p><p>Wall Street analysts and some administration officials have pointed to the S&P 500 returning to record highs as evidence the war hasn't seriously damaged the economy (<a href=\"https://www.reuters.com/business/wall-st-futures-edge-higher-mideast-diplomacy-hopes-strong-earnings-2026-04-16/\">Reuters</a>, <a href=\"https://www.wsj.com/finance/stocks/tech-stocks-power-s-p-500-and-nasdaq-to-records-69c9f187\">The Wall Street Journal</a>). For investors, this feels validating. But it obscures a dangerous divergence: stock rallies driven by corporate margin expansion happen precisely *because* companies are passing war costs to consumers through higher prices (<a href=\"https://www.nytimes.com/2026/04/15/business/economy/companies-profits-prices-iran-war.html\">The New York Times</a>). Corporate profits have reached a record share of GDP while families face $4+ gas and rising grocery costs. The beneficiaries are shareholders and executives; the losers are households whose budgets are strained. As one strategist put it, \"one person's inflation is often just someone else's margin expansion.\"</p>"
   },
 
-
-
-
 ]; // ← END OF DAILY CONTENT. Do not edit below this line.
 
 // ── FUN FACT — update this each morning ──────────────────────────
@@ -1425,7 +1422,6 @@ let orientShown = false;
 let holdTimer = null;
 let currentStoryIndex = 0;
 let scrollTracked25 = false;
-let digestScrollPos = 0;
 let scrollTracked50 = false;
 let scrollTracked90 = false;
 
@@ -1468,18 +1464,21 @@ function buildDigest() {
       const b = parseInt(s.overlayColor.slice(5,7),16);
       const op = ((s.overlayOpacity || 45) / 100).toFixed(2);
       html += `
-        <div class="featured-hero" id="featured-hero-0" onclick="openStory(0)" style="cursor:pointer;">
-          <div class="featured-hero-image-wrap">
-            <img src="${s.featuredImage}" alt="">
-            <div class="featured-hero-overlay" style="background:rgba(${r},${g},${b},${op});"></div>
+        <div class="card-wrapper" id="wrap-0" style="margin-bottom:12px; border-radius:10px; overflow:hidden;">
+          <div class="swipe-bg"><span class="swipe-bg-label">✓ Read</span></div>
+          <div class="featured-hero" id="card-0" onclick="openStory(0)" style="cursor:pointer; margin-bottom:0;">
+            <div class="featured-hero-image-wrap">
+              <img src="${s.featuredImage}" alt="">
+              <div class="featured-hero-overlay" style="background:rgba(${r},${g},${b},${op});"></div>
+            </div>
+            <div class="featured-hero-meta">
+              <div class="featured-hero-category">${s.category}</div>
+              <div class="featured-hero-headline">${s.headline}</div>
+              <div class="featured-hero-lede">${s.lede}</div>
+              <div class="featured-hero-cta">Read full story →</div>
+            </div>
+            <div class="featured-hero-read-badge">1</div>
           </div>
-          <div class="featured-hero-meta">
-            <div class="featured-hero-category">${s.category}</div>
-            <div class="featured-hero-headline">${s.headline}</div>
-            <div class="featured-hero-lede">${s.lede}</div>
-            <div class="featured-hero-cta">Read full story →</div>
-          </div>
-          <div class="featured-hero-read-badge">1</div>
         </div>`;
       return; // skip normal card render for story 0
     }
@@ -1626,9 +1625,6 @@ function openStory(index) {
   document.getElementById('liesLocked').style.display = 'flex';
   document.getElementById('liesRevealed').style.display = 'none';
 
-  // Save digest scroll position before switching views
-  digestScrollPos = window.scrollY || document.documentElement.scrollTop;
-
   // Switch views
   document.getElementById('digestView').classList.remove('active');
   document.getElementById('storyView').classList.add('active');
@@ -1652,8 +1648,6 @@ function closeStory() {
   markStoryRead(currentStoryIndex);
   document.getElementById('storyView').classList.remove('active');
   document.getElementById('digestView').classList.add('active');
-  // Restore digest scroll position
-  window.scrollTo(0, digestScrollPos || 0);
   updateFeedbackBtn();
 }
 
