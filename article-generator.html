@@ -543,6 +543,13 @@
           <div style="font-size:10px;color:#555;margin-top:4px;font-family:'IBM Plex Mono',monospace;">Edit or add domains. Defaults restore on reload.</div>
         </div>
       </div>
+      <div class="form-row" style="display:flex;gap:8px;align-items:center;margin-bottom:10px;">
+        <label class="form-label" style="margin:0;white-space:nowrap;">Sort by</label>
+        <div style="display:flex;gap:4px;flex:1;">
+          <div class="pill active" id="sort-date" onclick="setSort('date')" style="flex:1;padding:6px;">Date</div>
+          <div class="pill" id="sort-rel" onclick="setSort('rel')" style="flex:1;padding:6px;">Relevance</div>
+        </div>
+      </div>
       <button class="btn btn-primary btn-full" onclick="searchArticles()">
         <span id="searchBtnText">Search</span>
       </button>
@@ -626,6 +633,16 @@
 let articles = [];
 let selectedArticles = new Set();
 let currentSection = null;
+
+let currentSort = 'date';
+let currentPage = 1;
+let totalPages = 1;
+
+function setSort(s) {
+  currentSort = s;
+  document.getElementById('sort-date').classList.toggle('active', s === 'date');
+  document.getElementById('sort-rel').classList.toggle('active', s === 'rel');
+}
 
 const DEFAULT_SOURCES = [
   'nytimes.com','bloomberg.com','cbc.ca','bbc.com','france24.com','dw.com',
@@ -866,8 +883,8 @@ async function searchArticles() {
         $filter: { isDuplicate: 'skipDuplicates', startSourceRankPercentile: 0, endSourceRankPercentile: 40 }
       },
       resultType: 'articles',
-      articlesSortBy: 'date',
-      articlesCount: 30,
+      articlesSortBy: currentSort,
+      articlesCount: 50,
       articlesPage: 1,
       apiKey
     };
@@ -880,6 +897,8 @@ async function searchArticles() {
 
     const data = await resp.json();
     articles = (data.articles && data.articles.results) || [];
+    currentPage = 1;
+    totalPages = (data.articles && data.articles.pages) || 1;
     renderArticles();
   } catch (err) {
     showToast('Search failed: ' + err.message);
@@ -887,6 +906,97 @@ async function searchArticles() {
     document.getElementById('loadingState').style.display = 'none';
   } finally {
     btn.textContent = 'Search';
+  }
+}
+
+async function loadMore() {
+  const apiKey = document.getElementById('newsApiKey').value.trim();
+  const keywords = document.getElementById('keywords').value.trim();
+  if (!apiKey || !keywords) return;
+
+  const btn = document.getElementById('loadMoreBtn');
+  btn.textContent = 'Loading…';
+  btn.disabled = true;
+
+  const nextPage = currentPage + 1;
+  const sourceList = getActiveSources();
+  const queryConditions = [
+    { keyword: keywords, keywordSearchMode: 'simple' },
+    { lang: 'eng' }
+  ];
+  if (sourceList.length === 1) {
+    queryConditions.push({ sourceUri: sourceList[0] });
+  } else if (sourceList.length > 1) {
+    queryConditions.push({ $or: sourceList.map(s => ({ sourceUri: s })) });
+  }
+  const startDate = document.getElementById('startDate').value.trim();
+  const endDate = document.getElementById('endDate').value.trim();
+  const dateFilter = {};
+  if (startDate) dateFilter.dateStart = startDate;
+  if (endDate) dateFilter.dateEnd = endDate;
+  if (startDate || endDate) queryConditions.push(dateFilter);
+
+  try {
+    const resp = await fetch('https://www.newsapi.ai/api/v1/article/getArticles', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        query: {
+          $query: { $and: queryConditions },
+          $filter: { isDuplicate: 'skipDuplicates', startSourceRankPercentile: 0, endSourceRankPercentile: 40 }
+        },
+        resultType: 'articles',
+        articlesSortBy: currentSort,
+        articlesCount: 50,
+        articlesPage: nextPage,
+        apiKey
+      })
+    });
+    const data = await resp.json();
+    const newArticles = (data.articles && data.articles.results) || [];
+    const offset = articles.length;
+    articles = articles.concat(newArticles);
+    currentPage = nextPage;
+    totalPages = (data.articles && data.articles.pages) || totalPages;
+    appendArticles(newArticles, offset);
+  } catch(err) {
+    showToast('Load more failed: ' + err.message);
+  } finally {
+    const b = document.getElementById('loadMoreBtn');
+    if (b) { b.textContent = 'Load next 50'; b.disabled = false; }
+  }
+}
+
+function appendArticles(newArts, offset) {
+  const list = document.getElementById('articlesList');
+  const existing = list.querySelector('#load-more-bar');
+  if (existing) existing.remove();
+
+  newArts.forEach((a, idx) => {
+    const i = offset + idx;
+    const source = a.source && a.source.title ? a.source.title : (a.source || 'Unknown');
+    const date = a.dateTime ? a.dateTime.substring(0, 10) : '';
+    const body = a.body ? a.body.substring(0, 200) + '…' : '';
+    const div = document.createElement('div');
+    div.className = 'article-card';
+    div.id = 'card-' + i;
+    div.onclick = () => toggleArticle(i);
+    div.innerHTML = `<input type="checkbox" class="article-checkbox">
+      <div>
+        <div class="article-title">${escHtml(a.title || 'Untitled')}</div>
+        <div class="article-meta"><span class="article-source">${escHtml(source)}</span><span>${date}</span></div>
+        ${body ? `<div class="article-body">${escHtml(body)}</div>` : ''}
+      </div>`;
+    list.appendChild(div);
+  });
+
+  if (currentPage < totalPages) {
+    const bar = document.createElement('div');
+    bar.id = 'load-more-bar';
+    bar.style.cssText = 'text-align:center;padding:16px 0;';
+    bar.innerHTML = `<button class="btn btn-ghost" id="loadMoreBtn" onclick="loadMore()">Load next 50</button>
+      <div style="font-size:11px;color:var(--muted);margin-top:6px;font-family:'IBM Plex Mono',monospace;">Page ${currentPage} of ${totalPages}</div>`;
+    list.appendChild(bar);
   }
 }
 
@@ -904,8 +1014,9 @@ function renderArticles() {
   document.getElementById('emptyState').style.display = 'none';
   list.style.display = 'block';
 
+  const sortLabel = currentSort === 'date' ? 'newest first' : 'most relevant first';
   const header = `<div class="results-header">
-    <div class="results-count">${articles.length} articles found</div>
+    <div class="results-count">${articles.length} articles · ${sortLabel}</div>
     <div class="selected-count" id="selCountMain"></div>
   </div>`;
 
@@ -928,6 +1039,16 @@ function renderArticles() {
   }).join('');
 
   list.innerHTML = header + cards;
+
+  if (currentPage < totalPages) {
+    const bar = document.createElement('div');
+    bar.id = 'load-more-bar';
+    bar.style.cssText = 'text-align:center;padding:16px 0;';
+    bar.innerHTML = `<button class="btn btn-ghost" id="loadMoreBtn" onclick="loadMore()">Load next 50</button>
+      <div style="font-size:11px;color:var(--muted);margin-top:6px;font-family:'IBM Plex Mono',monospace;">Page ${currentPage} of ${totalPages}</div>`;
+    list.appendChild(bar);
+  }
+
   updateUI();
 }
 
