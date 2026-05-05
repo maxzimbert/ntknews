@@ -1028,7 +1028,7 @@ async function generateSection() {
   document.getElementById('generateBtn').disabled = true;
 
   try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    const resp = await fetch('https://small-boat-ae23.max-zimbert.workers.dev', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
