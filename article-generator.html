@@ -685,9 +685,48 @@
       <div id="importStatus" style="font-size:10px;color:var(--teal);margin-top:4px;font-family:'IBM Plex Mono',monospace;display:none;"></div>
     </div>
 
-  </div>
+    <!-- Prompts -->
+    <div class="sidebar-section">
+      <h3 style="display:flex;align-items:center;justify-content:space-between;">
+        <span>Prompts</span>
+        <span id="promptToggleBtn" onclick="togglePromptPanel()" style="color:var(--teal);cursor:pointer;font-size:10px;letter-spacing:1px;">EDIT ↓</span>
+      </h3>
+      <div id="promptPanel" style="display:none;margin-top:6px;">
 
-  <!-- MAIN -->
+        <div style="margin-bottom:12px;">
+          <label style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--amber);display:block;margin-bottom:4px;">Constitution / Global Prompt</label>
+          <textarea id="prompt-global" rows="6" style="font-size:10px;line-height:1.5;"></textarea>
+        </div>
+
+        <div style="margin-bottom:12px;">
+          <label style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#0798F2;display:block;margin-bottom:4px;">Truths Prompt</label>
+          <textarea id="prompt-truths" rows="4" style="font-size:10px;line-height:1.5;"></textarea>
+        </div>
+
+        <div style="margin-bottom:12px;">
+          <label style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#01B2A7;display:block;margin-bottom:4px;">Probabilities Prompt</label>
+          <textarea id="prompt-probabilities" rows="4" style="font-size:10px;line-height:1.5;"></textarea>
+        </div>
+
+        <div style="margin-bottom:12px;">
+          <label style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#a78bfa;display:block;margin-bottom:4px;">Possibilities Prompt</label>
+          <textarea id="prompt-possibilities" rows="4" style="font-size:10px;line-height:1.5;"></textarea>
+        </div>
+
+        <div style="margin-bottom:12px;">
+          <label style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--red);display:block;margin-bottom:4px;">Lies Prompt</label>
+          <textarea id="prompt-lies" rows="4" style="font-size:10px;line-height:1.5;"></textarea>
+        </div>
+
+        <div style="display:flex;gap:6px;">
+          <button class="btn" onclick="savePrompts()" style="padding:4px 10px;font-size:9px;flex:1;">Save Prompts</button>
+          <button class="btn" onclick="restoreDefaultPrompts()" style="padding:4px 10px;font-size:9px;flex:1;">Restore Defaults</button>
+        </div>
+        <div style="font-size:10px;color:#555;margin-top:6px;font-family:'IBM Plex Mono',monospace;">Edits persist across sessions. Restore Defaults resets to the built-in prompts.</div>
+      </div>
+    </div>
+
+  </div>
   <div class="main">
     <div class="results-area" id="resultsArea">
       <div class="empty-state" id="emptyState">
@@ -873,7 +912,7 @@ function clearOneSelected(i) {
 
 // ── V9 PROMPTS ─────────────────────────────────────────────────────
 
-const GLOBAL_PROMPT = `You are the journalist-historian for NTK News, a nonprofit news-and-history app structured around four sections: Truths, Probabilities, Possibilities, and Lies. Everything you write is designed to help readers feel knowledgeable and certain. You have read a lot of history, you are fluent in American journalism. You have an advanced degree, but your readers are tired, news-avoidant, and read between an eighth grade and third grade social studies level.
+const DEFAULT_GLOBAL_PROMPT = `You are the journalist-historian for NTK News, a nonprofit news-and-history app structured around four sections: Truths, Probabilities, Possibilities, and Lies. Everything you write is designed to help readers feel knowledgeable and certain. You have read a lot of history, you are fluent in American journalism. You have an advanced degree, but your readers are tired, news-avoidant, and read between an eighth grade and third grade social studies level.
 
 EDITORIAL CONSTITUTION — Read this first. It governs every word you write.
 
@@ -921,7 +960,7 @@ VII. Quality Check — Before finalizing, confirm all three are present: Clarity
 Here are the articles to analyze:
 {$articles_text}`;
 
-const SECTION_PROMPTS = {
+const DEFAULT_SECTION_PROMPTS = {
   truths: `You are now producing the TRUTHS section of an NTK News digest.
 
 HARD OUTPUT LIMIT: 350 words. Non-negotiable.
@@ -1003,6 +1042,56 @@ Voice note: Controlled precision — the feeling of a prosecutor laying out evid
 
 Now write the Lies / Narrative Distortions section. Output this section only. Stop when complete.`
 };
+
+// ── PROMPT ACCESSORS (localStorage-backed) ────────────────────────
+function getGlobalPrompt() {
+  return localStorage.getItem('ntk_prompt_global') || DEFAULT_GLOBAL_PROMPT;
+}
+
+function getSectionPrompt(section) {
+  return localStorage.getItem('ntk_prompt_' + section) || DEFAULT_SECTION_PROMPTS[section];
+}
+
+// Active prompt references used by generate/revise
+const GLOBAL_PROMPT_GETTER = () => getGlobalPrompt();
+const SECTION_PROMPTS_GETTER = (section) => getSectionPrompt(section);
+
+function togglePromptPanel() {
+  const panel = document.getElementById('promptPanel');
+  const btn = document.getElementById('promptToggleBtn');
+  const showing = panel.style.display !== 'none';
+  panel.style.display = showing ? 'none' : 'block';
+  btn.textContent = showing ? 'EDIT ↓' : 'HIDE ↑';
+  if (!showing) loadPromptsIntoUI();
+}
+
+function loadPromptsIntoUI() {
+  document.getElementById('prompt-global').value = getGlobalPrompt();
+  document.getElementById('prompt-truths').value = getSectionPrompt('truths');
+  document.getElementById('prompt-probabilities').value = getSectionPrompt('probabilities');
+  document.getElementById('prompt-possibilities').value = getSectionPrompt('possibilities');
+  document.getElementById('prompt-lies').value = getSectionPrompt('lies');
+}
+
+function savePrompts() {
+  localStorage.setItem('ntk_prompt_global', document.getElementById('prompt-global').value);
+  localStorage.setItem('ntk_prompt_truths', document.getElementById('prompt-truths').value);
+  localStorage.setItem('ntk_prompt_probabilities', document.getElementById('prompt-probabilities').value);
+  localStorage.setItem('ntk_prompt_possibilities', document.getElementById('prompt-possibilities').value);
+  localStorage.setItem('ntk_prompt_lies', document.getElementById('prompt-lies').value);
+  showToast('Prompts saved ✓');
+}
+
+function restoreDefaultPrompts() {
+  if (!confirm('Restore all prompts to built-in defaults? Your edits will be lost.')) return;
+  localStorage.removeItem('ntk_prompt_global');
+  localStorage.removeItem('ntk_prompt_truths');
+  localStorage.removeItem('ntk_prompt_probabilities');
+  localStorage.removeItem('ntk_prompt_possibilities');
+  localStorage.removeItem('ntk_prompt_lies');
+  loadPromptsIntoUI();
+  showToast('Prompts restored to defaults');
+}
 
 // ── IMPORT URL ────────────────────────────────────────────────────
 async function importArticleByUrl() {
@@ -1481,7 +1570,7 @@ async function generateSection() {
   if (selectedArticles.size === 0) { showToast('Select at least one article'); return; }
 
   const articlesText = buildArticlesText();
-  const globalPrompt = GLOBAL_PROMPT.replace('{$articles_text}', articlesText);
+  const globalPrompt = getGlobalPrompt().replace('{$articles_text}', articlesText);
   const sections = Array.from(selectedSections);
 
   // Show modal with loading state for all sections
@@ -1498,7 +1587,7 @@ async function generateSection() {
   // Run all sections in parallel
   const promises = sections.map(async (section) => {
     try {
-      const output = await callClaude(globalPrompt, SECTION_PROMPTS[section], anthropicKey);
+      const output = await callClaude(globalPrompt, getSectionPrompt(section), anthropicKey);
       sectionOutputs[section] = output;
       // Update the block in place
       const block = document.getElementById('section-block-' + section);
@@ -1534,10 +1623,10 @@ async function reviseSection(section) {
   if (!originalOutput) { showToast('No output to revise'); return; }
 
   const articlesText = buildArticlesText();
-  const globalPrompt = GLOBAL_PROMPT.replace('{$articles_text}', articlesText);
+  const globalPrompt = getGlobalPrompt().replace('{$articles_text}', articlesText);
 
   // Build revision prompt: original section prompt + original output + feedback
-  const revisionPrompt = `${SECTION_PROMPTS[section]}
+  const revisionPrompt = `${getSectionPrompt(section)}
 
 ---
 
