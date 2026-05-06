@@ -495,7 +495,7 @@
 
 <header>
   <div class="logo">NTK <span>·</span> News</div>
-  <div class="header-tag">Article Generator · v9</div>
+  <div class="header-tag">Article Generator · v10</div>
 </header>
 
 <div class="layout" id="app">
@@ -521,7 +521,7 @@
       <h3>Search Articles</h3>
       <div class="form-row">
         <label class="form-label">Keywords <span style="color:#555">(required)</span></label>
-        <input type="text" id="keywords" placeholder="e.g. immigration, tariffs, climate" />
+        <input type="text" id="keywords" placeholder="Rubio AND Venezuela · or · tariffs, trade war, sanctions" />
       </div>
       <div class="form-row form-grid">
         <div>
@@ -535,12 +535,20 @@
       </div>
       <div class="form-row">
         <label class="form-label" style="display:flex;align-items:center;justify-content:space-between;">
-          <span>Sources <span style="color:#555">(91 defaults loaded)</span></span>
+          <span>Sources <span style="color:#555" id="sourceCountLabel">(91 defaults loaded)</span></span>
           <span id="sourceToggleBtn" onclick="toggleSourcePanel()" style="color:var(--teal);cursor:pointer;font-size:10px;letter-spacing:1px;">EDIT ↓</span>
         </label>
         <div id="sourcePanel" style="display:none;margin-top:6px;">
+          <div style="display:flex;gap:4px;margin-bottom:6px;">
+            <input type="text" id="addSourceInput" placeholder="Add domain, e.g. statnews.com" style="flex:1;font-size:11px;" onkeydown="if(event.key==='Enter'){event.preventDefault();addSource();}">
+            <button class="btn" onclick="addSource()" style="padding:6px 10px;font-size:9px;">Add</button>
+          </div>
           <textarea id="sources" rows="4" placeholder="One domain per line or comma-separated" style="font-size:11px;line-height:1.6;"></textarea>
-          <div style="font-size:10px;color:#555;margin-top:4px;font-family:'IBM Plex Mono',monospace;">Edit or add domains. Defaults restore on reload.</div>
+          <div style="display:flex;gap:6px;margin-top:6px;">
+            <button class="btn" onclick="saveSourceEdits()" style="padding:4px 10px;font-size:9px;flex:1;">Save Edits</button>
+            <button class="btn" onclick="restoreDefaultSources()" style="padding:4px 10px;font-size:9px;flex:1;">Restore Defaults</button>
+          </div>
+          <div style="font-size:10px;color:#555;margin-top:6px;font-family:'IBM Plex Mono',monospace;">Add sources one at a time or edit the list. Changes persist across sessions.</div>
         </div>
       </div>
       <div class="form-row" style="display:flex;gap:8px;align-items:center;margin-bottom:10px;">
@@ -575,6 +583,17 @@
       <div id="selectedList" style="font-size:12px;color:#555;line-height:1.8;">
         No articles selected yet.
       </div>
+    </div>
+
+    <!-- Import URL -->
+    <div class="sidebar-section">
+      <h3>Import Article by URL</h3>
+      <div style="display:flex;gap:4px;">
+        <input type="text" id="importUrlInput" placeholder="Paste article URL" style="flex:1;font-size:11px;" onkeydown="if(event.key==='Enter'){event.preventDefault();importArticleByUrl();}">
+        <button class="btn" onclick="importArticleByUrl()" style="padding:6px 10px;font-size:9px;">Import</button>
+      </div>
+      <div style="font-size:10px;color:#555;margin-top:4px;font-family:'IBM Plex Mono',monospace;">Add any article to your selection — even if it wasn't in search results.</div>
+      <div id="importStatus" style="font-size:10px;color:var(--teal);margin-top:4px;font-family:'IBM Plex Mono',monospace;display:none;"></div>
     </div>
 
   </div>
@@ -676,9 +695,61 @@ function toggleSourcePanel() {
   const showing = panel.style.display !== 'none';
   panel.style.display = showing ? 'none' : 'block';
   btn.textContent = showing ? 'EDIT ↓' : 'HIDE ↑';
-  if (!showing && !document.getElementById('sources').value) {
-    document.getElementById('sources').value = DEFAULT_SOURCES.join('\n');
+  if (!showing) {
+    document.getElementById('sources').value = getSavedSources().join('\n');
+    updateSourceCount();
   }
+}
+
+function getSavedSources() {
+  const saved = localStorage.getItem('ntk_sources');
+  if (saved) {
+    try { return JSON.parse(saved); } catch(e) {}
+  }
+  return DEFAULT_SOURCES;
+}
+
+function saveSources(list) {
+  localStorage.setItem('ntk_sources', JSON.stringify(list));
+  updateSourceCount();
+}
+
+function updateSourceCount() {
+  const count = getSavedSources().length;
+  const label = document.getElementById('sourceCountLabel');
+  if (label) label.textContent = `(${count} defaults loaded)`;
+}
+
+function addSource() {
+  const input = document.getElementById('addSourceInput');
+  const domain = input.value.trim().toLowerCase();
+  if (!domain) return;
+  const current = getSavedSources();
+  if (current.includes(domain)) {
+    showToast(domain + ' already in list');
+    input.value = '';
+    return;
+  }
+  current.push(domain);
+  saveSources(current);
+  document.getElementById('sources').value = current.join('\n');
+  input.value = '';
+  showToast('Added ' + domain + ' · ' + current.length + ' sources');
+}
+
+function saveSourceEdits() {
+  const ta = document.getElementById('sources').value.trim();
+  if (!ta) return;
+  const list = ta.split(/[,\n]+/).map(s => s.trim()).filter(Boolean);
+  saveSources(list);
+  showToast('Saved ' + list.length + ' sources');
+}
+
+function restoreDefaultSources() {
+  localStorage.removeItem('ntk_sources');
+  document.getElementById('sources').value = DEFAULT_SOURCES.join('\n');
+  updateSourceCount();
+  showToast('Restored ' + DEFAULT_SOURCES.length + ' defaults');
 }
 
 function getActiveSources() {
@@ -686,7 +757,7 @@ function getActiveSources() {
   if (ta) {
     return ta.split(/[,\n]+/).map(s => s.trim()).filter(Boolean);
   }
-  return DEFAULT_SOURCES;
+  return getSavedSources();
 }
 
 function clearAllSelected() {
@@ -843,6 +914,92 @@ Voice note: Controlled precision — the feeling of a prosecutor laying out evid
 Now write the Lies / Narrative Distortions section. Output this section only. Stop when complete.`
 };
 
+// ── IMPORT URL ────────────────────────────────────────────────────
+async function importArticleByUrl() {
+  const url = document.getElementById('importUrlInput').value.trim();
+  if (!url) { showToast('Paste an article URL'); return; }
+
+  // Check if URL already exists in articles
+  const existingIdx = articles.findIndex(a => a.url === url);
+  if (existingIdx !== -1) {
+    selectedArticles.add(existingIdx);
+    const card = document.getElementById('card-' + existingIdx);
+    if (card) { card.classList.add('selected'); card.querySelector('input').checked = true; }
+    updateUI();
+    document.getElementById('importUrlInput').value = '';
+    showToast('Already in results — selected it');
+    return;
+  }
+
+  const statusEl = document.getElementById('importStatus');
+  statusEl.textContent = 'Fetching article…';
+  statusEl.style.display = 'block';
+
+  // Try NewsAPI.ai article extraction
+  const apiKey = document.getElementById('newsApiKey').value.trim();
+  if (apiKey) {
+    try {
+      const resp = await fetch('https://www.newsapi.ai/api/v1/article/getArticles', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query: { $query: { $and: [{ keyword: url, keywordSearchMode: 'phrase' }] } },
+          resultType: 'articles',
+          articlesCount: 5,
+          apiKey
+        })
+      });
+      const data = await resp.json();
+      const results = (data.articles && data.articles.results) || [];
+      const match = results.find(a => a.url === url);
+      if (match) {
+        const idx = articles.length;
+        articles.push(match);
+        selectedArticles.add(idx);
+        // Render the card in the list if visible
+        const list = document.getElementById('articlesList');
+        if (list.style.display !== 'none') {
+          appendArticles([match], idx);
+          const card = document.getElementById('card-' + idx);
+          if (card) { card.classList.add('selected'); card.querySelector('input').checked = true; }
+        }
+        updateUI();
+        document.getElementById('importUrlInput').value = '';
+        statusEl.textContent = 'Imported ✓';
+        setTimeout(() => { statusEl.style.display = 'none'; }, 2000);
+        showToast('Imported: ' + (match.title || 'article').substring(0, 40));
+        return;
+      }
+    } catch(e) { /* fall through to manual add */ }
+  }
+
+  // Fallback: add as manual entry with URL and minimal metadata
+  const domain = url.replace(/^https?:\/\//, '').split('/')[0];
+  const manualArticle = {
+    title: 'Imported: ' + domain,
+    url: url,
+    source: { title: domain },
+    body: '',
+    dateTime: new Date().toISOString(),
+    _imported: true
+  };
+  const idx = articles.length;
+  articles.push(manualArticle);
+  selectedArticles.add(idx);
+
+  const list = document.getElementById('articlesList');
+  if (list.style.display !== 'none') {
+    appendArticles([manualArticle], idx);
+    const card = document.getElementById('card-' + idx);
+    if (card) { card.classList.add('selected'); card.querySelector('input').checked = true; }
+  }
+  updateUI();
+  document.getElementById('importUrlInput').value = '';
+  statusEl.textContent = 'Added (no body text — Claude will work from title + URL)';
+  setTimeout(() => { statusEl.style.display = 'none'; }, 3000);
+  showToast('Imported URL');
+}
+
 // ── SEARCH ─────────────────────────────────────────────────────────
 async function searchArticles() {
   const apiKey = document.getElementById('newsApiKey').value.trim();
@@ -861,10 +1018,35 @@ async function searchArticles() {
     const endDate = document.getElementById('endDate').value.trim();
     const sourceList = getActiveSources();
 
-    const queryConditions = [
-      { keyword: keywords, keywordSearchMode: 'simple' },
-      { lang: 'eng' }
-    ];
+    const queryConditions = [];
+
+    // Parse keywords with AND/OR logic
+    // "Rubio AND Venezuela" → both required (separate keyword conditions in $and)
+    // "tariffs, trade war, sanctions" → any match (keyword conditions in $or)
+    if (keywords) {
+      if (keywords.toUpperCase().includes(' AND ')) {
+        // AND logic: split on AND, each term becomes its own keyword condition
+        const terms = keywords.split(/\s+AND\s+/i).map(t => t.trim()).filter(Boolean);
+        terms.forEach(term => {
+          queryConditions.push({ keyword: term, keywordSearchMode: 'simple' });
+        });
+      } else if (keywords.includes(',')) {
+        // OR logic: comma-separated terms, use $or
+        const terms = keywords.split(',').map(t => t.trim()).filter(Boolean);
+        if (terms.length === 1) {
+          queryConditions.push({ keyword: terms[0], keywordSearchMode: 'simple' });
+        } else {
+          queryConditions.push({
+            $or: terms.map(t => ({ keyword: t, keywordSearchMode: 'simple' }))
+          });
+        }
+      } else {
+        // Single keyword or phrase
+        queryConditions.push({ keyword: keywords, keywordSearchMode: 'simple' });
+      }
+    }
+
+    queryConditions.push({ lang: 'eng' });
 
     if (sourceList.length === 1) {
       queryConditions.push({ sourceUri: sourceList[0] });
@@ -880,7 +1062,7 @@ async function searchArticles() {
     const body = {
       query: {
         $query: { $and: queryConditions },
-        $filter: { isDuplicate: 'skipDuplicates', startSourceRankPercentile: 0, endSourceRankPercentile: 40 }
+        $filter: { isDuplicate: 'skipDuplicates', startSourceRankPercentile: 0, endSourceRankPercentile: 10 }
       },
       resultType: 'articles',
       articlesSortBy: currentSort,
@@ -920,10 +1102,27 @@ async function loadMore() {
 
   const nextPage = currentPage + 1;
   const sourceList = getActiveSources();
-  const queryConditions = [
-    { keyword: keywords, keywordSearchMode: 'simple' },
-    { lang: 'eng' }
-  ];
+  const queryConditions = [];
+  if (keywords) {
+    if (keywords.toUpperCase().includes(' AND ')) {
+      const terms = keywords.split(/\s+AND\s+/i).map(t => t.trim()).filter(Boolean);
+      terms.forEach(term => {
+        queryConditions.push({ keyword: term, keywordSearchMode: 'simple' });
+      });
+    } else if (keywords.includes(',')) {
+      const terms = keywords.split(',').map(t => t.trim()).filter(Boolean);
+      if (terms.length === 1) {
+        queryConditions.push({ keyword: terms[0], keywordSearchMode: 'simple' });
+      } else {
+        queryConditions.push({
+          $or: terms.map(t => ({ keyword: t, keywordSearchMode: 'simple' }))
+        });
+      }
+    } else {
+      queryConditions.push({ keyword: keywords, keywordSearchMode: 'simple' });
+    }
+  }
+  queryConditions.push({ lang: 'eng' });
   if (sourceList.length === 1) {
     queryConditions.push({ sourceUri: sourceList[0] });
   } else if (sourceList.length > 1) {
@@ -943,7 +1142,7 @@ async function loadMore() {
       body: JSON.stringify({
         query: {
           $query: { $and: queryConditions },
-          $filter: { isDuplicate: 'skipDuplicates', startSourceRankPercentile: 0, endSourceRankPercentile: 40 }
+          $filter: { isDuplicate: 'skipDuplicates', startSourceRankPercentile: 0, endSourceRankPercentile: 10 }
         },
         resultType: 'articles',
         articlesSortBy: currentSort,
@@ -1212,6 +1411,9 @@ function showToast(msg) {
 document.getElementById('keywords').addEventListener('keydown', e => {
   if (e.key === 'Enter') searchArticles();
 });
+
+// Init source count on load
+updateSourceCount();
 </script>
 </body>
 </html>
