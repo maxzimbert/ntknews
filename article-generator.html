@@ -508,12 +508,13 @@
       <h3>API Keys</h3>
       <div class="form-row">
         <label class="form-label">NewsAPI.ai Key</label>
-        <input type="password" id="newsApiKey" placeholder="Paste your NewsAPI.ai key" />
+        <input type="password" id="newsApiKey" placeholder="Paste your NewsAPI.ai key" onchange="saveApiKey('newsApiKey')" />
       </div>
       <div class="form-row">
         <label class="form-label">Anthropic Key</label>
-        <input type="password" id="anthropicKey" placeholder="Paste your Anthropic key" />
+        <input type="password" id="anthropicKey" placeholder="Paste your Anthropic key" onchange="saveApiKey('anthropicKey')" />
       </div>
+      <div style="font-size:10px;color:#555;margin-top:4px;font-family:'IBM Plex Mono',monospace;">Keys save locally in your browser. Never sent anywhere except the APIs.</div>
     </div>
 
     <!-- Search -->
@@ -1414,6 +1415,24 @@ document.getElementById('keywords').addEventListener('keydown', e => {
 
 // Init source count on load
 updateSourceCount();
+
+// API key persistence
+function saveApiKey(id) {
+  const val = document.getElementById(id).value.trim();
+  if (val) {
+    localStorage.setItem('ntk_' + id, val);
+  } else {
+    localStorage.removeItem('ntk_' + id);
+  }
+}
+
+function loadApiKeys() {
+  ['newsApiKey', 'anthropicKey'].forEach(id => {
+    const saved = localStorage.getItem('ntk_' + id);
+    if (saved) document.getElementById(id).value = saved;
+  });
+}
+loadApiKeys();
 </script>
 </body>
 </html>
