@@ -495,6 +495,83 @@
   }
   .clear-one:hover { color: var(--red); }
 
+  /* ── SECTION OUTPUT BLOCKS ── */
+  .section-output {
+    border-bottom: 1px solid var(--border);
+    padding: 20px;
+  }
+  .section-output:last-child { border-bottom: none; }
+
+  .section-output-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .section-output-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .section-output-label.truths { color: var(--teal); }
+  .section-output-label.probabilities { color: var(--amber); }
+  .section-output-label.possibilities { color: #a78bfa; }
+  .section-output-label.lies { color: var(--red); }
+
+  .section-output-actions {
+    display: flex;
+    gap: 6px;
+  }
+
+  .section-output-text {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--cream);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .section-output-text.loading {
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .revise-area {
+    margin-top: 12px;
+    display: none;
+  }
+
+  .revise-area.open { display: block; }
+
+  .revise-area textarea {
+    width: 100%;
+    background: var(--bg);
+    color: var(--cream);
+    border: 1px solid var(--border);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    padding: 10px;
+    border-radius: 4px;
+    resize: vertical;
+    min-height: 60px;
+  }
+
+  .revise-area textarea:focus {
+    outline: none;
+    border-color: var(--teal);
+  }
+
+  .revise-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 6px;
+    justify-content: flex-end;
+  }
+
   /* Scrollbar */
   ::-webkit-scrollbar { width: 4px; }
   ::-webkit-scrollbar-track { background: transparent; }
@@ -576,13 +653,14 @@
 
     <!-- Section -->
     <div class="sidebar-section">
-      <h3>Generate Section</h3>
+      <h3>Generate Sections</h3>
       <div class="section-pills">
-        <div class="pill truths" onclick="selectSection('truths')" id="pill-truths">Truths</div>
-        <div class="pill probabilities" onclick="selectSection('probabilities')" id="pill-probabilities">Probabilities</div>
-        <div class="pill possibilities" onclick="selectSection('possibilities')" id="pill-possibilities">Possibilities</div>
-        <div class="pill lies" onclick="selectSection('lies')" id="pill-lies">Lies</div>
+        <div class="pill truths" onclick="toggleSection('truths')" id="pill-truths">Truths</div>
+        <div class="pill probabilities" onclick="toggleSection('probabilities')" id="pill-probabilities">Probabilities</div>
+        <div class="pill possibilities" onclick="toggleSection('possibilities')" id="pill-possibilities">Possibilities</div>
+        <div class="pill lies" onclick="toggleSection('lies')" id="pill-lies">Lies</div>
       </div>
+      <div style="font-size:10px;color:#555;margin-top:6px;font-family:'IBM Plex Mono',monospace;">Click multiple. All selected sections generate at once.</div>
     </div>
 
     <!-- Selected -->
@@ -640,17 +718,17 @@
 
 <!-- OUTPUT MODAL -->
 <div class="modal-overlay" id="outputModal">
-  <div class="modal">
+  <div class="modal" style="max-height:90vh;display:flex;flex-direction:column;">
     <div class="modal-header">
-      <div class="modal-title" id="modalTitle">Output</div>
+      <div class="modal-title" id="modalTitle">NTK Analysis</div>
       <button class="modal-close" onclick="closeModal()">×</button>
     </div>
-    <div class="modal-body">
-      <div class="output-box" id="outputBox"></div>
+    <div class="modal-body" style="flex:1;overflow-y:auto;padding:0;">
+      <div id="multiSectionOutput"></div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeModal()">Close</button>
-      <button class="btn btn-primary" onclick="copyOutput()">Copy Output</button>
+      <button class="btn btn-primary" onclick="copyAllOutput()">Copy All</button>
     </div>
   </div>
 </div>
@@ -662,7 +740,8 @@
 // ── STATE ──────────────────────────────────────────────────────────
 let articles = [];
 let selectedArticles = new Set();
-let currentSection = null;
+let selectedSections = new Set();
+let sectionOutputs = {}; // { truths: 'text', probabilities: 'text', ... }
 
 let currentSort = 'date';
 let currentPage = 1;
@@ -1278,10 +1357,14 @@ function toggleArticle(i) {
   updateUI();
 }
 
-function selectSection(s) {
-  currentSection = s;
-  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-  document.getElementById('pill-' + s).classList.add('active');
+function toggleSection(s) {
+  if (selectedSections.has(s)) {
+    selectedSections.delete(s);
+    document.getElementById('pill-' + s).classList.remove('active');
+  } else {
+    selectedSections.add(s);
+    document.getElementById('pill-' + s).classList.add('active');
+  }
   updateUI();
 }
 
@@ -1314,93 +1397,195 @@ function updateUI() {
   // Generate button
   const btn = document.getElementById('generateBtn');
   const status = document.getElementById('generateStatus');
-  btn.disabled = count === 0 || !currentSection;
-  if (count === 0 && !currentSection) {
-    status.textContent = 'Select articles and a section to generate';
+  const secCount = selectedSections.size;
+  btn.disabled = count === 0 || secCount === 0;
+  if (count === 0 && secCount === 0) {
+    status.textContent = 'Select articles and sections to generate';
   } else if (count === 0) {
-    status.textContent = `${currentSection} selected — now pick articles`;
-  } else if (!currentSection) {
-    status.textContent = `${count} article${count > 1 ? 's' : ''} selected — pick a section`;
+    status.textContent = `${secCount} section${secCount > 1 ? 's' : ''} selected — now pick articles`;
+  } else if (secCount === 0) {
+    status.textContent = `${count} article${count > 1 ? 's' : ''} selected — pick sections`;
   } else {
-    status.textContent = `Ready: ${count} article${count > 1 ? 's' : ''} → ${currentSection.toUpperCase()}`;
+    const secNames = Array.from(selectedSections).map(s => s.toUpperCase()).join(', ');
+    status.textContent = `Ready: ${count} article${count > 1 ? 's' : ''} → ${secNames}`;
     status.style.color = 'var(--amber)';
   }
 }
 
-// ── GENERATE ───────────────────────────────────────────────────────
-async function generateSection() {
-  const anthropicKey = document.getElementById('anthropicKey').value.trim();
-  if (!anthropicKey) { showToast('Enter your Anthropic API key'); return; }
-  if (!currentSection) { showToast('Select a section'); return; }
-  if (selectedArticles.size === 0) { showToast('Select at least one article'); return; }
-
-  // Format articles
-  let articlesText = '';
+// ── GENERATE (MULTI-SECTION) ──────────────────────────────────────
+function buildArticlesText() {
+  let text = '';
   Array.from(selectedArticles).forEach((i, n) => {
     const a = articles[i];
     const source = a.source && a.source.title ? a.source.title : (a.source || '');
-    articlesText += `\n\n--- Article ${n + 1} ---\n`;
-    articlesText += `Title: ${a.title || 'Untitled'}\n`;
-    articlesText += `Source: ${source}\n`;
-    articlesText += `Date: ${a.dateTime || a.date || ''}\n`;
-    articlesText += `URL: ${a.url || ''}\n`;
-    articlesText += `Content: ${a.body || a.description || ''}\n`;
+    text += `\n\n--- Article ${n + 1} ---\n`;
+    text += `Title: ${a.title || 'Untitled'}\n`;
+    text += `Source: ${source}\n`;
+    text += `Date: ${a.dateTime || a.date || ''}\n`;
+    text += `URL: ${a.url || ''}\n`;
+    text += `Content: ${a.body || a.description || ''}\n`;
   });
+  return text;
+}
 
+async function callClaude(systemPrompt, userContent, anthropicKey) {
+  const resp = await fetch('https://small-boat-ae23.max-zimbert.workers.dev', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': anthropicKey,
+      'anthropic-version': '2023-06-01'
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 2048,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userContent }]
+    })
+  });
+  const data = await resp.json();
+  if (!resp.ok) throw new Error(data.error ? data.error.message : 'API error ' + resp.status);
+  return data.content && data.content[0] ? data.content[0].text : 'No output returned.';
+}
+
+function renderSectionBlock(section, state) {
+  // state: 'loading', 'done', 'revising'
+  const text = sectionOutputs[section] || '';
+  const isLoading = state === 'loading';
+  const isRevising = state === 'revising';
+  return `<div class="section-output" id="section-block-${section}">
+    <div class="section-output-header">
+      <div class="section-output-label ${section}">${section.toUpperCase()}</div>
+      <div class="section-output-actions">
+        ${!isLoading ? `<button class="btn btn-ghost" onclick="toggleRevise('${section}')" style="padding:4px 8px;font-size:9px;">Revise</button>` : ''}
+        ${!isLoading ? `<button class="btn btn-ghost" onclick="copySectionOutput('${section}')" style="padding:4px 8px;font-size:9px;">Copy</button>` : ''}
+      </div>
+    </div>
+    <div class="section-output-text ${isLoading ? 'loading' : ''}" id="section-text-${section}">
+      ${isLoading ? 'Generating ' + section + '…' : escHtml(text)}
+    </div>
+    <div class="revise-area ${isRevising ? 'open' : ''}" id="revise-area-${section}">
+      <textarea id="revise-input-${section}" placeholder="e.g. Tighten the third truth — it's weak. More focus on the economic angle."></textarea>
+      <div class="revise-actions">
+        <button class="btn btn-ghost" onclick="toggleRevise('${section}')" style="padding:4px 10px;font-size:9px;">Cancel</button>
+        <button class="btn btn-primary" onclick="reviseSection('${section}')" style="padding:4px 10px;font-size:9px;" id="revise-btn-${section}">Revise</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+async function generateSection() {
+  const anthropicKey = document.getElementById('anthropicKey').value.trim();
+  if (!anthropicKey) { showToast('Enter your Anthropic API key'); return; }
+  if (selectedSections.size === 0) { showToast('Select at least one section'); return; }
+  if (selectedArticles.size === 0) { showToast('Select at least one article'); return; }
+
+  const articlesText = buildArticlesText();
   const globalPrompt = GLOBAL_PROMPT.replace('{$articles_text}', articlesText);
-  const sectionPrompt = SECTION_PROMPTS[currentSection];
+  const sections = Array.from(selectedSections);
 
-  // Show modal with loading state
-  document.getElementById('modalTitle').textContent = currentSection.toUpperCase() + ' — Generating…';
-  document.getElementById('outputBox').textContent = 'Claude is writing your ' + currentSection + ' section…\n\nThis usually takes 20–40 seconds.';
+  // Show modal with loading state for all sections
+  sectionOutputs = {};
+  const container = document.getElementById('multiSectionOutput');
+  container.innerHTML = sections.map(s => renderSectionBlock(s, 'loading')).join('');
+  document.getElementById('modalTitle').textContent = `Generating ${sections.length} section${sections.length > 1 ? 's' : ''}…`;
   document.getElementById('outputModal').classList.add('open');
 
   const btn = document.getElementById('generateBtnText');
   btn.textContent = 'Generating…';
   document.getElementById('generateBtn').disabled = true;
 
-  try {
-    const resp = await fetch('https://small-boat-ae23.max-zimbert.workers.dev', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': anthropicKey,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 2048,
-        system: globalPrompt,
-        messages: [{ role: 'user', content: sectionPrompt }]
-      })
-    });
-
-    const data = await resp.json();
-
-    if (!resp.ok) {
-      throw new Error(data.error ? data.error.message : 'API error ' + resp.status);
+  // Run all sections in parallel
+  const promises = sections.map(async (section) => {
+    try {
+      const output = await callClaude(globalPrompt, SECTION_PROMPTS[section], anthropicKey);
+      sectionOutputs[section] = output;
+      // Update the block in place
+      const block = document.getElementById('section-block-' + section);
+      if (block) block.outerHTML = renderSectionBlock(section, 'done');
+    } catch (err) {
+      sectionOutputs[section] = 'Error: ' + err.message;
+      const block = document.getElementById('section-block-' + section);
+      if (block) block.outerHTML = renderSectionBlock(section, 'done');
     }
+  });
 
-    const output = data.content && data.content[0] ? data.content[0].text : 'No output returned.';
-    document.getElementById('modalTitle').textContent = currentSection.toUpperCase() + ' — Ready';
-    document.getElementById('outputBox').textContent = output;
+  await Promise.all(promises);
 
+  document.getElementById('modalTitle').textContent = 'NTK Analysis — Ready';
+  btn.textContent = 'Generate';
+  updateUI();
+}
+
+// ── REVISE ────────────────────────────────────────────────────────
+function toggleRevise(section) {
+  const area = document.getElementById('revise-area-' + section);
+  if (area) area.classList.toggle('open');
+}
+
+async function reviseSection(section) {
+  const anthropicKey = document.getElementById('anthropicKey').value.trim();
+  if (!anthropicKey) { showToast('Enter your Anthropic API key'); return; }
+
+  const feedback = document.getElementById('revise-input-' + section).value.trim();
+  if (!feedback) { showToast('Enter your revision feedback'); return; }
+
+  const originalOutput = sectionOutputs[section];
+  if (!originalOutput) { showToast('No output to revise'); return; }
+
+  const articlesText = buildArticlesText();
+  const globalPrompt = GLOBAL_PROMPT.replace('{$articles_text}', articlesText);
+
+  // Build revision prompt: original section prompt + original output + feedback
+  const revisionPrompt = `${SECTION_PROMPTS[section]}
+
+---
+
+Here is the previous output you generated for this section:
+
+${originalOutput}
+
+---
+
+The editor has the following feedback. Revise the section based on this guidance. Return the full revised section, not just the changed parts:
+
+${feedback}`;
+
+  // Show loading state
+  const reviseBtn = document.getElementById('revise-btn-' + section);
+  reviseBtn.textContent = 'Revising…';
+  reviseBtn.disabled = true;
+
+  try {
+    const output = await callClaude(globalPrompt, revisionPrompt, anthropicKey);
+    sectionOutputs[section] = output;
+    const block = document.getElementById('section-block-' + section);
+    if (block) block.outerHTML = renderSectionBlock(section, 'done');
+    showToast(section + ' revised ✓');
   } catch (err) {
-    document.getElementById('modalTitle').textContent = 'Error';
-    document.getElementById('outputBox').textContent = 'Generation failed:\n\n' + err.message;
-  } finally {
-    btn.textContent = 'Generate';
-    updateUI();
+    showToast('Revision failed: ' + err.message);
+    reviseBtn.textContent = 'Revise';
+    reviseBtn.disabled = false;
   }
 }
 
+// ── MODAL ─────────────────────────────────────────────────────────
 function closeModal() {
   document.getElementById('outputModal').classList.remove('open');
 }
 
-function copyOutput() {
-  const text = document.getElementById('outputBox').textContent;
-  navigator.clipboard.writeText(text).then(() => showToast('Copied to clipboard ✓'));
+function copySectionOutput(section) {
+  const text = sectionOutputs[section] || '';
+  navigator.clipboard.writeText(text).then(() => showToast(section + ' copied ✓'));
+}
+
+function copyAllOutput() {
+  const sections = ['truths', 'probabilities', 'possibilities', 'lies'];
+  const text = sections
+    .filter(s => sectionOutputs[s])
+    .map(s => `═══ ${s.toUpperCase()} ═══\n\n${sectionOutputs[s]}`)
+    .join('\n\n\n');
+  navigator.clipboard.writeText(text).then(() => showToast('All sections copied ✓'));
 }
 
 // ── UTILS ──────────────────────────────────────────────────────────
