@@ -143,6 +143,164 @@
     white-space: nowrap;
   }
 
+
+  /* ── BRIEF TICKER ──────────────────────────────────────────────── */
+  .ticker-wrap {
+    background: var(--dark);
+    border-bottom: 1px solid rgba(234,217,197,0.08);
+    overflow: hidden;
+    position: relative;
+    user-select: none;
+  }
+
+  .ticker-inner {
+    display: flex;
+    align-items: stretch;
+  }
+
+  .ticker-label {
+    flex-shrink: 0;
+    background: var(--blue);
+    color: #fff;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    z-index: 2;
+  }
+
+  .ticker-track {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    cursor: grab;
+  }
+  .ticker-track.paused { cursor: default; }
+
+  .ticker-scroll {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    will-change: transform;
+    padding: 0;
+  }
+
+  .ticker-item {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 0;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .ticker-cat {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--teal);
+    flex-shrink: 0;
+  }
+
+  .ticker-text {
+    font-family: 'Source Serif 4', serif;
+    font-size: 13px;
+    color: rgba(234,217,197,0.75);
+    flex-shrink: 0;
+  }
+
+  .ticker-divider {
+    display: inline-block;
+    width: 1px;
+    height: 14px;
+    background: rgba(234,217,197,0.15);
+    margin: 0 20px;
+    flex-shrink: 0;
+    vertical-align: middle;
+  }
+
+  /* Brief expand panel */
+  .brief-panel {
+    background: var(--dark);
+    border-bottom: 1px solid rgba(234,217,197,0.08);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .brief-panel.open {
+    max-height: 600px;
+  }
+  .brief-panel-inner {
+    padding: 12px 20px 16px;
+  }
+  .brief-panel-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(234,217,197,0.3);
+    margin-bottom: 10px;
+  }
+  .brief-item {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 7px 0;
+    border-bottom: 1px solid rgba(234,217,197,0.05);
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .brief-item:last-child { border-bottom: none; }
+  .brief-item:hover { opacity: 0.75; }
+  .brief-num {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    color: rgba(234,217,197,0.25);
+    flex-shrink: 0;
+    width: 18px;
+  }
+  .brief-item-cat {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--teal);
+    flex-shrink: 0;
+    width: 80px;
+  }
+  .brief-item-text {
+    font-family: 'Source Serif 4', serif;
+    font-size: 13px;
+    line-height: 1.5;
+    color: rgba(234,217,197,0.7);
+  }
+
+  /* Expand button in ticker label */
+  .ticker-expand-btn {
+    flex-shrink: 0;
+    background: rgba(234,217,197,0.06);
+    border: none;
+    color: rgba(234,217,197,0.4);
+    padding: 0 12px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: color 0.15s, background 0.15s;
+    line-height: 1;
+  }
+  .ticker-expand-btn:hover { color: var(--cream); background: rgba(234,217,197,0.1); }
+  .ticker-expand-btn.open { color: var(--teal); }
+
   .gesture-hint {
     background: rgba(7,152,242,0.07);
     border-bottom: 1px solid rgba(7,152,242,0.12);
@@ -250,6 +408,10 @@
     font-size: 14px;
     line-height: 1.6;
     color: rgba(38,31,35,0.68);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .card-footer {
@@ -1189,6 +1351,23 @@
     </div>
   </div>
 
+  <!-- BRIEF TICKER -->
+  <div class="brief-panel" id="briefPanel">
+    <div class="brief-panel-inner">
+      <div class="brief-panel-title">Today at a glance</div>
+      <div id="briefList"></div>
+    </div>
+  </div>
+  <div class="ticker-wrap" id="tickerWrap">
+    <div class="ticker-inner">
+      <div class="ticker-label">BRIEF</div>
+      <div class="ticker-track" id="tickerTrack">
+        <div class="ticker-scroll" id="tickerScroll"></div>
+      </div>
+      <button class="ticker-expand-btn" id="tickerExpandBtn" onclick="toggleBriefPanel()" title="Expand brief">≡</button>
+    </div>
+  </div>
+
   <div class="gesture-hint">
     <div class="hint-item"><span>👆</span> Tap to read</div>
     <div class="hint-item"><span>→</span> Swipe right to mark read</div>
@@ -2009,6 +2188,153 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 })();
+
+// ── BRIEF TICKER ────────────────────────────────────────────────
+(function() {
+  let tickerAnim = null;
+  let tickerPos = 0;
+  let tickerSpeed = 0.6; // px per frame
+  let isPaused = false;
+  let isTouchActive = false;
+  let touchStartX = 0;
+  let touchStartPos = 0;
+  let lastTouchX = 0;
+  let touchVelocity = 0;
+  let scrollWidth = 0;
+  let tickerReady = false;
+
+  function getBrief(story) {
+    // Use brief field if available, otherwise use lede
+    return story.brief || story.lede || '';
+  }
+
+  function buildTicker() {
+    const track = document.getElementById('tickerScroll');
+    const briefList = document.getElementById('briefList');
+    if (!track || !stories || !stories.length) return;
+
+    // Build ticker items (doubled for seamless loop)
+    const items = stories.map((s, i) =>
+      `<span class="ticker-item" data-idx="${i}" onclick="tickerJumpTo(${i})">` +
+        `<span class="ticker-cat">${s.category || ''}</span>` +
+        `<span class="ticker-text">${getBrief(s)}</span>` +
+      `</span>` +
+      `<span class="ticker-divider"></span>`
+    ).join('');
+
+    track.innerHTML = items + items; // doubled for loop
+
+    // Build expand panel list
+    briefList.innerHTML = stories.map((s, i) =>
+      `<div class="brief-item" onclick="tickerJumpTo(${i}); toggleBriefPanel();">` +
+        `<span class="brief-num">${String(i+1).padStart(2,'0')}</span>` +
+        `<span class="brief-item-cat">${s.category || ''}</span>` +
+        `<span class="brief-item-text">${getBrief(s)}</span>` +
+      `</div>`
+    ).join('');
+
+    // Wait for layout then measure
+    requestAnimationFrame(() => {
+      scrollWidth = track.scrollWidth / 2;
+      tickerReady = true;
+      startTicker();
+    });
+  }
+
+  function startTicker() {
+    if (tickerAnim) cancelAnimationFrame(tickerAnim);
+    function step() {
+      if (!isPaused && !isTouchActive) {
+        tickerPos += tickerSpeed;
+        if (tickerPos >= scrollWidth) tickerPos -= scrollWidth;
+        document.getElementById('tickerScroll').style.transform = `translateX(${-tickerPos}px)`;
+      }
+      tickerAnim = requestAnimationFrame(step);
+    }
+    tickerAnim = requestAnimationFrame(step);
+  }
+
+  function tickerJumpTo(idx) {
+    // Scroll digest to that card
+    const card = document.getElementById('card-' + idx) || document.getElementById('wrap-' + idx);
+    if (card) {
+      const top = card.getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+  }
+  window.tickerJumpTo = tickerJumpTo;
+
+  function toggleBriefPanel() {
+    const panel = document.getElementById('briefPanel');
+    const btn = document.getElementById('tickerExpandBtn');
+    const isOpen = panel.classList.contains('open');
+    panel.classList.toggle('open', !isOpen);
+    btn.classList.toggle('open', !isOpen);
+    isPaused = !isOpen;
+  }
+  window.toggleBriefPanel = toggleBriefPanel;
+
+  // Touch / drag handlers
+  function onTouchStart(e) {
+    isTouchActive = true;
+    touchStartX = e.touches ? e.touches[0].clientX : e.clientX;
+    touchStartPos = tickerPos;
+    lastTouchX = touchStartX;
+    touchVelocity = 0;
+    document.getElementById('tickerTrack').classList.add('paused');
+  }
+
+  function onTouchMove(e) {
+    if (!isTouchActive) return;
+    e.preventDefault();
+    const x = e.touches ? e.touches[0].clientX : e.clientX;
+    touchVelocity = lastTouchX - x;
+    lastTouchX = x;
+    const delta = touchStartX - x;
+    tickerPos = (touchStartPos + delta + scrollWidth) % scrollWidth;
+    document.getElementById('tickerScroll').style.transform = `translateX(${-tickerPos}px)`;
+  }
+
+  function onTouchEnd(e) {
+    const totalDelta = Math.abs(touchStartX - lastTouchX);
+    document.getElementById('tickerTrack').classList.remove('paused');
+
+    if (totalDelta < 5) {
+      // Tap — toggle pause
+      isPaused = !isPaused;
+      isTouchActive = false;
+      return;
+    }
+
+    // Swipe ended — resume with velocity-influenced speed
+    tickerSpeed = Math.max(0.3, Math.min(3, Math.abs(touchVelocity) * 0.3 + 0.6));
+    if (touchVelocity < 0) tickerSpeed = -tickerSpeed; // reverse if swiped right
+    // Gradually normalize speed back
+    setTimeout(() => { tickerSpeed = Math.abs(tickerSpeed) > 0.6 ? 0.6 : tickerSpeed; }, 1200);
+    isTouchActive = false;
+    isPaused = false;
+  }
+
+  const track = document.getElementById('tickerTrack');
+  if (track) {
+    // Touch
+    track.addEventListener('touchstart', onTouchStart, { passive: true });
+    track.addEventListener('touchmove', onTouchMove, { passive: false });
+    track.addEventListener('touchend', onTouchEnd);
+    // Mouse drag
+    track.addEventListener('mousedown', e => onTouchStart({ touches: [{ clientX: e.clientX }] }));
+    document.addEventListener('mousemove', e => { if (isTouchActive) onTouchMove({ touches: [{ clientX: e.clientX }], preventDefault: () => {} }); });
+    document.addEventListener('mouseup', e => { if (isTouchActive) onTouchEnd(e); });
+  }
+
+  // Init after stories load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', buildTicker);
+  } else {
+    buildTicker();
+  }
+})();
+
 </script>
 
 <!-- SUBSCRIBE MODAL -->
