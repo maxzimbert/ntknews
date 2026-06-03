@@ -711,6 +711,9 @@
         <div class="pill possibilities" onclick="toggleSection('possibilities')" id="pill-possibilities">Possibilities</div>
         <div class="pill lies" onclick="toggleSection('lies')" id="pill-lies">Lies</div>
       </div>
+      <div style="margin-top:6px;">
+        <div class="pill" onclick="selectSection('brief')" id="pill-brief" style="width:100%;text-align:center;background:rgba(242,174,46,0.08);border-color:rgba(242,174,46,0.3);color:var(--amber);justify-content:center;">⚡ Brief — Digest Ticker</div>
+      </div>
       <div style="font-size:10px;color:#555;margin-top:6px;font-family:'IBM Plex Mono',monospace;">Click multiple. All selected sections generate at once.</div>
     </div>
 
@@ -1083,6 +1086,34 @@ Section arc: Truths established what happened. Probabilities said what comes nex
 Voice note: Informed curiosity — the feeling of a smart friend saying "here's the thing almost nobody is considering." The reader finishes thinking: "I hadn't thought of that. Now I can't stop thinking about it."
 
 Now write the Possibilities section. Output this section only. Stop when complete.`,
+
+  brief: `You are producing the BRIEF field for the NTK News digest ticker.
+
+The ticker shows one line per story — a short, punchy beat that gives Jamie enough to decide if she wants to read this story. It scrolls across the top of the digest. It is not a headline. It is not a lede. It is a chyron — the cable news crawl distilled to its most essential beat.
+
+RULES:
+- One sentence only. Maximum 90 characters including spaces.
+- Must contain a civilian anchor: a dollar figure, a brand name, a named person in a visible act, or a number the reader already owns.
+- Lead with what happened or is happening. Not what it means.
+- No verdict. No thesis. The reader draws the conclusion.
+- No ellipsis, no "…" — the sentence must be complete.
+- Present tense where possible. Active voice always.
+
+POSITIVE EXAMPLES:
+- "Sony's robot beat 7 of 13 elite players — but choked against pros."
+- "Trump plans to leave the Correspondents' Dinner before the reporters he's suing are honored."
+- "Federal prosecutors charged a soldier with insider trading via a prediction market app."
+
+NEGATIVE EXAMPLES (avoid):
+- "AI threatens educational integrity" — no anchor, verdict not event
+- "The geopolitical implications are significant" — abstract, no actor
+- "This is a story about power" — never
+
+Output: return ONLY a JSON array of brief strings, one per article, in article order. No preamble. No markdown. Example format:
+["Sony's robot beat 7 of 13 elite table tennis players.", "Meta cut 3,600 jobs while posting record profits."]
+
+Here are the articles:
+{$articles_text}`,
 
   lies: `You are now producing the LIES / NARRATIVE DISTORTIONS section of an NTK News digest.
 
@@ -1653,7 +1684,22 @@ async function generateSection() {
   const promises = sections.map(async (section) => {
     try {
       const output = await callClaude(globalPrompt, getSectionPrompt(section), anthropicKey);
-      sectionOutputs[section] = output;
+      // Special brief formatting
+      if (section === 'brief') {
+        try {
+          const clean = output.replace(/```json|```/g, '').trim();
+          const briefs = JSON.parse(clean);
+          const artList = Array.from(selectedArticles);
+          const formatted = briefs.map((b, i) => {
+            const artIdx = artList[i];
+            const title = artIdx !== undefined && articles[artIdx] ? articles[artIdx].title.substring(0, 55) : 'Story ' + (i+1);
+            return `Story ${String(i+1).padStart(2,'0')} brief: "${b}"\n  → ${title}`;
+          }).join('\n\n');
+          sectionOutputs[section] = '// Add each brief: "..." to its story object in index.html\n\n' + formatted;
+        } catch(e) { sectionOutputs[section] = output; }
+      } else {
+        sectionOutputs[section] = output;
+      }
       // Update the block in place
       const block = document.getElementById('section-block-' + section);
       if (block) block.outerHTML = renderSectionBlock(section, 'done');
