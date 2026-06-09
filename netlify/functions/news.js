@@ -63,6 +63,7 @@ exports.handler = async (event) => {
       resultType: 'articles',
       includeArticleBody: false,
       includeArticleTitle: true,
+      includeArticleDate: true,
       includeSourceInfo: true,
       skipDuplicates: true,
       sourceUri: NTK_SOURCES
