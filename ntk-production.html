@@ -265,6 +265,8 @@ Below are the actual headlines publishing RIGHT NOW from the NTK source pool. Th
 TODAY'S HEADLINES FROM NTK SOURCES:
 ${headlines}
 
+FRESHNESS RULE: Each headline is labeled with its publication date. Today is ${TODAY}. Strongly prefer articles from the last 48 hours. Articles older than 48 hours should only be selected if the story is still actively developing today — not if it's a concluded event or a trend piece that could have run any week. Flag any selected story older than 48 hours with sourcing: moderate at minimum.
+
 SELECTION CRITERIA:
 COVERAGE: Which are the 3-5 most consequential in the last 24-48hrs? Which would Jamie (busy parent, stopped following news) feel left out of? Which affect her paycheck, kids, healthcare, safety? Which has a historical dimension that makes today click?
 MIX: Too heavy — all crisis, no humanity? Geographic diversity? Story Jamie would text? Verifiable progress? Story leaving her better equipped?
@@ -459,7 +461,7 @@ async function scanHeadlines(mode) {
     if (!articles.length) throw new Error('No articles returned from EventRegistry');
 
     const headlines = articles.map((a,i) =>
-      (i+1) + '. [' + (a.source?.title||'Unknown') + '] ' + a.title
+      (i+1) + '. [' + (a.source?.title||'Unknown') + ' | ' + (a.date||'unknown date') + '] ' + a.title
     ).join('\n');
 
     upd({statusMsg: 'Applying Story Selection Brief...'});
