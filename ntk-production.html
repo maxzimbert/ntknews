@@ -164,7 +164,8 @@ let S = {
   sections: new Set(SECS),
   packages: {},        // id -> {truths,probabilities,possibilities,lies} text
   candidateUrls: {},    // id -> [{title, url}] populated after generation
-  importedUrls: [],    // [{url, title, body}]
+  importedUrls: [],    // [{url, title, body}] - global supplementary sources
+  storyUrls: {},       // {storyId: [{url, body}]} - per-story supplementary sources
   urlInput: '',
   customInput: '',
   injBusy: false,
@@ -331,7 +332,7 @@ const makePrompt = (section, articlesText, suppUrls) => {
 Truths are observable facts: what people said and did, who performs what role. A historian's selection for vivid narrative.
 
 REQUIRED OPENING:
-- **Section headline:** bold, covers the whole story. Format: today's fact + consequence Jamie can feel. Two sentences.
+- **Digest headline:** This is the headline that appears on the digest screen and at the top of the story. Bold. Format: today's fact + consequence Jamie can feel. Two sentences. This is the most important line you write.
 - **Lede:** 1-2 sentences, 86-character hard limit, AP wire register. No wind-up.
 - **Subhead:** one sentence bridging the lede to the items below.
 
@@ -351,7 +352,7 @@ Each probability:
 - Gives a specific observable signal the reader can watch for: "Watch for procurement announcements framed around 'equity' and 'access,' not learning outcomes."
 - Names the real driver beneath the stated one
 
-FORMAT: **Bold headline** as its own paragraph. Body as a separate paragraph below. Arrange most immediate to most structural. Headline names a specific actor, institution, or dollar figure — not an abstract trend. Citation on key claims.`,
+FORMAT: Open with a **subhead** — one bold sentence that labels this section's thesis (e.g. "The most likely outcome is political gridlock, not collapse"). This appears at the top of the Probabilities section inside the story. Then each probability: **bold item headline** as its own paragraph + body as separate paragraph below. Arrange most immediate to most structural. Headline names a specific actor, institution, or dollar figure. Citation on key claims.`,
 
     possibilities: `You are producing the POSSIBILITIES section of an NTK News digest item. Hard limit: 300 words. Output only the Possibilities section — nothing else.
 
@@ -362,7 +363,7 @@ Each possibility:
 - At least one hopeful or constructive possibility
 - Tethered to evidence from the articles, not invented
 
-FORMAT: **Bold headline** (intelligence analyst edge-case framing) + 2-4 sentence body. Most grounded to most speculative. Register: informed curiosity — "here's the thing almost nobody is considering."`,
+FORMAT: Open with a **subhead** — one bold sentence that labels this section's thesis (e.g. "The scenarios nobody is pricing in"). This appears at the top of the Possibilities section inside the story. Then each possibility: **bold item headline** + 2-4 sentence body. Most grounded to most speculative. Register: informed curiosity — "here's the thing almost nobody is considering."`,
 
     lies: `You are producing the LIES section of an NTK News digest item. Hard limit: 300 words. Output only the Lies section — nothing else.
 
@@ -374,7 +375,7 @@ Each lie:
 - Uses the formula: "For [person or group], this feels true. But historically, it functions as a lie."
 - Does not dehumanize believers — the lie is the target, not the audience
 
-FORMAT: **Bold headline** (the distortion stated so clearly the reader recognizes it when they next encounter it) + 3-5 sentences: claim, maker, beneficiary, factual reality, historical parallel when earned. Most dangerous to most absurd. Register: controlled precision — a prosecutor, not a pundit.`
+FORMAT: Open with a **subhead** — one bold sentence that labels this section's thesis (e.g. "Two narratives in active circulation — both designed to make you stop asking questions"). This appears at the top of the Lies section inside the story. Then each lie: **bold item headline** (the distortion stated clearly) + 3-5 sentences: claim, maker, beneficiary, factual reality, historical parallel when earned. Most dangerous to most absurd. Register: controlled precision — a prosecutor, not a pundit.`
   };
 
   return `${GLOBAL}
@@ -488,12 +489,42 @@ async function injectStory(cat) {
   } catch(e) { upd({injBusy:false, injStatus:'Failed: '+e.message}); }
 }
 
-async function importUrl() {
+async function importUrl(mode, storyId) {
   const url = S.urlInput.trim();
   if (!url) return;
   upd({urlInput:'', injStatus:'Fetching '+url+'…'});
-  const result = await fetchUrl(url);
-  upd({importedUrls:[...S.importedUrls, result], injStatus:'URL added'+ (result.body?'':' (content unavailable — will cite by URL)')});
+
+  if (mode === 'lineup') {
+    // Fetch URL and create a candidate from it
+    upd({injStatus:'Reading URL and creating story candidate…'});
+    const result = await fetchUrl(url);
+    const prompt = `Today is ${TODAY}. You are the NTK News story scanner. A URL has been imported: ${url}
+
+Content preview: ${result.body ? result.body.slice(0,800) : 'unavailable'}
+
+Create 1 candidate story from this URL. Apply NTK standards: consequential, civilian anchor, gives Jamie something to feel oriented by.
+
+KEYWORDS must be specific enough to find this story in EventRegistry.
+
+Return ONLY a valid JSON array. No markdown fences.
+[{"id":"url-${Date.now()}","topic":"short topic name","angle":"one sharp NTK sentence","category":"Geopolitical|Domestic|Economic|Cultural|Health|Science|Under-Reported|Orienting","keywords":"specific named actors programs","sourcing":"moderate"}]`;
+    try {
+      const raw = await ai(prompt, 800);
+      const data = parseJSON(raw);
+      const tagged = data.map(c=>({...c, id:'url-'+Date.now(), injected:true, sourceUrl:url}));
+      upd({candidates:[...S.candidates,...tagged], storyOrder:[...S.storyOrder,...tagged.map(c=>c.id)], injStatus:'Added to lineup — scroll down to select'});
+    } catch(e) {
+      upd({injStatus:'Failed to create candidate: '+e.message});
+    }
+  } else if (mode === 'story' && storyId) {
+    // Attach URL as supplementary source for a specific story
+    const result = await fetchUrl(url);
+    const existing = S.storyUrls[storyId] || [];
+    upd({
+      storyUrls: {...S.storyUrls, [storyId]: [...existing, result]},
+      injStatus: 'URL attached to story' + (result.body ? '' : ' (content unavailable — will cite by URL)')
+    });
+  }
 }
 
 async function generate() {
@@ -525,7 +556,7 @@ async function generate() {
     for (const sec of todo) {
       upd({statusMsg: pick.topic + ' · ' + sec + '…'});
       try {
-        pkg[sec] = await ai(makePrompt(sec, artsText, S.importedUrls), 1500);
+        const allSupp = [...S.importedUrls, ...(S.storyUrls[pick.id]||[])]; pkg[sec] = await ai(makePrompt(sec, artsText, allSupp), 1500);
       } catch(e) {
         pkg[sec] = '[Generation failed: ' + e.message + ']';
       }
@@ -642,12 +673,20 @@ function draw() {
         <div class="inj-status">${x(S.injStatus)}</div>
       </div>
       <div class="url-import">
-        <label style="margin-bottom:8px;">Import a URL (supplementary source for all stories)</label>
+        <label style="margin-bottom:8px;">Import a URL</label>
         <div class="ui-row">
           <input type="url" id="url-in" value="${x(S.urlInput)}" placeholder="https://…">
-          <button class="btn btn-ghost btn-sm" id="url-btn">Import →</button>
         </div>
-        ${urlItems?`<div class="ui-list">${urlItems}</div>`:''}
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;">
+          <button class="btn btn-primary btn-sm" id="url-lineup-btn">+ Add to Lineup</button>
+          <select id="url-story-sel" style="font-family:var(--font-mono);font-size:11px;padding:4px 8px;border:1px solid var(--border);border-radius:2px;background:var(--surface);color:var(--body);flex:1;">
+            <option value="">Enhance a story in the lineup…</option>
+            ${orderedCands.map(c=>`<option value="${x(c.id)}">${x(c.topic)}</option>`).join('')}
+          </select>
+          <button class="btn-ghost btn-sm" id="url-story-btn">Attach →</button>
+        </div>
+        <div class="inj-status" style="margin-top:6px;">${x(S.injStatus)}</div>
+        ${urlItems?`<div class="ui-list" style="margin-top:6px;">${urlItems}</div>`:''}
       </div>
       <div class="sec-wrap">
         <label style="margin-bottom:8px;">Sections to generate</label>
@@ -685,8 +724,12 @@ function draw() {
     bind('cust-in','keydown',e=>{if(e.key==='Enter'&&S.customInput.trim())injectStory(S.customInput.trim());});
     bind('cust-btn','click',()=>{if(S.customInput.trim())injectStory(S.customInput.trim());});
     bind('url-in','input',e=>upd({urlInput:e.target.value}));
-    bind('url-in','keydown',e=>{if(e.key==='Enter')importUrl();});
-    bind('url-btn','click',importUrl);
+    bind('url-lineup-btn','click',()=>importUrl('lineup'));
+    bind('url-story-btn','click',()=>{
+      const sel=document.getElementById('url-story-sel');
+      if(sel&&sel.value) importUrl('story',sel.value);
+      else upd({injStatus:'Select a story from the dropdown first'});
+    });
 
   } else if (S.stage==='generating') {
     c.innerHTML = `<div class="spinner-wrap"><div class="spinner"></div><div class="spinner-msg">${x(S.statusMsg)}</div></div>`;
@@ -743,7 +786,7 @@ function draw() {
     }));
   }
 
-  el('restart-btn').onclick = ()=>upd({stage:'init',error:'',candidates:[],storyOrder:[],selected:new Set(),packages:{},candidateUrls:{}});
+  el('restart-btn').onclick = ()=>upd({stage:'init',error:'',candidates:[],storyOrder:[],selected:new Set(),packages:{},candidateUrls:{},storyUrls:{}});
 }
 
 function bind(id,ev,fn){const el=document.getElementById(id);if(el)el.addEventListener(ev,fn);}
