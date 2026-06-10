@@ -95,8 +95,7 @@ exports.handler = async (event) => {
       articleBodyLen: 1500,
       includeArticleDate: true,
       includeSourceInfo: true,
-      skipDuplicates: true,
-      sourceUri: NTK_SOURCES
+      skipDuplicates: true
     };
   }
 
