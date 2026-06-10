@@ -30,10 +30,7 @@ function post(body) {
       hostname: 'eventregistry.org',
       path: '/api/v1/article/getArticles',
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(bodyStr)
-      }
+      headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(bodyStr) }
     };
     const req = https.request(options, (res) => {
       let data = '';
@@ -48,8 +45,7 @@ function post(body) {
 
 exports.handler = async (event) => {
   const q = event.queryStringParameters || {};
-  const mode = q.mode || 'fetch'; // 'scan-ntk' | 'scan-broad' | 'fetch'
-
+  const mode = q.mode || 'fetch';
   let body;
 
   if (mode === 'scan-ntk') {
@@ -79,13 +75,13 @@ exports.handler = async (event) => {
       resultType: 'articles',
       includeArticleBody: false,
       includeArticleTitle: true,
+      includeArticleDate: true,
       includeSourceInfo: true,
       skipDuplicates: true,
       startSourceRankPercentile: 0,
       endSourceRankPercentile: 15
     };
   } else {
-    // Default: fetch full article content for generation
     body = {
       apiKey: process.env.NEWSAPI_KEY,
       action: 'getArticles',
@@ -97,6 +93,7 @@ exports.handler = async (event) => {
       resultType: 'articles',
       includeArticleBody: true,
       articleBodyLen: 1500,
+      includeArticleDate: true,
       includeSourceInfo: true,
       skipDuplicates: true,
       sourceUri: NTK_SOURCES
@@ -104,13 +101,9 @@ exports.handler = async (event) => {
   }
 
   const result = await post(body);
-
   return {
     statusCode: 200,
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*'
-    },
+    headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
     body: result.body
   };
 };
