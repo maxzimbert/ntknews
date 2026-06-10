@@ -7,53 +7,38 @@
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --bg: #f7f5f2; --surface: #ffffff; --surface2: #f0ede8;
+  --bg: #f7f5f2; --surface: #fff; --surface2: #f0ede8;
   --border: #d8d3cc; --border-hi: #a8a098;
   --text: #1a1712; --body: #2e2a25; --muted: #6b6560;
   --accent: #8b6410; --accent-hi: #a07818; --accent-bg: #fdf8ee;
   --green: #2e6e45; --green-bg: #eaf4ee;
   --amber: #7a5c0a; --amber-bg: #fdf5e0;
   --red: #8b2e1a; --red-bg: #fdf0ee;
-  --font-mono: 'JetBrains Mono','Fira Mono','Courier New',monospace;
-  --font-serif: 'Georgia','Times New Roman',serif;
+  --mono: 'JetBrains Mono','Fira Mono','Courier New',monospace;
+  --serif: 'Georgia','Times New Roman',serif;
 }
-body { background:var(--bg); color:var(--body); font-family:var(--font-mono); font-size:13px; line-height:1.65; min-height:100vh; }
-#app { max-width:800px; margin:0 auto; padding:32px 24px 80px; }
-
-/* Masthead */
+body { background:var(--bg); color:var(--body); font-family:var(--mono); font-size:13px; line-height:1.65; min-height:100vh; }
+#app { max-width:820px; margin:0 auto; padding:32px 24px 80px; }
 .masthead { border-bottom:2px solid var(--accent); padding-bottom:12px; margin-bottom:32px; display:flex; justify-content:space-between; align-items:flex-end; }
-.masthead-title { font-family:var(--font-serif); font-size:26px; color:var(--accent); }
+.masthead-title { font-family:var(--serif); font-size:26px; color:var(--accent); }
 .masthead-date { font-size:11px; color:var(--muted); margin-top:4px; }
-
-/* Stage label */
 .stage-lbl { font-size:10px; text-transform:uppercase; letter-spacing:.14em; color:var(--muted); margin-bottom:20px; }
-
-/* Form elements */
 label { display:block; font-size:10px; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-bottom:5px; font-weight:700; }
-input[type=password], input[type=text], input[type=url] {
-  width:100%; background:var(--surface); border:1px solid var(--border); color:var(--text);
-  font-family:var(--font-mono); font-size:13px; padding:9px 12px; outline:none; border-radius:2px; margin-bottom:12px;
-}
+input[type=password], input[type=text], input[type=url] { width:100%; background:var(--surface); border:1px solid var(--border); color:var(--text); font-family:var(--mono); font-size:13px; padding:9px 12px; outline:none; border-radius:2px; margin-bottom:12px; }
 input:focus { border-color:var(--accent); }
-
-/* Buttons */
-.btn { font-family:var(--font-mono); font-size:11px; text-transform:uppercase; letter-spacing:.08em; padding:9px 18px; cursor:pointer; border:none; border-radius:2px; transition:background .12s; }
+.btn { font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:.08em; padding:9px 18px; cursor:pointer; border:none; border-radius:2px; }
 .btn-primary { background:var(--accent); color:#fff; }
 .btn-primary:hover { background:var(--accent-hi); }
 .btn-primary:disabled { background:var(--border); color:var(--muted); cursor:not-allowed; }
-.btn-ghost { background:transparent; color:var(--muted); border:1px solid var(--border); font-family:var(--font-mono); font-size:11px; padding:7px 13px; cursor:pointer; border-radius:2px; transition:all .12s; }
+.btn-ghost { background:transparent; color:var(--muted); border:1px solid var(--border); font-family:var(--mono); font-size:11px; padding:7px 13px; cursor:pointer; border-radius:2px; }
 .btn-ghost:hover { border-color:var(--border-hi); color:var(--body); }
 .btn-ghost.on { border-color:var(--accent); color:var(--accent); background:var(--accent-bg); }
 .btn-sm { font-size:10px; padding:5px 10px; }
-
-/* Spinner */
 .spinner-wrap { text-align:center; padding:60px 0; }
 .spinner { width:28px; height:28px; border:2px solid var(--border); border-top-color:var(--accent); border-radius:50%; margin:0 auto 16px; animation:spin .7s linear infinite; }
 @keyframes spin { to { transform:rotate(360deg); } }
 .spinner-msg { font-size:12px; color:var(--muted); }
-
-/* Story cards in certify */
-.story-list { display:flex; flex-direction:column; gap:8px; margin-bottom:20px; }
+.story-list { display:flex; flex-direction:column; gap:8px; margin-bottom:16px; }
 .story-card { background:var(--surface); border:1px solid var(--border); border-radius:3px; overflow:hidden; }
 .story-card.selected { border-color:var(--accent); }
 .story-card.injected { border-left:3px solid var(--accent); }
@@ -61,7 +46,7 @@ input:focus { border-color:var(--accent); }
 .sc-num { width:36px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:var(--muted); background:var(--surface2); flex-shrink:0; border-right:1px solid var(--border); }
 .story-card.selected .sc-num { color:var(--accent); background:var(--accent-bg); }
 .sc-body { flex:1; padding:11px 13px; min-width:0; }
-.sc-topic { font-family:var(--font-serif); font-size:15px; color:var(--text); font-weight:bold; margin-bottom:3px; }
+.sc-topic { font-family:var(--serif); font-size:15px; color:var(--text); font-weight:bold; margin-bottom:3px; }
 .sc-angle { font-size:12px; color:var(--body); line-height:1.5; margin-bottom:7px; }
 .sc-meta { display:flex; gap:7px; flex-wrap:wrap; align-items:center; }
 .tag { font-size:9px; padding:2px 6px; border-radius:2px; text-transform:uppercase; letter-spacing:.06em; font-weight:700; }
@@ -70,34 +55,20 @@ input:focus { border-color:var(--accent); }
 .tag-x { background:var(--red-bg); color:var(--red); }
 .tag-kw { font-size:10px; color:var(--muted); }
 .tag-cat { font-size:9px; color:var(--accent); border:1px solid var(--accent); padding:2px 7px; border-radius:2px; cursor:pointer; background:var(--accent-bg); }
-.tag-inj { font-size:9px; color:var(--accent); text-transform:uppercase; letter-spacing:.06em; }
 .sc-actions { display:flex; flex-direction:column; justify-content:center; gap:4px; padding:8px 6px; border-left:1px solid var(--border); }
-.arr-btn { background:var(--surface2); border:1px solid var(--border); border-radius:2px; cursor:pointer; font-size:12px; width:24px; height:24px; display:flex; align-items:center; justify-content:center; line-height:1; color:var(--muted); transition:all .1s; }
+.arr-btn { background:var(--surface2); border:1px solid var(--border); border-radius:2px; cursor:pointer; font-size:12px; width:24px; height:24px; display:flex; align-items:center; justify-content:center; color:var(--muted); }
 .arr-btn:hover { border-color:var(--accent); color:var(--accent); }
 .arr-btn:disabled { opacity:.3; cursor:default; }
 .check-box { width:36px; display:flex; align-items:center; justify-content:center; flex-shrink:0; border-left:1px solid var(--border); color:var(--accent); font-size:16px; }
-
-/* URL panel per story */
-.url-panel { border-top:1px solid var(--border); padding:10px 13px; background:var(--surface2); }
-.url-row { display:flex; gap:7px; }
-.url-row input { margin-bottom:0; flex:1; font-size:12px; padding:7px 10px; }
-.url-status { font-size:11px; color:var(--muted); margin-top:5px; }
-
-/* Category quick picks */
-.cat-label { font-size:9px; text-transform:uppercase; letter-spacing:.14em; color:var(--muted); margin:20px 0 7px; font-weight:700; }
-
-/* Injector */
-.injector { background:var(--surface2); border:1px solid var(--border); border-radius:3px; padding:14px 16px; margin:16px 0; }
+.injector { background:var(--surface2); border:1px solid var(--border); border-radius:3px; padding:14px 16px; margin:12px 0; }
 .inj-title { font-size:10px; text-transform:uppercase; letter-spacing:.12em; color:var(--muted); margin-bottom:10px; font-weight:700; }
 .pick-row { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
-.pick-btn { font-family:var(--font-mono); font-size:10px; padding:5px 10px; border:1px solid var(--border); border-radius:2px; cursor:pointer; background:var(--surface); color:var(--body); transition:all .1s; }
+.pick-btn { font-family:var(--mono); font-size:10px; padding:5px 10px; border:1px solid var(--border); border-radius:2px; cursor:pointer; background:var(--surface); color:var(--body); }
 .pick-btn:hover:not(:disabled) { border-color:var(--accent); color:var(--accent); }
 .pick-btn:disabled { opacity:.5; cursor:default; }
 .inj-custom { display:flex; gap:8px; }
 .inj-custom input { margin-bottom:0; flex:1; }
 .inj-status { font-size:11px; color:var(--muted); margin-top:8px; min-height:16px; }
-
-/* Global URL import */
 .url-import { background:var(--surface2); border:1px solid var(--border); border-radius:3px; padding:12px 14px; margin:12px 0; }
 .ui-row { display:flex; gap:8px; }
 .ui-row input { margin-bottom:0; flex:1; }
@@ -105,32 +76,41 @@ input:focus { border-color:var(--accent); }
 .ui-item { font-size:11px; color:var(--muted); display:flex; gap:8px; align-items:center; }
 .ui-item a { color:var(--accent); word-break:break-all; }
 .ui-rm { background:none; border:none; color:var(--red); cursor:pointer; font-size:13px; flex-shrink:0; padding:0; }
-
-/* Sections toggle */
-.sec-wrap { border-top:1px solid var(--border); padding-top:18px; margin-top:8px; }
-.sec-row { display:flex; gap:7px; flex-wrap:wrap; margin-bottom:18px; }
+.sec-wrap { border-top:1px solid var(--border); padding-top:16px; margin-top:8px; }
+.sec-row { display:flex; gap:7px; flex-wrap:wrap; margin-bottom:16px; }
 .ctrl-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
 .counter { font-size:12px; color:var(--muted); }
 .counter strong { color:var(--accent); }
-
+/* Source preview */
+.src-story { background:var(--surface); border:1px solid var(--border); border-radius:3px; margin-bottom:12px; overflow:hidden; }
+.src-story-hdr { background:var(--surface2); border-bottom:1px solid var(--border); padding:10px 14px; display:flex; justify-content:space-between; align-items:center; }
+.src-story-topic { font-family:var(--serif); font-size:14px; color:var(--text); font-weight:bold; }
+.src-article { display:flex; align-items:flex-start; gap:10px; padding:9px 14px; border-bottom:1px solid var(--border); }
+.src-article:last-child { border-bottom:none; }
+.src-art-meta { flex:1; min-width:0; }
+.src-art-title { font-size:12px; color:var(--body); line-height:1.4; }
+.src-art-title a { color:var(--accent); text-decoration:none; }
+.src-art-title a:hover { text-decoration:underline; }
+.src-art-info { font-size:10px; color:var(--muted); margin-top:3px; }
+.src-rm { background:none; border:none; color:var(--red); cursor:pointer; font-size:14px; flex-shrink:0; padding:2px; }
+.src-add-row { padding:10px 14px; display:flex; gap:8px; border-top:1px dashed var(--border); }
+.src-add-row input { margin-bottom:0; flex:1; font-size:12px; padding:6px 10px; }
 /* Output */
-.out-story { margin-bottom:32px; border:1px solid var(--border); border-radius:3px; overflow:hidden; }
+.out-story { margin-bottom:28px; border:1px solid var(--border); border-radius:3px; overflow:hidden; }
 .out-story-hdr { background:var(--surface2); border-bottom:1px solid var(--border); padding:10px 16px; display:flex; justify-content:space-between; align-items:center; gap:12px; }
 .out-story-num { font-size:11px; color:var(--muted); font-weight:700; }
-.out-story-topic { font-family:var(--font-serif); font-size:16px; color:var(--text); font-weight:bold; }
+.out-story-topic { font-family:var(--serif); font-size:16px; color:var(--text); font-weight:bold; }
 .out-story-cat { font-size:10px; color:var(--accent); border:1px solid var(--accent); padding:2px 8px; border-radius:2px; }
 .out-story-body { padding:20px; }
-.out-sec { margin-bottom:24px; }
+.out-sec { margin-bottom:22px; }
 .out-sec:last-child { margin-bottom:0; }
 .out-sec-lbl { font-size:9px; text-transform:uppercase; letter-spacing:.14em; color:var(--muted); font-weight:700; margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid var(--border); }
 .out-text { font-size:13px; line-height:1.9; color:var(--body); }
 .out-text strong { color:var(--text); }
 .out-text a { color:var(--accent); text-decoration:none; }
 .out-text a:hover { text-decoration:underline; }
-.act-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:20px; }
-.copy-sec-btn { font-size:10px; float:right; margin-bottom:8px; }
-
-/* Error */
+.act-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
+.src-links { padding:8px 16px 10px; border-top:1px solid var(--border); background:var(--surface2); display:flex; gap:10px; flex-wrap:wrap; }
 .error { background:var(--red-bg); border:1px solid #e8a090; color:var(--red); padding:10px 13px; margin-top:12px; font-size:12px; border-radius:2px; }
 </style>
 </head>
@@ -155,109 +135,16 @@ const SECS = ['truths','probabilities','possibilities','lies'];
 const QUICK_PICKS = ['US News','World News','Economy','Health','Foreign Policy','Public Memory','Education','Climate'];
 
 let S = {
-  stage:'init',
-  antKey: localStorage.getItem('ntk_ant')||'',
-  newsKey: '',
-  candidates: [],      // [{id,topic,angle,category,keywords,sourcing,injected?}]
-  storyOrder: [],      // ids in display order
-  selected: new Set(),
-  sections: new Set(SECS),
-  packages: {},        // id -> {truths,probabilities,possibilities,lies} text
-  candidateUrls: {},    // id -> [{title, url}] populated after generation
-  importedUrls: [],    // [{url, title, body}] - global supplementary sources
-  storyUrls: {},       // {storyId: [{url, body}]} - per-story supplementary sources
-  urlInput: '',
-  customInput: '',
-  injBusy: false,
-  injStatus: '',
-  statusMsg: '',
-  error: '',
-  copied: ''
+  stage:'init', antKey:localStorage.getItem('ntk_ant')||'',
+  candidates:[], storyOrder:[], selected:new Set(), sections:new Set(SECS),
+  fetchedArticles:{},  // storyId -> [{title,url,date,source,body,included}]
+  storyUrls:{},        // storyId -> [{url,body}] editor-added
+  packages:{}, candidateUrls:{},
+  urlInput:'', customInput:'', injBusy:false, injStatus:'',
+  statusMsg:'', error:'', copied:''
 };
 
 // ─── PROMPTS ─────────────────────────────────────────────────────────────────
-
-const DISC = `Today is ${TODAY}. You are the NTK News story scanner for NTK News.
-
-Run an independent scan of today's news landscape. Produce 10-12 candidate stories.
-
-──────────────────────────────────────
-SCANNING QUESTIONS
-──────────────────────────────────────
-
-COVERAGE QUESTIONS — answer these first:
-- What are the 3-5 most consequential things that happened or are developing in the last 24-48 hours?
-- What is everyone talking about that Jamie (busy parent, stopped following news) would feel left out of if she missed it?
-- What happened that directly affects how Jamie spends money, raises her kids, gets healthcare, or feels safe?
-- What story has a historical or structural dimension that makes today's news click into a larger pattern?
-
-MIX QUESTIONS — check your list against these:
-- Is the list too heavy — all institutional failure, no humanity?
-- Is there anything interesting that isn't alarming?
-- Is there geographic diversity — not all Washington, not all coast?
-- Is there a story that would make Jamie text someone?
-- Is there a story showing verifiable progress on something hard — evidence of movement, not a pledge?
-- Is there a story that leaves Jamie better equipped — understanding her health, her kids' school, her finances, or her rights?
-
-QUALITY QUESTIONS — for each candidate:
-- Is this actually new, or incremental noise on a story that already ran?
-- Does the angle give something to say, or is it just "thing is happening"?
-- Is there a civilian anchor available — a dollar figure, a name, an institution Jamie already knows?
-
-──────────────────────────────────────
-THE TWO-PRONG PRINCIPLE
-──────────────────────────────────────
-When a story is consequential enough, two items are stronger than one. The first prong is the event — what happened today, specifically. The second prong is the pattern — the larger structure that makes the event legible. Use two prongs when Jamie needs both "what happened" AND "why is this happening" to feel oriented. If the pattern is already visible inside the event item, one is enough.
-
-──────────────────────────────────────
-SPECIALTY BEATS — prefer these sources by category
-──────────────────────────────────────
-- Education: Chalkbeat, Hechinger Report, The 74
-- Health: STAT News, KFF Health News
-- Criminal justice: Marshall Project
-- Gun violence: The Trace
-- General: AP, Reuters, NYT, Washington Post, WSJ, Bloomberg, Axios, Foreign Policy
-
-──────────────────────────────────────
-SOURCING NOTATIONS
-──────────────────────────────────────
-- strong: Multiple recent articles likely available from credible sources. Ready to run.
-- moderate: Some coverage available, may need one or two manual URLs. Flag which sources to check.
-- manual: No breaking news peg — anniversary items, historical context pieces, specialty beat stories not on the wire. Editor must supply URLs directly. Do not mark anything manual unless you are confident it cannot be found in a keyword search.
-
-──────────────────────────────────────
-KEYWORDS — THIS IS CRITICAL
-──────────────────────────────────────
-The keywords field goes directly into a professional news database query (EventRegistry). They must be specific enough to pull articles about THIS EXACT STORY — not the general topic.
-
-BAD keywords (too broad, returns wrong articles):
-- "Medicare drug prices" → returns everything about drug costs
-- "immigration policy" → returns everything about immigration
-- "climate change" → useless
-
-GOOD keywords (specific to this story, match language reporters actually used):
-- "Medicare Part D drug negotiation CMS insulin" → returns articles about the specific negotiation program
-- "ICE deportation flights military aircraft Title 42" → returns articles about this specific operation
-- "SVB Silicon Valley Bank FDIC receivership deposits" → returns articles about this specific event
-
-The test: would a reporter covering THIS specific story use these exact words in their article? If not, revise. 3-6 words maximum. Named actors, specific programs, bill numbers, and institutions outperform generic topic words every time.
-
-──────────────────────────────────────
-OUTPUT FORMAT
-──────────────────────────────────────
-Return ONLY a valid JSON array. Nothing before or after. No markdown fences. Start with [ end with ].
-
-[{"id":"1","topic":"short topic name","angle":"one sharp NTK sentence — specific actor, specific stake","category":"Geopolitical|Domestic|Economic|Cultural|Health|Science|Under-Reported|Orienting","keywords":"specific database query words — named actors, programs, institutions","sourcing":"strong|moderate|manual"}]`;
-
-const INJ_PROMPT = (cat) => `Today is ${TODAY}. You are the NTK News story scanner for NTK News. Find the 1-2 best stories right now in the category: "${cat}".
-
-Standards: consequential, civilian anchor (dollar figure, name, institution), gives Jamie (busy parent, stopped following news) something to feel oriented by — not just informed.
-
-KEYWORDS are critical — they go into a professional news database (EventRegistry). Make them specific to this exact story: named actors, specific programs, specific institutions. Not general topic words.
-
-Return ONLY a valid JSON array. Nothing before or after. No markdown fences. Use IDs starting with "inj-1".
-
-[{"id":"inj-1","topic":"short topic name","angle":"one sharp NTK sentence","category":"${cat}","keywords":"specific named actors and programs","sourcing":"strong|moderate|manual"}]`;
 
 const DISC_WITH_HEADLINES = (headlines) => `Today is ${TODAY}. You are the NTK News story scanner for NTK News.
 
@@ -266,46 +153,73 @@ Below are the actual headlines publishing RIGHT NOW from the NTK source pool. Th
 TODAY'S HEADLINES FROM NTK SOURCES:
 ${headlines}
 
-FRESHNESS RULE: Each headline is labeled with its publication date. Today is ${TODAY}. Strongly prefer articles from the last 48 hours. Articles older than 48 hours should only be selected if the story is still actively developing today — not if it's a concluded event or a trend piece that could have run any week. Flag any selected story older than 48 hours with sourcing: moderate at minimum.
-
 SELECTION CRITERIA:
 COVERAGE: Which are the 3-5 most consequential in the last 24-48hrs? Which would Jamie (busy parent, stopped following news) feel left out of? Which affect her paycheck, kids, healthcare, safety? Which has a historical dimension that makes today click?
 MIX: Too heavy — all crisis, no humanity? Geographic diversity? Story Jamie would text? Verifiable progress? Story leaving her better equipped?
 QUALITY: Actually new, not noise? Angle gives something to say? Civilian anchor available — dollar figure, name, institution?
 TWO-PRONG: When a story is consequential enough, select both the event AND the structural pattern as separate items.
+FRESHNESS: Prefer articles from the last 48 hours. Anything older should only be selected if it is still actively developing today.
 
-KEYWORDS — CRITICAL: Go directly into EventRegistry for article fetching. Use language a reporter covering THIS story would actually use — named actors, specific programs, bill numbers. Not general topics.
+KEYWORDS — CRITICAL: Go directly into EventRegistry for article fetching. Use language a reporter covering THIS story would actually use — named actors, specific programs, bill numbers. Not general topics. Named institutions outperform generic topic words every time.
 
-SOURCING: strong = multiple credible articles available now. moderate = some coverage, may need supplements. manual = no breaking peg, editor must supply URLs directly.
+SOURCING: strong = multiple credible articles available now. moderate = some coverage. manual = no breaking peg, editor must supply URLs.
 
-Return ONLY a valid JSON array. Nothing before or after. No markdown fences. Start with [ end with ].
-
+Return ONLY a valid JSON array. Nothing before or after. No markdown fences.
 [{"id":"1","topic":"short topic name","angle":"one sharp NTK sentence — specific actor, specific stake","category":"Geopolitical|Domestic|Economic|Cultural|Health|Science|Under-Reported|Orienting","keywords":"specific named actors programs institutions","sourcing":"strong|moderate|manual"}]`;
 
-const GLOBAL = `HARD OUTPUT LIMIT: 300 words per section. Mandatory ceiling. Count before outputting.
+const INJ_PROMPT = (cat) => `Today is ${TODAY}. Find the 1-2 best NTK-worthy stories right now in: "${cat}".
+Standards: consequential, civilian anchor, gives Jamie something to feel oriented by.
+KEYWORDS must be specific — named actors, programs, institutions — for EventRegistry.
+Return ONLY a valid JSON array. No markdown fences. IDs starting "inj-1".
+[{"id":"inj-1","topic":"...","angle":"one sharp NTK sentence","category":"${cat}","keywords":"specific named actors programs","sourcing":"strong|moderate|manual"}]`;
 
-You are the journalist-historian for NTK News, a nonprofit news-and-history app. Advanced degree, reads a lot of history. Writes for readers who are tired, news-avoidant, at a 3rd-8th grade social studies level. The expertise is yours. The vocabulary is theirs.
+const GLOBAL = `You are the journalist-historian for NTK News, a nonprofit news-and-history app. You have an advanced degree and have read a lot of history, but you write for readers who are tired, news-avoidant, and read between a third and eighth grade social studies level. The expertise is yours. The vocabulary is theirs.
 
 EDITORIAL PILLARS:
-1. Authoritarian movements are persistently ineffective, corrupt, incompetent, bullying, and wasteful. Pattern, not exception.
-2. Income inequality erodes trust. Immigration is a net economic positive. Insufficient childcare and eroding middle-class ladders are structural failures. America's greatness is its people, its capacity for renewal, its flexible founding documents.
-3. Climate change undermines stability. Privacy, reproductive rights, freedom of movement are constitutional rights. The Constitution is under stress from all three directions.
-4. America is defined by contradictions. Tension between freedom and community obligation is the operating system. Journalism makes truths more durable.
+1. On Power & Corruption: Authoritarian movements are persistently ineffective, corrupt, incompetent, bullying, and wasteful. Historical record, not polemic. Pattern, not exception.
+2. On Democracy & Society: Income inequality erodes trust. Immigration is a net economic positive when jobs and wages grow. Insufficient childcare and eroding middle-class ladders are structural failures. America's greatness lies in its people, its capacity for renewal, and its flexible founding documents.
+3. On Climate & Rights: Climate change undermines stability. Privacy, reproductive rights, and freedom of movement are constitutional rights. The Constitution is under stress from all three directions: executive orders, a paralyzed Congress, a rewriting Supreme Court.
+4. On History: America is defined by contradictions — liberty alongside slavery, equality alongside exclusion. Tension between individual freedom and community obligation is the operating system. Journalism's job is to make truths more durable.
 
-TONE: AP clarity — every sentence earns its place. Walter Lippmann depth — situate news in historical cycles. Jamie is a busy parent who stopped reading news. Orient her, don't lecture. NTK voice: grounded, direct, like a steady colleague. "This has happened before. Here's what shifted."
+TONE & VOICE:
+- AP clarity: concise, fact-based. Every sentence earns its place.
+- Walter Lippmann depth: situate news in historical cycles and structural patterns.
+- Jamie is a busy parent who stopped reading the news. Orient her, don't lecture.
+- NTK voice: grounded, direct, like a steady colleague. "This has happened before. Here's what shifted." Never therapeutic.
 
-STRUCTURAL RULES: Anchor output in what the source articles report — weave them into unified analysis, never summarize separately. Citations: ([Source Name](URL)) embedded in sentence before the closing period. Use **bold** for item headlines only — never ## or ### headings. Every factual claim needs a source.
+STRUCTURAL RULES:
+- Weave all source articles into unified analysis. Never summarize each separately.
+- Citations: ([Source Name](URL)) embedded in the sentence, immediately before the closing period. Never on its own line. Never after the period.
+- Use **bold** for item headlines and subheads only. Never ## or ### headings.
+- Every factual claim needs a source. Every historical claim needs a reference.
 
-SOURCE WEIGHTING: Articles are primary. Historical parallels are seasoning — one sentence max when earned, free reference link (Wikipedia, Library of Congress, Britannica). NTK has a SWIPE LEFT History layer — create curiosity gaps, don't deliver the full story.`;
+SOURCE WEIGHTING:
+- Source articles are primary. Anchor output in what they report.
+- Historical parallels are seasoning — one sentence max when earned, free reference link (Wikipedia, Library of Congress, Britannica).
+- NTK has a SWIPE LEFT History layer. Use history as framing — create curiosity gaps, don't deliver the full story here.
 
-// Voice reference embedded directly in section prompts — no separate pass
+QUALITY FLOOR — all three must be met before outputting:
+- Clarity: The reader understands exactly what happened and why without rereading. If a sentence requires a second pass, rewrite it.
+- Interestingness: Every item should crackle with liveliness — vivid, dramatic, history being made in real time. The reader must want to turn the page even when she knows what's coming.
+- Aesthetic pleasure: The writing moves. Each sentence earns the next. The reader feels she is watching something happen, not being told what to think.
+
+If any of the three is missing, revise before outputting.
+
+CROSS-SECTION RULES — each section owns a lane:
+- Already happened and verifiable → Truths only.
+- Most likely next step (60%+) → Probabilities only.
+- Lower-probability scenario tethered to evidence → Possibilities only.
+- Identifiable actor making a claim that fails factual scrutiny → Lies only.
+
+HARD OUTPUT LIMIT: 350 words per section. Mandatory ceiling.`;
+
 const VOICE_REF = `
-VOICE — STUDY THESE EXAMPLES:
+VOICE — STUDY THESE EXAMPLES OF NTK WRITING THAT WORKS:
 
-HEADLINE THAT WORKS: "Norway Gave Every Five-Year-Old an iPad in 2016. A Decade Later, 500,000 Norwegians Can't Read a Text Message."
+HEADLINE: "Norway Gave Every Five-Year-Old an iPad in 2016. A Decade Later, 500,000 Norwegians Can't Read a Text Message."
 Why: Two sentences. Scale, then consequence with a unit Jamie can feel. Not "reading declined" — 500,000 people in a country of 5.6 million.
 
-BODY THAT WORKS: "Norway now ranks dead last among 65 nations measured for children's enjoyment of reading, and 15,000 students finish primary school functionally illiterate — the direct result of a decade-long experiment Norwegian officials now call a catastrophic failure. The lesson: you can't learn to ride a bike from reading a book, and you can't build cognitive capacity by outsourcing it to machines."
+BODY: "Norway now ranks dead last among 65 nations measured for children's enjoyment of reading, and 15,000 students finish primary school functionally illiterate — the direct result of a decade-long experiment Norwegian officials now call a catastrophic failure. The lesson: you can't learn to ride a bike from reading a book, and you can't build cognitive capacity by outsourcing it to machines."
 Why: Every number has a unit. The kicker is an analogy that explains WHY, not just THAT.
 
 DETAIL THAT REVEALS MORE THAN THE FINDING: "Researchers appended FAQs asking media not to use the words 'stupid,' 'dumb,' or 'brain rot' — a tell that the findings are exactly as bad as they sound."
@@ -318,76 +232,92 @@ RULES:
 4. Name the real mechanism beneath the stated one: "lower labor costs dressed up as personalization."
 5. Second sentence adds consequence, context, or analogy — never restates the first.
 6. End with weight, not trailing context.
+7. If you cannot write a section item from what the source articles actually contain, skip it — do not invent. Write [INSUFFICIENT SOURCE MATERIAL FOR THIS ITEM] and move on.
 
-JAMIE TEST — before you output, ask of every item: "Why should she care about this right now, in her actual life?" If the answer isn't in the first two sentences, rewrite the opening.`;
+JAMIE TEST: For every item ask — "Why should she care about this right now, in her actual life?" If the answer isn't in the first two sentences, rewrite the opening.`;
 
-const makePrompt = (section, articlesText, suppUrls) => {
-  const suppBlock = suppUrls.length
-    ? `\n\nEDITOR-IMPORTED SOURCES (use these alongside the articles below):\n${suppUrls.map(u=>`URL: ${u.url}\n${u.body||'[Content unavailable — cite by URL]'}`).join('\n\n---\n\n')}`
-    : '';
+const SEC_PROMPTS = {
+truths: `You are now producing the TRUTHS section of an NTK News digest. HARD LIMIT: 350 words. Output only the Truths section.
 
-  const sectionInstructions = {
-    truths: `You are producing the TRUTHS section of an NTK News digest item. Hard limit: 300 words. Output only the Truths section — nothing else.
+WHAT TRUTHS ARE: Observable facts in the selected articles — what people said and did, who performs what role. Something a historian selects for a vivid narrative, not something a pundit argues about.
 
-Truths are observable facts: what people said and did, who performs what role. A historian's selection for vivid narrative.
+THE DIGEST HEADLINE — most important sentence you write:
+This headline does double duty: it appears on the digest screen as the story tile Jamie sees while scrolling the lineup, AND again at the top of the story once she taps. Formula: today's news fact + one civilian anchor the reader already owns. The anchor must be something already in the room — a brand name, a dollar figure with a unit she can feel, a named institution, a cultural touchstone. Think Lehman Brothers, not the 1929 crash. A car payment, not historic highs. Do NOT use years as anchors — years are historian's shorthand. Find the civilian image, attach your truth to it, stop.
 
-REQUIRED OPENING:
-- **Digest headline:** This is the headline that appears on the digest screen and at the top of the story. Bold. Format: today's fact + consequence Jamie can feel. Two sentences. This is the most important line you write.
+DO NOT write textbook chapter titles. "Income Inequality Erodes Trust" is dead on arrival. The fix is the civilian anchor.
+
+Examples:
+- "Trump's Tariffs Cost the Average American Family $1,700 a Year. That's a Car Payment."
+- "ICE Just Detained a U.S. Citizen. That's Not a Bug in the System — It's the System Working as Designed."
+- "Childcare Costs More Than Rent in 28 States. The Middle Class Didn't Collapse — It Was Defunded."
+
+REQUIRED OPENING before truth items:
+- **Digest headline:** [the headline as described above]
 - **Lede:** 1-2 sentences, 86-character hard limit, AP wire register. No wind-up.
-- **Subhead:** one sentence bridging the lede to the items below.
+- **Subhead:** One sentence bridging the lede to the items below. Tease the most significant truth.
 
-THEN 2-4 ITEMS. Each item:
-- **Bold headline** (fact + unit Jamie can feel)
-- 2-4 sentence body. First sentence lands the fact. Second does something with it — consequence, analogy, kicker. Citations: ([Source Name](URL)) before the closing period.
+THEN 2-4 ITEMS:
+- **Bold item headline** (today's hook + civilian anchor)
+- 2-4 sentence body. First sentence lands the fact. Second does something with it — consequence, analogy, kicker. Citation: ([Source Name](URL)) before closing period.
 
-DO NOT include predictions, speculation, or debunking here — those go in other sections.`,
+If source articles don't support an item, write [INSUFFICIENT SOURCE MATERIAL] and skip — do not invent.
+Boundary: Predictions → Probabilities. Speculation → Possibilities. Debunking → Lies.`,
 
-    probabilities: `You are producing the PROBABILITIES section of an NTK News digest item. Hard limit: 300 words. Output only the Probabilities section — nothing else.
+probabilities: `You are now producing the PROBABILITIES section of an NTK News digest. HARD LIMIT: 350 words. Output only the Probabilities section.
 
-Probabilities are likely next steps — pattern recognition stated with conviction, not hedged speculation.
+WHAT PROBABILITIES ARE: Likely next steps — what will almost certainly happen. Pattern recognition stated with conviction, not hedged speculation. Think: "If I've seen this pattern before, what happens next?"
 
-Each probability:
-- Names specific actors and timelines ("by fall 2026," "within 90 days")
-- States confidently: "will almost certainly," "the most likely outcome is"
-- Gives a specific observable signal the reader can watch for: "Watch for procurement announcements framed around 'equity' and 'access,' not learning outcomes."
-- Names the real driver beneath the stated one
+HOW TO WRITE THEM:
+- Be specific about actors, timelines, and mechanisms. "Congress will likely…" not "Policymakers may respond."
+- State confidently: "will almost certainly," "the most likely outcome is." Reserve "might" and "could" for Possibilities.
+- Each gives the reader a specific signal to watch for in the next 1-14 days — something observable that confirms or disconfirms the forecast.
+- Ground forecasts in source articles first. Reach for historical patterns only when they genuinely strengthen the forecast.
+- Do NOT command the reader to "watch" for something or "look." State what will happen and why.
+- If source articles don't support a forecast, write [INSUFFICIENT SOURCE MATERIAL] and skip.
 
-FORMAT: Open with a **subhead** — one bold sentence that labels this section's thesis (e.g. "The most likely outcome is political gridlock, not collapse"). This appears at the top of the Probabilities section inside the story. Then each probability: **bold item headline** as its own paragraph + body as separate paragraph below. Arrange most immediate to most structural. Headline names a specific actor, institution, or dollar figure. Citation on key claims.`,
+FORMAT: Each probability opens with a **bold subhead** — not a digest headline. Subheads live inside the story, visible only after Jamie has tapped and opened it. She is already committed. The subhead orients her within the section — make it forward-looking and declarative, slightly longer and more descriptive than a digest headline. Civilian anchor rule still applies. The subhead must be its own standalone paragraph. Body sentences must be a separate paragraph below. Never run subhead and body together. Arrange most immediate to most structural.`,
 
-    possibilities: `You are producing the POSSIBILITIES section of an NTK News digest item. Hard limit: 300 words. Output only the Possibilities section — nothing else.
+possibilities: `You are now producing the POSSIBILITIES section of an NTK News digest. HARD LIMIT: 350 words. Output only the Possibilities section.
 
-Possibilities are lower-probability but plausible outcomes — black swans, unintended consequences, second-order effects. The reader texts this section to her group chat.
+WHAT POSSIBILITIES ARE: Lower-probability but plausible outcomes — black swans, unintended consequences, second-order effects. Things that would surprise most people but not a historian. The section where NTK expands the reader's imagination without scaring her.
 
-Each possibility:
-- Names the conditions that would make the unlikely likely: "If X and Y converge, then Z becomes plausible."
-- At least one hopeful or constructive possibility
-- Tethered to evidence from the articles, not invented
+WHAT POSSIBILITIES ARE NOT: Not the base case (that's Probabilities). Not fiction — every possibility must be tethered to evidence. Not fear-based speculation. Not rhetorical games.
 
-FORMAT: Open with a **subhead** — one bold sentence that labels this section's thesis (e.g. "The scenarios nobody is pricing in"). This appears at the top of the Possibilities section inside the story. Then each possibility: **bold item headline** + 2-4 sentence body. Most grounded to most speculative. Register: informed curiosity — "here's the thing almost nobody is considering."`,
+HOW TO WRITE THEM:
+- Name the conditions that make the unlikely likely: "If X and Y converge — then Z becomes plausible."
+- Include at least one hopeful or constructive possibility. History contains surprising turns toward reform and resilience.
+- Start with source articles. What do they imply that they don't say outright?
+- Name the specific actor, event, or mechanism that triggers the scenario.
+- If source articles don't support a scenario, write [INSUFFICIENT SOURCE MATERIAL] and skip.
 
-    lies: `You are producing the LIES section of an NTK News digest item. Hard limit: 300 words. Output only the Lies section — nothing else.
+FORMAT: Each possibility opens with a **bold subhead** — not a digest headline. Subheads live inside the story. Make it speculative but grounded — an intelligence analyst's edge-case briefing. Civilian anchor rule still applies. Subhead as own paragraph, body as separate paragraph below. Arrange most grounded to most speculative.
 
-Lies are false or manipulative narratives in active circulation by identifiable actors. Not honest disagreements — deliberate distortion.
+EMOTIONAL REGISTER: Informed curiosity — "here's the thing almost nobody is considering." The reader texts this section to her group chat.`,
 
-Each lie:
-- Names the claim and who is making it. "Some people say" is not NTK's voice. "Senator X claimed Y on Z platform" is.
-- Exposes who benefits: clout, cash, or power
-- Uses the formula: "For [person or group], this feels true. But historically, it functions as a lie."
-- Does not dehumanize believers — the lie is the target, not the audience
+lies: `You are now producing the LIES / NARRATIVE DISTORTIONS section of an NTK News digest. HARD LIMIT: 350 words. Output only the Lies section.
 
-FORMAT: Open with a **subhead** — one bold sentence that labels this section's thesis (e.g. "Two narratives in active circulation — both designed to make you stop asking questions"). This appears at the top of the Lies section inside the story. Then each lie: **bold item headline** (the distortion stated clearly) + 3-5 sentences: claim, maker, beneficiary, factual reality, historical parallel when earned. Most dangerous to most absurd. Register: controlled precision — a prosecutor, not a pundit.`
-  };
+WHAT LIES ARE: False or manipulative narratives in active circulation — claims being stated, amplified, or implied by identifiable actors for identifiable reasons. Not honest disagreements. Deliberate distortion.
 
-  return `${GLOBAL}
+WHAT LIES ARE NOT: Not factual errors or honest debate. Two economists disagreeing is not a lie. A politician claiming tariffs raise no prices when all evidence is overwhelming — that's a lie. Not partisan scorekeeping — apply equally regardless of source.
 
-${VOICE_REF}
+HOW TO WRITE THEM:
+- Name the claim and who is making it. "Some people say" is not NTK's voice. "Senator X claimed Y on Z platform" is.
+- Expose who benefits: clout, cash, or power. Trace the incentive.
+- Formula: "For [person or group], this feels true. But historically, it functions as a lie."
+- Do NOT dehumanize believers. The lie is the target, not the audience. The lie was engineered to be persuasive — disassemble the engineering, don't mock the people it was designed for.
+- If source articles don't support a lie, write [INSUFFICIENT SOURCE MATERIAL] and skip.
 
-${sectionInstructions[section]}${suppBlock}
+FORMAT: Each lie opens with a **bold subhead** — not a digest headline. Subheads live inside the story. State the distortion clearly so she recognizes it immediately in the wild. Civilian anchor rule applies. Subhead as own paragraph, then 3-5 sentences: claim, maker, beneficiary, factual reality, historical parallel when earned. Arrange most dangerous to most absurd.
 
-ARTICLES TO ANALYZE:
-
-${articlesText}`;
+EMOTIONAL REGISTER: Controlled precision — a prosecutor laying out evidence, not a pundit ranting. The reader finishes thinking: "Now I can see the manipulation. I can explain it to someone else." That is the NTK superpower.`
 };
+
+function makePrompt(section, articlesText, suppUrls) {
+  const suppBlock = suppUrls && suppUrls.length
+    ? '\n\nEDITOR-IMPORTED SOURCES:\n' + suppUrls.map(u => `URL: ${u.url}\n${u.body||'[Content unavailable]'}`).join('\n\n---\n\n')
+    : '';
+  return `${GLOBAL}\n\n${VOICE_REF}\n\n${SEC_PROMPTS[section]}${suppBlock}\n\nARTICLES TO ANALYZE:\n\n${articlesText}`;
+}
 
 // ─── API ─────────────────────────────────────────────────────────────────────
 
@@ -395,7 +325,7 @@ async function ai(prompt, maxTok=1500) {
   const r = await fetch('https://api.anthropic.com/v1/messages', {
     method:'POST',
     headers:{'Content-Type':'application/json','x-api-key':S.antKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-    body: JSON.stringify({model:'claude-sonnet-4-20250514', max_tokens:maxTok, messages:[{role:'user',content:prompt}]})
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:maxTok,messages:[{role:'user',content:prompt}]})
   });
   const d = await r.json();
   if (d.error) throw new Error(d.error.message);
@@ -403,11 +333,10 @@ async function ai(prompt, maxTok=1500) {
 }
 
 async function fetchNews(kw) {
-  const p = new URLSearchParams({q:kw, lang:'eng', articlesCount:'5', articlesSortBy:'date', includeArticleBody:'true', articleBodyHtml:'false', skipDuplicates:'true', startSourceRankPercentile:'0', endSourceRankPercentile:'70'});
+  const p = new URLSearchParams({q:kw,lang:'eng',articlesCount:'5',articlesSortBy:'date',includeArticleBody:'true',articleBodyHtml:'false',skipDuplicates:'true'});
   const r = await fetch(`/.netlify/functions/news?${p}`);
   if (!r.ok) throw new Error('NewsAPI '+r.status);
-  const d = await r.json();
-  return d.articles?.results||[];
+  return (await r.json()).articles?.results || [];
 }
 
 async function fetchUrl(url) {
@@ -415,14 +344,10 @@ async function fetchUrl(url) {
     const r = await fetch(url, {mode:'cors'});
     if (!r.ok) return {url, body:''};
     const html = await r.text();
-    // strip tags
     const tmp = document.createElement('div');
     tmp.innerHTML = html;
-    const body = (tmp.innerText||tmp.textContent||'').replace(/\s+/g,' ').slice(0,2000);
-    return {url, body};
-  } catch {
-    return {url, body:''};
-  }
+    return {url, body:(tmp.innerText||tmp.textContent||'').replace(/\s+/g,' ').slice(0,2000)};
+  } catch { return {url, body:''}; }
 }
 
 function parseJSON(raw) {
@@ -431,47 +356,31 @@ function parseJSON(raw) {
   return JSON.parse(c);
 }
 
-function parsePkg(raw) {
-  const secs = {truths:'',probabilities:'',possibilities:'',lies:''};
-  const labels = {truths:'TRUTHS',probabilities:'PROBABILITIES',possibilities:'POSSIBILITIES',lies:'LIES'};
-  for (const [key,lbl] of Object.entries(labels)) {
-    const re = new RegExp(`===\\s*${lbl}\\s*===([\\s\\S]*?)(?===\\s*(?:TRUTHS|PROBABILITIES|POSSIBILITIES|LIES)\\s*===|$)`,'i');
-    const m = raw.match(re);
-    if (m) secs[key] = m[1].trim();
-  }
-  return secs;
-}
-
 function mdToHtml(text) {
   return text
-    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-    .replace(/\(\[([^\]]+)\]\(([^)]+)\)\)/g, '(<a href="$2" target="_blank" rel="noopener">$1</a>)')
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+    .replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')
+    .replace(/\(\[([^\]]+)\]\(([^)]+)\)\)/g,'(<a href="$2" target="_blank" rel="noopener">$1</a>)')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
 }
 
 // ─── ACTIONS ─────────────────────────────────────────────────────────────────
 
 async function scanHeadlines(mode) {
-  const msg = mode === 'scan-broad' ? 'Fetching top global sources...' : 'Fetching NTK source pool...';
-  upd({stage:'scanning', error:'', statusMsg: msg});
+  upd({stage:'scanning', error:'', statusMsg: mode==='scan-broad'?'Fetching top global sources…':'Fetching NTK source pool…'});
   try {
-    const r = await fetch('/.netlify/functions/news?mode=' + mode);
-    if (!r.ok) throw new Error('Fetch failed ' + r.status);
+    const r = await fetch(`/.netlify/functions/news?mode=${mode}`);
+    if (!r.ok) throw new Error('Fetch failed '+r.status);
     const data = await r.json();
     const articles = data.articles?.results || [];
-    if (!articles.length) throw new Error('No articles returned from EventRegistry');
-
+    if (!articles.length) throw new Error('No articles returned — check Netlify function logs');
     const headlines = articles.map((a,i) =>
-      (i+1) + '. [' + (a.source?.title||'Unknown') + ' | ' + (a.date||'unknown date') + '] ' + a.title
+      `${i+1}. [${a.source?.title||'Unknown'} | ${a.date||'?'}] ${a.title}`
     ).join('\n');
-
-    upd({statusMsg: 'Applying Story Selection Brief...'});
+    upd({statusMsg:'Applying Story Selection Brief…'});
     const raw = await ai(DISC_WITH_HEADLINES(headlines), 2500);
     const candidates = parseJSON(raw);
-    upd({candidates, storyOrder: candidates.map(c=>c.id), selected: new Set(), stage:'certify'});
-  } catch(e) {
-    upd({error: 'Scan failed: ' + e.message, stage:'init'});
-  }
+    upd({candidates, storyOrder:candidates.map(c=>c.id), selected:new Set(), stage:'certify'});
+  } catch(e) { upd({error:'Scan failed: '+e.message, stage:'init'}); }
 }
 
 async function discover() { await scanHeadlines('scan-ntk'); }
@@ -484,8 +393,8 @@ async function injectStory(cat) {
     const raw = await ai(INJ_PROMPT(cat), 800);
     const data = parseJSON(raw);
     const ts = Date.now();
-    const tagged = data.map((c,i)=>({...c, id:'inj-'+ts+'-'+i, injected:true, category:cat}));
-    upd({candidates:[...S.candidates,...tagged], storyOrder:[...S.storyOrder,...tagged.map(c=>c.id)], injBusy:false, injStatus:tagged.length+' '+(tagged.length===1?'story':'stories')+' added — scroll down to select'});
+    const tagged = data.map((c,i)=>({...c,id:'inj-'+ts+'-'+i,injected:true,category:cat}));
+    upd({candidates:[...S.candidates,...tagged], storyOrder:[...S.storyOrder,...tagged.map(c=>c.id)], injBusy:false, injStatus:tagged.length+' '+(tagged.length===1?'story':'stories')+' added'});
   } catch(e) { upd({injBusy:false, injStatus:'Failed: '+e.message}); }
 }
 
@@ -493,92 +402,107 @@ async function importUrl(mode, storyId) {
   const url = S.urlInput.trim();
   if (!url) return;
   upd({urlInput:'', injStatus:'Fetching '+url+'…'});
-
   if (mode === 'lineup') {
-    // Fetch URL and create a candidate from it
-    upd({injStatus:'Reading URL and creating story candidate…'});
     const result = await fetchUrl(url);
-    const prompt = `Today is ${TODAY}. You are the NTK News story scanner. A URL has been imported: ${url}
-
-Content preview: ${result.body ? result.body.slice(0,800) : 'unavailable'}
-
-Create 1 candidate story from this URL. Apply NTK standards: consequential, civilian anchor, gives Jamie something to feel oriented by.
-
-KEYWORDS must be specific enough to find this story in EventRegistry.
-
-Return ONLY a valid JSON array. No markdown fences.
-[{"id":"url-${Date.now()}","topic":"short topic name","angle":"one sharp NTK sentence","category":"Geopolitical|Domestic|Economic|Cultural|Health|Science|Under-Reported|Orienting","keywords":"specific named actors programs","sourcing":"moderate"}]`;
+    const prompt = `Today is ${TODAY}. A URL has been imported: ${url}\nContent: ${(result.body||'').slice(0,600)}\nCreate 1 NTK candidate story from this URL. Civilian anchor required.\nReturn ONLY a JSON array. [{"id":"url-1","topic":"...","angle":"...","category":"Domestic","keywords":"specific named actors","sourcing":"moderate"}]`;
     try {
-      const raw = await ai(prompt, 800);
+      const raw = await ai(prompt, 600);
       const data = parseJSON(raw);
-      const tagged = data.map(c=>({...c, id:'url-'+Date.now(), injected:true, sourceUrl:url}));
-      upd({candidates:[...S.candidates,...tagged], storyOrder:[...S.storyOrder,...tagged.map(c=>c.id)], injStatus:'Added to lineup — scroll down to select'});
-    } catch(e) {
-      upd({injStatus:'Failed to create candidate: '+e.message});
-    }
-  } else if (mode === 'story' && storyId) {
-    // Attach URL as supplementary source for a specific story
+      const tagged = data.map(c=>({...c,id:'url-'+Date.now(),injected:true,sourceUrl:url}));
+      upd({candidates:[...S.candidates,...tagged], storyOrder:[...S.storyOrder,...tagged.map(c=>c.id)], injStatus:'Added to lineup'});
+    } catch(e) { upd({injStatus:'Failed: '+e.message}); }
+  } else if (mode==='story' && storyId) {
     const result = await fetchUrl(url);
     const existing = S.storyUrls[storyId] || [];
-    upd({
-      storyUrls: {...S.storyUrls, [storyId]: [...existing, result]},
-      injStatus: 'URL attached to story' + (result.body ? '' : ' (content unavailable — will cite by URL)')
-    });
+    upd({storyUrls:{...S.storyUrls,[storyId]:[...existing,result]}, injStatus:'URL attached to story'+(result.body?'':' (content unavailable)')});
   }
+}
+
+async function prefetchArticles() {
+  // Fetch articles for all selected stories and store for preview
+  upd({stage:'previewing', error:''});
+  const picks = S.storyOrder.filter(id=>S.selected.has(id)).map(id=>S.candidates.find(c=>c.id===id)).filter(Boolean);
+  const fetched = {};
+  for (const pick of picks) {
+    upd({statusMsg:'Fetching sources: '+pick.topic+'…'});
+    try {
+      const arts = await fetchNews(pick.keywords);
+      fetched[pick.id] = arts.map(a=>({
+        title:a.title||'Untitled', url:a.url||'', date:a.date||'', source:a.source?.title||'Unknown',
+        body:(a.body||'').slice(0,1400), included:true
+      }));
+    } catch {
+      fetched[pick.id] = [];
+    }
+  }
+  upd({fetchedArticles:fetched, stage:'preview', statusMsg:''});
+}
+
+function toggleArticle(storyId, idx) {
+  const arts = [...(S.fetchedArticles[storyId]||[])];
+  arts[idx] = {...arts[idx], included:!arts[idx].included};
+  upd({fetchedArticles:{...S.fetchedArticles,[storyId]:arts}});
+}
+
+async function addArticleUrl(storyId, url) {
+  if (!url.trim()) return;
+  const result = await fetchUrl(url.trim());
+  const arts = [...(S.fetchedArticles[storyId]||[])];
+  arts.push({title:url, url:url, date:'', source:'Editor import', body:result.body||'', included:true});
+  upd({fetchedArticles:{...S.fetchedArticles,[storyId]:arts}});
 }
 
 async function generate() {
   upd({stage:'generating', error:''});
-  const picks = S.storyOrder
-    .filter(id => S.selected.has(id))
-    .map(id => S.candidates.find(c => c.id === id))
-    .filter(Boolean);
+  const picks = S.storyOrder.filter(id=>S.selected.has(id)).map(id=>S.candidates.find(c=>c.id===id)).filter(Boolean);
   const pkgs = {};
   const urlMap = {...S.candidateUrls};
 
   for (const pick of picks) {
-    upd({statusMsg: 'Fetching articles: ' + pick.topic + '…'});
+    const fetchedArts = (S.fetchedArticles[pick.id]||[]).filter(a=>a.included);
+    urlMap[pick.id] = fetchedArts.map(a=>({title:a.title,url:a.url}));
+
     let artsText = '';
-    let arts = [];
-    try {
-      arts = await fetchNews(pick.keywords);
-      // Store URLs so certify stage can show them
-      urlMap[pick.id] = arts.slice(0,5).map(a=>({title:a.title, url:a.url}));
-      artsText = arts.slice(0,4).map(a =>
-        `TITLE: ${a.title}\nSOURCE: ${a.source?.title||'Unknown'}\nURL: ${a.url}\n\n${(a.body||'').slice(0,1400)}`
+    if (fetchedArts.length) {
+      artsText = fetchedArts.map(a =>
+        `TITLE: ${a.title}\nSOURCE: ${a.source}\nURL: ${a.url}\nDATE: ${a.date}\n\n${a.body}`
       ).join('\n\n---\n\n');
-    } catch {
-      artsText = '[Article fetch failed — sourcing: ' + pick.sourcing + ']';
+    } else {
+      upd({statusMsg:'Fetching articles: '+pick.topic+'…'});
+      try {
+        const arts = await fetchNews(pick.keywords);
+        urlMap[pick.id] = arts.slice(0,5).map(a=>({title:a.title,url:a.url}));
+        artsText = arts.slice(0,4).map(a =>
+          `TITLE: ${a.title}\nSOURCE: ${a.source?.title||'Unknown'}\nURL: ${a.url}\nDATE: ${a.date||''}\n\n${(a.body||'').slice(0,1400)}`
+        ).join('\n\n---\n\n');
+      } catch { artsText = '[Article fetch failed]'; }
     }
 
     const pkg = {};
-    const todo = SECS.filter(s => S.sections.has(s));
+    const todo = SECS.filter(s=>S.sections.has(s));
+    const allSupp = [...(S.storyUrls[pick.id]||[])];
+
     for (const sec of todo) {
-      upd({statusMsg: pick.topic + ' · ' + sec + '…'});
+      upd({statusMsg:pick.topic+' · '+sec+'…'});
       try {
-        const allSupp = [...S.importedUrls, ...(S.storyUrls[pick.id]||[])]; pkg[sec] = await ai(makePrompt(sec, artsText, allSupp), 1500);
-      } catch(e) {
-        pkg[sec] = '[Generation failed: ' + e.message + ']';
-      }
+        pkg[sec] = await ai(makePrompt(sec, artsText, allSupp), 1500);
+      } catch(e) { pkg[sec] = '[Generation failed: '+e.message+']'; }
     }
     pkgs[pick.id] = pkg;
   }
-
-  upd({packages: pkgs, candidateUrls: urlMap, stage: 'output', statusMsg: ''});
+  upd({packages:pkgs, candidateUrls:urlMap, stage:'output', statusMsg:''});
 }
 
 function moveStory(id, dir) {
   const order = [...S.storyOrder];
-  const idx = order.indexOf(id);
-  const swap = idx + dir;
-  if (swap < 0 || swap >= order.length) return;
-  [order[idx], order[swap]] = [order[swap], order[idx]];
+  const idx = order.indexOf(id); const swap = idx+dir;
+  if (swap<0||swap>=order.length) return;
+  [order[idx],order[swap]] = [order[swap],order[idx]];
   upd({storyOrder:order});
 }
-
 function toggleSel(id) {
   const next = new Set(S.selected);
-  if (next.has(id)) { next.delete(id); } else if (next.size < 8) { next.add(id); }
+  if (next.has(id)) { next.delete(id); } else if (next.size<8) { next.add(id); }
   upd({selected:next});
 }
 function toggleSec(s) {
@@ -594,40 +518,39 @@ function cp(text, key) {
 function upd(p) {
   Object.assign(S,p);
   if (p.antKey!==undefined) localStorage.setItem('ntk_ant',S.antKey);
-  if (p.newsKey!==undefined) localStorage.setItem('ntk_news',S.newsKey);
   draw();
 }
+function reset() { upd({stage:'init',error:'',candidates:[],storyOrder:[],selected:new Set(),packages:{},candidateUrls:{},fetchedArticles:{},storyUrls:{}}); }
 
 // ─── RENDER ──────────────────────────────────────────────────────────────────
 
 function draw() {
   const el = id => document.getElementById(id);
-  el('restart-btn').style.display = (S.stage!=='init'&&S.stage!=='scanning')?'':'none';
+  el('restart-btn').style.display = (S.stage!=='init'&&S.stage!=='scanning'&&S.stage!=='previewing')?'':'none';
   const c = el('stage');
 
   if (S.stage==='init') {
     c.innerHTML = `<div class="stage-lbl">01 · Keys</div>
       <label>Anthropic API Key</label><input type="password" id="ak" value="${x(S.antKey)}" placeholder="sk-ant-…" autocomplete="off">
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
         <button class="btn btn-primary" id="scan-btn" ${!S.antKey?'disabled':''}>Scan NTK Sources →</button>
-        <button class="btn-ghost" id="scan-broad-btn" ${!S.antKey?'disabled':''} style="font-size:11px;">Broad Scan →</button>
+        <button class="btn-ghost" id="scan-broad-btn" ${!S.antKey?'disabled':''}>Broad Scan →</button>
       </div>
-      <div style="font-size:10px;color:var(--muted);margin-top:6px;font-family:var(--font-mono);">NTK Scan pulls from your 91-source pool · Broad Scan pulls top-tier global publishers by credibility rank</div>
+      <div style="font-size:10px;color:var(--muted);">NTK Scan: your 91-source pool · Broad Scan: top-tier global publishers by credibility rank</div>
       ${S.error?`<div class="error">${x(S.error)}</div>`:''}`;
     bind('ak','input',e=>upd({antKey:e.target.value}));
     bind('scan-btn','click',()=>{if(S.antKey)discover();});
     bind('scan-broad-btn','click',()=>{if(S.antKey)discoverBroad();});
 
   } else if (S.stage==='scanning') {
-    c.innerHTML = `<div class="spinner-wrap"><div class="spinner"></div><div class="spinner-msg">Scanning today's news landscape…</div></div>`;
+    c.innerHTML = `<div class="spinner-wrap"><div class="spinner"></div><div class="spinner-msg">${x(S.statusMsg)||'Scanning…'}</div></div>`;
 
   } else if (S.stage==='certify') {
     const orderedCands = S.storyOrder.map(id=>S.candidates.find(c=>c.id===id)).filter(Boolean);
-    const cards = orderedCands.map((cand,idx) => {
-      const isSel = S.selected.has(cand.id);
-      const isDim = !isSel && S.selected.size>=8;
-      const tagCls = cand.sourcing==='strong'?'tag-s':cand.sourcing==='moderate'?'tag-m':'tag-x';
-      return `<div class="story-card${isSel?' selected':''}${cand.injected?' injected':''}${isDim?' '+'dimmed':''}" style="${isDim?'opacity:.38;pointer-events:none':''}">
+    const cards = orderedCands.map((cand,idx)=>{
+      const isSel=S.selected.has(cand.id), isDim=!isSel&&S.selected.size>=8;
+      const tagCls=cand.sourcing==='strong'?'tag-s':cand.sourcing==='moderate'?'tag-m':'tag-x';
+      return `<div class="story-card${isSel?' selected':''}${cand.injected?' injected':''}" style="${isDim?'opacity:.38;pointer-events:none':''}">
         <div class="sc-header" data-toggle="${cand.id}">
           <div class="sc-num">${idx+1}</div>
           <div class="sc-body">
@@ -637,7 +560,7 @@ function draw() {
               <span class="tag ${tagCls}">${x(cand.sourcing)}</span>
               <span class="tag-kw">${x(cand.keywords)}</span>
               <span class="tag-cat" data-cat="${cand.id}">${x(cand.category)} ✎</span>
-              ${cand.injected?`<span class="tag-inj">+ added</span>`:''}
+              ${cand.injected?'<span style="font-size:9px;color:var(--accent);text-transform:uppercase;letter-spacing:.06em;">+ added</span>':''}
               <a href="https://news.google.com/search?q=${encodeURIComponent(cand.keywords)}" target="_blank" rel="noopener" style="font-size:10px;color:var(--accent);text-decoration:none;" onclick="event.stopPropagation()">search →</a>
             </div>
           </div>
@@ -645,14 +568,13 @@ function draw() {
             <button class="arr-btn" data-up="${cand.id}" ${idx===0?'disabled':''}>↑</button>
             <button class="arr-btn" data-dn="${cand.id}" ${idx===orderedCands.length-1?'disabled':''}>↓</button>
           </div>
-          ${isSel?`<div class="check-box">✓</div>`:'<div style="width:36px;border-left:1px solid var(--border)"></div>'}
+          ${isSel?'<div class="check-box">✓</div>':'<div style="width:36px;border-left:1px solid var(--border)"></div>'}
         </div>
       </div>`;
     }).join('');
 
     const quickBtns = QUICK_PICKS.map(p=>`<button class="pick-btn" data-pick="${x(p)}" ${S.injBusy?'disabled':''}>${x(p)}</button>`).join('');
     const secBtns = SECS.map(s=>`<button class="btn-ghost btn-sm${S.sections.has(s)?' on':''}" data-sec="${s}">${s}</button>`).join('');
-    const urlItems = S.importedUrls.map((u,i)=>`<div class="ui-item"><button class="ui-rm" data-urlrm="${i}">×</button><a href="${x(u.url)}" target="_blank">${x(u.url.slice(0,60)+(u.url.length>60?'…':''))}</a>${u.body?'':' <em>(content unavailable — cited by URL)</em>'}</div>`).join('');
 
     c.innerHTML = `<div class="stage-lbl">02 · Certify the Mix</div>
       <div class="ctrl-row">
@@ -667,59 +589,48 @@ function draw() {
         <div class="inj-title">Add a story to the lineup</div>
         <div class="pick-row">${quickBtns}</div>
         <div class="inj-custom">
-          <input type="text" id="cust-in" value="${x(S.customInput)}" placeholder="Custom topic — public memory, housing, student debt…">
+          <input type="text" id="cust-in" value="${x(S.customInput)}" placeholder="Custom topic…">
           <button class="btn btn-primary btn-sm" id="cust-btn" ${S.injBusy?'disabled':''}>Find Story →</button>
         </div>
         <div class="inj-status">${x(S.injStatus)}</div>
       </div>
       <div class="url-import">
         <label style="margin-bottom:8px;">Import a URL</label>
-        <div class="ui-row">
-          <input type="url" id="url-in" value="${x(S.urlInput)}" placeholder="https://…">
-        </div>
+        <div class="ui-row"><input type="url" id="url-in" value="${x(S.urlInput)}" placeholder="https://…"></div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;">
           <button class="btn btn-primary btn-sm" id="url-lineup-btn">+ Add to Lineup</button>
-          <select id="url-story-sel" style="font-family:var(--font-mono);font-size:11px;padding:4px 8px;border:1px solid var(--border);border-radius:2px;background:var(--surface);color:var(--body);flex:1;">
-            <option value="">Enhance a story in the lineup…</option>
+          <select id="url-story-sel" style="font-family:var(--mono);font-size:11px;padding:4px 8px;border:1px solid var(--border);border-radius:2px;background:var(--surface);color:var(--body);flex:1;">
+            <option value="">Enhance a story…</option>
             ${orderedCands.map(c=>`<option value="${x(c.id)}">${x(c.topic)}</option>`).join('')}
           </select>
           <button class="btn-ghost btn-sm" id="url-story-btn">Attach →</button>
         </div>
         <div class="inj-status" style="margin-top:6px;">${x(S.injStatus)}</div>
-        ${urlItems?`<div class="ui-list" style="margin-top:6px;">${urlItems}</div>`:''}
       </div>
       <div class="sec-wrap">
         <label style="margin-bottom:8px;">Sections to generate</label>
         <div class="sec-row">${secBtns}</div>
-        <button class="btn btn-primary" id="gen-btn" ${(S.selected.size===0||S.sections.size===0)?'disabled':''}>Generate Story Packages →</button>
+        <button class="btn btn-primary" id="gen-btn" ${S.selected.size===0||S.sections.size===0?'disabled':''}>Preview Sources →</button>
       </div>
       ${S.error?`<div class="error">${x(S.error)}</div>`:''}`;
 
-    // Bind certify events
     c.querySelectorAll('[data-toggle]').forEach(el=>el.addEventListener('click',e=>{
-      if (e.target.dataset.cat||e.target.dataset.up||e.target.dataset.dn) return;
+      if (e.target.dataset.cat||e.target.dataset.up||e.target.dataset.dn||e.target.tagName==='A') return;
       toggleSel(el.dataset.toggle);
     }));
     c.querySelectorAll('[data-up]').forEach(b=>b.addEventListener('click',()=>moveStory(b.dataset.up,-1)));
     c.querySelectorAll('[data-dn]').forEach(b=>b.addEventListener('click',()=>moveStory(b.dataset.dn,1)));
     c.querySelectorAll('[data-cat]').forEach(b=>b.addEventListener('click',e=>{
       e.stopPropagation();
-      const id = b.dataset.cat;
-      const cand = S.candidates.find(c=>c.id===id);
-      const newCat = prompt(`Change category for "${cand.topic}":`, cand.category);
-      if (newCat && newCat.trim()) {
-        const updated = S.candidates.map(c=>c.id===id?{...c,category:newCat.trim()}:c);
-        upd({candidates:updated});
-      }
+      const id=b.dataset.cat, cand=S.candidates.find(c=>c.id===id);
+      const newCat=prompt(`Category for "${cand.topic}":`,cand.category);
+      if (newCat&&newCat.trim()) upd({candidates:S.candidates.map(c=>c.id===id?{...c,category:newCat.trim()}:c)});
     }));
     c.querySelectorAll('[data-sec]').forEach(b=>b.addEventListener('click',()=>toggleSec(b.dataset.sec)));
     c.querySelectorAll('[data-pick]').forEach(b=>b.addEventListener('click',()=>injectStory(b.dataset.pick)));
-    c.querySelectorAll('[data-urlrm]').forEach(b=>b.addEventListener('click',()=>{
-      const urls = [...S.importedUrls]; urls.splice(+b.dataset.urlrm,1); upd({importedUrls:urls});
-    }));
     bind('rescan-btn','click',discover);
     bind('rescan-broad-btn','click',discoverBroad);
-    bind('gen-btn','click',()=>{if(S.selected.size&&S.sections.size)generate();});
+    bind('gen-btn','click',()=>{if(S.selected.size&&S.sections.size)prefetchArticles();});
     bind('cust-in','input',e=>{S.customInput=e.target.value;});
     bind('cust-in','keydown',e=>{if(e.key==='Enter'&&S.customInput.trim())injectStory(S.customInput.trim());});
     bind('cust-btn','click',()=>{if(S.customInput.trim())injectStory(S.customInput.trim());});
@@ -731,30 +642,75 @@ function draw() {
       else upd({injStatus:'Select a story from the dropdown first'});
     });
 
+  } else if (S.stage==='previewing') {
+    c.innerHTML = `<div class="spinner-wrap"><div class="spinner"></div><div class="spinner-msg">${x(S.statusMsg)||'Fetching sources…'}</div></div>`;
+
+  } else if (S.stage==='preview') {
+    const picks = S.storyOrder.filter(id=>S.selected.has(id)).map(id=>S.candidates.find(c=>c.id===id)).filter(Boolean);
+    const storyBlocks = picks.map(pick=>{
+      const arts = S.fetchedArticles[pick.id] || [];
+      const artItems = arts.map((a,idx)=>`
+        <div class="src-article">
+          <div class="src-art-meta">
+            <div class="src-art-title">
+              <a href="${x(a.url)}" target="_blank" rel="noopener">${x(a.title)}</a>
+            </div>
+            <div class="src-art-info">${x(a.source)}${a.date?' · '+x(a.date):''}</div>
+          </div>
+          <button class="src-rm" data-story="${pick.id}" data-idx="${idx}" title="${a.included?'Remove from synthesis':'Include in synthesis'}">${a.included?'✓':'○'}</button>
+        </div>`).join('');
+      return `<div class="src-story">
+        <div class="src-story-hdr">
+          <div class="src-story-topic">${x(pick.topic)}</div>
+          <div style="font-size:10px;color:var(--muted);">${arts.filter(a=>a.included).length} of ${arts.length} articles</div>
+        </div>
+        ${artItems||'<div style="padding:10px 14px;font-size:11px;color:var(--muted);">No articles found — check keywords or add a URL below</div>'}
+        <div class="src-add-row">
+          <input type="url" placeholder="Add a URL to this story…" id="add-url-${x(pick.id)}">
+          <button class="btn-ghost btn-sm" data-addurl="${pick.id}">Add →</button>
+        </div>
+      </div>`;
+    }).join('');
+
+    c.innerHTML = `<div class="stage-lbl">03 · Review Sources</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:16px;">Review the articles EventRegistry pulled for each story. Toggle articles out if they're wrong topic. Add URLs for anything missing.</div>
+      ${storyBlocks}
+      <div class="act-row" style="margin-top:20px;">
+        <button class="btn btn-primary" id="run-gen-btn">Run Synthesis →</button>
+        <button class="btn-ghost" id="back-to-certify">← Back</button>
+      </div>
+      ${S.error?`<div class="error">${x(S.error)}</div>`:''}`;
+
+    c.querySelectorAll('[data-story]').forEach(b=>b.addEventListener('click',()=>toggleArticle(b.dataset.story,+b.dataset.idx)));
+    c.querySelectorAll('[data-addurl]').forEach(b=>b.addEventListener('click',()=>{
+      const inp=document.getElementById('add-url-'+b.dataset.addurl);
+      if(inp&&inp.value.trim()) addArticleUrl(b.dataset.addurl, inp.value.trim());
+    }));
+    bind('run-gen-btn','click',generate);
+    bind('back-to-certify','click',()=>upd({stage:'certify'}));
+
   } else if (S.stage==='generating') {
     c.innerHTML = `<div class="spinner-wrap"><div class="spinner"></div><div class="spinner-msg">${x(S.statusMsg)}</div></div>`;
 
   } else if (S.stage==='output') {
     const orderedPicks = S.storyOrder.filter(id=>S.selected.has(id)&&S.packages[id]);
     const allText = orderedPicks.map((id,i)=>{
-      const cand = S.candidates.find(c=>c.id===id);
-      const pkg = S.packages[id];
+      const cand=S.candidates.find(c=>c.id===id), pkg=S.packages[id];
       return `--- Story ${i+1}: ${cand?.topic||id} ---\n\n`+SECS.filter(s=>S.sections.has(s)).map(s=>`[${s.toUpperCase()}]\n${pkg[s]||''}`).join('\n\n');
-    }).join('\n\n════════════════════════════\n\n');
+    }).join('\n\n════════════════════\n\n');
 
     const storyBlocks = orderedPicks.map((id,i)=>{
-      const cand = S.candidates.find(c=>c.id===id);
-      const pkg = S.packages[id];
-      const secBlocks = SECS.filter(s=>S.sections.has(s)).map(s=>`
+      const cand=S.candidates.find(c=>c.id===id), pkg=S.packages[id];
+      const srcUrls=S.candidateUrls[id]||[];
+      const secBlocks=SECS.filter(s=>S.sections.has(s)).map(s=>`
         <div class="out-sec">
           <div class="out-sec-lbl">${s}</div>
           <div class="out-text">${mdToHtml(pkg[s]||'').replace(/\n/g,'<br>')}</div>
         </div>`).join('');
-      const storyText = SECS.filter(s=>S.sections.has(s)).map(s=>`[${s.toUpperCase()}]\n${pkg[s]||''}`).join('\n\n');
-      const srcUrls = S.candidateUrls[id] || [];
-      const srcLinks = srcUrls.length
-        ? `<div style="padding:8px 16px 10px;border-top:1px solid var(--border);background:var(--surface2);display:flex;gap:10px;flex-wrap:wrap;">${srcUrls.map(s=>`<a href="${x(s.url)}" target="_blank" rel="noopener" style="font-size:10px;color:var(--accent);text-decoration:none;font-family:var(--font-mono);" title="${x(s.title)}">↗ ${x((s.title||s.url).slice(0,48)+(s.title&&s.title.length>48?'…':''))}</a>`).join('')}</div>`
+      const srcLinks=srcUrls.length
+        ? `<div class="src-links">${srcUrls.map(s=>`<a href="${x(s.url)}" target="_blank" rel="noopener" style="font-size:10px;color:var(--accent);text-decoration:none;" title="${x(s.title)}">↗ ${x((s.title||s.url).slice(0,50)+(s.title&&s.title.length>50?'…':''))}</a>`).join('')}</div>`
         : '';
+      const storyText=SECS.filter(s=>S.sections.has(s)).map(s=>`[${s.toUpperCase()}]\n${pkg[s]||''}`).join('\n\n');
       return `<div class="out-story">
         <div class="out-story-hdr">
           <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;">
@@ -769,16 +725,16 @@ function draw() {
       </div>`;
     }).join('');
 
-    c.innerHTML = `<div class="stage-lbl">03 · Output</div>
+    c.innerHTML = `<div class="stage-lbl">04 · Output</div>
       <div class="act-row">
         <button class="btn btn-primary" id="cp-all">${S.copied==='all'?'Copied ✓':'Copy all stories'}</button>
-        <button class="btn-ghost" id="back-btn">← Back to lineup</button>
+        <button class="btn-ghost" id="back-btn">← Back to sources</button>
       </div>
       ${storyBlocks}
       ${S.error?`<div class="error">${x(S.error)}</div>`:''}`;
 
     bind('cp-all','click',()=>cp(allText,'all'));
-    bind('back-btn','click',()=>upd({stage:'certify'}));
+    bind('back-btn','click',()=>upd({stage:'preview'}));
     c.querySelectorAll('[data-cpstory]').forEach(b=>b.addEventListener('click',()=>{
       const id=b.dataset.cpstory, cand=S.candidates.find(c=>c.id===id), pkg=S.packages[id];
       const t=`Story: ${cand?.topic||id}\n\n`+SECS.filter(s=>S.sections.has(s)).map(s=>`[${s.toUpperCase()}]\n${pkg[s]||''}`).join('\n\n');
@@ -786,13 +742,13 @@ function draw() {
     }));
   }
 
-  el('restart-btn').onclick = ()=>upd({stage:'init',error:'',candidates:[],storyOrder:[],selected:new Set(),packages:{},candidateUrls:{},storyUrls:{}});
+  el('restart-btn').onclick = reset;
 }
 
 function bind(id,ev,fn){const el=document.getElementById(id);if(el)el.addEventListener(ev,fn);}
 function x(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
-document.getElementById('restart-btn').addEventListener('click',()=>upd({stage:'init',error:'',candidates:[],storyOrder:[],selected:new Set(),packages:{},candidateUrls:{}}));
+document.getElementById('restart-btn').addEventListener('click', reset);
 draw();
 </script>
 </body>
