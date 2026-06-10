@@ -419,7 +419,6 @@ async function importUrl(mode, storyId) {
 }
 
 async function prefetchArticles() {
-  // Fetch articles for all selected stories and store for preview
   upd({stage:'previewing', error:''});
   const picks = S.storyOrder.filter(id=>S.selected.has(id)).map(id=>S.candidates.find(c=>c.id===id)).filter(Boolean);
   const fetched = {};
@@ -431,8 +430,8 @@ async function prefetchArticles() {
         title:a.title||'Untitled', url:a.url||'', date:a.date||'', source:a.source?.title||'Unknown',
         body:(a.body||'').slice(0,1400), included:true
       }));
-    } catch {
-      fetched[pick.id] = [];
+    } catch(e) {
+      fetched[pick.id] = [{title:'Fetch error: '+e.message, url:'', date:'', source:'Error', body:'', included:false}];
     }
   }
   upd({fetchedArticles:fetched, stage:'preview', statusMsg:''});
