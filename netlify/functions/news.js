@@ -45,10 +45,11 @@ function post(body) {
 
 exports.handler = async (event) => {
   const q = event.queryStringParameters || {};
-  const mode = q.mode || 'fetch';
+  const mode = q.mode || 'fetch-by-uri';
   let body;
 
   if (mode === 'scan-ntk') {
+    // Scan: return recent articles with short snippets for Claude to select from
     body = {
       apiKey: process.env.NEWSAPI_KEY,
       action: 'getArticles',
@@ -57,8 +58,8 @@ exports.handler = async (event) => {
       articlesSortBy: 'date',
       articlesSortByAsc: false,
       resultType: 'articles',
-      includeArticleBody: false,
-      includeArticleTitle: true,
+      includeArticleBody: true,
+      articleBodyLen: 250,
       includeArticleDate: true,
       includeSourceInfo: true,
       skipDuplicates: true,
@@ -73,15 +74,29 @@ exports.handler = async (event) => {
       articlesSortBy: 'date',
       articlesSortByAsc: false,
       resultType: 'articles',
-      includeArticleBody: false,
-      includeArticleTitle: true,
+      includeArticleBody: true,
+      articleBodyLen: 250,
       includeArticleDate: true,
       includeSourceInfo: true,
       skipDuplicates: true,
       startSourceRankPercentile: 0,
       endSourceRankPercentile: 15
     };
+  } else if (mode === 'fetch-by-uri') {
+    // Fetch full bodies for specific article URIs selected during scan
+    const uris = (q.uris || '').split(',').filter(Boolean);
+    body = {
+      apiKey: process.env.NEWSAPI_KEY,
+      action: 'getArticles',
+      articleUri: uris,
+      resultType: 'articles',
+      includeArticleBody: true,
+      articleBodyLen: 1500,
+      includeArticleDate: true,
+      includeSourceInfo: true
+    };
   } else {
+    // Fallback keyword fetch (kept for URL import flow)
     body = {
       apiKey: process.env.NEWSAPI_KEY,
       action: 'getArticles',
