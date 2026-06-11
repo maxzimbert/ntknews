@@ -160,18 +160,21 @@ QUALITY: Actually new, not noise? Angle gives something to say? Civilian anchor 
 TWO-PRONG: When a story is consequential enough, select both the event AND the structural pattern as separate items.
 FRESHNESS: Prefer articles from the last 48 hours. Anything older should only be selected if it is still actively developing today.
 
-KEYWORDS — CRITICAL: Go directly into EventRegistry for article fetching. Use language a reporter covering THIS story would actually use — named actors, specific programs, bill numbers. Not general topics. Named institutions outperform generic topic words every time.
+KEYWORDS — CRITICAL: Go directly into EventRegistry for article fetching. Use language a reporter covering THIS story would actually use — named actors, specific programs, bill numbers. Not general topics. Named institutions outperform generic topic words every time. Maximum 4 words.
 
-SOURCING: strong = multiple credible articles available now. moderate = some coverage. manual = no breaking peg, editor must supply URLs.
+SUGGESTED URL: For any story where you know a specific credible article exists — especially for sourcing: moderate or manual stories — provide a direct URL. This pre-populates the source panel so the editor doesn't have to hunt. Use your knowledge of what specific outlets have published. Leave blank if you don't have a reliable specific URL.
+
+SOURCING: strong = multiple credible articles available now. moderate = some coverage, may need supplement. manual = no breaking peg, editor must supply URLs.
 
 Return ONLY a valid JSON array. Nothing before or after. No markdown fences.
-[{"id":"1","topic":"short topic name","angle":"one sharp NTK sentence — specific actor, specific stake","category":"Geopolitical|Domestic|Economic|Cultural|Health|Science|Under-Reported|Orienting","keywords":"specific named actors programs institutions","sourcing":"strong|moderate|manual"}]`;
+[{"id":"1","topic":"short topic name","angle":"one sharp NTK sentence — specific actor, specific stake","category":"Geopolitical|Domestic|Economic|Cultural|Health|Science|Under-Reported|Orienting","keywords":"specific named actors programs institutions (max 4 words)","sourcing":"strong|moderate|manual","suggestedUrl":"https://... or empty string"}]`;
 
 const INJ_PROMPT = (cat) => `Today is ${TODAY}. Find the 1-2 best NTK-worthy stories right now in: "${cat}".
 Standards: consequential, civilian anchor, gives Jamie something to feel oriented by.
-KEYWORDS must be specific — named actors, programs, institutions — for EventRegistry.
+KEYWORDS must be specific — named actors, programs, institutions — for EventRegistry. Max 4 words.
+SUGGESTED URL: provide a specific credible article URL if you know one exists. Leave empty string if not.
 Return ONLY a valid JSON array. No markdown fences. IDs starting "inj-1".
-[{"id":"inj-1","topic":"...","angle":"one sharp NTK sentence","category":"${cat}","keywords":"specific named actors programs","sourcing":"strong|moderate|manual"}]`;
+[{"id":"inj-1","topic":"...","angle":"one sharp NTK sentence","category":"${cat}","keywords":"specific named actors programs","sourcing":"strong|moderate|manual","suggestedUrl":"https://... or empty string"}]`;
 
 const GLOBAL = `You are the journalist-historian for NTK News, a nonprofit news-and-history app. You have an advanced degree and have read a lot of history, but you write for readers who are tired, news-avoidant, and read between a third and eighth grade social studies level. The expertise is yours. The vocabulary is theirs.
 
@@ -428,15 +431,48 @@ async function prefetchArticles() {
   const fetched = {};
   for (const pick of picks) {
     upd({statusMsg:'Fetching sources: '+pick.topic+'…'});
+    let articles = [];
     try {
       const arts = await fetchNews(pick.keywords);
-      fetched[pick.id] = arts.map(a=>({
-        title:a.title||'Untitled', url:a.url||'', date:a.date||'', source:a.source?.title||'Unknown',
-        body:(a.body||'').slice(0,1400), included:true
+      articles = arts.map(a=>({
+        title:a.title||'Untitled', url:a.url||'', date:a.date||'',
+        source:a.source?.title||'Unknown', body:(a.body||'').slice(0,1400), included:true
       }));
     } catch(e) {
-      fetched[pick.id] = [{title:'Fetch error: '+e.message, url:'', date:'', source:'Error', body:'', included:false}];
+      articles = [{title:'Fetch error: '+e.message, url:'', date:'', source:'Error', body:'', included:false}];
     }
+
+    // If EventRegistry returned nothing and scan provided a suggested URL, auto-fetch it
+    if (!articles.length && pick.suggestedUrl) {
+      upd({statusMsg:'Auto-fetching suggested source: '+pick.topic+'…'});
+      const result = await fetchUrl(pick.suggestedUrl);
+      articles = [{
+        title: pick.suggestedUrl,
+        url: pick.suggestedUrl,
+        date: TODAY,
+        source: 'Scan suggested',
+        body: result.body || '',
+        included: true
+      }];
+    }
+
+    // Always prepend suggestedUrl if it exists and isn't already in the list
+    if (pick.suggestedUrl && !articles.find(a=>a.url===pick.suggestedUrl)) {
+      upd({statusMsg:'Adding suggested source: '+pick.topic+'…'});
+      const result = await fetchUrl(pick.suggestedUrl);
+      if (result.body) {
+        articles.unshift({
+          title: pick.suggestedUrl,
+          url: pick.suggestedUrl,
+          date: TODAY,
+          source: 'Scan suggested',
+          body: result.body,
+          included: true
+        });
+      }
+    }
+
+    fetched[pick.id] = articles;
   }
   upd({fetchedArticles:fetched, stage:'preview', statusMsg:''});
 }
