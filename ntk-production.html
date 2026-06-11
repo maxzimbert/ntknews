@@ -333,10 +333,21 @@ async function ai(prompt, maxTok=1500) {
 }
 
 async function fetchNews(kw) {
-  const p = new URLSearchParams({q:kw,lang:'eng',articlesCount:'5',articlesSortBy:'date',includeArticleBody:'true',articleBodyHtml:'false',skipDuplicates:'true'});
-  const r = await fetch(`/.netlify/functions/news?${p}`);
-  if (!r.ok) throw new Error('NewsAPI '+r.status);
-  return (await r.json()).articles?.results || [];
+  // Truncate to 4 words max — EventRegistry does AND on all terms
+  const words = kw.trim().split(/[\s,]+/).filter(w => w.length > 2);
+  const short = words.slice(0, 4).join(' ');
+  const shorter = words.slice(0, 2).join(' ');
+
+  async function tryFetch(q) {
+    const p = new URLSearchParams({q, lang:'eng', articlesCount:'5', articlesSortBy:'date', includeArticleBody:'true', articleBodyHtml:'false', skipDuplicates:'true'});
+    const r = await fetch(`/.netlify/functions/news?${p}`);
+    if (!r.ok) throw new Error('NewsAPI '+r.status);
+    return (await r.json()).articles?.results || [];
+  }
+
+  let arts = await tryFetch(short);
+  if (!arts.length && shorter !== short) arts = await tryFetch(shorter);
+  return arts;
 }
 
 async function fetchUrl(url) {
