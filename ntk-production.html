@@ -333,21 +333,14 @@ async function ai(prompt, maxTok=1500) {
 }
 
 async function fetchNews(kw) {
-  // Truncate to 4 words max — EventRegistry does AND on all terms
+  // Truncate to 4 words — EventRegistry does AND on all terms, longer queries return nothing
   const words = kw.trim().split(/[\s,]+/).filter(w => w.length > 2);
   const short = words.slice(0, 4).join(' ');
-  const shorter = words.slice(0, 2).join(' ');
-
-  async function tryFetch(q) {
-    const p = new URLSearchParams({q, lang:'eng', articlesCount:'5', articlesSortBy:'date', includeArticleBody:'true', articleBodyHtml:'false', skipDuplicates:'true'});
-    const r = await fetch(`/.netlify/functions/news?${p}`);
-    if (!r.ok) throw new Error('NewsAPI '+r.status);
-    return (await r.json()).articles?.results || [];
-  }
-
-  let arts = await tryFetch(short);
-  if (!arts.length && shorter !== short) arts = await tryFetch(shorter);
-  return arts;
+  const p = new URLSearchParams({q:short, lang:'eng', articlesCount:'5', articlesSortBy:'date', includeArticleBody:'true', articleBodyHtml:'false', skipDuplicates:'true'});
+  const r = await fetch(`/.netlify/functions/news?${p}`);
+  if (!r.ok) throw new Error('NewsAPI '+r.status);
+  return (await r.json()).articles?.results || [];
+  // No fallback — zero results means keywords need work. Source preview lets editor add a URL.
 }
 
 async function fetchUrl(url) {
@@ -665,7 +658,7 @@ function draw() {
             <div class="src-art-title">
               <a href="${x(a.url)}" target="_blank" rel="noopener">${x(a.title)}</a>
             </div>
-            <div class="src-art-info">${x(a.source)}${a.date?' · '+x(a.date):''}</div>
+            <div class="src-art-info">${x(a.source)}${a.date?' · <strong style="color:var(--accent)">'+x(a.date)+'</strong>':''}</div>
           </div>
           <button class="src-rm" data-story="${pick.id}" data-idx="${idx}" title="${a.included?'Remove from synthesis':'Include in synthesis'}">${a.included?'✓':'○'}</button>
         </div>`).join('');
