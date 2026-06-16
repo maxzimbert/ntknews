@@ -136,6 +136,9 @@ exports.handler = async (event) => {
       isDuplicateFilter: 'skipDuplicates',
       forceMaxDataTimeWindow: RECENT_WINDOW_DAYS
     };
+    // Narrows a broad entity down to the specific story (e.g. "Kash Patel" +
+    // keyword "UFC") instead of pulling that person's entire news firehose.
+    if (q.keyword) body.keyword = q.keyword;
     if (q.pool === 'ntk') body.sourceUri = NTK_SOURCES;
   } else if (mode === 'fetch-by-uri') {
     // Fetch full bodies for specific article URIs selected during the scan
