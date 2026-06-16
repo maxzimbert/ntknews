@@ -23,12 +23,18 @@ const NTK_SOURCES = [
   'mediaite.com','hollywoodreporter.com','deadline.com'
 ];
 
-function post(body) {
+// Bounds searches to recent data instead of EventRegistry's full historical
+// archive. This is the documented, supported way to scope "recent news" —
+// confirmed against the official SDK source, not the old dateStart/dateEnd
+// approach that was silently returning zero results.
+const RECENT_WINDOW_DAYS = 7;
+
+function post(path, body) {
   return new Promise((resolve) => {
     const bodyStr = JSON.stringify(body);
     const options = {
       hostname: 'eventregistry.org',
-      path: '/api/v1/article/getArticles',
+      path,
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(bodyStr) }
     };
@@ -46,6 +52,7 @@ function post(body) {
 exports.handler = async (event) => {
   const q = event.queryStringParameters || {};
   const mode = q.mode || 'fetch-by-uri';
+  let path = '/api/v1/article/getArticles';
   let body;
 
   if (mode === 'scan-ntk') {
@@ -62,7 +69,12 @@ exports.handler = async (event) => {
       articleBodyLen: 250,
       includeArticleDate: true,
       includeSourceInfo: true,
-      skipDuplicates: true,
+      // FIX: `skipDuplicates: true` was never a real EventRegistry parameter —
+      // it was silently ignored, so wire-syndication duplicates were never
+      // actually filtered. The real parameter is isDuplicateFilter.
+      isDuplicateFilter: 'skipDuplicates',
+      // NEW: see RECENT_WINDOW_DAYS above.
+      forceMaxDataTimeWindow: RECENT_WINDOW_DAYS,
       sourceUri: NTK_SOURCES
     };
   } else if (mode === 'scan-broad') {
@@ -78,12 +90,55 @@ exports.handler = async (event) => {
       articleBodyLen: 250,
       includeArticleDate: true,
       includeSourceInfo: true,
-      skipDuplicates: true,
+      isDuplicateFilter: 'skipDuplicates', // FIX: same bug as scan-ntk
+      forceMaxDataTimeWindow: RECENT_WINDOW_DAYS, // NEW
       startSourceRankPercentile: 0,
-      endSourceRankPercentile: 15
+      // FIX: EventRegistry requires this value be divisible by 10 (valid
+      // range 10-100). 15 violated that and may have been silently
+      // misbehaving. Rounded up to 20 to stay close to the original
+      // "top ~15% of sources" intent — change if you want it tighter.
+      endSourceRankPercentile: 20
     };
+  } else if (mode === 'resolve-concept') {
+    // NEW: resolves a person/org/topic name to its EventRegistry concept URI.
+    // Use this for stories with no good keyword string to match — named
+    // individuals, agencies, ongoing situations — where literal keyword
+    // search has no wire-coverage phrase to latch onto (the "RFK Jr. calendar
+    // transparency" problem). Returns a ranked list of candidate concepts;
+    // pick the right one and pass its uri into scan-by-concept below.
+    path = '/api/v1/suggestConceptsFast';
+    body = {
+      apiKey: process.env.NEWSAPI_KEY,
+      prefix: q.q || '',
+      source: ['concepts'],
+      lang: 'eng',
+      conceptLang: 'eng',
+      page: 1,
+      count: 5
+    };
+  } else if (mode === 'scan-by-concept') {
+    // NEW: searches by resolved concept URI instead of keyword matching.
+    // Pass conceptUri (from resolve-concept) and optionally pool=ntk to
+    // restrict to the 91-source list; omit pool to search broadly.
+    body = {
+      apiKey: process.env.NEWSAPI_KEY,
+      action: 'getArticles',
+      conceptUri: q.conceptUri || '',
+      lang: 'eng',
+      articlesCount: parseInt(q.articlesCount) || 20,
+      articlesSortBy: 'date',
+      articlesSortByAsc: false,
+      resultType: 'articles',
+      includeArticleBody: true,
+      articleBodyLen: 1500,
+      includeArticleDate: true,
+      includeSourceInfo: true,
+      isDuplicateFilter: 'skipDuplicates',
+      forceMaxDataTimeWindow: RECENT_WINDOW_DAYS
+    };
+    if (q.pool === 'ntk') body.sourceUri = NTK_SOURCES;
   } else if (mode === 'fetch-by-uri') {
-    // Fetch full bodies for specific article URIs selected during scan
+    // Fetch full bodies for specific article URIs selected during the scan
     const uris = (q.uris || '').split(',').filter(Boolean);
     body = {
       apiKey: process.env.NEWSAPI_KEY,
@@ -110,11 +165,11 @@ exports.handler = async (event) => {
       articleBodyLen: 1500,
       includeArticleDate: true,
       includeSourceInfo: true,
-      skipDuplicates: true
+      isDuplicateFilter: 'skipDuplicates' // FIX: same bug
     };
   }
 
-  const result = await post(body);
+  const result = await post(path, body);
   return {
     statusCode: 200,
     headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
