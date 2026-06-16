@@ -156,14 +156,14 @@ URI MAPPING: For each candidate, list the URIs of articles from the list above t
 SOURCING: strong = 3+ articles mapped. moderate = 1-2 articles mapped. manual = no articles found in this list, editor must supply a URL.
 Note: this label only reflects what showed up in this 40-article scan window, not the true breadth of pool coverage — a separate pass searches further before synthesis, so don't undersell a candidate just because few of its sources happened to land in this batch.
 
-CONCEPT TARGETING: For each candidate, also supply conceptEntity — the single most distinctive named person, organization, or place at the center of the story (e.g. "Kash Patel", "Hillary Clinton"), used to search the full source pool for additional coverage beyond this scan window. Use "" if no single entity is clearly central. Also supply narrowKeyword — a short word or phrase (1-3 words) that narrows that entity's coverage down to this specific story rather than everything about them (e.g. "UFC" to narrow Kash Patel to this plot, not his entire tenure). Use "" if the entity alone is already specific enough.
+CONCEPT TARGETING: For each candidate, also supply conceptEntity — the single most distinctive named person, organization, or place at the center of the story, written exactly as it would appear as a Wikipedia article title (e.g. "Kash Patel", "Hillary Clinton" — not "FBI Director Kash Patel" or just "Clinton"). If a surname alone is ambiguous between multiple well-known figures, always include the full disambiguating name. Use "" if no single entity is clearly central. Also supply narrowKeyword — exactly ONE distinctive word (not a phrase) likely to appear verbatim in any article about this specific story (e.g. "UFC" — not "UFC plot" or "assassination attempt", since this is matched as an exact phrase and multi-word guesses usually don't match). Use "" if the entity alone is already specific enough, or if you can't confidently predict a word that would appear verbatim.
 
 Return ONLY a valid JSON array. No markdown fences.
 [{"id":"1","topic":"short topic name","angle":"one sharp NTK sentence","category":"Geopolitical|Domestic|Economic|Cultural|Health|Science|Under-Reported|Orienting","articleUris":["uri1","uri2"],"sourcing":"strong|moderate|manual","conceptEntity":"","narrowKeyword":""}]`;
 
 const INJ_PROMPT = (cat) => `Today is ${TODAY}. Find the 1-2 best NTK-worthy stories right now in: "${cat}".
 Standards: consequential, civilian anchor, gives Jamie something to feel oriented by.
-Also supply conceptEntity (single most distinctive named person/org/place, or "" if none) and narrowKeyword (1-3 words narrowing that entity to this specific story, or "" if not needed) — used for a follow-up pool-wide coverage search.
+Also supply conceptEntity (single most distinctive named person/org/place, written as it would appear as a Wikipedia title — disambiguate ambiguous surnames, e.g. "Hillary Clinton" not "Clinton" — or "" if none) and narrowKeyword (exactly ONE word likely to appear verbatim in coverage of this specific story — not a phrase — or "" if unsure) — used for a follow-up pool-wide coverage search.
 Return ONLY a valid JSON array. No markdown fences.
 [{"id":"inj-1","topic":"...","angle":"one sharp NTK sentence","category":"${cat}","articleUris":[],"sourcing":"moderate","conceptEntity":"","narrowKeyword":""}]`;
 
@@ -346,7 +346,7 @@ async function importUrl(mode, storyId) {
   upd({urlInput:'', injStatus:'Fetching '+url+'…'});
   if (mode==='lineup') {
     const result = await fetchUrl(url);
-    const prompt = `Today is ${TODAY}. URL imported: ${url}\nContent: ${(result.body||'').slice(0,600)}\nCreate 1 NTK candidate. Civilian anchor required.\nAlso supply conceptEntity (single most distinctive named person/org/place, or "" if none) and narrowKeyword (1-3 words narrowing that entity to this specific story, or "").\nReturn ONLY JSON array. [{"id":"url-1","topic":"...","angle":"...","category":"Domestic","articleUris":[],"sourcing":"moderate","conceptEntity":"","narrowKeyword":""}]`;
+    const prompt = `Today is ${TODAY}. URL imported: ${url}\nContent: ${(result.body||'').slice(0,600)}\nCreate 1 NTK candidate. Civilian anchor required.\nAlso supply conceptEntity (single most distinctive named person/org/place, written as a Wikipedia title would be — disambiguate ambiguous surnames — or "" if none) and narrowKeyword (exactly ONE word likely to appear verbatim in coverage of this story, not a phrase, or "").\nReturn ONLY JSON array. [{"id":"url-1","topic":"...","angle":"...","category":"Domestic","articleUris":[],"sourcing":"moderate","conceptEntity":"","narrowKeyword":""}]`;
     try {
       const raw = await ai(prompt, 600);
       const data = parseJSON(raw);
@@ -366,9 +366,14 @@ async function gatherCoverage(pick) {
     const matches = await netlifyFetch({mode:'resolve-concept', q: pick.conceptEntity});
     const conceptUri = matches?.[0]?.uri;
     if (!conceptUri) return [];
-    const params = {mode:'scan-by-concept', conceptUri, pool:'ntk', articlesCount:'15'};
-    if (pick.narrowKeyword) params.keyword = pick.narrowKeyword;
-    return await netlifyFetch(params);
+    if (pick.narrowKeyword) {
+      const narrowed = await netlifyFetch({mode:'scan-by-concept', conceptUri, pool:'ntk', articlesCount:'15', keyword:pick.narrowKeyword});
+      if (narrowed.length) return narrowed;
+      // Keyword matches as an exact phrase — a guessed word that doesn't
+      // appear verbatim anywhere returns zero, not a smaller list. Fall back
+      // to the concept alone rather than treating that as "no coverage."
+    }
+    return await netlifyFetch({mode:'scan-by-concept', conceptUri, pool:'ntk', articlesCount:'15'});
   } catch { return []; }
 }
 
@@ -529,6 +534,7 @@ function draw() {
               <span class="tag ${tagCls}">${x(cand.sourcing)}</span>
               <span style="font-size:10px;color:var(--muted);">${artCount} article${artCount!==1?'s':''} mapped</span>
               <span class="tag-cat" data-cat="${cand.id}">${x(cand.category)} ✎</span>
+              ${cand.conceptEntity?`<span style="font-size:10px;color:var(--muted);">🔎 ${x(cand.conceptEntity)}${cand.narrowKeyword?' · '+x(cand.narrowKeyword):''}</span>`:''}
               ${cand.injected?'<span style="font-size:9px;color:var(--accent);text-transform:uppercase;letter-spacing:.06em;">+ added</span>':''}
               <a href="https://news.google.com/search?q=${encodeURIComponent(cand.topic)}" target="_blank" rel="noopener" style="font-size:10px;color:var(--accent);text-decoration:none;" onclick="event.stopPropagation()">search →</a>
             </div>
@@ -641,7 +647,7 @@ function draw() {
     }).join('');
 
     c.innerHTML=`<div class="stage-lbl">03 · Review Sources</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:16px;">Articles mapped directly from the scan. Toggle any out. Add a URL for anything missing.</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:16px;">Articles from the scan plus a full pool-wide search per story. Toggle any out. Add a URL for anything missing.</div>
       ${storyBlocks}
       <div class="act-row" style="margin-top:20px;">
         <button class="btn btn-primary" id="run-gen-btn">Run Synthesis →</button>
