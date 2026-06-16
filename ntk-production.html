@@ -154,14 +154,18 @@ TWO-PRONG: When consequential enough, select both the event AND the structural p
 URI MAPPING: For each candidate, list the URIs of articles from the list above that are relevant to it. Be specific — only include URIs where the article actually covers this story.
 
 SOURCING: strong = 3+ articles mapped. moderate = 1-2 articles mapped. manual = no articles found in this list, editor must supply a URL.
+Note: this label only reflects what showed up in this 40-article scan window, not the true breadth of pool coverage — a separate pass searches further before synthesis, so don't undersell a candidate just because few of its sources happened to land in this batch.
+
+CONCEPT TARGETING: For each candidate, also supply conceptEntity — the single most distinctive named person, organization, or place at the center of the story (e.g. "Kash Patel", "Hillary Clinton"), used to search the full source pool for additional coverage beyond this scan window. Use "" if no single entity is clearly central. Also supply narrowKeyword — a short word or phrase (1-3 words) that narrows that entity's coverage down to this specific story rather than everything about them (e.g. "UFC" to narrow Kash Patel to this plot, not his entire tenure). Use "" if the entity alone is already specific enough.
 
 Return ONLY a valid JSON array. No markdown fences.
-[{"id":"1","topic":"short topic name","angle":"one sharp NTK sentence","category":"Geopolitical|Domestic|Economic|Cultural|Health|Science|Under-Reported|Orienting","articleUris":["uri1","uri2"],"sourcing":"strong|moderate|manual"}]`;
+[{"id":"1","topic":"short topic name","angle":"one sharp NTK sentence","category":"Geopolitical|Domestic|Economic|Cultural|Health|Science|Under-Reported|Orienting","articleUris":["uri1","uri2"],"sourcing":"strong|moderate|manual","conceptEntity":"","narrowKeyword":""}]`;
 
 const INJ_PROMPT = (cat) => `Today is ${TODAY}. Find the 1-2 best NTK-worthy stories right now in: "${cat}".
 Standards: consequential, civilian anchor, gives Jamie something to feel oriented by.
+Also supply conceptEntity (single most distinctive named person/org/place, or "" if none) and narrowKeyword (1-3 words narrowing that entity to this specific story, or "" if not needed) — used for a follow-up pool-wide coverage search.
 Return ONLY a valid JSON array. No markdown fences.
-[{"id":"inj-1","topic":"...","angle":"one sharp NTK sentence","category":"${cat}","articleUris":[],"sourcing":"moderate"}]`;
+[{"id":"inj-1","topic":"...","angle":"one sharp NTK sentence","category":"${cat}","articleUris":[],"sourcing":"moderate","conceptEntity":"","narrowKeyword":""}]`;
 
 const GLOBAL = `You are the journalist-historian for NTK News, a nonprofit news-and-history app. Advanced degree, reads a lot of history, writes for readers who are tired and news-avoidant at a 3rd-8th grade social studies level. The expertise is yours. The vocabulary is theirs.
 
@@ -260,7 +264,11 @@ async function netlifyFetch(params) {
   const p = new URLSearchParams(params);
   const r = await fetch(`/.netlify/functions/news?${p}`);
   if (!r.ok) throw new Error('Function error '+r.status);
-  return (await r.json()).articles?.results || [];
+  const data = await r.json();
+  // resolve-concept returns a plain array (suggestConceptsFast); the
+  // scan/fetch/concept-search modes return {articles:{results:[...]}}
+  if (Array.isArray(data)) return data;
+  return data.articles?.results || [];
 }
 
 async function fetchByUris(uris) {
@@ -338,7 +346,7 @@ async function importUrl(mode, storyId) {
   upd({urlInput:'', injStatus:'Fetching '+url+'…'});
   if (mode==='lineup') {
     const result = await fetchUrl(url);
-    const prompt = `Today is ${TODAY}. URL imported: ${url}\nContent: ${(result.body||'').slice(0,600)}\nCreate 1 NTK candidate. Civilian anchor required.\nReturn ONLY JSON array. [{"id":"url-1","topic":"...","angle":"...","category":"Domestic","articleUris":[],"sourcing":"moderate"}]`;
+    const prompt = `Today is ${TODAY}. URL imported: ${url}\nContent: ${(result.body||'').slice(0,600)}\nCreate 1 NTK candidate. Civilian anchor required.\nAlso supply conceptEntity (single most distinctive named person/org/place, or "" if none) and narrowKeyword (1-3 words narrowing that entity to this specific story, or "").\nReturn ONLY JSON array. [{"id":"url-1","topic":"...","angle":"...","category":"Domestic","articleUris":[],"sourcing":"moderate","conceptEntity":"","narrowKeyword":""}]`;
     try {
       const raw = await ai(prompt, 600);
       const data = parseJSON(raw);
@@ -352,6 +360,18 @@ async function importUrl(mode, storyId) {
   }
 }
 
+async function gatherCoverage(pick) {
+  if (!pick.conceptEntity) return [];
+  try {
+    const matches = await netlifyFetch({mode:'resolve-concept', q: pick.conceptEntity});
+    const conceptUri = matches?.[0]?.uri;
+    if (!conceptUri) return [];
+    const params = {mode:'scan-by-concept', conceptUri, pool:'ntk', articlesCount:'15'};
+    if (pick.narrowKeyword) params.keyword = pick.narrowKeyword;
+    return await netlifyFetch(params);
+  } catch { return []; }
+}
+
 async function prefetchArticles() {
   upd({stage:'previewing', error:''});
   const picks = S.storyOrder.filter(id=>S.selected.has(id)).map(id=>S.candidates.find(c=>c.id===id)).filter(Boolean);
@@ -360,23 +380,44 @@ async function prefetchArticles() {
   for (const pick of picks) {
     upd({statusMsg:'Loading sources: '+pick.topic+'…'});
     const uris = pick.articleUris || [];
+    let arts = [];
 
     if (uris.length) {
       // Fetch full bodies for the exact URIs Claude mapped during scan
       try {
-        const arts = await fetchByUris(uris);
-        fetched[pick.id] = arts.map(a=>({
+        const known = await fetchByUris(uris);
+        arts = known.map(a=>({
           title:a.title||'Untitled', url:a.url||'', uri:a.uri||'',
           date:a.date||'', source:a.source?.title||'Unknown',
           body:(a.body||'').slice(0,1400), included:true
         }));
       } catch(e) {
-        fetched[pick.id] = [{title:'Fetch error: '+e.message, url:'', date:'', source:'Error', body:'', included:false}];
+        arts = [{title:'Fetch error: '+e.message, url:'', date:'', source:'Error', body:'', included:false}];
       }
-    } else {
-      // Manual sourcing — no URIs mapped, show empty with prompt to add URL
-      fetched[pick.id] = [];
     }
+    // else: manual sourcing — no URIs mapped from the scan window, leave arts
+    // empty for now; coverage gathering below may still find something.
+
+    // Pool-wide coverage gathering: the original scan only sees the 40 most
+    // recent articles across the entire pool, so multi-outlet pickups of one
+    // story often get crowded out by unrelated news before they're visible.
+    // This searches the full pool specifically for this story and adds
+    // anything new, deduped against what the scan already found.
+    upd({statusMsg:'Checking full pool coverage: '+pick.topic+'…'});
+    try {
+      const extra = await gatherCoverage(pick);
+      const known = new Set(arts.map(a=>a.uri).filter(Boolean));
+      const added = extra
+        .filter(a=>a.uri && !known.has(a.uri))
+        .map(a=>({
+          title:a.title||'Untitled', url:a.url||'', uri:a.uri||'',
+          date:a.date||'', source:a.source?.title||'Unknown',
+          body:(a.body||'').slice(0,1400), included:true
+        }));
+      arts = [...arts, ...added];
+    } catch(e) { /* non-fatal — keep whatever the scan already found */ }
+
+    fetched[pick.id] = arts;
   }
   upd({fetchedArticles:fetched, stage:'preview', statusMsg:''});
 }
