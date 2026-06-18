@@ -105,7 +105,26 @@ input:focus { border-color:var(--accent); }
 .out-text a:hover { text-decoration:underline; }
 .act-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
 .src-links { padding:8px 16px 10px; border-top:1px solid var(--border); background:var(--surface2); display:flex; gap:10px; flex-wrap:wrap; }
-.error { background:var(--red-bg); border:1px solid #e8a090; color:var(--red); padding:10px 13px; margin-top:12px; font-size:12px; border-radius:2px; }
+.certify-cols { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+@media(max-width:640px){ .certify-cols { grid-template-columns:1fr; } }
+.col-hdr { font-size:10px; text-transform:uppercase; letter-spacing:.12em; color:var(--muted); font-weight:700; margin-bottom:10px; padding-bottom:8px; border-bottom:2px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+.col-hdr-label { color:var(--accent); }
+.ev-card { background:var(--surface); border:1px solid var(--border); border-radius:3px; margin-bottom:8px; overflow:hidden; }
+.ev-card:hover { border-color:var(--border-hi); }
+.ev-body { padding:10px 12px; }
+.ev-topic { font-family:var(--serif); font-size:14px; color:var(--text); font-weight:bold; margin-bottom:4px; line-height:1.35; }
+.ev-summary { font-size:11px; color:var(--body); line-height:1.5; margin-bottom:6px; }
+.ev-meta { display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
+.ev-count { font-size:9px; font-weight:700; padding:2px 6px; border-radius:2px; background:var(--green-bg); color:var(--green); }
+.ev-loc { font-size:9px; color:var(--muted); }
+.ev-actions { display:flex; gap:5px; padding:6px 10px; border-top:1px solid var(--border); background:var(--surface2); flex-wrap:wrap; align-items:center; }
+.scan-more-row { display:flex; gap:4px; flex:1; }
+.btn-promote { font-family:var(--mono); font-size:9px; padding:3px 8px; border:1px solid var(--accent); border-radius:2px; background:var(--accent-bg); color:var(--accent); cursor:pointer; text-transform:uppercase; letter-spacing:.06em; margin-left:auto; }
+.btn-promote:hover { background:var(--accent); color:#fff; }
+.btn-scanmore { font-family:var(--mono); font-size:9px; padding:3px 8px; border:1px solid var(--border); border-radius:2px; background:var(--surface); color:var(--muted); cursor:pointer; text-transform:uppercase; letter-spacing:.06em; }
+.btn-scanmore:hover:not(:disabled) { border-color:var(--accent); color:var(--accent); }
+.btn-scanmore:disabled { opacity:.4; cursor:default; }
+.col-empty { font-size:11px; color:var(--muted); padding:20px 0; text-align:center; }
 </style>
 </head>
 <body>
@@ -128,10 +147,12 @@ const QUICK_PICKS = ['US News','World News','Economy','Health','Foreign Policy',
 let S = {
   stage:'init', antKey:localStorage.getItem('ntk_ant')||'',
   candidates:[], storyOrder:[], selected:new Set(), sections:new Set(SECS),
+  events:[], // left column: pre-clustered EventRegistry events
   fetchedArticles:{}, storyUrls:{},
   packages:{}, candidateUrls:{},
+  scanMoreBusy:{}, // eventUri or candidateId → true while scanning
   urlInput:'', customInput:'', injBusy:false, injStatus:'',
-  statusMsg:'', error:'', copied:''
+  statusMsg:'', error:'', copied:'', scanArticles:{}
 };
 
 // ─── PROMPTS ─────────────────────────────────────────────────────────────────
@@ -269,9 +290,11 @@ async function netlifyFetch(params) {
   const r = await fetch(`/.netlify/functions/news?${p}`);
   if (!r.ok) throw new Error('Function error '+r.status);
   const data = await r.json();
-  // resolve-concept returns a plain array (suggestConceptsFast); the
-  // scan/fetch/concept-search modes return {articles:{results:[...]}}
+  // resolve-concept returns a plain array (suggestConceptsFast)
   if (Array.isArray(data)) return data;
+  // scan-events returns {events:{results:[...]}}
+  if (data.events?.results) return data.events.results;
+  // all other modes return {articles:{results:[...]}}
   return data.articles?.results || [];
 }
 
@@ -331,6 +354,89 @@ async function scanHeadlines(mode) {
 
 async function discover() { await scanHeadlines('scan-ntk'); }
 async function discoverBroad() { await scanHeadlines('scan-broad'); }
+
+async function scanEvents() {
+  // Fires the left-column pull: EventRegistry pre-clustered events,
+  // North American publishers, sorted by coverage volume, 7-day window.
+  // Runs in parallel with (or after) the firehose scan — does not
+  // replace it. Updates S.events without touching S.candidates.
+  upd({statusMsg:'Fetching top stories from EventRegistry…'});
+  try {
+    const raw = await netlifyFetch({mode:'scan-events'});
+    // Normalize each event into the shape the left column expects
+    const events = raw.map(ev => ({
+      eventUri: ev.uri || ev.id || '',
+      topic: ev.title?.eng || ev.title || 'Untitled',
+      summary: (ev.summary?.eng || ev.summary || '').slice(0, 220),
+      articleCount: ev.totalArticleCount || ev.articleCounts?.total || 0,
+      date: ev.eventDate || ev.date || '',
+      location: ev.location?.label?.eng || ev.location?.label || '',
+      source: 'event' // marks this as a left-column event item
+    }));
+    upd({events, statusMsg:''});
+  } catch(e) { upd({error:'Events scan failed: '+e.message, statusMsg:''}); }
+}
+
+async function scanMore(item, pool) {
+  // "Scan more for this title" — fires appropriate EventRegistry query
+  // based on whether the item came from the left (event) or right (firehose).
+  const key = item.eventUri || item.id;
+  upd({scanMoreBusy:{...S.scanMoreBusy,[key]:true}});
+  try {
+    let arts = [];
+    if (item.source === 'event' && item.eventUri) {
+      // Left column: fetch by eventUri — EventRegistry already knows the cluster
+      arts = await netlifyFetch({mode:'scan-more-event', eventUri:item.eventUri, pool, articlesCount:'20'});
+    } else if (item.conceptEntity) {
+      // Right column: concept resolution path
+      const matches = await netlifyFetch({mode:'resolve-concept', q:item.conceptEntity});
+      const conceptUri = matches?.[0]?.uri;
+      if (conceptUri) {
+        const params = {mode:'scan-by-concept', conceptUri, articlesCount:'20'};
+        if (item.narrowKeyword) params.keyword = item.narrowKeyword;
+        if (pool === 'ntk') params.pool = 'ntk';
+        arts = await netlifyFetch(params);
+        if (!arts.length && item.narrowKeyword) {
+          // Keyword exact-phrase miss — retry on concept alone
+          delete params.keyword;
+          arts = await netlifyFetch(params);
+        }
+      }
+    }
+    if (!arts.length) { upd({scanMoreBusy:{...S.scanMoreBusy,[key]:false}}); return; }
+    // Merge into fetchedArticles for this item (deduped by URI)
+    const existing = S.fetchedArticles[key] || [];
+    const known = new Set(existing.map(a=>a.uri).filter(Boolean));
+    const added = arts
+      .filter(a => a.uri && !known.has(a.uri))
+      .map(a => ({
+        title:a.title||'Untitled', url:a.url||'', uri:a.uri||'',
+        date:a.date||'', source:a.source?.title||'Unknown',
+        body:(a.body||'').slice(0,1400), included:true
+      }));
+    upd({
+      fetchedArticles:{...S.fetchedArticles,[key]:[...existing,...added]},
+      scanMoreBusy:{...S.scanMoreBusy,[key]:false}
+    });
+  } catch(e) { upd({scanMoreBusy:{...S.scanMoreBusy,[key]:false}}); }
+}
+
+function promoteEvent(ev) {
+  // Moves a left-column event into the right-column candidate list
+  // so it can be selected, ordered, and synthesized.
+  const id = 'ev-'+ev.eventUri;
+  if (S.candidates.find(c=>c.id===id)) return; // already promoted
+  const cand = {
+    id, topic:ev.topic, angle:ev.summary||ev.topic,
+    category:'Geopolitical', articleUris:[], sourcing:'moderate',
+    conceptEntity:'', narrowKeyword:'', eventUri:ev.eventUri,
+    source:'event', injected:true
+  };
+  upd({
+    candidates:[...S.candidates, cand],
+    storyOrder:[...S.storyOrder, id]
+  });
+}
 
 async function injectStory(cat) {
   if (S.injBusy) return;
@@ -497,7 +603,7 @@ function upd(p) {
   if (p.antKey!==undefined) localStorage.setItem('ntk_ant',S.antKey);
   draw();
 }
-function reset() { upd({stage:'init',error:'',candidates:[],storyOrder:[],selected:new Set(),packages:{},candidateUrls:{},fetchedArticles:{},storyUrls:{},scanArticles:{}}); }
+function reset() { upd({stage:'init',error:'',candidates:[],storyOrder:[],selected:new Set(),packages:{},candidateUrls:{},fetchedArticles:{},storyUrls:{},scanArticles:{},events:[],scanMoreBusy:{}}); }
 
 // ─── RENDER ──────────────────────────────────────────────────────────────────
 
@@ -524,10 +630,47 @@ function draw() {
 
   } else if (S.stage==='certify') {
     const orderedCands=S.storyOrder.map(id=>S.candidates.find(c=>c.id===id)).filter(Boolean);
+
+    // ── LEFT COLUMN: EventRegistry pre-clustered events ──────────────────────
+    const eventCards = S.events.length
+      ? S.events.map(ev => {
+          const key = ev.eventUri;
+          const busy = S.scanMoreBusy[key];
+          const promoted = !!S.candidates.find(c=>c.id==='ev-'+ev.eventUri);
+          return `<div class="ev-card">
+            <div class="ev-body">
+              <div class="ev-topic">${x(ev.topic)}</div>
+              ${ev.summary?`<div class="ev-summary">${x(ev.summary)}</div>`:''}
+              <div class="ev-meta">
+                <span class="ev-count">${ev.articleCount} articles</span>
+                ${ev.location?`<span class="ev-loc">📍 ${x(ev.location)}</span>`:''}
+                ${ev.date?`<span class="ev-loc">${x(ev.date)}</span>`:''}
+              </div>
+            </div>
+            <div class="ev-actions">
+              <div class="scan-more-row">
+                <button class="btn-scanmore" data-sm-ev="${x(key)}" data-sm-pool="ntk" ${busy?'disabled':''}>
+                  ${busy?'…':'+ NTK'}
+                </button>
+                <button class="btn-scanmore" data-sm-ev="${x(key)}" data-sm-pool="broad" ${busy?'disabled':''}>
+                  ${busy?'…':'+ Broad'}
+                </button>
+              </div>
+              <button class="btn-promote" data-promote="${x(key)}" ${promoted?'disabled':''}>
+                ${promoted?'Added ✓':'→ Add to Mix'}
+              </button>
+            </div>
+          </div>`;
+        }).join('')
+      : `<div class="col-empty">Click "↺ Events" to load</div>`;
+
+    // ── RIGHT COLUMN: Firehose candidates ─────────────────────────────────────
     const cards=orderedCands.map((cand,idx)=>{
       const isSel=S.selected.has(cand.id), isDim=!isSel&&S.selected.size>=8;
       const tagCls=cand.sourcing==='strong'?'tag-s':cand.sourcing==='moderate'?'tag-m':'tag-x';
       const artCount=(cand.articleUris||[]).length;
+      const key=cand.id;
+      const busy=S.scanMoreBusy[key];
       return `<div class="story-card${isSel?' selected':''}${cand.injected?' injected':''}" style="${isDim?'opacity:.38;pointer-events:none':''}">
         <div class="sc-header" data-toggle="${cand.id}">
           <div class="sc-num">${idx+1}</div>
@@ -549,6 +692,11 @@ function draw() {
           </div>
           ${isSel?'<div class="check-box">✓</div>':'<div style="width:36px;border-left:1px solid var(--border)"></div>'}
         </div>
+        <div style="display:flex;gap:4px;padding:5px 8px 5px 36px;border-top:1px solid var(--border);background:var(--surface2);">
+          <span style="font-size:9px;color:var(--muted);align-self:center;margin-right:2px;text-transform:uppercase;letter-spacing:.06em;">Scan more:</span>
+          <button class="btn-scanmore" data-sm-cand="${x(key)}" data-sm-pool="ntk" ${busy?'disabled':''}>${busy?'…':'NTK'}</button>
+          <button class="btn-scanmore" data-sm-cand="${x(key)}" data-sm-pool="broad" ${busy?'disabled':''}>${busy?'…':'Broad'}</button>
+        </div>
       </div>`;
     }).join('');
 
@@ -559,11 +707,27 @@ function draw() {
       <div class="ctrl-row">
         <div class="counter"><strong>${S.selected.size}</strong> / 8 selected</div>
         <div style="display:flex;gap:6px;">
+          <button class="btn-ghost btn-sm" id="rescan-events-btn">↺ Events</button>
           <button class="btn-ghost btn-sm" id="rescan-btn">↺ NTK</button>
           <button class="btn-ghost btn-sm" id="rescan-broad-btn">↺ Broad</button>
         </div>
       </div>
-      <div class="story-list">${cards}</div>
+      <div class="certify-cols">
+        <div>
+          <div class="col-hdr">
+            <span><span class="col-hdr-label">Left</span> · EventRegistry clusters</span>
+            <span style="font-size:9px;">North America · by volume</span>
+          </div>
+          ${eventCards}
+        </div>
+        <div>
+          <div class="col-hdr">
+            <span><span class="col-hdr-label">Right</span> · NTK firehose</span>
+            <span style="font-size:9px;">91-source pool · by recency</span>
+          </div>
+          <div class="story-list">${cards}</div>
+        </div>
+      </div>
       <div class="injector">
         <div class="inj-title">Add a story to the lineup</div>
         <div class="pick-row">${quickBtns}</div>
@@ -594,7 +758,7 @@ function draw() {
       ${S.error?`<div class="error">${x(S.error)}</div>`:''}`;
 
     c.querySelectorAll('[data-toggle]').forEach(el=>el.addEventListener('click',e=>{
-      if(e.target.dataset.cat||e.target.dataset.up||e.target.dataset.dn||e.target.tagName==='A') return;
+      if(e.target.dataset.cat||e.target.dataset.up||e.target.dataset.dn||e.target.tagName==='A'||e.target.closest('.btn-scanmore')||e.target.closest('.btn-promote')) return;
       toggleSel(el.dataset.toggle);
     }));
     c.querySelectorAll('[data-up]').forEach(b=>b.addEventListener('click',()=>moveStory(b.dataset.up,-1)));
@@ -607,6 +771,23 @@ function draw() {
     }));
     c.querySelectorAll('[data-sec]').forEach(b=>b.addEventListener('click',()=>toggleSec(b.dataset.sec)));
     c.querySelectorAll('[data-pick]').forEach(b=>b.addEventListener('click',()=>injectStory(b.dataset.pick)));
+    c.querySelectorAll('[data-promote]').forEach(b=>b.addEventListener('click',e=>{
+      e.stopPropagation();
+      const uri=b.dataset.promote;
+      const ev=S.events.find(e=>e.eventUri===uri);
+      if(ev) promoteEvent(ev);
+    }));
+    c.querySelectorAll('[data-sm-ev]').forEach(b=>b.addEventListener('click',e=>{
+      e.stopPropagation();
+      const ev=S.events.find(e=>e.eventUri===b.dataset.smEv);
+      if(ev) scanMore(ev, b.dataset.smPool);
+    }));
+    c.querySelectorAll('[data-sm-cand]').forEach(b=>b.addEventListener('click',e=>{
+      e.stopPropagation();
+      const cand=S.candidates.find(c=>c.id===b.dataset.smCand);
+      if(cand) scanMore(cand, b.dataset.smPool);
+    }));
+    bind('rescan-events-btn','click', scanEvents);
     bind('rescan-btn','click',discover);
     bind('rescan-broad-btn','click',discoverBroad);
     bind('gen-btn','click',()=>{if(S.selected.size&&S.sections.size)prefetchArticles();});
