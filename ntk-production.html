@@ -177,6 +177,8 @@ URI MAPPING: For each candidate, list the URIs of articles from the list above t
 SOURCING: strong = 3+ articles mapped. moderate = 1-2 articles mapped. manual = no articles found in this list, editor must supply a URL.
 Note: this label only reflects what showed up in this 40-article scan window, not the true breadth of pool coverage — a separate pass searches further before synthesis, so don't undersell a candidate just because few of its sources happened to land in this batch.
 
+HARD RULE: A candidate with no mapped URIs is not a valid candidate. Do not generate stories from prior knowledge. Every candidate must have at least one URI from the list above.
+
 CONCEPT TARGETING: For each candidate, also supply conceptEntity — the single most distinctive named person, organization, or place at the center of the story, written exactly as it would appear as a Wikipedia article title (e.g. "Kash Patel", "Hillary Clinton" — not "FBI Director Kash Patel" or just "Clinton"). If a surname alone is ambiguous between multiple well-known figures, always include the full disambiguating name. Use "" if no single entity is clearly central. Also supply narrowKeyword — exactly ONE distinctive word (not a phrase) likely to appear verbatim in any article about this specific story (e.g. "UFC" — not "UFC plot" or "assassination attempt", since this is matched as an exact phrase and multi-word guesses usually don't match). Use "" if the entity alone is already specific enough, or if you can't confidently predict a word that would appear verbatim.
 
 Return ONLY a valid JSON array. No markdown fences.
