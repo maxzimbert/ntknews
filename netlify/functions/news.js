@@ -55,7 +55,52 @@ exports.handler = async (event) => {
   let path = '/api/v1/article/getArticles';
   let body;
 
-  if (mode === 'scan-ntk') {
+  if (mode === 'scan-events') {
+    // Pre-clustered events from EventRegistry, ranked by article volume.
+    // sourceLocationUri scopes to North American publishers — softer than
+    // sourceUri (which would require the 91-domain list) but editorially
+    // relevant without the sports/entertainment noise of a true global pull.
+    // sortBy:size surfaces stories with real momentum, not announcement noise.
+    path = '/api/v1/event/getEvents';
+    body = {
+      apiKey: process.env.NEWSAPI_KEY,
+      action: 'getEvents',
+      sourceLocationUri: 'http://en.wikipedia.org/wiki/North_America',
+      lang: 'eng',
+      eventsCount: 25,
+      eventsSortBy: 'size',
+      eventsSortByAsc: false,
+      minArticlesInEvent: 3,
+      forceMaxDataTimeWindow: 7,
+      resultType: 'events',
+      includeEventTitle: true,
+      includeEventSummary: true,
+      includeEventArticleCounts: true,
+      includeEventLocation: true,
+      includeEventDate: true,
+      includeEventCommonDates: true
+    };
+  } else if (mode === 'scan-more-event') {
+    // Fetch articles for a specific event by its eventUri.
+    // Used by "Scan more for this title" on left-column event cards.
+    // pool=ntk restricts to the 91-source list; omit for broad.
+    body = {
+      apiKey: process.env.NEWSAPI_KEY,
+      action: 'getArticles',
+      eventUri: q.eventUri || '',
+      lang: 'eng',
+      articlesCount: parseInt(q.articlesCount) || 20,
+      articlesSortBy: 'date',
+      articlesSortByAsc: false,
+      resultType: 'articles',
+      includeArticleBody: true,
+      articleBodyLen: 1500,
+      includeArticleDate: true,
+      includeSourceInfo: true,
+      isDuplicateFilter: 'skipDuplicates'
+    };
+    if (q.pool === 'ntk') body.sourceUri = NTK_SOURCES;
+  } else if (mode === 'scan-ntk') {
     // Scan: return recent articles with short snippets for Claude to select from
     body = {
       apiKey: process.env.NEWSAPI_KEY,
