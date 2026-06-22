@@ -18,7 +18,7 @@
   --serif: 'Georgia','Times New Roman',serif;
 }
 body { background:var(--bg); color:var(--body); font-family:var(--mono); font-size:13px; line-height:1.65; min-height:100vh; }
-#app { max-width:820px; margin:0 auto; padding:32px 24px 80px; }
+#app { max-width:1440px; margin:0 auto; padding:32px 24px 80px; }
 .masthead { border-bottom:2px solid var(--accent); padding-bottom:12px; margin-bottom:32px; display:flex; justify-content:space-between; align-items:flex-end; }
 .masthead-title { font-family:var(--serif); font-size:26px; color:var(--accent); }
 .masthead-date { font-size:11px; color:var(--muted); margin-top:4px; }
@@ -105,8 +105,8 @@ input:focus { border-color:var(--accent); }
 .out-text a:hover { text-decoration:underline; }
 .act-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
 .src-links { padding:8px 16px 10px; border-top:1px solid var(--border); background:var(--surface2); display:flex; gap:10px; flex-wrap:wrap; }
-.certify-cols { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
-@media(max-width:640px){ .certify-cols { grid-template-columns:1fr; } }
+.certify-cols { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:16px; }
+@media(max-width:900px){ .certify-cols { grid-template-columns:1fr; } }
 .col-hdr { font-size:10px; text-transform:uppercase; letter-spacing:.12em; color:var(--muted); font-weight:700; margin-bottom:10px; padding-bottom:8px; border-bottom:2px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
 .col-hdr-label { color:var(--accent); }
 .ev-card { background:var(--surface); border:1px solid var(--border); border-radius:3px; margin-bottom:8px; overflow:hidden; }
@@ -148,6 +148,7 @@ let S = {
   stage:'init', antKey:localStorage.getItem('ntk_ant')||'',
   candidates:[], storyOrder:[], selected:new Set(), sections:new Set(SECS),
   events:[], // left column: pre-clustered EventRegistry events
+  exaStories:[], exaBusy:false, // right column: Exa breaking news clusters
   fetchedArticles:{}, storyUrls:{},
   packages:{}, candidateUrls:{},
   scanMoreBusy:{}, // eventUri or candidateId → true while scanning
@@ -388,6 +389,74 @@ async function scanEvents() {
   } catch(e) { upd({error:'Events scan failed: '+e.message, statusMsg:''}); }
 }
 
+const EXA_CLUSTER_PROMPT = (articleList) => `Today is ${TODAY}. You are the NTK News story scanner reviewing breaking news from the last 3 hours.
+
+Below are recent articles from Exa's live web index. Each entry includes a title, source domain, published time, and highlight excerpt.
+
+YOUR JOB: Group these articles into distinct story clusters. Multiple articles covering the same event should be merged into one cluster. Apply NTK editorial judgment — deaths, resignations, verdicts, attacks, and major political events earn a cluster. Duplicative wire rewrites of the same story count as one cluster, not many.
+
+ARTICLE LIST:
+${articleList}
+
+For each cluster return:
+- id: "exa-1", "exa-2" etc
+- topic: short story name (e.g. "Keir Starmer Resigns as UK Prime Minister")
+- angle: one sharp NTK sentence — stakes and consequence, not summary
+- category: Geopolitical|Domestic|Economic|Cultural|Health|Science|Under-Reported|Orienting
+- urls: array of article URLs that belong to this cluster
+- sourceCount: number of distinct sources covering it
+- newestDate: ISO date string of the most recent article in the cluster
+
+Return ONLY a valid JSON array. No markdown fences.
+[{"id":"exa-1","topic":"...","angle":"...","category":"...","urls":["https://..."],"sourceCount":2,"newestDate":"2026-06-22T14:00:00.000Z"}]`;
+
+async function scanExa() {
+  upd({exaBusy:true, exaStories:[]});
+  try {
+    // 1. Fetch raw Exa results from the Netlify function
+    const r = await fetch('/.netlify/functions/news?mode=scan-exa');
+    if (!r.ok) throw new Error('Exa fetch failed: '+r.status);
+    const data = await r.json();
+    const results = data.results || [];
+    if (!results.length) { upd({exaBusy:false}); return; }
+
+    // 2. Build article list for Claude clustering
+    const articleList = results.map((a, i) => {
+      const domain = (() => { try { return new URL(a.url).hostname.replace('www.',''); } catch { return a.url; } })();
+      const mins = Math.round((Date.now() - new Date(a.publishedDate).getTime()) / 60000);
+      const age = mins < 60 ? `${mins}m ago` : `${Math.round(mins/60)}h ago`;
+      const highlight = (a.highlights?.[0] || '').replace(/\n/g,' ').slice(0, 200);
+      return `[${i+1}] ${a.title}\n  ${domain} · ${age}\n  ${highlight}\n  URL: ${a.url}`;
+    }).join('\n\n');
+
+    // 3. Claude clusters the results
+    const raw = await ai(EXA_CLUSTER_PROMPT(articleList), 1500);
+    const clusters = parseJSON(raw);
+
+    // 4. Attach the full highlight text to each cluster for synthesis
+    const urlToArticle = {};
+    results.forEach(a => { urlToArticle[a.url] = a; });
+    clusters.forEach(cluster => {
+      cluster.source = 'exa';
+      cluster.exaArticles = (cluster.urls || []).map(url => {
+        const a = urlToArticle[url] || {};
+        const domain = (() => { try { return new URL(url).hostname.replace('www.',''); } catch { return url; } })();
+        return {
+          title: a.title || 'Untitled',
+          url,
+          date: a.publishedDate || '',
+          source: domain,
+          // Use highlights as body — dense and token-efficient, no extra fetch needed
+          body: (a.highlights || []).join('\n\n').slice(0, 1400),
+          included: true
+        };
+      });
+    });
+
+    upd({exaStories:clusters, exaBusy:false});
+  } catch(e) { upd({exaBusy:false, error:'Breaking scan failed: '+e.message}); }
+}
+
 async function scanMore(item, pool) {
   // "Scan more for this title" — fires appropriate EventRegistry query
   // based on whether the item came from the left (event) or right (firehose).
@@ -446,6 +515,26 @@ function promoteEvent(ev) {
   upd({
     candidates:[...S.candidates, cand],
     storyOrder:[...S.storyOrder, id]
+  });
+}
+
+function promoteExaStory(story) {
+  // Moves an Exa breaking news cluster into the candidate list.
+  const id = story.id;
+  if (S.candidates.find(c=>c.id===id)) return;
+  const cand = {
+    id, topic:story.topic, angle:story.angle,
+    category:story.category||'Domestic', articleUris:[],
+    sourcing: story.sourceCount >= 3 ? 'strong' : 'moderate',
+    conceptEntity:'', narrowKeyword:'',
+    source:'exa', exaArticles:story.exaArticles||[],
+    newestDate:story.newestDate||'', injected:true
+  };
+  // Pre-populate fetchedArticles so source review works immediately
+  upd({
+    candidates:[...S.candidates, cand],
+    storyOrder:[...S.storyOrder, id],
+    fetchedArticles:{...S.fetchedArticles, [id]: story.exaArticles||[]}
   });
 }
 
@@ -508,7 +597,11 @@ async function prefetchArticles() {
     const uris = pick.articleUris || [];
     let arts = [];
 
-    if (pick.eventUri && pick.source === 'event') {
+    if (pick.source === 'exa' && pick.exaArticles) {
+      // Exa breaking news: highlights already fetched during clustering,
+      // no additional API call needed. Use them directly for synthesis.
+      arts = pick.exaArticles;
+    } else if (pick.eventUri && pick.source === 'event') {
       // Left-column promoted event: fetch by eventUri — EventRegistry already
       // knows the full article cluster, no guessing needed.
       try {
@@ -636,7 +729,7 @@ function upd(p) {
   if (p.antKey!==undefined) localStorage.setItem('ntk_ant',S.antKey);
   draw();
 }
-function reset() { upd({stage:'init',error:'',candidates:[],storyOrder:[],selected:new Set(),packages:{},candidateUrls:{},fetchedArticles:{},storyUrls:{},scanArticles:{},events:[],scanMoreBusy:{}}); }
+function reset() { upd({stage:'init',error:'',candidates:[],storyOrder:[],selected:new Set(),packages:{},candidateUrls:{},fetchedArticles:{},storyUrls:{},scanArticles:{},events:[],exaStories:[],exaBusy:false,scanMoreBusy:{}}); }
 
 // ─── RENDER ──────────────────────────────────────────────────────────────────
 
@@ -737,6 +830,33 @@ function draw() {
     const quickBtns=QUICK_PICKS.map(p=>`<button class="pick-btn" data-pick="${x(p)}" ${S.injBusy?'disabled':''}>${x(p)}</button>`).join('');
     const secBtns=SECS.map(s=>`<button class="btn-ghost btn-sm${S.sections.has(s)?' on':''}" data-sec="${s}">${s}</button>`).join('');
 
+    // ── RIGHT COLUMN (3rd): Exa breaking news clusters ────────────────────────
+    const exaCards = S.exaBusy
+      ? `<div class="col-empty"><div class="spinner" style="width:16px;height:16px;margin:0 auto 8px;"></div>Clustering breaking news…</div>`
+      : S.exaStories.length
+        ? S.exaStories.map(story => {
+            const promoted = !!S.candidates.find(c=>c.id===story.id);
+            const mins = story.newestDate ? Math.round((Date.now()-new Date(story.newestDate).getTime())/60000) : null;
+            const age = mins !== null ? (mins < 60 ? `${mins}m ago` : `${Math.round(mins/60)}h ago`) : '';
+            return `<div class="ev-card">
+              <div class="ev-body">
+                <div class="ev-topic">${x(story.topic)}</div>
+                ${story.angle?`<div class="ev-summary">${x(story.angle)}</div>`:''}
+                <div class="ev-meta">
+                  <span class="ev-count">${story.sourceCount} source${story.sourceCount!==1?'s':''}</span>
+                  ${age?`<span class="ev-loc">🕐 ${x(age)}</span>`:''}
+                  <span class="ev-loc" style="color:var(--red);font-weight:700;">BREAKING</span>
+                </div>
+              </div>
+              <div class="ev-actions">
+                <button class="btn-promote" data-promote-exa="${x(story.id)}" ${promoted?'disabled':''}>
+                  ${promoted?'Added ✓':'→ Add to Mix'}
+                </button>
+              </div>
+            </div>`;
+          }).join('')
+        : `<div class="col-empty">Click "↺ Breaking" to load</div>`;
+
     c.innerHTML=`<div class="stage-lbl">02 · Certify the Mix</div>
       <div class="ctrl-row">
         <div class="counter"><strong>${S.selected.size}</strong> / 8 selected</div>
@@ -744,6 +864,7 @@ function draw() {
           <button class="btn-ghost btn-sm" id="rescan-events-btn">↺ Events</button>
           <button class="btn-ghost btn-sm" id="rescan-btn">↺ NTK</button>
           <button class="btn-ghost btn-sm" id="rescan-broad-btn">↺ Broad</button>
+          <button class="btn-ghost btn-sm${S.exaBusy?' on':''}" id="rescan-exa-btn" ${S.exaBusy?'disabled':''}>↺ Breaking</button>
         </div>
       </div>
       <div class="certify-cols">
@@ -756,10 +877,17 @@ function draw() {
         </div>
         <div>
           <div class="col-hdr">
-            <span><span class="col-hdr-label">Right</span> · NTK firehose</span>
+            <span><span class="col-hdr-label">Center</span> · NTK firehose</span>
             <span style="font-size:9px;">91-source pool · by recency</span>
           </div>
           <div class="story-list">${cards}</div>
+        </div>
+        <div>
+          <div class="col-hdr">
+            <span><span class="col-hdr-label">Right</span> · Breaking · Exa</span>
+            <span style="font-size:9px;">last 3 hrs · Claude-clustered</span>
+          </div>
+          ${exaCards}
         </div>
       </div>
       <div class="injector">
@@ -821,6 +949,12 @@ function draw() {
       const cand=S.candidates.find(c=>c.id===b.dataset.smCand);
       if(cand) scanMore(cand, b.dataset.smPool);
     }));
+    c.querySelectorAll('[data-promote-exa]').forEach(b=>b.addEventListener('click',e=>{
+      e.stopPropagation();
+      const story=S.exaStories.find(s=>s.id===b.dataset.promoteExa);
+      if(story) promoteExaStory(story);
+    }));
+    bind('rescan-exa-btn','click', scanExa);
     bind('rescan-events-btn','click', scanEvents);
     bind('rescan-btn','click',discover);
     bind('rescan-broad-btn','click',discoverBroad);
