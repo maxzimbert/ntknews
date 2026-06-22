@@ -177,7 +177,7 @@ URI MAPPING: For each candidate, list the URIs of articles from the list above t
 SOURCING: strong = 3+ articles mapped. moderate = 1-2 articles mapped. manual = no articles found in this list, editor must supply a URL.
 Note: this label only reflects what showed up in this 40-article scan window, not the true breadth of pool coverage — a separate pass searches further before synthesis, so don't undersell a candidate just because few of its sources happened to land in this batch.
 
-HARD RULE: A candidate with no mapped URIs is not a valid candidate. Do not generate stories from prior knowledge. Every candidate must have at least one URI from the list above.
+HARD RULE: A candidate with no mapped URIs is not a valid candidate. Do not generate stories from prior knowledge. Every candidate must have at least one URI from the list above, and every mapped URI must be an article that is primarily about that candidate story — not an article that merely mentions it in passing. If you know a story is newsworthy but cannot find an article in the list that is genuinely about it, do not include it.
 
 CONCEPT TARGETING: For each candidate, also supply conceptEntity — the single most distinctive named person, organization, or place at the center of the story, written exactly as it would appear as a Wikipedia article title (e.g. "Kash Patel", "Hillary Clinton" — not "FBI Director Kash Patel" or just "Clinton"). If a surname alone is ambiguous between multiple well-known figures, always include the full disambiguating name. Use "" if no single entity is clearly central. Also supply narrowKeyword — exactly ONE distinctive word (not a phrase) likely to appear verbatim in any article about this specific story (e.g. "UFC" — not "UFC plot" or "assassination attempt", since this is matched as an exact phrase and multi-word guesses usually don't match). Use "" if the entity alone is already specific enough, or if you can't confidently predict a word that would appear verbatim.
 
@@ -346,9 +346,18 @@ async function scanHeadlines(mode) {
     const raw = await ai(DISC_PROMPT(articleList), 2500);
     const candidates = parseJSON(raw);
 
-    // Store the scan articles in state so preview can use them directly
+    // Annotate each candidate with the newest article date from its mapped URIs,
+    // so the certification card can show freshness without waiting for source review.
     const scanArticleMap = {};
     articles.forEach(a => { scanArticleMap[a.uri] = a; });
+    candidates.forEach(cand => {
+      const dates = (cand.articleUris||[])
+        .map(uri => scanArticleMap[uri]?.date)
+        .filter(Boolean)
+        .sort()
+        .reverse();
+      cand.newestDate = dates[0] || '';
+    });
 
     upd({candidates, storyOrder:candidates.map(c=>c.id), selected:new Set(), scanArticles:scanArticleMap, stage:'certify'});
   } catch(e) { upd({error:'Scan failed: '+e.message, stage:'init'}); }
@@ -499,7 +508,29 @@ async function prefetchArticles() {
     const uris = pick.articleUris || [];
     let arts = [];
 
-    if (uris.length) {
+    if (pick.eventUri && pick.source === 'event') {
+      // Left-column promoted event: fetch by eventUri — EventRegistry already
+      // knows the full article cluster, no guessing needed.
+      try {
+        const raw = await netlifyFetch({mode:'scan-more-event', eventUri:pick.eventUri, pool:'ntk', articlesCount:'20'});
+        arts = raw.map(a=>({
+          title:a.title||'Untitled', url:a.url||'', uri:a.uri||'',
+          date:a.date||'', source:a.source?.title||'Unknown',
+          body:(a.body||'').slice(0,1400), included:true
+        }));
+        // If NTK pool returned nothing, fall back to broad
+        if (!arts.length) {
+          const broad = await netlifyFetch({mode:'scan-more-event', eventUri:pick.eventUri, articlesCount:'20'});
+          arts = broad.map(a=>({
+            title:a.title||'Untitled', url:a.url||'', uri:a.uri||'',
+            date:a.date||'', source:a.source?.title||'Unknown',
+            body:(a.body||'').slice(0,1400), included:true
+          }));
+        }
+      } catch(e) {
+        arts = [{title:'Fetch error: '+e.message, url:'', date:'', source:'Error', body:'', included:false}];
+      }
+    } else if (uris.length) {
       // Fetch full bodies for the exact URIs Claude mapped during scan
       try {
         const known = await fetchByUris(uris);
@@ -682,6 +713,7 @@ function draw() {
             <div class="sc-meta">
               <span class="tag ${tagCls}">${x(cand.sourcing)}</span>
               <span style="font-size:10px;color:var(--muted);">${artCount} article${artCount!==1?'s':''} mapped</span>
+              ${cand.newestDate?`<span style="font-size:10px;color:${cand.newestDate<new Date(Date.now()-172800000).toISOString().slice(0,10)?'var(--red)':'var(--muted)'};">${x(cand.newestDate)}</span>`:''}
               <span class="tag-cat" data-cat="${cand.id}">${x(cand.category)} ✎</span>
               ${cand.conceptEntity?`<span style="font-size:10px;color:var(--muted);">🔎 ${x(cand.conceptEntity)}${cand.narrowKeyword?' · '+x(cand.narrowKeyword):''}</span>`:''}
               ${cand.injected?'<span style="font-size:9px;color:var(--accent);text-transform:uppercase;letter-spacing:.06em;">+ added</span>':''}
