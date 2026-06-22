@@ -23,12 +23,9 @@ const NTK_SOURCES = [
   'mediaite.com','hollywoodreporter.com','deadline.com'
 ];
 
-// Bounds searches to recent data instead of EventRegistry's full historical
-// archive. This is the documented, supported way to scope "recent news" —
-// confirmed against the official SDK source, not the old dateStart/dateEnd
-// approach that was silently returning zero results.
 const RECENT_WINDOW_DAYS = 7;
 
+// ── EventRegistry: POST to eventregistry.org ─────────────────────────────────
 function post(path, body) {
   return new Promise((resolve) => {
     const bodyStr = JSON.stringify(body);
@@ -49,9 +46,60 @@ function post(path, body) {
   });
 }
 
+// ── Exa: POST to api.exa.ai ───────────────────────────────────────────────────
+function exaPost(body) {
+  return new Promise((resolve) => {
+    const bodyStr = JSON.stringify(body);
+    const options = {
+      hostname: 'api.exa.ai',
+      path: '/search',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': process.env.EXA_API_KEY,
+        'Content-Length': Buffer.byteLength(bodyStr)
+      }
+    };
+    const req = https.request(options, (res) => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => resolve({ statusCode: res.statusCode, body: data }));
+    });
+    req.on('error', err => resolve({ statusCode: 500, body: JSON.stringify({ error: err.message }) }));
+    req.write(bodyStr);
+    req.end();
+  });
+}
+
 exports.handler = async (event) => {
   const q = event.queryStringParameters || {};
   const mode = q.mode || 'fetch-by-uri';
+
+  // ── Exa: breaking news scan ─────────────────────────────────────────────────
+  // Separate from EventRegistry — hits api.exa.ai directly.
+  // Designed for stories under ~3 hours old that EventRegistry hasn't
+  // clustered yet: deaths, resignations, verdicts, major sudden events.
+  // Returns Exa's native response shape {results:[{title,url,publishedDate,highlights}]}
+  // so the caller can normalize it separately from EventRegistry responses.
+  if (mode === 'scan-exa') {
+    const query = q.q || 'major breaking news today deaths resignations verdicts attacks';
+    const result = await exaPost({
+      query,
+      type: 'auto',
+      category: 'news',
+      numResults: parseInt(q.numResults) || 10,
+      contents: {
+        highlights: true,
+        maxAgeHours: parseInt(q.maxAgeHours) || 3
+      }
+    });
+    return {
+      statusCode: 200,
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      body: result.body
+    };
+  }
+
   let path = '/api/v1/article/getArticles';
   let body;
 
