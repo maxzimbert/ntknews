@@ -47,12 +47,12 @@ function post(path, body) {
 }
 
 // ── Exa: POST to api.exa.ai ───────────────────────────────────────────────────
-function exaPost(body) {
+function exaPost(body, path='/search') {
   return new Promise((resolve) => {
     const bodyStr = JSON.stringify(body);
     const options = {
       hostname: 'api.exa.ai',
-      path: '/search',
+      path,
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -75,7 +75,62 @@ exports.handler = async (event) => {
   const q = event.queryStringParameters || {};
   const mode = q.mode || 'fetch-by-uri';
 
-  // ── Exa: breaking news scan ─────────────────────────────────────────────────
+  // ── Simple URL metadata scrape ──────────────────────────────────────────────
+  // Fetches a URL server-side (no CORS) and extracts title + meta description.
+  // Used by the URL import flow on the Review Sources screen — no Exa needed,
+  // no cost, just enough to confirm what the article is before synthesis.
+  if (mode === 'fetch-url') {
+    const url = q.url || '';
+    if (!url) return { statusCode: 400, headers: { 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify({ error: 'url required' }) };
+    try {
+      const parsed = new URL(url);
+      const result = await new Promise((resolve) => {
+        const options = {
+          hostname: parsed.hostname,
+          path: parsed.pathname + (parsed.search || ''),
+          method: 'GET',
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (compatible; NTKNews/1.0)',
+            'Accept': 'text/html'
+          }
+        };
+        const req = https.request(options, (res) => {
+          // Follow one redirect
+          if ((res.statusCode === 301 || res.statusCode === 302) && res.headers.location) {
+            return resolve({ redirect: res.headers.location });
+          }
+          let data = '';
+          res.on('data', chunk => { data += chunk; if (data.length > 50000) req.destroy(); });
+          res.on('end', () => resolve({ html: data }));
+        });
+        req.on('error', err => resolve({ error: err.message }));
+        req.setTimeout(8000, () => { req.destroy(); resolve({ error: 'timeout' }); });
+        req.end();
+      });
+
+      const html = result.html || '';
+      const titleMatch = html.match(/<title[^>]*>([^<]{1,200})<\/title>/i);
+      const descMatch = html.match(/<meta[^>]+name=["']description["'][^>]+content=["']([^"']{1,400})["']/i)
+                     || html.match(/<meta[^>]+content=["']([^"']{1,400})["'][^>]+name=["']description["']/i)
+                     || html.match(/<meta[^>]+property=["']og:description["'][^>]+content=["']([^"']{1,400})["']/i);
+      const ogTitleMatch = html.match(/<meta[^>]+property=["']og:title["'][^>]+content=["']([^"']{1,200})["']/i);
+
+      const title = (ogTitleMatch?.[1] || titleMatch?.[1] || '').trim().replace(/\s+/g,' ');
+      const description = (descMatch?.[1] || '').trim().replace(/\s+/g,' ');
+
+      return {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+        body: JSON.stringify({ title, description })
+      };
+    } catch(e) {
+      return {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+        body: JSON.stringify({ title: '', description: '', error: e.message })
+      };
+    }
+  }
   // Separate from EventRegistry — hits api.exa.ai directly.
   // Designed for stories under ~3 hours old that EventRegistry hasn't
   // clustered yet: deaths, resignations, verdicts, major sudden events.
