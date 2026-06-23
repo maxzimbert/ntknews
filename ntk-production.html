@@ -308,13 +308,16 @@ async function fetchByUris(uris) {
 
 async function fetchUrl(url) {
   try {
-    const r = await fetch(url, {mode:'cors'});
-    if (!r.ok) return {url, body:''};
-    const html = await r.text();
-    const tmp = document.createElement('div');
-    tmp.innerHTML = html;
-    return {url, body:(tmp.innerText||tmp.textContent||'').replace(/\s+/g,' ').slice(0,2000)};
-  } catch { return {url, body:''}; }
+    const p = new URLSearchParams({mode:'fetch-url', url});
+    const r = await fetch(`/.netlify/functions/news?${p}`);
+    if (!r.ok) return {url, body:'', title:''};
+    const data = await r.json();
+    return {
+      url,
+      title: data.title || '',
+      body: data.description || ''
+    };
+  } catch { return {url, body:'', title:''}; }
 }
 
 function parseJSON(raw) {
@@ -673,7 +676,7 @@ async function addArticleUrl(storyId, url) {
   if (!url.trim()) return;
   const result = await fetchUrl(url.trim());
   const arts = [...(S.fetchedArticles[storyId]||[])];
-  arts.push({title:result.body?url:'URL (content unavailable)', url:url.trim(), date:TODAY, source:'Editor import', body:result.body||'', included:true});
+  arts.push({title:result.title||result.body?result.title||url:'URL (content unavailable)', url:url.trim(), date:TODAY, source:'Editor import', body:result.body||'', included:true});
   upd({fetchedArticles:{...S.fetchedArticles,[storyId]:arts}});
 }
 
