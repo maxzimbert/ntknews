@@ -83,14 +83,16 @@ exports.handler = async (event) => {
   // so the caller can normalize it separately from EventRegistry responses.
   if (mode === 'scan-exa') {
     const query = q.q || 'major breaking news today deaths resignations verdicts attacks';
+    const hoursBack = parseInt(q.maxAgeHours) || 3;
+    const startPublishedDate = new Date(Date.now() - hoursBack * 60 * 60 * 1000).toISOString();
     const result = await exaPost({
       query,
       type: 'auto',
       category: 'news',
       numResults: parseInt(q.numResults) || 10,
+      startPublishedDate,
       contents: {
-        highlights: true,
-        maxAgeHours: parseInt(q.maxAgeHours) || 3
+        highlights: true
       }
     });
     return {
