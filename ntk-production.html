@@ -234,9 +234,13 @@ REQUIRED OPENING:
 
 THEN 2-3 MOVEMENTS, not isolated items: each opens with a **bold headline** but follows causally from what came before — use a connective sentence rather than restarting cold. Each movement needs a person or institution whose situation actually changed, named specifically. Body length is whatever the stakes require — build to the consequence, don't just state it. Citation ([Source Name](URL)) lands wherever the claim it supports does, not necessarily at the end.
 Two-Prong: when a story is consequential enough, the event gets one movement and the underlying pattern gets a second — let the second one open by referring back to the first, not as a fresh restart.
-Boundary: predictions → Probabilities. speculation → Possibilities. debunking → Lies.`,
+Boundary: predictions → Probabilities. speculation → Possibilities. debunking → Lies.
+
+LENGTH: Aim for 400-450 words. This constraint forces you to pick the most consequential movements — not all of them. If you're running long, cut a movement, not sentences within movements.`,
 
 probabilities:`You are producing the PROBABILITIES section. Output only the Probabilities section.
+
+READER CONTEXT: The reader has already read Truths. Do not re-establish facts already stated there — no re-quoting the same numbers, no re-summarizing what happened. Build forward from what Truths established. Every sentence should assume the baseline and advance past it.
 
 Probabilities are likely next steps — pattern recognition stated with conviction. Not hedged speculation.
 
@@ -244,20 +248,30 @@ Probabilities are likely next steps — pattern recognition stated with convicti
 - Each gives something to watch in the next 1-14 days.
 - Do NOT command the reader to "watch" or "look." State what will happen and why.
 - Name the stakes: who's positioned to win or lose if this plays out as predicted.
+- Pick the 2-3 most consequential probabilities. Not all of them.
 
-FORMAT: Open with a **bold subhead** — lives inside the story, not on the digest screen. Orients reader within the section. Then each probability as a **bold headline** followed by body — let the second probability follow from the first's implications rather than starting over. Most immediate to most structural. Length is whatever it takes to make the mechanism, not just the prediction, convincing.`,
+FORMAT: Open with a **bold subhead** — lives inside the story, not on the digest screen. Orients reader within the section. Then each probability as a **bold headline** followed by body — let the second probability follow from the first's implications rather than starting over. Most immediate to most structural.
+
+LENGTH: Aim for 400-450 words. The word ceiling is the editorial discipline — it forces you to lead with mechanism, not context the reader already has.`,
 
 possibilities:`You are producing the POSSIBILITIES section. Output only the Possibilities section.
+
+READER CONTEXT: The reader has already read Truths and Probabilities. Do not re-establish facts or re-quote figures already stated in those sections. Start from what's already known and move into territory neither section covered.
 
 Possibilities are lower-probability but plausible — black swans, second-order effects. Not the base case. Not fiction.
 
 - Name conditions that make unlikely things likely: "If X and Y converge — then Z becomes plausible."
 - At least one hopeful or constructive possibility.
 - Every possibility tethered to evidence from the articles.
+- Pick the 2-3 most genuinely surprising possibilities. Not all of them.
 
-FORMAT: Open with a **bold subhead**. Then each possibility as a **bold headline** + body, long enough to make the convergence of conditions feel earned rather than asserted. Most grounded to most speculative. Register: informed curiosity, not hedging — "here's the thing almost nobody is considering," not "it's possible that maybe."`,
+FORMAT: Open with a **bold subhead**. Then each possibility as a **bold headline** + body, long enough to make the convergence of conditions feel earned rather than asserted. Most grounded to most speculative. Register: informed curiosity, not hedging — "here's the thing almost nobody is considering," not "it's possible that maybe."
+
+LENGTH: Aim for 400-450 words. If you're re-stating facts from Truths or Probabilities to set up a possibility, you're padding — assume the reader retained them and skip to the convergence.`,
 
 lies:`You are producing the LIES section. Output only the Lies section.
+
+READER CONTEXT: The reader has already read Truths, Probabilities, and Possibilities. Do not re-establish the factual record already laid out there. Name the lie, show the mechanism, and move — the reader already knows what actually happened.
 
 Lies are false or manipulative narratives in active circulation by identifiable actors. Not honest disagreements — deliberate distortion.
 
@@ -265,7 +279,9 @@ Lies are false or manipulative narratives in active circulation by identifiable 
 - Show why someone would believe it — what fear or need it answers — then who actually benefits from it spreading: clout, cash, or power. Vary the construction item to item; don't reuse the same sentence shape twice in one section.
 - Do not dehumanize believers. The lie is the target.
 
-FORMAT: Open with a **bold subhead**. Then each lie as a **bold headline** (the distortion stated clearly) followed by the claim, who's making it, who benefits, the factual reality, and a historical parallel when one is earned — built as a sequence toward the reveal, not a checklist. Most dangerous to most absurd. Register: controlled precision — a prosecutor laying out a case, not a pundit venting.`
+FORMAT: Open with a **bold subhead**. Then each lie as a **bold headline** (the distortion stated clearly) followed by the claim, who's making it, who benefits, the factual reality, and a historical parallel when one is earned — built as a sequence toward the reveal, not a checklist. Most dangerous to most absurd. Register: controlled precision — a prosecutor laying out a case, not a pundit venting.
+
+LENGTH: Aim for 400-450 words. One well-constructed lie, fully prosecuted, is more effective than three that each get two sentences.`
 };
 
 function makePrompt(section, articlesText, suppUrls) {
