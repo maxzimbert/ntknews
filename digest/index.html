@@ -143,6 +143,161 @@
     white-space: nowrap;
   }
 
+  /* ── BEAT CHIP ─────────────────────────────────────────────────── */
+  .beat-chip {
+    display: none;
+    align-items: center;
+    gap: 5px;
+    background: transparent;
+    border: 1px solid rgba(234,217,197,0.18);
+    border-radius: 3px;
+    padding: 3px 9px 3px 7px;
+    cursor: pointer;
+    white-space: nowrap;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: border-color 0.2s, opacity 0.2s;
+    flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .beat-chip.visible { display: flex; }
+  .beat-chip:active { opacity: 0.65; }
+  .beat-chip-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ── BEATS SHEET ───────────────────────────────────────────────── */
+  .beats-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0);
+    z-index: 199;
+    pointer-events: none;
+    transition: background 0.3s;
+  }
+  .beats-overlay.open {
+    background: rgba(0,0,0,0.55);
+    pointer-events: auto;
+  }
+  .beats-sheet {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-height: 85vh;
+    background: #1E181B;
+    border-top: 3px solid var(--blue);
+    border-radius: 12px 12px 0 0;
+    transform: translateY(105%);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 200;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .beats-sheet.open { transform: translateY(0); }
+  .beats-sheet-inner { padding: 20px 20px 44px; }
+  .beats-sheet-handle {
+    width: 36px; height: 4px;
+    background: rgba(234,217,197,0.18);
+    border-radius: 2px;
+    margin: 0 auto 20px;
+  }
+  .beats-sheet-kicker {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 5px;
+  }
+  .beats-sheet-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #EAD9C5;
+    margin-bottom: 20px;
+  }
+  .beat-domain-card {
+    border-left: 3px solid transparent;
+    border-radius: 0;
+    padding: 13px 14px 11px;
+    margin-bottom: 8px;
+    transition: opacity 0.3s;
+  }
+  .beat-domain-card:last-child { margin-bottom: 0; }
+  .beat-domain-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
+  .beat-domain-name {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: #EAD9C5;
+    margin-bottom: 3px;
+  }
+  .beat-domain-status {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+  }
+  .beat-recency-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+  .beat-bar-track {
+    height: 2px;
+    background: rgba(234,217,197,0.1);
+    border-radius: 1px;
+    overflow: hidden;
+    margin-bottom: 6px;
+  }
+  .beat-bar-fill {
+    height: 100%;
+    border-radius: 1px;
+    transition: width 0.5s ease;
+  }
+  .beat-domain-meta {
+    font-size: 10px;
+    color: rgba(234,217,197,0.3);
+    font-family: 'Space Grotesk', sans-serif;
+    letter-spacing: 0.3px;
+  }
+  .beats-scale-legend {
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(234,217,197,0.08);
+  }
+  .beats-scale-kicker {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(234,217,197,0.3);
+    margin-bottom: 10px;
+  }
+  .beats-scale-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+  .beat-pill {
+    font-size: 9px;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-family: 'Space Grotesk', sans-serif;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border: 1px solid transparent;
+  }
 
   /* ── BRIEF TICKER ──────────────────────────────────────────────── */
   .ticker-wrap {
@@ -1348,6 +1503,10 @@
     <div class="hero-label">Today's Digest</div>
     <div class="hero-date" id="heroDate">Loading...</div>
     <div class="progress-row">
+      <button class="beat-chip" id="beatChip" onclick="openBeatsSheet()" aria-label="Your beats">
+        <span class="beat-chip-dot" id="beatChipDot"></span>
+        <span id="beatChipLabel"></span>
+      </button>
       <div class="progress-track">
         <div class="progress-fill" id="progressFill"></div>
       </div>
@@ -1742,6 +1901,163 @@ function buildDigest() {
   });
 }
 
+// ── BEATS SYSTEM ─────────────────────────────────────────────────
+var BEATS_KEY = 'ntk_beats_v1';
+var BEATS_SCALE = [
+  { label: 'Skimmed',      color: '#5A5754' },
+  { label: 'Briefed',      color: '#8A8683' },
+  { label: 'Read It',      color: '#0798F2' },
+  { label: 'Following It', color: '#3AABF5' },
+  { label: 'On the Beat',  color: '#F2AE2E' },
+  { label: 'Carrying It',  color: '#725ABF' },
+  { label: 'Witness',      color: '#01B2A7' },
+];
+
+function beatsLoad() {
+  try { return JSON.parse(localStorage.getItem(BEATS_KEY)) || {}; } catch(e) { return {}; }
+}
+function beatsSave(data) {
+  try { localStorage.setItem(BEATS_KEY, JSON.stringify(data)); } catch(e) {}
+}
+
+function beatIdx(s) {
+  if (!s || !s.stories) return -1;
+  if (s.stories >= 10 && (s.sessions||1) >= 3) return 6;
+  if (s.stories >= 7  && (s.sessions||1) >= 3) return 5;
+  if (s.stories >= 5  && (s.sessions||1) >= 2) return 4;
+  if (s.stories >= 3)  return 3;
+  if (s.liesRead)      return 2;
+  if (s.depth >= 1)    return 1;
+  return 0;
+}
+
+function beatsEnsure(data, cat) {
+  if (!data[cat]) data[cat] = { stories:0, depth:0, liesRead:false, sessions:1, lastActive:Date.now() };
+  var hoursAgo = (Date.now() - (data[cat].lastActive||0)) / 3600000;
+  if (hoursAgo > 4) data[cat].sessions = (data[cat].sessions||1) + 1;
+  data[cat].lastActive = Date.now();
+}
+
+function beatsRecordOpen(cat) {
+  if (!cat) return;
+  var data = beatsLoad();
+  beatsEnsure(data, cat);
+  beatsSave(data);
+}
+
+function beatsRecordRead(cat) {
+  if (!cat) return;
+  var data = beatsLoad();
+  beatsEnsure(data, cat);
+  data[cat].stories = (data[cat].stories||0) + 1;
+  beatsSave(data);
+  updateBeatChip();
+}
+
+function beatsRecordDepth(cat) {
+  if (!cat) return;
+  var data = beatsLoad();
+  beatsEnsure(data, cat);
+  data[cat].depth = (data[cat].depth||0) + 1;
+  beatsSave(data);
+}
+
+function beatsRecordLies(cat) {
+  if (!cat) return;
+  var data = beatsLoad();
+  beatsEnsure(data, cat);
+  data[cat].liesRead = true;
+  beatsSave(data);
+  updateBeatChip();
+}
+
+function beatsGetTop() {
+  var data = beatsLoad();
+  var topCat = null, topIdx = -1;
+  Object.keys(data).forEach(function(cat) {
+    var idx = beatIdx(data[cat]);
+    if (idx > topIdx || (idx === topIdx && (data[cat].lastActive||0) > (topCat ? data[topCat].lastActive||0 : 0))) {
+      topIdx = idx;
+      topCat = cat;
+    }
+  });
+  return topCat ? { category: topCat, idx: topIdx, stats: data[topCat] } : null;
+}
+
+function updateBeatChip() {
+  var chip = document.getElementById('beatChip');
+  var dot  = document.getElementById('beatChipDot');
+  var lbl  = document.getElementById('beatChipLabel');
+  if (!chip) return;
+  var top = beatsGetTop();
+  if (!top || top.idx < 0) { chip.classList.remove('visible'); return; }
+  var beat = BEATS_SCALE[top.idx];
+  chip.classList.add('visible');
+  chip.style.borderColor = beat.color + '45';
+  chip.style.color = beat.color;
+  dot.style.background = beat.color;
+  lbl.textContent = beat.label;
+}
+
+function openBeatsSheet() {
+  document.getElementById('beatsOverlay').classList.add('open');
+  document.getElementById('beatsSheet').classList.add('open');
+  renderBeatsSheet();
+}
+
+function closeBeatsSheet() {
+  document.getElementById('beatsOverlay').classList.remove('open');
+  document.getElementById('beatsSheet').classList.remove('open');
+}
+window.openBeatsSheet = openBeatsSheet;
+window.closeBeatsSheet = closeBeatsSheet;
+
+function renderBeatsSheet() {
+  var data = beatsLoad();
+  var list  = document.getElementById('beatsDomainList');
+  var pills = document.getElementById('beatsScalePills');
+  if (!list) return;
+
+  var domains = Object.keys(data).map(function(cat) {
+    return { cat: cat, stats: data[cat], idx: beatIdx(data[cat]) };
+  }).sort(function(a, b) {
+    if (b.idx !== a.idx) return b.idx - a.idx;
+    return (b.stats.lastActive||0) - (a.stats.lastActive||0);
+  });
+
+  if (!domains.length) {
+    list.innerHTML = '<p style="font-family:\'Source Serif 4\',serif;font-style:italic;font-size:14px;color:rgba(234,217,197,0.4);text-align:center;padding:28px 0;">Read your first story to start building your beats.</p>';
+  } else {
+    var maxS = Math.max.apply(null, domains.map(function(d){ return d.stats.stories||0; }));
+    list.innerHTML = domains.map(function(d) {
+      var beat = BEATS_SCALE[Math.max(d.idx, 0)];
+      var daysAgo = (Date.now() - (d.stats.lastActive||0)) / 86400000;
+      var dotColor = daysAgo <= 7 ? '#01B2A7' : daysAgo <= 30 ? '#F2AE2E' : 'rgba(234,217,197,0.2)';
+      var opacity  = daysAgo <= 7 ? 1 : daysAgo <= 30 ? 0.6 : 0.32;
+      var barPct   = maxS > 0 ? Math.round(((d.stats.stories||0) / maxS) * 100) : 0;
+      return '<div class="beat-domain-card" style="border-left-color:' + beat.color + ';background:' + beat.color + '14;opacity:' + opacity + ';">' +
+        '<div class="beat-domain-top">' +
+          '<div>' +
+            '<div class="beat-domain-name">' + d.cat + '</div>' +
+            '<div class="beat-domain-status" style="color:' + beat.color + ';">' + beat.label + '</div>' +
+          '</div>' +
+          '<div class="beat-recency-dot" style="background:' + dotColor + ';"></div>' +
+        '</div>' +
+        '<div class="beat-bar-track"><div class="beat-bar-fill" style="width:' + barPct + '%;background:' + beat.color + ';"></div></div>' +
+        '<div class="beat-domain-meta">' + (d.stats.stories||0) + ' ' + (d.stats.stories===1?'story':'stories') + ' · ' + (d.stats.sessions||1) + ' session' + ((d.stats.sessions||1)!==1?'s':'') + '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  if (pills) {
+    pills.innerHTML = BEATS_SCALE.map(function(b) {
+      return '<span class="beat-pill" style="color:' + b.color + ';border-color:' + b.color + '35;">' + b.label + '</span>';
+    }).join('');
+  }
+}
+
+updateBeatChip();
+
 // ── Progress ──────────────────────────────────────────────────────
 function updateProgress() {
   const n = readStories.size;
@@ -1768,6 +2084,7 @@ function updateProgress() {
 function markStoryRead(index) {
   if (readStories.has(index)) return;
   readStories.add(index);
+  beatsRecordRead(stories[index] ? stories[index].category : null);
   const card = document.getElementById('card-' + index);
   if (card) card.classList.add('read-dimmed');
   // Also dim featured hero if present
@@ -1814,6 +2131,7 @@ function openStory(index) {
     story_category: s.category,
     story_headline: s.headline
   });
+  beatsRecordOpen(s.category);
 
   // Reset scroll tracking for this story
   scrollTracked25 = false;
@@ -1835,6 +2153,7 @@ function toggleSection(id, sectionName) {
   sec.classList.toggle('open');
 
   if (!wasOpen) {
+    beatsRecordDepth(stories[currentStoryIndex] ? stories[currentStoryIndex].category : null);
     track('section_open', {
       section: sectionName,
       story_index: currentStoryIndex + 1,
@@ -1860,6 +2179,7 @@ function cancelHold() {
 function revealLies() {
   document.getElementById('liesLocked').style.display = 'none';
   document.getElementById('liesRevealed').style.display = 'block';
+  beatsRecordLies(stories[currentStoryIndex] ? stories[currentStoryIndex].category : null);
   track('lies_revealed', {
     story_index: currentStoryIndex + 1,
     story_headline: stories[currentStoryIndex].headline
@@ -2517,6 +2837,20 @@ document.addEventListener('DOMContentLoaded', function() {
   </div>
 </div>
 <!-- /NTK ONBOARDING OVERLAY -->
+<!-- BEATS SHEET -->
+<div class="beats-overlay" id="beatsOverlay" onclick="closeBeatsSheet()"></div>
+<div class="beats-sheet" id="beatsSheet">
+  <div class="beats-sheet-inner">
+    <div class="beats-sheet-handle"></div>
+    <div class="beats-sheet-kicker">Your beats</div>
+    <div class="beats-sheet-title">What you've been tracking</div>
+    <div id="beatsDomainList"></div>
+    <div class="beats-scale-legend">
+      <div class="beats-scale-kicker">The beat scale</div>
+      <div class="beats-scale-pills" id="beatsScalePills"></div>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
