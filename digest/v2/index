@@ -1419,6 +1419,129 @@
     background: #1f1a1d;
   }
 
+  /* ── BOTTOM NAV ────────────────────────────────────────────────── */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 64px;
+    display: flex;
+    background: #1A1419;
+    border-top: 1px solid rgba(234,217,197,0.1);
+    z-index: 90;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .bottom-nav.hidden { display: none; }
+  .nav-item {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 5px; background: transparent; border: none;
+    cursor: pointer; padding: 8px 4px 10px;
+    -webkit-tap-highlight-color: transparent;
+    color: rgba(234,217,197,0.3);
+    transition: color 0.15s;
+  }
+  .nav-item.active { color: #EAD9C5; }
+  .nav-item:active { opacity: 0.6; }
+  .nav-item span {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 9px; font-weight: 600;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    color: inherit;
+  }
+
+  /* ── TODAY VIEW ────────────────────────────────────────────────── */
+  .today-view { min-height: 100vh; background: #261F23; padding-bottom: 80px; }
+  @media (prefers-color-scheme: light) { .today-view { background: #F5F0E8; } }
+  .today-header {
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid rgba(234,217,197,0.08);
+  }
+  @media (prefers-color-scheme: light) {
+    .today-header { border-bottom-color: rgba(38,31,35,0.1); }
+  }
+  .today-kicker {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--teal); margin-bottom: 4px;
+  }
+  .today-date {
+    font-family: 'Source Serif 4', serif;
+    font-size: 20px; font-weight: 300; color: #EAD9C5;
+  }
+  .today-date em { font-style: italic; color: var(--amber); }
+  @media (prefers-color-scheme: light) { .today-date { color: #261F23; } }
+  .today-item {
+    display: flex; align-items: baseline; gap: 12px;
+    padding: 13px 20px;
+    border-bottom: 1px solid rgba(234,217,197,0.06);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .today-item:active { background: rgba(234,217,197,0.04); }
+  @media (prefers-color-scheme: light) {
+    .today-item { border-bottom-color: rgba(38,31,35,0.07); }
+    .today-item:active { background: rgba(38,31,35,0.04); }
+  }
+  .today-num {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 10px; font-weight: 700;
+    color: rgba(234,217,197,0.22);
+    flex-shrink: 0; width: 18px; text-align: right;
+  }
+  @media (prefers-color-scheme: light) { .today-num { color: rgba(38,31,35,0.22); } }
+  .today-item-content { flex: 1; min-width: 0; }
+  .today-cat {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 9px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--terra); margin-bottom: 3px;
+    transition: color 0.3s;
+  }
+  .today-cat.cat-dim { color: rgba(234,217,197,0.2); }
+  @media (prefers-color-scheme: light) { .today-cat.cat-dim { color: rgba(38,31,35,0.2); } }
+  .today-lede {
+    font-family: 'Source Serif 4', serif;
+    font-size: 13px; line-height: 1.45;
+    color: rgba(234,217,197,0.65);
+    overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+  }
+  @media (prefers-color-scheme: light) { .today-lede { color: rgba(38,31,35,0.65); } }
+
+  /* ── BACKSTORY PLACEHOLDER ─────────────────────────────────────── */
+  .backstory-view {
+    min-height: 100vh; background: var(--dark);
+    display: flex; flex-direction: column;
+  }
+  .backstory-placeholder {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 40px 32px 100px; text-align: center;
+  }
+  .backstory-placeholder-icon { margin-bottom: 20px; opacity: 0.4; }
+  .backstory-placeholder-kicker {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 9px; letter-spacing: 4px; text-transform: uppercase;
+    color: var(--teal); margin-bottom: 14px;
+  }
+  .backstory-placeholder-text {
+    font-family: 'Source Serif 4', serif;
+    font-size: 18px; font-weight: 300; font-style: italic;
+    color: var(--white); line-height: 1.55; margin-bottom: 10px;
+  }
+  .backstory-placeholder-sub {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px; color: rgba(234,217,197,0.3); letter-spacing: 1px;
+  }
+
+  /* ── PROFILE TAB ───────────────────────────────────────────────── */
+  .profile-view { min-height: 100vh; background: #1E181B; padding-bottom: 80px; }
+  .profile-inner { padding: 24px 20px 40px; }
+
+  /* ── STORY VIEW — fixed modal above nav ────────────────────────── */
+  #storyView { position: fixed; inset: 0; z-index: 100; overflow-y: auto; -webkit-overflow-scrolling: touch; background: var(--cream); }
+
+  /* ── VIEW bottom padding ───────────────────────────────────────── */
+  #digestView { padding-bottom: 80px; }
+
 
   .backstory-btn {
     font-family: 'Space Grotesk', sans-serif;
@@ -1528,8 +1651,25 @@
 </head>
 <body>
 
+<!-- TODAY VIEW -->
+<div id="todayView" class="view active">
+  <div class="today-view">
+    <header class="digest-header">
+      <div class="digest-header-inner">
+        <div class="ntk-logo"><span style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;letter-spacing:6px;color:#f2f2f2;">NTK</span></div>
+        <button class="header-subscribe" onclick="handleSubscribeClick()">Subscribe</button>
+      </div>
+    </header>
+    <div class="today-header">
+      <div class="today-kicker">Today's Digest</div>
+      <div class="today-date" id="todayDate">Loading...</div>
+    </div>
+    <div id="todayList"></div>
+  </div>
+</div>
+
 <!-- DIGEST VIEW -->
-<div id="digestView" class="view active">
+<div id="digestView" class="view">
 
   <header class="digest-header">
     <div class="digest-header-inner">
@@ -1544,7 +1684,7 @@
     <div class="hero-label">Today's Digest</div>
     <div class="hero-date" id="heroDate">Loading...</div>
     <div class="progress-row">
-      <button class="beat-chip" id="beatChip" onclick="openBeatsSheet()" aria-label="Your beats">
+      <button class="beat-chip" id="beatChip" onclick="switchTab('profile')" aria-label="Your beats">
         <span class="beat-chip-dot" id="beatChipDot"></span>
         <span id="beatChipLabel"></span>
       </button>
@@ -1555,28 +1695,6 @@
     </div>
   </div>
 
-  <!-- BRIEF TICKER -->
-  <div class="brief-panel" id="briefPanel">
-    <div class="brief-panel-inner">
-      <div class="brief-panel-title">Today at a glance</div>
-      <div id="briefList"></div>
-    </div>
-  </div>
-  <div class="ticker-wrap" id="tickerWrap">
-    <div class="ticker-inner">
-      <div class="ticker-label">BRIEF</div>
-      <div class="ticker-track" id="tickerTrack">
-        <div class="ticker-scroll" id="tickerScroll"></div>
-      </div>
-      <button class="ticker-expand-btn" id="tickerExpandBtn" onclick="toggleBriefPanel()" title="Expand brief">≡</button>
-    </div>
-  </div>
-
-  <div class="gesture-hint">
-    <div class="hint-item"><span>👆</span> Tap to read</div>
-    <div class="hint-item"><span>→</span> Swipe right to mark read</div>
-    <div class="hint-item"><span>🎁</span> Something's waiting at the bottom. Open all stories to unlock it.</div>
-  </div>
 
   <div id="beatToast" class="beat-toast">
     <div class="beat-toast-label">NTK · Orientation</div>
@@ -2133,6 +2251,95 @@ function renderBeatsSheet() {
 
 updateBeatChip();
 
+// ── TAB NAVIGATION ───────────────────────────────────────────────
+var activeTab = 'today';
+var tabBeforeStory = 'today';
+
+function switchTab(tab) {
+  ['today','digest','backstory','profile'].forEach(function(t) {
+    document.getElementById(t + 'View').classList.remove('active');
+    var btn = document.getElementById('nav-' + t);
+    if (btn) btn.classList.remove('active');
+  });
+  document.getElementById(tab + 'View').classList.add('active');
+  var activeBtn = document.getElementById('nav-' + tab);
+  if (activeBtn) activeBtn.classList.add('active');
+  activeTab = tab;
+  if (tab === 'profile') renderProfileTab();
+  window.scrollTo(0, 0);
+  track('tab_switch', { tab: tab });
+}
+window.switchTab = switchTab;
+
+function buildToday() {
+  var todayDateEl = document.getElementById('todayDate');
+  if (todayDateEl) {
+    todayDateEl.innerHTML = days[d.getDay()] + ', ' + months[d.getMonth()] + ' ' + d.getDate() + ' — <em>What you need to know.</em>';
+  }
+  if (!stories || !stories.length) return;
+  var beatsData = beatsLoad();
+  var html = '';
+  stories.forEach(function(s, i) {
+    var num = String(i + 1).padStart(2, '0');
+    var catDim = beatsData[s.category] ? '' : ' cat-dim';
+    html += '<div class="today-item" onclick="openStoryFromToday(' + i + ')">' +
+      '<span class="today-num">' + num + '</span>' +
+      '<div class="today-item-content">' +
+        '<div class="today-cat' + catDim + '">' + s.category + '</div>' +
+        '<div class="today-lede">' + s.lede + '</div>' +
+      '</div>' +
+    '</div>';
+  });
+  document.getElementById('todayList').innerHTML = html;
+}
+
+function openStoryFromToday(index) {
+  tabBeforeStory = 'today';
+  openStory(index);
+}
+window.openStoryFromToday = openStoryFromToday;
+
+function renderProfileTab() {
+  var data = beatsLoad();
+  var list  = document.getElementById('profileDomainList');
+  var pills = document.getElementById('profileScalePills');
+  if (!list) return;
+  var domains = Object.keys(data).map(function(cat) {
+    return { cat: cat, stats: data[cat], idx: beatIdx(data[cat]) };
+  }).sort(function(a, b) {
+    if (b.idx !== a.idx) return b.idx - a.idx;
+    return (b.stats.lastActive||0) - (a.stats.lastActive||0);
+  });
+  if (!domains.length) {
+    list.innerHTML = '<p style="font-family:\'Source Serif 4\',serif;font-style:italic;font-size:14px;color:rgba(234,217,197,0.4);text-align:center;padding:32px 0;">Read your first story to start building your beats.</p>';
+  } else {
+    var maxS = Math.max.apply(null, domains.map(function(d){ return d.stats.stories||0; }));
+    list.innerHTML = domains.map(function(d) {
+      var beat = BEATS_SCALE[Math.max(d.idx, 0)];
+      var daysAgo = (Date.now() - (d.stats.lastActive||0)) / 86400000;
+      var dotColor = daysAgo <= 7 ? '#01B2A7' : daysAgo <= 30 ? '#F2AE2E' : 'rgba(234,217,197,0.2)';
+      var opacity  = daysAgo <= 7 ? 1 : daysAgo <= 30 ? 0.6 : 0.32;
+      var barPct   = maxS > 0 ? Math.round(((d.stats.stories||0) / maxS) * 100) : 0;
+      return '<div class="beat-domain-card" style="border-left-color:' + beat.color + ';background:' + beat.color + '14;opacity:' + opacity + ';">' +
+        '<div class="beat-domain-top">' +
+          '<div>' +
+            '<div class="beat-domain-name">' + d.cat + '</div>' +
+            '<div class="beat-domain-status" style="color:' + beat.color + ';">' + beat.label + '</div>' +
+          '</div>' +
+          '<div class="beat-recency-dot" style="background:' + dotColor + ';"></div>' +
+        '</div>' +
+        '<div class="beat-bar-track"><div class="beat-bar-fill" style="width:' + barPct + '%;background:' + beat.color + ';"></div></div>' +
+        '<div class="beat-domain-meta">' + (d.stats.stories||0) + ' ' + (d.stats.stories===1?'story':'stories') + ' · ' + (d.stats.sessions||1) + ' session' + ((d.stats.sessions||1)!==1?'s':'') + '</div>' +
+      '</div>';
+    }).join('');
+  }
+  if (pills) {
+    pills.innerHTML = BEATS_SCALE.map(function(b) {
+      return '<span class="beat-pill" style="color:' + b.color + ';border-color:' + b.color + '35;">' + b.label + '</span>';
+    }).join('');
+  }
+}
+
 // ── Progress ──────────────────────────────────────────────────────
 function updateProgress() {
   const n = readStories.size;
@@ -2195,8 +2402,12 @@ function openStory(index) {
   document.getElementById('liesRevealed').style.display = 'none';
 
   // Switch views
-  document.getElementById('digestView').classList.remove('active');
+  tabBeforeStory = activeTab;
+  ['todayView','digestView','backstoryView','profileView'].forEach(function(v) {
+    document.getElementById(v).classList.remove('active');
+  });
   document.getElementById('storyView').classList.add('active');
+  document.getElementById('bottomNav').classList.add('hidden');
   window.scrollTo(0, 0);
   updateFeedbackBtn();
 
@@ -2221,7 +2432,8 @@ function closeStory() {
   markStoryRead(currentStoryIndex);
 
   document.getElementById('storyView').classList.remove('active');
-  document.getElementById('digestView').classList.add('active');
+  document.getElementById('bottomNav').classList.remove('hidden');
+  switchTab(tabBeforeStory || 'digest');
   updateFeedbackBtn();
 
   if (cat) {
@@ -2502,11 +2714,13 @@ function updateFeedbackBtn() {
   const storyView = document.getElementById('storyView');
   const inStory = storyView ? storyView.classList.contains('active') : false;
   btn.href = buildFeedbackMailto();
-  btn.style.bottom = inStory ? '80px' : '24px';
+  btn.style.bottom = inStory ? '80px' : '88px';
 }
 
 // ── Init ──────────────────────────────────────────────────────────
 buildDigest();
+buildToday();
+updateBeatChip();
 updateFeedbackBtn();
 
 // Rebuild mailto on every tap so it's always current (fixes iOS load-time href issue)
@@ -2939,20 +3153,88 @@ document.addEventListener('DOMContentLoaded', function() {
   </div>
 </div>
 <!-- /NTK ONBOARDING OVERLAY -->
-<!-- BEATS SHEET -->
-<div class="beats-overlay" id="beatsOverlay" onclick="closeBeatsSheet()"></div>
-<div class="beats-sheet" id="beatsSheet">
-  <div class="beats-sheet-inner">
-    <div class="beats-sheet-handle"></div>
-    <div class="beats-sheet-kicker">Your beats</div>
-    <div class="beats-sheet-title">What you've been tracking</div>
-    <div id="beatsDomainList"></div>
-    <div class="beats-scale-legend">
-      <div class="beats-scale-kicker">The beat scale</div>
-      <div class="beats-scale-pills" id="beatsScalePills"></div>
+<!-- BACKSTORY VIEW -->
+<div id="backstoryView" class="view">
+  <div class="backstory-view">
+    <header class="digest-header">
+      <div class="digest-header-inner">
+        <div class="ntk-logo"><span style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;letter-spacing:6px;color:#f2f2f2;">NTK</span></div>
+        <button class="header-subscribe" onclick="handleSubscribeClick()">Subscribe</button>
+      </div>
+    </header>
+    <div class="backstory-placeholder">
+      <div class="backstory-placeholder-icon">
+        <svg width="60" height="60" viewBox="0 0 28 28">
+          <circle cx="13" cy="12" r="7" fill="none" stroke="#EAD9C5" stroke-width="1.5"/>
+          <circle cx="13" cy="12" r="3.5" fill="#EAD9C5" opacity="0.15"/>
+          <line x1="20" y1="12" x2="23" y2="10" stroke="#EAD9C5" stroke-width="1.75" stroke-linecap="round"/>
+          <path d="M6.5 17 Q5 20 6 24" stroke="#EAD9C5" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+        </svg>
+      </div>
+      <div class="backstory-placeholder-kicker">Backstory</div>
+      <div class="backstory-placeholder-text">The context layer. Stories don't begin when they break.</div>
+      <div class="backstory-placeholder-sub">Coming soon.</div>
     </div>
   </div>
 </div>
+
+<!-- PROFILE VIEW -->
+<div id="profileView" class="view">
+  <div class="profile-view">
+    <header class="digest-header">
+      <div class="digest-header-inner">
+        <div class="ntk-logo"><span style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;letter-spacing:6px;color:#f2f2f2;">NTK</span></div>
+      </div>
+    </header>
+    <div class="profile-inner">
+      <div class="beats-sheet-kicker">Your beats</div>
+      <div class="beats-sheet-title">What you've been tracking</div>
+      <div id="profileDomainList"></div>
+      <div class="beats-scale-legend">
+        <div class="beats-scale-kicker">The beat scale</div>
+        <div class="beats-scale-pills" id="profileScalePills"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav" id="bottomNav">
+  <button class="nav-item active" id="nav-today" onclick="switchTab('today')">
+    <svg width="22" height="22" viewBox="0 0 28 28">
+      <circle cx="14" cy="14" r="9" fill="currentColor"/>
+    </svg>
+    <span>Today</span>
+  </button>
+  <button class="nav-item" id="nav-digest" onclick="switchTab('digest')">
+    <svg width="22" height="22" viewBox="0 0 28 28">
+      <circle cx="14" cy="5.5" r="2" fill="currentColor"/>
+      <circle cx="20.5" cy="7.5" r="2" fill="currentColor"/>
+      <circle cx="22.5" cy="14" r="2" fill="currentColor"/>
+      <circle cx="20.5" cy="20.5" r="2" fill="currentColor"/>
+      <circle cx="14" cy="22.5" r="2" fill="currentColor"/>
+      <circle cx="7.5" cy="20.5" r="2" fill="currentColor"/>
+      <circle cx="5.5" cy="14" r="2" fill="currentColor"/>
+      <circle cx="7.5" cy="7.5" r="2" fill="currentColor"/>
+    </svg>
+    <span>Digest</span>
+  </button>
+  <button class="nav-item" id="nav-backstory" onclick="switchTab('backstory')">
+    <svg width="22" height="22" viewBox="0 0 28 28">
+      <circle cx="13" cy="12" r="7" fill="none" stroke="currentColor" stroke-width="1.75"/>
+      <line x1="20" y1="12" x2="23" y2="10" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/>
+      <path d="M6.5 17 Q5 20 6 24" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+    </svg>
+    <span>Backstory</span>
+  </button>
+  <button class="nav-item" id="nav-profile" onclick="switchTab('profile')">
+    <svg width="22" height="22" viewBox="0 0 28 28">
+      <circle cx="14" cy="9" r="5" fill="currentColor"/>
+      <path d="M4 24 C4 17 24 17 24 24" fill="currentColor"/>
+    </svg>
+    <span>Profile</span>
+  </button>
+</nav>
 
 </body>
 </html>
