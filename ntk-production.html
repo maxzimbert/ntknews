@@ -125,6 +125,14 @@ input:focus { border-color:var(--accent); }
 .btn-scanmore:hover:not(:disabled) { border-color:var(--accent); color:var(--accent); }
 .btn-scanmore:disabled { opacity:.4; cursor:default; }
 
+/* ── VISUAL COMPONENTS (output preview) ─────────────────────── */
+.ntk-pullquote { border-left:3px solid var(--accent); margin:14px 0; padding:11px 15px; background:var(--accent-bg); }
+.ntk-pq-text { font-family:var(--serif); font-size:16px; font-style:italic; color:var(--text); line-height:1.55; margin-bottom:5px; }
+.ntk-pq-cite { display:block; font-size:10px; text-transform:uppercase; letter-spacing:.08em; color:var(--accent); }
+.ntk-stat { border-left:3px solid var(--amber); margin:14px 0; padding:11px 15px; background:var(--amber-bg); }
+.ntk-stat-num { font-family:var(--mono); font-size:28px; font-weight:700; color:var(--amber); line-height:1.1; margin-bottom:4px; }
+.ntk-stat-ctx { font-size:12px; color:var(--body); line-height:1.45; }
+
 /* ── IMAGE PICKER ───────────────────────────────────────────── */
 .img-section { border-top:1px solid var(--border); padding:12px 14px 10px; }
 .img-section-hdr { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
@@ -319,7 +327,18 @@ function makePrompt(section, articlesText, suppUrls) {
   const suppBlock = suppUrls && suppUrls.length
     ? '\n\nEDITOR-IMPORTED SOURCES:\n' + suppUrls.map(u=>`URL: ${u.url}\n${u.body||'[unavailable]'}`).join('\n\n---\n\n')
     : '';
-  return `${GLOBAL}\n\n${VOICE_REF}\n\n${SEC_PROMPTS[section]}${suppBlock}\n\nARTICLES TO ANALYZE:\n\n${articlesText}`;
+  const visualBlock = `
+
+VISUAL MARKERS — insert at most one of each per section, only when the element genuinely earns it:
+
+[PULLQUOTE: "verbatim quote from a named source in your articles" | Speaker Name, role or context]
+Use only when a direct quote does something your prose cannot — not to break up text. Must be verbatim. Must name the speaker. Place inline where the quote lands in the narrative.
+
+[STAT: the number with its unit | one plain sentence of what it means]
+Use only when a specific number is the sharpest way to land the stakes. The number should be surprising or concrete enough to stop the reader. Not a decoration.
+
+A section without a visual marker is not incomplete. Omit both if neither earns its place.`;
+  return `${GLOBAL}\n\n${VOICE_REF}\n\n${SEC_PROMPTS[section]}${visualBlock}${suppBlock}\n\nARTICLES TO ANALYZE:\n\n${articlesText}`;
 }
 
 // ─── API ─────────────────────────────────────────────────────────────────────
@@ -375,6 +394,10 @@ function parseJSON(raw) {
 
 function mdToHtml(text) {
   return text
+    .replace(/\[PULLQUOTE:\s*"([^"]+)"\s*\|\s*([^\]]+)\]/g,
+      '<div class="ntk-pullquote"><p class="ntk-pq-text">$1</p><cite class="ntk-pq-cite">$2</cite></div>')
+    .replace(/\[STAT:\s*([^|\]]+?)\s*\|\s*([^\]]+?)\s*\]/g,
+      '<div class="ntk-stat"><div class="ntk-stat-num">$1</div><div class="ntk-stat-ctx">$2</div></div>')
     .replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')
     .replace(/\(\[([^\]]+)\]\(([^)]+)\)\)/g,'(<a href="$2" target="_blank" rel="noopener">$1</a>)')
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
