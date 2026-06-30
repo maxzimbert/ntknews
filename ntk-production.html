@@ -133,6 +133,19 @@ input:focus { border-color:var(--accent); }
 .ntk-stat-num { font-family:var(--mono); font-size:28px; font-weight:700; color:var(--amber); line-height:1.1; margin-bottom:4px; }
 .ntk-stat-ctx { font-size:12px; color:var(--body); line-height:1.45; }
 
+/* ── IMAGE DIGEST PREVIEW ────────────────────────────────────── */
+.img-hero-wrap { border-radius:3px; overflow:hidden; position:relative; aspect-ratio:16/9; background:#1e1419; margin-bottom:6px; }
+.img-hero-wrap img { width:100%; height:100%; object-fit:cover; display:block; }
+.img-hero-overlay { position:absolute; inset:0; background:linear-gradient(to top, rgba(30,20,25,.88) 0%, rgba(30,20,25,.25) 55%, rgba(30,20,25,0) 100%); pointer-events:none; }
+.img-hero-meta { position:absolute; bottom:0; left:0; right:0; padding:10px 12px; }
+.img-hero-view-lbl { font-size:8px; letter-spacing:2.5px; text-transform:uppercase; color:rgba(234,217,197,.45); margin-bottom:3px; }
+.img-hero-topic { font-family:var(--serif); font-size:13px; color:#EAD9C5; line-height:1.35; }
+.img-story-wrap { border-radius:3px; overflow:hidden; background:#1e1419; margin-bottom:6px; }
+.img-story-wrap img { width:100%; max-height:180px; object-fit:cover; display:block; }
+.img-story-view-lbl { font-size:8px; letter-spacing:2.5px; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+.img-confirmed-meta { font-size:10px; color:var(--muted); margin-bottom:6px; word-break:break-all; }
+.img-confirmed-credit { font-size:10px; color:var(--accent); margin-bottom:8px; }
+
 /* ── IMAGE PICKER ───────────────────────────────────────────── */
 .img-section { border-top:1px solid var(--border); padding:12px 14px 10px; }
 .img-section-hdr { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
@@ -809,14 +822,12 @@ async function fetchOgImage(storyId, articleUrl, idx) {
   const key = storyId+'-'+idx;
   upd({ogFetching:{...S.ogFetching,[key]:true}});
   try {
-    const proxy = 'https://api.allorigins.win/raw?url='+encodeURIComponent(articleUrl);
-    const res = await fetch(proxy, {signal:AbortSignal.timeout(9000)});
-    const html = await res.text();
-    const m = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i)
-           || html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i)
-           || html.match(/<meta[^>]+name=["']twitter:image["'][^>]+content=["']([^"']+)["']/i);
-    const imgUrl = m?.[1]||null;
-    upd({ogFetching:{...S.ogFetching,[key]:false}, ogImages:{...S.ogImages,[key]:{url:imgUrl,found:!!imgUrl}}});
+    const res = await fetch('https://api.microlink.io/?url='+encodeURIComponent(articleUrl), {
+      signal: AbortSignal.timeout(10000)
+    });
+    const data = await res.json();
+    const imgUrl = data?.data?.image?.url || null;
+    upd({ogFetching:{...S.ogFetching,[key]:false}, ogImages:{...S.ogImages,[key]:{url:imgUrl, found:!!imgUrl}}});
   } catch(e) {
     upd({ogFetching:{...S.ogFetching,[key]:false}, ogImages:{...S.ogImages,[key]:{found:false}}});
   }
@@ -842,6 +853,23 @@ function setImgTab(storyId, tab) {
   upd({imgActiveTab:{...S.imgActiveTab,[storyId]:tab}});
 }
 
+function imgHeroPreview(url, topic, viewLabel) {
+  return `<div class="img-hero-wrap">
+    <img src="${x(url)}" alt="" onerror="this.parentElement.style.display='none'">
+    <div class="img-hero-overlay"></div>
+    <div class="img-hero-meta">
+      <div class="img-hero-view-lbl">${viewLabel}</div>
+      <div class="img-hero-topic">${x(topic)}</div>
+    </div>
+  </div>`;
+}
+
+function imgStoryPreview(url) {
+  return `<div class="img-story-wrap">
+    <img src="${x(url)}" alt="" onerror="this.parentElement.style.display='none'">
+  </div>`;
+}
+
 function buildImgSection(pick) {
   const img = S.storyImages[pick.id];
   const tab = S.imgActiveTab[pick.id]||'sources';
@@ -854,14 +882,11 @@ function buildImgSection(pick) {
         <span class="img-section-label">📸 Featured image set</span>
         <button class="img-clear" data-clear-img="${pid}">Remove ×</button>
       </div>
-      <div class="img-preview-row">
-        <img src="${x(img.url)}" alt="Preview" onerror="this.style.opacity='.25'">
-        <div class="img-preview-meta">
-          <div class="img-preview-url">${x(img.url.length>90?img.url.slice(0,90)+'…':img.url)}</div>
-          ${img.credit?`<div class="img-preview-credit">${x(img.credit)}</div>`:''}
-          <div style="font-size:9px;color:var(--muted);margin-top:2px;">${x(img.source)}</div>
-        </div>
-      </div>
+      ${imgHeroPreview(img.url, pick.topic, 'Digest card view')}
+      <div class="img-story-view-lbl">Story view</div>
+      ${imgStoryPreview(img.url)}
+      ${img.credit?`<div class="img-confirmed-credit">Photo: ${x(img.credit)}</div>`:''}
+      <div class="img-confirmed-meta">${x(img.url.length>80?img.url.slice(0,80)+'…':img.url)}</div>
     </div>`;
   }
 
@@ -869,21 +894,23 @@ function buildImgSection(pick) {
     const key = pick.id+'-'+i;
     const fetching = S.ogFetching[key];
     const result = S.ogImages[key];
-    return `<div style="display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);">
-      <div style="flex:1;min-width:0;">
-        <div style="font-size:11px;color:var(--body);line-height:1.4;margin-bottom:3px;">${x((a.title||a.url).slice(0,80))}${(a.title||'').length>80?'…':''}</div>
-        <div style="font-size:9px;color:var(--muted);">${x(a.source||'')}</div>
-        ${result&&result.found?`
-          <div style="margin-top:6px;">
-            <img src="${x(result.url)}" style="width:100%;max-height:100px;object-fit:cover;border-radius:2px;display:block;margin-bottom:4px;" alt="" onerror="this.style.display='none'">
-            <button class="btn-ghost btn-sm" data-use-og="${pid}" data-og-url="${x(result.url)}" data-og-credit="${x(a.source||'')}">Use this image →</button>
-          </div>` : ''}
-        ${result&&!result.found?`<div style="font-size:10px;color:var(--muted);margin-top:4px;">Couldn't fetch — paste URL manually.</div>`:''}
+    return `<div style="padding:8px 0;border-bottom:1px solid var(--border);">
+      <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:${result&&result.found?'8':'0'}px;">
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:11px;color:var(--body);line-height:1.4;margin-bottom:2px;">${x((a.title||a.url).slice(0,75))}${(a.title||'').length>75?'…':''}</div>
+          <div style="font-size:9px;color:var(--muted);">${x(a.source||'')}</div>
+        </div>
+        ${!result?`<button class="btn-ghost btn-sm" data-fetch-og="${pid}" data-og-idx="${i}" data-og-src-url="${x(a.url)}" ${fetching?'disabled':''}>${fetching?'Fetching…':'Get image'}</button>`:''}
       </div>
-      ${!result?`<button class="btn-ghost btn-sm" data-fetch-og="${pid}" data-og-idx="${i}" data-og-src-url="${x(a.url)}" ${fetching?'disabled':''}>${fetching?'Fetching…':'Get image'}</button>`:''}
+      ${result&&result.found?`
+        ${imgHeroPreview(result.url, pick.topic, 'Digest card view')}
+        <div class="img-story-view-lbl">Story view</div>
+        ${imgStoryPreview(result.url)}
+        <button class="btn-ghost btn-sm" data-use-og="${pid}" data-og-url="${x(result.url)}" data-og-credit="${x(a.source||'')}">Use this image →</button>`:''}
+      ${result&&!result.found?`<div style="font-size:10px;color:var(--muted);margin-top:4px;">Couldn't fetch — try URL tab.</div>`:''}
     </div>`;
   }).join('')
-  : `<div style="font-size:11px;color:var(--muted);padding:8px 0;">No sources loaded yet — sources appear here after Preview Sources runs.</div>`;
+  : `<div style="font-size:11px;color:var(--muted);padding:8px 0;">Sources appear here after Preview Sources runs.</div>`;
 
   return `<div class="img-section">
     <div class="img-section-hdr">
@@ -896,9 +923,23 @@ function buildImgSection(pick) {
     </div>
     <div class="img-tab-panel ${tab==='sources'?'active':''}">${srcRows}</div>
     <div class="img-tab-panel ${tab==='url'?'active':''}">
-      <div class="img-row">
-        <input type="url" id="img-url-${pid}" placeholder="https://…">
+      <div class="img-row" style="margin-bottom:10px;">
+        <input type="url" id="img-url-${pid}" data-url-live="${pid}" placeholder="Paste image URL — preview appears instantly">
         <button class="btn-ghost btn-sm" data-img-use-url="${pid}">Use →</button>
+      </div>
+      <div id="img-live-wrap-${pid}" style="display:none;">
+        <div class="img-hero-wrap" id="img-live-hero-${pid}">
+          <img id="img-live-img1-${pid}" src="" alt="" onerror="this.parentElement.style.display='none'" onload="this.parentElement.style.display='block'">
+          <div class="img-hero-overlay"></div>
+          <div class="img-hero-meta">
+            <div class="img-hero-view-lbl">Digest card view</div>
+            <div class="img-hero-topic">${x(pick.topic)}</div>
+          </div>
+        </div>
+        <div class="img-story-view-lbl">Story view</div>
+        <div class="img-story-wrap">
+          <img id="img-live-img2-${pid}" src="" alt="" onerror="this.parentElement.style.display='none'" onload="this.parentElement.style.display='block'">
+        </div>
       </div>
     </div>
     <div class="img-tab-panel ${tab==='upload'?'active':''}">
@@ -1196,13 +1237,26 @@ function draw() {
     }));
     // Image: tab switching
     c.querySelectorAll('[data-img-tab]').forEach(b=>b.addEventListener('click',()=>setImgTab(b.dataset.imgTab, b.dataset.tab)));
-    // Image: fetch og:image from source article
+    // Image: fetch og:image via Microlink
     c.querySelectorAll('[data-fetch-og]').forEach(b=>b.addEventListener('click',()=>{
       fetchOgImage(b.dataset.fetchOg, b.dataset.ogSrcUrl, +b.dataset.ogIdx);
     }));
     // Image: use fetched og:image
     c.querySelectorAll('[data-use-og]').forEach(b=>b.addEventListener('click',()=>{
       setStoryImage(b.dataset.useOg, b.dataset.ogUrl, b.dataset.ogCredit, 'og:image');
+    }));
+    // Image: live URL preview (no state update — direct DOM)
+    c.querySelectorAll('[data-url-live]').forEach(inp=>inp.addEventListener('input',()=>{
+      const pid = inp.dataset.urlLive;
+      const url = inp.value.trim();
+      const wrap = document.getElementById('img-live-wrap-'+pid);
+      const img1 = document.getElementById('img-live-img1-'+pid);
+      const img2 = document.getElementById('img-live-img2-'+pid);
+      const hero = document.getElementById('img-live-hero-'+pid);
+      const valid = url.startsWith('http://') || url.startsWith('https://');
+      if (wrap) wrap.style.display = valid ? 'block' : 'none';
+      if (valid && img1) { img1.src = url; if(hero) hero.style.display='block'; }
+      if (valid && img2) img2.src = url;
     }));
     // Image: use URL
     c.querySelectorAll('[data-img-use-url]').forEach(b=>b.addEventListener('click',()=>{
