@@ -100,7 +100,12 @@
   .scanning-bar { height:2px; background:var(--surface2); overflow:hidden; flex-shrink:0; }
   .scanning-progress { height:100%; background:var(--blue); transition:width .3s; }
 
-  /* ── COPY PANEL ── */
+  /* ── VERDICTS ── */
+  .verdict { display:inline-block; font-size:9px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:2px 7px; border-radius:2px; margin-left:6px; vertical-align:middle; }
+  .verdict-yes   { background:rgba(1,178,167,.15); color:var(--teal); border:1px solid rgba(1,178,167,.3); }
+  .verdict-maybe { background:rgba(242,174,46,.12); color:var(--amber); border:1px solid rgba(242,174,46,.3); }
+  .verdict-no    { background:rgba(234,217,197,.06); color:var(--dim); border:1px solid rgba(234,217,197,.12); }
+  .verdict-reason { font-size:10px; color:var(--muted); margin-top:3px; font-style:italic; }
   .copy-panel { background:var(--surface); border-top:1px solid var(--border); padding:12px 20px; display:none; flex-shrink:0; }
   .copy-panel.visible { display:flex; align-items:center; gap:12px; }
   .copy-panel-text { font-size:11px; color:var(--muted); flex:1; }
@@ -122,6 +127,10 @@
   <div class="topbar-right">
     <span class="status-msg" id="statusMsg"></span>
     <span class="scan-count" id="scanCount" style="display:none;"></span>
+    <input type="password" id="antKeyInput" placeholder="sk-ant-… for NTK assess" autocomplete="off"
+      style="font-family:var(--mono);font-size:10px;padding:5px 10px;background:var(--surface2);border:1px solid var(--border);color:var(--muted);border-radius:2px;width:200px;outline:none;"
+      oninput="saveKey(this.value)">
+    <button class="btn btn-ghost" id="assessBtn" style="display:none;" onclick="runAssessment()">Assess with NTK →</button>
     <button class="btn btn-ghost" id="copyFlaggedBtn" style="display:none;" onclick="copyFlagged()">Copy flagged →</button>
     <button class="btn btn-primary" id="scanBtn" onclick="scan()">Scan feeds →</button>
   </div>
@@ -288,6 +297,8 @@ const CORS_PROXY = 'https://corsproxy.io/?';
 let enabled = new Set(FEEDS.map(f=>f.id));
 let stories = [];
 let flagged = new Set();
+let assessments = {};   // story link → { verdict, reason }
+let assessing   = false;
 let feedStatus = {};
 let sortMode = 'time';
 let scanning = false;
@@ -462,6 +473,13 @@ function renderResults() {
   list.innerHTML = sorted.map((s,i)=>{
     const age = timeAgo(s.pubDate);
     const isFlagged = flagged.has(s.link);
+    const av = isFlagged && assessments[s.link];
+    const verdictHtml = av
+      ? `<span class="verdict verdict-${av.verdict.toLowerCase()}">${av.verdict}</span>`
+      : '';
+    const reasonHtml = av && av.reason
+      ? `<div class="verdict-reason">${esc(av.reason)}</div>`
+      : '';
     return `<div class="story-item${isFlagged?' flagged':''}" id="story-${i}">
       <button class="story-flag" onclick="toggleFlag('${esc(s.link)}',${i})" title="${isFlagged?'Unflag':'Flag as NTK-worthy'}">${isFlagged?'⭐':'☆'}</button>
       <div class="story-body">
@@ -469,7 +487,8 @@ function renderResults() {
           <span class="story-source" style="background:${s.color}22;color:${s.color};">${esc(s.feedName)}</span>
           <span class="story-age">${age}</span>
         </div>
-        <div class="story-headline"><a href="${esc(s.link)}" target="_blank" rel="noopener">${esc(s.title)}</a></div>
+        <div class="story-headline"><a href="${esc(s.link)}" target="_blank" rel="noopener">${esc(s.title)}</a>${verdictHtml}</div>
+        ${reasonHtml}
         ${s.description?`<div class="story-lede">${esc(s.description.slice(0,180))}${s.description.length>180?'…':''}</div>`:''}
       </div>
     </div>`;
@@ -489,15 +508,23 @@ function toggleFlag(link, idx) {
   updateFlagCount();
 }
 
+function saveKey(val) {
+  localStorage.setItem('ntk_ant', val);
+}
+
 function updateFlagCount() {
-  const el = document.getElementById('flaggedCount');
-  const btn = document.getElementById('copyFlaggedBtn');
+  const el  = document.getElementById('flaggedCount');
+  const cpBtn = document.getElementById('copyFlaggedBtn');
+  const assBtn = document.getElementById('assessBtn');
+  const antKey = document.getElementById('antKeyInput')?.value.trim() || localStorage.getItem('ntk_ant')||'';
   if (flagged.size) {
     el.textContent = `${flagged.size} flagged`;
-    btn.style.display='';
+    cpBtn.style.display='';
+    if (antKey) assBtn.style.display='';
   } else {
     el.textContent='';
-    btn.style.display='none';
+    cpBtn.style.display='none';
+    assBtn.style.display='none';
   }
 }
 
@@ -521,6 +548,69 @@ function copyFlagged() {
     txt.textContent = `${flaggedStories.length} stories copied to clipboard.`;
     setTimeout(hideCopyPanel, 3000);
   });
+}
+
+async function runAssessment() {
+  const antKey = document.getElementById('antKeyInput').value.trim() || localStorage.getItem('ntk_ant')||'';
+  if (!antKey) { setStatus('Add your Anthropic API key to use NTK Assess'); return; }
+  const flaggedStories = stories.filter(s=>flagged.has(s.link));
+  if (!flaggedStories.length) return;
+
+  assessing = true;
+  const btn = document.getElementById('assessBtn');
+  btn.disabled = true; btn.textContent = 'Assessing…';
+  setStatus(`Sending ${flaggedStories.length} stories to Claude…`);
+
+  const storyList = flaggedStories.map((s,i)=>
+    `${i+1}. [${s.feedName}] ${s.title}${s.description?' — '+s.description.slice(0,120):''}`)
+    .join('\n');
+
+  const TODAY = new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+  const prompt = `Today is ${TODAY}. You are the NTK News story scanner.
+
+Below are ${flaggedStories.length} flagged headlines from local TV and wire RSS feeds. Evaluate each against NTK's story selection criteria.
+
+NTK READER — "Jamie": busy parent, mostly disengaged from news, anxious about the world. She needs what affects her paycheck, kids, healthcare, safety — and the occasional story she'd text a friend because it's wild or unexpectedly hopeful.
+
+SELECTION CRITERIA:
+COVERAGE: Consequential in last 24-48hrs? Would Jamie feel left out if she missed it?
+QUALITY: Actually new, not noise? Civilian anchor available (named person, dollar figure, institution)?
+MIX VALUE: Story Jamie would text? Verifiable progress? Leaves her better equipped?
+TWO-PRONG: If big enough, both event AND structural pattern deserve separate entries.
+
+VERDICT RULES:
+YES — clears the NTK bar. Include in today's digest.
+MAYBE — has merit but competes with stronger stories, or needs a sharper angle.
+NO — noise, weather, sports, crime without pattern, or too local without national implication.
+
+Return ONLY a valid JSON array, one object per headline in input order. No markdown fences.
+[{"verdict":"YES","reason":"one sentence max 15 words"}]
+
+HEADLINES TO ASSESS:
+${storyList}`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':antKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,messages:[{role:'user',content:prompt}]})
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    let raw = data.content[0].text.trim().replace(/^```json?\n?/,'').replace(/\n?```$/,'').trim();
+    const results = JSON.parse(raw);
+    results.forEach((r,i)=>{
+      if (flaggedStories[i]) assessments[flaggedStories[i].link]={verdict:(r.verdict||'MAYBE').toUpperCase(),reason:r.reason||''};
+    });
+    const yes=results.filter(r=>(r.verdict||'').toUpperCase()==='YES').length;
+    const maybe=results.filter(r=>(r.verdict||'').toUpperCase()==='MAYBE').length;
+    setStatus(`NTK Assessment: ${yes} YES · ${maybe} MAYBE · ${results.length-yes-maybe} NO`);
+  } catch(e) {
+    setStatus('Assessment failed: '+e.message);
+  }
+  assessing=false; btn.disabled=false; btn.textContent='Re-assess →';
+  renderResults();
 }
 
 function hideCopyPanel() {
@@ -555,6 +645,9 @@ function esc(s) {
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 
 buildSidebar();
+// Pre-fill API key if already stored from production tool
+const _k = localStorage.getItem('ntk_ant');
+if (_k) { const inp = document.getElementById('antKeyInput'); if(inp) inp.value=_k; }
 </script>
 </body>
 </html>
