@@ -283,7 +283,7 @@ const FEEDS = [
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
 
-const RSS2JSON = 'https://api.rss2json.com/v1/api.json?count=20&rss_url=';
+const CORS_PROXY = 'https://corsproxy.io/?';
 
 let enabled = new Set(FEEDS.map(f=>f.id));
 let stories = [];
@@ -398,19 +398,45 @@ async function scan() {
 
 async function fetchFeed(feed) {
   try {
-    const url = RSS2JSON + encodeURIComponent(feed.url) + '&api_key=';
-    const res = await fetch(url, {signal:AbortSignal.timeout(12000)});
-    const data = await res.json();
-    if (data.status !== 'ok' || !data.items) return [];
-    return data.items.map(item=>({
-      id: feed.id,
-      feedName: feed.name,
-      color: feed.color,
-      title: cleanStr(item.title||''),
-      link: item.link||'#',
-      pubDate: item.pubDate||item.isoDate||new Date().toISOString(),
-      description: stripHtml(item.description||item.content||''),
-    }));
+    const proxyUrl = CORS_PROXY + encodeURIComponent(feed.url);
+    const res = await fetch(proxyUrl, {signal: AbortSignal.timeout(12000)});
+    if (!res.ok) return [];
+    const text = await res.text();
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(text, 'text/xml');
+    if (xml.querySelector('parsererror')) return [];
+
+    // Detect RSS vs Atom
+    const isAtom = !!xml.querySelector('feed');
+    const items = isAtom
+      ? Array.from(xml.querySelectorAll('entry'))
+      : Array.from(xml.querySelectorAll('item'));
+
+    return items.slice(0, 20).map(item => {
+      let title, link, pubDate, description;
+      if (isAtom) {
+        title = item.querySelector('title')?.textContent || '';
+        link = item.querySelector('link')?.getAttribute('href')
+            || item.querySelector('link')?.textContent || '#';
+        pubDate = item.querySelector('published,updated')?.textContent || '';
+        description = item.querySelector('summary,content')?.textContent || '';
+      } else {
+        title = item.querySelector('title')?.textContent || '';
+        link = item.querySelector('link')?.textContent
+            || item.querySelector('link')?.getAttribute('href') || '#';
+        pubDate = item.querySelector('pubDate,published')?.textContent || '';
+        description = item.querySelector('description,summary')?.textContent || '';
+      }
+      return {
+        id: feed.id,
+        feedName: feed.name,
+        color: feed.color,
+        title: cleanStr(title),
+        link: link.trim(),
+        pubDate: pubDate ? new Date(pubDate).toISOString() : new Date().toISOString(),
+        description: stripHtml(description),
+      };
+    }).filter(s => s.title);
   } catch(e) { return []; }
 }
 
