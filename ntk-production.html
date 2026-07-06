@@ -346,6 +346,7 @@ VISUAL MARKERS — insert at most one of each per section, only when the element
 
 [PULLQUOTE: "verbatim quote from a named source in your articles" | Speaker Name, role or context]
 Use only when a direct quote does something your prose cannot — not to break up text. Must be verbatim. Must name the speaker. Place inline where the quote lands in the narrative.
+This marker IS your one allowed direct quote for the section (see VOICE_REF rule 3) — it is not a second, separate quote opportunity. If you use PULLQUOTE, do not also render that same line as a quoted sentence in the surrounding prose; paraphrase the moment in prose instead and let the marker carry the verbatim words.
 
 [STAT: the number with its unit | one plain sentence of what it means]
 Use only when a specific number is the sharpest way to land the stakes. The number should be surprising or concrete enough to stop the reader. Not a decoration.
@@ -406,9 +407,30 @@ function parseJSON(raw) {
 }
 
 function mdToHtml(text) {
-  return text
-    .replace(/\[PULLQUOTE:\s*"([^"]+)"\s*\|\s*([^\]]+)\]/g,
-      '<div class="ntk-pullquote"><p class="ntk-pq-text">$1</p><cite class="ntk-pq-cite">$2</cite></div>')
+  // Pull the PULLQUOTE markers out into placeholders first. This lets us strip
+  // a duplicate verbatim copy of the same quote if the model *also* left it
+  // sitting in the surrounding prose (the source of the "quote shows up twice" bug) —
+  // before finally swapping the placeholders for the styled callout markup.
+  const marks = [];
+  let out = text.replace(/\[PULLQUOTE:\s*"([^"]+)"\s*\|\s*([^\]]+)\]/g, (full, quote, speaker) => {
+    marks.push({quote, speaker});
+    return `\u0000PQ${marks.length-1}\u0000`;
+  });
+
+  marks.forEach(({quote}) => {
+    if (!quote) return;
+    const escaped = quote.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    // Remove a duplicate verbatim occurrence of the same line still quoted inline in prose
+    // (straight " " or curly " " quotes), leaving the callout as the single instance.
+    out = out.replace(new RegExp('["\u201c]'+escaped+'["\u201d][,.]?\\s*','g'), '');
+  });
+
+  marks.forEach((m, i) => {
+    out = out.replace(`\u0000PQ${i}\u0000`,
+      `<div class="ntk-pullquote"><p class="ntk-pq-text">${m.quote}</p><cite class="ntk-pq-cite">${m.speaker}</cite></div>`);
+  });
+
+  return out
     .replace(/\[STAT:\s*([^|\]]+?)\s*\|\s*([^\]]+?)\s*\]/g,
       '<div class="ntk-stat"><div class="ntk-stat-num">$1</div><div class="ntk-stat-ctx">$2</div></div>')
     .replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')
@@ -1210,7 +1232,10 @@ function draw() {
       return `<div class="src-story">
         <div class="src-story-hdr">
           <div class="src-story-topic">${x(pick.topic)}</div>
-          <div style="font-size:10px;color:var(--muted);">${arts.filter(a=>a.included).length}/${arts.length} in synthesis</div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="font-size:10px;color:var(--muted);">${arts.filter(a=>a.included).length}/${arts.length} in synthesis</div>
+            <button class="btn-ghost btn-sm" data-remove-topic="${x(pick.id)}" title="Remove this topic from the digest">✕ Remove</button>
+          </div>
         </div>
         ${artItems}${noArts}
         <div class="src-add-row">
@@ -1221,11 +1246,12 @@ function draw() {
       </div>`;
     }).join('');
 
+    const noPicks=!picks.length?`<div style="font-size:12px;color:var(--muted);padding:16px 0;">No topics left — go back and select at least one story.</div>`:'';
     c.innerHTML=`<div class="stage-lbl">03 · Review Sources</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:16px;">Articles from the scan plus a full pool-wide search per story. Toggle any out. Add a URL for anything missing.</div>
-      ${storyBlocks}
+      <div style="font-size:12px;color:var(--muted);margin-bottom:16px;">Articles from the scan plus a full pool-wide search per story. Toggle any out. Add a URL for anything missing. Remove a whole topic with ✕ Remove.</div>
+      ${storyBlocks}${noPicks}
       <div class="act-row" style="margin-top:20px;">
-        <button class="btn btn-primary" id="run-gen-btn">Run Synthesis →</button>
+        <button class="btn btn-primary" id="run-gen-btn" ${picks.length?'':'disabled'}>Run Synthesis →</button>
         <button class="btn-ghost" id="back-to-certify">← Back</button>
       </div>
       ${S.error?`<div class="error">${x(S.error)}</div>`:''}`;
@@ -1235,6 +1261,7 @@ function draw() {
       const inp=document.getElementById('add-url-'+b.dataset.addurl);
       if(inp&&inp.value.trim()) addArticleUrl(b.dataset.addurl,inp.value.trim());
     }));
+    c.querySelectorAll('[data-remove-topic]').forEach(b=>b.addEventListener('click',()=>toggleSel(b.dataset.removeTopic)));
     // Image: tab switching
     c.querySelectorAll('[data-img-tab]').forEach(b=>b.addEventListener('click',()=>setImgTab(b.dataset.imgTab, b.dataset.tab)));
     // Image: fetch og:image via Microlink
