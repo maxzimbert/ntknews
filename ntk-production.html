@@ -278,11 +278,16 @@ truths:`You are producing the TRUTHS section. Output only the Truths section.
 
 Truths are observable facts — what people said and did. A historian's selection for vivid narrative, not a transcript.
 
-REQUIRED OPENING:
-- **Digest headline:** appears on the digest screen AND tops the story. Today's fact + civilian anchor (brand, dollar figure, named institution already in the reader's file folder). Two sentences. This is the most important line you write. Do NOT use years as anchors. No textbook chapter titles.
+REQUIRED OPENING — output exactly these three tags first, each on its own line, in this literal bracket format (needed so the site-export step can extract them — do not skip the brackets, add commentary inside them, or rename the tags):
+[HEADLINE: the headline text]
+[LEDE: the lede text]
+[SUBHEAD: the subhead text]
+
+Guidance for each:
+- HEADLINE: today's fact + civilian anchor (brand, dollar figure, named institution already in the reader's file folder). Two sentences. This is the most important line you write. Do NOT use years as anchors. No textbook chapter titles.
   Examples: "Trump's Tariffs Cost the Average American Family $1,700 a Year. That's a Car Payment." / "Childcare Costs More Than Rent in 28 States. The Middle Class Didn't Collapse — It Was Defunded."
-- **Lede:** 1-2 sentences, 86-character hard limit, AP wire register.
-- **Subhead:** one sentence bridging lede to what follows.
+- LEDE: 1-2 sentences, 86-character hard limit, AP wire register.
+- SUBHEAD: one sentence bridging lede to what follows.
 
 THEN 2-3 MOVEMENTS, not isolated items: each opens with a **bold headline** but follows causally from what came before — use a connective sentence rather than restarting cold. Each movement needs a person or institution whose situation actually changed, named specifically. Body length is whatever the stakes require — build to the consequence, don't just state it. Citation ([Source Name](URL)) lands wherever the claim it supports does, not necessarily at the end.
 Two-Prong: when a story is consequential enough, the event gets one movement and the underlying pattern gets a second — let the second one open by referring back to the first, not as a fresh restart.
@@ -438,7 +443,77 @@ function mdToHtml(text) {
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
 }
 
-// ─── ACTIONS ─────────────────────────────────────────────────────────────────
+// ─── SITE EXPORT (converts tool output → digest/index.html `const stories` schema) ────
+
+function jsEsc(s) {
+  return String(s||'').replace(/\\/g,'\\\\').replace(/"/g,'\\"').replace(/\r?\n/g,' ').trim();
+}
+
+// Pulls the [HEADLINE: ]/[LEDE: ]/[SUBHEAD: ] tags out of the Truths section text.
+// Subhead is discarded — the live site has no field for it (only headline/lede are used).
+function extractTruthsTags(text) {
+  const grab = (tag) => {
+    const m = text.match(new RegExp('\\['+tag+':\\s*([\\s\\S]*?)\\]'));
+    return m ? m[1].trim() : '';
+  };
+  const headline = grab('HEADLINE');
+  const lede = grab('LEDE');
+  const body = text
+    .replace(/\[HEADLINE:[\s\S]*?\]/,'')
+    .replace(/\[LEDE:[\s\S]*?\]/,'')
+    .replace(/\[SUBHEAD:[\s\S]*?\]/,'')
+    .trim();
+  return {headline, lede, body};
+}
+
+// Same markdown → HTML conversion as mdToHtml. v2's live site already defines
+// matching .ntk-pullquote/.ntk-stat CSS classes, so these render as real callouts
+// there too. PULLQUOTE/STAT are pulled out to standalone placeholders first so they
+// land as their own block rather than nested inside a <p> (invalid HTML, breaks flow).
+function toSiteHtml(text) {
+  const blocks = [];
+  let t = text
+    .replace(/\[PULLQUOTE:\s*"([^"]+)"\s*\|\s*([^\]]+)\]/g, (m, quote, speaker) => {
+      blocks.push(`<div class="ntk-pullquote"><p class="ntk-pq-text">${quote}</p><cite class="ntk-pq-cite">${speaker}</cite></div>`);
+      return `\n\n\u0000BLOCK${blocks.length-1}\u0000\n\n`;
+    })
+    .replace(/\[STAT:\s*([^|\]]+?)\s*\|\s*([^\]]+?)\s*\]/g, (m, num, ctx) => {
+      blocks.push(`<div class="ntk-stat"><div class="ntk-stat-num">${num}</div><div class="ntk-stat-ctx">${ctx}</div></div>`);
+      return `\n\n\u0000BLOCK${blocks.length-1}\u0000\n\n`;
+    })
+    .replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')
+    .replace(/\(\[([^\]]+)\]\(([^)]+)\)\)/g,'(<a href="$2" target="_blank" rel="noopener">$1</a>)')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
+
+  return t.split(/\n{2,}/).map(p=>p.trim()).filter(Boolean).map(p=>{
+    const m = p.match(/^\u0000BLOCK(\d+)\u0000$/);
+    return m ? blocks[+m[1]] : (p.startsWith('<p')?p:`<p>${p}</p>`);
+  }).join('');
+}
+
+// Builds one ready-to-paste `const stories` entry for a single story.
+// `img` is optional — pass S.storyImages[id] to include the v2 featuredImage/overlay fields
+// (only meaningful on the first story in the array, which v2 renders as the hero).
+function toSiteStoryBlock(cand, pkg, img) {
+  const {headline, lede, body} = extractTruthsTags(pkg.truths||'');
+  const imgFields = img
+    ? `,
+    featuredImage: "${jsEsc(img.url)}",
+    overlayColor: "#261F23",
+    overlayOpacity: 45`
+    : '';
+  return `  {
+    category: "${jsEsc(cand.category)}",
+    headline: "${jsEsc(headline)}",
+    lede: "${jsEsc(lede)}",
+    truth: "${jsEsc(toSiteHtml(body))}",
+    prob: "${jsEsc(toSiteHtml(pkg.probabilities||''))}",
+    poss: "${jsEsc(toSiteHtml(pkg.possibilities||''))}",
+    lies: "${jsEsc(toSiteHtml(pkg.lies||''))}"${imgFields}
+  },`;
+}
+
+
 
 async function scanHeadlines(mode) {
   upd({stage:'scanning', error:'', statusMsg: mode==='scan-broad'?'Fetching top global sources…':'Fetching NTK source pool…'});
@@ -1311,15 +1386,31 @@ function draw() {
       return `--- Story ${i+1}: ${cand?.topic||id} ---\n${imgLine}\n`+SECS.filter(s=>S.sections.has(s)).map(s=>`[${s.toUpperCase()}]\n${pkg[s]||''}`).join('\n\n');
     }).join('\n\n════════════════════════════\n\n');
 
+    const allSiteText=orderedPicks.map(id=>{
+      const cand=S.candidates.find(c=>c.id===id), pkg=S.packages[id];
+      return toSiteStoryBlock(cand, pkg, S.storyImages[id]);
+    }).join('\n\n');
+
     const storyBlocks=orderedPicks.map((id,i)=>{
       const cand=S.candidates.find(c=>c.id===id), pkg=S.packages[id];
       const srcUrls=S.candidateUrls[id]||[];
       const img=S.storyImages[id];
-      const secBlocks=SECS.filter(s=>S.sections.has(s)).map(s=>`
+      const secBlocks=SECS.filter(s=>S.sections.has(s)).map(s=>{
+        let sectionHtml;
+        if (s==='truths') {
+          const {headline, lede, body} = extractTruthsTags(pkg[s]||'');
+          sectionHtml = `${headline?`<div style="font-family:var(--serif);font-size:17px;font-weight:bold;color:var(--text);margin-bottom:6px;">${x(headline)}</div>`:''}`
+            + `${lede?`<div style="font-size:13px;color:var(--muted);margin-bottom:12px;">${x(lede)}</div>`:''}`
+            + mdToHtml(body).replace(/\n/g,'<br>');
+        } else {
+          sectionHtml = mdToHtml(pkg[s]||'').replace(/\n/g,'<br>');
+        }
+        return `
         <div class="out-sec">
           <div class="out-sec-lbl">${s}</div>
-          <div class="out-text">${mdToHtml(pkg[s]||'').replace(/\n/g,'<br>')}</div>
-        </div>`).join('');
+          <div class="out-text">${sectionHtml}</div>
+        </div>`;
+      }).join('');
       const srcLinks=srcUrls.length
         ?`<div class="src-links">${srcUrls.map(s=>`<a href="${x(s.url)}" target="_blank" rel="noopener" style="font-size:10px;color:var(--accent);text-decoration:none;" title="${x(s.title)}">↗ ${x((s.title||s.url).slice(0,50)+(s.title&&s.title.length>50?'…':''))}</a>`).join('')}</div>`
         :'';
@@ -1336,7 +1427,10 @@ function draw() {
             <div class="out-story-cat">${x(cand?.category||'')}</div>
             ${img?`<span style="font-size:9px;color:var(--green);border:1px solid var(--green);padding:1px 6px;border-radius:2px;">📸 image set</span>`:''}
           </div>
-          <button class="btn-ghost btn-sm" data-cpstory="${id}">${S.copied===id?'Copied ✓':'Copy story'}</button>
+          <div style="display:flex;gap:6px;">
+            <button class="btn-ghost btn-sm" data-cpsite="${id}">${S.copied===id+'-site'?'Copied ✓':'Copy for site'}</button>
+            <button class="btn-ghost btn-sm" data-cpstory="${id}">${S.copied===id?'Copied ✓':'Copy story'}</button>
+          </div>
         </div>
         ${srcLinks}
         ${imgBlock}
@@ -1347,18 +1441,24 @@ function draw() {
     c.innerHTML=`<div class="stage-lbl">04 · Output</div>
       <div class="act-row">
         <button class="btn btn-primary" id="cp-all">${S.copied==='all'?'Copied ✓':'Copy all stories'}</button>
+        <button class="btn btn-primary" id="cp-all-site">${S.copied==='all-site'?'Copied ✓':'Copy all for site (const stories)'}</button>
         <button class="btn-ghost" id="back-btn">← Back to sources</button>
       </div>
       ${storyBlocks}
       ${S.error?`<div class="error">${x(S.error)}</div>`:''}`;
 
     bind('cp-all','click',()=>cp(allText,'all'));
+    bind('cp-all-site','click',()=>cp(allSiteText,'all-site'));
     bind('back-btn','click',()=>upd({stage:'preview'}));
     c.querySelectorAll('[data-cpstory]').forEach(b=>b.addEventListener('click',()=>{
       const id=b.dataset.cpstory,cand=S.candidates.find(c=>c.id===id),pkg=S.packages[id];
       const img=S.storyImages[id];
       const imgLine=img?`\nIMAGE: ${img.url}${img.credit?' (Photo: '+img.credit+')':''}\n`:'';
       cp(`Story: ${cand?.topic||id}\n${imgLine}\n`+SECS.filter(s=>S.sections.has(s)).map(s=>`[${s.toUpperCase()}]\n${pkg[s]||''}`).join('\n\n'),id);
+    }));
+    c.querySelectorAll('[data-cpsite]').forEach(b=>b.addEventListener('click',()=>{
+      const id=b.dataset.cpsite,cand=S.candidates.find(c=>c.id===id),pkg=S.packages[id];
+      cp(toSiteStoryBlock(cand, pkg, S.storyImages[id]), id+'-site');
     }));
   }
 
