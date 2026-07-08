@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NTK Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #261F23; --ink-2: #2F282C; --ink-3: #3A3238;
+    --cream: #F4F1EC; --cream-dim: #B8B2AC; --cream-faint: #7D7772;
+    --teal: #01B2A7; --terra: #DC6550; --blue: #0798F2;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--ink); color: var(--cream); font-family: 'Space Grotesk', sans-serif; }
+
+  header { display: flex; align-items: baseline; gap: 20px; padding: 22px 28px 16px;
+           border-bottom: 1px solid var(--ink-3); flex-wrap: wrap; }
+  .brand { font-weight: 700; font-size: 19px; letter-spacing: .04em; }
+  .brand em { font-style: normal; color: var(--teal); }
+  .meta { font-size: 12px; color: var(--cream-faint); letter-spacing: .05em; }
+  .meta strong { color: var(--cream-dim); font-weight: 500; }
+
+  .board { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px;
+           background: var(--ink-3); min-height: calc(100vh - 62px); }
+  .pile { background: var(--ink); padding: 18px 16px 60px; min-width: 0; }
+  @media (max-width: 1400px) { .board { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 1100px) { .board { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 640px)  { .board { grid-template-columns: 1fr; } }
+
+  .pile-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 14px;
+               padding-bottom: 10px; border-bottom: 2px solid var(--pilecolor, var(--teal)); }
+  .pile-name { font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+               color: var(--pilecolor, var(--teal)); }
+  .pile-count { font-size: 12px; color: var(--cream-faint); }
+  .pile-sub { font-size: 11px; color: var(--cream-faint); margin: -8px 0 14px; line-height: 1.5; }
+
+  .card { background: var(--ink-2); border-radius: 6px; padding: 12px 14px; margin-bottom: 10px;
+          border-left: 3px solid transparent; }
+  .card.yes { border-left-color: var(--teal); }
+  .card.killed { opacity: .55; border-left-color: var(--terra); }
+  .card.killed:hover { opacity: .9; }
+
+  .ticks { display: flex; gap: 3px; margin-bottom: 7px; height: 10px; align-items: flex-end; }
+  .tick { width: 4px; border-radius: 1px; background: var(--ink-3); height: 6px; }
+  .tick.hot { background: var(--teal); height: 10px; }
+
+  .card h3 { font-family: 'Source Serif 4', serif; font-size: 15.5px; font-weight: 600;
+             line-height: 1.35; margin-bottom: 7px; }
+  .card h3 a { color: var(--cream); text-decoration: none; }
+  .card h3 a:hover { color: var(--teal); }
+
+  .cmeta { font-size: 11px; color: var(--cream-faint); display: flex; gap: 10px; flex-wrap: wrap; }
+  .verdict { font-weight: 700; letter-spacing: .08em; }
+  .verdict.YES { color: var(--teal); } .verdict.MAYBE { color: var(--cream-dim); }
+  .verdict.NO { color: var(--terra); }
+  .rationale { font-size: 11.5px; color: var(--cream-dim); margin-top: 6px; line-height: 1.45;
+               font-style: italic; }
+  .anchor { color: var(--blue); font-style: normal; }
+
+  details { margin-top: 8px; }
+  summary { font-size: 11px; color: var(--cream-faint); cursor: pointer; letter-spacing: .05em;
+            list-style: none; }
+  summary::before { content: "+ "; color: var(--teal); }
+  details[open] summary::before { content: "− "; }
+  .src { font-size: 12px; padding: 6px 0 2px; border-top: 1px dotted var(--ink-3); margin-top: 6px;
+         line-height: 1.4; }
+  .src a { color: var(--cream-dim); text-decoration: none; font-family: 'Source Serif 4', serif; }
+  .src a:hover { color: var(--teal); }
+  .src .pub { color: var(--cream-faint); font-size: 10.5px; text-transform: uppercase;
+              letter-spacing: .08em; }
+  .src.is-angle { border-left: 2px solid var(--blue); padding-left: 8px; }
+  .src.is-angle .pub::after { content: " · angle"; color: var(--blue); }
+
+  .lchip { font-size: 9.5px; font-weight: 700; letter-spacing: .08em; padding: 1px 5px;
+           border-radius: 3px; vertical-align: 1px; }
+  .lchip.DEVELOPMENT { color: var(--ink); background: var(--teal); }
+  .lchip.INCREMENT { color: var(--cream-faint); background: var(--ink-3); }
+  .lchip.RECYCLED { color: var(--cream-faint); background: var(--ink-3); font-style: italic; }
+  .whatnew { color: var(--teal); font-size: 11.5px; }
+  .unique { color: var(--blue); font-size: 11px; font-style: italic; }
+  .credits { color: var(--cream-faint); font-size: 10.5px; }
+  .sop { font-size: 12px; color: var(--cream-dim); line-height: 1.5; margin-top: 8px;
+         padding: 8px 10px; background: var(--ink); border-radius: 4px;
+         font-family: 'Source Serif 4', serif; }
+  .sop b { color: var(--teal); font-family: 'Space Grotesk', sans-serif; font-size: 10px;
+           letter-spacing: .1em; }
+  .solo { color: var(--blue); font-weight: 700; letter-spacing: .06em; }
+  .solo.pablum { color: var(--terra); }
+
+  .empty { font-size: 12.5px; color: var(--cream-faint); line-height: 1.6; padding: 8px 2px; }
+  .err { padding: 40px 28px; color: var(--terra); font-size: 14px; line-height: 1.6; }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">NTK <em>Desk</em></div>
+  <div class="meta" id="stats">loading…</div>
+</header>
+<div class="board" id="board"></div>
+
+<script>
+const PILES = [
+  { id: "developments", name: "Developments", color: "var(--teal)",
+    sub: "The ledger changed — a new fact entered a story that survives triage.",
+    test: c => (c.developments_recent || 0) >= 1,
+    sort: (a, b) => (b.developments_recent - a.developments_recent) || (b.score - a.score) },
+  { id: "heating", name: "Heating", color: "var(--teal)",
+    sub: "Pickup velocity climbing — the discussion signal.",
+    test: c => c.velocity >= 2 && v(c) !== "NO",
+    sort: (a, b) => b.score - a.score },
+  { id: "fresh", name: "Fresh", color: "var(--blue)",
+    sub: "New in the last 6 hours. Single-source items here are scoop-or-pablum — read the rationale.",
+    test: c => c.age_hours <= 6 && c.velocity < 2 && v(c) !== "NO",
+    sort: (a, b) => a.age_hours - b.age_hours },
+  { id: "angles", name: "Angles", color: "var(--cream-dim)",
+    sub: "The outlier take inside a multi-source story — farthest from the pack while still on it.",
+    test: c => c.angle_id && c.size >= 3 && v(c) !== "NO",
+    sort: (a, b) => b.diversity - a.diversity },
+  { id: "killed", name: "Killed", color: "var(--terra)",
+    sub: "What the machine deemed pablum. Audit this pile — it tunes the rubric.",
+    test: c => v(c) === "NO",
+    sort: (a, b) => b.score - a.score },
+];
+
+function v(c) { return c.triage ? c.triage.verdict : null; }
+function esc(s) { return (s || "").replace(/[&<>"]/g, m => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[m])); }
+
+function ticksHtml(c) {
+  const total = Math.min(c.diversity, 12);
+  const hot = Math.min(c.velocity, total);
+  let h = "";
+  for (let i = 0; i < total; i++) h += `<div class="tick ${i < hot ? "hot" : ""}"></div>`;
+  return `<div class="ticks" title="${c.velocity} publishers in last 6h / ${c.diversity} total">${h}</div>`;
+}
+
+function cardHtml(c, pile) {
+  const verdict = v(c);
+  const lead = c.items[0] || {};
+  const tri = c.triage;
+  const srcs = c.items.slice(0, 8).map(it => {
+    const led = it.ledger;
+    const chip = led ? `<span class="lchip ${led.class}">${led.class === "DEVELOPMENT" ? "DEV" : led.class === "INCREMENT" ? "INC" : "REC"}</span> ` : "";
+    const extra = led ? [
+      led.what_new ? `<span class="whatnew">+ ${esc(led.what_new)}</span>` : "",
+      led.unique ? `<span class="unique">${esc(led.unique)}</span>` : "",
+      (led.credits || []).length ? `<span class="credits">credits: ${led.credits.map(esc).join(", ")}</span>` : "",
+    ].filter(Boolean).join("<br>") : "";
+    return `<div class="src ${it.is_angle ? "is-angle" : ""}">
+       <span class="pub">${chip}${esc(it.publisher)}</span><br>
+       <a href="${esc(it.url)}" target="_blank" rel="noopener">${esc(it.title)}</a>
+       ${extra ? "<br>" + extra : ""}
+     </div>`;
+  }).join("");
+  const devLines = pile === "developments"
+    ? c.items.filter(it => it.ledger && it.ledger.class === "DEVELOPMENT" && it.ledger.what_new)
+        .slice(0, 3).map(it => `<div class="rationale whatnew">+ ${esc(it.ledger.what_new)} <span class="credits">(${esc(it.publisher)})</span></div>`).join("")
+    : "";
+  const sop = pile === "developments" && c.state_of_play
+    ? `<div class="sop"><b>STATE OF PLAY</b><br>${esc(c.state_of_play)}</div>` : "";
+  const solo = tri && tri.solo ? ` <span class="solo ${esc(tri.solo)}">${esc(tri.solo)}?</span>` : "";
+  return `<div class="card ${verdict === "YES" ? "yes" : ""} ${pile === "killed" ? "killed" : ""}">
+    ${ticksHtml(c)}
+    <h3><a href="${esc(lead.url)}" target="_blank" rel="noopener">${esc(c.title)}</a></h3>
+    <div class="cmeta">
+      ${verdict ? `<span class="verdict ${verdict}">${verdict}</span>` : `<span>untriaged</span>`}${solo}
+      <span>${c.diversity} pub${c.diversity !== 1 ? "s" : ""}</span>
+      <span>${c.age_hours}h</span>
+      <span>${c.markets.join(" · ")}</span>
+    </div>
+    ${tri && tri.rationale ? `<div class="rationale">${esc(tri.rationale)}${tri.anchor ? ` <span class="anchor">⚓ ${esc(tri.anchor)}</span>` : ""}</div>` : ""}
+    ${devLines}${sop}
+    ${c.items.length > 1 || pile === "angles" ? `<details><summary>${c.items.length} item${c.items.length !== 1 ? "s" : ""}</summary>${srcs}</details>` : ""}
+  </div>`;
+}
+
+async function boot() {
+  const board = document.getElementById("board");
+  let data;
+  try {
+    data = await (await fetch("data/clusters.json?" + Date.now())).json();
+  } catch (e) {
+    board.innerHTML = `<div class="err">Couldn't load data/clusters.json. Run the pipeline once (Actions → NTK Desk → Run workflow), or locally: python ingest.py && python cluster.py && python triage.py</div>`;
+    return;
+  }
+  const when = new Date(data.updated);
+  document.getElementById("stats").innerHTML =
+    `<strong>${data.window_items}</strong> items · <strong>${data.clusters.length}</strong> stories · updated ${when.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"})}`;
+  board.innerHTML = PILES.map(p => {
+    const rows = data.clusters.filter(p.test).sort(p.sort);
+    const body = rows.length
+      ? rows.slice(0, 40).map(c => cardHtml(c, p.id)).join("")
+      : `<div class="empty">Nothing here right now. The pile fills as the cron runs.</div>`;
+    return `<div class="pile" style="--pilecolor:${p.color}">
+      <div class="pile-head"><span class="pile-name">${p.name}</span><span class="pile-count">${rows.length}</span></div>
+      <div class="pile-sub">${p.sub}</div>${body}</div>`;
+  }).join("");
+}
+boot();
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "_comment": "NTK Desk feed registry. STARTER SET — port your 91 publishers (and the rss-scanner's 62 feeds) into this structure. type: 'rss' (RSS 2.0 or Atom) or 'sitemap' (Google News sitemap, often at /news-sitemap.xml — use for publishers with dead/gutted RSS). tier: 1 = wire/anchor, 2 = strong daily, 3 = supplemental. market: 'national', 'intl', 'la', 'nyc', 'dc', 'chs'. Run `python ingest.py --validate` after editing to catch dead feeds.",
+  "feeds": [
+    { "id": "npr",        "name": "NPR",              "url": "https://feeds.npr.org/1001/rss.xml",                       "type": "rss",     "tier": 1, "market": "national" },
+    { "id": "propublica", "name": "ProPublica",       "url": "https://www.propublica.org/feeds/propublica/main",         "type": "rss",     "tier": 1, "market": "national" },
+    { "id": "guardian-us","name": "Guardian US",      "url": "https://www.theguardian.com/us-news/rss",                  "type": "rss",     "tier": 1, "market": "national" },
+    { "id": "ap",         "name": "AP News",          "url": "https://apnews.com/news-sitemap-content.xml",              "type": "sitemap", "tier": 1, "market": "national" },
+    { "id": "laist",      "name": "LAist",            "url": "https://laist.com/index.rss",                              "type": "rss",     "tier": 1, "market": "la" },
+    { "id": "latimes",    "name": "LA Times",         "url": "https://www.latimes.com/news-sitemap.xml",                 "type": "sitemap", "tier": 1, "market": "la" },
+    { "id": "gothamist",  "name": "Gothamist",        "url": "https://gothamist.com/feed",                               "type": "rss",     "tier": 1, "market": "nyc" },
+    { "id": "thecity",    "name": "The City",         "url": "https://www.thecity.nyc/feed/",                            "type": "rss",     "tier": 1, "market": "nyc" },
+    { "id": "51st",       "name": "The 51st",         "url": "https://51st.news/rss/",                                   "type": "rss",     "tier": 1, "market": "dc" },
+    { "id": "wtop",       "name": "WTOP",             "url": "https://wtop.com/feed/",                                   "type": "rss",     "tier": 2, "market": "dc" },
+    { "id": "postcourier","name": "Post and Courier", "url": "https://www.postandcourier.com/search/?f=rss",             "type": "rss",     "tier": 1, "market": "chs" }
+  ]
+}
