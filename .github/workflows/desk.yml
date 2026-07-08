@@ -1,0 +1,51 @@
+name: NTK Desk
+
+on:
+  schedule:
+    - cron: "*/20 * * * *"   # every 20 min (GitHub may delay; expect ~20-40 min effective)
+  workflow_dispatch: {}       # manual "Run workflow" button
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ntk-desk
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Ingest
+        working-directory: ntk-desk
+        run: python ingest.py
+
+      - name: Cluster
+        working-directory: ntk-desk
+        run: python cluster.py
+
+      - name: Triage
+        working-directory: ntk-desk
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python triage.py
+
+      - name: Ledger
+        working-directory: ntk-desk
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python ledger.py
+
+      - name: Commit data
+        run: |
+          git config user.name "ntk-desk-bot"
+          git config user.email "desk@ntknews.org"
+          git add ntk-desk/data/
+          git diff --cached --quiet || git commit -m "desk: refresh $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push
