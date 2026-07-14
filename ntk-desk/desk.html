@@ -42,10 +42,10 @@
   .card.killed { opacity: .55; border-left-color: var(--terra); }
   .card.killed:hover { opacity: .9; }
 
-.ticks { display: flex; gap: 3px; margin-bottom: 7px; height: 10px; align-items: center; }
-.tick { width: 4px; border-radius: 1px; background: var(--cream-faint); height: 8px; opacity: .55; }
-.tick.hot { background: var(--teal); height: 10px; opacity: 1; }
-  
+  .ticks { display: flex; gap: 3px; margin-bottom: 7px; height: 10px; align-items: flex-end; }
+  .tick { width: 4px; border-radius: 1px; background: var(--ink-3); height: 6px; }
+  .tick.hot { background: var(--teal); height: 10px; }
+
   .card h3 { font-family: 'Source Serif 4', serif; font-size: 15.5px; font-weight: 600;
              line-height: 1.35; margin-bottom: 7px; }
   .card h3 a { color: var(--cream); text-decoration: none; }
@@ -103,20 +103,24 @@
 <script>
 const PILES = [
   { id: "developments", name: "Developments", color: "var(--teal)",
-    sub: "The ledger changed — a new fact entered a story that survives triage.",
-    test: c => (c.developments_recent || 0) >= 1,
-    sort: (a, b) => (b.developments_recent - a.developments_recent) || (b.score - a.score) },
+    sub: "Stories that materially advanced — two or more new facts entered the ledger.",
+    test: c => (c.developments_recent || 0) >= 2,
+    sort: (a, b) => {
+      const at = a.latest_development_at ? Date.parse(a.latest_development_at) : 0;
+      const bt = b.latest_development_at ? Date.parse(b.latest_development_at) : 0;
+      return bt - at;  // newest development first
+    } },
   { id: "heating", name: "Heating", color: "var(--teal)",
     sub: "Pickup velocity climbing — the discussion signal.",
     test: c => c.velocity >= 2 && v(c) !== "NO",
     sort: (a, b) => b.score - a.score },
   { id: "fresh", name: "Fresh", color: "var(--blue)",
     sub: "New in the last 6 hours. Single-source items here are scoop-or-pablum — read the rationale.",
-    test: c => c.angle_id && c.size >= 3 && (v(c) === "YES" || v(c) === "MAYBE"),
+    test: c => c.age_hours <= 6 && c.velocity < 2 && v(c) !== "NO",
     sort: (a, b) => a.age_hours - b.age_hours },
   { id: "angles", name: "Angles", color: "var(--cream-dim)",
     sub: "The outlier take inside a multi-source story — farthest from the pack while still on it.",
-    test: c => c.angle_id && c.size >= 3 && v(c) !== "NO",
+    test: c => c.angle_id && c.size >= 3 && (v(c) === "YES" || v(c) === "MAYBE"),
     sort: (a, b) => b.diversity - a.diversity },
   { id: "killed", name: "Killed", color: "var(--terra)",
     sub: "What the machine deemed pablum. Audit this pile — it tunes the rubric.",
