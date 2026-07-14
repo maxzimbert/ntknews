@@ -30,6 +30,8 @@ SIM_THRESHOLD = 0.22      # cosine to join a cluster outright (headline-scale do
 ENTITY_ASSIST = 0.12      # cosine floor when >=2 shared entity tokens
 MERGE_THRESHOLD = 0.30    # centroid-vs-centroid cosine for the second-pass merge
 RECENT_HOURS = 6
+MAX_CLUSTER_SIZE = 30     # hard ceiling — beyond this, we're accumulating a topic not an event
+CENTROID_JOIN_BONUS = 12  # clusters larger than this require stricter joins (bar +50%)
 
 STOPWORDS = set("""a an and are as at be but by for from has have he her his i if in into is it its
 of on or she that the their they this to was were will with you your we our not no new says said
@@ -55,23 +57,32 @@ def tokenize(text):
     return [stem(w) for w in words if w not in STOPWORDS and len(w) > 2]
 
 
+ENTITY_BLOCKLIST = set("""here here's there this that these those city council report reports
+new news today yesterday tomorrow first second third last update updates live also here'
+where when what why how who whom whose which world global national local state states
+country countries government congress senate house president secretary official officials
+top bottom fresh breaking latest exclusive analysis opinion editorial comment view""".split())
+
+
 def entities(title):
     """Capitalized tokens from the title — cheap named-entity proxy.
 
-    Token-level (not run-level) so 'US Supreme Court' and 'Supreme Court'
-    share {'supreme', 'court'}. Drops the sentence-case first word and
-    stopword-ish capitals.
+    Token-level so 'US Supreme Court' and 'Supreme Court' share {'supreme','court'}.
+    Keeps sentence-initial proper nouns (e.g. 'California becomes...' -> {california})
+    provided the word isn't a generic in ENTITY_BLOCKLIST.
     """
     tokens = re.findall(r"[A-Za-z][a-zA-Z0-9''\.]+", title)
     ents = set()
     for i, tok in enumerate(tokens):
         if not tok[0].isupper():
             continue
-        low = tok.lower().rstrip(".'")
-        # Drop the sentence-case first word — unless it opens a proper-noun
-        # phrase (next token also capitalized: "Supreme Court ...").
-        leads_phrase = i + 1 < len(tokens) and tokens[i + 1][0].isupper()
-        if (i == 0 and not leads_phrase) or low in STOPWORDS or len(low) < 3:
+        # Strip possessive/quote suffixes: California's -> california, U.S. -> u.s -> handled below
+        low = tok.lower()
+        for suf in ("'s", "\u2019s", "'", "\u2019", "\u2018"):
+            if low.endswith(suf):
+                low = low[: -len(suf)]
+        low = low.rstrip(".")
+        if low in STOPWORDS or low in ENTITY_BLOCKLIST or len(low) < 3:
             continue
         ents.add(stem(low))
     return ents
@@ -132,9 +143,19 @@ def main():
         iid = it["id"]
         best, best_sim = None, 0.0
         for cl in clusters:
+            # Hard ceiling: don't grow past MAX_CLUSTER_SIZE.
+            if len(cl["ids"]) >= MAX_CLUSTER_SIZE:
+                continue
             sim = cosine(vecs[iid], cl["centroid"])
             shared = len(ents[iid] & cl["entities"])
-            joins = sim >= SIM_THRESHOLD or (shared >= 2 and sim >= ENTITY_ASSIST)
+            # As clusters grow their centroids become vaguer; raise the bar.
+            size_penalty = 1.5 if len(cl["ids"]) >= CENTROID_JOIN_BONUS else 1.0
+            # Require at least one shared proper-noun-ish entity for any join.
+            # Prevents pure-common-noun collisions (Costco vs Israel "expansion").
+            # Once an entity is shared, moderate cosine is enough; multiple
+            # entities lower the cosine bar further.
+            joins = (shared >= 1 and sim >= ENTITY_ASSIST * size_penalty) or \
+                    (shared >= 2 and sim >= ENTITY_ASSIST * 0.7 * size_penalty)
             if joins and sim > best_sim:
                 best, best_sim = cl, sim
         if best:
@@ -145,15 +166,20 @@ def main():
             clusters.append({"ids": [iid], "centroid": dict(vecs[iid]), "entities": set(ents[iid])})
 
     # Second pass: merge clusters the greedy order split apart.
+    # Same rule: at least one shared entity required.
     merged = True
     while merged:
         merged = False
         for i in range(len(clusters)):
             for j in range(i + 1, len(clusters)):
                 a, b = clusters[i], clusters[j]
+                # Don't merge if the result would exceed the size ceiling.
+                if len(a["ids"]) + len(b["ids"]) > MAX_CLUSTER_SIZE:
+                    continue
                 sim = cosine(a["centroid"], b["centroid"])
                 shared = len(a["entities"] & b["entities"])
-                if sim >= MERGE_THRESHOLD or (shared >= 2 and sim >= ENTITY_ASSIST):
+                if (shared >= 1 and sim >= MERGE_THRESHOLD) or \
+                   (shared >= 2 and sim >= ENTITY_ASSIST):
                     a["ids"] += b["ids"]
                     a["centroid"] = centroid([vecs[x] for x in a["ids"]])
                     a["entities"] |= b["entities"]
@@ -178,8 +204,13 @@ def main():
             dists = [(1 - cosine(vecs[m["id"]], cl["centroid"]), m["id"]) for m in members]
             dists.sort(reverse=True)
             angle = dists[0][1]
-        # Representative title: from the earliest tier-1 item, else earliest
-        members_sorted = sorted(zip(members, times), key=lambda mt: (mt[0]["tier"], mt[1]))
+        # Representative title: prefer English, then lowest tier, then earliest.
+        # Non-English items still cluster but do not provide the display headline.
+        def rep_sort_key(mt):
+            member = mt[0]
+            lang_penalty = 0 if member.get("language", "en") == "en" else 1
+            return (lang_penalty, member["tier"], mt[1])
+        members_sorted = sorted(zip(members, times), key=rep_sort_key)
         rep = members_sorted[0][0]
         markets = sorted({m["market"] for m in members})
         out.append({
