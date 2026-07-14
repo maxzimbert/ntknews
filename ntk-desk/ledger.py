@@ -70,6 +70,8 @@ Hard rules:
 - "credits": outlet names this item credits for the reporting ("first reported by X", "according to X"). Empty list if none.
 - ledger_updates must contain ONLY facts evidenced by these items. Rewrite state_of_play ONLY if a DEVELOPMENT changed it; otherwise return an empty string for it.
 
+CRITICAL JSON FORMATTING: your response must be strictly parseable JSON. Inside any string value: escape every double-quote as \\", escape every backslash as \\\\, escape every newline as \\n. Do NOT use smart quotes (\u201c \u201d \u2018 \u2019) inside string values — use straight quotes and escape them. If a source headline contains an apostrophe (Graham's, Trump's), preserve it as-is — apostrophes do not need escaping. If it contains a double-quote, escape it. Failure to produce valid JSON breaks the entire pipeline for this story.
+
 Respond ONLY with JSON, no preamble, no markdown fences:
 {{"items": [{{"id": "<item id>", "class": "DEVELOPMENT"|"INCREMENT"|"RECYCLED", "what_new": "<the specific new fact, under 20 words; empty unless DEVELOPMENT>", "unique": "<distinct contribution, under 15 words; else empty>", "credits": ["<outlet>"]}}], "ledger_updates": {{"actors": [{{"name": "", "role": ""}}], "numbers": [{{"value": "", "what": ""}}], "documents": [""], "quotes": [{{"who": "", "gist": ""}}], "state_of_play": ""}}}}"""
 
@@ -130,7 +132,42 @@ def call_claude(api_key, ledger, new_items, summaries):
     with urllib.request.urlopen(req, timeout=90) as resp:
         data = json.loads(resp.read())
     text = "".join(b.get("text", "") for b in data.get("content", []) if b.get("type") == "text")
-    return json.loads(text.replace("```json", "").replace("```", "").strip())
+    text = text.replace("```json", "").replace("```", "").strip()
+    return _parse_json_lenient(text)
+
+
+def _parse_json_lenient(text):
+    """Parse Sonnet's JSON, repairing common escaping mistakes it makes.
+
+    Sonnet occasionally emits smart quotes inside string values or leaves
+    an internal double-quote unescaped. We try strict parse first, then a
+    handful of narrow repairs; give up and raise if none work so the caller
+    logs the diff as failed instead of silently mis-classifying.
+    """
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        pass
+    # Repair 1: replace smart quotes that Sonnet sometimes uses inside strings
+    # with plain straight quotes. This won't fix all cases (e.g. unescaped
+    # internal straight quotes) but handles the most common failure mode.
+    repaired = (text.replace("\u201c", '"').replace("\u201d", '"')
+                    .replace("\u2018", "'").replace("\u2019", "'"))
+    try:
+        return json.loads(repaired)
+    except json.JSONDecodeError:
+        pass
+    # Repair 2: strip trailing commas before ] or }
+    repaired = re.sub(r",\s*([}\]])", r"\1", repaired)
+    try:
+        return json.loads(repaired)
+    except json.JSONDecodeError:
+        pass
+    # Repair 3: last resort — extract just the first well-formed object
+    m = re.search(r"\{.*\}", repaired, re.DOTALL)
+    if m:
+        return json.loads(m.group(0))
+    raise json.JSONDecodeError("all repair attempts failed", text, 0)
 
 
 def mock_diff(ledger, new_items, summaries):
@@ -243,6 +280,7 @@ def main():
     dev_cut = now_utc() - timedelta(hours=DEV_RECENT_HOURS)
     for cl in clusters_payload["clusters"]:
         devs_recent = 0
+        latest_dev_at = None  # timestamp of most recent DEVELOPMENT in window (for sort)
         state = ""
         for it in cl["items"]:
             res = classes.get(it["id"])
@@ -251,12 +289,17 @@ def main():
                 continue
             it["ledger"] = {"class": res["class"], "what_new": res.get("what_new", ""),
                             "unique": res.get("unique", ""), "credits": res.get("credits", [])}
-            if res["class"] == "DEVELOPMENT" and datetime.fromisoformat(res["at"]) >= dev_cut:
-                devs_recent += 1
+            if res["class"] == "DEVELOPMENT":
+                dev_ts = datetime.fromisoformat(res["at"])
+                if dev_ts >= dev_cut:
+                    devs_recent += 1
+                if latest_dev_at is None or dev_ts > latest_dev_at:
+                    latest_dev_at = dev_ts
             lid = res.get("ledger_id")
             if lid and lid in ledgers:
                 state = ledgers[lid]["facts"]["state_of_play"]
         cl["developments_recent"] = devs_recent
+        cl["latest_development_at"] = latest_dev_at.isoformat() if latest_dev_at else None
         cl["state_of_play"] = state
 
     # Prune classification cache to items still in the window
