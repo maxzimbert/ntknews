@@ -215,6 +215,7 @@ def main():
                     "publisher_name": f["name"],
                     "tier": f["tier"],
                     "market": f["market"],
+                    "language": f.get("language", "en"),
                     "published": pub.isoformat() if pub else None,
                     "first_seen": now.isoformat(),
                 }
