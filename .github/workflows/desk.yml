@@ -1,9 +1,7 @@
 name: NTK Desk
 
 on:
-  schedule:
-    - cron: "*/20 * * * *"   # every 20 min (GitHub may delay; expect ~20-40 min effective)
-  workflow_dispatch: {}       # manual "Run workflow" button
+  workflow_dispatch: {}       # manual only — schedule disabled to conserve API credits
 
 permissions:
   contents: write
