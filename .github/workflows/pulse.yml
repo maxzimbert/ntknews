@@ -1,0 +1,47 @@
+name: NTK Pulse
+
+on:
+  workflow_dispatch: {}   # manual only — Max's call, July 2026, to conserve API credits.
+                          # To go scheduled later, add:
+                          #   schedule:
+                          #     - cron: "*/20 * * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ntk-pulse
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Ingest (6h window)
+        working-directory: ntk-pulse
+        run: python ingest.py
+
+      - name: Cluster
+        working-directory: ntk-pulse
+        run: python cluster.py
+
+      - name: Triage (Haiku annotations)
+        working-directory: ntk-pulse
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          PULSE_MAX_CALLS: "25"
+        run: python triage.py
+
+      - name: Commit data
+        run: |
+          git config user.name "ntk-pulse-bot"
+          git config user.email "pulse@ntknews.org"
+          git add ntk-pulse/data/
+          git diff --cached --quiet || git commit -m "pulse: refresh $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push
