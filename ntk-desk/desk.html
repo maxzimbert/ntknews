@@ -183,7 +183,7 @@ async function boot() {
   const board = document.getElementById("board");
   let data;
   try {
-    data = await (await fetch("data/clusters.json?" + Date.now())).json();
+    data = await (await fetch("data/clusters.json?v=" + Date.now(), { cache: "no-store" })).json();
   } catch (e) {
     board.innerHTML = `<div class="err">Couldn't load data/clusters.json. Run the pipeline once (Actions → NTK Desk → Run workflow), or locally: python ingest.py && python cluster.py && python triage.py</div>`;
     return;
