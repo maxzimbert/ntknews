@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Pulse</title>
+<style>
+  /* Deliberately undesigned. Memeorandum register: text-forward, dense,
+     readable in one scan. Chrome kills it. */
+  :root {
+    --ink: #111;
+    --dim: #777;
+    --faint: #aaa;
+    --link: #1a0dab;
+    --rule: #ddd;
+    --certified: #0a7a2f;
+    --stale: #b03a00;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0 auto;
+    max-width: 780px;
+    padding: 14px 16px 60px;
+    font: 13px/1.45 Verdana, Geneva, "DejaVu Sans", sans-serif;
+    color: var(--ink);
+    background: #fff;
+  }
+  a { color: var(--link); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* Header: name, time, count. Nothing else. */
+  header {
+    display: flex; align-items: baseline; gap: 10px;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 6px; margin-bottom: 12px;
+  }
+  header h1 { font-size: 17px; margin: 0; letter-spacing: 1px; }
+  header .meta { color: var(--dim); font-size: 11px; }
+  header .stale { color: var(--stale); font-size: 11px; }
+  header .count { margin-left: auto; color: var(--dim); font-size: 11px; }
+
+  .cluster { padding: 7px 0; border-bottom: 1px solid var(--rule); }
+  .cluster.no-verdict-no { opacity: 0.55; }  /* NO = pablum: dimmed, never hidden */
+  .hed { font-size: 13.5px; font-weight: bold; cursor: pointer; }
+  .hed:hover { text-decoration: underline; }
+  .meta-line { font-size: 11px; color: var(--dim); margin-top: 2px; }
+  .beat {
+    text-transform: uppercase; letter-spacing: 0.5px; font-size: 10px;
+    font-weight: bold; margin-right: 6px;
+  }
+  .beat-national { color: #8a1f1f; }   .beat-international { color: #1f4d8a; }
+  .beat-tech { color: #5a2d82; }       .beat-health { color: #0a7a2f; }
+  .beat-education { color: #a05a00; }  .beat-science { color: #006b6b; }
+  .beat-business { color: #705500; }   .beat-culture { color: #8a1f6e; }
+  .beat-other { color: var(--dim); }
+  .line { font-size: 12px; color: #444; margin-top: 2px; }
+
+  .articles { display: none; margin: 6px 0 2px; padding-left: 12px; border-left: 2px solid var(--rule); }
+  .cluster.open .articles { display: block; }
+  .article { font-size: 12px; padding: 2px 0; }
+  .article .pub { font-weight: bold; color: #333; }
+  .article .t { color: var(--faint); font-size: 10.5px; }
+
+  .certify {
+    margin-top: 5px; font: bold 10.5px Verdana, sans-serif;
+    padding: 2px 8px; cursor: pointer;
+    border: 1px solid var(--dim); background: #fff; color: var(--ink);
+  }
+  .certify.done { border-color: var(--certified); color: var(--certified); }
+
+  /* Single-source items: same stream, compact rendering */
+  .cluster.solo { padding: 3px 0; border-bottom: 1px dotted var(--rule); }
+  .cluster.solo .hed { font-weight: normal; font-size: 12.5px; }
+
+  .empty { color: var(--dim); padding: 30px 0; }
+  @media (prefers-color-scheme: dark) {
+    body { background: #141414; }
+    :root { --ink: #ddd; --dim: #909090; --faint: #6a6a6a; --link: #8ab4f8; --rule: #333; }
+    header { border-color: var(--ink); }
+    .line { color: #b5b5b5; }
+    .article .pub { color: #ccc; }
+    .certify { background: transparent; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>PULSE</h1>
+  <span class="meta" id="clock"></span>
+  <span class="stale" id="stale"></span>
+  <span class="count" id="count"></span>
+</header>
+<main id="feed"><div class="empty">Loading…</div></main>
+
+<script>
+// NTK Pulse view — reads data/clusters.json produced by the pipeline.
+// Stateless surface; the 6-hour window is enforced upstream at ingest.
+//
+// CERTIFY IS A STUB (Slice 2 / open question Q1 in the Pulse briefing).
+// For now a click marks the cluster certified in localStorage so intent
+// isn't lost between page loads. No bridge to ntk-production yet.
+
+const CERT_KEY = "pulse-certified-v1";
+const certified = new Set(JSON.parse(localStorage.getItem(CERT_KEY) || "[]"));
+
+function saveCertified() {
+  localStorage.setItem(CERT_KEY, JSON.stringify([...certified]));
+}
+
+function rel(iso) {
+  if (!iso) return "";
+  const mins = Math.round((Date.now() - new Date(iso)) / 60000);
+  if (mins < 1) return "now";
+  if (mins < 60) return mins + "m";
+  const h = mins / 60;
+  return (h < 10 ? h.toFixed(1) : Math.round(h)) + "h";
+}
+
+function pubList(pubs) {
+  if (pubs.length <= 3) return pubs.join(", ");
+  return pubs.slice(0, 3).join(", ") + " +" + (pubs.length - 3);
+}
+
+function esc(s) {
+  const d = document.createElement("span"); d.textContent = s || ""; return d.innerHTML;
+}
+
+function render(data) {
+  const feed = document.getElementById("feed");
+  const clusters = data.clusters || [];
+  document.getElementById("count").textContent =
+    clusters.length + (clusters.length === 1 ? " story" : " stories");
+
+  // Staleness: with manual cron runs the data can outlive its window.
+  const ageMin = Math.round((Date.now() - new Date(data.updated)) / 60000);
+  const staleEl = document.getElementById("stale");
+  if (ageMin > 60) {
+    staleEl.textContent = "· data " + rel(data.updated) + " old — run the workflow";
+  }
+
+  if (!clusters.length) {
+    feed.innerHTML = '<div class="empty">Nothing in the window. Run the pipeline.</div>';
+    return;
+  }
+
+  feed.innerHTML = "";
+  for (const c of clusters) {
+    const beat = (c.triage && c.triage.beat) || c.beat_hint || "other";
+    const verdict = c.triage && c.triage.verdict;
+    const line = c.triage && c.triage.line;
+    const solo = c.publisher_count <= 1;
+
+    const el = document.createElement("div");
+    el.className = "cluster" + (solo ? " solo" : "") +
+                   (verdict === "NO" ? " no-verdict-no" : "");
+
+    const articles = c.items.map(it =>
+      '<div class="article"><span class="pub">' + esc(it.publisher) + "</span> · " +
+      '<a href="' + esc(it.url) + '" target="_blank" rel="noopener">' + esc(it.title) + "</a> " +
+      '<span class="t">' + rel(it.published) + "</span></div>"
+    ).join("");
+
+    el.innerHTML =
+      '<div class="hed">' + esc(c.title) + "</div>" +
+      '<div class="meta-line">' +
+        '<span class="beat beat-' + esc(beat) + '">' + esc(beat) + "</span>" +
+        esc(pubList(c.publishers)) + " · " + rel(c.latest) +
+      "</div>" +
+      (line && !solo ? '<div class="line">' + esc(line) + "</div>" : "") +
+      '<div class="articles">' + articles +
+        '<button class="certify' + (certified.has(c.key) ? " done" : "") + '">' +
+        (certified.has(c.key) ? "✓ certified" : "certify into digest") + "</button>" +
+      "</div>";
+
+    el.querySelector(".hed").addEventListener("click", () => el.classList.toggle("open"));
+    el.querySelector(".certify").addEventListener("click", (e) => {
+      const b = e.target;
+      if (certified.has(c.key)) { certified.delete(c.key); b.classList.remove("done"); b.textContent = "certify into digest"; }
+      else { certified.add(c.key); b.classList.add("done"); b.textContent = "✓ certified"; }
+      saveCertified();
+    });
+    feed.appendChild(el);
+  }
+}
+
+function tick() {
+  const now = new Date();
+  document.getElementById("clock").textContent =
+    now.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+}
+tick(); setInterval(tick, 30000);
+
+fetch("data/clusters.json?t=" + Date.now())
+  .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+  .then(render)
+  .catch(() => {
+    document.getElementById("feed").innerHTML =
+      '<div class="empty">No data yet — data/clusters.json not found. Run the pipeline once.</div>';
+  });
+</script>
+</body>
+</html>

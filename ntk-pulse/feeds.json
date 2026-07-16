@@ -1,0 +1,849 @@
+{
+ "_comment": "NTK Desk feed registry \u2014 91-source pool with July 14 repairs. 'language' controls representative-title eligibility (only 'en' feeds provide cluster headlines; non-en items still cluster). Disabled feeds live in '_disabled' for recovery; several were paywalled outlets (Bloomberg, WSJ, Haaretz, Free Beacon, The Australian, Houston Chronicle) whose bodies still come through EventRegistry at synthesis time. Others were URLs that returned 404/timeout/parse errors and need fresh URLs sourced from the publisher.",
+ "feeds": [
+  {
+   "id": "reuters",
+   "name": "Reuters",
+   "url": "https://www.reuters.com/arc/outboundfeeds/rss/",
+   "type": "rss",
+   "tier": 1,
+   "market": "intl",
+   "language": "en"
+  },
+  {
+   "id": "afp",
+   "name": "AFP",
+   "url": "https://www.afp.com/en/rss.xml",
+   "type": "rss",
+   "tier": 1,
+   "market": "intl",
+   "language": "en"
+  },
+  {
+   "id": "npr",
+   "name": "NPR",
+   "url": "https://feeds.npr.org/1001/rss.xml",
+   "type": "rss",
+   "tier": 1,
+   "market": "national",
+   "language": "en"
+  },
+  {
+   "id": "pbs",
+   "name": "PBS NewsHour",
+   "url": "https://www.pbs.org/newshour/feeds/rss/headlines",
+   "type": "rss",
+   "tier": 1,
+   "market": "national",
+   "language": "en"
+  },
+  {
+   "id": "nytimes",
+   "name": "New York Times",
+   "url": "https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml",
+   "type": "rss",
+   "tier": 1,
+   "market": "national",
+   "language": "en"
+  },
+  {
+   "id": "wapo",
+   "name": "Washington Post",
+   "url": "https://feeds.washingtonpost.com/rss/national",
+   "type": "rss",
+   "tier": 1,
+   "market": "national",
+   "language": "en"
+  },
+  {
+   "id": "usatoday",
+   "name": "USA Today",
+   "url": "https://www.usatoday.com/rss/",
+   "type": "rss",
+   "tier": 2,
+   "market": "national",
+   "language": "en"
+  },
+  {
+   "id": "cnn",
+   "name": "CNN",
+   "url": "http://rss.cnn.com/rss/cnn_topstories.rss",
+   "type": "rss",
+   "tier": 2,
+   "market": "national",
+   "language": "en"
+  },
+  {
+   "id": "nbcnews",
+   "name": "NBC News",
+   "url": "https://feeds.nbcnews.com/nbcnews/public/news",
+   "type": "rss",
+   "tier": 2,
+   "market": "national",
+   "language": "en"
+  },
+  {
+   "id": "abcnews",
+   "name": "ABC News",
+   "url": "https://abcnews.go.com/abcnews/topstories",
+   "type": "rss",
+   "tier": 2,
+   "market": "national",
+   "language": "en"
+  },
+  {
+   "id": "cbsnews",
+   "name": "CBS News",
+   "url": "https://www.cbsnews.com/latest/rss/main",
+   "type": "rss",
+   "tier": 2,
+   "market": "national",
+   "language": "en"
+  },
+  {
+   "id": "foxnews",
+   "name": "Fox News",
+   "url": "https://moxie.foxnews.com/google-publisher/latest.xml",
+   "type": "rss",
+   "tier": 2,
+   "market": "national",
+   "language": "en"
+  },
+  {
+   "id": "cnbc",
+   "name": "CNBC",
+   "url": "https://www.cnbc.com/id/100003114/device/rss/rss.html",
+   "type": "rss",
+   "tier": 2,
+   "market": "national",
+   "language": "en"
+  },
+  {
+   "id": "propublica",
+   "name": "ProPublica",
+   "url": "https://www.propublica.org/feeds/propublica/main",
+   "type": "rss",
+   "tier": 1,
+   "market": "national",
+   "language": "en"
+  },
+  {
+   "id": "atlantic",
+   "name": "The Atlantic",
+   "url": "https://www.theatlantic.com/feed/all/",
+   "type": "rss",
+   "tier": 2,
+   "market": "national",
+   "language": "en"
+  },
+  {
+   "id": "newyorker",
+   "name": "The New Yorker",
+   "url": "https://www.newyorker.com/feed/everything",
+   "type": "rss",
+   "tier": 2,
+   "market": "national",
+   "language": "en"
+  },
+  {
+   "id": "economist",
+   "name": "The Economist",
+   "url": "https://www.economist.com/the-world-this-week/rss.xml",
+   "type": "rss",
+   "tier": 2,
+   "market": "intl",
+   "language": "en"
+  },
+  {
+   "id": "bulwark",
+   "name": "The Bulwark",
+   "url": "https://www.thebulwark.com/feed",
+   "type": "rss",
+   "tier": 2,
+   "market": "national",
+   "language": "en"
+  },
+  {
+   "id": "newrepublic",
+   "name": "The New Republic",
+   "url": "https://newrepublic.com/rss.xml",
+   "type": "rss",
+   "tier": 2,
+   "market": "national",
+   "language": "en"
+  },
+  {
+   "id": "spectator",
+   "name": "American Spectator",
+   "url": "https://spectator.org/feed/",
+   "type": "rss",
+   "tier": 3,
+   "market": "national",
+   "language": "en"
+  },
+  {
+   "id": "tpm",
+   "name": "Talking Points Memo",
+   "url": "https://talkingpointsmemo.com/feed",
+   "type": "rss",
+   "tier": 2,
+   "market": "national",
+   "language": "en"
+  },
+  {
+   "id": "semafor",
+   "name": "Semafor",
+   "url": "https://www.semafor.com/rss.xml",
+   "type": "rss",
+   "tier": 2,
+   "market": "national",
+   "language": "en"
+  },
+  {
+   "id": "washingtonian",
+   "name": "Washingtonian",
+   "url": "https://www.washingtonian.com/feed/",
+   "type": "rss",
+   "tier": 3,
+   "market": "dc",
+   "language": "en"
+  },
+  {
+   "id": "bbc",
+   "name": "BBC",
+   "url": "https://feeds.bbci.co.uk/news/rss.xml",
+   "type": "rss",
+   "tier": 1,
+   "market": "intl",
+   "language": "en"
+  },
+  {
+   "id": "guardian",
+   "name": "The Guardian",
+   "url": "https://www.theguardian.com/us/rss",
+   "type": "rss",
+   "tier": 1,
+   "market": "intl",
+   "language": "en"
+  },
+  {
+   "id": "ft",
+   "name": "Financial Times",
+   "url": "https://www.ft.com/?format=rss",
+   "type": "rss",
+   "tier": 1,
+   "market": "intl",
+   "language": "en"
+  },
+  {
+   "id": "independent",
+   "name": "The Independent",
+   "url": "https://www.independent.co.uk/news/rss",
+   "type": "rss",
+   "tier": 2,
+   "market": "intl",
+   "language": "en"
+  },
+  {
+   "id": "telegraph",
+   "name": "The Telegraph",
+   "url": "https://www.telegraph.co.uk/rss.xml",
+   "type": "rss",
+   "tier": 2,
+   "market": "intl",
+   "language": "en"
+  },
+  {
+   "id": "dailymail",
+   "name": "Daily Mail",
+   "url": "https://www.dailymail.co.uk/articles.rss",
+   "type": "rss",
+   "tier": 3,
+   "market": "intl",
+   "language": "en"
+  },
+  {
+   "id": "france24",
+   "name": "France 24",
+   "url": "https://www.france24.com/en/rss",
+   "type": "rss",
+   "tier": 2,
+   "market": "intl",
+   "language": "en"
+  },
+  {
+   "id": "dw",
+   "name": "Deutsche Welle",
+   "url": "https://rss.dw.com/xml/rss-en-all",
+   "type": "rss",
+   "tier": 2,
+   "market": "intl",
+   "language": "en"
+  },
+  {
+   "id": "aljazeera",
+   "name": "Al Jazeera",
+   "url": "https://www.aljazeera.com/xml/rss/all.xml",
+   "type": "rss",
+   "tier": 2,
+   "market": "intl",
+   "language": "en"
+  },
+  {
+   "id": "jpost",
+   "name": "Jerusalem Post",
+   "url": "https://www.jpost.com/rss/rssfeedsheadlines.aspx",
+   "type": "rss",
+   "tier": 3,
+   "market": "intl",
+   "language": "en"
+  },
+  {
+   "id": "yonhap",
+   "name": "Yonhap News",
+   "url": "https://en.yna.co.kr/RSS/news.xml",
+   "type": "rss",
+   "tier": 3,
+   "market": "intl",
+   "language": "en"
+  },
+  {
+   "id": "abcau",
+   "name": "ABC Australia",
+   "url": "https://www.abc.net.au/news/feed/45910/rss.xml",
+   "type": "rss",
+   "tier": 3,
+   "market": "intl",
+   "language": "en"
+  },
+  {
+   "id": "standardmedia",
+   "name": "Standard (Kenya)",
+   "url": "https://www.standardmedia.co.ke/rss/headlines.php",
+   "type": "rss",
+   "tier": 3,
+   "market": "intl",
+   "language": "en"
+  },
+  {
+   "id": "ansa",
+   "name": "ANSA",
+   "url": "https://www.ansa.it/sito/ansait_rss.xml",
+   "type": "rss",
+   "tier": 3,
+   "market": "intl",
+   "language": "it"
+  },
+  {
+   "id": "corriere",
+   "name": "Corriere",
+   "url": "https://xml2.corriereobjects.it/rss/homepage.xml",
+   "type": "rss",
+   "tier": 3,
+   "market": "intl",
+   "language": "it"
+  },
+  {
+   "id": "latimes",
+   "name": "LA Times",
+   "url": "https://www.latimes.com/news-sitemap.xml",
+   "type": "sitemap",
+   "tier": 1,
+   "market": "la",
+   "language": "en"
+  },
+  {
+   "id": "laist",
+   "name": "LAist",
+   "url": "https://laist.com/index.rss",
+   "type": "rss",
+   "tier": 1,
+   "market": "la",
+   "language": "en"
+  },
+  {
+   "id": "nbcwash",
+   "name": "NBC Washington",
+   "url": "https://www.nbcwashington.com/news/local/?rss=y",
+   "type": "rss",
+   "tier": 2,
+   "market": "dc",
+   "language": "en"
+  },
+  {
+   "id": "fox5dc",
+   "name": "Fox 5 DC",
+   "url": "https://www.fox5dc.com/rss/category/news",
+   "type": "rss",
+   "tier": 3,
+   "market": "dc",
+   "language": "en"
+  },
+  {
+   "id": "chicagoreader",
+   "name": "Chicago Reader",
+   "url": "https://chicagoreader.com/feed/",
+   "type": "rss",
+   "tier": 3,
+   "market": "chi",
+   "language": "en"
+  },
+  {
+   "id": "atlblackstar",
+   "name": "Atlanta Black Star",
+   "url": "https://atlantablackstar.com/feed/",
+   "type": "rss",
+   "tier": 3,
+   "market": "atl",
+   "language": "en"
+  },
+  {
+   "id": "fox5atl",
+   "name": "Fox 5 Atlanta",
+   "url": "https://www.fox5atlanta.com/rss/category/news",
+   "type": "rss",
+   "tier": 3,
+   "market": "atl",
+   "language": "en"
+  },
+  {
+   "id": "houpublicmedia",
+   "name": "Houston Public Media",
+   "url": "https://www.houstonpublicmedia.org/feed/",
+   "type": "rss",
+   "tier": 3,
+   "market": "hou",
+   "language": "en"
+  },
+  {
+   "id": "postcourier",
+   "name": "Post and Courier",
+   "url": "https://www.postandcourier.com/search/?f=rss",
+   "type": "rss",
+   "tier": 1,
+   "market": "chs",
+   "language": "en"
+  },
+  {
+   "id": "gardenandgun",
+   "name": "Garden and Gun",
+   "url": "https://gardenandgun.com/feed/",
+   "type": "rss",
+   "tier": 3,
+   "market": "chs",
+   "language": "en"
+  },
+  {
+   "id": "vogueus",
+   "name": "Vogue",
+   "url": "https://www.vogue.com/feed/rss",
+   "type": "rss",
+   "tier": 3,
+   "market": "national",
+   "language": "en"
+  },
+  {
+   "id": "teenvogue",
+   "name": "Teen Vogue",
+   "url": "https://www.teenvogue.com/feed/rss",
+   "type": "rss",
+   "tier": 3,
+   "market": "national",
+   "language": "en"
+  },
+  {
+   "id": "glamourus",
+   "name": "Glamour",
+   "url": "https://www.glamour.com/feed/rss",
+   "type": "rss",
+   "tier": 3,
+   "market": "national",
+   "language": "en"
+  },
+  {
+   "id": "dailybeast",
+   "name": "Daily Beast",
+   "url": "https://www.thedailybeast.com/arc/outboundfeeds/rss/",
+   "type": "rss",
+   "tier": 2,
+   "market": "national",
+   "language": "en"
+  },
+  {
+   "id": "chalkbeat",
+   "name": "Chalkbeat",
+   "url": "https://www.chalkbeat.org/arc/outboundfeeds/rss/",
+   "type": "rss",
+   "tier": 1,
+   "market": "national",
+   "language": "en"
+  },
+  {
+   "id": "hechinger",
+   "name": "Hechinger Report",
+   "url": "https://hechingerreport.org/feed/",
+   "type": "rss",
+   "tier": 1,
+   "market": "national",
+   "language": "en"
+  },
+  {
+   "id": "the74",
+   "name": "The 74",
+   "url": "https://www.the74million.org/feed/",
+   "type": "rss",
+   "tier": 1,
+   "market": "national",
+   "language": "en"
+  },
+  {
+   "id": "statnews",
+   "name": "STAT News",
+   "url": "https://www.statnews.com/feed/",
+   "type": "rss",
+   "tier": 1,
+   "market": "national",
+   "language": "en"
+  },
+  {
+   "id": "kffhealth",
+   "name": "KFF Health News",
+   "url": "https://kffhealthnews.org/feed/",
+   "type": "rss",
+   "tier": 1,
+   "market": "national",
+   "language": "en"
+  },
+  {
+   "id": "thetrace",
+   "name": "The Trace",
+   "url": "https://www.thetrace.org/feed/",
+   "type": "rss",
+   "tier": 1,
+   "market": "national",
+   "language": "en"
+  },
+  {
+   "id": "marshall",
+   "name": "The Marshall Project",
+   "url": "https://www.themarshallproject.org/rss/recent.rss",
+   "type": "rss",
+   "tier": 1,
+   "market": "national",
+   "language": "en"
+  },
+  {
+   "id": "memeorandum",
+   "name": "Memeorandum",
+   "url": "https://www.memeorandum.com/index.xml",
+   "type": "rss",
+   "tier": 3,
+   "market": "national",
+   "language": "en"
+  },
+  {
+   "id": "techmeme",
+   "name": "Techmeme",
+   "url": "https://www.techmeme.com/feed.xml",
+   "type": "rss",
+   "tier": 2,
+   "market": "national",
+   "language": "en",
+   "beat": "tech"
+  },
+  {
+   "id": "verge",
+   "name": "The Verge",
+   "url": "https://www.theverge.com/rss/index.xml",
+   "type": "rss",
+   "tier": 2,
+   "market": "national",
+   "language": "en",
+   "beat": "tech"
+  },
+  {
+   "id": "arstechnica",
+   "name": "Ars Technica",
+   "url": "https://feeds.arstechnica.com/arstechnica/index",
+   "type": "rss",
+   "tier": 2,
+   "market": "national",
+   "language": "en",
+   "beat": "tech"
+  },
+  {
+   "id": "wired",
+   "name": "Wired",
+   "url": "https://www.wired.com/feed/rss",
+   "type": "rss",
+   "tier": 2,
+   "market": "national",
+   "language": "en",
+   "beat": "tech"
+  },
+  {
+   "id": "404media",
+   "name": "404 Media",
+   "url": "https://www.404media.co/rss/",
+   "type": "rss",
+   "tier": 2,
+   "market": "national",
+   "language": "en",
+   "beat": "tech"
+  },
+  {
+   "id": "techcrunch",
+   "name": "TechCrunch",
+   "url": "https://techcrunch.com/feed/",
+   "type": "rss",
+   "tier": 2,
+   "market": "national",
+   "language": "en",
+   "beat": "tech"
+  },
+  {
+   "id": "restofworld",
+   "name": "Rest of World",
+   "url": "https://restofworld.org/feed/latest/",
+   "type": "rss",
+   "tier": 2,
+   "market": "intl",
+   "language": "en",
+   "beat": "tech"
+  },
+  {
+   "id": "quanta",
+   "name": "Quanta Magazine",
+   "url": "https://www.quantamagazine.org/feed/",
+   "type": "rss",
+   "tier": 2,
+   "market": "national",
+   "language": "en",
+   "beat": "science"
+  },
+  {
+   "id": "ars_science",
+   "name": "Ars Technica Science",
+   "url": "https://feeds.arstechnica.com/arstechnica/science",
+   "type": "rss",
+   "tier": 2,
+   "market": "national",
+   "language": "en",
+   "beat": "science"
+  },
+  {
+   "id": "sciencenews",
+   "name": "Science News",
+   "url": "https://www.sciencenews.org/feed",
+   "type": "rss",
+   "tier": 2,
+   "market": "national",
+   "language": "en",
+   "beat": "science"
+  },
+  {
+   "id": "nature",
+   "name": "Nature News",
+   "url": "https://www.nature.com/nature.rss",
+   "type": "rss",
+   "tier": 1,
+   "market": "intl",
+   "language": "en",
+   "beat": "science"
+  },
+  {
+   "id": "sciam",
+   "name": "Scientific American",
+   "url": "https://rss.sciam.com/ScientificAmerican-Global",
+   "type": "rss",
+   "tier": 2,
+   "market": "national",
+   "language": "en",
+   "beat": "science"
+  },
+  {
+   "id": "healthaffairs",
+   "name": "Health Affairs Forefront",
+   "url": "https://www.healthaffairs.org/action/showFeed?type=etoc&feed=rss&jc=hlthaff",
+   "type": "rss",
+   "tier": 2,
+   "market": "national",
+   "language": "en",
+   "beat": "health"
+  },
+  {
+   "id": "medpage",
+   "name": "MedPage Today",
+   "url": "https://www.medpagetoday.com/rss/headlines.xml",
+   "type": "rss",
+   "tier": 2,
+   "market": "national",
+   "language": "en",
+   "beat": "health"
+  }
+ ],
+ "_disabled": [
+  {
+   "id": "apnews",
+   "name": "AP News",
+   "reason": "HTTP 401 on RSS; EventRegistry has bodies at synthesis time"
+  },
+  {
+   "id": "wsj",
+   "name": "Wall Street Journal",
+   "reason": "RSS paywalled/blocked; EventRegistry handles bodies"
+  },
+  {
+   "id": "bloomberg",
+   "name": "Bloomberg",
+   "reason": "RSS paywalled/blocked; EventRegistry handles bodies"
+  },
+  {
+   "id": "theweek",
+   "name": "The Week",
+   "reason": "HTTP 404 on RSS; feed URL changed; deprioritize"
+  },
+  {
+   "id": "freebeacon",
+   "name": "Washington Free Beacon",
+   "reason": "HTTP 401 on RSS; paywalled/bot-blocked"
+  },
+  {
+   "id": "hcr",
+   "name": "Heather Cox Richardson",
+   "reason": "HTTP 403 on RSS; Substack blocked our UA"
+  },
+  {
+   "id": "mcclatchydc",
+   "name": "McClatchy DC",
+   "reason": "HTTP timeout; feed URL likely changed"
+  },
+  {
+   "id": "cbc",
+   "name": "CBC",
+   "reason": "HTTP timeout; feed URL may need rework"
+  },
+  {
+   "id": "haaretz",
+   "name": "Haaretz",
+   "reason": "HTTP 403 on RSS; paywalled/bot-blocked"
+  },
+  {
+   "id": "nhk",
+   "name": "NHK World",
+   "reason": "HTTP timeout; feed URL likely changed since port"
+  },
+  {
+   "id": "koreaherald",
+   "name": "Korea Herald",
+   "reason": "ParseError on feed contents; needs fresh URL"
+  },
+  {
+   "id": "theaustralian",
+   "name": "The Australian",
+   "reason": "HTTP 403 on RSS; paywalled/bot-blocked"
+  },
+  {
+   "id": "tuko",
+   "name": "Tuko (Kenya)",
+   "reason": "HTTP 404 on RSS; feed URL likely changed"
+  },
+  {
+   "id": "elpaisuy",
+   "name": "El Pa\u00eds Uruguay",
+   "reason": "HTTP 403 on RSS; feed may have moved"
+  },
+  {
+   "id": "rainews",
+   "name": "Rai News",
+   "reason": "HTTP 404 on RSS; feed URL changed"
+  },
+  {
+   "id": "ny1",
+   "name": "NY1",
+   "reason": "ParseError on feed; not well-formed XML"
+  },
+  {
+   "id": "spectrumny1",
+   "name": "Spectrum News 1",
+   "reason": "HTTP 404 on RSS; feed URL likely changed"
+  },
+  {
+   "id": "wgbh",
+   "name": "GBH News",
+   "reason": "HTTP 404 on RSS; feed URL likely changed"
+  },
+  {
+   "id": "wbur",
+   "name": "WBUR",
+   "reason": "ParseError on feed contents; needs fresh URL"
+  },
+  {
+   "id": "wbez",
+   "name": "WBEZ",
+   "reason": "HTTP 404 on RSS; feed URL likely changed"
+  },
+  {
+   "id": "ajc",
+   "name": "AJC",
+   "reason": "HTTP 404 on RSS; feed URL likely changed"
+  },
+  {
+   "id": "spectrumlocal",
+   "name": "Spectrum Local News",
+   "reason": "HTTP 404 on RSS; feed URL likely changed"
+  },
+  {
+   "id": "houchron",
+   "name": "Houston Chronicle",
+   "reason": "HTTP 403 on RSS; bot-blocked"
+  },
+  {
+   "id": "miamiherald",
+   "name": "Miami Herald",
+   "reason": "HTTP timeout; feed URL likely changed"
+  },
+  {
+   "id": "vogueuk",
+   "name": "Vogue UK",
+   "reason": "HTTP 404 on RSS; feed URL likely changed"
+  },
+  {
+   "id": "glamouruk",
+   "name": "Glamour UK",
+   "reason": "HTTP 404 on RSS; feed URL likely changed"
+  },
+  {
+   "id": "gma",
+   "name": "Good Morning America",
+   "reason": "HTTP 404 on RSS; feed URL likely changed"
+  },
+  {
+   "id": "gmayahoo",
+   "name": "GMA on Yahoo",
+   "reason": "ParseError on feed contents; needs fresh URL"
+  },
+  {
+   "id": "chronicle",
+   "name": "Chronicle of Higher Ed",
+   "reason": "HTTP 404 on RSS; feed URL likely changed"
+  },
+  {
+   "id": "insidehighered",
+   "name": "Inside Higher Ed",
+   "reason": "HTTP 404 on RSS; feed URL likely changed"
+  },
+  {
+   "id": "messagebox",
+   "name": "Message Box",
+   "reason": "HTTP 403 on Substack RSS; blocked by UA policy"
+  },
+  {
+   "id": "garbageday",
+   "name": "Garbage Day",
+   "reason": "HTTP 404 on RSS; feed URL likely changed"
+  }
+ ],
+ "disabled": [],
+ "note": "NTK Pulse feed pool. Desk's 60 carried forward verbatim per Pulse Briefing v1 Part 5; tech/science/health additions appended with beat hints. New feed URLs are best-guess \u2014 run `python ingest.py --validate` and repair DEAD/EMPTY before first real run. The Information and Nature Medicine omitted pending paywall check; EdSurge optional."
+}
