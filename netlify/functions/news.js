@@ -83,8 +83,10 @@ exports.handler = async (event) => {
     const url = q.url || '';
     if (!url) return { statusCode: 400, headers: { 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify({ error: 'url required' }) };
     try {
-      const parsed = new URL(url);
-      const result = await new Promise((resolve) => {
+      // Follows up to 2 redirects and reads enough HTML for paragraph extraction.
+      const getOnce = (target) => new Promise((resolve) => {
+        let parsed;
+        try { parsed = new URL(target); } catch { return resolve({ error: 'bad url' }); }
         const options = {
           hostname: parsed.hostname,
           path: parsed.pathname + (parsed.search || ''),
@@ -95,18 +97,20 @@ exports.handler = async (event) => {
           }
         };
         const req = https.request(options, (res) => {
-          // Follow one redirect
-          if ((res.statusCode === 301 || res.statusCode === 302) && res.headers.location) {
-            return resolve({ redirect: res.headers.location });
+          if ([301, 302, 303, 307, 308].includes(res.statusCode) && res.headers.location) {
+            res.resume();
+            return resolve({ redirect: new URL(res.headers.location, target).href });
           }
           let data = '';
-          res.on('data', chunk => { data += chunk; if (data.length > 50000) req.destroy(); });
+          res.on('data', chunk => { data += chunk; if (data.length > 400000) req.destroy(); });
           res.on('end', () => resolve({ html: data }));
         });
         req.on('error', err => resolve({ error: err.message }));
         req.setTimeout(8000, () => { req.destroy(); resolve({ error: 'timeout' }); });
         req.end();
       });
+      let result = await getOnce(url);
+      for (let hop = 0; hop < 2 && result.redirect; hop++) result = await getOnce(result.redirect);
 
       const html = result.html || '';
       const titleMatch = html.match(/<title[^>]*>([^<]{1,200})<\/title>/i);
@@ -118,10 +122,34 @@ exports.handler = async (event) => {
       const title = (ogTitleMatch?.[1] || titleMatch?.[1] || '').trim().replace(/\s+/g,' ');
       const description = (descMatch?.[1] || '').trim().replace(/\s+/g,' ');
 
+      // Crude article-body extraction: concatenated <p> text, scripts/styles
+      // stripped, entity-decoded, capped by ?bodyLen (default 4000). Not a
+      // readability engine — nav junk sneaks in on some sites — but far more
+      // synthesis material than a 400-char meta description. Bot-blocked and
+      // paywalled sites still return little or nothing; EventRegistry remains
+      // the primary body source.
+      const bodyCap = Math.min(parseInt(q.bodyLen) || 4000, 8000);
+      const cleaned = html
+        .replace(/<script[\s\S]*?<\/script>/gi, '')
+        .replace(/<style[\s\S]*?<\/style>/gi, '')
+        .replace(/<!--[\s\S]*?-->/g, '');
+      const paras = [];
+      const pRe = /<p[^>]*>([\s\S]*?)<\/p>/gi;
+      let pm, total = 0;
+      while ((pm = pRe.exec(cleaned)) && total < bodyCap) {
+        const text = pm[1].replace(/<[^>]+>/g, ' ')
+          .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+          .replace(/&quot;/g, '"').replace(/&#0?39;|&apos;|&rsquo;|&#8217;/g, "'")
+          .replace(/&nbsp;/g, ' ').replace(/&[a-z]+;|&#\d+;/gi, ' ')
+          .replace(/\s+/g, ' ').trim();
+        if (text.length > 60) { paras.push(text); total += text.length; }
+      }
+      const bodyText = paras.join('\n\n').slice(0, bodyCap);
+
       return {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-        body: JSON.stringify({ title, description })
+        body: JSON.stringify({ title, description, body: bodyText })
       };
     } catch(e) {
       return {
@@ -199,7 +227,7 @@ exports.handler = async (event) => {
       articlesSortByAsc: false,
       resultType: 'articles',
       includeArticleBody: true,
-      articleBodyLen: 1500,
+      articleBodyLen: Math.min(parseInt(q.bodyLen) || 1500, 8000),
       includeArticleDate: true,
       includeSourceInfo: true,
       isDuplicateFilter: 'skipDuplicates'
@@ -280,7 +308,7 @@ exports.handler = async (event) => {
       articlesSortByAsc: false,
       resultType: 'articles',
       includeArticleBody: true,
-      articleBodyLen: 1500,
+      articleBodyLen: Math.min(parseInt(q.bodyLen) || 1500, 8000),
       includeArticleDate: true,
       includeSourceInfo: true,
       isDuplicateFilter: 'skipDuplicates',
@@ -299,7 +327,7 @@ exports.handler = async (event) => {
       articleUri: uris,
       resultType: 'articles',
       includeArticleBody: true,
-      articleBodyLen: 1500,
+      articleBodyLen: Math.min(parseInt(q.bodyLen) || 1500, 8000),
       includeArticleDate: true,
       includeSourceInfo: true
     };
@@ -315,7 +343,7 @@ exports.handler = async (event) => {
       articlesSortByAsc: false,
       resultType: 'articles',
       includeArticleBody: true,
-      articleBodyLen: 1500,
+      articleBodyLen: Math.min(parseInt(q.bodyLen) || 1500, 8000),
       includeArticleDate: true,
       includeSourceInfo: true,
       isDuplicateFilter: 'skipDuplicates' // FIX: same bug
