@@ -600,6 +600,31 @@ function activeArts(story){
   return story.articles.filter(a=>a.included && !a.dupOf && !isSup(a.url));
 }
 
+function spentStats(pkg){
+  // Mechanical ledger of numbers already deployed: every [STAT:] figure and
+  // any number appearing in the Truths [HEADLINE:] tag.
+  const spent = [];
+  for (const sec of SECS){
+    const t = pkg[sec]; if (!t) continue;
+    let m; const statRe = /\[STAT:\s*([^|\]]+?)\s*\|/g;
+    while ((m = statRe.exec(t))) spent.push(`"${m[1].trim()}" (${sec} STAT)`);
+  }
+  const hed = (pkg.truths||'').match(/\[HEADLINE:\s*([\s\S]*?)\]/);
+  if (hed){ const nums = hed[1].match(/\$?[\d,.]+%?/g)||[];
+    nums.forEach(n=>{ if(/\d/.test(n)) spent.push(`"${n}" (Truths headline)`); }); }
+  return spent;
+}
+function priorSectionsBlock(pkg){
+  const written = SECS.filter(s=>pkg[s]);
+  if (!written.length) return '';
+  const spent = spentStats(pkg);
+  return `\n\nALREADY WRITTEN — the reader has read these sections in full before reaching yours. This is the actual text, not a summary:\n\n`+
+    written.map(s=>`═══ ${s.toUpperCase()} (already published above your section) ═══\n${pkg[s]}`).join('\n\n')+
+    `\n\nCROSS-SECTION DISCIPLINE:\n`+
+    `- Never re-establish, re-quote, or re-summarize facts, figures, or quotes that appear above. The reader holds them.\n`+
+    (spent.length ? `- SPENT NUMBERS — already deployed as a STAT or headline figure: ${spent.join('; ')}. A spent number may be referred to obliquely ("the toll," "that figure") but never re-stated digit-for-digit and never used in another [STAT:] marker. If your sharpest number is spent, your section's sharpest number is a different one — or none.\n` : '')+
+    `- Build forward, not sideways: a thread opened in an earlier section can be advanced, escalated, or paid off — never reopened as if new. Referring back in shorthand is encouraged; the sections should read as one mind thinking, not four writers briefed separately.`;
+}
 async function generateStory(story){
   const arts = activeArts(story);
   if (!arts.length){ setStatus(story,'No active sources — enrich or add URLs first',true); return; }
@@ -608,10 +633,16 @@ async function generateStory(story){
     `TITLE: ${a.title}\nSOURCE: ${a.source}\nURL: ${a.url}\nDATE: ${a.date}\n\n${(a.body||'[body unavailable — headline only]').slice(0,SETTINGS.bodyLen)}`
   ).join('\n\n---\n\n');
   const angleBlock = story.angle ? `\n\nEDITOR'S ANGLE (the editorial frame for this story — honor it): ${story.angle}` : '';
-  const pkg = story.packages||{};
+  // Chained generation: sections run in reading order and each call receives
+  // the sections already written, verbatim, plus the spent-numbers ledger.
+  // This is what makes the prompts' long-standing "the reader has already
+  // read Truths" instruction actually checkable instead of aspirational.
+  // A regenerate starts a fresh package — chaining stale sections into new
+  // ones would freeze yesterday's text into today's context.
+  const pkg = {};
   for (const sec of SECS){
     setStatus(story, story.title.slice(0,40)+' · '+sec+'…');
-    try { pkg[sec] = await ai(makePrompt(sec, artsText+angleBlock, []), 1500); }
+    try { pkg[sec] = await ai(makePrompt(sec, artsText+angleBlock+priorSectionsBlock(pkg), []), 1500); }
     catch(e){ pkg[sec] = '[Generation failed: '+e.message+']'; }
   }
   story.packages = pkg; story.generatedAt = new Date().toISOString(); story.outOpen = true;
