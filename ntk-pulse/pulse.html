@@ -6,198 +6,817 @@
 <meta name="robots" content="noindex">
 <title>Pulse</title>
 <style>
-  /* Deliberately undesigned. Memeorandum register: text-forward, dense,
-     readable in one scan. Chrome kills it. */
+  /* Deliberately undesigned. Memeorandum register: text-forward, dense. */
   :root {
-    --ink: #111;
-    --dim: #777;
-    --faint: #aaa;
-    --link: #1a0dab;
-    --rule: #ddd;
-    --certified: #0a7a2f;
-    --stale: #b03a00;
+    --ink: #111; --dim: #777; --faint: #aaa; --link: #1a0dab;
+    --rule: #ddd; --certified: #0a7a2f; --stale: #b03a00; --warn: #a05a00;
+    --card: #fafafa;
   }
   * { box-sizing: border-box; }
   body {
-    margin: 0 auto;
-    max-width: 780px;
-    padding: 14px 16px 60px;
+    margin: 0 auto; max-width: 840px; padding: 14px 16px 80px;
     font: 13px/1.45 Verdana, Geneva, "DejaVu Sans", sans-serif;
-    color: var(--ink);
-    background: #fff;
+    color: var(--ink); background: #fff;
   }
   a { color: var(--link); text-decoration: none; }
   a:hover { text-decoration: underline; }
+  button { font: inherit; cursor: pointer; }
+  input, textarea, select { font: 12px/1.4 Verdana, sans-serif; color: var(--ink);
+    border: 1px solid var(--rule); background: #fff; padding: 4px 6px; }
+  textarea { width: 100%; resize: vertical; }
 
-  /* Header: name, time, count. Nothing else. */
   header {
-    display: flex; align-items: baseline; gap: 10px;
-    border-bottom: 2px solid var(--ink);
-    padding-bottom: 6px; margin-bottom: 12px;
+    display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+    border-bottom: 2px solid var(--ink); padding-bottom: 6px; margin-bottom: 12px;
   }
   header h1 { font-size: 17px; margin: 0; letter-spacing: 1px; }
+  .tab { background: none; border: none; font-size: 12px; color: var(--dim); padding: 0; letter-spacing: 0.5px; }
+  .tab.on { color: var(--ink); font-weight: bold; border-bottom: 2px solid var(--ink); }
   header .meta { color: var(--dim); font-size: 11px; }
   header .stale { color: var(--stale); font-size: 11px; }
-  header .count { margin-left: auto; color: var(--dim); font-size: 11px; }
+  header .right { margin-left: auto; display: flex; gap: 10px; align-items: baseline; }
+  header .count { color: var(--dim); font-size: 11px; }
+  .gear { background: none; border: none; color: var(--dim); font-size: 13px; }
 
+  /* Settings drawer */
+  #settings { border: 1px solid var(--rule); background: var(--card); padding: 10px; margin-bottom: 12px; display: none; }
+  #settings.open { display: block; }
+  #settings label { display: block; font-size: 10.5px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.5px; margin: 8px 0 2px; }
+  #settings input { width: 100%; max-width: 480px; }
+  #settings .row { display: flex; gap: 16px; flex-wrap: wrap; }
+  #settings .note { font-size: 11px; color: var(--dim); margin-top: 8px; }
+
+  /* Stream */
   .cluster { padding: 7px 0; border-bottom: 1px solid var(--rule); }
-  .cluster.no-verdict-no { opacity: 0.55; }  /* NO = pablum: dimmed, never hidden */
+  .cluster.no-verdict-no { opacity: 0.55; }
   .hed { font-size: 13.5px; font-weight: bold; cursor: pointer; }
   .hed:hover { text-decoration: underline; }
   .meta-line { font-size: 11px; color: var(--dim); margin-top: 2px; }
-  .beat {
-    text-transform: uppercase; letter-spacing: 0.5px; font-size: 10px;
-    font-weight: bold; margin-right: 6px;
-  }
-  .beat-national { color: #8a1f1f; }   .beat-international { color: #1f4d8a; }
-  .beat-tech { color: #5a2d82; }       .beat-health { color: #0a7a2f; }
-  .beat-education { color: #a05a00; }  .beat-science { color: #006b6b; }
-  .beat-business { color: #705500; }   .beat-culture { color: #8a1f6e; }
+  .beat { text-transform: uppercase; letter-spacing: 0.5px; font-size: 10px; font-weight: bold; margin-right: 6px; }
+  .beat-national { color: #8a1f1f; } .beat-international { color: #1f4d8a; }
+  .beat-tech { color: #5a2d82; } .beat-health { color: #0a7a2f; }
+  .beat-education { color: #a05a00; } .beat-science { color: #006b6b; }
+  .beat-business { color: #705500; } .beat-culture { color: #8a1f6e; }
   .beat-other { color: var(--dim); }
   .line { font-size: 12px; color: #444; margin-top: 2px; }
-
   .articles { display: none; margin: 6px 0 2px; padding-left: 12px; border-left: 2px solid var(--rule); }
   .cluster.open .articles { display: block; }
   .article { font-size: 12px; padding: 2px 0; }
   .article .pub { font-weight: bold; color: #333; }
   .article .t { color: var(--faint); font-size: 10.5px; }
-
-  .certify {
-    margin-top: 5px; font: bold 10.5px Verdana, sans-serif;
-    padding: 2px 8px; cursor: pointer;
-    border: 1px solid var(--dim); background: #fff; color: var(--ink);
+  .article.suppressed a { text-decoration: line-through; color: var(--faint); }
+  .article.suppressed .pub { color: var(--faint); }
+  .x {
+    background: none; border: none; color: var(--faint); font-size: 11px;
+    padding: 0 3px; line-height: 1;
   }
+  .x:hover { color: var(--stale); }
+  .article.suppressed .x { color: var(--stale); }
+  .certify { margin-top: 5px; font: bold 10.5px Verdana, sans-serif; padding: 2px 8px;
+    border: 1px solid var(--dim); background: #fff; color: var(--ink); }
   .certify.done { border-color: var(--certified); color: var(--certified); }
-
-  /* Single-source items: same stream, compact rendering */
   .cluster.solo { padding: 3px 0; border-bottom: 1px dotted var(--rule); }
   .cluster.solo .hed { font-weight: normal; font-size: 12.5px; }
-
   .empty { color: var(--dim); padding: 30px 0; }
+
+  /* Lineup */
+  .story {
+    border: 1px solid var(--rule); background: var(--card);
+    padding: 10px 12px; margin-bottom: 10px;
+  }
+  .story-top { display: flex; gap: 8px; align-items: baseline; }
+  .ord { font-size: 15px; font-weight: bold; color: var(--dim); min-width: 18px; }
+  .story-title { flex: 1; font-weight: bold; font-size: 13px; border: none; background: transparent; width: 100%; padding: 0; }
+  .story-title:focus { outline: 1px solid var(--rule); background: #fff; }
+  .mini { background: none; border: 1px solid var(--rule); color: var(--dim); font-size: 10.5px; padding: 1px 6px; }
+  .mini:hover { color: var(--ink); border-color: var(--dim); }
+  .mini:disabled { opacity: 0.4; cursor: default; }
+  .mini.primary { border-color: var(--ink); color: var(--ink); font-weight: bold; }
+  .mini.go { border-color: var(--certified); color: var(--certified); font-weight: bold; }
+  .angle-row { display: flex; gap: 6px; margin-top: 6px; align-items: flex-start; }
+  .angle-row textarea { flex: 1; min-height: 34px; }
+  .story-meta { font-size: 10.5px; color: var(--dim); margin-top: 5px; display: flex; gap: 10px; flex-wrap: wrap; align-items: baseline; }
+  .story-status { font-size: 11px; color: var(--warn); margin-top: 4px; min-height: 14px; }
+  .story-status.err { color: var(--stale); }
+  .pkg { margin-top: 8px; border-top: 1px dotted var(--rule); padding-top: 6px; }
+  .pkg .article { display: flex; gap: 6px; align-items: baseline; }
+  .pkg .article .grow { flex: 1; }
+  .chip { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.4px; padding: 0 4px; border: 1px solid var(--rule); color: var(--dim); white-space: nowrap; }
+  .chip.body { border-color: var(--certified); color: var(--certified); }
+  .chip.thin { border-color: var(--warn); color: var(--warn); }
+  .chip.dup { border-color: var(--faint); color: var(--faint); }
+  .chip.xstory { border-color: #1f4d8a; color: #1f4d8a; }
+  .addurl { display: flex; gap: 6px; margin-top: 6px; }
+  .addurl input { flex: 1; }
+  .out { margin-top: 10px; border-top: 1px solid var(--rule); padding-top: 8px; }
+  .out h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--dim); margin: 12px 0 4px; }
+  .out .body { font-size: 12.5px; line-height: 1.55; }
+  .out .body p { margin: 0 0 8px; }
+  .ntk-pullquote { border-left: 3px solid var(--ink); margin: 10px 0; padding: 4px 10px; }
+  .ntk-pq-text { font-size: 13px; font-style: italic; margin: 0; }
+  .ntk-pq-cite { font-size: 10.5px; color: var(--dim); }
+  .ntk-stat { margin: 10px 0; }
+  .ntk-stat-num { font-size: 18px; font-weight: bold; }
+  .ntk-stat-ctx { font-size: 11px; color: var(--dim); }
+  .lineup-bar { display: flex; gap: 8px; margin-bottom: 12px; align-items: baseline; flex-wrap: wrap; }
+  .lineup-bar .spacer { flex: 1; }
+  .copied { color: var(--certified); font-size: 10.5px; }
+
   @media (prefers-color-scheme: dark) {
     body { background: #141414; }
-    :root { --ink: #ddd; --dim: #909090; --faint: #6a6a6a; --link: #8ab4f8; --rule: #333; }
+    :root { --ink: #ddd; --dim: #909090; --faint: #6a6a6a; --link: #8ab4f8; --rule: #333; --card: #1b1b1b; }
     header { border-color: var(--ink); }
     .line { color: #b5b5b5; }
     .article .pub { color: #ccc; }
-    .certify { background: transparent; }
+    .certify, input, textarea, select { background: transparent; color: var(--ink); }
+    .story-title:focus { background: #101010; }
   }
 </style>
 </head>
 <body>
 <header>
   <h1>PULSE</h1>
+  <button class="tab on" id="tab-stream">stream</button>
+  <button class="tab" id="tab-lineup">lineup</button>
   <span class="meta" id="clock"></span>
   <span class="stale" id="stale"></span>
-  <span class="count" id="count"></span>
+  <span class="right">
+    <span class="count" id="count"></span>
+    <button class="gear" id="gear" title="settings">⚙</button>
+  </span>
 </header>
-<main id="feed"><div class="empty">Loading…</div></main>
+
+<div id="settings">
+  <div class="row">
+    <div style="flex:1;min-width:260px">
+      <label>Anthropic API key</label>
+      <input id="set-key" type="password" placeholder="sk-ant-…">
+      <label>Netlify proxy base (where ntk-production lives)</label>
+      <input id="set-proxy" type="text" placeholder="https://your-site.netlify.app">
+    </div>
+    <div>
+      <label>Body chars per article</label>
+      <input id="set-bodylen" type="number" min="500" max="8000" step="500" style="width:90px">
+      <label>ER articles per story</label>
+      <input id="set-maxarts" type="number" min="5" max="30" style="width:90px">
+    </div>
+  </div>
+  <div class="note">Key and settings live in this browser's localStorage only. The proxy base is the domain where ntk-production.html is served — its Netlify functions do the EventRegistry and body fetching.</div>
+</div>
+
+<main id="view"><div class="empty">Loading…</div></main>
 
 <script>
-// NTK Pulse view — reads data/clusters.json produced by the pipeline.
-// Stateless surface; the 6-hour window is enforced upstream at ingest.
-//
-// CERTIFY IS A STUB (Slice 2 / open question Q1 in the Pulse briefing).
-// For now a click marks the cluster certified in localStorage so intent
-// isn't lost between page loads. No bridge to ntk-production yet.
+/* ═══ NTK PULSE v2 — monitoring stream + lineup CMS ═══
+   Stream: reads data/clusters.json from the pipeline (unchanged).
+   Lineup: certify snapshots a cluster; suppress-x prunes links; ER
+   enrichment builds the source package; v14 Jefferson prompts generate
+   truths/probabilities/possibilities/lies; export produces the
+   digest/index.html stories-array block. All state in localStorage. */
 
-const CERT_KEY = "pulse-certified-v1";
-const certified = new Set(JSON.parse(localStorage.getItem(CERT_KEY) || "[]"));
+const SECS = ['truths','probabilities','possibilities','lies'];
+const TODAY = new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+const CATEGORIES = ['Geopolitical','Domestic','Economic','Cultural','Health','Science','Under-Reported','Orienting'];
+const BEAT_TO_CAT = { national:'Domestic', international:'Geopolitical', business:'Economic',
+  tech:'Science', science:'Science', health:'Health', education:'Cultural', culture:'Cultural', other:'Domestic' };
+const LINEUP_MAX = 8;
 
-function saveCertified() {
-  localStorage.setItem(CERT_KEY, JSON.stringify([...certified]));
+/* ─── persisted state ─── */
+const LS = {
+  settings: 'ntk_pulse_settings_v1',
+  lineup:   'ntk_pulse_lineup_v1',
+  sup:      'ntk_pulse_suppressed_v1',
+};
+function load(k, fallback) { try { const v = JSON.parse(localStorage.getItem(k)); return v ?? fallback; } catch { return fallback; } }
+let SETTINGS = load(LS.settings, { antKey:'', proxyBase:'', bodyLen:4000, maxArts:15 });
+let LINEUP = load(LS.lineup, []);          // [{id, title, angle, beat, category, conceptEntity, narrowKeyword, articles:[], enrichedAt, packages, busy?, status?, open?, outOpen?}]
+let SUP = load(LS.sup, {});                 // canonical url -> true  (editor suppressions, global, persistent)
+let STREAM = null;                          // clusters.json payload
+let TAB = 'stream';
+function saveSettings(){ localStorage.setItem(LS.settings, JSON.stringify(SETTINGS)); }
+function saveLineup(){ const clean = LINEUP.map(({busy,status,err,...s})=>s); localStorage.setItem(LS.lineup, JSON.stringify(clean)); }
+function saveSup(){ localStorage.setItem(LS.sup, JSON.stringify(SUP)); }
+
+/* ─── utils ─── */
+function esc(s){ const d=document.createElement('span'); d.textContent=s==null?'':s; return d.innerHTML; }
+function rel(iso){ if(!iso) return ''; const m=Math.round((Date.now()-new Date(iso))/60000);
+  if(m<1) return 'now'; if(m<60) return m+'m'; const h=m/60; return (h<10?h.toFixed(1):Math.round(h))+'h'; }
+function pubList(p){ return p.length<=3 ? p.join(', ') : p.slice(0,3).join(', ')+' +'+(p.length-3); }
+
+// Canonical URL: identity key for suppression + RSS/ER dedup (layer 2).
+const TRACK_PARAMS = /^(utm_|fbclid|gclid|mc_cid|mc_eid|cmpid|ref$|smid|ocid|ito)/i;
+function canon(u){
+  try {
+    const url = new URL(u);
+    let host = url.hostname.toLowerCase().replace(/^(www|m|amp)\./,'');
+    let path = url.pathname.replace(/\/amp\/?$/,'/').replace(/\/+$/,'') || '/';
+    const keep = [];
+    url.searchParams.forEach((v,k)=>{ if(!TRACK_PARAMS.test(k)) keep.push(k+'='+v); });
+    return host + path + (keep.length ? '?'+keep.sort().join('&') : '');
+  } catch { return (u||'').trim(); }
+}
+function isSup(u){ return !!SUP[canon(u)]; }
+function toggleSup(u){ const c=canon(u); if(SUP[c]) delete SUP[c]; else SUP[c]=true; saveSup(); }
+
+// Syndication detection (layer 3): 8-word shingle Jaccard over body text.
+function shingles(text, n=8){
+  const w = (text||'').toLowerCase().replace(/[^a-z0-9\s]/g,' ').split(/\s+/).filter(Boolean);
+  const out = new Set();
+  for (let i=0; i+n<=w.length; i++) out.add(w.slice(i,i+n).join(' '));
+  return out;
+}
+function jaccard(a,b){ if(!a.size||!b.size) return 0; let inter=0;
+  const [s,l]=a.size<b.size?[a,b]:[b,a]; for(const x of s) if(l.has(x)) inter++;
+  return inter/(a.size+b.size-inter); }
+function titleTokens(t){ return new Set((t||'').toLowerCase().replace(/[^a-z0-9\s]/g,' ').split(/\s+/).filter(x=>x.length>2)); }
+
+function parseJSON(raw){
+  let c = raw.trim().replace(/^```json?\n?/,'').replace(/\n?```$/,'').trim();
+  const i = c.indexOf('['); const j = c.indexOf('{');
+  if (i>0 && (j<0 || i<j)) c = c.slice(i);
+  else if (j>0 && (i<0 || j<i)) c = c.slice(j);
+  return JSON.parse(c);
 }
 
-function rel(iso) {
-  if (!iso) return "";
-  const mins = Math.round((Date.now() - new Date(iso)) / 60000);
-  if (mins < 1) return "now";
-  if (mins < 60) return mins + "m";
-  const h = mins / 60;
-  return (h < 10 ? h.toFixed(1) : Math.round(h)) + "h";
-}
-
-function pubList(pubs) {
-  if (pubs.length <= 3) return pubs.join(", ");
-  return pubs.slice(0, 3).join(", ") + " +" + (pubs.length - 3);
-}
-
-function esc(s) {
-  const d = document.createElement("span"); d.textContent = s || ""; return d.innerHTML;
-}
-
-function render(data) {
-  const feed = document.getElementById("feed");
-  const clusters = data.clusters || [];
-  document.getElementById("count").textContent =
-    clusters.length + (clusters.length === 1 ? " story" : " stories");
-
-  // Staleness: with manual cron runs the data can outlive its window.
-  const ageMin = Math.round((Date.now() - new Date(data.updated)) / 60000);
-  const staleEl = document.getElementById("stale");
-  if (ageMin > 60) {
-    staleEl.textContent = "· data " + rel(data.updated) + " old — run the workflow";
-  }
-
-  if (!clusters.length) {
-    feed.innerHTML = '<div class="empty">Nothing in the window. Run the pipeline.</div>';
-    return;
-  }
-
-  feed.innerHTML = "";
-  for (const c of clusters) {
-    const beat = (c.triage && c.triage.beat) || c.beat_hint || "other";
-    const verdict = c.triage && c.triage.verdict;
-    const line = c.triage && c.triage.line;
-    const solo = c.publisher_count <= 1;
-
-    const el = document.createElement("div");
-    el.className = "cluster" + (solo ? " solo" : "") +
-                   (verdict === "NO" ? " no-verdict-no" : "");
-
-    const articles = c.items.map(it =>
-      '<div class="article"><span class="pub">' + esc(it.publisher) + "</span> · " +
-      '<a href="' + esc(it.url) + '" target="_blank" rel="noopener">' + esc(it.title) + "</a> " +
-      '<span class="t">' + rel(it.published) + "</span></div>"
-    ).join("");
-
-    el.innerHTML =
-      '<div class="hed">' + esc(c.title) + "</div>" +
-      '<div class="meta-line">' +
-        '<span class="beat beat-' + esc(beat) + '">' + esc(beat) + "</span>" +
-        esc(pubList(c.publishers)) + " · " + rel(c.latest) +
-      "</div>" +
-      (line && !solo ? '<div class="line">' + esc(line) + "</div>" : "") +
-      '<div class="articles">' + articles +
-        '<button class="certify' + (certified.has(c.key) ? " done" : "") + '">' +
-        (certified.has(c.key) ? "✓ certified" : "certify into digest") + "</button>" +
-      "</div>";
-
-    el.querySelector(".hed").addEventListener("click", () => el.classList.toggle("open"));
-    el.querySelector(".certify").addEventListener("click", (e) => {
-      const b = e.target;
-      if (certified.has(c.key)) { certified.delete(c.key); b.classList.remove("done"); b.textContent = "certify into digest"; }
-      else { certified.add(c.key); b.classList.add("done"); b.textContent = "✓ certified"; }
-      saveCertified();
-    });
-    feed.appendChild(el);
-  }
-}
-
-function tick() {
-  const now = new Date();
-  document.getElementById("clock").textContent =
-    now.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-}
-tick(); setInterval(tick, 30000);
-
-fetch("data/clusters.json?t=" + Date.now())
-  .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
-  .then(render)
-  .catch(() => {
-    document.getElementById("feed").innerHTML =
-      '<div class="empty">No data yet — data/clusters.json not found. Run the pipeline once.</div>';
+/* ─── API plumbing (ported from ntk-production) ─── */
+async function ai(prompt, maxTok=1500){
+  if (!SETTINGS.antKey) throw new Error('No Anthropic key — set it in ⚙');
+  const r = await fetch('https://api.anthropic.com/v1/messages', {
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':SETTINGS.antKey,
+      'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:maxTok,messages:[{role:'user',content:prompt}]})
   });
+  const d = await r.json();
+  if (d.error) throw new Error(d.error.message);
+  return d.content[0].text;
+}
+function proxyUrl(params){
+  const base = (SETTINGS.proxyBase||'').replace(/\/+$/,'');
+  if (!base) throw new Error('No proxy base — set the Netlify domain in ⚙');
+  return base + '/.netlify/functions/news?' + new URLSearchParams(params);
+}
+async function netlifyFetch(params){
+  const r = await fetch(proxyUrl(params));
+  if (!r.ok) throw new Error('Proxy error '+r.status);
+  const data = await r.json();
+  if (Array.isArray(data)) return data;
+  if (data.events?.results) return data.events.results;
+  return data.articles?.results || [];
+}
+async function fetchUrlBody(url){
+  try {
+    const r = await fetch(proxyUrl({mode:'fetch-url', url}));
+    if (!r.ok) return {url, title:'', body:''};
+    const d = await r.json();
+    return {url, title:d.title||'', body:d.body||d.description||''};
+  } catch { return {url, title:'', body:''}; }
+}
+
+/* ─── v14 EDITORIAL PROMPTS — spliced verbatim from ntk-production.html.
+   This is the live production editorial system. Edit there, re-splice here,
+   or edit both — but never let them drift silently. ─── */
+const GLOBAL = `You are the journalist-historian for NTK News, a nonprofit news-and-history app. Advanced degree, reads a lot of history, writes for a reader who is anxious about where things are headed, has mostly disengaged from the news as a coping mechanism, and assumes most outlets are spinning them. The expertise is yours. The vocabulary is plain — not because the reader can't handle more, but because anything that sounds like showing off reads as exactly the kind of con this reader has learned to distrust.
+
+EDITORIAL PILLARS:
+1. Authoritarian movements are persistently ineffective, corrupt, incompetent, bullying, and wasteful. Pattern, not exception.
+2. Income inequality erodes trust. Immigration is a net economic positive. Insufficient childcare and eroding middle-class ladders are structural failures. America's greatness is its people, its capacity for renewal, its flexible founding documents.
+3. Climate change undermines stability. Privacy, reproductive rights, freedom of movement are constitutional rights. The Constitution is under stress from all three directions.
+4. America is defined by contradictions. Tension between freedom and community obligation is the operating system. Journalism makes truths more durable.
+
+TONE: Tuchman and Halberstam, not Lippmann — scene and consequence before judgment, never a verdict handed down from above. This reader doesn't trust people who sound certain; they trust people who show their work and let the irony land on its own. Grounded, direct, like a colleague who's seen this pattern before — unsurprised by it, but not bored by it either. The stakes are real and the writing should feel like it.
+
+STAKES & PLOT: Every item needs someone or some institution whose situation actually changes — who wins, who loses, who's exposed, who's covering for whom — named specifically, never abstractly. Build toward that; don't open with it. If a named actor isn't a household name, give them one clause that makes them a character — a pattern, a tell, a prior stumble — not just a title. Movements within a section should follow from each other, not sit side by side: use a connective sentence ("That wasn't the only place the story didn't hold up." / "Three miles away, the calculation looked different.") instead of restarting cold at each new bold headline.
+
+STRUCTURAL RULES: Weave all source articles into unified analysis — never summarize separately. Citations: ([Source Name](URL)) in sentence before closing period. **Bold** for headlines and subheads only. Every factual claim needs a source.
+
+SOURCE WEIGHTING: Articles are primary. Historical parallels are seasoning — one sentence max. NTK has a SWIPE LEFT History layer — create curiosity gaps.
+
+QUALITY FLOOR: Clarity (no sentence needs rereading), Stakes (the reader knows within two sentences who specifically gains or loses, and why), Momentum (each sentence raises a question the next one answers — the reader is pulled forward, not handed a list), Aesthetic pleasure (writing moves). All four required.
+
+CROSS-SECTION RULES: Already happened → Truths only. Most likely next step → Probabilities only. Lower-probability scenario → Possibilities only. Identifiable actor making unsupported claim → Lies only.
+
+LENGTH: No word ceiling. Length is governed by what the stakes and plot actually require — cut anything that doesn't deepen stakes, advance the plot, or pay off a setup, the same discipline you'd apply to an unnecessary citation. Most sections will still land around 300-500 words once that's applied honestly; if you're well past that, you're probably padding, not building. If source articles don't support an item, write [INSUFFICIENT SOURCE MATERIAL] — do not invent.`;
+
+const VOICE_REF = `
+VOICE — STUDY THESE EXAMPLES:
+HEADLINE: "Norway Gave Every Five-Year-Old an iPad in 2016. A Decade Later, 500,000 Norwegians Can't Read a Text Message." Two sentences — scale, then consequence with a unit the reader can feel.
+BODY (worked example, illustrative — adjust to taste): "Kash Patel Said the FBI Stopped Snipers and Bomb Drones at a White House UFC Event. The Secret Service Wishes He'd Stayed Quiet. The FBI says it broke up a plot to attack a UFC card at the White House using explosive-rigged drones and at least one sniper position — the kind of detail prosecutors usually keep sealed until they're ready to use it. Patel announced it anyway. Secret Service officials were reportedly furious, telling reporters he'd put the case at risk to make himself the man who saved fight night. Then JD Vance, defending his own FBI director without quite agreeing with him, said the plotters 'weren't even in town' when the event happened — which either means the threat was contained early, or that 'thwarted' was doing more work than the facts could carry. It's Patel's third stumbled rollout this year. That's not bad luck anymore. That's a pattern."
+DETAIL: "Researchers appended FAQs asking media not to use the words 'stupid,' 'dumb,' or 'brain rot' — a tell that the findings are exactly as bad as they sound." The meta-detail reveals more than the finding.
+RULES: (1) Headline = fact + consequence with a unit. (2) Every number needs a unit. (3) One surgical quote from a named person only if it does something prose cannot. (4) Name the real mechanism beneath the stated one. (5) Don't open with the verdict — let the sequence of facts earn it. (6) End with weight, not a moral.
+CYNIC TEST: "Does this sound like someone trying to sell me something, or someone just telling me what happened?" If it reads like spin — even spin in the reader's favor — rewrite it flatter and let the facts carry the weight instead.`;
+
+const SEC_PROMPTS = {
+truths:`You are producing the TRUTHS section. Output only the Truths section.
+
+Truths are observable facts — what people said and did. A historian's selection for vivid narrative, not a transcript.
+
+REQUIRED OPENING — output exactly these three tags first, each on its own line, in this literal bracket format (needed so the site-export step can extract them — do not skip the brackets, add commentary inside them, or rename the tags):
+[HEADLINE: the headline text]
+[LEDE: the lede text]
+[SUBHEAD: the subhead text]
+
+Guidance for each:
+- HEADLINE: today's fact + civilian anchor (brand, dollar figure, named institution already in the reader's file folder). Two sentences. This is the most important line you write. Do NOT use years as anchors. No textbook chapter titles.
+  Examples: "Trump's Tariffs Cost the Average American Family $1,700 a Year. That's a Car Payment." / "Childcare Costs More Than Rent in 28 States. The Middle Class Didn't Collapse — It Was Defunded."
+- LEDE: 1-2 sentences, 86-character hard limit, AP wire register.
+- SUBHEAD: one sentence bridging lede to what follows.
+
+THEN 2-3 MOVEMENTS, not isolated items: each opens with a **bold headline** but follows causally from what came before — use a connective sentence rather than restarting cold. Each movement needs a person or institution whose situation actually changed, named specifically. Body length is whatever the stakes require — build to the consequence, don't just state it. Citation ([Source Name](URL)) lands wherever the claim it supports does, not necessarily at the end.
+Two-Prong: when a story is consequential enough, the event gets one movement and the underlying pattern gets a second — let the second one open by referring back to the first, not as a fresh restart.
+Boundary: predictions → Probabilities. speculation → Possibilities. debunking → Lies.
+
+LENGTH: Aim for 400-450 words. This constraint forces you to pick the most consequential movements — not all of them. If you're running long, cut a movement, not sentences within movements.`,
+
+probabilities:`You are producing the PROBABILITIES section. Output only the Probabilities section.
+
+READER CONTEXT: The reader has already read Truths. Do not re-establish facts already stated there — no re-quoting the same numbers, no re-summarizing what happened. Build forward from what Truths established. Every sentence should assume the baseline and advance past it.
+
+Probabilities are likely next steps — pattern recognition stated with conviction. Not hedged speculation.
+
+- Specific actors, timelines, mechanisms. State confidently: "will almost certainly," "the most likely outcome is."
+- Each gives something to watch in the next 1-14 days.
+- Do NOT command the reader to "watch" or "look." State what will happen and why.
+- Name the stakes: who's positioned to win or lose if this plays out as predicted.
+- Pick the 2-3 most consequential probabilities. Not all of them.
+
+FORMAT: Open with a **bold subhead** — lives inside the story, not on the digest screen. Orients reader within the section. Then each probability as a **bold headline** followed by body — let the second probability follow from the first's implications rather than starting over. Most immediate to most structural.
+
+LENGTH: Aim for 400-450 words. The word ceiling is the editorial discipline — it forces you to lead with mechanism, not context the reader already has.`,
+
+possibilities:`You are producing the POSSIBILITIES section. Output only the Possibilities section.
+
+READER CONTEXT: The reader has already read Truths and Probabilities. Do not re-establish facts or re-quote figures already stated in those sections. Start from what's already known and move into territory neither section covered.
+
+Possibilities are lower-probability but plausible — black swans, second-order effects. Not the base case. Not fiction.
+
+- Name conditions that make unlikely things likely: "If X and Y converge — then Z becomes plausible."
+- At least one hopeful or constructive possibility.
+- Every possibility tethered to evidence from the articles.
+- Pick the 2-3 most genuinely surprising possibilities. Not all of them.
+
+FORMAT: Open with a **bold subhead**. Then each possibility as a **bold headline** + body, long enough to make the convergence of conditions feel earned rather than asserted. Most grounded to most speculative. Register: informed curiosity, not hedging — "here's the thing almost nobody is considering," not "it's possible that maybe."
+
+LENGTH: Aim for 400-450 words. If you're re-stating facts from Truths or Probabilities to set up a possibility, you're padding — assume the reader retained them and skip to the convergence.`,
+
+lies:`You are producing the LIES section. Output only the Lies section.
+
+READER CONTEXT: The reader has already read Truths, Probabilities, and Possibilities. Do not re-establish the factual record already laid out there. Name the lie, show the mechanism, and move — the reader already knows what actually happened.
+
+Lies are false or manipulative narratives in active circulation by identifiable actors. Not honest disagreements — deliberate distortion.
+
+- Name the claim and who makes it. "Some people say" is not NTK's voice.
+- Show why someone would believe it — what fear or need it answers — then who actually benefits from it spreading: clout, cash, or power. Vary the construction item to item; don't reuse the same sentence shape twice in one section.
+- Do not dehumanize believers. The lie is the target.
+
+FORMAT: Open with a **bold subhead**. Then each lie as a **bold headline** (the distortion stated clearly) followed by the claim, who's making it, who benefits, the factual reality, and a historical parallel when one is earned — built as a sequence toward the reveal, not a checklist. Most dangerous to most absurd. Register: controlled precision — a prosecutor laying out a case, not a pundit venting.
+
+LENGTH: Aim for 400-450 words. One well-constructed lie, fully prosecuted, is more effective than three that each get two sentences.`
+};
+
+function makePrompt(section, articlesText, suppUrls) {
+  const suppBlock = suppUrls && suppUrls.length
+    ? '\n\nEDITOR-IMPORTED SOURCES:\n' + suppUrls.map(u=>`URL: ${u.url}\n${u.body||'[unavailable]'}`).join('\n\n---\n\n')
+    : '';
+  const visualBlock = `
+
+VISUAL MARKERS — insert at most one of each per section, only when the element genuinely earns it:
+
+[PULLQUOTE: "verbatim quote from a named source in your articles" | Speaker Name, role or context]
+Use only when a direct quote does something your prose cannot — not to break up text. Must be verbatim. Must name the speaker. Place inline where the quote lands in the narrative.
+This marker IS your one allowed direct quote for the section (see VOICE_REF rule 3) — it is not a second, separate quote opportunity. If you use PULLQUOTE, do not also render that same line as a quoted sentence in the surrounding prose; paraphrase the moment in prose instead and let the marker carry the verbatim words.
+
+[STAT: the number with its unit | one plain sentence of what it means]
+Use only when a specific number is the sharpest way to land the stakes. The number should be surprising or concrete enough to stop the reader. Not a decoration.
+
+A section without a visual marker is not incomplete. Omit both if neither earns its place.`;
+  return `${GLOBAL}\n\n${VOICE_REF}\n\n${SEC_PROMPTS[section]}${visualBlock}${suppBlock}\n\nARTICLES TO ANALYZE:\n\n${articlesText}`;
+}
+
+/* ─── export (ported from ntk-production) ─── */
+function jsEsc(s){ return String(s||'').replace(/\\/g,'\\\\').replace(/"/g,'\\"').replace(/\r?\n/g,' ').trim(); }
+function extractTruthsTags(text){
+  const grab = (tag)=>{ const m=text.match(new RegExp('\\['+tag+':\\s*([\\s\\S]*?)\\]')); return m?m[1].trim():''; };
+  return { headline: grab('HEADLINE'), lede: grab('LEDE'),
+    body: text.replace(/\[HEADLINE:[\s\S]*?\]/,'').replace(/\[LEDE:[\s\S]*?\]/,'').replace(/\[SUBHEAD:[\s\S]*?\]/,'').trim() };
+}
+function mdToHtml(text){
+  const marks=[];
+  let out = text.replace(/\[PULLQUOTE:\s*"([^"]+)"\s*\|\s*([^\]]+)\]/g,(f,quote,speaker)=>{
+    marks.push({quote,speaker}); return `\u0000PQ${marks.length-1}\u0000`; });
+  marks.forEach(({quote})=>{ if(!quote) return;
+    const escaped = quote.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    out = out.replace(new RegExp('["\u201c]'+escaped+'["\u201d][,.]?\\s*','g'),''); });
+  marks.forEach((m,i)=>{ out = out.replace(`\u0000PQ${i}\u0000`,
+    `<div class="ntk-pullquote"><p class="ntk-pq-text">${m.quote}</p><cite class="ntk-pq-cite">${m.speaker}</cite></div>`); });
+  return out
+    .replace(/\[STAT:\s*([^|\]]+?)\s*\|\s*([^\]]+?)\s*\]/g,
+      '<div class="ntk-stat"><div class="ntk-stat-num">$1</div><div class="ntk-stat-ctx">$2</div></div>')
+    .replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')
+    .replace(/\(\[([^\]]+)\]\(([^)]+)\)\)/g,'(<a href="$2" target="_blank" rel="noopener">$1</a>)')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
+}
+function toSiteHtml(text){
+  const blocks=[];
+  let t = text
+    .replace(/\[PULLQUOTE:\s*"([^"]+)"\s*\|\s*([^\]]+)\]/g,(m,quote,speaker)=>{
+      blocks.push(`<div class="ntk-pullquote"><p class="ntk-pq-text">${quote}</p><cite class="ntk-pq-cite">${speaker}</cite></div>`);
+      return `\n\n\u0000BLOCK${blocks.length-1}\u0000\n\n`; })
+    .replace(/\[STAT:\s*([^|\]]+?)\s*\|\s*([^\]]+?)\s*\]/g,(m,num,ctx)=>{
+      blocks.push(`<div class="ntk-stat"><div class="ntk-stat-num">${num}</div><div class="ntk-stat-ctx">${ctx}</div></div>`);
+      return `\n\n\u0000BLOCK${blocks.length-1}\u0000\n\n`; })
+    .replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')
+    .replace(/\(\[([^\]]+)\]\(([^)]+)\)\)/g,'(<a href="$2" target="_blank" rel="noopener">$1</a>)')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
+  return t.split(/\n{2,}/).map(p=>p.trim()).filter(Boolean).map(p=>{
+    const m=p.match(/^\u0000BLOCK(\d+)\u0000$/);
+    return m ? blocks[+m[1]] : (p.startsWith('<p')?p:`<p>${p}</p>`);
+  }).join('');
+}
+function toSiteStoryBlock(story){
+  const pkg = story.packages||{};
+  const {headline, lede, body} = extractTruthsTags(pkg.truths||'');
+  return `  {
+    category: "${jsEsc(story.category)}",
+    headline: "${jsEsc(headline)}",
+    lede: "${jsEsc(lede)}",
+    truth: "${jsEsc(toSiteHtml(body))}",
+    prob: "${jsEsc(toSiteHtml(pkg.probabilities||''))}",
+    poss: "${jsEsc(toSiteHtml(pkg.possibilities||''))}",
+    lies: "${jsEsc(toSiteHtml(pkg.lies||''))}"
+  },`;
+}
+
+/* ─── lineup actions ─── */
+function inLineup(key){ return LINEUP.some(s=>s.key===key); }
+function certify(cluster){
+  const existing = LINEUP.findIndex(s=>s.key===cluster.key);
+  if (existing>=0){ LINEUP.splice(existing,1); saveLineup(); render(); return; }
+  if (LINEUP.length>=LINEUP_MAX){ alert('Lineup is full ('+LINEUP_MAX+'). Remove a story first.'); return; }
+  // SNAPSHOT: copy title + links now. The stream churns between runs; the
+  // lineup doesn't. Re-certify (toggle off, toggle on) to pick up new links.
+  LINEUP.push({
+    id: 'ln-'+Date.now(), key: cluster.key,
+    title: cluster.title, beat: (cluster.triage&&cluster.triage.beat)||cluster.beat_hint||'other',
+    category: BEAT_TO_CAT[(cluster.triage&&cluster.triage.beat)||cluster.beat_hint||'other']||'Domestic',
+    angle: (cluster.triage&&cluster.triage.line)||'',
+    conceptEntity:'', narrowKeyword:'',
+    articles: cluster.items.map(it=>({
+      url: it.url, title: it.title, source: it.publisher, date: it.published||'',
+      body:'', bodyFrom:'', included:true, dupOf:null, origin:'rss'
+    })),
+    enrichedAt: null, packages: null, open: true, outOpen: false,
+  });
+  saveLineup(); render();
+}
+function removeStory(id){ LINEUP = LINEUP.filter(s=>s.id!==id); saveLineup(); render(); }
+function moveStory(id, dir){
+  const i = LINEUP.findIndex(s=>s.id===id), j = i+dir;
+  if (i<0||j<0||j>=LINEUP.length) return;
+  [LINEUP[i],LINEUP[j]]=[LINEUP[j],LINEUP[i]]; saveLineup(); render();
+}
+function setStatus(story, msg, err){ story.status=msg; story.err=!!err; render(); }
+
+// One Haiku call drafts angle + concept targeting together.
+async function draftMeta(story){
+  story.busy=true; setStatus(story,'Drafting angle + concept…');
+  try {
+    const heds = story.articles.slice(0,8).map(a=>`- [${a.source}] ${a.title}`).join('\n');
+    const prompt = `Today is ${TODAY}. You are the NTK News editor. Story cluster:\n${heds}\n\nReturn ONLY a JSON object, no fences:\n{"angle":"one sharp NTK sentence — what is actually happening and what's at stake, plain vocabulary, no hype","conceptEntity":"single most distinctive named person/org/place at the story's center, written exactly as a Wikipedia article title (disambiguate surnames), or \\"\\" if none","narrowKeyword":"exactly ONE word likely to appear verbatim in any article about this specific story, or \\"\\""}`;
+    const raw = await ai(prompt, 400);
+    const d = parseJSON(raw);
+    if (d.angle && !story.angle) story.angle = d.angle;
+    else if (d.angle && story.angle && confirm('Replace current angle with draft?\n\n'+d.angle)) story.angle = d.angle;
+    story.conceptEntity = d.conceptEntity||story.conceptEntity||'';
+    story.narrowKeyword = d.narrowKeyword||story.narrowKeyword||'';
+    setStatus(story,'');
+  } catch(e){ setStatus(story,'Draft failed: '+e.message,true); }
+  story.busy=false; saveLineup(); render();
+}
+
+/* Enrichment: ER pool search first (real bodies), fetch-url fallback for
+   uncovered RSS links (meta/paragraph text), then dedup layers 2+3. */
+async function enrich(story){
+  story.busy=true;
+  try {
+    if (!story.conceptEntity && !story.angle) await draftMeta(story);
+    else if (!story.conceptEntity){
+      setStatus(story,'Resolving concept…');
+      try { const raw = await ai(`Story: "${story.title}". Return ONLY JSON, no fences: {"conceptEntity":"single most distinctive named person/org/place, as a Wikipedia article title, or \\"\\"","narrowKeyword":"ONE word likely verbatim in coverage, or \\"\\""}`, 200);
+        const d = parseJSON(raw); story.conceptEntity=d.conceptEntity||''; story.narrowKeyword=d.narrowKeyword||'';
+      } catch {}
+    }
+
+    // 1. ER pool search — the body engine.
+    let er = [];
+    if (story.conceptEntity){
+      setStatus(story,'EventRegistry: resolving "'+story.conceptEntity+'"…');
+      try {
+        const matches = await netlifyFetch({mode:'resolve-concept', q:story.conceptEntity});
+        const conceptUri = matches?.[0]?.uri;
+        if (conceptUri){
+          setStatus(story,'EventRegistry: pool coverage…');
+          const base = {mode:'scan-by-concept', conceptUri, pool:'ntk',
+            articlesCount:String(SETTINGS.maxArts), bodyLen:String(SETTINGS.bodyLen)};
+          if (story.narrowKeyword){
+            er = await netlifyFetch({...base, keyword:story.narrowKeyword});
+            if (!er.length) er = await netlifyFetch(base);   // guessed keyword missed — concept alone
+          } else er = await netlifyFetch(base);
+          if (!er.length){ const {pool, ...broad} = base; er = await netlifyFetch(broad); }  // pool empty — go broad
+        } else setStatus(story,'ER: no concept match for "'+story.conceptEntity+'" — RSS links only');
+      } catch(e){ setStatus(story,'ER unavailable ('+e.message+') — RSS links only',true); }
+    }
+    const erArts = er.map(a=>({
+      url:a.url||'', title:a.title||'Untitled', source:a.source?.title||'Unknown',
+      date:a.date||'', body:(a.body||''), bodyFrom: a.body?'er':'', included:true, dupOf:null, origin:'er'
+    })).filter(a=>a.url);
+
+    // 2. Merge (layer 2): canonical-URL match. ER copy wins — it has the body.
+    const byCanon = new Map();
+    for (const a of erArts) byCanon.set(canon(a.url), a);
+    const rssOnly = [];
+    for (const a of story.articles.filter(x=>x.origin==='rss')){
+      const hit = byCanon.get(canon(a.url));
+      if (hit) hit.origin='both';
+      else rssOnly.push(a);
+    }
+    // Editor-added URLs from a previous package survive enrichment.
+    const editorArts = story.articles.filter(x=>x.origin==='editor');
+
+    // 3. fetch-url fallback for uncovered, unsuppressed RSS links.
+    for (const a of rssOnly){
+      if (isSup(a.url)) { a.body=''; a.bodyFrom=''; continue; }
+      setStatus(story,'Fetching: '+a.source+'…');
+      const r = await fetchUrlBody(a.url);
+      a.body = r.body||''; a.bodyFrom = a.body ? 'fetch' : '';
+    }
+
+    let all = [...erArts, ...rssOnly, ...editorArts];
+
+    // 4. Syndication pass (layer 3): near-identical text under different URLs.
+    //    Keep the longest body (tie: earliest date); auto-x the copies —
+    //    visibly, reversibly, never off-screen.
+    const sh = all.map(a=>({ t:titleTokens(a.title), b:shingles(a.body) }));
+    for (let i=0;i<all.length;i++){
+      for (let j=i+1;j<all.length;j++){
+        if (all[i].dupOf||all[j].dupOf) continue;
+        const tSim = jaccard(sh[i].t, sh[j].t);
+        // Body-similarity dedup only when both bodies are substantial —
+        // short identical boilerplate (cookie walls, subscribe stubs) must
+        // not collapse distinct articles into "syndicated" false positives.
+        const bothFat = all[i].body.length>600 && all[j].body.length>600;
+        const bSim = bothFat ? jaccard(sh[i].b, sh[j].b) : 0;
+        if (bSim>0.6 || (tSim>0.8 && (bSim>0.3 || !all[i].body || !all[j].body))){
+          let keep=i, drop=j;
+          if (all[j].body.length>all[i].body.length) { keep=j; drop=i; }
+          else if (all[j].body.length===all[i].body.length &&
+                   all[j].date && all[i].date && all[j].date<all[i].date) { keep=j; drop=i; }
+          all[drop].dupOf = all[keep].source;
+          all[drop].included = false;
+        }
+      }
+    }
+    story.articles = all;
+    story.enrichedAt = new Date().toISOString();
+    setStatus(story,'');
+  } catch(e){ setStatus(story,'Enrichment failed: '+e.message,true); }
+  story.busy=false; saveLineup(); render();
+}
+
+async function addUrl(story, url){
+  if (!url.trim()) return;
+  story.busy=true; setStatus(story,'Fetching '+url+'…');
+  try {
+    const r = await fetchUrlBody(url.trim());
+    story.articles.push({ url:url.trim(), title:r.title||url.trim(), source:'Editor import',
+      date:new Date().toISOString(), body:r.body||'', bodyFrom:r.body?'fetch':'',
+      included:true, dupOf:null, origin:'editor' });
+    setStatus(story, r.body?'':'Added — no body retrievable, headline only');
+  } catch(e){ setStatus(story,'Add failed: '+e.message,true); }
+  story.busy=false; saveLineup(); render();
+}
+
+function activeArts(story){
+  return story.articles.filter(a=>a.included && !a.dupOf && !isSup(a.url));
+}
+
+async function generateStory(story){
+  const arts = activeArts(story);
+  if (!arts.length){ setStatus(story,'No active sources — enrich or add URLs first',true); return; }
+  story.busy=true;
+  const artsText = arts.map(a=>
+    `TITLE: ${a.title}\nSOURCE: ${a.source}\nURL: ${a.url}\nDATE: ${a.date}\n\n${(a.body||'[body unavailable — headline only]').slice(0,SETTINGS.bodyLen)}`
+  ).join('\n\n---\n\n');
+  const angleBlock = story.angle ? `\n\nEDITOR'S ANGLE (the editorial frame for this story — honor it): ${story.angle}` : '';
+  const pkg = story.packages||{};
+  for (const sec of SECS){
+    setStatus(story, story.title.slice(0,40)+' · '+sec+'…');
+    try { pkg[sec] = await ai(makePrompt(sec, artsText+angleBlock, []), 1500); }
+    catch(e){ pkg[sec] = '[Generation failed: '+e.message+']'; }
+  }
+  story.packages = pkg; story.generatedAt = new Date().toISOString(); story.outOpen = true;
+  story.busy=false; setStatus(story,''); saveLineup(); render();
+}
+async function generateAll(){
+  for (const s of LINEUP) if (!s.packages) await generateStory(s);
+}
+
+let copiedFlag = '';
+function cp(text, flag){
+  navigator.clipboard.writeText(text).then(()=>{ copiedFlag=flag; render();
+    setTimeout(()=>{ copiedFlag=''; render(); }, 1600); });
+}
+function storyText(s){
+  const pkg=s.packages||{};
+  return `--- ${s.title} ---\nANGLE: ${s.angle}\n\n`+SECS.map(x=>`[${x.toUpperCase()}]\n${pkg[x]||''}`).join('\n\n');
+}
+function siteExport(){
+  return 'const stories = [\n' + LINEUP.filter(s=>s.packages).map(toSiteStoryBlock).join('\n') + '\n];';
+}
+
+/* ─── render: stream ─── */
+function renderStream(root){
+  const data = STREAM;
+  if (!data){ root.innerHTML = '<div class="empty">No data yet — data/clusters.json not found. Run the pipeline once.</div>'; return; }
+  const clusters = data.clusters||[];
+  document.getElementById('count').textContent = clusters.length + (clusters.length===1?' story':' stories');
+  const ageMin = Math.round((Date.now()-new Date(data.updated))/60000);
+  document.getElementById('stale').textContent = ageMin>60 ? '· data '+rel(data.updated)+' old — run the workflow' : '';
+  if (!clusters.length){ root.innerHTML='<div class="empty">Nothing in the window. Run the pipeline.</div>'; return; }
+
+  root.innerHTML='';
+  for (const c of clusters){
+    const beat=(c.triage&&c.triage.beat)||c.beat_hint||'other';
+    const verdict=c.triage&&c.triage.verdict;
+    const line=c.triage&&c.triage.line;
+    const solo=c.publisher_count<=1;
+    const el=document.createElement('div');
+    el.className='cluster'+(solo?' solo':'')+(verdict==='NO'?' no-verdict-no':'');
+    const nSup = c.items.filter(it=>isSup(it.url)).length;
+    const articles=c.items.map((it,i)=>
+      `<div class="article${isSup(it.url)?' suppressed':''}" data-i="${i}">`+
+      `<span class="pub">${esc(it.publisher)}</span> · `+
+      `<a href="${esc(it.url)}" target="_blank" rel="noopener">${esc(it.title)}</a> `+
+      `<span class="t">${rel(it.published)}</span>`+
+      `<button class="x" title="${isSup(it.url)?'restore':'suppress from digest work'}">✕</button></div>`
+    ).join('');
+    el.innerHTML=
+      `<div class="hed">${esc(c.title)}</div>`+
+      `<div class="meta-line"><span class="beat beat-${esc(beat)}">${esc(beat)}</span>`+
+      `${esc(pubList(c.publishers))} · ${rel(c.latest)}`+
+      (nSup?` · <span style="color:var(--stale)">${nSup} suppressed</span>`:'')+`</div>`+
+      (line&&!solo?`<div class="line">${esc(line)}</div>`:'')+
+      `<div class="articles">${articles}`+
+      `<button class="certify${inLineup(c.key)?' done':''}">${inLineup(c.key)?'✓ in lineup — click to remove':'→ lineup'}</button></div>`;
+    el.querySelector('.hed').addEventListener('click',()=>el.classList.toggle('open'));
+    el.querySelectorAll('.article .x').forEach(btn=>{
+      btn.addEventListener('click',e=>{
+        const i=+e.target.closest('.article').dataset.i;
+        toggleSup(c.items[i].url); render();
+        e.target.closest('.cluster')?.classList.add('open');
+      });
+    });
+    el.querySelector('.certify').addEventListener('click',()=>certify(c));
+    root.appendChild(el);
+    if (el.querySelector('.certify.done')||nSup) el.classList.add('open');
+  }
+}
+
+/* ─── render: lineup ─── */
+function bodyChip(a){
+  if (a.dupOf) return `<span class="chip dup">syndicated · ${esc(a.dupOf)}</span>`;
+  if (isSup(a.url)) return `<span class="chip dup">suppressed</span>`;
+  if (a.bodyFrom==='er') return `<span class="chip body">er body ${(a.body.length/1000).toFixed(1)}k</span>`;
+  if (a.bodyFrom==='fetch') return `<span class="chip thin">meta ${a.body.length}ch</span>`;
+  return `<span class="chip thin">headline only</span>`;
+}
+function renderLineup(root){
+  document.getElementById('count').textContent = LINEUP.length+'/'+LINEUP_MAX+' in lineup';
+  document.getElementById('stale').textContent = '';
+  if (!LINEUP.length){ root.innerHTML='<div class="empty">Nothing certified yet. Expand a cluster in the stream and hit “→ lineup”.</div>'; return; }
+
+  // Layer 4: same article appearing in more than one lineup story — badge, never auto-kill.
+  const urlStories = {};
+  LINEUP.forEach((s,si)=>s.articles.forEach(a=>{
+    const c=canon(a.url); (urlStories[c]=urlStories[c]||new Set()).add(si);
+  }));
+
+  const nGen = LINEUP.filter(s=>s.packages).length;
+  root.innerHTML = `<div class="lineup-bar">
+    <button class="mini go" id="gen-all" ${LINEUP.some(s=>s.busy)?'disabled':''}>Generate all ungenerated</button>
+    <span class="spacer"></span>
+    <button class="mini" id="cp-all" ${nGen?'':'disabled'}>Copy all text</button>
+    <button class="mini" id="cp-site" ${nGen?'':'disabled'}>Copy site stories block</button>
+    <span class="copied">${copiedFlag==='all'?'copied':copiedFlag==='site'?'copied':''}</span>
+  </div>`;
+  document.getElementById('gen-all').addEventListener('click',generateAll);
+  document.getElementById('cp-all').addEventListener('click',()=>cp(LINEUP.filter(s=>s.packages).map(storyText).join('\n\n\n'),'all'));
+  document.getElementById('cp-site').addEventListener('click',()=>cp(siteExport(),'site'));
+
+  LINEUP.forEach((s,si)=>{
+    const arts=s.articles||[];
+    const nActive=activeArts(s).length;
+    const nDup=arts.filter(a=>a.dupOf).length;
+    const nSup=arts.filter(a=>!a.dupOf&&isSup(a.url)).length;
+    const nBody=arts.filter(a=>a.included&&!a.dupOf&&!isSup(a.url)&&a.bodyFrom==='er').length;
+    const el=document.createElement('div');
+    el.className='story';
+    const pkgRows = arts.map((a,i)=>{
+      const others=[...(urlStories[canon(a.url)]||[])].filter(x=>x!==si);
+      return `<div class="article${(a.dupOf||isSup(a.url))?' suppressed':''}" data-i="${i}">`+
+        `<span class="grow"><span class="pub">${esc(a.source)}</span> · `+
+        `<a href="${esc(a.url)}" target="_blank" rel="noopener">${esc(a.title)}</a> `+
+        `<span class="t">${rel(a.date)}</span></span>`+
+        bodyChip(a)+
+        (others.length?`<span class="chip xstory">also №${others.map(x=>x+1).join(',')}</span>`:'')+
+        `<button class="x" title="toggle">✕</button></div>`;
+    }).join('');
+    el.innerHTML =
+      `<div class="story-top"><span class="ord">${si+1}</span>`+
+      `<input class="story-title" value="${esc(s.title)}">`+
+      `<button class="mini up">↑</button><button class="mini dn">↓</button>`+
+      `<button class="mini rm" title="remove">remove</button></div>`+
+      `<div class="angle-row"><textarea class="angle" placeholder="Angle — one sharp NTK sentence">${esc(s.angle)}</textarea>`+
+      `<button class="mini draft" ${s.busy?'disabled':''}>Draft</button></div>`+
+      `<div class="story-meta"><span class="beat beat-${esc(s.beat)}">${esc(s.beat)}</span>`+
+      `<select class="cat">${CATEGORIES.map(c=>`<option${c===s.category?' selected':''}>${c}</option>`).join('')}</select>`+
+      `<span>${nActive} active sources · ${nBody} with ER bodies`+
+      (nDup?` · ${nDup} deduped`:'')+(nSup?` · ${nSup} suppressed`:'')+`</span>`+
+      (s.conceptEntity?`<span>concept: ${esc(s.conceptEntity)}${s.narrowKeyword?' · "'+esc(s.narrowKeyword)+'"':''}</span>`:'')+
+      `</div>`+
+      `<div class="story-status${s.err?' err':''}">${esc(s.status||'')}</div>`+
+      `<div><button class="mini primary enr" ${s.busy?'disabled':''}>${s.enrichedAt?'Re-enrich':'Enrich sources'}</button> `+
+      `<button class="mini pkg-t">${s.open?'hide':'show'} package (${arts.length})</button> `+
+      `<button class="mini go gen" ${s.busy?'disabled':''}>${s.packages?'Regenerate':'Generate'} Jefferson</button> `+
+      (s.packages?`<button class="mini out-t">${s.outOpen?'hide':'show'} output</button> `+
+        `<button class="mini cp-s">copy text</button><span class="copied">${copiedFlag===s.id?' copied':''}</span>`:'')+
+      `</div>`+
+      (s.open?`<div class="pkg">${pkgRows}<div class="addurl"><input class="add-in" placeholder="https:// add a source URL"><button class="mini add-go">add</button></div></div>`:'')+
+      (s.outOpen&&s.packages?`<div class="out">`+SECS.map(x=>
+        `<h3>${x}</h3><div class="body">${mdToHtml(esc(s.packages[x]||'')).split(/\n{2,}/).map(p=>p.startsWith('<')?p:'<p>'+p+'</p>').join('')}</div>`).join('')+`</div>`:'');
+
+    el.querySelector('.story-title').addEventListener('change',e=>{ s.title=e.target.value; saveLineup(); });
+    el.querySelector('.angle').addEventListener('change',e=>{ s.angle=e.target.value; saveLineup(); });
+    el.querySelector('.cat').addEventListener('change',e=>{ s.category=e.target.value; saveLineup(); });
+    el.querySelector('.up').addEventListener('click',()=>moveStory(s.id,-1));
+    el.querySelector('.dn').addEventListener('click',()=>moveStory(s.id,1));
+    el.querySelector('.rm').addEventListener('click',()=>{ if(confirm('Remove "'+s.title+'" from the lineup?')) removeStory(s.id); });
+    el.querySelector('.draft').addEventListener('click',()=>draftMeta(s));
+    el.querySelector('.enr').addEventListener('click',()=>enrich(s));
+    el.querySelector('.pkg-t').addEventListener('click',()=>{ s.open=!s.open; saveLineup(); render(); });
+    el.querySelector('.gen').addEventListener('click',()=>generateStory(s));
+    el.querySelector('.out-t')?.addEventListener('click',()=>{ s.outOpen=!s.outOpen; saveLineup(); render(); });
+    el.querySelector('.cp-s')?.addEventListener('click',()=>cp(storyText(s), s.id));
+    el.querySelectorAll('.pkg .article .x').forEach(btn=>{
+      btn.addEventListener('click',e=>{
+        const i=+e.target.closest('.article').dataset.i;
+        const a=s.articles[i];
+        if (a.dupOf){ a.dupOf=null; a.included=true; }   // un-dedupe = restore
+        else toggleSup(a.url);                            // editor kill = global suppression
+        saveLineup(); render();
+      });
+    });
+    el.querySelector('.add-go')?.addEventListener('click',()=>{
+      const inp=el.querySelector('.add-in'); addUrl(s, inp.value); inp.value='';
+    });
+    root.appendChild(el);
+  });
+}
+
+/* ─── shell ─── */
+function render(){
+  const root=document.getElementById('view');
+  document.getElementById('tab-stream').classList.toggle('on', TAB==='stream');
+  document.getElementById('tab-lineup').classList.toggle('on', TAB==='lineup');
+  document.getElementById('tab-lineup').textContent = 'lineup'+(LINEUP.length?' ('+LINEUP.length+')':'');
+  if (TAB==='stream') renderStream(root); else renderLineup(root);
+}
+document.getElementById('tab-stream').addEventListener('click',()=>{ TAB='stream'; render(); });
+document.getElementById('tab-lineup').addEventListener('click',()=>{ TAB='lineup'; render(); });
+document.getElementById('gear').addEventListener('click',()=>{
+  const p=document.getElementById('settings'); p.classList.toggle('open');
+  document.getElementById('set-key').value=SETTINGS.antKey;
+  document.getElementById('set-proxy').value=SETTINGS.proxyBase;
+  document.getElementById('set-bodylen').value=SETTINGS.bodyLen;
+  document.getElementById('set-maxarts').value=SETTINGS.maxArts;
+});
+['set-key','set-proxy','set-bodylen','set-maxarts'].forEach(id=>{
+  document.getElementById(id).addEventListener('change',e=>{
+    if(id==='set-key') SETTINGS.antKey=e.target.value.trim();
+    if(id==='set-proxy') SETTINGS.proxyBase=e.target.value.trim();
+    if(id==='set-bodylen') SETTINGS.bodyLen=Math.max(500,parseInt(e.target.value)||4000);
+    if(id==='set-maxarts') SETTINGS.maxArts=Math.min(30,Math.max(5,parseInt(e.target.value)||15));
+    saveSettings();
+  });
+});
+function tick(){ document.getElementById('clock').textContent =
+  new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}); }
+tick(); setInterval(tick,30000);
+
+fetch('data/clusters.json?t='+Date.now())
+  .then(r=>{ if(!r.ok) throw 0; return r.json(); })
+  .then(d=>{ STREAM=d; render(); })
+  .catch(()=>{ STREAM=null; render(); });
 </script>
 </body>
 </html>
