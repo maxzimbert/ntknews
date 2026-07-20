@@ -294,6 +294,30 @@ exports.handler = async (event) => {
       page: 1,
       count: 5
     };
+  } else if (mode === 'context-scan') {
+    // NEW (Pulse 2b): historical-arc retrieval for Summon Context. Same
+    // concept-scoped search as scan-by-concept but with a wide window
+    // (default 29 days, capped at 30 = standard archive access), sorted by
+    // relevance rather than date, and a small count — this feeds the
+    // BACKGROUND block of synthesis, not the source package. Kept as a
+    // separate mode so widening this window can never loosen the tight
+    // recency window Enrich depends on.
+    body = {
+      apiKey: process.env.NEWSAPI_KEY,
+      action: 'getArticles',
+      conceptUri: q.conceptUri || '',
+      lang: 'eng',
+      articlesCount: Math.min(parseInt(q.articlesCount) || 5, 10),
+      articlesSortBy: 'rel',
+      resultType: 'articles',
+      includeArticleBody: true,
+      articleBodyLen: Math.min(parseInt(q.bodyLen) || 1200, 3000),
+      includeArticleDate: true,
+      includeSourceInfo: true,
+      isDuplicateFilter: 'skipDuplicates',
+      forceMaxDataTimeWindow: Math.min(parseInt(q.windowDays) || 29, 30)
+    };
+    if (q.keyword) body.keyword = q.keyword;
   } else if (mode === 'scan-by-concept') {
     // NEW: searches by resolved concept URI instead of keyword matching.
     // Pass conceptUri (from resolve-concept) and optionally pool=ntk to
