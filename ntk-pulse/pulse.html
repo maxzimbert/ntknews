@@ -106,6 +106,16 @@
   .chip.thin { border-color: var(--warn); color: var(--warn); }
   .chip.dup { border-color: var(--faint); color: var(--faint); }
   .chip.xstory { border-color: #1f4d8a; color: #1f4d8a; }
+  .chip.ctx { border-color: #5a2d82; color: #5a2d82; }
+  .chip.arc { border-color: #006b6b; color: #006b6b; }
+  .ctx-row { display: flex; gap: 6px; margin-top: 6px; align-items: flex-start; }
+  .ctx-row textarea { flex: 1; min-height: 30px; font-size: 11px; }
+  .ctx-note { font-size: 11.5px; color: #444; margin: 2px 0 4px 12px; border-left: 2px solid var(--rule); padding-left: 8px; }
+  .qpanel { border: 1px dashed var(--rule); padding: 8px 10px; margin-bottom: 12px; }
+  .qpanel .qrow { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px; }
+  .qpanel input[type=text] { flex: 1; min-width: 160px; }
+  .qpanel .qres { font-size: 12px; padding: 2px 0; display: flex; gap: 6px; align-items: baseline; }
+  .qpanel .qres label { flex: 1; }
   .addurl { display: flex; gap: 6px; margin-top: 6px; }
   .addurl input { flex: 1; }
   .out { margin-top: 10px; border-top: 1px solid var(--rule); padding-top: 8px; }
@@ -514,6 +524,7 @@ async function enrich(story){
       try {
         const matches = await netlifyFetch({mode:'resolve-concept', q:story.conceptEntity});
         const conceptUri = matches?.[0]?.uri;
+        story.conceptUri = conceptUri || story.conceptUri || null;
         if (conceptUri){
           setStatus(story,'EventRegistry: pool coverage…');
           const base = {mode:'scan-by-concept', conceptUri, pool:'ntk',
@@ -596,6 +607,118 @@ async function addUrl(story, url){
   story.busy=false; saveLineup(); render();
 }
 
+/* ─── Summon Context: curated Wikipedia sections + 29-day ER arc ─── */
+const WIKI_API = 'https://en.wikipedia.org/w/api.php';
+
+// Crude wikitext → prose. Not a parser — enough for background material.
+function stripWikitext(w){
+  let t = w;
+  for (let i=0;i<6;i++) t = t.replace(/\{\{[^{}]*\}\}/g,'');       // templates, innermost-out
+  t = t.replace(/<ref[^>]*\/>/gi,'').replace(/<ref[^>]*>[\s\S]*?<\/ref>/gi,'');
+  t = t.replace(/<!--[\s\S]*?-->/g,'');
+  t = t.replace(/\[\[(?:File|Image|Category):[^\]]*\]\]/gi,'');
+  t = t.replace(/\[\[[^\]|]*\|([^\]]*)\]\]/g,'$1').replace(/\[\[([^\]]*)\]\]/g,'$1');
+  t = t.replace(/\[https?:\/\/[^\s\]]+\s*([^\]]*)\]/g,'$1');
+  t = t.replace(/'''([^']*)'''/g,'$1').replace(/''([^']*)''/g,'$1');
+  t = t.replace(/^==+[^=]+==+\s*$/gm,'').replace(/<[^>]+>/g,' ');
+  return t.replace(/&nbsp;/g,' ').replace(/\n{3,}/g,'\n\n').replace(/[ \t]+/g,' ').trim();
+}
+async function wikiJson(params){
+  const r = await fetch(WIKI_API+'?'+new URLSearchParams({format:'json', origin:'*', ...params}));
+  if (!r.ok) throw new Error('Wikipedia '+r.status);
+  return r.json();
+}
+// One curated ID -> raw section text. "Page#Anchor" or bare "Page".
+async function fetchWikiId(id){
+  const [page, anchor] = id.split('#');
+  const url = 'https://en.wikipedia.org/wiki/'+page+(anchor?'#'+anchor:'');
+  if (anchor){
+    const d = await wikiJson({action:'parse', page, prop:'sections'});
+    if (d.error) throw new Error(d.error.info||'page not found');
+    const sec = (d.parse.sections||[]).find(s=>s.anchor===anchor);
+    if (sec){
+      const w = await wikiJson({action:'parse', page, section:sec.index, prop:'wikitext'});
+      return {id, url, title: page.replace(/_/g,' ')+' § '+sec.line,
+              text: stripWikitext(w.parse.wikitext['*']).slice(0,6000), anchorFound:true};
+    }
+    // Anchor renamed or wrong — fall through to the lead, but say so.
+  }
+  const d = await wikiJson({action:'query', prop:'extracts', titles:page,
+    exintro:'1', explaintext:'1', redirects:'1'});
+  const pages = d.query?.pages||{}; const first = pages[Object.keys(pages)[0]];
+  if (!first || first.missing !== undefined) throw new Error('page not found');
+  return {id, url, title: (first.title||page.replace(/_/g,' '))+(anchor?' (anchor not found — page lead used)':''),
+          text: (first.extract||'').slice(0,6000), anchorFound: !anchor};
+}
+async function ensureConceptUri(story){
+  if (story.conceptUri) return story.conceptUri;
+  if (!story.conceptEntity) return null;
+  const matches = await netlifyFetch({mode:'resolve-concept', q:story.conceptEntity});
+  story.conceptUri = matches?.[0]?.uri || null;
+  return story.conceptUri;
+}
+async function summonContext(story){
+  story.busy=true;
+  const ctx = [];
+  try {
+    // 1. Curated Wikipedia sections — editor-selected precedent threads.
+    const ids = (story.wikiIds||'').split(/[\n,]+/).map(s=>s.trim()).filter(Boolean);
+    const raws = [];
+    for (const id of ids){
+      setStatus(story,'Wikipedia: '+id+'…');
+      try { raws.push(await fetchWikiId(id)); }
+      catch(e){ ctx.push({kind:'wiki', id, url:'https://en.wikipedia.org/wiki/'+id.split('#')[0],
+        title:id, note:'[unavailable: '+e.message+']', included:false}); }
+    }
+    // 2. One Haiku call condenses all fetched sections into per-ID notes,
+    //    each keeping its URL so generation can cite each thread separately.
+    if (raws.length){
+      setStatus(story,'Condensing background…');
+      const prompt = `You are preparing BACKGROUND notes for an NTK News story: "${story.title}".\n`+
+        `For each Wikipedia source below, write one factual note of at most 120 words: the prior events and their dates, plainly told, selected for what makes TODAY's incremental news legible. No commentary, no analysis of today's news itself.\n\n`+
+        raws.map((r,i)=>`SOURCE ${i} — ${r.title}:\n${r.text}`).join('\n\n')+
+        `\n\nReturn ONLY a JSON array, no fences: [{"i":0,"note":"..."}]`;
+      const notes = parseJSON(await ai(prompt, 1200));
+      raws.forEach((r,i)=>{
+        const n = notes.find(x=>x.i===i);
+        ctx.push({kind:'wiki', id:r.id, url:r.url, title:r.title,
+          note:(n&&n.note)||r.text.slice(0,600), included:true});
+      });
+    }
+    // 3. ER arc: concept-scoped, 29-day, relevance-sorted — the story so far.
+    const uri = await ensureConceptUri(story).catch(()=>null);
+    if (uri){
+      setStatus(story,'EventRegistry: 29-day arc…');
+      try {
+        const arc = await netlifyFetch({mode:'context-scan', conceptUri:uri,
+          articlesCount:'5', windowDays:'29', bodyLen:'1200'});
+        for (const a of arc){
+          if (!a.url || isSup(a.url)) continue;
+          // Skip arc items already in the source package — they're news, not background.
+          if (story.articles.some(x=>canon(x.url)===canon(a.url))) continue;
+          ctx.push({kind:'arc', url:a.url, title:a.title||'Untitled',
+            source:a.source?.title||'Unknown', date:a.date||'',
+            note:(a.body||'').slice(0,1200), included:true});
+        }
+      } catch(e){ setStatus(story,'Arc unavailable: '+e.message,true); }
+    }
+    story.context = ctx; story.contextAt = new Date().toISOString();
+    setStatus(story, ctx.length ? '' : 'No context retrieved — check wiki IDs / concept');
+  } catch(e){ setStatus(story,'Summon failed: '+e.message,true); }
+  story.busy=false; saveLineup(); render();
+}
+function contextBlock(story){
+  const items = (story.context||[]).filter(c=>c.included);
+  if (!items.length) return '';
+  const wiki = items.filter(c=>c.kind==='wiki');
+  const arc = items.filter(c=>c.kind==='arc');
+  return `\n\nBACKGROUND — NOT today's news. Today's source articles above remain the ground truth; this block exists only for the History Scoping Rule: name the precedent, date it, make the rhyme land in one sentence, cite the free reference link. Seasoning, not the main course — background should never displace today's development as the subject of a movement.\n`+
+    (wiki.length ? `\nPRECEDENT THREADS (editor-curated, cite as ([Wikipedia](URL))):\n`+
+      wiki.map(c=>`- ${c.title} — URL: ${c.url}\n  ${c.note}`).join('\n') : '')+
+    (arc.length ? `\nTHE STORY SO FAR (last 29 days of coverage, for continuity — not fresh news):\n`+
+      arc.map(c=>`- [${c.source}, ${c.date}] ${c.title} — URL: ${c.url}\n  ${c.note}`).join('\n') : '');
+}
+
 function activeArts(story){
   return story.articles.filter(a=>a.included && !a.dupOf && !isSup(a.url));
 }
@@ -642,7 +765,7 @@ async function generateStory(story){
   const pkg = {};
   for (const sec of SECS){
     setStatus(story, story.title.slice(0,40)+' · '+sec+'…');
-    try { pkg[sec] = await ai(makePrompt(sec, artsText+angleBlock+priorSectionsBlock(pkg), []), 1500); }
+    try { pkg[sec] = await ai(makePrompt(sec, artsText+angleBlock+contextBlock(story)+priorSectionsBlock(pkg), []), 1500); }
     catch(e){ pkg[sec] = '[Generation failed: '+e.message+']'; }
   }
   story.packages = pkg; story.generatedAt = new Date().toISOString(); story.outOpen = true;
@@ -663,6 +786,62 @@ function storyText(s){
 }
 function siteExport(){
   return 'const stories = [\n' + LINEUP.filter(s=>s.packages).map(toSiteStoryBlock).join('\n') + '\n];';
+}
+
+/* ─── Create cluster by query (2b) ─── */
+let Q = { open:false, kw:'', src:'', results:[], busy:false, note:'' };
+function windowSearch(){
+  // Tier 1 — instant, free: search the current 6h window client-side.
+  const kws = Q.kw.toLowerCase().split(/\s+/).filter(Boolean);
+  if (!kws.length || !STREAM) return [];
+  const srcF = Q.src.toLowerCase().trim();
+  const seen = new Set(); const out = [];
+  for (const c of (STREAM.clusters||[])){
+    for (const it of c.items){
+      const hay = (it.title+' '+it.publisher).toLowerCase();
+      if (!kws.every(k=>hay.includes(k))) continue;
+      if (srcF && !it.publisher.toLowerCase().includes(srcF)) continue;
+      const cn = canon(it.url); if (seen.has(cn)) continue; seen.add(cn);
+      out.push({url:it.url, title:it.title, source:it.publisher, date:it.published||'',
+        body:'', bodyFrom:'', included:true, dupOf:null, origin:'rss', pick:true});
+    }
+  }
+  return out;
+}
+async function erSearch(){
+  // Tier 2 — ER keyword reach-back (7-day window, bodies included).
+  Q.busy=true; Q.note='Searching EventRegistry…'; render();
+  try {
+    const raw = await netlifyFetch({mode:'keyword-scan', q:Q.kw,
+      articlesCount:'10', bodyLen:String(SETTINGS.bodyLen)});
+    const srcF = Q.src.toLowerCase().trim();
+    const have = new Set(Q.results.map(r=>canon(r.url)));
+    let added = 0;
+    for (const a of raw){
+      if (!a.url || have.has(canon(a.url))) continue;
+      const sname = a.source?.title||'Unknown';
+      if (srcF && !sname.toLowerCase().includes(srcF)) continue;
+      Q.results.push({url:a.url, title:a.title||'Untitled', source:sname, date:a.date||'',
+        body:a.body||'', bodyFrom:a.body?'er':'', included:true, dupOf:null, origin:'er', pick:true});
+      added++;
+    }
+    Q.note = added ? '' : 'EventRegistry found nothing new for that query.';
+  } catch(e){ Q.note='ER search failed: '+e.message; }
+  Q.busy=false; render();
+}
+function createStoryFromQuery(){
+  const picked = Q.results.filter(r=>r.pick);
+  if (!picked.length) return;
+  if (LINEUP.length>=LINEUP_MAX){ alert('Lineup is full ('+LINEUP_MAX+').'); return; }
+  LINEUP.push({
+    id:'ln-'+Date.now(), key:'query-'+Date.now(),
+    title: Q.kw.trim()||'New story', beat:'other', category:'Domestic',
+    angle:'', conceptEntity:'', narrowKeyword:'', conceptUri:null,
+    articles: picked.map(({pick,...a})=>a),
+    enrichedAt:null, packages:null, open:true, outOpen:false,
+  });
+  Q = { open:false, kw:'', src:'', results:[], busy:false, note:'' };
+  saveLineup(); render();
 }
 
 /* ─── render: stream ─── */
@@ -735,11 +914,38 @@ function renderLineup(root){
   const nGen = LINEUP.filter(s=>s.packages).length;
   root.innerHTML = `<div class="lineup-bar">
     <button class="mini go" id="gen-all" ${LINEUP.some(s=>s.busy)?'disabled':''}>Generate all ungenerated</button>
+    <button class="mini" id="q-toggle">${Q.open?'close search':'+ new story from search'}</button>
     <span class="spacer"></span>
     <button class="mini" id="cp-all" ${nGen?'':'disabled'}>Copy all text</button>
     <button class="mini" id="cp-site" ${nGen?'':'disabled'}>Copy site stories block</button>
     <span class="copied">${copiedFlag==='all'?'copied':copiedFlag==='site'?'copied':''}</span>
   </div>`;
+  if (Q.open){
+    const qp = document.createElement('div'); qp.className='qpanel';
+    qp.innerHTML = `<div class="qrow">
+      <input type="text" id="q-kw" placeholder="keywords" value="${esc(Q.kw)}">
+      <input type="text" id="q-src" placeholder="source filter (optional)" value="${esc(Q.src)}" style="max-width:170px">
+      <button class="mini" id="q-win">search window</button>
+      <button class="mini" id="q-er" ${Q.busy?'disabled':''}>search EventRegistry</button>
+      </div>`+
+      Q.results.map((r,i)=>`<div class="qres"><input type="checkbox" data-qi="${i}" ${r.pick?'checked':''}>`+
+        `<label><span class="pub">${esc(r.source)}</span> · <a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a> `+
+        `<span class="t">${rel(r.date)}</span></label>`+
+        (r.bodyFrom==='er'?`<span class="chip body">er body</span>`:`<span class="chip thin">headline</span>`)+`</div>`).join('')+
+      `<div class="qrow" style="margin-top:6px"><span class="t" style="flex:1">${esc(Q.note)}</span>`+
+      (Q.results.length?`<button class="mini go" id="q-make">add as story (${Q.results.filter(r=>r.pick).length})</button>`:'')+`</div>`;
+    root.insertBefore(qp, root.children[1]||null);
+    const kwEl=qp.querySelector('#q-kw'), srcEl=qp.querySelector('#q-src');
+    kwEl.addEventListener('change',e=>{ Q.kw=e.target.value; });
+    srcEl.addEventListener('change',e=>{ Q.src=e.target.value; });
+    qp.querySelector('#q-win').addEventListener('click',()=>{ Q.kw=kwEl.value; Q.src=srcEl.value;
+      Q.results=windowSearch(); Q.note=Q.results.length?'':'Nothing in the 6-hour window — try EventRegistry.'; render(); });
+    qp.querySelector('#q-er').addEventListener('click',()=>{ Q.kw=kwEl.value; Q.src=srcEl.value; erSearch(); });
+    qp.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.addEventListener('change',e=>{
+      Q.results[+e.target.dataset.qi].pick=e.target.checked; render(); }));
+    qp.querySelector('#q-make')?.addEventListener('click',createStoryFromQuery);
+  }
+  document.getElementById('q-toggle').addEventListener('click',()=>{ Q.open=!Q.open; render(); });
   document.getElementById('gen-all').addEventListener('click',generateAll);
   document.getElementById('cp-all').addEventListener('click',()=>cp(LINEUP.filter(s=>s.packages).map(storyText).join('\n\n\n'),'all'));
   document.getElementById('cp-site').addEventListener('click',()=>cp(siteExport(),'site'));
@@ -762,6 +968,15 @@ function renderLineup(root){
         (others.length?`<span class="chip xstory">also №${others.map(x=>x+1).join(',')}</span>`:'')+
         `<button class="x" title="toggle">✕</button></div>`;
     }).join('');
+    const ctxRows = (s.context||[]).map((c,i)=>
+      `<div class="article${c.included?'':' suppressed'}" data-ci="${i}">`+
+      `<span class="grow"><span class="pub">${c.kind==='wiki'?'Wikipedia':esc(c.source||'')}</span> · `+
+      `<a href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.title)}</a>`+
+      (c.date?` <span class="t">${esc(String(c.date))}</span>`:'')+`</span>`+
+      `<span class="chip ${c.kind==='wiki'?'ctx':'arc'}">${c.kind==='wiki'?'context':'arc 29d'}</span>`+
+      `<button class="x" title="toggle">✕</button></div>`+
+      (c.included&&c.note?`<div class="ctx-note">${esc(c.note)}</div>`:'')
+    ).join('');
     el.innerHTML =
       `<div class="story-top"><span class="ord">${si+1}</span>`+
       `<input class="story-title" value="${esc(s.title)}">`+
@@ -776,13 +991,15 @@ function renderLineup(root){
       (s.conceptEntity?`<span>concept: ${esc(s.conceptEntity)}${s.narrowKeyword?' · "'+esc(s.narrowKeyword)+'"':''}</span>`:'')+
       `</div>`+
       `<div class="story-status${s.err?' err':''}">${esc(s.status||'')}</div>`+
+      `<div class="ctx-row"><textarea class="wiki-ids" placeholder="Wikipedia IDs for background, one per line — Page or Page#Section_anchor">${esc(s.wikiIds||'')}</textarea>`+
+      `<button class="mini summon" ${s.busy?'disabled':''}>${s.contextAt?'Re-summon':'Summon context'}</button></div>`+
       `<div><button class="mini primary enr" ${s.busy?'disabled':''}>${s.enrichedAt?'Re-enrich':'Enrich sources'}</button> `+
       `<button class="mini pkg-t">${s.open?'hide':'show'} package (${arts.length})</button> `+
       `<button class="mini go gen" ${s.busy?'disabled':''}>${s.packages?'Regenerate':'Generate'} Jefferson</button> `+
       (s.packages?`<button class="mini out-t">${s.outOpen?'hide':'show'} output</button> `+
         `<button class="mini cp-s">copy text</button><span class="copied">${copiedFlag===s.id?' copied':''}</span>`:'')+
       `</div>`+
-      (s.open?`<div class="pkg">${pkgRows}<div class="addurl"><input class="add-in" placeholder="https:// add a source URL"><button class="mini add-go">add</button></div></div>`:'')+
+      (s.open?`<div class="pkg">${pkgRows}${ctxRows}<div class="addurl"><input class="add-in" placeholder="https:// add a source URL"><button class="mini add-go">add</button></div></div>`:'')+
       (s.outOpen&&s.packages?`<div class="out">`+SECS.map(x=>
         `<h3>${x}</h3><div class="body">${mdToHtml(esc(s.packages[x]||'')).split(/\n{2,}/).map(p=>p.startsWith('<')?p:'<p>'+p+'</p>').join('')}</div>`).join('')+`</div>`:'');
 
@@ -793,6 +1010,8 @@ function renderLineup(root){
     el.querySelector('.dn').addEventListener('click',()=>moveStory(s.id,1));
     el.querySelector('.rm').addEventListener('click',()=>{ if(confirm('Remove "'+s.title+'" from the lineup?')) removeStory(s.id); });
     el.querySelector('.draft').addEventListener('click',()=>draftMeta(s));
+    el.querySelector('.wiki-ids').addEventListener('change',e=>{ s.wikiIds=e.target.value; saveLineup(); });
+    el.querySelector('.summon').addEventListener('click',()=>summonContext(s));
     el.querySelector('.enr').addEventListener('click',()=>enrich(s));
     el.querySelector('.pkg-t').addEventListener('click',()=>{ s.open=!s.open; saveLineup(); render(); });
     el.querySelector('.gen').addEventListener('click',()=>generateStory(s));
@@ -800,7 +1019,12 @@ function renderLineup(root){
     el.querySelector('.cp-s')?.addEventListener('click',()=>cp(storyText(s), s.id));
     el.querySelectorAll('.pkg .article .x').forEach(btn=>{
       btn.addEventListener('click',e=>{
-        const i=+e.target.closest('.article').dataset.i;
+        const row=e.target.closest('.article');
+        if (row.dataset.ci!==undefined){                 // context item: story-local toggle
+          const c=s.context[+row.dataset.ci]; c.included=!c.included;
+          saveLineup(); render(); return;
+        }
+        const i=+row.dataset.i;
         const a=s.articles[i];
         if (a.dupOf){ a.dupOf=null; a.included=true; }   // un-dedupe = restore
         else toggleSup(a.url);                            // editor kill = global suppression
