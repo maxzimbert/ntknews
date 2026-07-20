@@ -109,6 +109,13 @@
   .chip.ctx { border-color: #5a2d82; color: #5a2d82; }
   .chip.arc { border-color: #006b6b; color: #006b6b; }
   .ctx-row { display: flex; gap: 6px; margin-top: 6px; align-items: flex-start; }
+  .concept-row { display: flex; gap: 6px; margin-top: 6px; align-items: baseline; flex-wrap: wrap; }
+  .concept-row input[type=text] { min-width: 160px; }
+  .concept-row .kw { max-width: 120px; }
+  .concept-status { font-size: 10.5px; }
+  .concept-status.ok { color: var(--certified); }
+  .concept-status.miss { color: var(--stale); }
+  .concept-status.unchecked { color: var(--dim); }
   .ctx-row textarea { flex: 1; min-height: 30px; font-size: 11px; }
   .ctx-note { font-size: 11.5px; color: #444; margin: 2px 0 4px 12px; border-left: 2px solid var(--rule); padding-left: 8px; }
   .qpanel { border: 1px dashed var(--rule); padding: 8px 10px; margin-bottom: 12px; }
@@ -497,6 +504,9 @@ async function draftMeta(story){
     const d = parseJSON(raw);
     if (d.angle && !story.angle) story.angle = d.angle;
     else if (d.angle && story.angle && confirm('Replace current angle with draft?\n\n'+d.angle)) story.angle = d.angle;
+    if (d.conceptEntity && d.conceptEntity !== story.conceptEntity){
+      story.conceptUri = null; story.conceptMatch = null; story.conceptChecked = false; // entity changed — old resolution is stale
+    }
     story.conceptEntity = d.conceptEntity||story.conceptEntity||'';
     story.narrowKeyword = d.narrowKeyword||story.narrowKeyword||'';
     setStatus(story,'');
@@ -650,12 +660,25 @@ async function fetchWikiId(id){
   return {id, url, title: (first.title||page.replace(/_/g,' '))+(anchor?' (anchor not found — page lead used)':''),
           text: (first.extract||'').slice(0,6000), anchorFound: !anchor};
 }
-async function ensureConceptUri(story){
-  if (story.conceptUri) return story.conceptUri;
+async function ensureConceptUri(story, force){
+  if (story.conceptUri && !force) return story.conceptUri;
   if (!story.conceptEntity) return null;
   const matches = await netlifyFetch({mode:'resolve-concept', q:story.conceptEntity});
   story.conceptUri = matches?.[0]?.uri || null;
+  story.conceptMatch = matches?.[0]?.label?.eng || (matches?.[0]?.uri ? story.conceptEntity : null);
+  story.conceptChecked = true;
   return story.conceptUri;
+}
+// Standalone resolve check — the "vibe check" step. No Enrich, no search,
+// just: does this entity string actually match something, and what.
+async function checkConcept(story){
+  if (!story.conceptEntity.trim()){ setStatus(story,'Enter an entity to check',true); return; }
+  story.busy=true; story.conceptUri=null; setStatus(story,'Resolving "'+story.conceptEntity+'"…');
+  try {
+    await ensureConceptUri(story, true);
+    setStatus(story, story.conceptUri ? '' : 'No Wikipedia match for "'+story.conceptEntity+'"', !story.conceptUri);
+  } catch(e){ setStatus(story,'Resolve failed: '+e.message,true); }
+  story.busy=false; saveLineup(); render();
 }
 async function summonContext(story){
   story.busy=true;
@@ -988,8 +1011,15 @@ function renderLineup(root){
       `<select class="cat">${CATEGORIES.map(c=>`<option${c===s.category?' selected':''}>${c}</option>`).join('')}</select>`+
       `<span>${nActive} active sources · ${nBody} with ER bodies`+
       (nDup?` · ${nDup} deduped`:'')+(nSup?` · ${nSup} suppressed`:'')+`</span>`+
-      (s.conceptEntity?`<span>concept: ${esc(s.conceptEntity)}${s.narrowKeyword?' · "'+esc(s.narrowKeyword)+'"':''}</span>`:'')+
       `</div>`+
+      `<div class="concept-row">`+
+      `<span style="font-size:10.5px;color:var(--dim)">concept:</span>`+
+      `<input type="text" class="concept-in" placeholder="Wikipedia entity — disambiguate here if needed" value="${esc(s.conceptEntity)}">`+
+      `<input type="text" class="kw-in kw" placeholder="keyword" value="${esc(s.narrowKeyword)}">`+
+      `<button class="mini check-concept" ${s.busy?'disabled':''}>check</button>`+
+      `<span class="concept-status ${s.conceptChecked?(s.conceptUri?'ok':'miss'):'unchecked'}">`+
+        (s.conceptChecked ? (s.conceptUri ? '✓ '+esc(s.conceptMatch||s.conceptEntity) : '✕ no match') : (s.conceptEntity?'unchecked':''))+
+      `</span></div>`+
       `<div class="story-status${s.err?' err':''}">${esc(s.status||'')}</div>`+
       `<div class="ctx-row"><textarea class="wiki-ids" placeholder="Wikipedia IDs for background, one per line — Page or Page#Section_anchor">${esc(s.wikiIds||'')}</textarea>`+
       `<button class="mini summon" ${s.busy?'disabled':''}>${s.contextAt?'Re-summon':'Summon context'}</button></div>`+
@@ -1010,6 +1040,13 @@ function renderLineup(root){
     el.querySelector('.dn').addEventListener('click',()=>moveStory(s.id,1));
     el.querySelector('.rm').addEventListener('click',()=>{ if(confirm('Remove "'+s.title+'" from the lineup?')) removeStory(s.id); });
     el.querySelector('.draft').addEventListener('click',()=>draftMeta(s));
+    el.querySelector('.concept-in').addEventListener('change',e=>{
+      const v=e.target.value.trim();
+      if (v !== s.conceptEntity){ s.conceptEntity=v; s.conceptUri=null; s.conceptMatch=null; s.conceptChecked=false; }
+      saveLineup(); render();
+    });
+    el.querySelector('.kw-in').addEventListener('change',e=>{ s.narrowKeyword=e.target.value.trim(); saveLineup(); });
+    el.querySelector('.check-concept').addEventListener('click',()=>checkConcept(s));
     el.querySelector('.wiki-ids').addEventListener('change',e=>{ s.wikiIds=e.target.value; saveLineup(); });
     el.querySelector('.summon').addEventListener('click',()=>summonContext(s));
     el.querySelector('.enr').addEventListener('click',()=>enrich(s));
