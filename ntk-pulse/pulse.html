@@ -518,6 +518,8 @@ async function draftMeta(story){
    uncovered RSS links (meta/paragraph text), then dedup layers 2+3. */
 async function enrich(story){
   story.busy=true;
+  let hadError=false;                 // an actual failure occurred somewhere in this run
+  let fetchFails=0;                   // count of fetch-url attempts that returned nothing
   try {
     if (!story.conceptEntity && !story.angle) await draftMeta(story);
     else if (!story.conceptEntity){
@@ -545,7 +547,9 @@ async function enrich(story){
           } else er = await netlifyFetch(base);
           if (!er.length){ const {pool, ...broad} = base; er = await netlifyFetch(broad); }  // pool empty — go broad
         } else setStatus(story,'ER: no concept match for "'+story.conceptEntity+'" — RSS links only');
-      } catch(e){ setStatus(story,'ER unavailable ('+e.message+') — RSS links only',true); }
+      } catch(e){ hadError=true; setStatus(story,'ER unavailable ('+e.message+') — RSS links only',true); }
+    } else if (!er.length && !story.conceptEntity){
+      hadError=true; setStatus(story,'No concept entity set — type one and hit check, or Draft first',true);
     }
     const erArts = er.map(a=>({
       url:a.url||'', title:a.title||'Untitled', source:a.source?.title||'Unknown',
@@ -570,6 +574,7 @@ async function enrich(story){
       setStatus(story,'Fetching: '+a.source+'…');
       const r = await fetchUrlBody(a.url);
       a.body = r.body||''; a.bodyFrom = a.body ? 'fetch' : '';
+      if (!a.body) fetchFails++;
     }
 
     let all = [...erArts, ...rssOnly, ...editorArts];
@@ -599,8 +604,19 @@ async function enrich(story){
     }
     story.articles = all;
     story.enrichedAt = new Date().toISOString();
-    setStatus(story,'');
-  } catch(e){ setStatus(story,'Enrichment failed: '+e.message,true); }
+    // Never blindly clear a real mid-run error — summarize instead, always,
+    // so "it finished fast and said nothing" can't happen again.
+    const nBody = erArts.filter(a=>a.bodyFrom==='er').length;
+    const nFetched = rssOnly.filter(a=>a.bodyFrom==='fetch').length;
+    if (hadError){
+      // keep the specific error already set by the catch above, but append counts
+      story.status = (story.status||'Enrichment had an error') +
+        ` — result: ${nBody} ER bodies, ${nFetched} fetched, ${fetchFails} fetch failures.`;
+    } else {
+      setStatus(story, `Enriched: ${nBody} ER bodies, ${nFetched} fetched` +
+        (fetchFails ? `, ${fetchFails} fetch failures (bot-blocked/paywalled likely)` : '') + '.');
+    }
+  } catch(e){ hadError=true; setStatus(story,'Enrichment failed: '+e.message,true); }
   story.busy=false; saveLineup(); render();
 }
 
