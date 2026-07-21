@@ -138,6 +138,23 @@
   .lineup-bar { display: flex; gap: 8px; margin-bottom: 12px; align-items: baseline; flex-wrap: wrap; }
   .lineup-bar .spacer { flex: 1; }
   .copied { color: var(--certified); font-size: 10.5px; }
+  #notesPanel { border: 1px solid var(--rule); background: var(--card); padding: 10px; margin-bottom: 12px; display: none; }
+  #notesPanel.open { display: block; }
+  .note-add { display: flex; gap: 6px; margin-bottom: 8px; }
+  .note-add textarea { flex: 1; min-height: 32px; }
+  .note-item { border-top: 1px dotted var(--rule); padding: 6px 0; }
+  .note-item textarea { width: 100%; min-height: 30px; font-size: 12px; }
+  .note-meta { font-size: 10.5px; color: var(--dim); display: flex; gap: 10px; margin-top: 3px; flex-wrap: wrap; align-items: baseline; }
+  .note-flags { font-size: 11px; color: #444; margin: 4px 0 0 10px; border-left: 2px solid var(--rule); padding-left: 8px; }
+  .note-flags div { margin-bottom: 2px; }
+  .promoted-box { margin-top: 6px; border: 1px dashed var(--certified); padding: 6px 8px; font-size: 12px; }
+  .sec-h { display: flex; gap: 8px; align-items: baseline; }
+  .sec-h .mini { font-size: 9.5px; padding: 0 5px; }
+  .revise-box, .flag-box { display: none; margin: 4px 0 8px; gap: 6px; }
+  .revise-box.open, .flag-box.open { display: flex; }
+  .revise-box textarea { flex: 1; min-height: 28px; font-size: 11.5px; }
+  .flag-box select { font-size: 11.5px; }
+  .flag-box input[type=text] { flex: 1; font-size: 11.5px; }
 
   @media (prefers-color-scheme: dark) {
     body { background: #141414; }
@@ -159,9 +176,12 @@
   <span class="stale" id="stale"></span>
   <span class="right">
     <span class="count" id="count"></span>
+    <button class="gear" id="notesToggle" title="editorial notes">📝<span id="notesBadge"></span></button>
     <button class="gear" id="gear" title="settings">⚙</button>
   </span>
 </header>
+
+<div id="notesPanel"></div>
 
 <div id="settings">
   <div class="row">
@@ -203,16 +223,71 @@ const LS = {
   settings: 'ntk_pulse_settings_v1',
   lineup:   'ntk_pulse_lineup_v1',
   sup:      'ntk_pulse_suppressed_v1',
+  notes:    'ntk_pulse_notes_v1',
 };
 function load(k, fallback) { try { const v = JSON.parse(localStorage.getItem(k)); return v ?? fallback; } catch { return fallback; } }
 let SETTINGS = load(LS.settings, { antKey:'', proxyBase:'', bodyLen:4000, maxArts:15 });
 let LINEUP = load(LS.lineup, []);          // [{id, title, angle, beat, category, conceptEntity, narrowKeyword, articles:[], enrichedAt, packages, busy?, status?, open?, outOpen?}]
 let SUP = load(LS.sup, {});                 // canonical url -> true  (editor suppressions, global, persistent)
+// Standing editorial notes: ongoing directives that ride into every
+// generation call until removed or promoted into v14 itself. genCounter
+// increments once per completed generateStory call; each note's baseline
+// is the counter's value at the moment it was added, so "stories since"
+// only counts generations the note could actually have influenced.
+let NOTES = load(LS.notes, { items: [], genCounter: 0 });
+let notesOpen = false;
 let STREAM = null;                          // clusters.json payload
 let TAB = 'stream';
 function saveSettings(){ localStorage.setItem(LS.settings, JSON.stringify(SETTINGS)); }
 function saveLineup(){ const clean = LINEUP.map(({busy,status,err,...s})=>s); localStorage.setItem(LS.lineup, JSON.stringify(clean)); }
 function saveSup(){ localStorage.setItem(LS.sup, JSON.stringify(SUP)); }
+function saveNotes(){
+  const clean = { ...NOTES, items: NOTES.items.map(({busy,...n})=>n) };
+  localStorage.setItem(LS.notes, JSON.stringify(clean));
+}
+function addNote(text){
+  if (!text.trim()) return;
+  NOTES.items.push({ id:'note-'+Date.now(), text:text.trim(),
+    addedAt:new Date().toISOString(), baseline:NOTES.genCounter||0, flags:[] });
+  saveNotes(); renderNotes();
+}
+function removeNote(id){
+  if (!confirm('Remove this standing note? It will stop applying to future generations.')) return;
+  NOTES.items = NOTES.items.filter(n=>n.id!==id); saveNotes(); renderNotes();
+}
+function notesBlock(){
+  const items = (NOTES.items||[]).filter(n=>n.text && n.text.trim());
+  if (!items.length) return '';
+  return `\n\nSTANDING EDITORIAL NOTES — ongoing directives from the editor, apply to every section, every story, until told otherwise:\n`+
+    items.map(n=>`- ${n.text}`).join('\n');
+}
+function flagSection(story, sectionName, noteId, newNoteText){
+  let note;
+  if (noteId==='__new__'){
+    if (!newNoteText || !newNoteText.trim()) return;
+    note = { id:'note-'+Date.now(), text:newNoteText.trim(), addedAt:new Date().toISOString(),
+      baseline:NOTES.genCounter||0, flags:[] };
+    NOTES.items.push(note);
+  } else {
+    note = NOTES.items.find(n=>n.id===noteId);
+  }
+  if (!note) return;
+  note.flags.push({ storyId:story.id, title:story.title, section:sectionName,
+    snippet:(story.packages[sectionName]||'').slice(0,180), flaggedAt:new Date().toISOString() });
+  saveNotes();
+  if (notesOpen) renderNotes(); else render();  // flag can be triggered while the notes panel is closed
+}
+async function promoteNote(note){
+  note.busy = true; renderNotes();
+  try {
+    const examples = note.flags.slice(-5).map(f=>`- (${f.section}, "${f.title}"): "${f.snippet}"`).join('\n');
+    const prompt = `You are editing the NTK News v14 editorial prompt system. An editor has been applying this standing note across recent output: "${note.text}"\n\n`+
+      (examples?`Flagged examples of the pattern in actual output:\n${examples}\n\n`:'')+
+      `Write ONE terse rule line in the EXACT house style of these existing v14 rules — absolute, imperative, no explanation, one sentence, no preamble:\n"No exclamation points."\n"No benefit claims."\n"Never re-establish facts from prior sections."\n\nReturn ONLY the new rule line. No quotes around it, no commentary.`;
+    note.promotedText = (await ai(prompt, 200)).trim();
+  } catch(e){ note.promotedText = '[Promote failed: '+e.message+']'; }
+  note.busy = false; saveNotes(); renderNotes();
+}
 
 /* ─── utils ─── */
 function esc(s){ const d=document.createElement('span'); d.textContent=s==null?'':s; return d.innerHTML; }
@@ -789,31 +864,33 @@ function activeArts(story){
   return story.articles.filter(a=>a.included && !a.dupOf && !isSup(a.url));
 }
 
-function spentStats(pkg){
-  // Mechanical ledger of numbers already deployed: every [STAT:] figure and
-  // any number appearing in the Truths [HEADLINE:] tag.
+function spentStats(pkg, includeList){
+  const list = includeList || SECS;
   const spent = [];
-  for (const sec of SECS){
+  for (const sec of list){
     const t = pkg[sec]; if (!t) continue;
     let m; const statRe = /\[STAT:\s*([^|\]]+?)\s*\|/g;
     while ((m = statRe.exec(t))) spent.push(`"${m[1].trim()}" (${sec} STAT)`);
   }
-  const hed = (pkg.truths||'').match(/\[HEADLINE:\s*([\s\S]*?)\]/);
-  if (hed){ const nums = hed[1].match(/\$?[\d,.]+%?/g)||[];
-    nums.forEach(n=>{ if(/\d/.test(n)) spent.push(`"${n}" (Truths headline)`); }); }
+  if (list.includes('truths')){
+    const hed = (pkg.truths||'').match(/\[HEADLINE:\s*([\s\S]*?)\]/);
+    if (hed){ const nums = hed[1].match(/\$?[\d,.]+%?/g)||[];
+      nums.forEach(n=>{ if(/\d/.test(n)) spent.push(`"${n}" (Truths headline)`); }); }
+  }
   return spent;
 }
-function priorSectionsBlock(pkg){
-  const written = SECS.filter(s=>pkg[s]);
+function sectionsBlock(pkg, includeList, label){
+  const written = includeList.filter(s=>pkg[s]);
   if (!written.length) return '';
-  const spent = spentStats(pkg);
-  return `\n\nALREADY WRITTEN — the reader has read these sections in full before reaching yours. This is the actual text, not a summary:\n\n`+
-    written.map(s=>`═══ ${s.toUpperCase()} (already published above your section) ═══\n${pkg[s]}`).join('\n\n')+
+  const spent = spentStats(pkg, includeList);
+  return `\n\n${label||'ALREADY WRITTEN'} — the reader has read these sections in full. This is the actual text, not a summary:\n\n`+
+    written.map(s=>`═══ ${s.toUpperCase()} (already published) ═══\n${pkg[s]}`).join('\n\n')+
     `\n\nCROSS-SECTION DISCIPLINE:\n`+
     `- Never re-establish, re-quote, or re-summarize facts, figures, or quotes that appear above. The reader holds them.\n`+
     (spent.length ? `- SPENT NUMBERS — already deployed as a STAT or headline figure: ${spent.join('; ')}. A spent number may be referred to obliquely ("the toll," "that figure") but never re-stated digit-for-digit and never used in another [STAT:] marker. If your sharpest number is spent, your section's sharpest number is a different one — or none.\n` : '')+
     `- Build forward, not sideways: a thread opened in an earlier section can be advanced, escalated, or paid off — never reopened as if new. Referring back in shorthand is encouraged; the sections should read as one mind thinking, not four writers briefed separately.`;
 }
+function priorSectionsBlock(pkg){ return sectionsBlock(pkg, SECS); }
 async function generateStory(story){
   const arts = activeArts(story);
   if (!arts.length){ setStatus(story,'No active sources — enrich or add URLs first',true); return; }
@@ -831,11 +908,35 @@ async function generateStory(story){
   const pkg = {};
   for (const sec of SECS){
     setStatus(story, story.title.slice(0,40)+' · '+sec+'…');
-    try { pkg[sec] = await ai(makePrompt(sec, artsText+angleBlock+contextBlock(story)+priorSectionsBlock(pkg), []), 1500); }
+    try { pkg[sec] = await ai(makePrompt(sec, artsText+angleBlock+contextBlock(story)+notesBlock()+priorSectionsBlock(pkg), []), 1500); }
     catch(e){ pkg[sec] = '[Generation failed: '+e.message+']'; }
   }
   story.packages = pkg; story.generatedAt = new Date().toISOString(); story.outOpen = true;
+  NOTES.genCounter = (NOTES.genCounter||0) + 1; saveNotes();
   story.busy=false; setStatus(story,''); saveLineup(); render();
+}
+async function reviseSection(story, sectionName, note){
+  const arts = activeArts(story);
+  if (!arts.length){ setStatus(story,'No active sources — enrich first',true); return; }
+  story.busy=true; setStatus(story,'Revising '+sectionName+'…'); render();
+  const artsText = arts.map(a=>
+    `TITLE: ${a.title}\nSOURCE: ${a.source}\nURL: ${a.url}\nDATE: ${a.date}\n\n${(a.body||'[body unavailable — headline only]').slice(0,SETTINGS.bodyLen)}`
+  ).join('\n\n---\n\n');
+  const angleBlock = story.angle ? `\n\nEDITOR'S ANGLE (the editorial frame for this story — honor it): ${story.angle}` : '';
+  // Siblings, not "prior": revise keeps the OTHER three sections fixed
+  // regardless of reading order, so a mid-package rewrite stays consistent
+  // on both sides of it, not just with what came before.
+  const siblings = sectionsBlock(story.packages, SECS.filter(s=>s!==sectionName),
+    'ALREADY PUBLISHED — SIBLING SECTIONS (unaffected by this revision)');
+  const revisionNote = (note||'').trim()
+    ? `\n\nEDITOR'S REVISION NOTE — the specific reason this section is being rewritten; apply it directly and concretely, not just in spirit: ${note.trim()}`
+    : '\n\nThis section is being regenerated at the editor\'s request with no specific note — reconsider it freshly against the source material and the standing editorial notes above.';
+  try {
+    story.packages[sectionName] = await ai(makePrompt(sectionName,
+      artsText+angleBlock+contextBlock(story)+notesBlock()+siblings+revisionNote, []), 1500);
+    setStatus(story,'Revised '+sectionName+'.');
+  } catch(e){ setStatus(story,'Revise failed: '+e.message,true); }
+  story.busy=false; saveLineup(); render();
 }
 async function generateAll(){
   for (const s of LINEUP) if (!s.packages) await generateStory(s);
@@ -1074,7 +1175,17 @@ function renderLineup(root){
       `</div>`+
       (s.open?`<div class="pkg">${pkgRows}${ctxRows}<div class="addurl"><input class="add-in" placeholder="https:// add a source URL"><button class="mini add-go">add</button></div></div>`:'')+
       (s.outOpen&&s.packages?`<div class="out">`+SECS.map(x=>
-        `<h3>${x}</h3><div class="body">${mdToHtml(esc(s.packages[x]||'')).split(/\n{2,}/).map(p=>p.startsWith('<')?p:'<p>'+p+'</p>').join('')}</div>`).join('')+`</div>`:'');
+        `<div class="sec-h"><h3>${x}</h3>`+
+        `<button class="mini revise-btn" data-sec="${x}">revise</button>`+
+        `<button class="mini flag-btn" data-sec="${x}">flag</button></div>`+
+        `<div class="revise-box" data-sec="${x}"><textarea class="revise-note" placeholder="What should change in ${x}?"></textarea>`+
+        `<button class="mini go revise-go" data-sec="${x}">regenerate</button></div>`+
+        `<div class="flag-box" data-sec="${x}">`+
+        `<select class="flag-select">${NOTES.items.map(n=>`<option value="${n.id}">${esc(n.text.slice(0,50))}</option>`).join('')}`+
+        `<option value="__new__">+ new note…</option></select>`+
+        `<input type="text" class="flag-new" placeholder="new note text (if creating one)">`+
+        `<button class="mini flag-go" data-sec="${x}">flag</button></div>`+
+        `<div class="body">${mdToHtml(esc(s.packages[x]||'')).split(/\n{2,}/).map(p=>p.startsWith('<')?p:'<p>'+p+'</p>').join('')}</div>`).join('')+`</div>`:'');
 
     el.querySelector('.story-title').addEventListener('change',e=>{ s.title=e.target.value; saveLineup(); });
     el.querySelector('.angle').addEventListener('change',e=>{ s.angle=e.target.value; saveLineup(); });
@@ -1097,6 +1208,27 @@ function renderLineup(root){
     el.querySelector('.gen').addEventListener('click',()=>generateStory(s));
     el.querySelector('.out-t')?.addEventListener('click',()=>{ s.outOpen=!s.outOpen; saveLineup(); render(); });
     el.querySelector('.cp-s')?.addEventListener('click',()=>cp(storyText(s), s.id));
+    if (s.outOpen && s.packages){
+      SECS.forEach(sec=>{
+        const reviseBox = el.querySelector(`.revise-box[data-sec="${sec}"]`);
+        const flagBox = el.querySelector(`.flag-box[data-sec="${sec}"]`);
+        el.querySelector(`.revise-btn[data-sec="${sec}"]`)?.addEventListener('click',()=>{
+          reviseBox.classList.toggle('open'); flagBox.classList.remove('open');
+        });
+        el.querySelector(`.flag-btn[data-sec="${sec}"]`)?.addEventListener('click',()=>{
+          flagBox.classList.toggle('open'); reviseBox.classList.remove('open');
+        });
+        el.querySelector(`.revise-go[data-sec="${sec}"]`)?.addEventListener('click',()=>{
+          const note = reviseBox.querySelector('.revise-note').value;
+          reviseSection(s, sec, note);
+        });
+        el.querySelector(`.flag-go[data-sec="${sec}"]`)?.addEventListener('click',()=>{
+          const sel = flagBox.querySelector('.flag-select').value;
+          const newText = flagBox.querySelector('.flag-new').value;
+          flagSection(s, sec, sel, newText);
+        });
+      });
+    }
     el.querySelectorAll('.pkg .article .x').forEach(btn=>{
       btn.addEventListener('click',e=>{
         const row=e.target.closest('.article');
@@ -1118,9 +1250,49 @@ function renderLineup(root){
   });
 }
 
+/* ─── notes panel ─── */
+function renderNotes(){
+  const panel = document.getElementById('notesPanel');
+  panel.className = notesOpen ? 'open' : '';
+  document.getElementById('notesBadge').textContent = NOTES.items.length ? ' '+NOTES.items.length : '';
+  if (!notesOpen) { panel.innerHTML=''; return; }
+  panel.innerHTML = `<div class="note-add">
+      <textarea id="new-note" placeholder="New standing note — applies to every section, every story, from now on"></textarea>
+      <button class="mini go" id="add-note-btn">add</button>
+    </div>`+
+    (NOTES.items.length ? NOTES.items.map(n=>{
+      const since = (NOTES.genCounter||0) - (n.baseline||0);
+      return `<div class="note-item" data-id="${n.id}">`+
+        `<textarea class="note-text">${esc(n.text)}</textarea>`+
+        `<div class="note-meta"><span>added ${new Date(n.addedAt).toLocaleDateString()}</span>`+
+        `<span>${since} ${since===1?'story':'stories'} since</span>`+
+        `<span>${n.flags.length} flagged example${n.flags.length===1?'':'s'}</span>`+
+        `<button class="mini promote-btn" ${n.busy?'disabled':''}>${n.promotedText?'re-promote':'promote'}</button>`+
+        `<button class="mini remove-note">remove</button></div>`+
+        (n.flags.length ? `<div class="note-flags">${n.flags.slice(-5).map(f=>
+          `<div>· <strong>${esc(f.section)}</strong> in "${esc(f.title)}": "${esc(f.snippet)}…"</div>`).join('')}</div>` : '')+
+        (n.promotedText ? `<div class="promoted-box">${esc(n.promotedText)}<br><button class="mini copy-promoted">copy rule</button>`+
+          `<span class="copied">${copiedFlag===n.id+'-promo'?' copied':''}</span>`+
+          `<div style="color:var(--dim);margin-top:4px">Paste into the matching voice-discipline block in ntk-production.html, bump the version, re-splice into Pulse.</div></div>` : '')+
+      `</div>`;
+    }).join('') : `<div style="color:var(--dim);font-size:12px">No standing notes yet. Add one above, or flag a generated section below and create one from there.</div>`);
+
+  panel.querySelector('#add-note-btn').addEventListener('click',()=>{
+    addNote(panel.querySelector('#new-note').value);
+  });
+  panel.querySelectorAll('.note-item').forEach(row=>{
+    const id = row.dataset.id; const note = NOTES.items.find(n=>n.id===id);
+    row.querySelector('.note-text').addEventListener('change',e=>{ note.text=e.target.value; saveNotes(); });
+    row.querySelector('.remove-note').addEventListener('click',()=>removeNote(id));
+    row.querySelector('.promote-btn').addEventListener('click',()=>promoteNote(note));
+    row.querySelector('.copy-promoted')?.addEventListener('click',()=>cp(note.promotedText, id+'-promo'));
+  });
+}
+
 /* ─── shell ─── */
 function render(){
   const root=document.getElementById('view');
+  document.getElementById('notesBadge').textContent = NOTES.items.length ? ' '+NOTES.items.length : '';
   document.getElementById('tab-stream').classList.toggle('on', TAB==='stream');
   document.getElementById('tab-lineup').classList.toggle('on', TAB==='lineup');
   document.getElementById('tab-lineup').textContent = 'lineup'+(LINEUP.length?' ('+LINEUP.length+')':'');
@@ -1128,6 +1300,7 @@ function render(){
 }
 document.getElementById('tab-stream').addEventListener('click',()=>{ TAB='stream'; render(); });
 document.getElementById('tab-lineup').addEventListener('click',()=>{ TAB='lineup'; render(); });
+document.getElementById('notesToggle').addEventListener('click',()=>{ notesOpen=!notesOpen; renderNotes(); });
 document.getElementById('gear').addEventListener('click',()=>{
   const p=document.getElementById('settings'); p.classList.toggle('open');
   document.getElementById('set-key').value=SETTINGS.antKey;
