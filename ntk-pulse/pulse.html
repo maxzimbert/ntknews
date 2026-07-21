@@ -275,8 +275,17 @@ function proxyUrl(params){
 }
 async function netlifyFetch(params){
   const r = await fetch(proxyUrl(params));
-  if (!r.ok) throw new Error('Proxy error '+r.status);
-  const data = await r.json();
+  const raw = await r.text();
+  if (!r.ok) throw new Error('Proxy error '+r.status+': '+raw.slice(0,400));
+  let data;
+  try { data = JSON.parse(raw); }
+  catch {
+    // EventRegistry sometimes rejects a request with a plain-text response
+    // (bad/foreign key, account issue) instead of JSON — that response was
+    // getting truncated to a few characters by the generic "not valid
+    // JSON" parse error. Surface the actual sentence instead.
+    throw new Error('Non-JSON response: '+raw.slice(0,400));
+  }
   // The proxy always answers 200 even when EventRegistry itself failed
   // internally (bad key, exhausted quota, malformed request) — ER expresses
   // that as {"error": "..."} in the body, not an HTTP error code. Without
