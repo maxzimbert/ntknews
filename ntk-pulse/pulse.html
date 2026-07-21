@@ -277,6 +277,11 @@ async function netlifyFetch(params){
   const r = await fetch(proxyUrl(params));
   if (!r.ok) throw new Error('Proxy error '+r.status);
   const data = await r.json();
+  // The proxy always answers 200 even when EventRegistry itself failed
+  // internally (bad key, exhausted quota, malformed request) — ER expresses
+  // that as {"error": "..."} in the body, not an HTTP error code. Without
+  // this check that failure looks identical to "zero real results."
+  if (data && typeof data.error === 'string') throw new Error('EventRegistry: '+data.error);
   if (Array.isArray(data)) return data;
   if (data.events?.results) return data.events.results;
   return data.articles?.results || [];
@@ -519,6 +524,10 @@ async function draftMeta(story){
 async function enrich(story){
   story.busy=true;
   let hadError=false;                 // an actual failure occurred somewhere in this run
+  let errMsg='';                      // the real cause — captured separately so the
+                                       // fetch-url loop's own progress text ("Fetching:
+                                       // NBC News…") can never overwrite it before the
+                                       // final summary is built.
   let fetchFails=0;                   // count of fetch-url attempts that returned nothing
   try {
     if (!story.conceptEntity && !story.angle) await draftMeta(story);
@@ -547,9 +556,10 @@ async function enrich(story){
           } else er = await netlifyFetch(base);
           if (!er.length){ const {pool, ...broad} = base; er = await netlifyFetch(broad); }  // pool empty — go broad
         } else setStatus(story,'ER: no concept match for "'+story.conceptEntity+'" — RSS links only');
-      } catch(e){ hadError=true; setStatus(story,'ER unavailable ('+e.message+') — RSS links only',true); }
+      } catch(e){ hadError=true; errMsg='ER unavailable: '+e.message; setStatus(story,errMsg+' — RSS links only',true); }
     } else if (!er.length && !story.conceptEntity){
-      hadError=true; setStatus(story,'No concept entity set — type one and hit check, or Draft first',true);
+      hadError=true; errMsg='No concept entity set — type one and hit check, or Draft first';
+      setStatus(story,errMsg,true);
     }
     const erArts = er.map(a=>({
       url:a.url||'', title:a.title||'Untitled', source:a.source?.title||'Unknown',
@@ -609,9 +619,17 @@ async function enrich(story){
     const nBody = erArts.filter(a=>a.bodyFrom==='er').length;
     const nFetched = rssOnly.filter(a=>a.bodyFrom==='fetch').length;
     if (hadError){
-      // keep the specific error already set by the catch above, but append counts
-      story.status = (story.status||'Enrichment had an error') +
+      // Build from errMsg — the captured cause — never from the live
+      // story.status, which the fetch-url loop's progress updates have
+      // almost certainly overwritten by this point. And set story.err
+      // directly rather than via setStatus: every plain progress update
+      // in between ("Fetching: NBC News…") called setStatus with no err
+      // argument, which resets story.err to false on every call — so by
+      // the time we get here the red/error styling has been silently
+      // wiped even though the failure is real. Re-assert it explicitly.
+      story.status = (errMsg||'Enrichment had an error') +
         ` — result: ${nBody} ER bodies, ${nFetched} fetched, ${fetchFails} fetch failures.`;
+      story.err = true;
     } else {
       setStatus(story, `Enriched: ${nBody} ER bodies, ${nFetched} fetched` +
         (fetchFails ? `, ${fetchFails} fetch failures (bot-blocked/paywalled likely)` : '') + '.');
