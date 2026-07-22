@@ -64,7 +64,8 @@ ENTITY_BLOCKLIST = set("""here here's there this that these those city council r
 new news today yesterday tomorrow first second third last update updates live also here'
 where when what why how who whom whose which world global national local state states
 country countries government congress senate house president secretary official officials
-top bottom fresh breaking latest exclusive analysis opinion editorial comment view""".split())
+top bottom fresh breaking latest exclusive analysis opinion editorial comment view
+trump white house administration""".split())  # omnipresent names — not a distinguishing signal
 
 # Common headline abbreviations that split clusters ("Fed" vs "Federal
 # Reserve" share zero tokens otherwise). Conservative additive fix —
@@ -79,14 +80,19 @@ ENTITY_ALIASES = {
 }
 
 
-def entities(title):
-    """Capitalized tokens from the title — cheap named-entity proxy.
+def entities(title, summary=""):
+    """Capitalized tokens from the title AND summary — cheap named-entity proxy.
 
     Token-level so 'US Supreme Court' and 'Supreme Court' share {'supreme','court'}.
     Keeps sentence-initial proper nouns provided the word isn't a generic
     in ENTITY_BLOCKLIST.
+
+    Reads summary too, not just title (July 21 indie-clustering test): wire
+    headlines front-load entities by convention; many indie headlines
+    (datelines, literary titles) don't, even when the body plainly does.
     """
-    tokens = re.findall(r"[A-Za-z][a-zA-Z0-9''\.]+", title)
+    combined = title + " " + (summary or "")
+    tokens = re.findall(r"[A-Za-z][a-zA-Z0-9''\.]+", combined)
     ents = set()
     for tok in tokens:
         if not tok[0].isupper():
@@ -168,7 +174,7 @@ def main():
         return
 
     vecs = build_vectors(items)
-    ents = {it["id"]: entities(it["title"]) for it in items}
+    ents = {it["id"]: entities(it["title"], it.get("summary","")) for it in items}
 
     clusters = []  # each: {"ids": [...], "centroid": vec, "entities": set}
     for it in items:
@@ -217,6 +223,7 @@ def main():
 
     by_id = {it["id"]: it for it in items}
     out = []
+    members_by_key = {}
     for cl in clusters:
         members = [by_id[i] for i in cl["ids"]]
         times = [ts(m, now) for m in members]
@@ -234,6 +241,7 @@ def main():
             lang_penalty = 0 if member.get("language", "en") == "en" else 1
             return (lang_penalty, member["tier"], mt[1])
         rep = sorted(zip(members, times), key=rep_sort_key)[0][0]
+        members_by_key[rep["id"]] = members
         pulse_score = len(pubs) * DIVERSITY_WEIGHT - latest_age_h
         out.append({
             "key": rep["id"],
@@ -252,6 +260,13 @@ def main():
                 "published": m.get("published"),
             } for m, _ in sorted(zip(members, times), key=lambda mt: mt[1], reverse=True)],
         })
+
+    # Echo detection: a cluster with at least one origin:"indie" item AND at
+    # least one non-indie item is flagged. Purely additive — a label on
+    # clusters the join logic already built, never a change to scoring.
+    for c in out:
+        origins = {feeds_by_id.get(m["publisher"], {}).get("origin", "rss") for m in members_by_key.get(c["key"], [])}
+        c["echo"] = bool(("indie" in origins) and (origins - {"indie"}))
 
     out.sort(key=lambda c: c["pulse_score"], reverse=True)
     payload = {"updated": now.isoformat(), "window_items": len(items), "clusters": out}
