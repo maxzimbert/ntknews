@@ -1044,6 +1044,12 @@ function mcCentroid(vecs){
    every cluster.py run and would otherwise wipe a manual merge out. ─── */
 let MANUAL = load(LS.manual, []);
 let SELECTED = new Set();  // cluster keys currently checked for merging
+// Which organic cluster cards are expanded. Session-only (not persisted),
+// but crucially it's the ONLY thing that decides openness — previously
+// openness was partly inferred from EXTRACT_SEL's size, which resets to 0
+// the instant an extraction succeeds, collapsing the card you were just
+// looking at right when it should stay put so you can see the result.
+let OPEN_CLUSTERS = new Set();
 function saveManual(){ localStorage.setItem(LS.manual, JSON.stringify(MANUAL)); }
 function manualScore(mc){
   const pubs = new Set(mc.items.map(it=>it.publisher));
@@ -1082,7 +1088,18 @@ function extractSelected(sourceCluster){
     title: items[0].title+(items.length>1?' (+'+(items.length-1)+' extracted)':' (extracted)'),
     items, manual:true, createdAt:new Date().toISOString(), beat_hint:'other', triage:null,
     rescanResults:null, rescanAt:null, search:{open:false,kw:'',src:'',results:[],busy:false,note:''} };
-  MANUAL.push(mc); EXTRACT_SEL.delete(sourceCluster.key); saveManual(); render();
+  MANUAL.push(mc);
+  EXTRACT_SEL.delete(sourceCluster.key);
+  OPEN_CLUSTERS.add(sourceCluster.key);   // stay open — you were just looking at it
+  saveManual(); render();
+  // Scroll the newly created cluster into view and flash it — otherwise it
+  // can land anywhere in the score-sorted list, far from where you're looking,
+  // and a silent success reads exactly like a silent failure.
+  requestAnimationFrame(()=>{
+    const card = document.querySelector(`.cluster[data-mc-key="${mc.key}"]`);
+    if (card){ card.scrollIntoView({behavior:'smooth', block:'center'});
+      card.style.outline='2px solid #5a2d82'; setTimeout(()=>{ card.style.outline=''; }, 2000); }
+  });
 }
 
 function deleteManual(key){
@@ -1280,7 +1297,11 @@ function renderStream(root){
       `<div class="articles">${articles}${extractBar}`+
       `<button class="certify${inLineup(c.key)?' done':''}">${inLineup(c.key)?'✓ in lineup — click to remove':'→ lineup'}</button></div>`;
     el.querySelector('.selchk').addEventListener('click',e=>{ e.stopPropagation(); toggleSelect(c.key); });
-    el.querySelector('.hed').addEventListener('click',e=>{ if(e.target.classList.contains('selchk'))return; el.classList.toggle('open'); });
+    el.querySelector('.hed').addEventListener('click',e=>{
+      if(e.target.classList.contains('selchk'))return;
+      if (OPEN_CLUSTERS.has(c.key)) OPEN_CLUSTERS.delete(c.key); else OPEN_CLUSTERS.add(c.key);
+      render();
+    });
     el.querySelectorAll('.article .x').forEach(btn=>{
       btn.addEventListener('click',e=>{
         const i=+e.target.closest('.article').dataset.i;
@@ -1294,7 +1315,7 @@ function renderStream(root){
     el.querySelector('.extract-btn')?.addEventListener('click',()=>extractSelected(c));
     el.querySelector('.certify').addEventListener('click',()=>certify(c));
     list.appendChild(el);
-    if (el.querySelector('.certify.done')||nSup||extSel.size) el.classList.add('open');
+    if (OPEN_CLUSTERS.has(c.key)||el.querySelector('.certify.done')||nSup) el.classList.add('open');
   }
 }
 
@@ -1302,6 +1323,7 @@ function renderManualCard(root, mc){
   const pubs = [...new Set(mc.items.map(it=>it.publisher))];
   const el = document.createElement('div');
   el.className = 'cluster open'+(SELECTED.has(mc.key)?' selected':'');
+  el.dataset.mcKey = mc.key;
   const nSup = mc.items.filter(it=>isSup(it.url)).length;
   const extSel = EXTRACT_SEL.get(mc.key) || new Set();
   const multi = mc.items.length > 1;
