@@ -122,6 +122,18 @@
   .qpanel .qrow { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px; }
   .qpanel input[type=text] { flex: 1; min-width: 160px; }
   .qpanel .qres { font-size: 12px; padding: 2px 0; display: flex; gap: 6px; align-items: baseline; }
+  .selbar { position: sticky; top: 0; background: #fff; border-bottom: 2px solid var(--ink);
+    padding: 6px 0; margin-bottom: 8px; display: none; gap: 8px; align-items: baseline; z-index: 5; }
+  .selbar.show { display: flex; }
+  .selchk { margin-right: 6px; }
+  .cluster.selected { background: #fffbe6; }
+  @media (prefers-color-scheme: dark) { .selbar { background: #141414; } .cluster.selected { background: #2a2610; } }
+  .manual-badge { background: #5a2d82; color: #fff; font-size: 9.5px; padding: 0 5px;
+    text-transform: uppercase; letter-spacing: 0.5px; margin-right: 6px; }
+  .rescan-sugg { margin: 6px 0 0 12px; border-left: 2px solid var(--rule); padding-left: 8px; }
+  .rescan-sugg .article { display: flex; gap: 6px; align-items: baseline; font-size: 11.5px; }
+  .rescan-sugg .why { color: var(--dim); font-size: 10px; }
+  .mc-search { border: 1px dashed var(--rule); padding: 6px 8px; margin-top: 6px; font-size: 12px; }
   .qpanel .qres label { flex: 1; }
   .addurl { display: flex; gap: 6px; margin-top: 6px; }
   .addurl input { flex: 1; }
@@ -224,6 +236,7 @@ const LS = {
   lineup:   'ntk_pulse_lineup_v1',
   sup:      'ntk_pulse_suppressed_v1',
   notes:    'ntk_pulse_notes_v1',
+  manual:   'ntk_pulse_manual_clusters_v1',
 };
 function load(k, fallback) { try { const v = JSON.parse(localStorage.getItem(k)); return v ?? fallback; } catch { return fallback; } }
 let SETTINGS = load(LS.settings, { antKey:'', proxyBase:'', bodyLen:4000, maxArts:15 });
@@ -955,6 +968,181 @@ function siteExport(){
   return 'const stories = [\n' + LINEUP.filter(s=>s.packages).map(toSiteStoryBlock).join('\n') + '\n];';
 }
 
+/* ─── client-side entity/cosine matcher — ported from cluster.py, WITH
+   both fixes from the indie-clustering test baked in from the start:
+   entities read title+summary (not title alone), and omnipresent names
+   are blocklisted. Powers manual-cluster Rescan — the only place Pulse
+   runs join logic in the browser rather than the pipeline. ─── */
+const MC_STOPWORDS = new Set(("a an and are as at be but by for from has have he her his i if in into is it its "+
+  "of on or she that the their they this to was were will with you your we our not no new says said "+
+  "after over more than about up out how what who when why").split(/\s+/));
+function mcStem(w){
+  const rules = [["ization","iz"],["izations","iz"],["ized","iz"],["izes","iz"],["ize","iz"],
+    ["ational","ate"],["ations","ate"],["ation","ate"],["ies","y"],["ing",""],["ers","er"],
+    ["ed",""],["es",""],["s",""]];
+  for (const [suf,rep] of rules) if (w.endsWith(suf) && w.length-suf.length>=3) return w.slice(0,w.length-suf.length)+rep;
+  return w;
+}
+function mcTokenize(text){
+  return ((text||'').toLowerCase().match(/[a-z0-9']+/g)||[]).filter(w=>!MC_STOPWORDS.has(w)&&w.length>2).map(mcStem);
+}
+const MC_ENTITY_BLOCKLIST = new Set(("here theres there this that these those city council report reports "+
+  "new news today yesterday tomorrow first second third last update updates live also "+
+  "where when what why how who whom whose which world global national local state states "+
+  "country countries government congress senate house president secretary official officials "+
+  "top bottom fresh breaking latest exclusive analysis opinion editorial comment view "+
+  "trump white house administration").split(/\s+/));
+const MC_ENTITY_ALIASES = {fed:["federal","reserv"],feds:["federal","reserv"],scotus:["supreme","court"],
+  gop:["republican"],dems:["democrat"],dem:["democrat"]};
+function mcEntities(title, summary){
+  const tokens = (title+' '+(summary||'')).match(/[A-Za-z][a-zA-Z0-9’']+/g)||[];
+  const ents = new Set();
+  for (const tok of tokens){
+    if (!/[A-Z]/.test(tok[0])) continue;
+    let low = tok.toLowerCase();
+    for (const suf of ["’s","'s","’","'"]) if (low.endsWith(suf)){ low = low.slice(0,-suf.length); break; }
+    low = low.replace(/\.$/,'');
+    if (MC_ENTITY_ALIASES[low]){ MC_ENTITY_ALIASES[low].forEach(t=>ents.add(mcStem(t))); continue; }
+    if (MC_STOPWORDS.has(low) || MC_ENTITY_BLOCKLIST.has(low) || low.length<3) continue;
+    ents.add(mcStem(low));
+  }
+  return ents;
+}
+function mcBuildVectors(items){
+  // items: [{id, title, summary}]. TF-IDF over the given pool, same shape as cluster.py.
+  const tfMaps = {};
+  items.forEach(it=>{ const tf={}; mcTokenize(it.title+' '+(it.summary||'')).forEach(t=>tf[t]=(tf[t]||0)+1); tfMaps[it.id]=tf; });
+  const df = {};
+  Object.values(tfMaps).forEach(tf=>Object.keys(tf).forEach(t=>df[t]=(df[t]||0)+1));
+  const n = Math.max(items.length,1);
+  const idf = {}; Object.keys(df).forEach(t=>idf[t]=Math.log(n/(1+df[t]))+1);
+  const vecs = {};
+  items.forEach(it=>{
+    const v={}; Object.entries(tfMaps[it.id]).forEach(([t,c])=>{ v[t]=(1+Math.log(c))*(idf[t]||1); });
+    let norm=Math.sqrt(Object.values(v).reduce((s,x)=>s+x*x,0))||1;
+    Object.keys(v).forEach(t=>v[t]/=norm);
+    vecs[it.id]=v;
+  });
+  return vecs;
+}
+function mcCosine(a,b){
+  const [s,l] = Object.keys(a).length<Object.keys(b).length ? [a,b] : [b,a];
+  let sum=0; for (const t in s) if (l[t]) sum += s[t]*l[t];
+  return sum;
+}
+function mcCentroid(vecs){
+  const agg={};
+  vecs.forEach(v=>Object.entries(v).forEach(([t,x])=>{ agg[t]=(agg[t]||0)+x; }));
+  let norm=Math.sqrt(Object.values(agg).reduce((s,x)=>s+x*x,0))||1;
+  Object.keys(agg).forEach(t=>agg[t]/=norm);
+  return agg;
+}
+
+/* ─── Manual clusters: singletons (or any clusters) merged by hand in the
+   stream, with rescan/add/search to keep building the set. Persist across
+   pipeline runs — unlike organic clusters, which are fully regenerated by
+   every cluster.py run and would otherwise wipe a manual merge out. ─── */
+let MANUAL = load(LS.manual, []);
+let SELECTED = new Set();  // cluster keys currently checked for merging
+function saveManual(){ localStorage.setItem(LS.manual, JSON.stringify(MANUAL)); }
+function manualScore(mc){
+  const pubs = new Set(mc.items.map(it=>it.publisher));
+  const latest = mc.items.reduce((mx,it)=> (it.published||'')>mx?it.published:mx, '');
+  const ageH = latest ? Math.max((Date.now()-new Date(latest))/3600000, 0) : 999;
+  return pubs.size*0.5 - ageH;
+}
+function toggleSelect(key){ if (SELECTED.has(key)) SELECTED.delete(key); else SELECTED.add(key); render(); }
+function mergeSelected(){
+  if (SELECTED.size < 2){ alert('Select at least 2 clusters to merge.'); return; }
+  const all = [...(STREAM?.clusters||[]), ...MANUAL];
+  const picked = all.filter(c=>SELECTED.has(c.key));
+  const items = []; picked.forEach(c=>items.push(...c.items));
+  const mc = { key:'manual-'+Date.now(), title: picked[0].title+(picked.length>1?' (+'+(picked.length-1)+' merged)':''),
+    items, manual:true, createdAt:new Date().toISOString(), beat_hint:'other', triage:null,
+    rescanResults:null, rescanAt:null, search:{open:false,kw:'',src:'',results:[],busy:false,note:''} };
+  MANUAL.push(mc); SELECTED.clear(); saveManual(); render();
+}
+function deleteManual(key){
+  if (!confirm('Delete this manual cluster? (Certify it into the lineup first if you want to keep it.)')) return;
+  MANUAL = MANUAL.filter(m=>m.key!==key); saveManual(); render();
+}
+function rescanManual(mc){
+  if (!STREAM || !STREAM.clusters){ alert('No stream data loaded — nothing to rescan against.'); return; }
+  const poolItems = [];
+  STREAM.clusters.forEach(c=>c.items.forEach(it=>poolItems.push({id:it.id, title:it.title, summary:'', _ref:{...it, _fromCluster:c.title}})));
+  const mcShape = mc.items.map(it=>({id:it.id, title:it.title, summary:''}));
+  const existingIds = new Set(mc.items.map(it=>it.id));
+  const vecs = mcBuildVectors([...poolItems.map(p=>({id:p.id,title:p.title,summary:p.summary})), ...mcShape]);
+  const centroid = mcCentroid(mcShape.map(it=>vecs[it.id]));
+  const mcEnts = new Set(); mc.items.forEach(it=>mcEntities(it.title,'').forEach(e=>mcEnts.add(e)));
+  const candidates = [];
+  poolItems.forEach(pi=>{
+    if (existingIds.has(pi.id)) return;
+    const sim = mcCosine(centroid, vecs[pi.id]);
+    const ents = mcEntities(pi.title,'');
+    const shared = [...ents].filter(e=>mcEnts.has(e));
+    if (shared.length>=1 && sim>=0.12) candidates.push({item:pi._ref, sim, shared});
+  });
+  candidates.sort((a,b)=>b.sim-a.sim);
+  mc.rescanResults = candidates.slice(0,15).map(c=>({...c, pick:true}));
+  mc.rescanAt = new Date().toISOString();
+  saveManual(); render();
+}
+function applyRescan(mc){
+  const picked = (mc.rescanResults||[]).filter(c=>c.pick);
+  picked.forEach(c=>mc.items.push(c.item));
+  mc.rescanResults = null; saveManual(); render();
+}
+async function addUrlToManual(mc, url){
+  if (!url.trim()) return;
+  const r = await fetchUrlBody(url.trim());
+  mc.items.push({ id:'manual-add-'+Date.now(), title:r.title||url.trim(), url:url.trim(),
+    publisher:'Editor import', published:new Date().toISOString() });
+  saveManual(); render();
+}
+async function mcWindowSearch(mc){
+  const kws = mc.search.kw.toLowerCase().split(/\s+/).filter(Boolean);
+  if (!kws.length || !STREAM){ mc.search.note='Enter a keyword first.'; render(); return; }
+  const srcF = mc.search.src.toLowerCase().trim();
+  const existingIds = new Set(mc.items.map(it=>it.id));
+  const out = [];
+  STREAM.clusters.forEach(c=>c.items.forEach(it=>{
+    if (existingIds.has(it.id)) return;
+    const hay = (it.title+' '+it.publisher).toLowerCase();
+    if (!kws.every(k=>hay.includes(k))) return;
+    if (srcF && !it.publisher.toLowerCase().includes(srcF)) return;
+    out.push({...it, pick:true});
+  }));
+  mc.search.results = out;
+  mc.search.note = out.length ? '' : 'Nothing in the current window matches.';
+  saveManual(); render();
+}
+async function mcErSearch(mc){
+  mc.search.busy = true; mc.search.note = 'Searching EventRegistry…'; render();
+  try {
+    const raw = await netlifyFetch({mode:'keyword-scan', q:mc.search.kw, articlesCount:'10', bodyLen:String(SETTINGS.bodyLen)});
+    const srcF = mc.search.src.toLowerCase().trim();
+    const have = new Set(mc.search.results.map(r=>canon(r.url)));
+    let added = 0;
+    for (const a of raw){
+      if (!a.url || have.has(canon(a.url))) continue;
+      const sname = a.source?.title||'Unknown';
+      if (srcF && !sname.toLowerCase().includes(srcF)) continue;
+      mc.search.results.push({id:'er-'+canon(a.url), url:a.url, title:a.title||'Untitled',
+        publisher:sname, published:a.date||'', pick:true});
+      added++;
+    }
+    mc.search.note = added ? '' : 'EventRegistry found nothing new.';
+  } catch(e){ mc.search.note = 'ER search failed: '+e.message; }
+  mc.search.busy = false; saveManual(); render();
+}
+function mcApplySearch(mc){
+  const picked = (mc.search.results||[]).filter(r=>r.pick);
+  picked.forEach(r=>mc.items.push({id:r.id, title:r.title, url:r.url, publisher:r.publisher, published:r.published}));
+  mc.search = {open:false, kw:'', src:'', results:[], busy:false, note:''};
+  saveManual(); render();
+}
+
 /* ─── Create cluster by query (2b) ─── */
 let Q = { open:false, kw:'', src:'', results:[], busy:false, note:'' };
 function windowSearch(){
@@ -1014,21 +1202,38 @@ function createStoryFromQuery(){
 /* ─── render: stream ─── */
 function renderStream(root){
   const data = STREAM;
-  if (!data){ root.innerHTML = '<div class="empty">No data yet — data/clusters.json not found. Run the pipeline once.</div>'; return; }
-  const clusters = data.clusters||[];
-  document.getElementById('count').textContent = clusters.length + (clusters.length===1?' story':' stories');
-  const ageMin = Math.round((Date.now()-new Date(data.updated))/60000);
-  document.getElementById('stale').textContent = ageMin>60 ? '· data '+rel(data.updated)+' old — run the workflow' : '';
-  if (!clusters.length){ root.innerHTML='<div class="empty">Nothing in the window. Run the pipeline.</div>'; return; }
+  if (!data && !MANUAL.length){ root.innerHTML = '<div class="empty">No data yet — data/clusters.json not found. Run the pipeline once.</div>'; return; }
+  const organic = (data&&data.clusters)||[];
+  document.getElementById('count').textContent = (organic.length+MANUAL.length) + ((organic.length+MANUAL.length)===1?' story':' stories');
+  if (data){
+    const ageMin = Math.round((Date.now()-new Date(data.updated))/60000);
+    document.getElementById('stale').textContent = ageMin>60 ? '· data '+rel(data.updated)+' old — run the workflow' : '';
+  }
+  if (!organic.length && !MANUAL.length){ root.innerHTML='<div class="empty">Nothing in the window. Run the pipeline.</div>'; return; }
 
-  root.innerHTML='';
-  for (const c of clusters){
+  // Merge organic + manual into one sorted list, each tagged with its kind.
+  const combined = [
+    ...organic.map(c=>({kind:'organic', c, score:c.pulse_score})),
+    ...MANUAL.map(c=>({kind:'manual', c, score:manualScore(c)})),
+  ].sort((a,b)=>b.score-a.score);
+
+  root.innerHTML = `<div class="selbar${SELECTED.size?' show':''}">`+
+    `<span>${SELECTED.size} selected</span>`+
+    `<button class="mini go" id="merge-btn">merge into one cluster</button>`+
+    `<button class="mini" id="clear-sel">clear</button></div>`+
+    `<div id="stream-list"></div>`;
+  document.getElementById('merge-btn')?.addEventListener('click', mergeSelected);
+  document.getElementById('clear-sel')?.addEventListener('click', ()=>{ SELECTED.clear(); render(); });
+  const list = document.getElementById('stream-list');
+
+  for (const {kind, c} of combined){
+    if (kind === 'manual') { renderManualCard(list, c); continue; }
     const beat=(c.triage&&c.triage.beat)||c.beat_hint||'other';
     const verdict=c.triage&&c.triage.verdict;
     const line=c.triage&&c.triage.line;
     const solo=c.publisher_count<=1;
     const el=document.createElement('div');
-    el.className='cluster'+(solo?' solo':'')+(verdict==='NO'?' no-verdict-no':'');
+    el.className='cluster'+(solo?' solo':'')+(verdict==='NO'?' no-verdict-no':'')+(SELECTED.has(c.key)?' selected':'');
     const nSup = c.items.filter(it=>isSup(it.url)).length;
     const articles=c.items.map((it,i)=>
       `<div class="article${isSup(it.url)?' suppressed':''}" data-i="${i}">`+
@@ -1038,14 +1243,15 @@ function renderStream(root){
       `<button class="x" title="${isSup(it.url)?'restore':'suppress from digest work'}">✕</button></div>`
     ).join('');
     el.innerHTML=
-      `<div class="hed">${esc(c.title)}</div>`+
+      `<div class="hed"><input type="checkbox" class="selchk" ${SELECTED.has(c.key)?'checked':''}> ${esc(c.title)}${c.echo?' <span class="manual-badge" style="background:#006b6b">echoed by indie</span>':''}</div>`+
       `<div class="meta-line"><span class="beat beat-${esc(beat)}">${esc(beat)}</span>`+
       `${esc(pubList(c.publishers))} · ${rel(c.latest)}`+
       (nSup?` · <span style="color:var(--stale)">${nSup} suppressed</span>`:'')+`</div>`+
       (line&&!solo?`<div class="line">${esc(line)}</div>`:'')+
       `<div class="articles">${articles}`+
       `<button class="certify${inLineup(c.key)?' done':''}">${inLineup(c.key)?'✓ in lineup — click to remove':'→ lineup'}</button></div>`;
-    el.querySelector('.hed').addEventListener('click',()=>el.classList.toggle('open'));
+    el.querySelector('.selchk').addEventListener('click',e=>{ e.stopPropagation(); toggleSelect(c.key); });
+    el.querySelector('.hed').addEventListener('click',e=>{ if(e.target.classList.contains('selchk'))return; el.classList.toggle('open'); });
     el.querySelectorAll('.article .x').forEach(btn=>{
       btn.addEventListener('click',e=>{
         const i=+e.target.closest('.article').dataset.i;
@@ -1054,9 +1260,87 @@ function renderStream(root){
       });
     });
     el.querySelector('.certify').addEventListener('click',()=>certify(c));
-    root.appendChild(el);
+    list.appendChild(el);
     if (el.querySelector('.certify.done')||nSup) el.classList.add('open');
   }
+}
+
+function renderManualCard(root, mc){
+  const pubs = [...new Set(mc.items.map(it=>it.publisher))];
+  const el = document.createElement('div');
+  el.className = 'cluster open'+(SELECTED.has(mc.key)?' selected':'');
+  const nSup = mc.items.filter(it=>isSup(it.url)).length;
+  const articles = mc.items.map((it,i)=>
+    `<div class="article${isSup(it.url)?' suppressed':''}" data-i="${i}">`+
+    `<span class="pub">${esc(it.publisher)}</span> · `+
+    `<a href="${esc(it.url||'#')}" target="_blank" rel="noopener">${esc(it.title)}</a> `+
+    `<span class="t">${rel(it.published)}</span>`+
+    `<button class="x" title="${isSup(it.url)?'restore':'suppress'}">✕</button></div>`
+  ).join('');
+  const sugg = mc.rescanResults ? `<div class="rescan-sugg">`+
+    (mc.rescanResults.length ? mc.rescanResults.map((r,i)=>
+      `<div class="article"><input type="checkbox" data-ri="${i}" ${r.pick?'checked':''}>`+
+      `<span class="pub">${esc(r.item.publisher)}</span> · `+
+      `<a href="${esc(r.item.url)}" target="_blank" rel="noopener">${esc(r.item.title)}</a>`+
+      ` <span class="why">shared: ${r.shared.slice(0,4).join(', ')} · sim ${r.sim.toFixed(2)}</span></div>`
+    ).join('') : `<div class="why">No candidates found in the current window.</div>`)+
+    (mc.rescanResults.length ? `<button class="mini go rescan-apply">add checked</button>`:'')+
+    `<button class="mini rescan-dismiss">dismiss</button></div>` : '';
+  const searchBox = mc.search.open ? `<div class="mc-search">
+      <div class="qrow"><input type="text" class="mc-kw" placeholder="keywords" value="${esc(mc.search.kw)}">
+      <input type="text" class="mc-src" placeholder="source filter" value="${esc(mc.search.src)}" style="max-width:150px">
+      <button class="mini mc-win">search window</button>
+      <button class="mini mc-er" ${mc.search.busy?'disabled':''}>search EventRegistry</button></div>`+
+      (mc.search.results.length ? mc.search.results.map((r,i)=>
+        `<div class="qres"><input type="checkbox" data-si="${i}" ${r.pick?'checked':''}>`+
+        `<label><span class="pub">${esc(r.publisher)}</span> · <a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a></label></div>`
+      ).join('') : '')+
+      `<div style="margin-top:4px"><span style="color:var(--dim);font-size:11px">${esc(mc.search.note)}</span>`+
+      (mc.search.results.length?`<button class="mini go mc-apply-search">add checked</button>`:'')+`</div></div>` : '';
+  el.innerHTML =
+    `<div class="hed"><input type="checkbox" class="selchk" ${SELECTED.has(mc.key)?'checked':''}> `+
+    `<span class="manual-badge">manual</span>${esc(mc.title)}</div>`+
+    `<div class="meta-line">${esc(pubList(pubs))} · created ${new Date(mc.createdAt).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})}`+
+    (nSup?` · <span style="color:var(--stale)">${nSup} suppressed</span>`:'')+`</div>`+
+    `<div class="articles">${articles}${sugg}`+
+    `<div style="margin-top:6px">`+
+    `<button class="mini rescan-btn">rescan</button> `+
+    `<button class="mini mc-search-toggle">${mc.search.open?'hide':''} search</button> `+
+    `<button class="mini mc-del">delete</button> `+
+    `<button class="certify${inLineup(mc.key)?' done':''}">${inLineup(mc.key)?'✓ in lineup — click to remove':'→ lineup'}</button></div>`+
+    `<div class="addurl"><input class="mc-add-in" placeholder="https:// add a source URL"><button class="mini mc-add-go">add</button></div>`+
+    searchBox+
+    `</div>`;
+  el.querySelector('.selchk').addEventListener('click',e=>{ e.stopPropagation(); toggleSelect(mc.key); });
+  el.querySelectorAll('.articles > .article .x').forEach(btn=>{
+    btn.addEventListener('click',e=>{
+      const i=+e.target.closest('.article').dataset.i;
+      toggleSup(mc.items[i].url); render();
+    });
+  });
+  el.querySelector('.rescan-btn').addEventListener('click',()=>rescanManual(mc));
+  el.querySelector('.rescan-apply')?.addEventListener('click',()=>applyRescan(mc));
+  el.querySelector('.rescan-dismiss')?.addEventListener('click',()=>{ mc.rescanResults=null; saveManual(); render(); });
+  el.querySelectorAll('.rescan-sugg input[type=checkbox]').forEach(cb=>{
+    cb.addEventListener('change',e=>{ mc.rescanResults[+e.target.dataset.ri].pick = e.target.checked; });
+  });
+  el.querySelector('.mc-del').addEventListener('click',()=>deleteManual(mc.key));
+  el.querySelector('.certify').addEventListener('click',()=>certify(mc));
+  el.querySelector('.mc-add-go').addEventListener('click',()=>{
+    const inp = el.querySelector('.mc-add-in'); addUrlToManual(mc, inp.value); inp.value='';
+  });
+  el.querySelector('.mc-search-toggle').addEventListener('click',()=>{ mc.search.open=!mc.search.open; saveManual(); render(); });
+  if (mc.search.open){
+    el.querySelector('.mc-kw').addEventListener('change',e=>{ mc.search.kw=e.target.value; });
+    el.querySelector('.mc-src').addEventListener('change',e=>{ mc.search.src=e.target.value; });
+    el.querySelector('.mc-win').addEventListener('click',()=>mcWindowSearch(mc));
+    el.querySelector('.mc-er').addEventListener('click',()=>mcErSearch(mc));
+    el.querySelectorAll('.mc-search .qres input[type=checkbox]').forEach(cb=>{
+      cb.addEventListener('change',e=>{ mc.search.results[+e.target.dataset.si].pick=e.target.checked; });
+    });
+    el.querySelector('.mc-apply-search')?.addEventListener('click',()=>mcApplySearch(mc));
+  }
+  root.appendChild(el);
 }
 
 /* ─── render: lineup ─── */
