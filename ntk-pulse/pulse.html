@@ -1062,6 +1062,29 @@ function mergeSelected(){
     rescanResults:null, rescanAt:null, search:{open:false,kw:'',src:'',results:[],busy:false,note:''} };
   MANUAL.push(mc); SELECTED.clear(); saveManual(); render();
 }
+// EXTRACT_SEL: clusterKey -> Set(itemId). Independent of SELECTED (whole-
+// cluster merge picks) — this tracks individual article checkboxes inside
+// one expanded cluster, for pulling a subset out into its own cluster.
+// Non-destructive, same philosophy as certify's snapshot: the source
+// cluster is untouched, the extracted items just also exist elsewhere now.
+let EXTRACT_SEL = new Map();
+function toggleExtractItem(clusterKey, itemId){
+  if (!EXTRACT_SEL.has(clusterKey)) EXTRACT_SEL.set(clusterKey, new Set());
+  const s = EXTRACT_SEL.get(clusterKey);
+  if (s.has(itemId)) s.delete(itemId); else s.add(itemId);
+  render();
+}
+function extractSelected(sourceCluster){
+  const ids = EXTRACT_SEL.get(sourceCluster.key);
+  if (!ids || ids.size < 1){ alert('Check at least one article to extract.'); return; }
+  const items = sourceCluster.items.filter(it=>ids.has(it.id));
+  const mc = { key:'manual-'+Date.now(),
+    title: items[0].title+(items.length>1?' (+'+(items.length-1)+' extracted)':' (extracted)'),
+    items, manual:true, createdAt:new Date().toISOString(), beat_hint:'other', triage:null,
+    rescanResults:null, rescanAt:null, search:{open:false,kw:'',src:'',results:[],busy:false,note:''} };
+  MANUAL.push(mc); EXTRACT_SEL.delete(sourceCluster.key); saveManual(); render();
+}
+
 function deleteManual(key){
   if (!confirm('Delete this manual cluster? (Certify it into the lineup first if you want to keep it.)')) return;
   MANUAL = MANUAL.filter(m=>m.key!==key); saveManual(); render();
@@ -1235,20 +1258,26 @@ function renderStream(root){
     const el=document.createElement('div');
     el.className='cluster'+(solo?' solo':'')+(verdict==='NO'?' no-verdict-no':'')+(SELECTED.has(c.key)?' selected':'');
     const nSup = c.items.filter(it=>isSup(it.url)).length;
+    const extSel = EXTRACT_SEL.get(c.key) || new Set();
+    const multi = c.items.length > 1;   // extraction only makes sense out of a multi-item cluster
     const articles=c.items.map((it,i)=>
       `<div class="article${isSup(it.url)?' suppressed':''}" data-i="${i}">`+
+      (multi?`<input type="checkbox" class="extchk" data-id="${esc(it.id)}" ${extSel.has(it.id)?'checked':''}>`:'')+
       `<span class="pub">${esc(it.publisher)}</span> · `+
       `<a href="${esc(it.url)}" target="_blank" rel="noopener">${esc(it.title)}</a> `+
       `<span class="t">${rel(it.published)}</span>`+
       `<button class="x" title="${isSup(it.url)?'restore':'suppress from digest work'}">✕</button></div>`
     ).join('');
+    const extractBar = multi ? `<div class="addurl" style="border:none;padding-top:6px">`+
+      `<span style="flex:1;color:var(--dim);font-size:11px">${extSel.size} checked</span>`+
+      `<button class="mini go extract-btn" ${extSel.size?'':'disabled'}>extract into new cluster</button></div>` : '';
     el.innerHTML=
       `<div class="hed"><input type="checkbox" class="selchk" ${SELECTED.has(c.key)?'checked':''}> ${esc(c.title)}${c.echo?' <span class="manual-badge" style="background:#006b6b">echoed by indie</span>':''}</div>`+
       `<div class="meta-line"><span class="beat beat-${esc(beat)}">${esc(beat)}</span>`+
       `${esc(pubList(c.publishers))} · ${rel(c.latest)}`+
       (nSup?` · <span style="color:var(--stale)">${nSup} suppressed</span>`:'')+`</div>`+
       (line&&!solo?`<div class="line">${esc(line)}</div>`:'')+
-      `<div class="articles">${articles}`+
+      `<div class="articles">${articles}${extractBar}`+
       `<button class="certify${inLineup(c.key)?' done':''}">${inLineup(c.key)?'✓ in lineup — click to remove':'→ lineup'}</button></div>`;
     el.querySelector('.selchk').addEventListener('click',e=>{ e.stopPropagation(); toggleSelect(c.key); });
     el.querySelector('.hed').addEventListener('click',e=>{ if(e.target.classList.contains('selchk'))return; el.classList.toggle('open'); });
@@ -1259,9 +1288,13 @@ function renderStream(root){
         e.target.closest('.cluster')?.classList.add('open');
       });
     });
+    el.querySelectorAll('.article .extchk').forEach(cb=>{
+      cb.addEventListener('click',e=>{ e.stopPropagation(); toggleExtractItem(c.key, e.target.dataset.id); });
+    });
+    el.querySelector('.extract-btn')?.addEventListener('click',()=>extractSelected(c));
     el.querySelector('.certify').addEventListener('click',()=>certify(c));
     list.appendChild(el);
-    if (el.querySelector('.certify.done')||nSup) el.classList.add('open');
+    if (el.querySelector('.certify.done')||nSup||extSel.size) el.classList.add('open');
   }
 }
 
@@ -1270,13 +1303,19 @@ function renderManualCard(root, mc){
   const el = document.createElement('div');
   el.className = 'cluster open'+(SELECTED.has(mc.key)?' selected':'');
   const nSup = mc.items.filter(it=>isSup(it.url)).length;
+  const extSel = EXTRACT_SEL.get(mc.key) || new Set();
+  const multi = mc.items.length > 1;
   const articles = mc.items.map((it,i)=>
     `<div class="article${isSup(it.url)?' suppressed':''}" data-i="${i}">`+
+    (multi?`<input type="checkbox" class="extchk" data-id="${esc(it.id)}" ${extSel.has(it.id)?'checked':''}>`:'')+
     `<span class="pub">${esc(it.publisher)}</span> · `+
     `<a href="${esc(it.url||'#')}" target="_blank" rel="noopener">${esc(it.title)}</a> `+
     `<span class="t">${rel(it.published)}</span>`+
     `<button class="x" title="${isSup(it.url)?'restore':'suppress'}">✕</button></div>`
   ).join('');
+  const extractBar = multi ? `<div class="addurl" style="border:none;padding-top:6px">`+
+    `<span style="flex:1;color:var(--dim);font-size:11px">${extSel.size} checked</span>`+
+    `<button class="mini go extract-btn" ${extSel.size?'':'disabled'}>extract into new cluster</button></div>` : '';
   const sugg = mc.rescanResults ? `<div class="rescan-sugg">`+
     (mc.rescanResults.length ? mc.rescanResults.map((r,i)=>
       `<div class="article"><input type="checkbox" data-ri="${i}" ${r.pick?'checked':''}>`+
@@ -1302,7 +1341,7 @@ function renderManualCard(root, mc){
     `<span class="manual-badge">manual</span>${esc(mc.title)}</div>`+
     `<div class="meta-line">${esc(pubList(pubs))} · created ${new Date(mc.createdAt).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})}`+
     (nSup?` · <span style="color:var(--stale)">${nSup} suppressed</span>`:'')+`</div>`+
-    `<div class="articles">${articles}${sugg}`+
+    `<div class="articles">${articles}${sugg}${extractBar}`+
     `<div style="margin-top:6px">`+
     `<button class="mini rescan-btn">rescan</button> `+
     `<button class="mini mc-search-toggle">${mc.search.open?'hide':''} search</button> `+
@@ -1312,6 +1351,10 @@ function renderManualCard(root, mc){
     searchBox+
     `</div>`;
   el.querySelector('.selchk').addEventListener('click',e=>{ e.stopPropagation(); toggleSelect(mc.key); });
+  el.querySelectorAll('.articles > .article .extchk').forEach(cb=>{
+    cb.addEventListener('click',e=>{ e.stopPropagation(); toggleExtractItem(mc.key, e.target.dataset.id); });
+  });
+  el.querySelector('.extract-btn')?.addEventListener('click',()=>extractSelected(mc));
   el.querySelectorAll('.articles > .article .x').forEach(btn=>{
     btn.addEventListener('click',e=>{
       const i=+e.target.closest('.article').dataset.i;
