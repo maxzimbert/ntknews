@@ -574,13 +574,18 @@ function certify(cluster){
   if (LINEUP.length>=LINEUP_MAX){ alert('Lineup is full ('+LINEUP_MAX+'). Remove a story first.'); return; }
   // SNAPSHOT: copy title + links now. The stream churns between runs; the
   // lineup doesn't. Re-certify (toggle off, toggle on) to pick up new links.
+  // Items that have been extracted elsewhere are excluded — they're no
+  // longer this cluster's active content, even though the underlying data
+  // is left untouched (non-destructive, so rescan/undo still works).
+  const extracted = EXTRACTED_ELSEWHERE.get(cluster.key);
+  const activeItems = extracted ? cluster.items.filter(it=>!extracted.has(it.id)) : cluster.items;
   LINEUP.push({
     id: 'ln-'+Date.now(), key: cluster.key,
     title: cluster.title, beat: (cluster.triage&&cluster.triage.beat)||cluster.beat_hint||'other',
     category: BEAT_TO_CAT[(cluster.triage&&cluster.triage.beat)||cluster.beat_hint||'other']||'Domestic',
     angle: (cluster.triage&&cluster.triage.line)||'',
     conceptEntity:'', narrowKeyword:'',
-    articles: cluster.items.map(it=>({
+    articles: activeItems.map(it=>({
       url: it.url, title: it.title, source: it.publisher, date: it.published||'',
       body:'', bodyFrom:'', included:true, dupOf:null, origin:'rss'
     })),
@@ -1050,6 +1055,19 @@ let SELECTED = new Set();  // cluster keys currently checked for merging
 // the instant an extraction succeeds, collapsing the card you were just
 // looking at right when it should stay put so you can see the result.
 let OPEN_CLUSTERS = new Set();
+// Items extracted out of a specific organic cluster: sourceClusterKey ->
+// Map(itemId -> {targetKey, targetTitle}). Deliberately NOT the same
+// mechanism as global suppression (SUP) — suppression is keyed by URL and
+// applies everywhere an item appears, which would hide an extracted item
+// in its NEW cluster just as much as its old one. This is scoped to one
+// specific source cluster, so the item reads inactive where it came from
+// and completely normal where it landed.
+let EXTRACTED_ELSEWHERE = new Map();
+// Organic cluster keys fully consumed by a merge (every item moved out) —
+// hidden from the stream entirely rather than shown as an empty husk.
+let MERGED_AWAY = new Set();
+function isExtracted(clusterKey, itemId){ return EXTRACTED_ELSEWHERE.get(clusterKey)?.has(itemId) || false; }
+function unextract(clusterKey, itemId){ EXTRACTED_ELSEWHERE.get(clusterKey)?.delete(itemId); render(); }
 function saveManual(){ localStorage.setItem(LS.manual, JSON.stringify(MANUAL)); }
 function manualScore(mc){
   const pubs = new Set(mc.items.map(it=>it.publisher));
@@ -1066,7 +1084,17 @@ function mergeSelected(){
   const mc = { key:'manual-'+Date.now(), title: picked[0].title+(picked.length>1?' (+'+(picked.length-1)+' merged)':''),
     items, manual:true, createdAt:new Date().toISOString(), beat_hint:'other', triage:null,
     rescanResults:null, rescanAt:null, search:{open:false,kw:'',src:'',results:[],busy:false,note:''} };
-  MANUAL.push(mc); SELECTED.clear(); saveManual(); render();
+  MANUAL.push(mc);
+  // A merged source is fully consumed — every one of its items moved into
+  // the new cluster, so there's nothing left to show. Organic sources get
+  // hidden from the stream (their data is untouched, just not rendered);
+  // manual sources get deleted outright, since keeping an empty duplicate
+  // manual card around would just be clutter.
+  picked.forEach(c=>{
+    if (STREAM?.clusters?.some(oc=>oc.key===c.key)) MERGED_AWAY.add(c.key);
+    else MANUAL = MANUAL.filter(m=>m.key!==c.key);
+  });
+  SELECTED.clear(); saveManual(); render();
 }
 // EXTRACT_SEL: clusterKey -> Set(itemId). Independent of SELECTED (whole-
 // cluster merge picks) — this tracks individual article checkboxes inside
@@ -1091,6 +1119,9 @@ function extractSelected(sourceCluster){
   MANUAL.push(mc);
   EXTRACT_SEL.delete(sourceCluster.key);
   OPEN_CLUSTERS.add(sourceCluster.key);   // stay open — you were just looking at it
+  if (!EXTRACTED_ELSEWHERE.has(sourceCluster.key)) EXTRACTED_ELSEWHERE.set(sourceCluster.key, new Map());
+  const tracker = EXTRACTED_ELSEWHERE.get(sourceCluster.key);
+  ids.forEach(id=>tracker.set(id, {targetKey: mc.key, targetTitle: mc.title}));
   saveManual(); render();
   // Scroll the newly created cluster into view and flash it — otherwise it
   // can land anywhere in the score-sorted list, far from where you're looking,
@@ -1268,6 +1299,7 @@ function renderStream(root){
 
   for (const {kind, c} of combined){
     if (kind === 'manual') { renderManualCard(list, c); continue; }
+    if (MERGED_AWAY.has(c.key)) continue;   // fully consumed by a merge — nothing left to show
     const beat=(c.triage&&c.triage.beat)||c.beat_hint||'other';
     const verdict=c.triage&&c.triage.verdict;
     const line=c.triage&&c.triage.line;
@@ -1277,14 +1309,20 @@ function renderStream(root){
     const nSup = c.items.filter(it=>isSup(it.url)).length;
     const extSel = EXTRACT_SEL.get(c.key) || new Set();
     const multi = c.items.length > 1;   // extraction only makes sense out of a multi-item cluster
-    const articles=c.items.map((it,i)=>
-      `<div class="article${isSup(it.url)?' suppressed':''}" data-i="${i}">`+
-      (multi?`<input type="checkbox" class="extchk" data-id="${esc(it.id)}" ${extSel.has(it.id)?'checked':''}>`:'')+
+    const articles=c.items.map((it,i)=>{
+      const extracted = isExtracted(c.key, it.id);
+      const target = extracted ? EXTRACTED_ELSEWHERE.get(c.key).get(it.id) : null;
+      const inactive = isSup(it.url) || extracted;
+      return `<div class="article${inactive?' suppressed':''}" data-i="${i}">`+
+      (multi && !extracted?`<input type="checkbox" class="extchk" data-id="${esc(it.id)}" ${extSel.has(it.id)?'checked':''}>`:'')+
       `<span class="pub">${esc(it.publisher)}</span> · `+
       `<a href="${esc(it.url)}" target="_blank" rel="noopener">${esc(it.title)}</a> `+
-      `<span class="t">${rel(it.published)}</span>`+
-      `<button class="x" title="${isSup(it.url)?'restore':'suppress from digest work'}">✕</button></div>`
-    ).join('');
+      (extracted ? `<span class="t">→ moved to "${esc(target.targetTitle.slice(0,40))}"</span>` : `<span class="t">${rel(it.published)}</span>`)+
+      (extracted
+        ? `<button class="x unext" data-id="${esc(it.id)}" title="bring back — undo the extraction">↩</button>`
+        : `<button class="x" title="${isSup(it.url)?'restore':'suppress from digest work'}">✕</button>`)+
+      `</div>`;
+    }).join('');
     const extractBar = multi ? `<div class="addurl" style="border:none;padding-top:6px">`+
       `<span style="flex:1;color:var(--dim);font-size:11px">${extSel.size} checked</span>`+
       `<button class="mini go extract-btn" ${extSel.size?'':'disabled'}>extract into new cluster</button></div>` : '';
@@ -1302,12 +1340,15 @@ function renderStream(root){
       if (OPEN_CLUSTERS.has(c.key)) OPEN_CLUSTERS.delete(c.key); else OPEN_CLUSTERS.add(c.key);
       render();
     });
-    el.querySelectorAll('.article .x').forEach(btn=>{
+    el.querySelectorAll('.article .x:not(.unext)').forEach(btn=>{
       btn.addEventListener('click',e=>{
         const i=+e.target.closest('.article').dataset.i;
         toggleSup(c.items[i].url); render();
         e.target.closest('.cluster')?.classList.add('open');
       });
+    });
+    el.querySelectorAll('.article .x.unext').forEach(btn=>{
+      btn.addEventListener('click',e=>{ e.stopPropagation(); unextract(c.key, e.target.dataset.id); });
     });
     el.querySelectorAll('.article .extchk').forEach(cb=>{
       cb.addEventListener('click',e=>{ e.stopPropagation(); toggleExtractItem(c.key, e.target.dataset.id); });
@@ -1327,14 +1368,20 @@ function renderManualCard(root, mc){
   const nSup = mc.items.filter(it=>isSup(it.url)).length;
   const extSel = EXTRACT_SEL.get(mc.key) || new Set();
   const multi = mc.items.length > 1;
-  const articles = mc.items.map((it,i)=>
-    `<div class="article${isSup(it.url)?' suppressed':''}" data-i="${i}">`+
-    (multi?`<input type="checkbox" class="extchk" data-id="${esc(it.id)}" ${extSel.has(it.id)?'checked':''}>`:'')+
+  const articles = mc.items.map((it,i)=>{
+    const extracted = isExtracted(mc.key, it.id);
+    const target = extracted ? EXTRACTED_ELSEWHERE.get(mc.key).get(it.id) : null;
+    const inactive = isSup(it.url) || extracted;
+    return `<div class="article${inactive?' suppressed':''}" data-i="${i}">`+
+    (multi && !extracted?`<input type="checkbox" class="extchk" data-id="${esc(it.id)}" ${extSel.has(it.id)?'checked':''}>`:'')+
     `<span class="pub">${esc(it.publisher)}</span> · `+
     `<a href="${esc(it.url||'#')}" target="_blank" rel="noopener">${esc(it.title)}</a> `+
-    `<span class="t">${rel(it.published)}</span>`+
-    `<button class="x" title="${isSup(it.url)?'restore':'suppress'}">✕</button></div>`
-  ).join('');
+    (extracted ? `<span class="t">→ moved to "${esc(target.targetTitle.slice(0,40))}"</span>` : `<span class="t">${rel(it.published)}</span>`)+
+    (extracted
+      ? `<button class="x unext" data-id="${esc(it.id)}" title="bring back — undo the extraction">↩</button>`
+      : `<button class="x" title="${isSup(it.url)?'restore':'suppress'}">✕</button>`)+
+    `</div>`;
+  }).join('');
   const extractBar = multi ? `<div class="addurl" style="border:none;padding-top:6px">`+
     `<span style="flex:1;color:var(--dim);font-size:11px">${extSel.size} checked</span>`+
     `<button class="mini go extract-btn" ${extSel.size?'':'disabled'}>extract into new cluster</button></div>` : '';
@@ -1377,11 +1424,14 @@ function renderManualCard(root, mc){
     cb.addEventListener('click',e=>{ e.stopPropagation(); toggleExtractItem(mc.key, e.target.dataset.id); });
   });
   el.querySelector('.extract-btn')?.addEventListener('click',()=>extractSelected(mc));
-  el.querySelectorAll('.articles > .article .x').forEach(btn=>{
+  el.querySelectorAll('.articles > .article .x:not(.unext)').forEach(btn=>{
     btn.addEventListener('click',e=>{
       const i=+e.target.closest('.article').dataset.i;
       toggleSup(mc.items[i].url); render();
     });
+  });
+  el.querySelectorAll('.articles > .article .x.unext').forEach(btn=>{
+    btn.addEventListener('click',e=>{ e.stopPropagation(); unextract(mc.key, e.target.dataset.id); });
   });
   el.querySelector('.rescan-btn').addEventListener('click',()=>rescanManual(mc));
   el.querySelector('.rescan-apply')?.addEventListener('click',()=>applyRescan(mc));
