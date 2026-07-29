@@ -125,9 +125,21 @@ def match_ledger(cluster, ledgers):
     return best
 
 
+MAX_ITEMS_PER_DIFF_CALL = 12  # a first run against an empty ledger can hand a
+    # big story 20+ "new" items at once; capping the batch keeps every response
+    # comfortably inside max_tokens instead of gambling on truncation. The
+    # remainder is picked up on the NEXT run — it just costs one extra cycle
+    # of freshness, not correctness.
+
+
 def call_claude(api_key, ledger, new_items, summaries):
+    # ~150 tokens/item covers class + what_new + unique + credits + contradicts
+    # generously; MAX_ITEMS_PER_DIFF_CALL * 150 + headroom stays well inside
+    # the cap even for the chattiest responses.
+    overflow = len(new_items) > MAX_ITEMS_PER_DIFF_CALL
+    batch = new_items[:MAX_ITEMS_PER_DIFF_CALL]
     lines = []
-    for it in new_items:
+    for it in batch:
         summ = summaries.get(it["id"], "")
         lines.append(f'- id={it["id"]} [{it["publisher"]}] {it["title"]}'
                      + (f' — {summ}' if summ else ""))
@@ -136,7 +148,7 @@ def call_claude(api_key, ledger, new_items, summaries):
                            **{k: ledger["facts"][k] for k in ("actors", "numbers", "documents", "quotes")},
                            "credits": ledger["credits"]}, indent=1),
         items="\n".join(lines))
-    body = {"model": MODEL, "max_tokens": 1500,
+    body = {"model": MODEL, "max_tokens": 4000,
             "messages": [{"role": "user", "content": prompt}]}
     req = urllib.request.Request(API_URL, data=json.dumps(body).encode("utf-8"),
         headers={"Content-Type": "application/json", "x-api-key": api_key,
@@ -175,10 +187,35 @@ def _parse_json_lenient(text):
         return json.loads(repaired)
     except json.JSONDecodeError:
         pass
-    # Repair 3: last resort — extract just the first well-formed object
+    # Repair 3: whole-object extraction, if the object itself is intact
     m = re.search(r"\{.*\}", repaired, re.DOTALL)
     if m:
-        return json.loads(m.group(0))
+        try:
+            return json.loads(m.group(0))
+        except json.JSONDecodeError:
+            pass
+    # Repair 4: the response was cut off mid-array (a raised max_tokens and a
+    # capped batch size make this rare, not impossible). Salvage whatever
+    # complete {...} objects appear before the truncation point rather than
+    # discarding classifications the model actually finished — partial
+    # credit over total loss, same principle as "judge on evidence."
+    items_match = re.search(r'"items"\s*:\s*\[(.*)', repaired, re.DOTALL)
+    if items_match:
+        depth, start, objs = 0, None, []
+        for i, ch in enumerate(items_match.group(1)):
+            if ch == "{":
+                if depth == 0:
+                    start = i
+                depth += 1
+            elif ch == "}":
+                depth -= 1
+                if depth == 0 and start is not None:
+                    try:
+                        objs.append(json.loads(items_match.group(1)[start:i+1]))
+                    except json.JSONDecodeError:
+                        pass
+        if objs:
+            return {"items": objs, "ledger_updates": {}}
     raise json.JSONDecodeError("all repair attempts failed", text, 0)
 
 
@@ -205,7 +242,7 @@ def mock_diff(ledger, new_items, summaries):
                           "unique": "", "credits": [c.strip() for c in credits]})
     if any(i["class"] == "DEVELOPMENT" for i in out_items):
         updates["state_of_play"] = f"[mock] {len(out_items)} items diffed for '{ledger['title'][:50]}'."
-    return {"items": out_items, "ledger_updates": updates}
+    return {"items": out_items, "ledger_updates": updates}, [it["id"] for it in new_items]
 
 
 def merge_facts(ledger, updates, ts):
@@ -272,12 +309,16 @@ def main():
         if not mock and calls >= MAX_CALLS_PER_RUN:
             continue
         try:
-            result = (mock_diff if mock else
+            result, processed_ids = (mock_diff if mock else
                       lambda l, n, s: call_claude(api_key, l, n, s))(led, new_items, summaries)
         except Exception as e:
             log(f"  diff failed for '{cl['title'][:40]}': {type(e).__name__}: {e}")
             continue
         calls += 0 if mock else 1
+        if len(processed_ids) < len(new_items):
+            log(f"  batched: {len(processed_ids)}/{len(new_items)} new items for "
+                f"'{cl['title'][:40]}' — remainder picked up next run")
+        processed_set = set(processed_ids)
         pub_by_id = {it["id"]: it.get("publisher", "") for it in new_items}
         for item_res in result.get("items", []):
             item_res["ledger_id"] = lid
@@ -299,7 +340,9 @@ def main():
                         "publisher": pub_by_id.get(item_res["id"], ""),
                         "text": contra})
         merge_facts(led, result.get("ledger_updates", {}), ts)
-        led["seen_ids"] = list(set(led["seen_ids"]) | {it["id"] for it in new_items})
+        # Only what was actually classified counts as seen. Overflow items
+        # stay unseen and get diffed on the next run.
+        led["seen_ids"] = list(set(led["seen_ids"]) | processed_set)
 
     # Annotate clusters.json for the Desk view
     dev_cut = now_utc() - timedelta(hours=DEV_RECENT_HOURS)
