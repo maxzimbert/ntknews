@@ -268,7 +268,11 @@ def velocity(members, times, window_start, window_end):
 ROOT_DIR = Path(__file__).parent
 
 
-def main(data_dir, out_name="clusters_v2.json", verbose=True):
+def main(data_dir, out_name="clusters.json", verbose=True):
+    # v1 wrote data/clusters.json and every downstream stage (triage.py,
+    # ledger.py, assembly.py, pulse.html) reads that exact name — this was
+    # defaulting to "clusters_v2.json" during dev testing and never got put
+    # back before packaging.
     DATA = Path(data_dir)
     now = datetime.now(timezone.utc)
     window = json.loads((DATA / "window.json").read_text())
@@ -418,4 +422,11 @@ def main(data_dir, out_name="clusters_v2.json", verbose=True):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1] if len(sys.argv) > 1 else ".")
+    # Match v1's exact invocation contract: `python cluster.py`, no argument,
+    # data/ resolved relative to the SCRIPT's own location — not the current
+    # working directory. The previous version defaulted the no-arg case to
+    # "." (cwd), which happened to work in every local test here because
+    # testing always passed an explicit "data" argument — the bare
+    # `python cluster.py` invocation the real workflow uses was never
+    # actually exercised until it ran live and failed on FileNotFoundError.
+    main(sys.argv[1] if len(sys.argv) > 1 else str(Path(__file__).parent / "data"))
