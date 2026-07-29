@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""NTK Desk — Layer 3: The Story Ledger.
+"""NTK Pulse — Layer 3: The Story Ledger.
 
 Epistemic deduplication — the machine version of "no increments."
 
@@ -21,11 +21,21 @@ Also extracts per-item "unique contribution" (the LLM angle pass) and
 first-reported-by credits, in the same call — one Sonnet call per cluster
 per run, only for triage survivors with un-diffed items, capped.
 
-SLICE 2 LIMITATION (by design): the diff judges headline + RSS summary, not
-full article bodies. News writing frontloads new facts, so this catches most
-developments; full-body diffing arrives when the fetch layer lands (Slice 3).
+BODY LIMITATION (still true in Pulse): the diff judges headline + RSS summary,
+not full article bodies. Enrichment — the only place Pulse has real bodies —
+runs client-side in pulse.html at lineup time, AFTER this pipeline stage has
+finished. So the Digest Assembly spec's "extraction must run against enriched
+bodies" is NOT satisfied here. News writing frontloads new facts, so this
+catches most developments, and it is enough to drive the assembly rubric's
+increment constraint and the "N new facts since you last looked" promise.
+Full-body diffing requires the ledger to run after enrichment — either moving
+it client-side or moving enrichment server-side. Neither is in scope here.
 "Judge on evidence" is therefore a hard rule in the prompt: if the summary
 shows nothing new, it's an INCREMENT even if the body might contain more.
+
+CONTRADICTIONS (new in Pulse): the diff also flags when an item contradicts
+something already established in the ledger — a reversal, a denial, a corrected
+figure. This is material the Lies section needs and previously could not see.
 
 Usage:
   python ledger.py          # real run (needs ANTHROPIC_API_KEY)
@@ -68,12 +78,13 @@ Hard rules:
 - A different angle on known facts is still an INCREMENT unless it introduces a new fact — angles are captured separately in "unique".
 - "unique" answers: what does this piece alone contribute? A source nobody else has, a document, an evidenced contrarian thesis, an on-the-ground scene. Empty if nothing distinctive.
 - "credits": outlet names this item credits for the reporting ("first reported by X", "according to X"). Empty list if none.
+- "contradicts": if this item contradicts something already established in THE LEDGER above — a reversal, a denial, a corrected figure, a walked-back commitment — state it in under 25 words: what the ledger held, and what this item asserts instead. Empty string if nothing is contradicted. Be strict: a new development is not a contradiction. Only flag a genuine conflict with an already-established fact.
 - ledger_updates must contain ONLY facts evidenced by these items. Rewrite state_of_play ONLY if a DEVELOPMENT changed it; otherwise return an empty string for it.
 
 CRITICAL JSON FORMATTING: your response must be strictly parseable JSON. Inside any string value: escape every double-quote as \\", escape every backslash as \\\\, escape every newline as \\n. Do NOT use smart quotes (\u201c \u201d \u2018 \u2019) inside string values — use straight quotes and escape them. If a source headline contains an apostrophe (Graham's, Trump's), preserve it as-is — apostrophes do not need escaping. If it contains a double-quote, escape it. Failure to produce valid JSON breaks the entire pipeline for this story.
 
 Respond ONLY with JSON, no preamble, no markdown fences:
-{{"items": [{{"id": "<item id>", "class": "DEVELOPMENT"|"INCREMENT"|"RECYCLED", "what_new": "<the specific new fact, under 20 words; empty unless DEVELOPMENT>", "unique": "<distinct contribution, under 15 words; else empty>", "credits": ["<outlet>"]}}], "ledger_updates": {{"actors": [{{"name": "", "role": ""}}], "numbers": [{{"value": "", "what": ""}}], "documents": [""], "quotes": [{{"who": "", "gist": ""}}], "state_of_play": ""}}}}"""
+{{"items": [{{"id": "<item id>", "class": "DEVELOPMENT"|"INCREMENT"|"RECYCLED", "what_new": "<the specific new fact, under 20 words; empty unless DEVELOPMENT>", "unique": "<distinct contribution, under 15 words; else empty>", "credits": ["<outlet>"], "contradicts": "<under 25 words, or empty>"}}], "ledger_updates": {{"actors": [{{"name": "", "role": ""}}], "numbers": [{{"value": "", "what": ""}}], "documents": [""], "quotes": [{{"who": "", "gist": ""}}], "state_of_play": ""}}}}"""
 
 
 def log(msg):
@@ -97,6 +108,7 @@ def blank_ledger(cluster, ts):
         "facts": {"actors": [], "numbers": [], "documents": [], "quotes": [],
                   "state_of_play": ""},
         "credits": [],
+        "contradictions": [],   # {at, item_id, publisher, text} — append-only
     }
 
 
@@ -266,6 +278,7 @@ def main():
             log(f"  diff failed for '{cl['title'][:40]}': {type(e).__name__}: {e}")
             continue
         calls += 0 if mock else 1
+        pub_by_id = {it["id"]: it.get("publisher", "") for it in new_items}
         for item_res in result.get("items", []):
             item_res["ledger_id"] = lid
             item_res["at"] = ts
@@ -273,6 +286,18 @@ def main():
             for c in item_res.get("credits", []):
                 if c and c not in led["credits"]:
                     led["credits"].append(c)
+            # Contradictions are append-only and never rewritten — the same
+            # immutability principle the canonical facts follow. A reversal is
+            # part of the story's record, not a correction to be tidied away.
+            contra = (item_res.get("contradicts") or "").strip()
+            if contra:
+                led.setdefault("contradictions", [])
+                if not any(c["text"].lower() == contra.lower()
+                           for c in led["contradictions"]):
+                    led["contradictions"].append({
+                        "at": ts, "item_id": item_res["id"],
+                        "publisher": pub_by_id.get(item_res["id"], ""),
+                        "text": contra})
         merge_facts(led, result.get("ledger_updates", {}), ts)
         led["seen_ids"] = list(set(led["seen_ids"]) | {it["id"] for it in new_items})
 
