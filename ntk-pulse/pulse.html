@@ -150,6 +150,23 @@
   .lineup-bar { display: flex; gap: 8px; margin-bottom: 12px; align-items: baseline; flex-wrap: wrap; }
   .lineup-bar .spacer { flex: 1; }
   .copied { color: var(--certified); font-size: 10.5px; }
+  .ed-head { border: 1px solid var(--rule); background: var(--card); padding: 10px; margin-bottom: 12px; }
+  .ed-head .row { display: flex; gap: 14px; flex-wrap: wrap; font-size: 11.5px; align-items: baseline; }
+  .ed-head .k { color: var(--dim); text-transform: uppercase; font-size: 10px; letter-spacing: .5px; }
+  .lint { margin-top: 8px; }
+  .lint-ok { color: var(--certified); font-size: 12px; font-weight: bold; }
+  .lint-fail { color: var(--stale); font-size: 12px; padding: 2px 0; }
+  .ed-story { border-bottom: 1px solid var(--rule); padding: 8px 0; }
+  .slot-tag { display: inline-block; background: var(--ink); color: #fff; font-size: 9.5px;
+    text-transform: uppercase; letter-spacing: .5px; padding: 1px 6px; margin-right: 7px; }
+  .sc { display: inline-block; font-size: 10px; margin-right: 8px; color: var(--dim); }
+  .sc b { color: var(--ink); font-size: 11px; }
+  .sc.hot b { color: var(--stale); }
+  .sc.good b { color: var(--certified); }
+  .facts { font-size: 11.5px; color: #444; margin: 4px 0 0 12px; border-left: 2px solid var(--rule); padding-left: 8px; }
+  .killed { margin-top: 14px; border-top: 1px dashed var(--rule); padding-top: 8px; }
+  .killed .k-item { font-size: 11px; color: var(--dim); padding: 1px 0; }
+  @media (prefers-color-scheme: dark) { .slot-tag { background: #ddd; color: #111; } }
   #notesPanel { border: 1px solid var(--rule); background: var(--card); padding: 10px; margin-bottom: 12px; display: none; }
   #notesPanel.open { display: block; }
   .note-add { display: flex; gap: 6px; margin-bottom: 8px; }
@@ -184,6 +201,7 @@
   <h1>PULSE</h1>
   <button class="tab on" id="tab-stream">stream</button>
   <button class="tab" id="tab-lineup">lineup</button>
+  <button class="tab" id="tab-edition">edition</button>
   <span class="meta" id="clock"></span>
   <span class="stale" id="stale"></span>
   <span class="right">
@@ -1688,6 +1706,75 @@ function renderNotes(){
   });
 }
 
+/* ─── edition view: what assembly.py decided, and why ─── */
+let EDITION = null;
+
+function scoreChip(label, val, hotAbove, goodAbove){
+  const cls = (hotAbove && val >= hotAbove) ? ' hot' : (goodAbove && val >= goodAbove ? ' good' : '');
+  return `<span class="sc${cls}">${label} <b>${val}</b></span>`;
+}
+
+function renderEdition(root){
+  document.getElementById('stale').textContent = '';
+  if (!EDITION){
+    document.getElementById('count').textContent = '';
+    root.innerHTML = '<div class="empty">No edition yet — data/lineup.json not found. '+
+      'Run the workflow with the Assemble step enabled.</div>';
+    return;
+  }
+  const e = EDITION;
+  document.getElementById('count').textContent = e.actual_size + ' assembled';
+
+  const fails = e.lint_failures || [];
+  const unfilled = e.slots_unfilled || [];
+
+  root.innerHTML =
+    `<div class="ed-head">
+      <div class="row">
+        <span><span class="k">plan</span> <b>${esc(e.slot_plan)}</b></span>
+        <span><span class="k">day</span> ${esc(e.daytype)}</span>
+        <span><span class="k">size</span> ${e.actual_size} <span style="color:var(--dim)">(target ${e.target_size?e.target_size.join('–'):'?'})</span></span>
+        <span><span class="k">displacement</span> ${esc(e.displacement||'')}</span>
+        <span><span class="k">assembled</span> ${rel(e.assembled_at)} ago</span>
+      </div>
+      <div class="lint">` +
+        (fails.length
+          ? fails.map(f=>`<div class="lint-fail">✕ ${esc(f)}</div>`).join('')
+          : `<div class="lint-ok">✓ passes all set constraints</div>`) +
+        (unfilled.length ? `<div class="lint-fail">✕ unfilled: ${esc(unfilled.join(', '))}</div>` : '') +
+      `</div>
+    </div>` +
+    (e.stories||[]).map((s,i)=>{
+      const sc = s.scores||{};
+      return `<div class="ed-story">
+        <div><span class="slot-tag">${esc(s.slot_label||s.slot)}</span>`+
+        `<strong>${i+1}. ${esc(s.title)}</strong></div>
+        <div class="meta-line" style="margin-top:3px">
+          <span class="beat beat-${esc(s.beat)}">${esc(s.beat)}</span>
+          ${esc(pubList(s.publishers||[]))} · ${s.publisher_count} pub${s.publisher_count===1?'':'s'}
+          ${s.ledger_class?' · <b>'+esc(s.ledger_class)+'</b>':''}
+          ${s.politician_led?' · politician-led':''}
+        </div>
+        <div style="margin-top:4px">`+
+          scoreChip('emotion', sc.emotional_load, 4, null)+
+          scoreChip('explain', sc.explainability, null, 5)+
+          scoreChip('action', sc.actionability, null, 4)+
+          scoreChip('currency', sc.conversational_currency, null, 4)+
+          `<span class="sc">score <b>${s.assembly_score}</b></span>
+        </div>`+
+        (s.line?`<div class="line">${esc(s.line)}</div>`:'')+
+        ((s.new_facts||[]).length
+          ? `<div class="facts"><b>${s.new_facts.length} new fact${s.new_facts.length===1?'':'s'}:</b> `+
+            s.new_facts.map(f=>esc(f)).join(' · ')+`</div>` : '')+
+      `</div>`;
+    }).join('') +
+    ((e.excluded_sample||[]).length
+      ? `<div class="killed"><div class="k" style="font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px">`+
+        `excluded before slot-filling (${e.excluded_sample.length} shown)</div>`+
+        e.excluded_sample.map(x=>`<div class="k-item">✕ ${esc(x.why)} — ${esc(x.title||'')}</div>`).join('')+
+        `</div>` : '');
+}
+
 /* ─── shell ─── */
 function render(){
   const root=document.getElementById('view');
@@ -1695,10 +1782,14 @@ function render(){
   document.getElementById('tab-stream').classList.toggle('on', TAB==='stream');
   document.getElementById('tab-lineup').classList.toggle('on', TAB==='lineup');
   document.getElementById('tab-lineup').textContent = 'lineup'+(LINEUP.length?' ('+LINEUP.length+')':'');
-  if (TAB==='stream') renderStream(root); else renderLineup(root);
+  document.getElementById('tab-edition').classList.toggle('on', TAB==='edition');
+  if (TAB==='stream') renderStream(root);
+  else if (TAB==='edition') renderEdition(root);
+  else renderLineup(root);
 }
 document.getElementById('tab-stream').addEventListener('click',()=>{ TAB='stream'; render(); });
 document.getElementById('tab-lineup').addEventListener('click',()=>{ TAB='lineup'; render(); });
+document.getElementById('tab-edition').addEventListener('click',()=>{ TAB='edition'; render(); });
 document.getElementById('notesToggle').addEventListener('click',()=>{ notesOpen=!notesOpen; renderNotes(); });
 document.getElementById('gear').addEventListener('click',()=>{
   const p=document.getElementById('settings'); p.classList.toggle('open');
@@ -1724,6 +1815,13 @@ fetch('data/clusters.json?t='+Date.now())
   .then(r=>{ if(!r.ok) throw 0; return r.json(); })
   .then(d=>{ STREAM=d; render(); })
   .catch(()=>{ STREAM=null; render(); });
+
+// The assembled edition. Absent until the workflow's Assemble step has run —
+// a 404 here is normal, not an error worth surfacing.
+fetch('data/lineup.json?t='+Date.now())
+  .then(r=>{ if(!r.ok) throw 0; return r.json(); })
+  .then(d=>{ EDITION=d; render(); })
+  .catch(()=>{ EDITION=null; });
 </script>
 </body>
 </html>
