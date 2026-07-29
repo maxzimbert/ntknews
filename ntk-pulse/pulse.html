@@ -201,7 +201,6 @@
   <h1>PULSE</h1>
   <button class="tab on" id="tab-stream">stream</button>
   <button class="tab" id="tab-lineup">lineup</button>
-  <button class="tab" id="tab-edition">edition</button>
   <span class="meta" id="clock"></span>
   <span class="stale" id="stale"></span>
   <span class="right">
@@ -268,7 +267,7 @@ let SUP = load(LS.sup, {});                 // canonical url -> true  (editor su
 let NOTES = load(LS.notes, { items: [], genCounter: 0 });
 let notesOpen = false;
 let STREAM = null;                          // clusters.json payload
-let TAB = 'stream';
+let TAB = 'lineup';   // Lineup is the homepage — assembled by assembly.py, authored here
 function saveSettings(){ localStorage.setItem(LS.settings, JSON.stringify(SETTINGS)); }
 function saveLineup(){ const clean = LINEUP.map(({busy,status,err,...s})=>s); localStorage.setItem(LS.lineup, JSON.stringify(clean)); }
 function saveSup(){ localStorage.setItem(LS.sup, JSON.stringify(SUP)); }
@@ -1484,10 +1483,46 @@ function bodyChip(a){
   if (a.bodyFrom==='fetch') return `<span class="chip thin">meta ${a.body.length}ch</span>`;
   return `<span class="chip thin">headline only</span>`;
 }
+function editionScoreChips(key){
+  if (!EDITION) return '';
+  const s = (EDITION.stories||[]).find(x=>x.key===key);
+  if (!s || !s.scores) return '';
+  const sc = s.scores;
+  const hot = sc.emotional_load>=4 ? ' style="color:var(--stale)"' : '';
+  return ` · <span${hot}>emotion ${sc.emotional_load}</span> · action ${sc.actionability} · currency ${sc.conversational_currency}`+
+    (s.ledger_class ? ` · <b>${esc(s.ledger_class)}</b>` : '');
+}
+
+function editionStrip(){
+  if (!EDITION) return '';
+  const fails = EDITION.lint_failures||[], unfilled = EDITION.slots_unfilled||[];
+  return `<div class="ed-head">
+    <div class="row">
+      <span><span class="k">plan</span> <b>${esc(EDITION.slot_plan)}</b></span>
+      <span><span class="k">day</span> ${esc(EDITION.daytype)}</span>
+      <span><span class="k">size</span> ${EDITION.actual_size} <span style="color:var(--dim)">(target ${(EDITION.target_size||[]).join('–')})</span></span>
+      <span><span class="k">assembled</span> ${rel(EDITION.assembled_at)} ago</span>
+    </div>
+    <div class="lint">${fails.length
+        ? fails.map(f=>`<div class="lint-fail">✕ ${esc(f)}</div>`).join('')
+        : `<div class="lint-ok">✓ passes all set constraints</div>`}
+      ${unfilled.length?`<div class="lint-fail">✕ unfilled: ${esc(unfilled.join(', '))}</div>`:''}
+    </div>
+  </div>` +
+  ((EDITION.excluded_sample||[]).length ? `<details class="killed"><summary style="cursor:pointer;color:var(--dim);font-size:11px">`+
+    `${EDITION.excluded_sample.length} candidates excluded before slot-filling</summary>`+
+    EDITION.excluded_sample.map(x=>`<div class="k-item">✕ ${esc(x.why)} — ${esc(x.title||'')}</div>`).join('')+
+    `</details>` : '');
+}
+
 function renderLineup(root){
   document.getElementById('count').textContent = LINEUP.length+'/'+LINEUP_MAX+' in lineup';
   document.getElementById('stale').textContent = '';
-  if (!LINEUP.length){ root.innerHTML='<div class="empty">Nothing certified yet. Expand a cluster in the stream and hit “→ lineup”.</div>'; return; }
+  const strip = editionStrip();
+  if (!LINEUP.length){
+    root.innerHTML = strip + '<div class="empty">Nothing certified yet — assembled edition will populate automatically once the workflow runs, or expand a cluster in the stream and hit “→ lineup”.</div>';
+    return;
+  }
 
   // Layer 4: same article appearing in more than one lineup story — badge, never auto-kill.
   const urlStories = {};
@@ -1496,7 +1531,7 @@ function renderLineup(root){
   }));
 
   const nGen = LINEUP.filter(s=>s.packages).length;
-  root.innerHTML = `<div class="lineup-bar">
+  root.innerHTML = strip + `<div class="lineup-bar">
     <button class="mini go" id="gen-all" ${LINEUP.some(s=>s.busy)?'disabled':''}>Generate all ungenerated</button>
     <button class="mini" id="q-toggle">${Q.open?'close search':'+ new story from search'}</button>
     <span class="spacer"></span>
@@ -1563,6 +1598,8 @@ function renderLineup(root){
     ).join('');
     el.innerHTML =
       `<div class="story-top"><span class="ord">${si+1}</span>`+
+      (s.slotLabel?`<span class="manual-badge" style="background:#333">${esc(s.slotLabel)}</span>`:'')+
+      (s.inEdition===false?`<span class="manual-badge" style="background:var(--stale)">not in today's edition</span>`:'')+
       `<input class="story-title" value="${esc(s.title)}">`+
       `<button class="mini up">↑</button><button class="mini dn">↓</button>`+
       `<button class="mini rm" title="remove">remove</button></div>`+
@@ -1572,6 +1609,7 @@ function renderLineup(root){
       `<select class="cat">${CATEGORIES.map(c=>`<option${c===s.category?' selected':''}>${c}</option>`).join('')}</select>`+
       `<span>${nActive} active sources · ${nBody} with ER bodies`+
       (nDup?` · ${nDup} deduped`:'')+(nSup?` · ${nSup} suppressed`:'')+`</span>`+
+      editionScoreChips(s.key)+
       `</div>`+
       `<div class="concept-row">`+
       `<span style="font-size:10.5px;color:var(--dim)">concept:</span>`+
@@ -1706,74 +1744,80 @@ function renderNotes(){
   });
 }
 
+/* ─── edition -> lineup sync ───
+   assembly.py picks the day's stories; this materializes each pick into a
+   normal, fully-authorable LINEUP entry — same object shape certify() has
+   always built — so Enrich/Summon/Generate/Revise work identically whether
+   a story arrived by manual certify or by the automated edition. This is
+   the "Lineup is the homepage" change: assembly's picks ARE the lineup now,
+   not a separate read-only report you look at before manually certifying.
+
+   Strictly non-destructive both directions:
+     - An edition story that's already in LINEUP (matched by key) is left
+       completely alone — title, angle, packages, everything an editor may
+       have already authored survives untouched. Only a story with NO
+       existing entry gets one created.
+     - A LINEUP entry whose story fell OUT of today's edition is never
+       deleted. It's flagged `inEdition:false` so the UI can show it as
+       "not in today's edition" — the editor decides whether to keep
+       working on it, certify it anyway, or remove it. Same principle as
+       suppression and extraction: the machine marks, the editor decides. */
+function syncEditionToLineup(){
+  if (!EDITION || !EDITION.stories) return;
+  const editionKeys = new Set(EDITION.stories.map(s=>s.key));
+  let changed = false;
+
+  for (const s of EDITION.stories){
+    const existing = LINEUP.find(l=>l.key===s.key);
+    // Backfill articles into an entry that was auto-created before STREAM
+    // had loaded (a real race: lineup.json can resolve before clusters.json
+    // does). Only touches entries that are still genuinely empty and
+    // untouched by the editor — anything with real articles, an angle worth
+    // keeping, or generated work is left completely alone.
+    if (existing && existing.fromEdition && existing.articles.length===0 && !existing.packages){
+      const sc = (STREAM?.clusters||[]).find(c=>c.key===s.key);
+      if (sc && sc.items.length){
+        existing.articles = sc.items.map(it=>({
+          url: it.url, title: it.title, source: it.publisher, date: it.published||'',
+          body:'', bodyFrom:'', included:true, dupOf:null, origin:'rss'
+        }));
+        changed = true;
+      }
+      continue;
+    }
+    if (existing){ continue; }   // never touch authored state
+    if (LINEUP.length >= LINEUP_MAX) break;   // respect the same cap certify() always has
+    // Pull the real items from the live stream so Enrich/Generate have
+    // something to work with — assembly.py's lineup.json intentionally
+    // doesn't duplicate full article lists (single source of truth).
+    const streamCluster = (STREAM?.clusters||[]).find(c=>c.key===s.key);
+    const items = streamCluster ? streamCluster.items : [];
+    LINEUP.push({
+      id: 'ln-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),
+      key: s.key, title: s.title,
+      beat: s.beat, category: BEAT_TO_CAT[s.beat] || 'Domestic',
+      angle: s.line || '',
+      conceptEntity:'', narrowKeyword:'',
+      articles: items.map(it=>({
+        url: it.url, title: it.title, source: it.publisher, date: it.published||'',
+        body:'', bodyFrom:'', included:true, dupOf:null, origin:'rss'
+      })),
+      enrichedAt: null, packages: null, open: false, outOpen: false,
+      fromEdition: true, slotLabel: s.slot_label,
+    });
+    changed = true;
+  }
+  // Flag (never delete) anything that fell out of today's edition.
+  for (const l of LINEUP){
+    const stillIn = editionKeys.has(l.key);
+    if (l.inEdition !== stillIn){ l.inEdition = stillIn; changed = true; }
+  }
+  if (changed) saveLineup();
+}
+
 /* ─── edition view: what assembly.py decided, and why ─── */
 let EDITION = null;
 
-function scoreChip(label, val, hotAbove, goodAbove){
-  const cls = (hotAbove && val >= hotAbove) ? ' hot' : (goodAbove && val >= goodAbove ? ' good' : '');
-  return `<span class="sc${cls}">${label} <b>${val}</b></span>`;
-}
-
-function renderEdition(root){
-  document.getElementById('stale').textContent = '';
-  if (!EDITION){
-    document.getElementById('count').textContent = '';
-    root.innerHTML = '<div class="empty">No edition yet — data/lineup.json not found. '+
-      'Run the workflow with the Assemble step enabled.</div>';
-    return;
-  }
-  const e = EDITION;
-  document.getElementById('count').textContent = e.actual_size + ' assembled';
-
-  const fails = e.lint_failures || [];
-  const unfilled = e.slots_unfilled || [];
-
-  root.innerHTML =
-    `<div class="ed-head">
-      <div class="row">
-        <span><span class="k">plan</span> <b>${esc(e.slot_plan)}</b></span>
-        <span><span class="k">day</span> ${esc(e.daytype)}</span>
-        <span><span class="k">size</span> ${e.actual_size} <span style="color:var(--dim)">(target ${e.target_size?e.target_size.join('–'):'?'})</span></span>
-        <span><span class="k">displacement</span> ${esc(e.displacement||'')}</span>
-        <span><span class="k">assembled</span> ${rel(e.assembled_at)} ago</span>
-      </div>
-      <div class="lint">` +
-        (fails.length
-          ? fails.map(f=>`<div class="lint-fail">✕ ${esc(f)}</div>`).join('')
-          : `<div class="lint-ok">✓ passes all set constraints</div>`) +
-        (unfilled.length ? `<div class="lint-fail">✕ unfilled: ${esc(unfilled.join(', '))}</div>` : '') +
-      `</div>
-    </div>` +
-    (e.stories||[]).map((s,i)=>{
-      const sc = s.scores||{};
-      return `<div class="ed-story">
-        <div><span class="slot-tag">${esc(s.slot_label||s.slot)}</span>`+
-        `<strong>${i+1}. ${esc(s.title)}</strong></div>
-        <div class="meta-line" style="margin-top:3px">
-          <span class="beat beat-${esc(s.beat)}">${esc(s.beat)}</span>
-          ${esc(pubList(s.publishers||[]))} · ${s.publisher_count} pub${s.publisher_count===1?'':'s'}
-          ${s.ledger_class?' · <b>'+esc(s.ledger_class)+'</b>':''}
-          ${s.politician_led?' · politician-led':''}
-        </div>
-        <div style="margin-top:4px">`+
-          scoreChip('emotion', sc.emotional_load, 4, null)+
-          scoreChip('explain', sc.explainability, null, 5)+
-          scoreChip('action', sc.actionability, null, 4)+
-          scoreChip('currency', sc.conversational_currency, null, 4)+
-          `<span class="sc">score <b>${s.assembly_score}</b></span>
-        </div>`+
-        (s.line?`<div class="line">${esc(s.line)}</div>`:'')+
-        ((s.new_facts||[]).length
-          ? `<div class="facts"><b>${s.new_facts.length} new fact${s.new_facts.length===1?'':'s'}:</b> `+
-            s.new_facts.map(f=>esc(f)).join(' · ')+`</div>` : '')+
-      `</div>`;
-    }).join('') +
-    ((e.excluded_sample||[]).length
-      ? `<div class="killed"><div class="k" style="font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px">`+
-        `excluded before slot-filling (${e.excluded_sample.length} shown)</div>`+
-        e.excluded_sample.map(x=>`<div class="k-item">✕ ${esc(x.why)} — ${esc(x.title||'')}</div>`).join('')+
-        `</div>` : '');
-}
 
 /* ─── shell ─── */
 function render(){
@@ -1782,14 +1826,11 @@ function render(){
   document.getElementById('tab-stream').classList.toggle('on', TAB==='stream');
   document.getElementById('tab-lineup').classList.toggle('on', TAB==='lineup');
   document.getElementById('tab-lineup').textContent = 'lineup'+(LINEUP.length?' ('+LINEUP.length+')':'');
-  document.getElementById('tab-edition').classList.toggle('on', TAB==='edition');
   if (TAB==='stream') renderStream(root);
-  else if (TAB==='edition') renderEdition(root);
   else renderLineup(root);
 }
 document.getElementById('tab-stream').addEventListener('click',()=>{ TAB='stream'; render(); });
 document.getElementById('tab-lineup').addEventListener('click',()=>{ TAB='lineup'; render(); });
-document.getElementById('tab-edition').addEventListener('click',()=>{ TAB='edition'; render(); });
 document.getElementById('notesToggle').addEventListener('click',()=>{ notesOpen=!notesOpen; renderNotes(); });
 document.getElementById('gear').addEventListener('click',()=>{
   const p=document.getElementById('settings'); p.classList.toggle('open');
@@ -1813,14 +1854,14 @@ tick(); setInterval(tick,30000);
 
 fetch('data/clusters.json?t='+Date.now())
   .then(r=>{ if(!r.ok) throw 0; return r.json(); })
-  .then(d=>{ STREAM=d; render(); })
+  .then(d=>{ STREAM=d; syncEditionToLineup(); render(); })
   .catch(()=>{ STREAM=null; render(); });
 
 // The assembled edition. Absent until the workflow's Assemble step has run —
 // a 404 here is normal, not an error worth surfacing.
 fetch('data/lineup.json?t='+Date.now())
   .then(r=>{ if(!r.ok) throw 0; return r.json(); })
-  .then(d=>{ EDITION=d; render(); })
+  .then(d=>{ EDITION=d; syncEditionToLineup(); render(); })
   .catch(()=>{ EDITION=null; });
 </script>
 </body>
