@@ -53,8 +53,10 @@ For the story below (headlines from one or more publishers), produce:
 
 5. POLITICIAN_LED — true if the story's primary actor is a politician or government official, false otherwise.
 
+6. HEADLINE — write a real headline for this cluster, from what these headlines actually say together. Do NOT copy any single article's headline verbatim. Rules: plain, specific, names the actual event (who/what), no wordplay, no questions, under 90 characters. If the supplied headlines are themselves a roundup/digest ("Best Shows This Week," "5 things to know") rather than one coherent story, write a headline describing THAT — e.g. "Weekly culture roundup" — never adopt the roundup's own clickbait title.
+
 Respond ONLY with JSON, no preamble, no markdown fences:
-{"beat": "<one of the beats>", "line": "<one sentence or empty string>", "verdict": "YES"|"MAYBE"|"NO", "emotional_load": <1-5>, "explainability": <1-5>, "actionability": <1-5>, "conversational_currency": <1-5>, "politician_led": true|false}"""
+{"beat": "<one of the beats>", "line": "<one sentence or empty string>", "verdict": "YES"|"MAYBE"|"NO", "emotional_load": <1-5>, "explainability": <1-5>, "actionability": <1-5>, "conversational_currency": <1-5>, "politician_led": true|false, "headline": "<generated headline>"}"""
 
 
 def log(msg):
@@ -65,7 +67,7 @@ def fingerprint(cluster):
     # Re-triage when a cluster roughly doubles in publisher diversity
     d = cluster["publisher_count"]
     bucket = 1 if d < 2 else (2 if d < 4 else 4)
-    return f"{cluster['key']}:{bucket}:v2"   # :v2 — cached pre-scoring verdicts must re-run
+    return f"{cluster['key']}:{bucket}:v3"   # :v3 — cached pre-headline verdicts must re-run
 
 
 def _parse_json_lenient(text):
@@ -120,6 +122,8 @@ def call_claude(api_key, cluster):
         except (TypeError, ValueError):
             verdict[axis] = 3
     verdict["politician_led"] = bool(verdict.get("politician_led", False))
+    hl = (verdict.get("headline") or "").strip()
+    verdict["headline"] = hl[:120] if hl else None  # None -> caller falls back to raw title
     return verdict
 
 
