@@ -365,7 +365,13 @@ def main():
                            if not any(x["slot"] == s["id"] for x in chosen) and s["min"] > 0],
         "stories": [{
             "slot": x["slot"], "slot_label": x["slot_label"],
-            "key": x["cluster"]["key"], "title": x["cluster"]["title"],
+            "key": x["cluster"]["key"],
+            # Prefer triage's generated headline (R15) — written from what the
+            # cluster's articles actually say together — over the raw
+            # representative title, which is just whichever single article's
+            # headline happened to sort first and is prone to picking up a
+            # roundup/newsletter title that describes five unrelated things.
+            "title": (x["cluster"].get("triage") or {}).get("headline") or x["cluster"]["title"],
             "beat": beat_of(x["cluster"]),
             "publisher_count": x["cluster"]["publisher_count"],
             "publishers": x["cluster"].get("publishers", []),
