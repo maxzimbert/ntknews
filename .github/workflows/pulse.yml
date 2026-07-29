@@ -48,22 +48,42 @@ jobs:
 
       # Layer 3 — the epistemic dedup. Sonnet, capped at 15 calls/run, and
       # only touches clusters that triage graded YES or MAYBE.
+      #
+      # continue-on-error: true — a bug in this stage (there have been two
+      # already) must NOT cost the fresh window/clusters/triage data that
+      # already exists on disk at this point. Without this, GitHub Actions'
+      # default behavior on a failed step is to skip every step after it,
+      # including Commit — so a ledger crash was silently discarding a full
+      # ingest+cluster+triage run every time it happened. That is almost
+      # certainly why Pulse has been showing "data 48h old": several runs in
+      # a row did real work and then threw it away at the finish line.
       - name: Story Ledger
         if: ${{ inputs.run_ledger }}
+        continue-on-error: true
         working-directory: ntk-pulse
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python ledger.py
 
       # No API calls — every judgment used here was already paid for above.
+      # Also continue-on-error: assembly depends on ledger annotations being
+      # PRESENT, not on the ledger step having SUCCEEDED — if ledger.py
+      # failed above, assembly.py still runs fine against triage data alone
+      # (ledger_class() returns None gracefully for unannotated clusters).
       - name: Assemble digest
+        continue-on-error: true
         working-directory: ntk-pulse
         env:
           NTK_SLOT_PLAN: ${{ inputs.slot_plan }}
           NTK_DISPLACEMENT: MANUAL
         run: python assembly.py
 
+      # if: always() — this is the actual fix. Commit whatever exists in
+      # data/ regardless of whether every prior step succeeded. A fresh
+      # window and fresh clusters are worth saving even if ledger or
+      # assembly had a bad run; partial freshness beats total staleness.
       - name: Commit data
+        if: always()
         run: |
           git config user.name "ntk-pulse-bot"
           git config user.email "pulse@ntknews.org"
