@@ -167,9 +167,23 @@ def _parse_json_lenient(text):
     an internal double-quote unescaped. We try strict parse first, then a
     handful of narrow repairs; give up and raise if none work so the caller
     logs the diff as failed instead of silently mis-classifying.
+
+    CRITICAL: json.loads() succeeding is not the same as getting the shape
+    we asked for. A bare JSON string ("Nothing to report.") or a bare
+    number parses without error and is perfectly valid JSON — but the
+    caller does result.get("items"), which crashes on anything that isn't
+    a dict. Every stage below is therefore gated on isinstance(_, dict);
+    a non-dict success is treated the same as a parse failure and falls
+    through to the next repair, so a model that deviates from the required
+    schema produces a logged, caught failure instead of a crash.
     """
+    def _as_dict(v):
+        if isinstance(v, dict):
+            return v
+        raise json.JSONDecodeError(f"parsed to {type(v).__name__}, not an object", text, 0)
+
     try:
-        return json.loads(text)
+        return _as_dict(json.loads(text))
     except json.JSONDecodeError:
         pass
     # Repair 1: replace smart quotes that Sonnet sometimes uses inside strings
@@ -178,20 +192,20 @@ def _parse_json_lenient(text):
     repaired = (text.replace("\u201c", '"').replace("\u201d", '"')
                     .replace("\u2018", "'").replace("\u2019", "'"))
     try:
-        return json.loads(repaired)
+        return _as_dict(json.loads(repaired))
     except json.JSONDecodeError:
         pass
     # Repair 2: strip trailing commas before ] or }
     repaired = re.sub(r",\s*([}\]])", r"\1", repaired)
     try:
-        return json.loads(repaired)
+        return _as_dict(json.loads(repaired))
     except json.JSONDecodeError:
         pass
     # Repair 3: whole-object extraction, if the object itself is intact
     m = re.search(r"\{.*\}", repaired, re.DOTALL)
     if m:
         try:
-            return json.loads(m.group(0))
+            return _as_dict(json.loads(m.group(0)))
         except json.JSONDecodeError:
             pass
     # Repair 4: the response was cut off mid-array (a raised max_tokens and a
