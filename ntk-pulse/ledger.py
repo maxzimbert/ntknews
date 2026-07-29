@@ -157,7 +157,14 @@ def call_claude(api_key, ledger, new_items, summaries):
         data = json.loads(resp.read())
     text = "".join(b.get("text", "") for b in data.get("content", []) if b.get("type") == "text")
     text = text.replace("```json", "").replace("```", "").strip()
-    return _parse_json_lenient(text)
+    result = _parse_json_lenient(text)
+    # Only the batch actually sent counts as "processed" — the caller must
+    # not mark overflow items seen, or they vanish from the ledger forever
+    # without ever being classified. (Fixed once already; got lost in a
+    # subsequent edit that was built on a stale copy of this file — this
+    # time verified against the live deployed source directly, not a local
+    # copy, to close that gap.)
+    return result, [it["id"] for it in batch]
 
 
 def _parse_json_lenient(text):
