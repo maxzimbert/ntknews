@@ -1,10 +1,19 @@
 name: NTK Pulse
 
 on:
-  workflow_dispatch: {}   # manual only — Max's call, July 2026, to conserve API credits.
-                          # To go scheduled later, add:
-                          #   schedule:
-                          #     - cron: "*/20 * * * *"
+  workflow_dispatch:
+    inputs:
+      slot_plan:
+        description: "Digest slot plan: A (reader-relationship slots) or B (4 hard + 4 reserved)"
+        required: false
+        default: "A"
+        type: choice
+        options: ["A", "B"]
+      run_ledger:
+        description: "Run the Story Ledger pass (Sonnet — the expensive stage)"
+        required: false
+        default: true
+        type: boolean
 
 permissions:
   contents: write
@@ -18,7 +27,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -31,12 +39,29 @@ jobs:
         working-directory: ntk-pulse
         run: python cluster.py
 
-      - name: Triage (Haiku annotations)
+      - name: Triage (beat, line, verdict + assembly scores)
         working-directory: ntk-pulse
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           PULSE_MAX_CALLS: "25"
         run: python triage.py
+
+      # Layer 3 — the epistemic dedup. Sonnet, capped at 15 calls/run, and
+      # only touches clusters that triage graded YES or MAYBE.
+      - name: Story Ledger
+        if: ${{ inputs.run_ledger }}
+        working-directory: ntk-pulse
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python ledger.py
+
+      # No API calls — every judgment used here was already paid for above.
+      - name: Assemble digest
+        working-directory: ntk-pulse
+        env:
+          NTK_SLOT_PLAN: ${{ inputs.slot_plan }}
+          NTK_DISPLACEMENT: MANUAL
+        run: python assembly.py
 
       - name: Commit data
         run: |
