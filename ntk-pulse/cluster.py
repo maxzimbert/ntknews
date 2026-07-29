@@ -153,6 +153,22 @@ def centroid(vec_list):
 
 
 # ── FIX 1: entity IDF ──
+# Feed-level beat hints. Haiku triage supplies the authoritative beat tag;
+# this is the fallback shown before/without a triage verdict. Dropped by
+# accident in the first v2 draft — restoring it, since pulse.html renders
+# beat badges from it and assembly.py falls back to it for slot tests.
+MARKET_BEAT = {"intl": "international"}
+
+
+def beat_hint(members, feeds_by_id):
+    from collections import Counter as _C
+    votes = _C()
+    for m in members:
+        f = feeds_by_id.get(m["publisher"], {})
+        votes[f.get("beat") or MARKET_BEAT.get(m.get("market", ""), "national")] += 1
+    return votes.most_common(1)[0][0] if votes else "national"
+
+
 def build_entity_idf(ents_by_id):
     """Rarity weight per entity. 'iran' in 200 headlines ≈ 0; a name in 3 ≈ high."""
     df = Counter()
@@ -249,10 +265,18 @@ def velocity(members, times, window_start, window_end):
     return min(len(recent_pubs) / expected, VELOCITY_CLAMP)
 
 
+ROOT_DIR = Path(__file__).parent
+
+
 def main(data_dir, out_name="clusters_v2.json", verbose=True):
     DATA = Path(data_dir)
     now = datetime.now(timezone.utc)
     window = json.loads((DATA / "window.json").read_text())
+    try:
+        feeds_by_id = {f["id"]: f for f in
+                       json.loads((ROOT_DIR / "feeds.json").read_text())["feeds"]}
+    except Exception:
+        feeds_by_id = {}
 
     def ts(item):
         raw = item.get("published") or item.get("first_seen")
@@ -361,6 +385,7 @@ def main(data_dir, out_name="clusters_v2.json", verbose=True):
             "raw_velocity": round(raw_vel, 3),
             "pulse_score": 0.0,   # filled in below, once the run median is known
             "is_bridge": any(i in bridge_ids for i in cl["ids"]),
+            "beat_hint": beat_hint(members, feeds_by_id),
             "entities": sorted(cl["entities"])[:40],
             "items": [{"id": m["id"], "title": m["title"], "url": m["url"],
                        "publisher": m["publisher_name"], "published": m.get("published")}
