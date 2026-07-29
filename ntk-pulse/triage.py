@@ -29,7 +29,7 @@ MAX_CALLS_PER_RUN = int(os.environ.get("PULSE_MAX_CALLS", "25"))
 API_URL = "https://api.anthropic.com/v1/messages"
 
 BEATS = ["national", "international", "tech", "health", "education",
-         "science", "business", "culture", "other"]
+         "science", "business", "culture", "longevity", "parenting", "other"]
 
 RUBRIC = """You are the monitoring editor for NTK News, a daily digest for anxious, disengaged, cynical Americans who have largely stopped following the news. You are annotating a real-time surveillance surface, not filtering it — every story stays visible regardless of your verdict.
 
@@ -41,8 +41,20 @@ For the story below (headlines from one or more publishers), produce:
 
 3. VERDICT — YES (a reader needs to know), MAYBE, or NO (pablum: statements without acts, horse-race framing, celebrity churn, process increments, press-release rewrites).
 
+4. SCORES — four 1-5 judgments the digest assembler needs. Score the STORY, not your feelings about it.
+
+   emotional_load — what it costs the reader to carry. 1 = light or joyful. 3 = sober but bearable. 5 = death, violence, cruelty, a child harmed, personal catastrophe. Be honest; do not soften a hard story to be kind.
+
+   explainability — can a reader with ZERO prior knowledge follow this in 150 words? 5 = fully self-contained. 3 = needs one sentence of setup. 1 = incomprehensible without following the story for weeks.
+
+   actionability — is there a decision, deadline, or thing to do? 5 = a concrete action for an ordinary person. 3 = changes how they'd think about a decision. 1 = nothing to do.
+
+   conversational_currency — will this come up in conversation this week? 5 = everyone will reference it. 1 = nobody will mention it.
+
+5. POLITICIAN_LED — true if the story's primary actor is a politician or government official, false otherwise.
+
 Respond ONLY with JSON, no preamble, no markdown fences:
-{"beat": "<one of the nine>", "line": "<one sentence or empty string>", "verdict": "YES"|"MAYBE"|"NO"}"""
+{"beat": "<one of the beats>", "line": "<one sentence or empty string>", "verdict": "YES"|"MAYBE"|"NO", "emotional_load": <1-5>, "explainability": <1-5>, "actionability": <1-5>, "conversational_currency": <1-5>, "politician_led": true|false}"""
 
 
 def log(msg):
@@ -53,7 +65,7 @@ def fingerprint(cluster):
     # Re-triage when a cluster roughly doubles in publisher diversity
     d = cluster["publisher_count"]
     bucket = 1 if d < 2 else (2 if d < 4 else 4)
-    return f"{cluster['key']}:{bucket}"
+    return f"{cluster['key']}:{bucket}:v2"   # :v2 — cached pre-scoring verdicts must re-run
 
 
 def _parse_json_lenient(text):
@@ -98,6 +110,16 @@ def call_claude(api_key, cluster):
     # Sanity: clamp beat to the known set
     if verdict.get("beat") not in BEATS:
         verdict["beat"] = None
+    # Clamp the 1-5 axes; assembly treats a missing score as "unknown" (3)
+    # rather than as zero, so a bad parse can't silently make a story look
+    # weightless on emotional load.
+    for axis in ("emotional_load", "explainability", "actionability",
+                 "conversational_currency"):
+        try:
+            verdict[axis] = max(1, min(5, int(verdict.get(axis, 3))))
+        except (TypeError, ValueError):
+            verdict[axis] = 3
+    verdict["politician_led"] = bool(verdict.get("politician_led", False))
     return verdict
 
 
