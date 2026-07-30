@@ -167,6 +167,64 @@ def call_claude(api_key, ledger, new_items, summaries):
     return result, [it["id"] for it in batch]
 
 
+VALID_CLASSES = {"DEVELOPMENT", "INCREMENT", "RECYCLED"}
+
+
+def validate_diff_result(result, batch_ids, cluster_title=""):
+    """Normalize the model's diff response into something safe to consume.
+
+    Three schema-deviation bugs have now shipped from this one response
+    shape — a truncated array, a non-dict top level, and item objects with
+    no "id". Rather than defend field-by-field at each use site, everything
+    the caller depends on is guaranteed HERE, once:
+
+      - items is a list of dicts
+      - every item has an "id" that was actually in the batch we sent
+        (a hallucinated id would corrupt classes{} and seen_ids)
+      - every item has a valid "class"
+      - credits is a list, contradicts is a string
+
+    Anything failing those checks is dropped with a log line rather than
+    crashing the run or silently mis-classifying. Partial credit over total
+    loss — the same principle as the truncation salvage.
+    """
+    if not isinstance(result, dict):
+        return {"items": [], "ledger_updates": {}}, ["result was not an object"]
+
+    problems = []
+    valid_ids = set(batch_ids)
+    clean = []
+    for raw in result.get("items", []):
+        if not isinstance(raw, dict):
+            problems.append("item was not an object")
+            continue
+        iid = raw.get("id")
+        if not iid or not isinstance(iid, str):
+            problems.append(f"item missing id (class={raw.get('class', '?')})")
+            continue
+        if iid not in valid_ids:
+            # The model invented or mangled an id. Trusting it would write a
+            # bogus key into classes{} and mark an item seen that never was.
+            problems.append(f"item id not in batch: {iid[:24]}")
+            continue
+        cls = raw.get("class")
+        if cls not in VALID_CLASSES:
+            problems.append(f"invalid class '{cls}' for {iid[:16]}")
+            continue
+        raw["credits"] = [c for c in (raw.get("credits") or []) if isinstance(c, str)]
+        contra = raw.get("contradicts")
+        raw["contradicts"] = contra if isinstance(contra, str) else ""
+        for k in ("what_new", "unique"):
+            if not isinstance(raw.get(k), str):
+                raw[k] = ""
+        clean.append(raw)
+
+    updates = result.get("ledger_updates")
+    if not isinstance(updates, dict):
+        updates = {}
+    return {"items": clean, "ledger_updates": updates}, problems
+
+
 def _parse_json_lenient(text):
     """Parse Sonnet's JSON, repairing common escaping mistakes it makes.
 
@@ -339,6 +397,9 @@ def main():
         if len(processed_ids) < len(new_items):
             log(f"  batched: {len(processed_ids)}/{len(new_items)} new items for "
                 f"'{cl['title'][:40]}' — remainder picked up next run")
+        result, problems = validate_diff_result(result, processed_ids, cl.get("title", ""))
+        for p in problems[:4]:
+            log(f"  dropped malformed item for '{cl['title'][:34]}': {p}")
         processed_set = set(processed_ids)
         pub_by_id = {it["id"]: it.get("publisher", "") for it in new_items}
         for item_res in result.get("items", []):
