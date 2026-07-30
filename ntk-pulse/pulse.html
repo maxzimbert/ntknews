@@ -424,7 +424,7 @@ TONE: Tuchman and Halberstam, not Lippmann — scene and consequence before judg
 
 STAKES & PLOT: Every item needs someone or some institution whose situation actually changes — who wins, who loses, who's exposed, who's covering for whom — named specifically, never abstractly. Build toward that; don't open with it. If a named actor isn't a household name, give them one clause that makes them a character — a pattern, a tell, a prior stumble — not just a title. Movements within a section should follow from each other, not sit side by side: use a connective sentence ("That wasn't the only place the story didn't hold up." / "Three miles away, the calculation looked different.") instead of restarting cold at each new bold headline.
 
-STRUCTURAL RULES: Weave all source articles into unified analysis — never summarize separately. Citations: ([Source Name](URL)) in sentence before closing period. **Bold** for headlines and subheads only. Every factual claim needs a source.
+STRUCTURAL RULES: Weave all source articles into unified analysis — never summarize separately. Citations: ([Source Name](URL)) in sentence before closing period. **Bold** for headlines and subheads only. Every factual claim needs a source. Always leave a space after a closing ** before the next word — never let a bold span run directly into the next word or into another bold span with no space between them. A subhead is a sentence that orients the reader inside the story, never the section's own name (Truths/Probabilities/Possibilities/Lies) restated as a label — the reader already knows which section they're in.
 
 SOURCE WEIGHTING: Articles are primary. Historical parallels are seasoning — one sentence max. NTK has a SWIPE LEFT History layer — create curiosity gaps.
 
@@ -1493,6 +1493,12 @@ function editionScoreChips(key){
     (s.ledger_class ? ` · <b>${esc(s.ledger_class)}</b>` : '');
 }
 
+function wireCandidateButtons(root){
+  root.querySelectorAll('.add-candidate').forEach(btn=>{
+    btn.addEventListener('click',()=>addEditionCandidate(btn.dataset.key));
+  });
+}
+
 function editionStrip(){
   if (!EDITION) return '';
   const fails = EDITION.lint_failures||[], unfilled = EDITION.slots_unfilled||[];
@@ -1507,11 +1513,18 @@ function editionStrip(){
         ? fails.map(f=>`<div class="lint-fail">✕ ${esc(f)}</div>`).join('')
         : `<div class="lint-ok">✓ passes all set constraints</div>`}
       ${unfilled.length?`<div class="lint-fail">✕ unfilled: ${esc(unfilled.join(', '))}</div>`:''}
-      ${(EDITION._blockedByCap||[]).length?`<div class="lint-fail">✕ Lineup is full (${LINEUP_MAX}) — `+
-        `${EDITION._blockedByCap.length} fresh edition pick${EDITION._blockedByCap.length===1?'':'s'} couldn't sync in. `+
-        `Remove old stories to make room: ${esc(EDITION._blockedByCap.slice(0,3).join(' · '))}${EDITION._blockedByCap.length>3?' …':''}</div>`:''}
     </div>
   </div>` +
+  ((EDITION._candidates||[]).length ? `<div class="ed-head" style="margin-top:8px">
+    <div style="font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">
+      ${EDITION._candidates.length} from today's edition not yet in your lineup — choose what to add`+
+      (LINEUP.length>=LINEUP_MAX?' (full — remove a story first)':'')+`
+    </div>`+
+    EDITION._candidates.map(s=>`<div class="qres">`+
+      `<label style="flex:1"><span class="slot-tag" style="background:#666">${esc(s.slot_label||'')}</span> ${esc(s.title)}</label>`+
+      `<button class="mini add-candidate" data-key="${esc(s.key)}" ${LINEUP.length>=LINEUP_MAX?'disabled':''}>+ add</button>`+
+      `</div>`).join('')+
+    `</div>` : '') +
   ((EDITION.excluded_sample||[]).length ? `<details class="killed"><summary style="cursor:pointer;color:var(--dim);font-size:11px">`+
     `${EDITION.excluded_sample.length} candidates excluded before slot-filling</summary>`+
     EDITION.excluded_sample.map(x=>`<div class="k-item">✕ ${esc(x.why)} — ${esc(x.title||'')}</div>`).join('')+
@@ -1524,6 +1537,7 @@ function renderLineup(root){
   const strip = editionStrip();
   if (!LINEUP.length){
     root.innerHTML = strip + '<div class="empty">Nothing certified yet — assembled edition will populate automatically once the workflow runs, or expand a cluster in the stream and hit “→ lineup”.</div>';
+    wireCandidateButtons(root);
     return;
   }
 
@@ -1569,6 +1583,7 @@ function renderLineup(root){
   }
   document.getElementById('q-toggle').addEventListener('click',()=>{ Q.open=!Q.open; render(); });
   document.getElementById('gen-all').addEventListener('click',generateAll);
+  wireCandidateButtons(root);
   document.getElementById('cp-all').addEventListener('click',()=>cp(LINEUP.filter(s=>s.packages).map(storyText).join('\n\n\n'),'all'));
   document.getElementById('cp-site').addEventListener('click',()=>cp(siteExport(),'site'));
 
@@ -1607,7 +1622,7 @@ function renderLineup(root){
       `<button class="mini up">↑</button><button class="mini dn">↓</button>`+
       `<button class="mini rm" title="remove">remove</button></div>`+
       `<div class="angle-row"><textarea class="angle" placeholder="Angle — one sharp NTK sentence">${esc(s.angle)}</textarea>`+
-      `<button class="mini draft" ${s.busy?'disabled':''}>Draft</button></div>`+
+      `<button class="mini draft" ${s.busy?'disabled':''}>Step 1 · Draft</button></div>`+
       `<div class="story-meta"><span class="beat beat-${esc(s.beat)}">${esc(s.beat)}</span>`+
       `<select class="cat">${CATEGORIES.map(c=>`<option${c===s.category?' selected':''}>${c}</option>`).join('')}</select>`+
       `<span>${nActive} active sources · ${nBody} with ER bodies`+
@@ -1618,16 +1633,16 @@ function renderLineup(root){
       `<span style="font-size:10.5px;color:var(--dim)">concept:</span>`+
       `<input type="text" class="concept-in" placeholder="Wikipedia entity — disambiguate here if needed" value="${esc(s.conceptEntity)}">`+
       `<input type="text" class="kw-in kw" placeholder="keyword" value="${esc(s.narrowKeyword)}">`+
-      `<button class="mini check-concept" ${s.busy?'disabled':''}>check</button>`+
+      `<button class="mini check-concept" ${s.busy?'disabled':''}>Step 2 · check</button>`+
       `<span class="concept-status ${s.conceptChecked?(s.conceptUri?'ok':'miss'):'unchecked'}">`+
         (s.conceptChecked ? (s.conceptUri ? '✓ '+esc(s.conceptMatch||s.conceptEntity) : '✕ no match') : (s.conceptEntity?'unchecked':''))+
       `</span></div>`+
       `<div class="story-status${s.err?' err':''}">${esc(s.status||'')}</div>`+
       `<div class="ctx-row"><textarea class="wiki-ids" placeholder="Wikipedia IDs for background, one per line — Page or Page#Section_anchor">${esc(s.wikiIds||'')}</textarea>`+
-      `<button class="mini summon" ${s.busy?'disabled':''}>${s.contextAt?'Re-summon':'Summon context'}</button></div>`+
-      `<div><button class="mini primary enr" ${s.busy?'disabled':''}>${s.enrichedAt?'Re-enrich':'Enrich sources'}</button> `+
+      `<button class="mini summon" ${s.busy?'disabled':''}>Step 3 · ${s.contextAt?'Re-summon':'Summon context'}</button></div>`+
+      `<div><button class="mini primary enr" ${s.busy?'disabled':''}>Step 4 · ${s.enrichedAt?'Re-enrich':'Enrich sources'}</button> `+
       `<button class="mini pkg-t">${s.open?'hide':'show'} package (${arts.length})</button> `+
-      `<button class="mini go gen" ${s.busy?'disabled':''}>${s.packages?'Regenerate':'Generate'} Jefferson</button> `+
+      `<button class="mini go gen" ${s.busy?'disabled':''}>Step 5 · ${s.packages?'Regenerate':'Generate'} Jefferson</button> `+
       (s.packages?`<button class="mini out-t">${s.outOpen?'hide':'show'} output</button> `+
         `<button class="mini cp-s">copy text</button><span class="copied">${copiedFlag===s.id?' copied':''}</span>`:'')+
       `</div>`+
@@ -1765,11 +1780,51 @@ function renderNotes(){
        "not in today's edition" — the editor decides whether to keep
        working on it, certify it anyway, or remove it. Same principle as
        suppression and extraction: the machine marks, the editor decides. */
+// Builds the actual LINEUP entry object for an edition pick. Shared by
+// bootstrap auto-fill and manual candidate-add so there's exactly one
+// place that defines what a synced story looks like.
+function materializeEditionStory(s){
+  const streamCluster = (STREAM?.clusters||[]).find(c=>c.key===s.key);
+  const items = streamCluster ? streamCluster.items : [];
+  return {
+    id: 'ln-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),
+    key: s.key, title: s.title,
+    beat: s.beat, category: BEAT_TO_CAT[s.beat] || 'Domestic',
+    angle: s.line || '',
+    conceptEntity:'', narrowKeyword:'',
+    articles: items.map(it=>({
+      url: it.url, title: it.title, source: it.publisher, date: it.published||'',
+      body:'', bodyFrom:'', included:true, dupOf:null, origin:'rss'
+    })),
+    enrichedAt: null, packages: null, open: false, outOpen: false,
+    fromEdition: true, slotLabel: s.slot_label,
+  };
+}
+
+// Manual add: called when the editor clicks a specific candidate in the
+// "available to add" list, never automatically once the editor has started
+// curating (see the bootstrap check below).
+function addEditionCandidate(key){
+  if (LINEUP.length >= LINEUP_MAX){ alert('Lineup is full ('+LINEUP_MAX+'). Remove a story first.'); return; }
+  const s = (EDITION?.stories||[]).find(x=>x.key===key);
+  if (!s || LINEUP.find(l=>l.key===key)) return;
+  LINEUP.push(materializeEditionStory(s));
+  saveLineup(); render();
+}
+
 function syncEditionToLineup(){
   if (!EDITION || !EDITION.stories) return;
   const editionKeys = new Set(EDITION.stories.map(s=>s.key));
   let changed = false;
-  const blockedByCap = [];   // edition picks that couldn't sync — cap was full
+  // Auto-fill only applies to a genuinely empty Lineup — pure bootstrap, the
+  // very first time the homepage has anything to show. The instant you've
+  // started curating (removed a story, edited an angle, whatever), a slot
+  // opening back up should never be silently refilled with whichever
+  // edition pick happens to sort first — that's the machine making an
+  // editorial choice you didn't ask it to make. Candidates get offered
+  // instead; you choose.
+  const bootstrap = LINEUP.length === 0;
+  const candidates = [];
 
   for (const s of EDITION.stories){
     const existing = LINEUP.find(l=>l.key===s.key);
@@ -1790,37 +1845,12 @@ function syncEditionToLineup(){
       continue;
     }
     if (existing){ continue; }   // never touch authored state
-    if (LINEUP.length >= LINEUP_MAX){
-      // The old failure mode here was silent: sync would just stop and the
-      // editor had no way to know 10 fresh edition picks arrived and 8 of
-      // them never made it in. Cluster keys aren't stable across pipeline
-      // runs (the representative article shifts as the 6h window rolls),
-      // so this isn't rare — a full Lineup blocks EVERY subsequent sync
-      // until something is manually removed.
-      blockedByCap.push(s.title);
-      continue;
-    }
-    // Pull the real items from the live stream so Enrich/Generate have
-    // something to work with — assembly.py's lineup.json intentionally
-    // doesn't duplicate full article lists (single source of truth).
-    const streamCluster = (STREAM?.clusters||[]).find(c=>c.key===s.key);
-    const items = streamCluster ? streamCluster.items : [];
-    LINEUP.push({
-      id: 'ln-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),
-      key: s.key, title: s.title,
-      beat: s.beat, category: BEAT_TO_CAT[s.beat] || 'Domestic',
-      angle: s.line || '',
-      conceptEntity:'', narrowKeyword:'',
-      articles: items.map(it=>({
-        url: it.url, title: it.title, source: it.publisher, date: it.published||'',
-        body:'', bodyFrom:'', included:true, dupOf:null, origin:'rss'
-      })),
-      enrichedAt: null, packages: null, open: false, outOpen: false,
-      fromEdition: true, slotLabel: s.slot_label,
-    });
+    if (!bootstrap){ candidates.push(s); continue; }   // offer, don't auto-add
+    if (LINEUP.length >= LINEUP_MAX){ candidates.push(s); continue; }
+    LINEUP.push(materializeEditionStory(s));
     changed = true;
   }
-  if (blockedByCap.length) EDITION._blockedByCap = blockedByCap; else delete EDITION._blockedByCap;
+  EDITION._candidates = candidates;
   // Flag (never delete) anything that fell out of today's edition.
   for (const l of LINEUP){
     const stillIn = editionKeys.has(l.key);
