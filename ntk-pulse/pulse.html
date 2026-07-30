@@ -1022,6 +1022,50 @@ function sectionsBlock(pkg, includeList, label){
     `- Build forward, not sideways: a thread opened in an earlier section can be advanced, escalated, or paid off — never reopened as if new. Referring back in shorthand is encouraged; the sections should read as one mind thinking, not four writers briefed separately.`;
 }
 function priorSectionsBlock(pkg){ return sectionsBlock(pkg, SECS); }
+/* ─── deterministic post-generation cleanup ───
+   The GLOBAL prompt now instructs the model to leave a space after a
+   closing bold marker and never self-label a section. That reduces how
+   often it happens; it can't guarantee zero, and it hasn't (confirmed:
+   "ForIf", "WhoKevin", "The Lies Section" all recurred after the prompt
+   fix shipped). So this runs on every generated section regardless of
+   compliance — a deterministic safety net layered on TOP of the prompt
+   instruction, not a replacement for it. Applied once, at the moment text
+   is received, so the corrected version is what's stored, rendered,
+   copied, exported, AND fed to later sections as "already written"
+   context — nothing downstream ever sees the raw artifact. */
+const NO_SPACE_AFTER = new Set('.,;:\'\u2019")]}-\u2013\u2014!?'.split(''));
+function fixBoldSpacing(text){
+  let out = '', inBold = false, i = 0;
+  while (i < text.length){
+    if (text[i]==='*' && text[i+1]==='*'){
+      out += '**'; inBold = !inBold; i += 2;
+      // Just closed a bold span — if what follows isn't whitespace and
+      // isn't punctuation that legitimately hugs the close (a period, an
+      // apostrophe for a possessive, a closing paren), insert the space
+      // the model dropped. Catches both "**For**If" (letter runs on) and
+      // "**Lies****Trump's**" (a second bold span runs on with no gap).
+      if (!inBold && i < text.length && text[i]!==' ' && text[i]!=='\n' && !NO_SPACE_AFTER.has(text[i])){
+        out += ' ';
+      }
+      continue;
+    }
+    out += text[i]; i++;
+  }
+  return out;
+}
+function stripSectionSelfLabel(sec, text){
+  // A leading bold span that's just the section's own name echoed back
+  // ("**Lies**", "**The Lies Section**") is always redundant — the h3
+  // header already says LIES — and never intentional content. Matched
+  // against THIS section's name specifically, not all four, so a
+  // legitimate subhead that happens to share a word stays untouched.
+  const re = new RegExp('^\\s*\\*\\*\\s*(the\\s+)?'+sec.toLowerCase()+'(\\s+section)?\\s*\\*\\*\\s*\\n*','i');
+  return text.replace(re, '');
+}
+function cleanSectionText(sec, text){
+  return fixBoldSpacing(stripSectionSelfLabel(sec, text||''));
+}
+
 async function generateStory(story){
   const arts = activeArts(story);
   if (!arts.length){ setStatus(story,'No active sources — enrich or add URLs first',true); return; }
@@ -1039,7 +1083,7 @@ async function generateStory(story){
   const pkg = {};
   for (const sec of SECS){
     setStatus(story, story.title.slice(0,40)+' · '+sec+'…');
-    try { pkg[sec] = await ai(makePrompt(sec, artsText+angleBlock+contextBlock(story)+notesBlock()+priorSectionsBlock(pkg), []), 1500); }
+    try { pkg[sec] = cleanSectionText(sec, await ai(makePrompt(sec, artsText+angleBlock+contextBlock(story)+notesBlock()+priorSectionsBlock(pkg), []), 1500)); }
     catch(e){ pkg[sec] = '[Generation failed: '+e.message+']'; }
   }
   story.packages = pkg; story.generatedAt = new Date().toISOString(); story.outOpen = true;
@@ -1063,8 +1107,8 @@ async function reviseSection(story, sectionName, note){
     ? `\n\nEDITOR'S REVISION NOTE — the specific reason this section is being rewritten; apply it directly and concretely, not just in spirit: ${note.trim()}`
     : '\n\nThis section is being regenerated at the editor\'s request with no specific note — reconsider it freshly against the source material and the standing editorial notes above.';
   try {
-    story.packages[sectionName] = await ai(makePrompt(sectionName,
-      artsText+angleBlock+contextBlock(story)+notesBlock()+siblings+revisionNote, []), 1500);
+    story.packages[sectionName] = cleanSectionText(sectionName, await ai(makePrompt(sectionName,
+      artsText+angleBlock+contextBlock(story)+notesBlock()+siblings+revisionNote, []), 1500));
     setStatus(story,'Revised '+sectionName+'.');
   } catch(e){ setStatus(story,'Revise failed: '+e.message,true); }
   story.busy=false; saveLineup(); render();
