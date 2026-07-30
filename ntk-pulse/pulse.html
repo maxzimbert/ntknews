@@ -364,7 +364,32 @@ function parseJSON(raw){
   const i = c.indexOf('['); const j = c.indexOf('{');
   if (i>0 && (j<0 || i<j)) c = c.slice(i);
   else if (j>0 && (i<0 || j<i)) c = c.slice(j);
-  return JSON.parse(c);
+  try { return JSON.parse(c); }
+  catch (e) {
+    // Truncated mid-array (a max_tokens ceiling hit on a big response) —
+    // salvage whatever complete top-level objects exist before the cutoff
+    // rather than losing the entire batch to one unterminated string.
+    // Same principle already proven in ledger.py's Python-side parser.
+    if (c.trim().startsWith('[')){
+      const objs = []; let depth = 0, start = -1, inStr = false, esc = false;
+      for (let k = 0; k < c.length; k++){
+        const ch = c[k];
+        if (inStr){
+          if (esc) esc = false;
+          else if (ch === '\\') esc = true;
+          else if (ch === '"') inStr = false;
+          continue;
+        }
+        if (ch === '"') { inStr = true; continue; }
+        if (ch === '{'){ if (depth === 0) start = k; depth++; }
+        else if (ch === '}'){ depth--; if (depth === 0 && start >= 0){
+          try { objs.push(JSON.parse(c.slice(start, k+1))); } catch {}
+        }}
+      }
+      if (objs.length) return objs;
+    }
+    throw e;
+  }
 }
 
 /* ─── API plumbing (ported from ntk-production) ─── */
@@ -899,20 +924,38 @@ async function summonContext(story){
       catch(e){ ctx.push({kind:'wiki', id, url:'https://en.wikipedia.org/wiki/'+id.split('#')[0],
         title:id, note:'[unavailable: '+e.message+']', included:false}); }
     }
-    // 2. One Haiku call condenses all fetched sections into per-ID notes,
-    //    each keeping its URL so generation can cite each thread separately.
+    // 2. Haiku condenses fetched sections into per-ID notes, each keeping
+    //    its URL so generation can cite each thread separately. Batched —
+    //    a category expansion can hand this up to WIKI_CATEGORY_CAP (15)
+    //    sources at once, and 15 notes at ~120 words each needs well over
+    //    2000 tokens of output, which used to truncate against a 1200
+    //    ceiling sized for the original few-hand-picked-IDs case. Same
+    //    fix already proven in ledger.py: cap items per call so no single
+    //    response is ever asked to hold more than it safely can.
+    const CONDENSE_BATCH = 6;
     if (raws.length){
-      setStatus(story,'Condensing background…');
-      const prompt = `You are preparing BACKGROUND notes for an NTK News story: "${story.title}".\n`+
-        `For each Wikipedia source below, write one factual note of at most 120 words: the prior events and their dates, plainly told, selected for what makes TODAY's incremental news legible. No commentary, no analysis of today's news itself.\n\n`+
-        raws.map((r,i)=>`SOURCE ${i} — ${r.title}:\n${r.text}`).join('\n\n')+
-        `\n\nReturn ONLY a JSON array, no fences: [{"i":0,"note":"..."}]`;
-      const notes = parseJSON(await ai(prompt, 1200));
-      raws.forEach((r,i)=>{
-        const n = notes.find(x=>x.i===i);
-        ctx.push({kind:'wiki', id:r.id, url:r.url, title:r.title,
-          note:(n&&n.note)||r.text.slice(0,600), included:true});
-      });
+      for (let start = 0; start < raws.length; start += CONDENSE_BATCH){
+        const batch = raws.slice(start, start + CONDENSE_BATCH);
+        setStatus(story, `Condensing background… (${start+1}-${start+batch.length} of ${raws.length})`);
+        const prompt = `You are preparing BACKGROUND notes for an NTK News story: "${story.title}".\n`+
+          `For each Wikipedia source below, write one factual note of at most 120 words: the prior events and their dates, plainly told, selected for what makes TODAY's incremental news legible. No commentary, no analysis of today's news itself.\n\n`+
+          batch.map((r,i)=>`SOURCE ${i} — ${r.title}:\n${r.text}`).join('\n\n')+
+          `\n\nReturn ONLY a JSON array, no fences: [{"i":0,"note":"..."}]`;
+        try {
+          const notes = parseJSON(await ai(prompt, 2000));
+          batch.forEach((r,i)=>{
+            const n = notes.find(x=>x.i===i);
+            ctx.push({kind:'wiki', id:r.id, url:r.url, title:r.title,
+              note:(n&&n.note)||r.text.slice(0,600), included:true});
+          });
+        } catch(e){
+          // One bad batch shouldn't cost the others — fall back to the raw
+          // (uncondensed) extract for just this batch rather than losing
+          // everything summoned so far.
+          batch.forEach(r=>ctx.push({kind:'wiki', id:r.id, url:r.url, title:r.title,
+            note:r.text.slice(0,600), included:true}));
+        }
+      }
     }
     // 3. ER arc: concept-scoped, 29-day, relevance-sorted — the story so far.
     const uri = await ensureConceptUri(story).catch(()=>null);
