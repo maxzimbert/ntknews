@@ -1507,6 +1507,9 @@ function editionStrip(){
         ? fails.map(f=>`<div class="lint-fail">✕ ${esc(f)}</div>`).join('')
         : `<div class="lint-ok">✓ passes all set constraints</div>`}
       ${unfilled.length?`<div class="lint-fail">✕ unfilled: ${esc(unfilled.join(', '))}</div>`:''}
+      ${(EDITION._blockedByCap||[]).length?`<div class="lint-fail">✕ Lineup is full (${LINEUP_MAX}) — `+
+        `${EDITION._blockedByCap.length} fresh edition pick${EDITION._blockedByCap.length===1?'':'s'} couldn't sync in. `+
+        `Remove old stories to make room: ${esc(EDITION._blockedByCap.slice(0,3).join(' · '))}${EDITION._blockedByCap.length>3?' …':''}</div>`:''}
     </div>
   </div>` +
   ((EDITION.excluded_sample||[]).length ? `<details class="killed"><summary style="cursor:pointer;color:var(--dim);font-size:11px">`+
@@ -1766,6 +1769,7 @@ function syncEditionToLineup(){
   if (!EDITION || !EDITION.stories) return;
   const editionKeys = new Set(EDITION.stories.map(s=>s.key));
   let changed = false;
+  const blockedByCap = [];   // edition picks that couldn't sync — cap was full
 
   for (const s of EDITION.stories){
     const existing = LINEUP.find(l=>l.key===s.key);
@@ -1786,7 +1790,16 @@ function syncEditionToLineup(){
       continue;
     }
     if (existing){ continue; }   // never touch authored state
-    if (LINEUP.length >= LINEUP_MAX) break;   // respect the same cap certify() always has
+    if (LINEUP.length >= LINEUP_MAX){
+      // The old failure mode here was silent: sync would just stop and the
+      // editor had no way to know 10 fresh edition picks arrived and 8 of
+      // them never made it in. Cluster keys aren't stable across pipeline
+      // runs (the representative article shifts as the 6h window rolls),
+      // so this isn't rare — a full Lineup blocks EVERY subsequent sync
+      // until something is manually removed.
+      blockedByCap.push(s.title);
+      continue;
+    }
     // Pull the real items from the live stream so Enrich/Generate have
     // something to work with — assembly.py's lineup.json intentionally
     // doesn't duplicate full article lists (single source of truth).
@@ -1807,6 +1820,7 @@ function syncEditionToLineup(){
     });
     changed = true;
   }
+  if (blockedByCap.length) EDITION._blockedByCap = blockedByCap; else delete EDITION._blockedByCap;
   // Flag (never delete) anything that fell out of today's edition.
   for (const l of LINEUP){
     const stillIn = editionKeys.has(l.key);
