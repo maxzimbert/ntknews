@@ -459,7 +459,11 @@ function generateOutput() {
     const headlineHtml = escapeForJs(convertHeadline(s.headline));
     const ledeHtml     = escapeForJs(convertHeadline(s.lede));
     const category     = escapeForJs(normalizeUnicode(s.category));
-    const hasFeatImg = i === 0 && s.featuredImage;
+    // Was: i === 0 && s.featuredImage — silently dropped every image
+    // except the day's first story, even though each story already stores
+    // its own image independently (see saveCurrentFields). No reason for
+    // the restriction; every story that has a photo now gets one.
+    const hasFeatImg = !!s.featuredImage;
 
     out += '  {\n';
     out += '    category: "' + category + '",\n';
