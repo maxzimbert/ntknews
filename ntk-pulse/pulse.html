@@ -651,6 +651,34 @@ function moveStory(id, dir){
 function setStatus(story, msg, err){ story.status=msg; story.err=!!err; render(); }
 
 // One Haiku call drafts angle + concept targeting together.
+// Same craft rules as the default triage.py headline generation, applied
+// on demand to a specific lineup story — for the moment you're actually
+// choosing what leads the edition and want options to compare, not just
+// the one the pipeline already committed to. Same guardrail language,
+// same governing principle: compression and selection, never invention.
+async function punchUpHeadline(story){
+  story.busy = true; story.headlineCandidates = null; setStatus(story, 'Punching up the headline…');
+  try {
+    const arts = activeArts(story).slice(0, 8);
+    const context = arts.map(a=>`- [${a.source}] ${a.title}`).join('\n');
+    const prompt = `Current headline: "${story.title}"\n\nWhat the sources actually say:\n${context}\n\n`+
+      `Write 3 alternative headlines for this story. Most true headlines are written at the flattest level — the administrative fact, not the stakes. Find the sharpest TRUE sentence available, not the first true sentence available.\n\n`+
+      `Three moves, in order of how much they help:\n`+
+      `- STRONGER VERB. "Switches to," "announces," "reports" are administrative. Reach for the verb that carries the actual weight — "scraps," "ends," "kills," "drops," "blocks" — WHEN the sources genuinely support that verb's force.\n`+
+      `- STAKES OVER MECHANISM. Given a choice between how something happened and why it matters, lead with why it matters — provided the "why" is already in the sources, not an inference you're adding.\n`+
+      `- CUT THE HEDGE-PHRASE. "Amid concerns about," "in a move that," "for [vague] reasons" soften a headline into safety. If the sources name the actual thing being hedged, name it.\n\n`+
+      `THE GUARDRAIL, which governs all three: this is compression and selection, never invention. No superlative ("unprecedented," "historic," "shocking") unless the sources establish it. No rhetorical questions. No manufactured urgency for a story that isn't breaking. If a sharper phrasing would require implying anything not already in the sources, write the plainer version instead — a flat accurate headline always beats a sharp inaccurate one. No wordplay. Under 90 characters each.\n\n`+
+      `Return ONLY a JSON array of exactly 3 strings, no fences: ["headline one","headline two","headline three"]`;
+    const candidates = parseJSON(await ai(prompt, 400));
+    story.headlineCandidates = Array.isArray(candidates) ? candidates.slice(0,3) : [];
+    setStatus(story, story.headlineCandidates.length ? '' : 'No candidates returned — try again', !story.headlineCandidates.length);
+  } catch(e){ setStatus(story, 'Punch-up failed: '+e.message, true); }
+  story.busy = false; saveLineup(); render();
+}
+function applyPunchedHeadline(story, text){
+  story.title = text; story.headlineCandidates = null; saveLineup(); render();
+}
+
 async function draftMeta(story){
   story.busy=true; setStatus(story,'Drafting angle + concept…');
   try {
@@ -1759,8 +1787,12 @@ function renderLineup(root){
       (s.slotLabel?`<span class="manual-badge" style="background:#333">${esc(s.slotLabel)}</span>`:'')+
       (s.inEdition===false?`<span class="manual-badge" style="background:var(--stale)">not in today's edition</span>`:'')+
       `<input class="story-title" value="${esc(s.title)}">`+
+      `<button class="mini punch-up" ${s.busy?'disabled':''} title="3 sharper true headlines">punch up</button>`+
       `<button class="mini up">↑</button><button class="mini dn">↓</button>`+
       `<button class="mini rm" title="remove">remove</button></div>`+
+      ((s.headlineCandidates && s.headlineCandidates.length) ? `<div class="qres" style="flex-direction:column;align-items:stretch;gap:4px;margin:4px 0">`+
+        s.headlineCandidates.map((h,i)=>`<button class="mini punch-pick" data-i="${i}" style="text-align:left">${esc(h)}</button>`).join('')+
+        `<button class="mini punch-dismiss" style="align-self:flex-start">dismiss</button></div>` : '')+
       `<div class="angle-row"><textarea class="angle" placeholder="Angle — one sharp NTK sentence">${esc(s.angle)}</textarea>`+
       `<button class="mini draft" ${s.busy?'disabled':''}>Step 1 · Draft</button></div>`+
       `<div class="story-meta"><span class="beat beat-${esc(s.beat)}">${esc(s.beat)}</span>`+
@@ -1806,6 +1838,11 @@ function renderLineup(root){
         `<div class="body" data-sec="${x}" title="click to edit">${mdToHtml(esc(s.packages[x]||'')).split(/\n{2,}/).map(p=>p.startsWith('<')?p:'<p>'+p+'</p>').join('')}</div>`).join('')+`</div>`:'');
 
     el.querySelector('.story-title').addEventListener('change',e=>{ s.title=e.target.value; saveLineup(); });
+    el.querySelector('.punch-up').addEventListener('click',()=>punchUpHeadline(s));
+    el.querySelectorAll('.punch-pick').forEach(btn=>{
+      btn.addEventListener('click',()=>applyPunchedHeadline(s, s.headlineCandidates[+btn.dataset.i]));
+    });
+    el.querySelector('.punch-dismiss')?.addEventListener('click',()=>{ s.headlineCandidates=null; saveLineup(); render(); });
     el.querySelector('.angle').addEventListener('change',e=>{ s.angle=e.target.value; saveLineup(); });
     el.querySelector('.cat').addEventListener('change',e=>{ s.category=e.target.value; saveLineup(); });
     el.querySelector('.up').addEventListener('click',()=>moveStory(s.id,-1));
