@@ -145,6 +145,11 @@
   .out .body:hover { background: rgba(0,0,0,0.02); }
   .out .body-edit { font: 12.5px/1.55 Verdana, sans-serif; width: 100%; min-height: 120px;
     border: 1px solid var(--ink); padding: 6px 8px; resize: vertical; color: var(--ink); background: #fff; }
+  .img-row { display: flex; gap: 8px; align-items: center; margin-top: 6px; }
+  .img-thumb { width: 54px; height: 34px; object-fit: cover; border: 1px solid var(--rule); }
+  .img-thumb-empty { width: 54px; height: 34px; border: 1px dashed var(--rule); display: flex;
+    align-items: center; justify-content: center; font-size: 9px; color: var(--dim); }
+  .img-row input[type=file] { display: none; }
   .edited-badge { font-size: 9px; color: var(--warn); text-transform: uppercase;
     letter-spacing: .5px; margin-left: 6px; border: 1px solid var(--warn); padding: 0 4px; }
   @media (prefers-color-scheme: dark) { .out .body-edit { background: #101010; } .out .body:hover { background: rgba(255,255,255,0.04); } }
@@ -601,9 +606,44 @@ function toSiteHtml(text){
     return m ? blocks[+m[1]] : (p.startsWith('<p')?p:`<p>${p}</p>`);
   }).join('');
 }
+// Same compression pipeline as editor.html's proven handleImageUpload —
+// resize to 800px max width preserving aspect ratio, JPEG at 75% quality,
+// stored as base64 directly on the story. Ported rather than reimplemented
+// so behavior matches exactly what's already been working there.
+function handleStoryImageUpload(story, file){
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const MAX_W = 800, ratio = Math.min(MAX_W / img.width, 1);
+      canvas.width = Math.round(img.width * ratio);
+      canvas.height = Math.round(img.height * ratio);
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      story.featuredImage = canvas.toDataURL('image/jpeg', 0.75);
+      story.overlayColor = story.overlayColor || '#0798F2';
+      story.overlayOpacity = story.overlayOpacity || 45;
+      saveLineup(); render();
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+function clearStoryImage(story){
+  delete story.featuredImage; delete story.overlayColor; delete story.overlayOpacity;
+  saveLineup(); render();
+}
+
 function toSiteStoryBlock(story){
   const pkg = story.packages||{};
   const {headline, lede, body} = extractTruthsTags(pkg.truths||'');
+  // No i===0 restriction here — that was a bug in editor.html's export,
+  // fixed there separately. Every story with an uploaded image gets one.
+  const imgFields = story.featuredImage ? `,
+    featuredImage: "${jsEsc(story.featuredImage)}",
+    overlayColor: "${jsEsc(story.overlayColor || '#0798F2')}",
+    overlayOpacity: ${story.overlayOpacity || 45}` : '';
   return `  {
     category: "${jsEsc(story.category)}",
     headline: "${jsEsc(headline)}",
@@ -611,7 +651,7 @@ function toSiteStoryBlock(story){
     truth: "${jsEsc(toSiteHtml(body))}",
     prob: "${jsEsc(toSiteHtml(pkg.probabilities||''))}",
     poss: "${jsEsc(toSiteHtml(pkg.possibilities||''))}",
-    lies: "${jsEsc(toSiteHtml(pkg.lies||''))}"
+    lies: "${jsEsc(toSiteHtml(pkg.lies||''))}"${imgFields}
   },`;
 }
 
@@ -1801,6 +1841,14 @@ function renderLineup(root){
       (nDup?` · ${nDup} deduped`:'')+(nSup?` · ${nSup} suppressed`:'')+`</span>`+
       editionScoreChips(s.key)+
       `</div>`+
+      `<div class="img-row">`+
+      (s.featuredImage
+        ? `<img class="img-thumb" src="${s.featuredImage}">`
+        : `<div class="img-thumb-empty">no photo</div>`)+
+      `<input type="file" accept="image/*" class="img-file" id="imgfile-${s.id}">`+
+      `<label for="imgfile-${s.id}" class="mini img-upload-label" style="cursor:pointer">${s.featuredImage?'replace photo':'add photo'}</label>`+
+      (s.featuredImage ? `<button class="mini img-clear">remove</button>` : '')+
+      `</div>`+
       `<div class="concept-row">`+
       `<span style="font-size:10.5px;color:var(--dim)">concept:</span>`+
       `<input type="text" class="concept-in" placeholder="Wikipedia entity — disambiguate here if needed" value="${esc(s.conceptEntity)}">`+
@@ -1839,6 +1887,10 @@ function renderLineup(root){
 
     el.querySelector('.story-title').addEventListener('change',e=>{ s.title=e.target.value; saveLineup(); });
     el.querySelector('.punch-up').addEventListener('click',()=>punchUpHeadline(s));
+    el.querySelector('.img-file').addEventListener('change',e=>{
+      handleStoryImageUpload(s, e.target.files[0]);
+    });
+    el.querySelector('.img-clear')?.addEventListener('click',()=>clearStoryImage(s));
     el.querySelectorAll('.punch-pick').forEach(btn=>{
       btn.addEventListener('click',()=>applyPunchedHeadline(s, s.headlineCandidates[+btn.dataset.i]));
     });
