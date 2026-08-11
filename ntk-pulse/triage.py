@@ -53,7 +53,33 @@ For the story below (headlines from one or more publishers), produce:
 
 5. POLITICIAN_LED — true if the story's primary actor is a politician or government official, false otherwise.
 
-6. HEADLINE — write a real headline for this cluster, from what these headlines actually say together. Do NOT copy any single article's headline verbatim. Rules: plain, specific, names the actual event (who/what), no wordplay, no questions, under 90 characters. If the supplied headlines are themselves a roundup/digest ("Best Shows This Week," "5 things to know") rather than one coherent story, write a headline describing THAT — e.g. "Weekly culture roundup" — never adopt the roundup's own clickbait title.
+6. HEADLINE — write a real headline for this cluster, from what these headlines actually say together. Do NOT copy any single article's headline verbatim. Under 90 characters. If the supplied headlines are themselves a roundup/digest ("Best Shows This Week," "5 things to know") rather than one coherent story, write a headline describing THAT — e.g. "Weekly culture roundup" — never adopt the roundup's own clickbait title.
+
+   Most true headlines are written at the flattest level of the story — the
+   administrative fact, not the stakes. Find the sharpest TRUE sentence
+   available, not the first true sentence available. Three moves, in order
+   of how much they help:
+
+   - STRONGER VERB. "Switches to," "announces," "reports" are administrative.
+     Reach for the verb that carries the actual weight of the action —
+     "scraps," "ends," "kills," "drops," "blocks" — WHEN the sources
+     genuinely support that verb's force. Do not upgrade a verb past what
+     the sources establish.
+   - STAKES OVER MECHANISM. Given a choice between naming HOW something
+     happened and WHY it matters, lead with why it matters — provided the
+     "why" is a fact already in the sources, not an inference you're adding.
+   - CUT THE HEDGE-PHRASE. "For mental health reasons," "amid concerns
+     about," "in a move that" — these soften a headline into safety. If the
+     sources name the actual thing being hedged, name it.
+
+   THE GUARDRAIL, which governs all three: this is a compression and
+   selection task, never an invention task. Never add a superlative
+   ("unprecedented," "historic," "shocking") unless the sources themselves
+   establish it. Never use a rhetorical question. Never manufacture urgency
+   or immediacy for a story that isn't breaking. If the sharper phrasing
+   would require implying or adding anything not already stated in the
+   supplied headlines, use the plainer version instead — a flat accurate
+   headline always beats a sharp inaccurate one. No wordplay.
 
 Respond ONLY with JSON, no preamble, no markdown fences:
 {"beat": "<one of the beats>", "line": "<one sentence or empty string>", "verdict": "YES"|"MAYBE"|"NO", "emotional_load": <1-5>, "explainability": <1-5>, "actionability": <1-5>, "conversational_currency": <1-5>, "politician_led": true|false, "headline": "<generated headline>"}"""
@@ -67,7 +93,7 @@ def fingerprint(cluster):
     # Re-triage when a cluster roughly doubles in publisher diversity
     d = cluster["publisher_count"]
     bucket = 1 if d < 2 else (2 if d < 4 else 4)
-    return f"{cluster['key']}:{bucket}:v3"   # :v3 — cached pre-headline verdicts must re-run
+    return f"{cluster['key']}:{bucket}:v4"   # :v4 — cached pre-punch-up-rubric headlines must re-run
 
 
 def _parse_json_lenient(text):
