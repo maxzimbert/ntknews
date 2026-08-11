@@ -1,0 +1,64 @@
+name: NTK Pulse — Scan
+
+# The cheap half of the pipeline, split out so Stream can refresh every 20
+# minutes without paying ledger.py's Sonnet cost at that frequency. Ingest
+# and cluster make zero API calls; triage is Haiku, capped, and caches
+# per-cluster so it doesn't re-pay for a story it just triaged minutes ago.
+#
+# Deliberately does NOT run ledger.py or assembly.py — those stay on
+# pulse.yml's 4-hour schedule. Lineup/Edition freshness is bounded by that
+# schedule, not this one; only Stream benefits from the 20-minute cadence.
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "*/20 * * * *"
+
+permissions:
+  contents: write
+
+# Shared with pulse.yml on purpose — same group name means GitHub Actions
+# will never run this workflow and the full pulse.yml at the same moment,
+# which is what prevents the two from racing to git-push data/ at once.
+# cancel-in-progress: false means a run that's already going finishes
+# before the next one starts, rather than being killed mid-write.
+concurrency:
+  group: ntk-pulse
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Ingest (6h window)
+        working-directory: ntk-pulse
+        run: python ingest.py
+
+      - name: Cluster
+        working-directory: ntk-pulse
+        run: python cluster.py
+
+      - name: Triage (beat, line, verdict + assembly scores)
+        working-directory: ntk-pulse
+        continue-on-error: true
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          PULSE_MAX_CALLS: "25"
+        run: python triage.py
+
+      # Same lesson as the full workflow: commit whatever exists in data/
+      # regardless of whether triage succeeded — a fresh window and fresh
+      # clusters are worth saving on their own.
+      - name: Commit data
+        if: always()
+        run: |
+          git config user.name "ntk-pulse-bot"
+          git config user.email "pulse@ntknews.org"
+          git add ntk-pulse/data/
+          git diff --cached --quiet || git commit -m "pulse-scan: refresh $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push
