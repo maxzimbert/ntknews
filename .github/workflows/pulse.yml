@@ -14,6 +14,15 @@ on:
         required: false
         default: true
         type: boolean
+  # Runs the full chain unattended. Cadence is deliberately conservative to
+  # start — every 4 hours, 6 runs/day — because ledger.py has no prompt
+  # caching or batch-API cost reduction built in yet (that optimization was
+  # scoped in the requirements doc but never implemented), so real per-run
+  # cost is closer to the naive end of the earlier estimate than the
+  # optimized end. Widen this only after a few days of real numbers from
+  # the Anthropic console, not before. Times are UTC.
+  schedule:
+    - cron: "0 */4 * * *"
 
 permissions:
   contents: write
@@ -57,8 +66,17 @@ jobs:
       # ingest+cluster+triage run every time it happened. That is almost
       # certainly why Pulse has been showing "data 48h old": several runs in
       # a row did real work and then threw it away at the finish line.
+      #
+      # The `if` below is trigger-aware on purpose. `inputs.run_ledger` is
+      # only ever populated on a manual workflow_dispatch run — its default
+      # does NOT apply on a schedule-triggered run, which has no dispatch
+      # inputs at all. Without the `github.event_name != 'workflow_dispatch'`
+      # half of this condition, every scheduled run would silently skip the
+      # ledger stage entirely, forever, with no error and nothing in the
+      # log to suggest why. This was caught and fixed before scheduling was
+      # turned on, not after.
       - name: Story Ledger
-        if: ${{ inputs.run_ledger }}
+        if: ${{ github.event_name != 'workflow_dispatch' || inputs.run_ledger }}
         continue-on-error: true
         working-directory: ntk-pulse
         env:
