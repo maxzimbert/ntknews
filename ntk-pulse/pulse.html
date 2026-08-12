@@ -1840,9 +1840,17 @@ function renderLineup(root){
       `<button class="mini up">↑</button><button class="mini dn">↓</button>`+
       `<button class="mini rm" title="remove">remove</button></div>`+
       (s.syncFailed ? `<div style="background:var(--stale);color:#fff;font-size:11px;padding:5px 8px;margin-top:4px">`+
-        `⚠ no source material — this story's original articles couldn't be found in the current stream `+
-        `(clusters age out of the 6-hour window). Draft/Enrich/Generate won't work until real sources are `+
-        `attached. Use search or add-URL below to bring in fresh articles for this story.</div>` : '')+
+        `⚠ no source material — this story's original articles couldn't be found in the current stream, `+
+        `and no confident match was found either (clusters age out of the 6h window). Draft/Enrich/Generate `+
+        `won't work until real sources are attached. Use search or add-URL below.</div>` : '')+
+      (s.recoveredFrom ? `<div style="background:#5a2d82;color:#fff;font-size:11px;padding:4px 8px;margin-top:4px">`+
+        `↻ reconnected automatically — original cluster key aged out, matched to "${esc(s.recoveredFrom.slice(0,60))}" `+
+        `in the current stream.</div>` : '')+
+      (s.reconnectSuggestion ? `<div style="background:var(--warn);color:#fff;font-size:11px;padding:5px 8px;margin-top:4px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">`+
+        `<span>⚠ original cluster gone — possible match: "${esc(s.reconnectSuggestion.title.slice(0,50))}" `+
+        `(${s.reconnectSuggestion.pubCount} pubs)</span>`+
+        `<button class="mini reconnect-accept" style="background:#fff">use this</button>`+
+        `<button class="mini reconnect-dismiss" style="background:transparent;color:#fff;border-color:#fff">not this</button></div>` : '')+
       ((s.headlineCandidates && s.headlineCandidates.length) ? `<div class="qres" style="flex-direction:column;align-items:stretch;gap:4px;margin:4px 0">`+
         s.headlineCandidates.map((h,i)=>`<button class="mini punch-pick" data-i="${i}" style="text-align:left">${esc(h)}</button>`).join('')+
         `<button class="mini punch-dismiss" style="align-self:flex-start">dismiss</button></div>` : '')+
@@ -1904,6 +1912,8 @@ function renderLineup(root){
       handleStoryImageUpload(s, e.target.files[0]);
     });
     el.querySelector('.img-clear')?.addEventListener('click',()=>clearStoryImage(s));
+    el.querySelector('.reconnect-accept')?.addEventListener('click',()=>acceptReconnect(s));
+    el.querySelector('.reconnect-dismiss')?.addEventListener('click',()=>dismissReconnect(s));
     el.querySelectorAll('.punch-pick').forEach(btn=>{
       btn.addEventListener('click',()=>applyPunchedHeadline(s, s.headlineCandidates[+btn.dataset.i]));
     });
@@ -2064,15 +2074,66 @@ function renderNotes(){
 // Builds the actual LINEUP entry object for an edition pick. Shared by
 // bootstrap auto-fill and manual candidate-add so there's exactly one
 // place that defines what a synced story looks like.
+// The key a story was assembled under isn't a permanent identity — it's
+// whichever article cluster.py picked as earliest-and-lowest-tier WITHIN
+// THAT RUN'S window. Every 20 minutes the scan re-clusters and that pick
+// can shift for a story that's still very much alive, just now filed under
+// a different key. An exact-key lookup failing doesn't mean the story is
+// gone; it usually means it got renamed out from under itself. Before
+// admitting defeat, try to recognize it anyway — same entity+cosine
+// matcher already proven for manual-cluster Rescan, just run once against
+// the story's own title instead of an existing cluster's centroid.
+// Auto-attach and merely-suggest need different bars, and it took a real
+// test case to see why: mcEntities()'s alias map (fed -> federal+reserv)
+// only feeds the entity-overlap check, never the cosine vector — "Fed" and
+// "Federal Reserve" are correctly recognized as the same ENTITY but are
+// still different TOKENS to the cosine math, so a real, correct entity
+// match can still score a low cosine. Fine for a suggestion (you confirm
+// it anyway); not fine to auto-attach on alone, where cosine agreeing too
+// is what justifies skipping your confirmation.
+const RECONNECT_CONFIDENT = 0.30;  // auto-attach without asking — needs BOTH signals
+function findReconnectCandidate(storyTitle){
+  const clusters = STREAM?.clusters || [];
+  if (!clusters.length) return null;
+  const pool = clusters.map((c,i)=>({id:'c'+i, title:c.title, summary:''}));
+  pool.push({id:'story', title:storyTitle, summary:''});
+  const vecs = mcBuildVectors(pool);
+  const storyEnts = mcEntities(storyTitle, '');
+  let best = null;
+  clusters.forEach((c,i)=>{
+    const sim = mcCosine(vecs['story'], vecs['c'+i]);
+    const shared = [...mcEntities(c.title,'')].filter(e=>storyEnts.has(e));
+    // Rank candidates by entity-overlap count first, cosine as tiebreaker —
+    // a shared specific entity is stronger evidence than a marginally
+    // higher cosine on a pool this small.
+    if (shared.length >= 1 && (!best || shared.length > best.shared.length ||
+        (shared.length === best.shared.length && sim > best.sim))){
+      best = {cluster:c, sim, shared};
+    }
+  });
+  return best;
+}
+
 function materializeEditionStory(s){
   const streamCluster = (STREAM?.clusters||[]).find(c=>c.key===s.key);
-  const items = streamCluster ? streamCluster.items : [];
-  // Flag it the moment it happens, don't let it surface three steps later
-  // as a cryptic API error. This isn't rare: cluster keys aren't stable
-  // across pipeline runs (the representative article shifts as the 6h
-  // window rolls forward), so a story that assembly.py picked can easily
-  // no longer exist under that same key by the time this browser session
-  // loads and tries to pull its articles from the live stream.
+  let items = streamCluster ? streamCluster.items : [];
+  let recoveredFrom = null, suggestion = null;
+
+  if (!streamCluster){
+    const match = findReconnectCandidate(s.title);
+    if (match && match.sim >= RECONNECT_CONFIDENT){
+      items = match.cluster.items;
+      recoveredFrom = match.cluster.title;
+    } else if (match){
+      // Any real entity match (blocklist already filters generic words —
+      // "trump", "white house" — so what's left is a genuine name/place/org)
+      // is worth surfacing for a human to confirm, even without cosine's
+      // agreement. This is the tier the earlier version was undershooting.
+      suggestion = {key: match.cluster.key, title: match.cluster.title,
+        pubCount: match.cluster.publisher_count, sim: match.sim};
+    }
+  }
+
   return {
     id: 'ln-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),
     key: s.key, title: s.title,
@@ -2085,8 +2146,27 @@ function materializeEditionStory(s){
     })),
     enrichedAt: null, packages: null, open: false, outOpen: false,
     fromEdition: true, slotLabel: s.slot_label,
-    syncFailed: !streamCluster,
+    syncFailed: !streamCluster && !recoveredFrom && !suggestion,
+    recoveredFrom, reconnectSuggestion: suggestion,
   };
+}
+
+// Called when the editor accepts a suggested reconnect from the banner.
+function acceptReconnect(story){
+  const s = story.reconnectSuggestion;
+  const cluster = (STREAM?.clusters||[]).find(c=>c.key===s.key);
+  if (!cluster) return;
+  story.articles = cluster.items.map(it=>({
+    url: it.url, title: it.title, source: it.publisher, date: it.published||'',
+    body:'', bodyFrom:'', included:true, dupOf:null, origin:'rss'
+  }));
+  story.syncFailed = false;
+  story.recoveredFrom = cluster.title;
+  story.reconnectSuggestion = null;
+  saveLineup(); render();
+}
+function dismissReconnect(story){
+  story.reconnectSuggestion = null; saveLineup(); render();
 }
 
 // Manual add: called when the editor clicks a specific candidate in the
