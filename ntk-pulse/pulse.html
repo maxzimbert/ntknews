@@ -720,6 +720,15 @@ function applyPunchedHeadline(story, text){
 }
 
 async function draftMeta(story){
+  // Same failure this crashed on before: an empty headline list makes the
+  // model answer in plain English ("I don't see any articles...") instead
+  // of the JSON it was asked for, and that non-JSON response is what threw
+  // the raw parse error. Catching it here means a clear, specific message
+  // instead of "Unexpected token 'I'" leaking out of a JSON parser.
+  if (activeArts(story).length === 0){
+    setStatus(story, 'No source material to draft from — this story has no active articles. Use search or add-URL to bring in real sources first.', true);
+    return;
+  }
   story.busy=true; setStatus(story,'Drafting angle + concept…');
   try {
     const heds = story.articles.slice(0,8).map(a=>`- [${a.source}] ${a.title}`).join('\n');
@@ -1830,6 +1839,10 @@ function renderLineup(root){
       `<button class="mini punch-up" ${s.busy?'disabled':''} title="3 sharper true headlines">punch up</button>`+
       `<button class="mini up">↑</button><button class="mini dn">↓</button>`+
       `<button class="mini rm" title="remove">remove</button></div>`+
+      (s.syncFailed ? `<div style="background:var(--stale);color:#fff;font-size:11px;padding:5px 8px;margin-top:4px">`+
+        `⚠ no source material — this story's original articles couldn't be found in the current stream `+
+        `(clusters age out of the 6-hour window). Draft/Enrich/Generate won't work until real sources are `+
+        `attached. Use search or add-URL below to bring in fresh articles for this story.</div>` : '')+
       ((s.headlineCandidates && s.headlineCandidates.length) ? `<div class="qres" style="flex-direction:column;align-items:stretch;gap:4px;margin:4px 0">`+
         s.headlineCandidates.map((h,i)=>`<button class="mini punch-pick" data-i="${i}" style="text-align:left">${esc(h)}</button>`).join('')+
         `<button class="mini punch-dismiss" style="align-self:flex-start">dismiss</button></div>` : '')+
@@ -2054,6 +2067,12 @@ function renderNotes(){
 function materializeEditionStory(s){
   const streamCluster = (STREAM?.clusters||[]).find(c=>c.key===s.key);
   const items = streamCluster ? streamCluster.items : [];
+  // Flag it the moment it happens, don't let it surface three steps later
+  // as a cryptic API error. This isn't rare: cluster keys aren't stable
+  // across pipeline runs (the representative article shifts as the 6h
+  // window rolls forward), so a story that assembly.py picked can easily
+  // no longer exist under that same key by the time this browser session
+  // loads and tries to pull its articles from the live stream.
   return {
     id: 'ln-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),
     key: s.key, title: s.title,
@@ -2066,6 +2085,7 @@ function materializeEditionStory(s){
     })),
     enrichedAt: null, packages: null, open: false, outOpen: false,
     fromEdition: true, slotLabel: s.slot_label,
+    syncFailed: !streamCluster,
   };
 }
 
