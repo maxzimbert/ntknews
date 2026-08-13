@@ -51,6 +51,17 @@ jobs:
           PULSE_MAX_CALLS: "25"
         run: python triage.py
 
+      # Stream -> Lineup, automatic. No API calls, no approval step — the
+      # 2+ publisher bar IS the judgment call. Additive only; never touches
+      # what's already there. assembly.py's next full run (every 4h) does
+      # its own complete, more careful selection and naturally supersedes
+      # whatever this added in between — that's the intended relationship,
+      # not a bug.
+      - name: Promote new stories into lineup
+        working-directory: ntk-pulse
+        continue-on-error: true
+        run: python lineup_promote.py
+
       # Same lesson as the full workflow: commit whatever exists in data/
       # regardless of whether triage succeeded — a fresh window and fresh
       # clusters are worth saving on their own.
