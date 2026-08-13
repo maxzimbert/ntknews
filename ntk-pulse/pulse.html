@@ -231,6 +231,8 @@
       <input id="set-key" type="password" placeholder="sk-ant-…">
       <label>Netlify proxy base (where ntk-production lives)</label>
       <input id="set-proxy" type="text" placeholder="https://your-site.netlify.app">
+      <label>GitHub token (scoped: contents write, this repo only) — powers Publish</label>
+      <input id="set-ghtoken" type="password" placeholder="github_pat_…">
     </div>
     <div>
       <label>Body chars per article</label>
@@ -268,7 +270,7 @@ const LS = {
   manual:   'ntk_pulse_manual_clusters_v1',
 };
 function load(k, fallback) { try { const v = JSON.parse(localStorage.getItem(k)); return v ?? fallback; } catch { return fallback; } }
-let SETTINGS = load(LS.settings, { antKey:'', proxyBase:'', bodyLen:4000, maxArts:15 });
+let SETTINGS = load(LS.settings, { antKey:'', proxyBase:'', ghToken:'', bodyLen:4000, maxArts:15 });
 let LINEUP = load(LS.lineup, []);          // [{id, title, angle, beat, category, conceptEntity, narrowKeyword, articles:[], enrichedAt, packages, busy?, status?, open?, outOpen?}]
 let SUP = load(LS.sup, {});                 // canonical url -> true  (editor suppressions, global, persistent)
 // Standing editorial notes: ongoing directives that ride into every
@@ -1207,6 +1209,91 @@ function siteExport(){
   return 'const stories = [\n' + LINEUP.filter(s=>s.packages).map(toSiteStoryBlock).join('\n') + '\n];';
 }
 
+// Clean structured JSON for the automated build — deliberately NOT the
+// JS-literal format siteExport() produces. A script parsing untrusted JS
+// as code is the wrong shape for anything automated; this is the same
+// data, in the format the build script actually expects.
+function storyDataExport(){
+  return JSON.stringify(
+    LINEUP.filter(s=>s.packages).map(s=>{
+      const {headline, lede, body} = extractTruthsTags(s.packages.truths||'');
+      return {
+        key: s.key, category: s.category, headline, lede,
+        truth: toSiteHtml(body),
+        prob: toSiteHtml(s.packages.probabilities||''),
+        poss: toSiteHtml(s.packages.possibilities||''),
+        lies: toSiteHtml(s.packages.lies||''),
+        featuredImage: s.featuredImage || null,
+        overlayColor: s.overlayColor || '#0798F2',
+        overlayOpacity: s.overlayOpacity || 45,
+      };
+    }), null, 1);
+}
+const GH_REPO = 'maxzimbert/ntknews';
+const GH_PUBLISH_PATH = 'ntk-pulse/data/lineup-publish.json';
+
+// Publish: commits the current lineup's story data straight to the repo
+// via GitHub's Contents API — confirmed to support direct browser CORS
+// requests before this was built, not assumed. That commit itself is the
+// trigger for pulse-publish.yml (a path-scoped push trigger), so this one
+// call is the entire "zero clicks after this" chain: no separate
+// workflow-start call needed.
+async function publishToDigest(){
+  if (!SETTINGS.ghToken){ alert('Add a GitHub token in ⚙ first — scoped to contents:write on this repo only.'); return; }
+  const stories = LINEUP.filter(s=>s.packages);
+  if (!stories.length){ alert('Nothing generated yet — nothing to publish.'); return; }
+  publishStatus = 'Publishing…'; renderPublishStatus();
+  try {
+    const content = storyDataExport();
+    const b64 = btoa(unescape(encodeURIComponent(content)));
+    const apiUrl = `https://api.github.com/repos/${GH_REPO}/contents/${GH_PUBLISH_PATH}`;
+    const headers = { 'Authorization': 'Bearer '+SETTINGS.ghToken, 'Accept': 'application/vnd.github+json' };
+
+    // The Contents API needs the current file's sha to UPDATE it — a 404
+    // on this GET means it's never been published before, which is fine,
+    // just means this PUT will CREATE the file instead.
+    let sha = null;
+    const getResp = await fetch(apiUrl, {headers});
+    if (getResp.ok){ sha = (await getResp.json()).sha; }
+    else if (getResp.status !== 404){ throw new Error('GitHub GET failed: '+getResp.status); }
+
+    const putResp = await fetch(apiUrl, {
+      method:'PUT', headers:{...headers,'Content-Type':'application/json'},
+      body: JSON.stringify({
+        message: 'publish: '+stories.length+' stories from Pulse',
+        content: b64, branch:'main', ...(sha?{sha}:{}),
+      }),
+    });
+    if (!putResp.ok){ const t=await putResp.text(); throw new Error('GitHub PUT failed: '+putResp.status+' '+t.slice(0,200)); }
+    publishStatus = 'Published — build running now, usually a minute or two.';
+  } catch(e){ publishStatus = 'Publish failed: '+e.message; }
+  renderPublishStatus();
+  setTimeout(fetchLastPublished, 45000);   // one check after the build's had time to land
+}
+let publishStatus = '';
+function renderPublishStatus(){
+  const el = document.getElementById('publish-status');
+  if (el) el.textContent = publishStatus;
+}
+let LAST_PUBLISHED = null;
+async function fetchLastPublished(){
+  try {
+    const r = await fetch('data/last-published.json?t='+Date.now());
+    if (r.ok) LAST_PUBLISHED = await r.json();
+  } catch {}
+  const el = document.getElementById('last-pub');
+  if (el) el.textContent = LAST_PUBLISHED ? 'last published '+rel(LAST_PUBLISHED.at)+' ago ('+LAST_PUBLISHED.stories+' stories)' : '';
+}
+
+function downloadStoryData(){
+  const blob = new Blob([storyDataExport()], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'ntk-stories-'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 /* ─── client-side entity/cosine matcher — ported from cluster.py, WITH
    both fixes from the indie-clustering test baked in from the start:
    entities read title+summary (not title alone), and omnipresent names
@@ -1771,7 +1858,11 @@ function renderLineup(root){
     <span class="spacer"></span>
     <button class="mini" id="cp-all" ${nGen?'':'disabled'}>Copy all text</button>
     <button class="mini" id="cp-site" ${nGen?'':'disabled'}>Copy site stories block</button>
+    <button class="mini" id="dl-json" ${nGen?'':'disabled'}>Download story data (JSON)</button>
+    <button class="mini go" id="publish-btn" ${nGen?'':'disabled'}>Publish to digest v2</button>
     <span class="copied">${copiedFlag==='all'?'copied':copiedFlag==='site'?'copied':''}</span>
+    <span id="publish-status" style="font-size:10.5px;color:var(--warn)"></span>
+    <span id="last-pub" style="font-size:10.5px;color:var(--dim)"></span>
   </div>`;
   if (Q.open){
     const qp = document.createElement('div'); qp.className='qpanel';
@@ -1803,6 +1894,9 @@ function renderLineup(root){
   wireCandidateButtons(root);
   document.getElementById('cp-all').addEventListener('click',()=>cp(LINEUP.filter(s=>s.packages).map(storyText).join('\n\n\n'),'all'));
   document.getElementById('cp-site').addEventListener('click',()=>cp(siteExport(),'site'));
+  document.getElementById('dl-json').addEventListener('click',downloadStoryData);
+  document.getElementById('publish-btn').addEventListener('click',publishToDigest);
+  renderPublishStatus();
 
   LINEUP.forEach((s,si)=>{
     const arts=s.articles||[];
@@ -2248,13 +2342,15 @@ document.getElementById('gear').addEventListener('click',()=>{
   const p=document.getElementById('settings'); p.classList.toggle('open');
   document.getElementById('set-key').value=SETTINGS.antKey;
   document.getElementById('set-proxy').value=SETTINGS.proxyBase;
+  document.getElementById('set-ghtoken').value=SETTINGS.ghToken||'';
   document.getElementById('set-bodylen').value=SETTINGS.bodyLen;
   document.getElementById('set-maxarts').value=SETTINGS.maxArts;
 });
-['set-key','set-proxy','set-bodylen','set-maxarts'].forEach(id=>{
+['set-key','set-proxy','set-ghtoken','set-bodylen','set-maxarts'].forEach(id=>{
   document.getElementById(id).addEventListener('change',e=>{
     if(id==='set-key') SETTINGS.antKey=e.target.value.trim();
     if(id==='set-proxy') SETTINGS.proxyBase=e.target.value.trim();
+    if(id==='set-ghtoken') SETTINGS.ghToken=e.target.value.trim();
     if(id==='set-bodylen') SETTINGS.bodyLen=Math.max(500,parseInt(e.target.value)||4000);
     if(id==='set-maxarts') SETTINGS.maxArts=Math.min(30,Math.max(5,parseInt(e.target.value)||15));
     saveSettings();
@@ -2275,6 +2371,8 @@ fetch('data/lineup.json?t='+Date.now())
   .then(r=>{ if(!r.ok) throw 0; return r.json(); })
   .then(d=>{ EDITION=d; syncEditionToLineup(); render(); })
   .catch(()=>{ EDITION=null; });
+
+fetchLastPublished();
 </script>
 </body>
 </html>
