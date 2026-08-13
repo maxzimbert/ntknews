@@ -1,0 +1,48 @@
+name: NTK Pulse — Publish to Digest
+
+# Triggered by the commit itself — Pulse's Publish button writes
+# ntk-pulse/data/lineup-publish.json directly to the repo via GitHub's
+# Contents API, and that push is the trigger. No polling, no separate
+# "start this workflow" call needed — the file landing IS the signal.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ntk-pulse/data/lineup-publish.json'
+  workflow_dispatch: {}   # manual re-run, e.g. if a build needs retrying
+
+permissions:
+  contents: write
+
+# Deliberately its OWN concurrency group, not shared with ntk-pulse — a
+# publish should never wait behind a routine 4-hour pipeline run just
+# because both happened to fire close together. If two publishes somehow
+# overlap, THAT should serialize (hence a group at all) — but a publish
+# and a scan/full-pipeline run genuinely don't touch the same files, so
+# there's no git-race reason to block one on the other.
+concurrency:
+  group: ntk-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Build digest
+        working-directory: ntk-pulse
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python build_digest.py data/lineup-publish.json
+
+      - name: Commit
+        run: |
+          git config user.name "ntk-publish-bot"
+          git config user.email "publish@ntknews.org"
+          git add digest/v2/ ntk-pulse/data/last-published.json
+          git diff --cached --quiet || git commit -m "publish: $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push
