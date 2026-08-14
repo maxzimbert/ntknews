@@ -114,6 +114,9 @@ def build_stories_block(stories):
             img_fields = (f',\n    featuredImage: "{jsEsc(s["featuredImage"])}"'
                           f',\n    overlayColor: "{jsEsc(s.get("overlayColor", "#0798F2"))}"'
                           f',\n    overlayOpacity: {s.get("overlayOpacity", 45)}')
+        permalink_field = ""
+        if s.get("permalink"):
+            permalink_field = f',\n    permalink: "{jsEsc(s["permalink"])}"'
         lines.append(f'  {{\n'
                       f'    category: "{jsEsc(s.get("category",""))}",\n'
                       f'    headline: "{jsEsc(s.get("headline",""))}",\n'
@@ -121,7 +124,7 @@ def build_stories_block(stories):
                       f'    truth: "{jsEsc(s.get("truth",""))}",\n'
                       f'    prob: "{jsEsc(s.get("prob",""))}",\n'
                       f'    poss: "{jsEsc(s.get("poss",""))}",\n'
-                      f'    lies: "{jsEsc(s.get("lies",""))}"{img_fields}\n'
+                      f'    lies: "{jsEsc(s.get("lies",""))}"{img_fields}{permalink_field}\n'
                       f'  }},')
     lines.append("]; // ← END OF DAILY CONTENT. Do not edit below this line.")
     return "\n".join(lines)
@@ -324,25 +327,37 @@ def main():
     else:
         log("no fresh fun fact generated — leaving today's existing one in place")
 
-    # 2. Regenerate the LIVE homepage in place. This is the piece that
+    # 2. Compute this edition's slugs and per-story permalinks FIRST — the
+    # homepage regeneration in step 3 needs these already attached to each
+    # story dict so the interactive share button has a real URL to use,
+    # not the swipe-app's own page. (Previously this ran after step 3,
+    # which meant `permalink` didn't exist yet when the stories block was
+    # written — the bug behind the share button sharing the wrong URL.)
+    slugs = unique_slugs(stories)
+    for story, slug in zip(stories, slugs):
+        story["permalink"] = f"{base_url}/digest/v2/{date_str}/{slug}/"
+
+    # 3. Regenerate the LIVE homepage in place. This is the piece that
     # makes the whole chain zero-click: no more paste, ever.
     current_html = live_index_path.read_text()
     new_html = regenerate_homepage(current_html, stories, fun_fact)
     live_index_path.write_text(new_html)
     log(f"live homepage regenerated: {live_index_path}")
 
-    # 3. Freeze today's now-correct homepage at a permanent dated path.
+    # 4. Freeze today's now-correct homepage at a permanent dated path.
     dated_dir = digest_dir / date_str
     dated_dir.mkdir(parents=True, exist_ok=True)
     (dated_dir / "index.html").write_text(new_html)
 
-    # 4. Per-story permalinks + images.
-    slugs = unique_slugs(stories)
+    # 5. Per-story permalinks + images. Slugs already computed in step 2 —
+    # reused here rather than recomputed, so the permalink written into the
+    # homepage's stories array and the actual page built on disk can never
+    # drift apart from each other.
     headlines_meta = []
     for story, slug in zip(stories, slugs):
         story_dir = dated_dir / slug
         story_dir.mkdir(parents=True, exist_ok=True)
-        canonical_url = f"{base_url}/digest/v2/{date_str}/{slug}/"
+        canonical_url = story["permalink"]
 
         image_rel_url = image_abs_url = None
         if story.get("featuredImage"):
@@ -358,10 +373,10 @@ def main():
 
     (dated_dir / "_headlines.json").write_text(json.dumps(headlines_meta, indent=1))
 
-    # 5. Archive, rebuilt from what's actually on disk.
+    # 6. Archive, rebuilt from what's actually on disk.
     rebuild_archive(digest_dir, base_url)
 
-    # 6. Last-published marker — what Pulse's button reads to show you
+    # 7. Last-published marker — what Pulse's button reads to show you
     # "last published: N ago" without you having to go check GitHub.
     (repo_root / "ntk-pulse" / "data" / "last-published.json").write_text(
         json.dumps({"at": datetime.now(timezone.utc).isoformat(), "stories": len(stories)}, indent=1))
