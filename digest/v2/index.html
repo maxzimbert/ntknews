@@ -2610,10 +2610,11 @@ function initSwipe(cardEl, index) {
 function shareStory() {
   const s = stories[currentStoryIndex];
   track('story_share', { story_index: currentStoryIndex + 1 });
+  const shareUrl = s.permalink || window.location.href;
   if (navigator.share) {
-    navigator.share({ title: s.headline, text: s.lede, url: window.location.href });
+    navigator.share({ title: s.headline, text: s.lede, url: shareUrl });
   } else {
-    alert('Share: ' + s.headline + '\n\nntknews.org');
+    alert('Share: ' + s.headline + '\n\n' + shareUrl);
   }
 }
 
