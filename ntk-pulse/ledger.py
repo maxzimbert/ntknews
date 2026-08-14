@@ -53,7 +53,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).parent
 DATA = ROOT / "data"
-MODEL = "claude-sonnet-4-6"
+MODEL = "claude-sonnet-5"
 API_URL = "https://api.anthropic.com/v1/messages"
 MAX_CALLS_PER_RUN = 15
 LEDGER_EXPIRE_DAYS = 14
