@@ -85,7 +85,12 @@
     padding: 10px 12px; margin-bottom: 10px;
   }
   .story-top { display: flex; gap: 8px; align-items: baseline; }
-  .ord { font-size: 15px; font-weight: bold; color: var(--dim); min-width: 18px; }
+  .ord { font-size: 15px; font-weight: bold; color: var(--ink); min-width: 26px; max-width: 26px;
+    text-align: center; border: 1px solid var(--rule); background: transparent; padding: 1px 2px; }
+  .ord:focus { outline: 1px solid var(--dim); background: #fff; }
+  .drag-handle { cursor: grab; color: var(--faint); font-size: 14px; padding: 0 2px; user-select: none; }
+  .story.dragging { opacity: 0.4; }
+  .story.drag-over { border-top: 2px solid var(--certified); }
   .story-title { flex: 1; font-weight: bold; font-size: 13px; border: none; background: transparent; width: 100%; padding: 0; }
   .story-title:focus { outline: 1px solid var(--rule); background: #fff; }
   .mini { background: none; border: 1px solid var(--rule); color: var(--dim); font-size: 10.5px; padding: 1px 6px; }
@@ -685,10 +690,20 @@ function certify(cluster){
   saveLineup(); render();
 }
 function removeStory(id){ LINEUP = LINEUP.filter(s=>s.id!==id); saveLineup(); render(); }
-function moveStory(id, dir){
-  const i = LINEUP.findIndex(s=>s.id===id), j = i+dir;
-  if (i<0||j<0||j>=LINEUP.length) return;
-  [LINEUP[i],LINEUP[j]]=[LINEUP[j],LINEUP[i]]; saveLineup(); render();
+// Replaces the old up/down-arrow moveStory — reordering now happens by
+// drag-and-drop or by typing a target position directly, both funneling
+// into this one function. Moves the story to a 1-indexed target position,
+// shifting everything between its old and new spot rather than swapping
+// pairwise, so typing "1" on the last story actually jumps it to the
+// front in one move instead of needing N-1 arrow clicks to get there.
+function reorderStory(id, targetPos){
+  const from = LINEUP.findIndex(s=>s.id===id);
+  if (from < 0) return;
+  const to = Math.max(0, Math.min(LINEUP.length - 1, targetPos - 1));
+  if (from === to) return;
+  const [story] = LINEUP.splice(from, 1);
+  LINEUP.splice(to, 0, story);
+  saveLineup(); render();
 }
 function setStatus(story, msg, err){ story.status=msg; story.err=!!err; render(); }
 
@@ -1856,9 +1871,6 @@ function renderLineup(root){
     <button class="mini go" id="gen-all" ${LINEUP.some(s=>s.busy)?'disabled':''}>Generate all ungenerated</button>
     <button class="mini" id="q-toggle">${Q.open?'close search':'+ new story from search'}</button>
     <span class="spacer"></span>
-    <button class="mini" id="cp-all" ${nGen?'':'disabled'}>Copy all text</button>
-    <button class="mini" id="cp-site" ${nGen?'':'disabled'}>Copy site stories block</button>
-    <button class="mini" id="dl-json" ${nGen?'':'disabled'}>Download story data (JSON)</button>
     <button class="mini go" id="publish-btn" ${nGen?'':'disabled'}>Publish to digest v2</button>
     <span class="copied">${copiedFlag==='all'?'copied':copiedFlag==='site'?'copied':''}</span>
     <span id="publish-status" style="font-size:10.5px;color:var(--warn)"></span>
@@ -1892,9 +1904,6 @@ function renderLineup(root){
   document.getElementById('q-toggle').addEventListener('click',()=>{ Q.open=!Q.open; render(); });
   document.getElementById('gen-all').addEventListener('click',generateAll);
   wireCandidateButtons(root);
-  document.getElementById('cp-all').addEventListener('click',()=>cp(LINEUP.filter(s=>s.packages).map(storyText).join('\n\n\n'),'all'));
-  document.getElementById('cp-site').addEventListener('click',()=>cp(siteExport(),'site'));
-  document.getElementById('dl-json').addEventListener('click',downloadStoryData);
   document.getElementById('publish-btn').addEventListener('click',publishToDigest);
   renderPublishStatus();
 
@@ -1925,13 +1934,15 @@ function renderLineup(root){
       `<button class="x" title="toggle">✕</button></div>`+
       (c.included&&c.note?`<div class="ctx-note">${esc(c.note)}</div>`:'')
     ).join('');
+    el.draggable = true;
+    el.dataset.storyId = s.id;
     el.innerHTML =
-      `<div class="story-top"><span class="ord">${si+1}</span>`+
+      `<div class="story-top"><span class="drag-handle" title="drag to reorder">⠿</span>`+
+      `<input class="ord" type="number" min="1" max="${LINEUP.length}" value="${si+1}" title="type a position, press Enter">`+
       (s.slotLabel?`<span class="manual-badge" style="background:#333">${esc(s.slotLabel)}</span>`:'')+
       (s.inEdition===false?`<span class="manual-badge" style="background:var(--stale)">not in today's edition</span>`:'')+
       `<input class="story-title" value="${esc(s.title)}">`+
       `<button class="mini punch-up" ${s.busy?'disabled':''} title="3 sharper true headlines">punch up</button>`+
-      `<button class="mini up">↑</button><button class="mini dn">↓</button>`+
       `<button class="mini rm" title="remove">remove</button></div>`+
       (s.syncFailed ? `<div style="background:var(--stale);color:#fff;font-size:11px;padding:5px 8px;margin-top:4px">`+
         `⚠ no source material — this story's original articles couldn't be found in the current stream, `+
@@ -2014,8 +2025,26 @@ function renderLineup(root){
     el.querySelector('.punch-dismiss')?.addEventListener('click',()=>{ s.headlineCandidates=null; saveLineup(); render(); });
     el.querySelector('.angle').addEventListener('change',e=>{ s.angle=e.target.value; saveLineup(); });
     el.querySelector('.cat').addEventListener('change',e=>{ s.category=e.target.value; saveLineup(); });
-    el.querySelector('.up').addEventListener('click',()=>moveStory(s.id,-1));
-    el.querySelector('.dn').addEventListener('click',()=>moveStory(s.id,1));
+    el.querySelector('.ord').addEventListener('keydown',e=>{
+      if (e.key==='Enter'){ e.preventDefault(); reorderStory(s.id, parseInt(e.target.value)||1); }
+    });
+    el.querySelector('.ord').addEventListener('blur',e=>{
+      const n = parseInt(e.target.value)||(si+1);
+      if (n !== si+1) reorderStory(s.id, n); else render();  // snap back to current if unchanged/invalid
+    });
+    el.addEventListener('dragstart', e=>{
+      el.classList.add('dragging');
+      e.dataTransfer.setData('text/plain', s.id);
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    el.addEventListener('dragend', ()=>{ el.classList.remove('dragging'); });
+    el.addEventListener('dragover', e=>{ e.preventDefault(); el.classList.add('drag-over'); });
+    el.addEventListener('dragleave', ()=>{ el.classList.remove('drag-over'); });
+    el.addEventListener('drop', e=>{
+      e.preventDefault(); el.classList.remove('drag-over');
+      const draggedId = e.dataTransfer.getData('text/plain');
+      if (draggedId && draggedId !== s.id) reorderStory(draggedId, si+1);
+    });
     el.querySelector('.rm').addEventListener('click',()=>{ if(confirm('Remove "'+s.title+'" from the lineup?')) removeStory(s.id); });
     el.querySelector('.draft').addEventListener('click',()=>draftMeta(s));
     el.querySelector('.concept-in').addEventListener('change',e=>{
