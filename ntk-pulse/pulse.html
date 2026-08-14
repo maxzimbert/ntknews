@@ -597,6 +597,7 @@ function mdToHtml(text){
     .replace(/\[STAT:\s*([^|\]]+?)\s*\|\s*([^\]]+?)\s*\]/g,
       '<div class="ntk-stat"><div class="ntk-stat-num">$1</div><div class="ntk-stat-ctx">$2</div></div>')
     .replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*([^*]+)\*/g,'<em>$1</em>')
     .replace(/\(\[([^\]]+)\]\(([^)]+)\)\)/g,'(<a href="$2" target="_blank" rel="noopener">$1</a>)')
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
 }
@@ -610,6 +611,7 @@ function toSiteHtml(text){
       blocks.push(`<div class="ntk-stat"><div class="ntk-stat-num">${num}</div><div class="ntk-stat-ctx">${ctx}</div></div>`);
       return `\n\n\u0000BLOCK${blocks.length-1}\u0000\n\n`; })
     .replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*([^*]+)\*/g,'<em>$1</em>')
     .replace(/\(\[([^\]]+)\]\(([^)]+)\)\)/g,'(<a href="$2" target="_blank" rel="noopener">$1</a>)')
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
   return t.split(/\n{2,}/).map(p=>p.trim()).filter(Boolean).map(p=>{
