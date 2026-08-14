@@ -261,9 +261,13 @@
 
 const SECS = ['truths','probabilities','possibilities','lies'];
 const TODAY = new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-const CATEGORIES = ['Geopolitical','Domestic','Economic','Cultural','Health','Science','Under-Reported','Orienting'];
-const BEAT_TO_CAT = { national:'Domestic', international:'Geopolitical', business:'Economic',
-  tech:'Science', science:'Science', health:'Health', education:'Cultural', culture:'Cultural', other:'Domestic' };
+// USA Today-style section names — plain, reader-facing nouns rather than
+// policy-desk language. 'Under-Reported' and 'Orienting' are NTK's own
+// editorial curation tags (not subject-matter sections) and have no USA
+// Today equivalent, so they stay. Renamed 2026-08-14.
+const CATEGORIES = ['World','Nation','Politics','Money','Tech','Health','Life','Under-Reported','Orienting'];
+const BEAT_TO_CAT = { national:'Nation', international:'World', business:'Money',
+  tech:'Tech', science:'Tech', health:'Health', education:'Life', culture:'Life', other:'Nation' };
 const LINEUP_MAX = 8;
 
 /* ─── persisted state ─── */
@@ -652,7 +656,7 @@ function toSiteStoryBlock(story){
     overlayColor: "${jsEsc(story.overlayColor || '#0798F2')}",
     overlayOpacity: ${story.overlayOpacity || 45}` : '';
   return `  {
-    category: "${jsEsc(story.category)}",
+    category: "${jsEsc((story.categoryCustom||'').trim() || story.category)}",
     headline: "${jsEsc(headline)}",
     lede: "${jsEsc(lede)}",
     truth: "${jsEsc(toSiteHtml(body))}",
@@ -678,7 +682,8 @@ function certify(cluster){
   LINEUP.push({
     id: 'ln-'+Date.now(), key: cluster.key,
     title: cluster.title, beat: (cluster.triage&&cluster.triage.beat)||cluster.beat_hint||'other',
-    category: BEAT_TO_CAT[(cluster.triage&&cluster.triage.beat)||cluster.beat_hint||'other']||'Domestic',
+    category: BEAT_TO_CAT[(cluster.triage&&cluster.triage.beat)||cluster.beat_hint||'other']||'Nation',
+    categoryCustom: '',
     angle: (cluster.triage&&cluster.triage.line)||'',
     conceptEntity:'', narrowKeyword:'',
     articles: activeItems.map(it=>({
@@ -1597,7 +1602,7 @@ function createStoryFromQuery(){
   if (LINEUP.length>=LINEUP_MAX){ alert('Lineup is full ('+LINEUP_MAX+').'); return; }
   LINEUP.push({
     id:'ln-'+Date.now(), key:'query-'+Date.now(),
-    title: Q.kw.trim()||'New story', beat:'other', category:'Domestic',
+    title: Q.kw.trim()||'New story', beat:'other', category:'Nation', categoryCustom:'',
     angle:'', conceptEntity:'', narrowKeyword:'', conceptUri:null,
     articles: picked.map(({pick,...a})=>a),
     enrichedAt:null, packages:null, open:true, outOpen:false,
@@ -1963,6 +1968,7 @@ function renderLineup(root){
       `<button class="mini draft" ${s.busy?'disabled':''}>Step 1 · Draft</button></div>`+
       `<div class="story-meta"><span class="beat beat-${esc(s.beat)}">${esc(s.beat)}</span>`+
       `<select class="cat">${CATEGORIES.map(c=>`<option${c===s.category?' selected':''}>${c}</option>`).join('')}</select>`+
+      `<input type="text" class="cat-custom" placeholder="or type a custom category…" value="${esc(s.categoryCustom||'')}" style="width:160px">`+
       `<span>${nActive} active sources · ${nBody} with ER bodies`+
       (nDup?` · ${nDup} deduped`:'')+(nSup?` · ${nSup} suppressed`:'')+`</span>`+
       editionScoreChips(s.key)+
@@ -2024,7 +2030,8 @@ function renderLineup(root){
     });
     el.querySelector('.punch-dismiss')?.addEventListener('click',()=>{ s.headlineCandidates=null; saveLineup(); render(); });
     el.querySelector('.angle').addEventListener('change',e=>{ s.angle=e.target.value; saveLineup(); });
-    el.querySelector('.cat').addEventListener('change',e=>{ s.category=e.target.value; saveLineup(); });
+    el.querySelector('.cat').addEventListener('change',e=>{ s.category=e.target.value; s.categoryCustom=''; saveLineup(); render(); });
+    el.querySelector('.cat-custom').addEventListener('change',e=>{ s.categoryCustom=e.target.value.trim(); saveLineup(); });
     el.querySelector('.ord').addEventListener('keydown',e=>{
       if (e.key==='Enter'){ e.preventDefault(); reorderStory(s.id, parseInt(e.target.value)||1); }
     });
@@ -2260,7 +2267,7 @@ function materializeEditionStory(s){
   return {
     id: 'ln-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),
     key: s.key, title: s.title,
-    beat: s.beat, category: BEAT_TO_CAT[s.beat] || 'Domestic',
+    beat: s.beat, category: BEAT_TO_CAT[s.beat] || 'Nation', categoryCustom: '',
     angle: s.line || '',
     conceptEntity:'', narrowKeyword:'',
     articles: items.map(it=>({
