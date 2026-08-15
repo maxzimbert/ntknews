@@ -1,5 +1,5 @@
 {
- "assembled_at": "2026-08-15T01:23:47.429513+00:00",
+ "assembled_at": "2026-08-15T04:37:53.269644+00:00",
  "slot_plan": "A",
  "displacement": "MANUAL",
  "daytype": "weekend",
@@ -7,167 +7,107 @@
   4,
   6
  ],
- "actual_size": 58,
- "lint_failures": [
-  "under 3 fully self-contained items",
-  "no item answers 'what do I do with this'"
- ],
+ "actual_size": 6,
+ "lint_failures": [],
  "slots_unfilled": [],
  "stories": [
   {
    "slot": "unavoidable",
    "slot_label": "Unavoidable",
-   "key": "1a815948b42ab7c0",
-   "title": "Mangione pleads guilty to killing UnitedHealthcare CEO, describes stalking in court",
-   "beat": "national",
-   "publisher_count": 12,
+   "key": "415eeab89b1cf3ed",
+   "title": "7.7 earthquake off Indonesia triggers tsunami warning",
+   "beat": "international",
+   "publisher_count": 8,
    "publishers": [
     "BBC",
-    "New York Times",
-    "PBS NewsHour",
     "The Guardian",
-    "Washington Post",
-    "CBS News",
-    "CNBC",
-    "Fox News",
-    "MedPage Today",
+    "ABC News",
+    "Al Jazeera",
+    "Deutsche Welle",
     "NBC News",
     "The Independent",
-    "Daily Mail"
+    "ABC Australia"
    ],
    "scores": {
-    "emotional_load": 5,
+    "emotional_load": 4,
     "explainability": 5,
     "actionability": 1,
-    "conversational_currency": 5
+    "conversational_currency": 4
    },
    "politician_led": false,
    "ledger_class": "DEVELOPMENT",
    "new_facts": [
-    "Mangione told judge: 'I shot Mr. Thompson in Manhattan. I knew what I was doing was illegal.'",
-    "Mangione read a statement in court describing targeting Thompson outside an investor conference.",
-    "Mangione quoted: 'I shot Mr Thompson and he died.' Thompson's age given as 50."
+    "New story: 7.7-magnitude earthquake off Flores Island, Indonesia, early Saturday; one dead.",
+    "Quake damaged buildings and sent residents to higher ground, indicating tsunami risk response.",
+    "Death toll raised to at least two; buildings toppled; region described as quake-prone.",
+    "Quake occurred around 5 a.m. local time at ~6-mile depth; no major tsunami generated.",
+    "New story: 7.7 magnitude earthquake strikes Indonesia, tsunami warning issued, no immediate damage/casualty reports",
+    "Quake pinpointed off Flores island; followed by at least two aftershocks",
+    "Adds depth (10km), time (5:58am Saturday), aftershock magnitude 6.1, hundreds evacuated",
+    "Indonesia's geophysics agency puts magnitude at 7.8, says no threat to Australia"
    ],
-   "line": "Luigi Mangione pleaded guilty to killing UnitedHealthcare CEO Brian Thompson and detailed his stalking and motive in court.",
-   "assembly_score": 14.32
+   "line": "A 7.7 magnitude earthquake struck off Indonesia's coast, triggering a tsunami warning.",
+   "assembly_score": 16.61
   },
   {
    "slot": "money_me",
    "slot_label": "Money & me",
-   "key": "6efd10f54b7879a9",
-   "title": "Anthropic projects $190B\u2013$200B revenue by 2028 ahead of IPO",
+   "key": "c1e2fb98094768e5",
+   "title": "Tax deadline tomorrow; extension filing explained",
    "beat": "business",
    "publisher_count": 1,
    "publishers": [
-    "Techmeme"
+    "CNN"
    ],
    "scores": {
-    "emotional_load": 1,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
+    "emotional_load": 2,
+    "explainability": 5,
+    "actionability": 5,
+    "conversational_currency": 4
    },
    "politician_led": false,
-   "ledger_class": "DEVELOPMENT",
-   "new_facts": [
-    "Anthropic projects 2028 revenue of ~$190B-$200B vs $47B run rate in May, per sources ahead of IPO pricing"
-   ],
-   "line": "Anthropic's projected 2028 revenue is $190B\u2013$200B, up from a $47B run rate in May, as the AI company prepares for a public offering.",
-   "assembly_score": 5.65
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "Tax filing deadline is tomorrow; you can request a six-month extension if you're not ready.",
+   "assembly_score": 5.38
   },
   {
    "slot": "body_mind",
    "slot_label": "Body & mind",
-   "key": "6abcb1826196567e",
-   "title": "UK weighs restricting prostate cancer screening access",
+   "key": "eaf7858aa9c5bda5",
+   "title": "FDA recalls 19 million eggs over salmonella contamination",
    "beat": "health",
-   "publisher_count": 1,
+   "publisher_count": 3,
    "publishers": [
-    "Daily Mail"
+    "New York Times",
+    "Deutsche Welle",
+    "Fox 5 DC"
    ],
    "scores": {
     "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
+    "explainability": 5,
+    "actionability": 3,
+    "conversational_currency": 4
    },
-   "politician_led": true,
+   "politician_led": false,
    "ledger_class": "DEVELOPMENT",
    "new_facts": [
-    "New guidance lets GPs decide whether men over 50 can get PSA prostate cancer blood tests."
+    "FDA recalls 19 million eggs over Salmonella risk, warning of severe illness or death from exposure.",
+    "FDA assigns Class I (highest-risk) status to a July egg recall of 1.5 million eggs over salmonella.",
+    "NYT quotes FDA's Class I classification language: 'reasonable probability' of 'serious adverse health consequences or death.'"
    ],
-   "line": "UK health officials propose restricting prostate cancer screening access for men, drawing criticism from former Prime Minister David Cameron.",
-   "assembly_score": 5.17
+   "line": "FDA recalls millions of eggs from a producer due to salmonella contamination risk.",
+   "assembly_score": 9.62
   },
   {
    "slot": "work_machines",
    "slot_label": "Work & machines",
-   "key": "dd78d3b68e460b94",
-   "title": "Waymo receives approval from the California Public Utilities Commission to expand across 18 counties, including Sacramento and San Diego (Fred Lambert/Electrek)",
+   "key": "11ad2df622d26522",
+   "title": "Altman pushes OpenAI toward IPO as company faces upheaval",
    "beat": "tech",
    "publisher_count": 1,
    "publishers": [
-    "Techmeme"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 4.13
-  },
-  {
-   "slot": "group_chat",
-   "slot_label": "The group chat",
-   "key": "c89ee2c87ee3308f",
-   "title": "Cambridge professor accused of plagiarism found dead after resignation",
-   "beat": "education",
-   "publisher_count": 14,
-   "publishers": [
-    "BBC",
-    "Financial Times",
-    "New York Times",
-    "PBS NewsHour",
-    "The Guardian",
-    "ABC News",
-    "Al Jazeera",
-    "CBS News",
-    "Deutsche Welle",
-    "Fox News",
-    "NBC News",
-    "The Independent",
-    "ABC Australia",
-    "Daily Mail"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Jason Arday, a Cambridge professor who resigned after plagiarism accusations, has been found dead.",
-   "assembly_score": 10.41
-  },
-  {
-   "slot": "close",
-   "slot_label": "The close",
-   "key": "b8ee5b69ef0a6447",
-   "title": "BBC seeks to subpoena Trump family members in defamation case",
-   "beat": "national",
-   "publisher_count": 4,
-   "publishers": [
-    "BBC",
-    "The Guardian",
-    "Daily Beast",
-    "The Independent"
+    "Financial Times"
    ],
    "scores": {
     "emotional_load": 2,
@@ -178,194 +118,20 @@
    "politician_led": false,
    "ledger_class": "DEVELOPMENT",
    "new_facts": [
-    "BBC seeks to interview Jared Kushner and Ivanka Trump for its defense in Trump's defamation suit over Jan 6 speech.",
-    "Reveals lawsuit is worth $10 billion and that police blocked BBC's May attempt to serve Kushner/Ivanka in Miami."
+    "OpenAI facing executive exits and safety team changes while preparing IPO push led by Sam Altman"
    ],
-   "line": "BBC is seeking to question Ivanka Trump and Jared Kushner as witnesses in its defense against a Trump defamation lawsuit.",
-   "assembly_score": 8.27
+   "line": "OpenAI's Sam Altman is preparing the company for an initial public offering amid internal turmoil.",
+   "assembly_score": 4.61
   },
   {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "491eb911e8ea8b76",
-   "title": "Trump dismisses sailor complaints about conditions on USS Abraham Lincoln",
-   "beat": "national",
-   "publisher_count": 8,
-   "publishers": [
-    "New York Times",
-    "PBS NewsHour",
-    "The Guardian",
-    "Al Jazeera",
-    "CBS News",
-    "NBC News",
-    "The Independent",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/8/14/trump-dismisses-mental-health-concerns-on-uss-lincoln-aircraft-carrier?traffic_source=rss",
-    "//cbsnews.com/video/trump-downplays-concerns-of-mental-health-issues-aboard-uss-lincoln",
-    "//cbsnews.com/video/trump-says-uss-lincoln-deployment-not-nearly-long-enough-as-concerns-mount",
-    "//independent.co.uk/news/world/americas/us-politics/uss-lincoln-conditions-trump-iran-wa-b3033439.html",
-    "//memeorandum.com/260814/p75",
-    "//memeorandum.com/260814/p99",
-    "//nbcnews.com/nightly-news/video/trump-downplays-concerns-about-living-conditions-on-aircraft-carrier-268343365616",
-    "//nbcnews.com/video/trump-downplays-concerns-about-conditions-aboard-uss-abraham-lincoln-268337733828",
-    "//nytimes.com/2026/08/14/us/politics/trump-uss-abraham-lincoln.html",
-    "//pbs.org/newshour/show/trump-dismisses-concerns-over-conditions-on-long-deployed-uss-abraham-lincoln",
-    "//pbs.org/newshour/world/new-aircraft-carrier-en-route-to-middle-east-after-issues-reported-aboard-uss-abraham-lincoln",
-    "//theguardian.com/us-news/2026/aug/14/trump-uss-abraham-lincoln-deployment"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Sailors on a deployed aircraft carrier reported poor living conditions and mental health struggles; Trump dismissed their concerns.",
-   "assembly_score": 3.55
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "e4a189769ba18d34",
-   "title": "Controller prevents collision between planes with identical call signs",
-   "beat": "national",
-   "publisher_count": 4,
-   "publishers": [
-    "PBS NewsHour",
-    "CBS News",
-    "The Independent",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//cbsnews.com/news/phoenix-air-traffic-controller-2-american-airlines-flights-same-call-number-converge",
-    "//dailymail.com/news/article-16053983/Flight-disaster-averted-two-jets-certain-collision.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//independent.co.uk/news/american-airlines-phoenix-chicago-b3033417.html",
-    "//pbs.org/newshour/nation/quick-thinking-controller-helps-2-planes-with-same-flight-number-avoid-possible-disaster"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "An air traffic controller prevented a collision between two planes that had been assigned the same flight number.",
-   "assembly_score": 2.26
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "6a94a040eb1c39a8",
-   "title": "Six dead, including suspect, in rural Michigan shooting spree",
-   "beat": "national",
-   "publisher_count": 7,
-   "publishers": [
-    "The Guardian",
-    "CBS News",
-    "Fox News",
-    "NBC News",
-    "The Independent",
-    "Daily Mail",
-    "Fox 5 DC"
-   ],
-   "urls": [
-    "//cbsnews.com/news/police-investigate-homicide-northern-michigan-missaukee-county",
-    "//dailymail.com/news/article-16053977/Six-dead-Chad-Hickman-Michigan-shooting.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//fox5dc.com/news/this-situation-is-heartbreaking-6-found-dead-including-suspect-northern-michigan-community",
-    "//foxnews.com/us/several-people-dead-including-suspect-rural-michigan-multi-scene-shooting-police",
-    "//independent.co.uk/news/police-detroit-b3033464.html",
-    "//independent.co.uk/news/world/americas/crime/michigan-shooting-chad-hickman-missaukee-county-b3033470.html",
-    "//nbcnews.com/news/us-news/5-people-killed-rural-michigan-suspect-found-deceased-rcna592625",
-    "//theguardian.com/us-news/2026/aug/14/michigan-mass-shooting-missaukee-county"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Six people, including the suspect, died in a multi-location shooting in rural northern Michigan.",
-   "assembly_score": 1.618
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "3443f6a811bf6195",
-   "title": "Trump claims AOC shifting positions; regulator approves banking license for Trump-linked crypto firm",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "Fox News",
-    "The Independent",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//foxnews.com/politics/president-trump-claims-aoc-far-left-democrats-backing-away-controversial-positions",
-    "//independent.co.uk/news/world/americas/us-politics/trump-aoc-president-2028-woke-b3033473.html",
-    "//memeorandum.com/260814/p79"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump claims AOC is abandoning progressive positions; separately, a Trump-appointed regulator approved a banking license for a Trump-linked crypto firm.",
-   "assembly_score": 1.417
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "29281d4c25534f20",
-   "title": "7.7 earthquake hits Indonesia, tsunami warning issued",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "NBC News",
-    "The Independent"
-   ],
-   "urls": [
-    "//independent.co.uk/news/world/asia/indonesia-earthquake-coast-tsunami-warning-b3033463.html",
-    "//nbcnews.com/video/powerful-7-7-magnitude-earthquake-causes-intense-shaking-near-indonesia-268349509807"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A 7.7-magnitude earthquake struck Indonesia with tsunami warnings issued; damage and casualties remain unclear.",
-   "assembly_score": 1.31
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "deffdc4ff826ea12",
-   "title": "Picasso print stolen from Milwaukee gallery in 2018 found in vacant apartment",
+   "slot": "group_chat",
+   "slot_label": "The group chat",
+   "key": "8a1cb3cf2d1efd02",
+   "title": "French rural pools close as drought intensifies",
    "beat": "culture",
-   "publisher_count": 2,
+   "publisher_count": 1,
    "publishers": [
-    "The Guardian",
-    "The Independent"
-   ],
-   "urls": [
-    "//independent.co.uk/news/madison-milwaukee-picasso-fbi-b3033447.html",
-    "//theguardian.com/us-news/2026/aug/14/picasso-print-stolen-milwaukee"
+    "The Guardian"
    ],
    "scores": {
     "emotional_load": 2,
@@ -374,761 +140,23 @@
     "conversational_currency": 2
    },
    "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A Picasso print stolen from a Milwaukee gallery six years ago has been recovered in a vacant apartment during routine cleaning.",
-   "assembly_score": 1.19
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "France's rural swimming pools face funding threat amid record heatwaves; profile of Suzy Bernard, 75, village pool user."
+   ],
+   "line": "French rural communities are closing public swimming pools due to drought and heat, threatening summer gathering spaces.",
+   "assembly_score": 4.32
   },
   {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "3f38f3eab6c877b2",
-   "title": "Stolen C\u00e9zanne, Matisse, and Renoir paintings recovered after museum heist",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "ANSA",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//ansa.it/sito/notizie/cronaca/2026/08/14/recuperati-i-tre-quadri-di-cezanne-matisse-e-renoir-rubati-a-parma_37630a2f-51f5-42f4-92fc-3c880ac393b4.html",
-    "//dailymail.com/news/article-16053829/Moment-art-thieves-steal-works-museum.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Thieves stole nine million euros in paintings from a museum; Italian authorities say they recovered them.",
-   "assembly_score": 0.94
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "120325092a898f36",
-   "title": "Farage wins Clacton seat as watchdog restarts donation probe",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "ABC Australia",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-08-15/clacton-by-election-weirdest-in-recent-uk-history/107040534",
-    "//dailymail.com/debate/article-16053345/ANDREW-NEIL-Tories-Reform-bury-egos-Britain.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dailymail.com/news/article-16053807/Farage-win-vindication-watchdog-gift-probe-Tories-pointless.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dailymail.com/news/article-16053885/DAILY-MAIL-COMMENT-Right-wing-lessons-Clacton.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Nigel Farage won a UK parliamentary seat in Clacton; regulators immediately reopened a \u00a35m donation investigation against him.",
-   "assembly_score": 0.73
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "def668b7e9dc0e56",
-   "title": "Trump says he will declare Strait of Hormuz U.S. territory",
-   "beat": "international",
-   "publisher_count": 9,
-   "publishers": [
-    "The Guardian",
-    "Al Jazeera",
-    "Daily Beast",
-    "Deutsche Welle",
-    "The Independent",
-    "ABC Australia",
-    "Daily Mail",
-    "Memeorandum",
-    "Yonhap News"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-08-15/trump-says-he-will-declare-hormuz-us-territory/107041530",
-    "//aljazeera.com/news/2026/8/14/trump-says-he-will-declare-strait-of-hormuz-a-us-territory?traffic_source=rss",
-    "//aljazeera.com/news/liveblog/2026/8/15/iran-war-live-trump-vows-to-make-hormuz-us-territory-pretty-soon?traffic_source=rss",
-    "//dailymail.com/news/article-16053819/Trump-Iran-Strait-Hormuz-US-territory.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dw.com/en/donald-trump-to-declare-hormuz-us-territory-soon/a-78377755?maca=en-rss-en-all-1573-xml-mrss",
-    "//en.yna.co.kr/view/AEN20260815000300315",
-    "//en.yna.co.kr/view/AEN20260815000351315",
-    "//independent.co.uk/news/world/middle-east/iran-us-war-live-trump-hormuz-naval-blockade-oil-prices-b3032930.html",
-    "//memeorandum.com/260814/p78",
-    "//thedailybeast.com/trump-wants-to-make-stretch-of-water-a-us-territory",
-    "//theguardian.com/us-news/2026/aug/14/trump-threat-strait-hormuz-us-territory"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 5
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump says he will declare the Strait of Hormuz a U.S. territory, a waterway controlled by Iran that handles a third of global oil shipments.",
-   "assembly_score": 0.48
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "76e89937c9131fbe",
-   "title": "Japan's PM and defense minister honor Yasukuni Shrine amid regional tensions",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "The Independent",
-    "Yonhap News"
-   ],
-   "urls": [
-    "//en.yna.co.kr/view/AEN20260815001100315",
-    "//independent.co.uk/news/shinjiro-koizumi-japanese-tokyo-yasukuni-shrine-asian-b3033454.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Japan's prime minister sent an offering to Yasukuni Shrine without visiting in person, while the defense minister prayed there; the shrine honors Japan's war dead including convicted war criminals.",
-   "assembly_score": 0.48
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "a3c0e14be0a2cc04",
-   "title": "UN calls for aid access as Taliban restrictions on Afghan women persist",
-   "beat": "international",
-   "publisher_count": 3,
-   "publishers": [
-    "Al Jazeera",
-    "ABC Australia",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-08-15/afghan-women-girls-human-rights-five-years-taliban-rule/106940996",
-    "//aljazeera.com/news/2026/8/15/un-urges-support-for-afghan-womens-aid-five-years-into-taliban-rule?traffic_source=rss",
-    "//memeorandum.com/260814/p77"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Five years after taking power, the Taliban has restricted women's rights so severely that UN agencies and aid groups are struggling to operate and help them.",
-   "assembly_score": 0.368
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "9790836fa4e68b73",
-   "title": "Halle Berry marks 60th birthday",
-   "beat": "culture",
-   "publisher_count": 3,
-   "publishers": [
-    "Daily Beast",
-    "Fox News",
-    "Atlanta Black Star"
-   ],
-   "urls": [
-    "//atlantablackstar.com/2026/08/14/halle-berrys-spicy-birthday-pics-have-people-losing-it-over-how-incredible-she-looks-at-60",
-    "//foxnews.com/entertainment/halle-berry-celebrates-60th-birthday-plunging-robe-defiant-message",
-    "//thedailybeast.com/halle-berry-celebrates-60th-birthday-in-see-through-robe"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 0.358
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "17893073d3e8e43e",
-   "title": "Prosecutors narrow case in retrial of Palisades fire suspect",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "LAist",
-    "The Independent"
-   ],
-   "urls": [
-    "//independent.co.uk/news/los-angeles-malibu-b3033416.html",
-    "//laist.com/news/prosecutors-narrow-their-case-ahead-of-the-retrial-of-the-man-accused-of-setting-the-palisades-fire"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Prosecutors are reducing charges in the retrial of the man accused of starting the Palisades fire, one of California's deadliest wildfires.",
-   "assembly_score": 0.02
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "a2ee4e85a9bef5f0",
-   "title": "Trump press secretary Leavitt resigns",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Daily Beast",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16053567/Karoline-Leavitts-face-says-breaks-cover-shock-resignation.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//thedailybeast.com/why-donald-trumps-goons-are-fleeing-west-wing-from-hell"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump's White House press secretary Karoline Leavitt has resigned, signaling internal instability in the early days of the administration.",
-   "assembly_score": -0.05
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "415eeab89b1cf3ed",
-   "title": "7.7 earthquake off Indonesia triggers tsunami warning",
-   "beat": "international",
-   "publisher_count": 5,
-   "publishers": [
-    "The Guardian",
-    "ABC News",
-    "Deutsche Welle",
-    "NBC News",
-    "ABC Australia"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-08-15/earthquake-strikes-off-coast-of-indonesia/107041680",
-    "//abcnews.com/International/wireStory/magnitude-77-earthquake-strikes-off-coast-indonesia-usgs-135659935",
-    "//dw.com/en/indonesia-strong-earthquake-hits-off-coast-of-flores-island/a-78377990?maca=en-rss-en-all-1573-xml-mrss",
-    "//nbcnews.com/world/indonesia/earthquake-indonesia-rcna592638",
-    "//theguardian.com/world/2026/aug/15/indonesia-earthquake"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A 7.7 magnitude earthquake struck off Indonesia's coast, triggering a tsunami warning.",
-   "assembly_score": -0.77
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "52fb6bb84e8447c6",
-   "title": "Army halts Apache training flights after fatal Fort Hood crash",
-   "beat": "national",
-   "publisher_count": 5,
-   "publishers": [
-    "PBS NewsHour",
-    "ABC News",
-    "CBS News",
-    "Fox 5 Atlanta",
-    "Fox 5 DC"
-   ],
-   "urls": [
-    "//abcnews.com/Politics/army-grounds-apache-helicopter-flights/story?id=135658131",
-    "//cbsnews.com/news/army-apache-helicopter-training-flights-temporarily-grounded-fatal-crash-fort-hood",
-    "//cbsnews.com/video/army-temporarily-grounds-all-apache-helicopter-training-flights-after-fatal-crash",
-    "//fox5atlanta.com/news/us-army-temporarily-halts-apache-helicopter-training-following-deadly-texas-crash",
-    "//fox5dc.com/news/us-army-temporarily-halts-apache-helicopter-training-following-deadly-texas-crash",
-    "//pbs.org/newshour/nation/army-temporarily-halts-apache-helicopter-training-missions-after-deadly-texas-crash"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Army halts Apache helicopter training flights after a crash near Fort Hood killed two pilots.",
-   "assembly_score": -0.94
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "ae3aaca5f4829756",
-   "title": "Nvidia discloses $21B stake in SpaceX, $30B in Intel",
-   "beat": "tech",
-   "publisher_count": 3,
-   "publishers": [
-    "Financial Times",
-    "CNBC",
-    "Techmeme"
-   ],
-   "urls": [
-    "//cnbc.com/2026/08/14/goldmans-latest-cash-cow-is-all-about-funding-the-ai-infrastructure-boom.html",
-    "//cnbc.com/2026/08/14/nvidia-discloses-21-billion-stake-in-spacex-at-end-of-second-quarter.html",
-    "//ft.com/content/6f66a76d-0b2d-4301-886c-87ecc046731b?syn-25a6b1a6=1",
-    "//techmeme.com/260814/p23",
-    "//techmeme.com/260814/p27",
-    "//techmeme.com/260814/p29"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Nvidia disclosed major stakes in SpaceX, Intel, and xAI, signaling where chip-maker wealth is concentrating in AI infrastructure.",
-   "assembly_score": -1.35
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "43063663ac09db68",
-   "title": "Burnham deploys military, bans barbecues as wildfires spread; \u00a365m aid for drought-hit farmers",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "The Independent",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16053985/Ban-barbecues-Andy-Burnham-calls-military-battle-Britains-wildfires-warned-crisis-far-over.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//independent.co.uk/news/uk/politics/uk-drought-burnham-farming-climate-change-b3033347.html"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 3,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Greater Manchester mayor deploys military and restricts barbecues to fight wildfires; government offers \u00a365m drought aid to farmers.",
-   "assembly_score": -1.69
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "eaf7858aa9c5bda5",
-   "title": "FDA Classifies Egg Recall as Class I for Highest Health Risk",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "Fox 5 DC"
-   ],
-   "urls": [
-    "//fox5dc.com/news/fda-assigns-highest-risk-status-recall-1-5-million-egg-over-salmonella-risk",
-    "//nytimes.com/2026/08/14/health/fda-egg-recall-salmonella.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.73
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "eb8596a67b3c1a82",
-   "title": "Murder rate hits 20-year low as violent crime drops in 2025",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "CBS News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//cbsnews.com/video/violent-crime-dropped-in-2025-with-murder-rate-hitting-20-year-low-new-fbi-stats-show",
-    "//memeorandum.com/260814/p85"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "FBI data shows violent crime and murder rates fell to their lowest levels in two decades during 2025.",
-   "assembly_score": -1.79
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "01b03e3725174043",
-   "title": "Michigan governor credits Trump for healthcare project Biden stalled",
-   "beat": "national",
+   "slot": "close",
+   "slot_label": "The close",
+   "key": "6fc74655b523ad34",
+   "title": "Construction crew uncovers \u00a37.5 million in gold during brewery renovation",
+   "beat": "other",
    "publisher_count": 2,
    "publishers": [
     "Fox News",
-    "Fox 5 Atlanta"
-   ],
-   "urls": [
-    "//fox5atlanta.com/news/keisha-lance-bottoms-sits-michigan-governor-forum",
-    "//foxnews.com/media/democratic-governor-credits-trump-delivering-mission-michigan-biden-couldnt-get-over-finish-line"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 2,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Michigan's governor credits Trump for a healthcare project she says Biden failed to complete.",
-   "assembly_score": -1.83
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "f7a360d266b24672",
-   "title": "The U.S. Navy Nimitz-class aircraft carrier USS Abraham Lincoln sails in support of the Operation Epic Fury attack on Iran from an undisclosed location March 3, 2026.",
-   "beat": "national",
-   "publisher_count": 6,
-   "publishers": [
-    "Post and Courier",
-    "ABC News",
-    "CBS News",
-    "CNBC",
-    "France 24",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//abcnews.com/Politics/trump-record-uss-lincoln-deployment-long/story?id=135652552",
-    "//cbsnews.com/live-updates/iran-war-donald-trump-strait-of-hormuz-uae-accuses-attacks-vance-oil-gas",
-    "//cbsnews.com/news/aircraft-carrier-uss-george-washington-uss-lincoln-iran-middle-east",
-    "//cbsnews.com/video/new-aircraft-carrier-on-way-to-replace-uss-lincoln",
-    "//cnbc.com/2026/08/14/us-iran-war-trump-hormuz-carrier-abraham-lincoln-george-washington.html",
-    "//france24.com/en/middle-east/20260814-trump-says-record-navy-deployment-in-iran-operations-not-nearly-long-enough",
-    "//memeorandum.com/260814/p71",
-    "//memeorandum.com/260814/p83",
-    "//postandcourier.com/the-u-s-navy-nimitz-class-aircraft-carrier-uss-abraham-lincoln-sails-in-support-of/image_d9611fc2-18aa-4d83-a41f-33ee404ad509.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.98
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "b069e122ca54b158",
-   "title": "ICE detainees report gas leak exposure, denied medical treatment at Mississippi facility",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "The New Republic",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/260814/p93",
-    "//newrepublic.com/post/214389/ice-refused-detainees-medical-treatment-gas-leak"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 2,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Detainees at a Mississippi ICE facility report being exposed to a gas leak and denied medical care in response.",
-   "assembly_score": -2.26
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "bb975727473c872a",
-   "title": "Kentucky governor says he has received no information on Mitch McConnell\u2019s health as he rips into Congress",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Daily Beast",
-    "The Independent"
-   ],
-   "urls": [
-    "//independent.co.uk/news/world/americas/us-politics/andy-beshear-mitch-mcconnell-hospital-senate-b3033405.html",
-    "//thedailybeast.com/obsessed/daily-show-star-josh-johnson-torches-missing-mitch-hes-not-coming-back"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.27
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "dd0c038b34606f54",
-   "title": "Tech giants and trading firms absorb market losses amid shifting investment landscape",
-   "beat": "business",
-   "publisher_count": 3,
-   "publishers": [
-    "Financial Times",
-    "TechCrunch",
-    "Techmeme"
-   ],
-   "urls": [
-    "//ft.com/content/47dd5308-dd17-404a-a615-61046defd697?syn-25a6b1a6=1",
-    "//techcrunch.com/2026/08/14/talks-to-sell-paypal-to-stripe-and-advent-are-heating-up",
-    "//techmeme.com/260814/p22"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Major financial firms face unusual losses and valuation pressure as market volatility and investment income shifts reshape tech and finance sector economics.",
-   "assembly_score": -2.3
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "de49dce0a0c58351",
-   "title": "Kennedy Center board votes to name grounds after Trump",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "CBS News",
-    "Fox News",
-    "The Independent"
-   ],
-   "urls": [
-    "//cbsnews.com/video/rep-joyce-beatty-says-trump-was-on-call-where-board-voted-to-put-his-name-back-on-kennedy-center",
-    "//foxnews.com/politics/exclusive-kennedy-center-board-moves-name-grounds-president-donald-j-trump-plaza",
-    "//independent.co.uk/news/world/americas/us-politics/rfk-jr-trump-mcdonalds-plane-b3033398.html"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Kennedy Center board votes to name its grounds after Trump; Beatty says Trump participated in the call.",
-   "assembly_score": -2.39
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "63e5e3b41b93f44d",
-   "title": "News Wrap: Record-breaking heat wave grips Europe",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "PBS NewsHour",
-    "Al Jazeera"
-   ],
-   "urls": [
-    "//aljazeera.com/video/newsfeed/2026/8/14/wildfires-rage-across-europe-as-heatwaves-drive-record-temperatures?traffic_source=rss",
-    "//pbs.org/newshour/show/news-wrap-record-breaking-heat-wave-grips-europe"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.42
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "801a2ffef0762455",
-   "title": "Congo Ebola outbreak on track to become deadliest in history",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "PBS NewsHour",
-    "France 24"
-   ],
-   "urls": [
-    "//france24.com/en/tv-shows/eye-on-africa/20260814-dr-congo-ebola-outbreak-spreads-to-sixth-province",
-    "//pbs.org/newshour/show/congo-ebola-outbreak-on-track-to-become-deadliest-in-history"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.51
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "3ba63f86fec3f1af",
-   "title": "Judge\u2019s Harvard antisemitism ruling sends Trump Justice Department back to drawing board",
-   "beat": "national",
-   "publisher_count": 4,
-   "publishers": [
-    "ABC News",
-    "CBS News",
-    "Fox News",
-    "The Independent"
-   ],
-   "urls": [
-    "//abcnews.com/US/wireStory/judge-refuses-block-trump-administration-building-border-wall-135659058",
-    "//cbsnews.com/news/justice-department-opinion-military-migrants-trespassing",
-    "//foxnews.com/politics/judge-harvard-antisemitism-ruling-sends-trump-justice-department-back-drawing-board",
-    "//independent.co.uk/news/trump-washington-native-american-government-arizona-b3033434.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.88
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "283811c3d414b9a8",
-   "title": "Trump leaves stage mid-speech to embrace parents of 12-year-old killed by stray bullet in the Bronx",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox News",
-    "Houston Public Media"
-   ],
-   "urls": [
-    "//foxnews.com/politics/trump-leaves-stage-mid-speech-embrace-parents-12-year-old-killed-stray-bullet-bronx",
-    "//houstonpublicmedia.org/articles/news/fort-bend/2026/08/14/559549/fort-bend-county-stray-livestock"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.94
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "b47ff524d8005942",
-   "title": "Hawaii under a hurricane warning as Tropical Storm Lala takes aim",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "CBS News",
-    "NBC News",
-    "The Independent"
-   ],
-   "urls": [
-    "//cbsnews.com/news/tropical-storm-lala-big-island-hawaii-hurricane-track",
-    "//independent.co.uk/news/big-island-hawaii-national-hurricane-center-honolulu-shelters-b3033441.html",
-    "//nbcnews.com/video/tropical-storm-lala-could-bring-damaging-winds-and-rain-to-hawaii-s-big-island-268338245627"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.09
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "15499e40dd128114",
-   "title": "Bezos consortium buys minority stake in Liverpool for \u00a31.65 billion",
-   "beat": "business",
-   "publisher_count": 2,
-   "publishers": [
-    "ABC Australia",
     "Daily Mail"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-08-15/epl-liverpool-jeff-bezos-and-eduardo-saverin-buy-stake/107041580",
-    "//dailymail.com/sport/football/article-16053313/Amazon-billionaire-Jeff-Bezos-minority-stake-Liverpool-1-35billion-investment-Amit-Bhatia.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
    ],
    "scores": {
     "emotional_load": 1,
@@ -1137,726 +165,62 @@
     "conversational_currency": 3
    },
    "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Jeff Bezos's investment group acquires a minority stake in Liverpool Football Club for \u00a31.65 billion.",
-   "assembly_score": -3.18
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "df8ad31ae2892e4a",
-   "title": "Trump makes remarks about young women at campaign speech",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Deutsche Welle",
-    "The Independent"
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Builders in Belgium found hidden gold treasure worth \u00a37.5million in a cellar renovation.",
+    "Workers found $10 million in gold coins/bars while building a sewer under a former brewery in Belgium."
    ],
-   "urls": [
-    "//dw.com/en/trump-asks-supreme-court-to-let-white-house-ballroom-construction-continue/a-78377695?maca=en-rss-en-all-1573-xml-mrss",
-    "//independent.co.uk/news/world/americas/us-politics/trump-new-york-beautiful-girls-speech-b3033400.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump made remarks about young women at a campaign event; outlets differ on characterization.",
-   "assembly_score": -3.24
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "dc4311d7715c783a",
-   "title": "Navy sailors abandon ship after Iranian attacks; sea lion assault case advances",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16053535/Trumps-callous-US-sailors-Iran.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//nytimes.com/2026/08/14/us/politics/uss-abraham-lincoln-trump-supplies-diego-garcia.html"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 2,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Navy sailors abandoned ship during Iranian attacks; separate incident involves man charged with kicking sea lion.",
-   "assembly_score": -3.24
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "0582644bdf7460db",
-   "title": "As Army Fails to Protect Palestinians, Israeli Leaders Sympathize With Settlers",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "New York Times",
-    "PBS NewsHour",
-    "Al Jazeera"
-   ],
-   "urls": [
-    "//aljazeera.com/video/newsfeed/2026/8/14/israeli-soldiers-accused-of-supporting-terrorist-settlers-in-qusra?traffic_source=rss",
-    "//nytimes.com/2026/08/14/world/middleeast/israel-west-bank-settler-violence-military-police.html",
-    "//pbs.org/newshour/world/palestinians-besieged-in-west-bank-village-of-qusra-fear-israeli-settlers-will-seize-their-homes"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.26
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "ee0c3f04cacec696",
-   "title": "DeSantis withholds support from Mills in Florida primary",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//foxnews.com/media/stephen-smith-admits-byron-donalds-could-make-him-republican-calls-him-real-deal",
-    "//memeorandum.com/260814/p82"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 2,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Florida Republican primary features DeSantis withholding support from embattled incumbent Cory Mills.",
-   "assembly_score": -3.26
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "328134773c2bc19e",
-   "title": "FBI reports violent crime hits record low in 2025",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "NBC News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/260814/p84",
-    "//nbcnews.com/politics/justice-department/fbi-reports-record-decrease-violent-crime-2025-rcna592593"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "FBI data shows violent crime fell to its lowest level on record in 2025, reversing decades of concern about public safety.",
-   "assembly_score": -3.35
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "c62947d22aa88426",
-   "title": "Popular tomato soup sold at Walmart recalled over listeria concerns",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox 5 Atlanta",
-    "Fox 5 DC"
-   ],
-   "urls": [
-    "//fox5atlanta.com/news/popular-tomato-soup-sold-walmart-recalled-over-listeria-concerns",
-    "//fox5dc.com/news/popular-tomato-soup-sold-walmart-recalled-over-listeria-concerns"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.42
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "b5cd4239db01acec",
-   "title": "Hodgkinson loses European 800m title to Werro",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//bbc.co.uk/sport/athletics/articles/cyvl05g8g4lo?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/sport/othersports/article-16053879/keely-hodgkinson-800m-european-championship.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "British runner Keely Hodgkinson finishes second in the 800m at the European Championships, losing her title to Swiss rival Werro.",
-   "assembly_score": -3.54
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "5a17ebfbe8d546c7",
-   "title": "Massachusetts mayor arrested over alleged $1.5m Covid relief loan fraud",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "The Independent",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//independent.co.uk/news/world/americas/crime/massachusetts-mayor-lawrence-brian-depena-b3033428.html",
-    "//memeorandum.com/260814/p72"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.73
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "137fe75c65fffd64",
-   "title": "Alex Murdaugh scores major victory ahead of murder retrial as judge allows testing of mystery male DNA found on wife Maggie",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "Daily Mail",
-    "Fox 5 Atlanta",
-    "Fox 5 DC"
-   ],
-   "urls": [
-    "//dailymail.com/crime-desk/article-16053595/alex-murdaugh-murder-retrial-dna-court-south-carolina.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//fox5atlanta.com/news/judge-moves-alex-murdaugh-murder-retrial-from-small-rural-county-amid-ongoing-legal-twists",
-    "//fox5dc.com/news/judge-moves-alex-murdaugh-murder-retrial-from-small-rural-county-amid-ongoing-legal-twists"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.76
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "6bdfc20ed4a03fbb",
-   "title": "Jessica Bang, rookie professional golfer, dies at 18",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox 5 Atlanta",
-    "Fox 5 DC"
-   ],
-   "urls": [
-    "//fox5atlanta.com/news/jessica-bang-golf-dies",
-    "//fox5dc.com/news/jessica-bang-golf-dies"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.82
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "283e5f97940a01de",
-   "title": "FDA upgrades egg recall linked to salmonella to highest risk level",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "CBS News",
-    "The Independent"
-   ],
-   "urls": [
-    "//cbsnews.com/news/fda-class-1-egg-recall-salmonella",
-    "//independent.co.uk/news/world/americas/us-politics/cyclospora-taylor-farms-site-fda-b3033394.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -4.0
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "efdaaa6e1c79a80e",
-   "title": "Trump family crypto firm gets conditional bank charter approval",
-   "beat": "business",
-   "publisher_count": 2,
-   "publishers": [
-    "CNBC",
-    "Techmeme"
-   ],
-   "urls": [
-    "//cnbc.com/2026/08/14/world-liberty-trump-occ-bank-charter-stablecoin.html",
-    "//techmeme.com/260814/p24"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A Trump family cryptocurrency firm wins conditional approval to operate as a bank and issue a dollar-backed stablecoin.",
-   "assembly_score": -4.09
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "e5a6b927cbbc9872",
-   "title": "FBI: Violent crime plummeted in 2025, murder rate hit 20-year low",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "CBS News",
-    "The Independent"
-   ],
-   "urls": [
-    "//cbsnews.com/news/fbi-crime-data-violent-crime-murder-white-house",
-    "//independent.co.uk/news/fbi-donald-trump-united-states-experts-ceo-b3033426.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -4.11
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "8e4d794e2a3ee54a",
-   "title": "Fires prompt national alert as 19 homes destroyed",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "The Independent"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/c2k7y4k98x3o?at_campaign=rss&at_medium=RSS",
-    "//independent.co.uk/news/uk/politics/emergency-alert-wildfires-uk-wales-warning-live-updates-b3033354.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -4.14
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "aca3ab39f278bcad",
-   "title": "Amazon blocks class-action lawsuits in updated user agreement",
-   "beat": "business",
-   "publisher_count": 2,
-   "publishers": [
-    "CNN",
-    "Techmeme"
-   ],
-   "urls": [
-    "//cnn.com/cnn-underscored/deals/best-amazon-deals-2023-04-12?iid=CNNUnderscoredHPcontainer",
-    "//cnn.com/cnn-underscored/travel/amazon-travel-products?iid=CNNUnderscoredHPcontainer",
-    "//techmeme.com/260814/p25"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 5,
-    "actionability": 3,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Amazon reinserts a clause blocking class-action lawsuits in its user agreement, reversing a 2021 removal of the same restriction.",
-   "assembly_score": -4.18
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "5c6224dfc5aeba01",
-   "title": "Where the Texas surrogate dispute stands right now",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "CBS News",
-    "Houston Public Media"
-   ],
-   "urls": [
-    "//cbsnews.com/video/where-the-texas-surrogacy-dispute-stands-right-now",
-    "//houstonpublicmedia.org/articles/news/education-news/2026/08/14/559560/texas-schools-see-modest-improvement-in-2026-a-f-ratings-heres-how-they-fared"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -4.87
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "add733d82f993337",
-   "title": "Mangione pleads guilty to UnitedHealthcare CEO killing, claims company helped locate target",
-   "beat": "national",
-   "publisher_count": 7,
-   "publishers": [
-    "New York Times",
-    "PBS NewsHour",
-    "Al Jazeera",
-    "CBS News",
-    "MedPage Today",
-    "NBC News",
-    "The Independent"
-   ],
-   "urls": [
-    "//aljazeera.com/video/newsfeed/2026/8/15/mangione-pleads-guilty-as-polarising-ceo-killing-reaches-new-phase?traffic_source=rss",
-    "//cbsnews.com/news/luigi-mangione-says-he-will-plead-guilty-in-federal-case",
-    "//cbsnews.com/video/081426-cbs-evening-news",
-    "//cbsnews.com/video/814-the-takeout-with-major-garrett",
-    "//cbsnews.com/video/luigi-mangione-describes-how-he-stalked-and-shot-unitedhealthcare-ceo-in-courtroom-confession",
-    "//cbsnews.com/video/luigi-mangiones-guilty-plea-explained-case-by-case-48-hours-podcast",
-    "//cbsnews.com/video/what-to-know-after-luigi-mangione-pleads-guilty-to-killing",
-    "//independent.co.uk/news/world/americas/crime/luigi-mangione-confession-healthcare-ceo-b3033298.html",
-    "//independent.co.uk/news/world/americas/crime/luigi-mangione-guilty-plea-new-york-courtroom-b3033316.html",
-    "//medpagetoday.com/publichealthpolicy/publichealth/122626",
-    "//nbcnews.com/nightly-news/video/luigi-mangione-admits-to-killing-ceo-268342853771",
-    "//nytimes.com/2026/08/14/nyregion/luigi-mangione-culture-shooting.html",
-    "//pbs.org/newshour/show/luigi-mangione-reveals-motive-for-ceos-killing-after-pleading-guilty-in-federal-case"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 5
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Luigi Mangione pleaded guilty to killing UnitedHealthcare CEO Brian Thompson, claiming the company directed him to his target.",
-   "assembly_score": 1.967
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "369f8bd7329ed935",
-   "title": "ICE detains Haitians after temporary protected status ends",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "NBC News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/260814/p107",
-    "//nbcnews.com/now/video/haitians-in-maryland-live-in-fear-over-ice-detentions-after-end-of-their-tps-status-268337221877"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 2,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "ICE is detaining Haitian immigrants in Maryland after their temporary protected status expired, causing community fear.",
-   "assembly_score": 1.38
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "2b4c07d33eefbd99",
-   "title": "DFW Airport scraps Islamic foot-washing station plan after Abbott criticism",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//foxnews.com/politics/dfw-airport-scraps-controversial-islamic-footwashing-station-plan-texas-gov-abbott-takes-aim",
-    "//memeorandum.com/260814/p104"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Dallas-Fort Worth Airport canceled plans for an Islamic ablution facility after Texas governor criticized the project.",
-   "assembly_score": 0.63
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "6c11551a3057b904",
-   "title": "\u2018Haven\u2019t Been Asleep Since\u2019: Black Woman Held at Gunpoint on Busy Highway After Police Failed to Fix Flock Camera Error That Turned Her into a Target",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "Atlanta Black Star",
-    "Fox 5 Atlanta",
-    "Fox 5 DC"
-   ],
-   "urls": [
-    "//atlantablackstar.com/2026/08/14/black-woman-held-at-gunpoint-on-busy-highway",
-    "//fox5atlanta.com/news/flock-cameras-targeted-vandals-us",
-    "//fox5dc.com/news/flock-cameras-targeted-vandals-us"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.73
+   "line": "Construction workers in Britain discovered gold worth roughly \u00a37.5 million while renovating a cellar beneath a former brewery.",
+   "assembly_score": 7.11
   }
  ],
  "excluded_sample": [
   {
-   "title": "The weirdest by-election in recent UK history marked a return to the status quo",
+   "title": "Storm Team4 Forecast: Weather Alert possible Sunday",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Joan Collins, 93, jokes she's 'spending all Elizabeth Hurley's money' as they enjoy lunch in St Tropez with Damian and Billy Ray Cyrus",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Traders are spoiling for a fight over the yen",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Entrenched, Embattled and Defiant, the Taliban Celebrate 5 Years in Power",
    "why": "ledger: INCREMENT"
   },
   {
-   "title": "James Talarico Just Gave Democrats a Red-State Blueprint",
-   "why": "ledger: RECYCLED"
-  },
-  {
-   "title": "Halle Berry celebrates 60th birthday in plunging robe with defiant message",
+   "title": "Dear Abby for August 15, 2026",
    "why": "triage verdict NO"
   },
   {
-   "title": "Heartwarming story of the man whose heatwave lawn will leave you green with envy. He's just lost his wife of 50 years and has had six new hips - but even the drought hasn't stopped Stuart creating perfection. So how DOES he do it?",
+   "title": "Crosby, Mrs. Fannie",
    "why": "triage verdict NO"
   },
   {
-   "title": "Why I would NEVER eat low-fat food: As a veteran restaurant reviewer, you'd think TOM PARKER BOWLES would eat anything. But here he reveals the things that will never pass his lips... for very good reason",
+   "title": "Crowther, Christine",
    "why": "triage verdict NO"
   },
   {
-   "title": "'A lot of people are nervous about what he could reveal': Inside Ireland's toughest prison where guards are desperate to stop 'drug kingpin' Daniel Kinahan being reached by his friends... or his enemies",
+   "title": "America\u2019s AI election",
    "why": "triage verdict NO"
   },
   {
-   "title": "GENERAL SIR RICHARD SHIRREFF: Why I believe this charming Arctic island is where Putin could start WWIII",
+   "title": "Which is the next No 1 city on Earth?",
    "why": "triage verdict NO"
   },
   {
-   "title": "If royal walls could talk! As Lord Snowdon's old love nest goes on the market, RICHARD KAY reveals the secrets of the country retreat where he seduced countless lovers behind Princess Margaret's back (and the reality even makes The Crown look tame...)",
+   "title": "Why Israel has done so little to rein in spiraling settler violence against Palestinians",
+   "why": "ledger: INCREMENT"
+  },
+  {
+   "title": "Gina Raimondo on Reclaiming the American Dream in the Age of A.I.",
    "why": "triage verdict NO"
   },
   {
-   "title": "WATCH: Community comes together to thank firefighters after Washington state wildfires",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Ken Martin Is Open to Change at the DNC (NOTUS)",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Wisconsin Democratic candidate says her party 'left behind' rural America",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Seagull survives being wedged in car's grille for several miles on motorway after 'being hit at high speed'",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Sen. Richard Blumenthal reacts to acting Navy secretary's statement about USS Lincoln conditions",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Business Models, Coherence, And Not Being an Agitated, Sickly Lab Rat",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "FRED KELLY: My bizarre (and very long) night at the Clacton by-election with Howling Laud Hope, Baron Von Thunderclap... but sadly not No-show Nigel",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Flammable Gas Analysis.jpg",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Despite Mamdani\u2019s Attempts to Appease, Many Business Leaders Remain Wary",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "You won't believe the billionaires' new beauty obsession",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Why has Britain fallen out of love with the Astra? Sales of Vauxhall's family hatch have collapsed, yet it now drives better than ever, says ROB HULL",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "\u2018Daily Show\u2019 Star Torches Missing Mitch: He\u2019s Not Coming Back",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Vegas Golden Knights unveil quintessentially Sin City center ice design for 10th season",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Co-creator of Good Day Atlanta inducted into NABJ Hall of Fame posthumously",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Scheffler equals course record to lead first play-off event",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Racing Legend Stuns 12 Million People With Wild Workout Video",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Kelly Osbourne blasts Dee Snider as 'spectacularly classless' for claiming Ozzy didn\u2019t write his own songs",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Kumanjayi Little Baby to be remembered at funeral service today",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "A Big Story in a Little Film",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "This week on \"Sunday Morning\" (Aug. 16)",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Brooks and Atkins Stohr on 'woke' politics in America",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "GFPI5404-1M3_FPO.jpg",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "AMANDA PLATELL: Sacrificed your career to marry Cruise? Who are you kidding, Nic!",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Bomani Jones baselessly accuses 'White folks' of favoring Josh Allen, while he favors Black quarterbacks",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Ian Frazier Wrote \u2018Coyote v. Acme\u2019 in 1990. Now It\u2019s a Movie.",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Rocker Calls Marrying Kardashian the \u2018Most Punk\u2019 Thing Ever",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Ex-Trump Attack Dog Has Shocking New Job After $47M Payday",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Fox News Campus Radicals Newsletter: Socialist streamer scrapped, a campus hate alert and coddled college kids",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "lake murray blvd apts render",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Raul Jimenez\u2019s late penalty seals share of spoils for Wolves against Blackburn",
+   "title": "Podcast: One country musician is calling for other artists to oppose assault rifles",
    "why": "triage verdict NO"
   },
   {
@@ -1865,6 +229,110 @@
   },
   {
    "title": "50+ products to make your life easier and our planet cleaner",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Mother's Day is around the corner. Here are 50+ thoughtful gifts she'll love",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "A head-to-toe guide of how men should dress this spring, and where they should shop",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "42 of the most useful travel products you can buy on Amazon",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "The 7 best high-yield savings accounts of April 2023",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Composting is an easy way to reduce food waste. Here's how to do it",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "The beloved Dyson Supersonic hair dryer is at its lowest price ever",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Everything you need to know about Way Day 2023, Wayfair's biggest sale of the year",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "The 2024 presidential alternative many voters will want",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Opinion: The Moment Luigi Mangione Finally Lost His Luster",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Rodney Scott's BBQ",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "The Problem of Gratuitous Beauty, in The Story of Everything",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "IQ Tests Were Meant to Help Children, Not Rank People",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Trump\u2019s Ceasefire Trap: Iran, Gaza, and the Politics of Peace",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Hollywood Won\u2019t Show Radical Islam. Run Hide Fight: Infidels Will",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Camping as a Voluntary Renunciation of Civilization",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Scott McKay\u2019s The Necessary Men \u2014 Episode 2: The Faraway Plans",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Broncos defense makes early statement in 27-7 victory in Atlanta",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Toy Story 5 and the Vanishing America of Toy Stores and Churches",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "33-year-old man killed in shooting near southwest Atlanta apartment",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Hana and Wanda's unlikely friendship is helping tackle an insidious problem",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Stolen dog recovered: Austell police arrest 2 after gas station theft",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Live: Tigers\u2013Saints starts big day of footy, ahead of Q-Clash, Hawks\u2013Pies",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "AI scrambles the political map (Maria Curi/Axios)",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Usa, 'numero esiguo di casi di salute mentale sulla Lincoln, nessuna vittima'",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "James Talarico Just Gave Democrats a Red-State Blueprint",
+   "why": "ledger: RECYCLED"
+  },
+  {
+   "title": "Heartwarming story of the man whose heatwave lawn will leave you green with envy. He's just lost his wife of 50 years and has had six new hips - but even the drought hasn't stopped Stuart creating perfection. So how DOES he do it?",
    "why": "triage verdict NO"
   }
  ]
