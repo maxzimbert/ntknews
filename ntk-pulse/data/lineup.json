@@ -1,5 +1,5 @@
 {
- "assembled_at": "2026-08-15T16:32:18.953226+00:00",
+ "assembled_at": "2026-08-15T20:30:03.847400+00:00",
  "slot_plan": "A",
  "displacement": "MANUAL",
  "daytype": "weekend",
@@ -7,40 +7,50 @@
   4,
   6
  ],
- "actual_size": 55,
+ "actual_size": 6,
  "lint_failures": [],
  "slots_unfilled": [],
  "stories": [
   {
    "slot": "unavoidable",
    "slot_label": "Unavoidable",
-   "key": "03014506cedaf711",
-   "title": "Tropical Storm Lala floods Midwest, targets Hawaii under hurricane warning",
-   "beat": "national",
-   "publisher_count": 4,
+   "key": "8ac5643904a5b9d9",
+   "title": "Cambridge professor accused of plagiarism found dead; family cites sustained abuse",
+   "beat": "education",
+   "publisher_count": 10,
    "publishers": [
+    "BBC",
+    "NPR",
+    "New York Times",
     "PBS NewsHour",
+    "Al Jazeera",
     "CBS News",
-    "Deutsche Welle",
-    "The Independent"
+    "The Atlantic",
+    "The Independent",
+    "Daily Mail",
+    "Memeorandum"
    ],
    "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 3,
-    "conversational_currency": 4
+    "emotional_load": 5,
+    "explainability": 3,
+    "actionability": 1,
+    "conversational_currency": 3
    },
-   "politician_led": false,
+   "politician_led": true,
    "ledger_class": "DEVELOPMENT",
    "new_facts": [
-    "Storm is already lashing the Big Island with wind and rain, not merely forecast.",
-    "Forecasters warn of up to 25 inches of rain and life-threatening mudslides; off-grid residents urged to evacuate.",
-    "Separate Midwest flooding tied to same weather system, with Iowa River rising.",
-    "Hawaii declared state of emergency; Lala could be first hurricane to hit Big Island since 1871.",
-    "Hurricane warning issued for Hawaiian Islands as Tropical Storm Lala approaches."
+    "New fundraiser for Arday's family and a planned public vigil.",
+    "Reveals plagiarism accusation, his 'youngest Black professor' title, and death location in south London.",
+    "Family cites a 'campaign of misinformation' that had become too much before Arday's death.",
+    "Reports Cambridge ignored a series of warnings about his life story and work.",
+    "States Arday resigned days before his death amid intense scrutiny over his academic work.",
+    "Gives his age (37) when he became Cambridge's youngest Black professor.",
+    "Family describes a 'campaign of sustained abuse' since he took the Cambridge role, beyond earlier misinformation claim.",
+    "PM Andy Burnham calls for a 'moment for reflection'; politicians and academics call death a tragedy.",
+    "Police say the death does not appear suspicious but is being investigated."
    ],
-   "line": "Tropical Storm Lala is flooding the Midwest and approaching Hawaii under hurricane warning, with the Big Island facing heavy rain and wind.",
-   "assembly_score": 16.35
+   "line": "Cambridge professor Jason Arday, who faced plagiarism accusations and alleged harassment, has died; his family says he endured sustained abuse since his hire.",
+   "assembly_score": 17.47
   },
   {
    "slot": "money_me",
@@ -64,68 +74,71 @@
     "FDA elevated recall of ~1.6m dozen Texas eggs to highest-risk level amid salmonella outbreak sickening ~100 people."
    ],
    "line": "Salmonella contamination has prompted a recall of eggs across southern U.S. states; consumers should check their cartons.",
-   "assembly_score": 8.0
+   "assembly_score": 3.28
   },
   {
    "slot": "body_mind",
    "slot_label": "Body & mind",
-   "key": "f6c48a56575544d3",
-   "title": "Parasite outbreak exposes gaps in U.S. food safety system",
+   "key": "76eefe58ee6ba329",
+   "title": "Cyclospora outbreak exposes gaps in U.S. food safety system",
    "beat": "health",
-   "publisher_count": 1,
+   "publisher_count": 2,
    "publishers": [
+    "New York Times",
     "Memeorandum"
    ],
    "scores": {
     "emotional_load": 4,
     "explainability": 4,
-    "actionability": 2,
+    "actionability": 1,
     "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Cyclospora parasite contaminated U.S. food supply despite safety oversight, sickening thousands across multiple states.",
-   "assembly_score": 3.29
-  },
-  {
-   "slot": "work_machines",
-   "slot_label": "Work & machines",
-   "key": "94a2ea670170612f",
-   "title": "How to check if your AI accounts have been hacked",
-   "beat": "tech",
-   "publisher_count": 1,
-   "publishers": [
-    "TechCrunch"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 5,
-    "conversational_currency": 2
    },
    "politician_led": false,
    "ledger_class": "DEVELOPMENT",
    "new_facts": [
-    "Introduces guide topic: checking whether AI platform accounts have been hacked."
+    "Trump administration delayed a rule last year that could have sped up sourcing the Cyclospora outbreak"
    ],
-   "line": "Signs your AI platform accounts may be compromised and steps to secure them.",
-   "assembly_score": 6.94
+   "line": "A parasite outbreak sickened thousands across the U.S. despite food safety systems designed to prevent it.",
+   "assembly_score": 5.65
+  },
+  {
+   "slot": "work_machines",
+   "slot_label": "Work & machines",
+   "key": "870a08ab82f55646",
+   "title": "Anthropic adds fading watermarks to Claude text",
+   "beat": "tech",
+   "publisher_count": 2,
+   "publishers": [
+    "TechCrunch",
+    "Techmeme"
+   ],
+   "scores": {
+    "emotional_load": 2,
+    "explainability": 4,
+    "actionability": 1,
+    "conversational_currency": 2
+   },
+   "politician_led": false,
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "Anthropic is adding watermarks to Claude outputs that fade with editing and skip code, making detection unreliable.",
+   "assembly_score": 2.89
   },
   {
    "slot": "group_chat",
    "slot_label": "The group chat",
    "key": "645fb9ad5db320dc",
-   "title": "Bonnie Tyler dead at 75",
+   "title": "Bonnie Tyler remembered as coffin arrives in Welsh hometown",
    "beat": "culture",
-   "publisher_count": 3,
+   "publisher_count": 4,
    "publishers": [
     "BBC",
+    "The Guardian",
     "The Independent",
     "Daily Mail"
    ],
    "scores": {
-    "emotional_load": 2,
+    "emotional_load": 3,
     "explainability": 5,
     "actionability": 1,
     "conversational_currency": 3
@@ -136,1505 +149,98 @@
     "Establishes story: Bonnie Tyler's coffin brought home, fans line Welsh village streets to bid farewell",
     "Adds real name Gaynor Hopkins, age 75, death in Portugal hospital July 8, prior induced coma after intestinal surgery, funeral Monday"
    ],
-   "line": "Bonnie Tyler, Welsh singer known for 'Total Eclipse of the Heart,' has died at 75.",
-   "assembly_score": 8.98
+   "line": "Bonnie Tyler, 1980s rock star behind 'Total Eclipse of the Heart,' died at 75; thousands gathered in her Welsh hometown as her coffin arrived.",
+   "assembly_score": 6.06
   },
   {
    "slot": "close",
    "slot_label": "The close",
-   "key": "fa80fe4997894e48",
-   "title": "Trump pushes Navy to redesign warship to his specifications",
+   "key": "2487d8ad769701e2",
+   "title": "Democrats move South Carolina to first 2028 primary position",
    "beat": "national",
-   "publisher_count": 2,
+   "publisher_count": 5,
    "publishers": [
-    "Daily Beast",
+    "New York Times",
+    "PBS NewsHour",
+    "CBS News",
+    "NBC News",
     "Memeorandum"
    ],
    "scores": {
     "emotional_load": 2,
-    "explainability": 4,
+    "explainability": 5,
     "actionability": 1,
-    "conversational_currency": 4
+    "conversational_currency": 2
    },
    "politician_led": true,
    "ledger_class": "DEVELOPMENT",
    "new_facts": [
-    "Specifies redesign detail: moving command tower closer to ship's middle on Ford-class carriers.",
-    "Navy considering major redesign of new aircraft carriers to resemble WWII-era ships per Trump's preference; could cost billions."
-   ],
-   "line": "Trump is pushing the Navy to redesign a major warship class to match his preferences, potentially costing billions.",
-   "assembly_score": 8.09
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "1d047d94feddfa68",
-   "title": "Cambridge professor dies after plagiarism resignation",
-   "beat": "education",
-   "publisher_count": 11,
-   "publishers": [
-    "BBC",
-    "Financial Times",
-    "New York Times",
-    "The Guardian",
-    "Al Jazeera",
-    "CBS News",
-    "The Independent",
-    "Daily Mail",
-    "Fox 5 Atlanta",
-    "Fox 5 DC",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//aljazeera.com/video/newsfeed/2026/8/15/black-professor-at-centre-of-cambridge-plagiarism-row-found-dead?traffic_source=rss",
-    "//bbc.co.uk/news/articles/c9982znvyk4o?at_campaign=rss&at_medium=RSS",
-    "//cbsnews.com/news/jason-arday-dies-cambridge-professor-plagiarism",
-    "//cbsnews.com/video/jason-arday-ex-cambridge-professor-found-dead-weeks-after-plagiarism-scandal",
-    "//dailymail.com/news/article-16054825/Politicians-react-death-Jason-Arday-Prime-Minister-reflection.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//fox5atlanta.com/news/jason-arday-dead-cambridge",
-    "//fox5dc.com/news/jason-arday-dead-cambridge",
-    "//ft.com/content/cdec2138-2272-450e-81b8-2fdc9fa61983?syn-25a6b1a6=1",
-    "//independent.co.uk/news/uk/home-news/jason-arday-dead-cambridge-family-tribute-abuse-b3033429.html",
-    "//independent.co.uk/news/uk/home-news/jason-arday-family-statement-plagiarism-cambridge-b3033526.html",
-    "//independent.co.uk/news/uk/home-news/jason-arday-found-dead-b3033390.html",
-    "//memeorandum.com/260815/p17",
-    "//nytimes.com/2026/08/15/world/europe/jason-arday-cambridge-hiring-questions.html",
-    "//theguardian.com/uk-news/2026/aug/15/jason-arday-tributes-paid-to-former-cambridge-professor"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Black Cambridge professor Jason Arday found dead days after resigning over plagiarism allegations.",
-   "assembly_score": 6.15
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "7a3f7f759bd12548",
-   "title": "Israeli strikes kill 9 in Lebanon, breaching two-month truce",
-   "beat": "international",
-   "publisher_count": 6,
-   "publishers": [
-    "Financial Times",
-    "New York Times",
-    "PBS NewsHour",
-    "CBS News",
-    "Deutsche Welle",
-    "France 24"
-   ],
-   "urls": [
-    "//cbsnews.com/live-updates/iran-war-donald-trump-strait-of-hormuz-uae-accuses-attacks-vance-oil-gas",
-    "//dw.com/en/lebanon-says-11-killed-in-israeli-airstrikes/a-78383713?maca=en-rss-en-all-1573-xml-mrss",
-    "//france24.com/en/deadly-israeli-strikes-in-lebanon-put-peace-talks-at-risk",
-    "//ft.com/content/1bd69e67-266f-4a4a-9c49-eb3c83bcb295?syn-25a6b1a6=1",
-    "//nytimes.com/2026/08/15/world/middleeast/israel-strikes-lebanon-ansar.html",
-    "//pbs.org/newshour/world/israeli-airstrikes-on-southern-lebanon-kill-11-people-health-ministry-says"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Israeli airstrikes killed at least 9 people in southern Lebanon, breaching a ceasefire agreement and complicating peace negotiations.",
-   "assembly_score": 5.735
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "a7dd852ce2a69e0b",
-   "title": "Ukraine hits Russian rocket plant and satellite network as Russia builds homes in occupied territory",
-   "beat": "international",
-   "publisher_count": 6,
-   "publishers": [
-    "Al Jazeera",
-    "Ars Technica",
-    "CBS News",
-    "Deutsche Welle",
-    "France 24",
-    "The Atlantic"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/8/15/ukraine-hits-russian-starlink-style-network-moscow-tracks-arms-package?traffic_source=rss",
-    "//arstechnica.com/space/2026/08/ukraine-strikes-major-russian-rocket-factory-with-cruise-missiles",
-    "//cbsnews.com/video/july-was-the-deadliest-month-for-ukrainian-civilians-since-start-of-russias-war-un-says",
-    "//dw.com/en/russians-snap-up-new-homes-built-on-ukraine-graveyard/a-78360176?maca=en-rss-en-all-1573-xml-mrss",
-    "//france24.com/en/europe/20260815-ukraine-attacks-russian-air-base-and-rocket-plant-in-samara-region",
-    "//theatlantic.com/international/2026/08/russia-ukraine-drone-war-protest/688259"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Ukraine strikes Russian military infrastructure including a rocket factory; Russia meanwhile develops occupied Ukrainian territory for civilian housing.",
-   "assembly_score": 4.3
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "55f5b4c9bde3b0c7",
-   "title": "Two powerful earthquakes kill at least 47 in Indonesia",
-   "beat": "international",
-   "publisher_count": 6,
-   "publishers": [
-    "BBC",
-    "Al Jazeera",
-    "CBS News",
-    "France 24",
-    "ANSA",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//aljazeera.com/video/newsfeed/2026/8/15/aftermath-of-deadly-indonesia-earthquake?traffic_source=rss",
-    "//ansa.it/sito/notizie/mondo/2026/08/15/due-violente-scosse-di-terremoto-in-indonesia-almeno-47-morti_662f7d1c-3c4b-427a-93c9-1f20b958b8d2.html",
-    "//bbc.co.uk/news/articles/c5y0zz63gero?at_campaign=rss&at_medium=RSS",
-    "//cbsnews.com/news/indonesia-earthquake-tsunami-warning",
-    "//dailymail.com/news/article-16054131/Indonesia-hit-huge-earthquake.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//france24.com/en/asia-pacific/20260815-deadly-earthquake-strikes-indonesia-and-triggers-mass-evacuations",
-    "//france24.com/en/indonesia-hit-by-earthquake-aftershock-as-rescuers-search-for-survivors"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Two powerful earthquakes struck Indonesia within hours, killing at least 47 people and collapsing buildings across the region.",
-   "assembly_score": 2.515
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "bf73e7e51cbd375b",
-   "title": "Five shot at Virginia State University; campus locked down",
-   "beat": "national",
-   "publisher_count": 9,
-   "publishers": [
-    "BBC",
-    "The Guardian",
-    "Washington Post",
-    "Al Jazeera",
-    "CBS News",
-    "Fox News",
-    "The Independent",
-    "Fox 5 Atlanta",
-    "Fox 5 DC"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/8/15/five-wounded-in-shooting-at-virginia-state?traffic_source=rss",
-    "//bbc.co.uk/news/articles/c0l5583903yo?at_campaign=rss&at_medium=RSS",
-    "//cbsnews.com/news/shooting-virginia-state-university",
-    "//fox5atlanta.com/news/multiple-injured-shooting-virginia-state-university-students-told-shelter-place",
-    "//fox5dc.com/news/multiple-injured-shooting-virginia-state-university-students-told-shelter-place",
-    "//foxnews.com/us/multiple-people-shot-virginia-state-university-campus-lockdown-police",
-    "//independent.co.uk/news/virginia-richmond-portland-maine-b3033640.html",
-    "//independent.co.uk/news/world/americas/crime/virginia-state-university-shooting-vsu-suspects-b3033606.html",
-    "//theguardian.com/us-news/2026/aug/15/multiple-people-injured-virginia-state-university-shooting",
-    "//washingtonpost.com/nation/2026/08/15/five-people-shot-virginia-state-university"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Five people were shot at Virginia State University; campus was locked down and police responded.",
-   "assembly_score": 2.178
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "c5a9c7a8a9feb195",
-   "title": "Aircraft carrier crew morale drops amid combat stress in Middle East",
-   "beat": "national",
-   "publisher_count": 5,
-   "publishers": [
-    "Financial Times",
-    "PBS NewsHour",
-    "The Guardian",
-    "CBS News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//cbsnews.com/news/aircraft-carrier-uss-george-washington-uss-lincoln-iran-middle-east",
-    "//cbsnews.com/video/navy-families-say-morale-is-low-aboard-uss-abraham-lincoln-aircraft-carrier",
-    "//ft.com/content/4bd6537f-db17-4013-be3f-c70a1299183c?syn-25a6b1a6=1",
-    "//memeorandum.com/260815/p11",
-    "//pbs.org/newshour/world/u-s-pulls-last-aircraft-carrier-in-asia-as-trump-focuses-on-iran-and-the-western-hemisphere",
-    "//theguardian.com/us-news/2026/aug/15/uss-abraham-lincoln-sailors-mental-health"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "USS Abraham Lincoln carrier crew reports low morale and health concerns tied to combat operations in the Middle East.",
-   "assembly_score": 1.89
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "7c59f092f221f705",
-   "title": "Spain fortifies Ceuta enclave as false posts fuel migration alarm",
-   "beat": "international",
-   "publisher_count": 3,
-   "publishers": [
-    "Fox News",
-    "France 24",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16054641/Hundreds-troops-deployed-Ceuta-border-Morocco-migrants.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//foxnews.com/world/spain-stocks-african-enclave-ceuta-boosted-security-morocco-monitors-calls-second-border-rush",
-    "//france24.com/en/ceuta-false-social-media-posts-fuel-migration-tensions"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Spain deploys hundreds of troops to its African enclave Ceuta after social media posts spark fears of a mass migration attempt from Morocco.",
-   "assembly_score": 1.802
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "0b2bdd446f9abf6d",
-   "title": "Marchand, O'Connor advance at European Swimming Championships",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "France 24"
-   ],
-   "urls": [
-    "//bbc.co.uk/sport/athletics/articles/c0qvveqdyvko?at_campaign=rss&at_medium=RSS",
-    "//france24.com/en/sport/20260815-l%C3%A9on-marchand-wins-200-meter-butterfly-at-european-swimming-championships"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "European Swimming Championships underway with Marchand winning the 200-meter butterfly and O'Connor leading the heptathlon.",
-   "assembly_score": 1.7
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "fd83b05cee5d401b",
-   "title": "Newcastle forced to change shirts mid-match over colour clash",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "The Telegraph"
-   ],
-   "urls": [
-    "//bbc.co.uk/sport/football/articles/cd9wwny25z4o?at_campaign=rss&at_medium=RSS",
-    "//telegraph.co.uk/football/2026/08/15/newcastle-vs-bayer-leverkusen-live-score-latest-friendly"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Newcastle United switched shirts mid-game during a friendly because the home and away kits created an unplayable colour clash.",
-   "assembly_score": 1.695
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "6ed019a09971189c",
-   "title": "Body found in nine-month search for missing British hiker in Romania",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "The Independent",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16054935/Body-British-teen-mountains-Draculas-castle-hiking-trip.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//independent.co.uk/news/uk/home-news/george-smyth-romania-body-found-b3033641.html"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Search for missing British hiker George Smyth ends with discovery of body in Romanian mountains after nine months.",
-   "assembly_score": 1.485
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "7149bc136f89ca55",
-   "title": "Trump administration moves to cut health care subsidies and coverage",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/260815/p23",
-    "//nytimes.com/2026/08/15/opinion/trump-health-care-cuts.html"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 3,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump administration officials are moving to cut health care coverage and subsidies, making insurance less affordable for millions.",
-   "assembly_score": 1.43
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "5ac6f2f81f7dbeb0",
-   "title": "Mistaken emergency alert overwhelms 999 lines with false fire reports",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/cwyjjvd4g0qo?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/news/article-16054509/Fire-service-inundated-calls-residents-needless-emergency-wildfire-alert.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A mistaken emergency alert flooded 999 lines with false reports, overwhelming fire services during peak call volume.",
-   "assembly_score": 0.92
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "c15ccd1ce8f3c6e3",
-   "title": "Israeli settlers besiege Palestinians as Trump's allies strengthen ties with Israel",
-   "beat": "international",
-   "publisher_count": 3,
-   "publishers": [
-    "Al Jazeera",
-    "Deutsche Welle",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//aljazeera.com/video/newsfeed/2026/8/15/15-08-reported-nour-west-bank-ps?traffic_source=rss",
-    "//dw.com/en/donald-trump-s-latin-america-allies-open-arms-to-israel/a-78378930?maca=en-rss-en-all-1573-xml-mrss",
-    "//dw.com/en/trump-s-latin-america-allies-open-arms-to-israel/a-78378930?maca=en-rss-en-all-1573-xml-mrss",
-    "//memeorandum.com/260815/p6"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Israeli settlers are encircling Palestinian families in the West Bank; Trump's Latin American allies are strengthening ties with Israel.",
-   "assembly_score": 0.823
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "f5f20ab5b68aa72a",
-   "title": "Hundreds arrested for arson as wildfires sweep across Europe",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16054933/Tinderbox-Europe-burns-control-wildfires-rage.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//theguardian.com/world/2026/aug/14/arrested-suspicion-starting-wildfires-europe-france"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Wildfires spread across southern Europe as hundreds are arrested on suspicion of arson in France amid evacuation threats.",
-   "assembly_score": 0.31
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "da594f61c9a94482",
-   "title": "Mangione guilty plea may end state case in UnitedHealthcare CEO killing",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "CBS News"
-   ],
-   "urls": [
-    "//cbsnews.com/news/luigi-mangione-says-he-will-plead-guilty-in-federal-case",
-    "//cbsnews.com/news/mangione-guilty-plea-federal-case-jeopardize-state-murder-trial",
-    "//cbsnews.com/video/luigi-mangione-admits-guilt-explains-why-he-targeted-unitedhealthcare-ceo",
-    "//theguardian.com/us-news/2026/aug/15/luigi-mangione-double-jeopardy-state-case"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Luigi Mangione pleads guilty to killing UnitedHealthcare CEO; double jeopardy rules may block New York state prosecution.",
-   "assembly_score": 0.29
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "14eefd06d9aeeedf",
-   "title": "Producer moves Hollywood operations to Nashville; actor cites faith in departing industry",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "Fox News"
-   ],
-   "urls": [
-    "//foxnews.com/entertainment/former-disney-star-david-henrie-rejected-secular-hollywood-lifestyle-after-life-changing-monastery-visit",
-    "//foxnews.com/entertainment/test-your-pop-culture-from-hollywood-heartland-20",
-    "//nytimes.com/2026/08/15/opinion/culture/ellison-nashville-paramount-hollywood.html"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Producer David Ellison is relocating film operations to Nashville; separately, former Disney actor David Henrie cited religious reasons for leaving Hollywood.",
-   "assembly_score": 0.27
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "c773d129196f22ca",
-   "title": "French father and sons rescued after 16 hours adrift off Thai island",
-   "beat": "international",
-   "publisher_count": 3,
-   "publishers": [
-    "CBS News",
-    "France 24",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//cbsnews.com/news/thailand-jet-ski-family-rescue",
-    "//dailymail.com/news/article-16054697/Moment-family-rescued-floating-16-hours-capsized-jet-ski-Thailand.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//france24.com/en/asia-pacific/20260815-french-father-and-two-children-rescued-after-16-hours-adrift-off-thai-island"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A French father and two children were rescued after 16 hours adrift in the Andaman Sea near a Thai island.",
-   "assembly_score": -1.07
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "81b40fba6ae913c6",
-   "title": "Trump attacks lawsuit opponents as 'treasonists' over ballroom project",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "Daily Beast",
-    "The Independent",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//independent.co.uk/news/world/americas/us-politics/trump-ballroom-construction-treason-lawsuit-b3033605.html",
-    "//memeorandum.com/260815/p16",
-    "//thedailybeast.com/trump-rages-at-treasonists-in-bonkers-ballroom-rant"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump faces a lawsuit over a ballroom project and responded by attacking the plaintiffs as traitors on social media.",
-   "assembly_score": -1.1
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "332bc90701f1f487",
-   "title": "Anthropic details Claude's text watermark, reports strong revenue growth",
-   "beat": "tech",
-   "publisher_count": 2,
-   "publishers": [
-    "CNBC",
-    "Techmeme"
-   ],
-   "urls": [
-    "//cnbc.com/2026/08/15/anthropic-revenue-jumps-to-over-11point5-billion-in-q2-report.html",
-    "//techmeme.com/260815/p11"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Anthropic's AI model Claude embeds detectable watermarks in its text output, though the marks are limited and easily removed through rewriting.",
-   "assembly_score": -1.4
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "eb9de79d6b565b78",
-   "title": "Iran rebuffs Trump's claim over Strait of Hormuz amid report of another ship being struck",
-   "beat": "international",
-   "publisher_count": 4,
-   "publishers": [
-    "Al Jazeera",
-    "CNBC",
-    "The Independent",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//aljazeera.com/video/101-east/2026/8/15/is-china-seeking-to-copy-irans-strait-of-hormuz-blockade-around-taiwan?traffic_source=rss",
-    "//cnbc.com/2026/08/15/iran-rebuffs-trumps-claim-over-hormuz-amid-report-of-ship-strike.html",
-    "//independent.co.uk/news/world/middle-east/iran-us-war-live-news-trump-hormuz-oil-prices-b3033570.html",
-    "//independent.co.uk/news/world/middle-east/trump-strait-of-hormuz-us-iran-war-b3033549.html",
-    "//memeorandum.com/260815/p15"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.48
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "8bf27f8f89d99d37",
-   "title": "Met Police exposes email addresses of Al Fayed accusers in data breach",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "BBC",
-    "The Independent",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/c1w1yv987jqo?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/news/article-16054849/Met-Police-apologises-Mohamed-Al-Fayed-victims-data-breach.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//independent.co.uk/news/uk/crime/met-police-al-fayed-victims-email-addresses-b3033557.html",
-    "//independent.co.uk/news/uk/home-news/uk-weather-rain-met-office-drought-b3033612.html"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 2,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "London police exposed email addresses of 143 people alleging sexual assault by the late department store owner, breaching their privacy during an active investigation.",
-   "assembly_score": -1.57
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "53cd5d3de5ae781a",
-   "title": "US homicide rate falls to 75-year low as violent crime declines",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox 5 DC",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//fox5dc.com/news/fbi-homicide-rate-violent-crime",
-    "//memeorandum.com/260815/p8"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "FBI reports homicide rate fell to lowest level since 1950, with violent crime declining overall in 2025.",
-   "assembly_score": -1.8
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "cd3680dc5dbd3424",
-   "title": "Man charged in Tupac Shakur's 1994 killing goes to trial",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "The Independent"
-   ],
-   "urls": [
-    "//independent.co.uk/news/davis-tupac-shakur-bill-clinton-anderson-cadillac-b3033603.html",
-    "//theguardian.com/music/2026/aug/15/tupac-shakur-duane-davis-murder-trial"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A man goes to trial for Tupac Shakur's 1994 murder, a case unsolved for three decades.",
-   "assembly_score": -1.8
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "52dcf115f7dabd67",
-   "title": "Liechtenstein opens throne succession to women",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "CBS News",
-    "The Independent"
-   ],
-   "urls": [
-    "//cbsnews.com/news/liechtenstein-succession-rules-female-monarch",
-    "//independent.co.uk/news/liechtenstein-austria-switzerland-b3033600.html"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Liechtenstein is changing its succession law to allow women to inherit the throne for the first time.",
-   "assembly_score": -1.87
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "cb1213de909ff911",
-   "title": "Sherrod Brown Seeks Senate Comeback in Ohio, Hoping His Populist Pitch Still Resonates",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/260815/p5",
-    "//nytimes.com/2026/08/15/us/politics/sherrod-brown-ohio-senate-race.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.21
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "6e8327efc93d9ddd",
-   "title": "Cable hosts spar over Trump's campaign travel logistics",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "Daily Beast",
-    "Fox News"
-   ],
-   "urls": [
-    "//foxnews.com/opinion/broadcast-bias-networks-turn-trumps-plane-switch-fancy-scandal",
-    "//thedailybeast.com/obsessed/bill-maher-offers-brutal-theory-on-trumps-catering-truck-escape"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.37
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "d1419050e211e368",
-   "title": "Sadie Sink and Adam Driver to star in new X-Men movie",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "The Verge"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/c5y0zndql7po?at_campaign=rss&at_medium=RSS",
-    "//theverge.com/entertainment/980635/marvel-new-x-men-movie-cast"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.43
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "f2f05adea5e20ae9",
-   "title": "US pulls last aircraft carrier in Asia as Trump focuses on Iran and the Western Hemisphere",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "The Independent",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//independent.co.uk/news/china-middle-east-george-washington-navy-lincoln-b3033592.html",
-    "//memeorandum.com/260815/p13"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.47
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "0a4abdc7753244bc",
-   "title": "Defendant in children's deaths searched psychiatric symptoms before killings",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox News",
-    "MedPage Today"
-   ],
-   "urls": [
-    "//foxnews.com/us/lindsay-clancy-murder-trial-social-media-obsession-tiktok-sleuths-debate-controversial-case",
-    "//medpagetoday.com/nursing/nursing/122624"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Woman accused of killing three children had searched for psychiatric symptoms before the deaths; trial is drawing significant online attention.",
-   "assembly_score": -2.48
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "1182deec2b54848c",
-   "title": "Fact-checkers debunk false puppy-killing claim about Michigan candidate",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "The Bulwark",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/260815/p10",
-    "//thebulwark.com/p/debunking-maga-puppy-killer-smear-against-abdul-el-sayed"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A false claim that Michigan gubernatorial candidate Abdul El-Sayed killed puppies circulated among MAGA supporters; fact-checkers debunked it.",
-   "assembly_score": -3.57
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "f995e1a70bad37c3",
-   "title": "Water main burst floods Heathrow access roads",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/cgmkdr3gy07o?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/news/article-16054499/Heathrow-passengers-not-drive-airport-flooding-roads.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A water main burst flooded Heathrow's access roads, forcing the airport to tell passengers not to drive there.",
-   "assembly_score": -3.75
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "fb358a8623794341",
-   "title": "Florida cold case suspect allegedly confesses to 1987 murder and reveals secret crime-scene details",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "Fox News",
-    "Fox 5 Atlanta",
-    "Fox 5 DC"
-   ],
-   "urls": [
-    "//fox5atlanta.com/news/florida-cold-case-suspect-allegedly-confesses-1987-murder-reveals-secret-crime-scene-details",
-    "//fox5dc.com/news/florida-cold-case-suspect-allegedly-confesses-1987-murder-reveals-secret-crime-scene-details",
-    "//foxnews.com/us/florida-cold-case-suspect-allegedly-confesses-1987-murder-reveals-secret-crime-scene-details"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.78
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "dcc4a4f37406016e",
-   "title": "Heat Deaths in a \u2018Cold\u2019 Country Are a Warning to the Rest of Europe",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "Al Jazeera"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/8/15/afghan-refugees-face-uncertain-future-as-europe-shifts-to-the-right?traffic_source=rss",
-    "//nytimes.com/2026/08/15/world/europe/belgium-heat-wave-deaths.html",
-    "//nytimes.com/2026/08/15/world/europe/heat-deaths-in-a-cold-country-are-a-warning-to-the-rest-of-europe.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -4.24
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "4e4a8c5cd42f9eaa",
-   "title": "NFL player's suspension traced to fertility treatment, not performance enhancement",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Fox News"
-   ],
-   "urls": [
-    "//bbc.co.uk/sport/american-football/articles/cx2rrnvr404o?at_campaign=rss&at_medium=RSS",
-    "//foxnews.com/sports/nfl-player-reveals-suspension-performance-enhancing-drug-happened-addressing-infertility"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "NFL player suspended for performance-enhancing drugs says he was taking fertility medication, raising questions about testing protocols.",
-   "assembly_score": -4.55
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "8b0aaaed5c00ad86",
-   "title": "Republicans invoke Trump as shield in midterm races",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "The Bulwark",
-    "The Independent"
-   ],
-   "urls": [
-    "//independent.co.uk/news/world/americas/us-politics/trump-2024-grocery-photo-inflation-republicans-midterms-b3033627.html",
-    "//thebulwark.com/p/republicans-accused-of-horrible-things"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Republicans tied to Trump are citing his 2024 campaign activities as a defense against midterm-year accountability.",
-   "assembly_score": 1.4
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "5af5a4c30c40451a",
-   "title": "Wildfires spread across Belgium and French nature reserves",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "France 24"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/cp8eex1nmpvo?at_campaign=rss&at_medium=RSS",
-    "//france24.com/en/firefighters-keep-battling-wildfire-in-france-s-landes-region"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Wildfires are spreading across Belgium and southwestern France, with firefighters working to contain the blazes in protected natural areas.",
-   "assembly_score": 1.3
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "2487d8ad769701e2",
-   "title": "Democrats move South Carolina to first position in 2028 primary calendar",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "NBC News"
-   ],
-   "urls": [
-    "//nbcnews.com/politics/2028-election/democrats-officially-set-2028-primary-calendar-south-carolina-going-fi-rcna592519",
-    "//nytimes.com/2026/08/15/us/politics/democrats-new-presidential-primary-calendar.html"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Democrats have reordered their 2028 primary calendar, moving South Carolina to first contest instead of Iowa.",
-   "assembly_score": 1.82
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "ce8d9776d2904608",
-   "title": "Court filings allege Sinema had sexual encounters with married security guard",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Daily Beast",
-    "Fox News"
-   ],
-   "urls": [
-    "//foxnews.com/politics/court-filings-reveal-kyrsten-sinema-sex-multiple-times-married-bodyguard-serving-senator",
-    "//thedailybeast.com/senator-had-sex-with-married-security-guard-at-cnn-stars-wedding"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Court documents allege Senator Kyrsten Sinema had sexual encounters with a married security detail member while in office.",
-   "assembly_score": 1.66
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "4e19854a08a5f1fc",
-   "title": "Taliban marks five years ruling Afghanistan amid rights crisis",
-   "beat": "international",
-   "publisher_count": 3,
-   "publishers": [
-    "PBS NewsHour",
-    "Al Jazeera",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/8/15/five-years-on-how-will-taliban-deal-with-armed-opposition?traffic_source=rss",
-    "//aljazeera.com/video/newsfeed/2026/8/15/afghans-mark-five-years-of-taliban-rule?traffic_source=rss",
-    "//dailymail.com/news/article-16054983/Afghanistan-Freedom-Day-five-years-fall-Kabul-DAVID-PATRIKARAKOS.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//pbs.org/newshour/world/while-taliban-leaders-mark-5-years-in-power-in-afghanistan-a-un-official-warns-of-a-rights-crisis"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Taliban marks five years in power as Afghanistan faces a documented rights crisis and Afghan refugees struggle to find safety in Europe.",
-   "assembly_score": 1.353
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "ae6b214a852d0c57",
-   "title": "Lifestyle roundup: trending makeup, backpack reviews",
-   "beat": "other",
-   "publisher_count": 2,
-   "publishers": [
-    "NBC News",
-    "Glamour"
-   ],
-   "urls": [
-    "//glamour.com/story/birth-month-makeup-how-to-find-your-beauty-look",
-    "//nbcnews.com/select/shopping/best-backpacks-for-kids-rcna592578"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 1
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 1.24
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "cd1e4d08aa40fc40",
-   "title": "Books contain love, danger and dark magic",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Post and Courier",
-    "Fox News"
-   ],
-   "urls": [
-    "//foxnews.com/travel/archaeologists-uncover-mysterious-face-hidden-centuries-book-revelation-city",
-    "//postandcourier.com/berkeley-independent/opinion/books-contain-love-danger-and-dark-magic/article_0cdc9669-7a3d-4607-8883-55f842c17c69.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.68
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "a715d117ceeb25d8",
-   "title": "Indiana flooding prompts evacuations and water rescues",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "CBS News",
-    "The Independent"
-   ],
-   "urls": [
-    "//cbsnews.com/news/indiana-floods-white-river-evacuations-rescues",
-    "//independent.co.uk/news/indiana-indianapolis-mike-braun-emergency-management-marion-county-b3033685.html"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Heavy flooding in Indiana forces evacuations and water rescues as the region experiences severe weather.",
-   "assembly_score": 1.475
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "4fadd98f35c0bb54",
-   "title": "Beauty brands launch trend-based styling tools",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "NBC News",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/tvshowbiz/article-16055351/Princess-Andre-corset-gown-Helen-Flanagan-Hair-Beauty-Awards.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//nbcnews.com/select/shopping/pattern-beauty-heat-collection-launch-rcna592362"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 1.145
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "a7122b612030eaea",
-   "title": "Death toll from Zimbabwe ferry disaster rises to 68",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "The Independent"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/8/15/death-toll-from-zimbabwe-ferry-disaster-rises-to-69?traffic_source=rss",
-    "//independent.co.uk/news/world/africa/zimbabwe-ferry-disaster-death-toll-lake-kariba-b3033666.html",
-    "//independent.co.uk/news/zimbabwe-harare-zambia-b3033653.html"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A ferry sank in Zimbabwe; at least 68 people have died and recovery efforts are ongoing.",
-   "assembly_score": 1.115
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "2823803dc21b67a9",
-   "title": "Prosecutors examined firm connected to hush-money trial judge",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "The Independent"
-   ],
-   "urls": [
-    "//independent.co.uk/news/world/americas/us-politics/trump-merchans-daughter-investigation-hush-money-trial-b3033598.html",
-    "//nytimes.com/2026/08/15/us/politics/prosecutors-examined-firm-with-tie-to-judge-in-trump-hush-money-trial.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Prosecutors investigated a firm with ties to the judge overseeing Trump's hush-money trial, raising questions about judicial impartiality.",
-   "assembly_score": 1.02
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "c890f042b184ed57",
-   "title": "Trump posts photo with Kim Jong Un, says they 'get along great'",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Matthew Yglesias (Slow Boring)",
-    "Yonhap News"
-   ],
-   "urls": [
-    "//en.yna.co.kr/view/AEN20260816000200315",
-    "//slowboring.com/p/saturday-discussion-post-376"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump posts a photo with Kim Jong Un and claims they get along well, reviving talk of U.S.-North Korea diplomacy.",
-   "assembly_score": 0.99
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "e7d877765904c22e",
-   "title": "Rashford returns as United loses to Milan under Amorim",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "The Telegraph"
-   ],
-   "urls": [
-    "//bbc.co.uk/sport/football/articles/cg5ll71pqv1o?at_campaign=rss&at_medium=RSS",
-    "//telegraph.co.uk/football/2026/08/15/manchester-united-vs-ac-milan-live-score-latest-updates"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Marcus Rashford played in Manchester United's loss to AC Milan under new manager Ruben Amorim, exposing tactical or personnel problems.",
-   "assembly_score": 0.99
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "9c636de8d8d816b8",
-   "title": "Six killed in northern Michigan shooting; motive under investigation",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "The Independent",
-    "Fox 5 DC"
-   ],
-   "urls": [
-    "//fox5dc.com/news/msp-investigating-motive-after-six-people-found-dead-northern-michigan",
-    "//independent.co.uk/news/gretchen-whitmer-michigan-detroit-police-associated-press-b3033674.html"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Six people dead in northern Michigan including the suspected shooter; authorities investigating motive.",
-   "assembly_score": 2.8
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "0d7453f2d2d00423",
-   "title": "Trump sued over $100K Wall Street access program; posts targets on Truth Social",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//foxnews.com/media/trumps-100k-wall-street-truth-access-draws-lawsuit-expert-warns-raises-stakes-ethics",
-    "//memeorandum.com/260815/p22"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump is posting on Truth Social about political opponents and vandalism while facing a lawsuit over a $100K Wall Street access program.",
-   "assembly_score": 2.11
+    "DNC officially adopted new 2028 primary calendar: SC first, then Nevada, NH, NM, Michigan, Virginia.",
+    "Specifies exact dates: South Carolina Jan. 22, 2028; Nevada Feb. 1, 2028."
+   ],
+   "line": "Democrats moved South Carolina to first position in 2028 primary calendar, shifting early voting power to a state with large Black and Latino populations.",
+   "assembly_score": 9.3
   }
  ],
  "excluded_sample": [
-  {
-   "title": "Newcastle kit fiasco sums up haphazard pre-season",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Copenhagen Bakery recreates cozy Danish classics",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "\"The Brink of War\" stars Jeff Daniels and Jared Harris on Reagan and Gorbachev's fateful meeting",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Doctors Will Bear Witness to the Childhood Suffering",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "\u2018A Man Without Love\u2019 singer Engelbert Humperdinck credits underwater workout for keeping him \u2018alive\u2019 at 90",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Mystery of the missing mini Mozarts",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "ALEXANDRA SHULMAN: My brilliant new trick to hide my greys - the top of my head looked like a snowscape, but I've discovered a stylish and cheap solution",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Exclusive discounts from CBS Mornings Deals",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Keeley Hawes cosies up to husband Matthew Macfadyen in rare snaps as they enjoy a five-star holiday in Istanbul",
-   "why": "triage verdict NO"
-  },
   {
    "title": "The buck stops somewhere else: A look at Trump's tendency to avoid blame when things go awry (Will Weissert/Associated Press)",
    "why": "triage verdict NO"
   },
   {
-   "title": "Sophie Cunningham got up on an Indy bar last night to belt out Toby Keith classic, Mr T sings & dodgeball",
+   "title": "\u2018I Could Cry\u2019: Michelle Obama Finally Gets the Mother-Daughter Moment With Malia and Sasha She Couldn\u2019t Have In the White House",
    "why": "triage verdict NO"
   },
   {
-   "title": "What the Last Weeks of Summer Can Offer",
+   "title": "Trump Goons Panic Over Karoline Leavitt\u2019s Exit",
    "why": "triage verdict NO"
   },
   {
-   "title": "\u2018That Was Clever\u2019: Anthony Anderson Tears Into Trump\u2019s Bizarre Escape Plan \u2014 Then Blows Up His \u2018Total Control\u2019 Claim with One Punchline",
+   "title": "Selena Gomez slams 'completely meritless' lawsuit accusing her and mother Mandy of defrauding mental health company investors",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Everyday habit linked to dramatically lower risk of dying from heart disease",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Ariana Grande kicks off her London 10-day residency at The O2 after announcing plans to step out of the spotlight",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Prince Harry stops giving money from Diana's memorial fund to Sentebale as he diverts cash to elephant charity",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Rhian Sugden turns up the heat as she slips into a busty red lace bodysuit - after admitting sexting scandal with Vernon Kay 'still follows her around'",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "\u2018I Should Be Entitled to It!\u2019: Trump Blurts Wild Declaration on Live TV \u2014 But the Woman Behind Him Steals the Show with One Awkward Reaction",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Atsuko Okatsuka: \u2018Fans have cut their hair to look like mine, which is a huge commitment\u2019",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Trump Cabinet member roasted for awkward TikTok video: \u2018Walks like the aliens\u2019",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Transgender athletes are a red herring (Brynn Tannehill/Public Notice)",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Pattern Beauty just launched a new styling tool for natural hair \u2014 here\u2019s everything you should know",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "The Last Hurricane to Hit Hawaii Became a Movie Star",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Cardinals top pick Jeremiyah Love out for a least a week after suffering preseason injury, coach says",
    "why": "triage verdict NO"
   },
   {
@@ -1642,107 +248,99 @@
    "why": "triage verdict NO"
   },
   {
-   "title": "This week on \"Sunday Morning\" (Aug. 16)",
+   "title": "Lily Allen takes her West End Girl show to Norway as she performs in a satin bustier and suspenders",
    "why": "triage verdict NO"
   },
   {
-   "title": "Switched on Pop\u2019s Nate Sloan and Charlie Harding love fresh vegetables and guitar pedals",
+   "title": "8 things we learned from Google's Pixel 11 event",
    "why": "triage verdict NO"
   },
   {
-   "title": "Disney D23 2026: Everything announced for Star Wars, Marvel, and more",
+   "title": "Medicare and Social Security scams: Warning signs and tips",
    "why": "triage verdict NO"
   },
   {
-   "title": "A year after elder son\u2019s drowning, Emilie Kiser apologizes for letting toddler skip life jacket",
+   "title": "Hammerhead shark as viewed from Malibu Pier.",
    "why": "triage verdict NO"
-  },
-  {
-   "title": "2nd earthquake hits Indonesia following powerful magnitude 7.7 quake",
-   "why": "ledger: INCREMENT"
   },
   {
    "title": "clemson football helmets (Copy)",
    "why": "triage verdict NO"
   },
   {
-   "title": "Good, bad and ugly of Flock cameras",
+   "title": "CallowayKaty",
    "why": "triage verdict NO"
   },
   {
-   "title": "Iran\u2019s Long Shadow",
+   "title": "Build MLK Jr.'s vision of a \u2018Beloved Community\u2019",
    "why": "triage verdict NO"
   },
   {
-   "title": "BROADCAST BIAS: Networks turn Trump\u2019s plane switch into a fancy scandal",
+   "title": "Pro wrestler LaBron Kozone talks decision to sign with MLW, getting called 'generational' prospect",
    "why": "triage verdict NO"
   },
   {
-   "title": "DAVID MARCUS: Karoline Leavitt\u2019s lasting legacy is opening the White House to indie press",
+   "title": "Sealed with a kiss: Zara Tindall beams and jumps for joy after winning first major championship in nearly 20 years at the British Open Championships",
    "why": "triage verdict NO"
   },
   {
-   "title": "I finally found a magnetic phone grip I never want to remove",
+   "title": "Volunteering changes lives and fills community gaps across the country",
    "why": "triage verdict NO"
   },
   {
-   "title": "Lions betting outlook for 2025: why the NFC North division title is the best play at +170",
+   "title": "The public unravelling of a playboy pub owner",
    "why": "triage verdict NO"
   },
   {
-   "title": "Giwa",
+   "title": "L'Oca vince la prova generale del Palio dell'Assunta",
    "why": "triage verdict NO"
   },
   {
-   "title": "Carmen Electra reveals what she wants in a man after racy Playboy comeback",
+   "title": "Ewan McGregor fights back tears describing how starring with daughter Clara helped heal their relationship after 'painful' divorce from her mother",
    "why": "triage verdict NO"
   },
   {
-   "title": "\u2018Went Crazy\u2019: Trump\u2019s \u2018Arm Candy\u2019 Threw a Fit After He Left Her on Decoy Plane, Now She\u2019s the One He Won\u2019t Leave Behind as She Eyes Leavitt\u2019s Job",
+   "title": "Dream becomes reality as couple takes over outback pub",
    "why": "triage verdict NO"
   },
   {
-   "title": "On this day in space! Aug. 15, 1977: Mysterious 'Wow!' Signal boosts search for E.T.",
+   "title": "Behind Barker's tattoos and tabloid headlines is a remarkable story",
    "why": "triage verdict NO"
   },
   {
-   "title": "\u2018Once I started zooming in, I never stopped\u2019: the mesmerising art of macro photography",
+   "title": "Hello \u2014 it's me. I've been wondering when you'll test your music knowledge",
    "why": "triage verdict NO"
   },
   {
-   "title": "Jeff Arcuri reveals how 'Bachelorette' wife\u2019s cancer fight transformed his comedy \u2014 and their marriage",
+   "title": "Editorial: Tri-county housing needs to provide more than money",
    "why": "triage verdict NO"
   },
   {
-   "title": "NFL preseason picks: Rams over 16.5 points and Panthers with the points against Bills",
+   "title": "Retired Navy SEALS plunge into New York Harbor for patriotic swim honoring service and sacrifice",
    "why": "triage verdict NO"
   },
   {
-   "title": "Belgian Pocognoli frontrunner to be Scotland boss",
+   "title": "Why Trump\u2019s Weird Fixations Are Exploding Now",
    "why": "triage verdict NO"
   },
   {
-   "title": "Accoltella la sorella, poi precipita dalla finestra e muore",
+   "title": "\u2018Birth Month Makeup\u2019 Is Trending, So Here's How to Find Your Next Beauty Look",
    "why": "triage verdict NO"
   },
   {
-   "title": "Democratic primary turnout has soared in some states. Can it carry over to November? (Associated Press)",
+   "title": "La Liga: Real Madrid key talking points heading into new 2026-27 season",
    "why": "triage verdict NO"
   },
   {
-   "title": "Ranucci va avanti, lavora sul nuovo ciclo di Report",
+   "title": "Transfer roundup: Paris Saint-Germain sign \u20ac50m Ferran Torres; Djed Spence seals Inter move",
    "why": "triage verdict NO"
   },
   {
-   "title": "Trump is running into roadblocks in a plot to seize elections. How desperate will he get?",
+   "title": "Moment brawny Texas cop is repeatedly attacked by furious BIRD in parking lot outside his precinct",
    "why": "triage verdict NO"
   },
   {
-   "title": "Rita Ora shows off her incredible figure in a mismatched bikini before enjoying a spot of snorkelling during sun-soaked yacht trip with pals in Ibiza",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Every fusion startup that has raised over $100M",
+   "title": "EastEnders star Shaheen Jafargholi wows fans as he shows off his toned physique in shirtless snaps - eight years after appearing on the soap",
    "why": "triage verdict NO"
   }
  ]
