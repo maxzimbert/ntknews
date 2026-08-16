@@ -1,5 +1,5 @@
 {
- "assembled_at": "2026-08-16T08:34:22.431456+00:00",
+ "assembled_at": "2026-08-16T12:45:48.280004+00:00",
  "slot_plan": "A",
  "displacement": "MANUAL",
  "daytype": "weekend",
@@ -7,8 +7,10 @@
   4,
   6
  ],
- "actual_size": 37,
- "lint_failures": [],
+ "actual_size": 6,
+ "lint_failures": [
+  "no item answers 'what do I do with this'"
+ ],
  "slots_unfilled": [],
  "stories": [
   {
@@ -17,9 +19,14 @@
    "key": "20cfa26d02e62aaf",
    "title": "Russia and Ukraine exchange hundreds of drone strikes overnight",
    "beat": "international",
-   "publisher_count": 4,
+   "publisher_count": 9,
    "publishers": [
     "BBC",
+    "Financial Times",
+    "NPR",
+    "The Guardian",
+    "ABC News",
+    "CBS News",
     "Deutsche Welle",
     "France 24",
     "The Independent"
@@ -33,48 +40,49 @@
    "politician_led": false,
    "ledger_class": "DEVELOPMENT",
    "new_facts": [
+    "Moscow mayor says 600-drone assault wounded three; Kyiv mayor Klitschko reports missile strikes sparked fires in two districts",
     "Russian aerial attacks across Ukraine kill three; fire at Kyiv market; Moscow says a warehouse was hit",
     "Ukraine launched hundreds of drones after hitting a 'Russian starlink' network; Italian/Turkish jets scrambled over Latvia airspace violation",
     "Moscow says 600 drones targeted the Russian capital region overnight",
-    "Moscow mayor says 600-drone assault wounded three; Kyiv mayor Klitschko reports missile strikes sparked fires in two districts"
+    "Spanish F-18 shot down a drone that breached Romania's airspace near the Moldova/Ukraine border."
    ],
    "line": "Russia and Ukraine conducted large-scale drone and missile attacks on each other overnight, with at least three killed.",
-   "assembly_score": 14.03
+   "assembly_score": 14.74
   },
   {
    "slot": "money_me",
    "slot_label": "Money & me",
-   "key": "c1e2fb98094768e5",
-   "title": "Tax deadline tomorrow; how to request an extension",
+   "key": "f1ac1573b008852f",
+   "title": "Tipping screens spread beyond restaurants to routine retail purchases",
    "beat": "business",
    "publisher_count": 1,
    "publishers": [
-    "CNN"
+    "Fox News"
    ],
    "scores": {
-    "emotional_load": 3,
+    "emotional_load": 2,
     "explainability": 5,
-    "actionability": 5,
-    "conversational_currency": 4
+    "actionability": 1,
+    "conversational_currency": 3
    },
    "politician_led": false,
    "ledger_class": null,
    "new_facts": [],
-   "line": "Tax filing deadline is tomorrow; the IRS allows 6-month extensions if requested by the due date.",
-   "assembly_score": 6.88
+   "line": "Tipping screens are now ubiquitous at checkout counters, pressuring customers to add gratuities for non-service transactions.",
+   "assembly_score": 4.04
   },
   {
    "slot": "body_mind",
    "slot_label": "Body & mind",
-   "key": "c2bacc6540a0309f",
-   "title": "Mongolian herders revive traditional fire practices as climate shifts steppe conditions",
+   "key": "f66e61db97085b86",
+   "title": "Solar material headed to Earth as NASA works to restore damaged Swift observatory",
    "beat": "science",
    "publisher_count": 1,
    "publishers": [
-    "The Guardian"
+    "EarthSky"
    ],
    "scores": {
-    "emotional_load": 3,
+    "emotional_load": 2,
     "explainability": 4,
     "actionability": 1,
     "conversational_currency": 2
@@ -82,18 +90,18 @@
    "politician_led": false,
    "ledger_class": null,
    "new_facts": [],
-   "line": "Mongolian herders are reviving traditional fire management practices to combat climate-driven wildfires on the steppe.",
-   "assembly_score": 0.54
+   "line": "A solar eruption is moving toward Earth; NASA's Swift spacecraft, which monitors such events, is experiencing technical problems.",
+   "assembly_score": 3.14
   },
   {
    "slot": "work_machines",
    "slot_label": "Work & machines",
-   "key": "0496dae589d1c127",
-   "title": "Fields Medalist Timothy Gowers says most famous mathematics problems solved by LLMs so far have almost all been with counterexamples rather than proofs (Timothy Gowers/Gowers's Weblog)",
+   "key": "af2af46d5d3afbf2",
+   "title": "Rogue AI aren\u2019t science fiction anymore",
    "beat": "tech",
    "publisher_count": 1,
    "publishers": [
-    "Techmeme"
+    "The Verge"
    ],
    "scores": {
     "emotional_load": 3,
@@ -105,1010 +113,62 @@
    "ledger_class": null,
    "new_facts": [],
    "line": "",
-   "assembly_score": 1.64
+   "assembly_score": 4.23
   },
   {
    "slot": "group_chat",
    "slot_label": "The group chat",
-   "key": "473375c7d8f6c2ce",
-   "title": "Makhachev breaks UFC win streak record with victory over Machado Garry",
+   "key": "e296495dee16942b",
+   "title": "Cotswolds village stages polite protest against overtourism",
    "beat": "culture",
-   "publisher_count": 2,
+   "publisher_count": 1,
    "publishers": [
-    "BBC",
-    "Al Jazeera"
+    "Daily Mail"
    ],
    "scores": {
-    "emotional_load": 1,
+    "emotional_load": 2,
     "explainability": 5,
     "actionability": 1,
-    "conversational_currency": 3
+    "conversational_currency": 2
    },
    "politician_led": false,
    "ledger_class": "DEVELOPMENT",
    "new_facts": [
-    "Makhachev breaks UFC win record, beating Ian Machado Garry; becomes top pound-for-pound fighter.",
-    "Specifies 17th consecutive UFC win and welterweight title defense at UFC 330."
+    "Bibury rejected new shop/cafe development citing overtourism fears, gridlocked roads, overflowing car parks",
+    "Locals held a peaceful demonstration against overtourism, contrasted with violent protests in Barcelona, Palma, Venice"
    ],
-   "line": "UFC fighter Makhachev wins his 16th consecutive fight, breaking the divisional record.",
-   "assembly_score": 8.46
+   "line": "Residents of a Cotswolds village stage a polite protest against overtourism, highlighting how popular destinations struggle with visitor volume.",
+   "assembly_score": 7.02
   },
   {
    "slot": "close",
    "slot_label": "The close",
-   "key": "f1fbae21c7d19817",
-   "title": "Bangladesh defeats Australia in Test cricket for first time",
+   "key": "225208899d3ff774",
+   "title": "Four Renaissance paintings stolen from Sicilian museum",
    "beat": "culture",
-   "publisher_count": 3,
+   "publisher_count": 2,
    "publishers": [
-    "BBC",
-    "Al Jazeera",
-    "ABC Australia"
+    "The Guardian",
+    "The Independent"
    ],
    "scores": {
-    "emotional_load": 1,
-    "explainability": 4,
+    "emotional_load": 2,
+    "explainability": 5,
     "actionability": 1,
     "conversational_currency": 3
    },
    "politician_led": false,
    "ledger_class": "DEVELOPMENT",
    "new_facts": [
-    "Australia suffered a shock defeat to Bangladesh, exposing deeper issues in their Test match application.",
-    "Bangladesh thrashed Australia by nine wickets on Day Four, completing a historic Test upset.",
-    "Bangladesh secured their first-ever Test cricket win in Australia."
+    "Four Antonello da Messina Renaissance paintings stolen from Messina museum during a holiday festival, day after Parma recovery."
    ],
-   "line": "Bangladesh defeated Australia in Test cricket for the first time, winning decisively on Australian soil.",
-   "assembly_score": 8.21
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "abfb728b448e111d",
-   "title": "NATO jet shoots down drone in Romanian airspace near Ukraine",
-   "beat": "international",
-   "publisher_count": 4,
-   "publishers": [
-    "Al Jazeera",
-    "CBS News",
-    "France 24",
-    "ANSA"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/8/16/russian-strikes-kill-ukrainian-woman-as-nato-jet-downs-drone-over-romania?traffic_source=rss",
-    "//ansa.it/sito/notizie/mondo/2026/08/16/romania-drone-abbattuto-da-un-caccia-spagnolo-_96359585-d9e6-4ce3-88ff-a0a24e780d2d.html",
-    "//cbsnews.com/news/nato-fighter-jet-shoots-down-drone-romania-ukraine",
-    "//france24.com/en/europe/20260816-spanish-fighter-jet-downs-drone-breaching-romania-s-airspace"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A Spanish NATO fighter jet shot down a drone that crossed into Romanian airspace near the Ukraine border.",
-   "assembly_score": 1.23
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "d20ba38f00479e94",
-   "title": "Polish bus crashes on Hungarian motorway, 12 dead",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "The Independent"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/ckg4424zd7go?at_campaign=rss&at_medium=RSS",
-    "//independent.co.uk/news/world/europe/hungary-bus-crash-m3-mezokeresztes-nyiregyhaza-b3033759.html"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A Polish tour bus crashed on a Hungarian motorway, killing 12 people and injuring 10.",
-   "assembly_score": 1.0
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "b9bf26927c11ac57",
-   "title": "Israel expands Lebanon strikes as Iran targets shipping in Hormuz",
-   "beat": "international",
-   "publisher_count": 4,
-   "publishers": [
-    "Post and Courier",
-    "ABC News",
-    "Al Jazeera",
-    "CBS News"
-   ],
-   "urls": [
-    "//abcnews.com/International/live-updates/iran-live-updates-negotiations-us-messages-exchanged-tehran?id=135508900",
-    "//aljazeera.com/video/newsfeed/2026/8/16/israel-strikes-south-lebanon-again-as-families-flee-north?traffic_source=rss",
-    "//cbsnews.com/live-updates/iran-war-donald-trump-strait-of-hormuz-uae-accuses-attacks-vance-oil-gas",
-    "//postandcourier.com/nation-world/lebanon-says-israeli-strikes-kill-at-least-11/article_732f2d8c-311d-4a42-aeeb-c31f0251540d.html"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 5
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Israel intensifies strikes in Lebanon while Iran attacks shipping in the Strait of Hormuz; regional tension escalates across multiple fronts.",
-   "assembly_score": 0.96
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "803a25ffb81d1d2e",
-   "title": "Hawaii faces first direct hurricane hit in 34 years as Lala approaches",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "BBC",
-    "CBS News",
-    "Deutsche Welle"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/crmrr7kjy9vo?at_campaign=rss&at_medium=RSS",
-    "//cbsnews.com/news/tropical-storm-lala-big-island-hawaii-hurricane-track",
-    "//dw.com/en/us-hurricane-lala-brings-hawaii-heavy-rain-strong-winds/a-78386551?maca=en-rss-en-all-1573-xml-mrss"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 3,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Hurricane Lala approaches Hawaii with potential for first direct hit since 1990, bringing heavy rain and strong winds.",
-   "assembly_score": -0.87
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "66eb2a37ed51fdcd",
-   "title": "Magnitude 7.7 earthquake kills dozens in Indonesia, search for survivors underway",
-   "beat": "international",
-   "publisher_count": 5,
-   "publishers": [
-    "BBC",
-    "The Guardian",
-    "Al Jazeera",
-    "France 24",
-    "The Independent"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/8/16/indonesias-magnitude-7-7-quake-kills-at-least-51-displaces-thousands?traffic_source=rss",
-    "//bbc.co.uk/news/articles/c3v00w5ylw9o?at_campaign=rss&at_medium=RSS",
-    "//france24.com/en/asia-pacific/20260816-thousands-await-aid-after-deadly-indonesian-quake",
-    "//independent.co.uk/news/indonesia-flores-sulawesi-muslim-catholic-b3033737.html",
-    "//theguardian.com/world/2026/aug/16/rescue-teams-search-for-survivors-in-indonesia-after-powerful-earthquake"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A magnitude 7.7 earthquake struck Indonesia's Flores island, killing at least 47 people and displacing thousands; rescue efforts are ongoing.",
-   "assembly_score": -0.93
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "6931f70469ece268",
-   "title": "North Korean troops deploy to aid Russian forces in Ukraine",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Deutsche Welle"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/c4gvv07ww42o?at_campaign=rss&at_medium=RSS",
-    "//dw.com/en/troops-from-north-korea-to-boost-russia-s-ukraine-forces/a-78385524?maca=en-rss-en-all-1573-xml-mrss"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 5
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "North Korean troops are reportedly deploying to support Russian forces in Ukraine, expanding the conflict's scope beyond the two nations directly at war.",
-   "assembly_score": -1.29
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "b5d965a837cf25fd",
-   "title": "Belgium battles largest wildfire on record; EU sends aircraft as hundreds evacuate",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Deutsche Welle",
-    "France 24"
-   ],
-   "urls": [
-    "//dw.com/en/belgium-battles-record-wildfire-at-german-border/a-78386242?maca=en-rss-en-all-1573-xml-mrss",
-    "//dw.com/en/belgium-hundreds-evacuated-as-firefighters-battle-largest-wildfire-on-record/a-78386242?maca=en-rss-en-all-1573-xml-mrss",
-    "//france24.com/en/europe/20260816-eu-sends-aircraft-and-villagers-evacuate-as-belgium-battles-record-wildfire"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Belgium is fighting its largest recorded wildfire; hundreds of people evacuated and EU aircraft deployed to help.",
-   "assembly_score": -2.05
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "2db083db4be3eeff",
-   "title": "BlackBerry returns to quarterly profit after six years",
-   "beat": "business",
-   "publisher_count": 2,
-   "publishers": [
-    "Financial Times",
-    "Techmeme"
-   ],
-   "urls": [
-    "//ft.com/content/a026e094-7017-4ff8-8344-213573e973ed",
-    "//techmeme.com/260816/p2"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "BlackBerry reports positive cash flow in Q1 for the first time since 2017, driven by software and security products rather than phones.",
-   "assembly_score": -2.36
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "b7ba47b83a4ec3af",
-   "title": "Trump plans Strait of Hormuz claim; Iran rejects it",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Deutsche Welle",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16055531/Iran-ridicules-Presidents-claim-Strait-Hormuz-US.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dw.com/en/africa-s-low-key-high-stakes-strait-of-hormuz-diplomacy/a-78376699?maca=en-rss-en-all-1573-xml-mrss"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump reportedly plans to declare the Strait of Hormuz U.S. territory; Iran says it cannot be claimed by executive action.",
-   "assembly_score": -2.59
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "280b73120c61ff63",
-   "title": "Douglass breaks 50m freestyle record twice in one day",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "Al Jazeera"
-   ],
-   "urls": [
-    "//aljazeera.com/sports/2026/8/16/pallister-ledecky-pan-pacific-swimming-championship-800m-free-douglass-50m-free-world-record?traffic_source=rss",
-    "//theguardian.com/sport/2026/aug/15/kate-douglass-50m-freestyle-world-record-gretchen-walsh-pan-pacs"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Kate Douglass broke the 50-meter freestyle world record twice in one day, ending Katie Ledecky's dominance in longer distances.",
-   "assembly_score": 1.12
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "d9b64daa2fa6399d",
-   "title": "Death in Tasmanian prison; presenter flees over threats after exposing smugglers",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "ABC Australia",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-08-16/tasmania-man-dies-custody-hobart-reception-prison-police/107043768",
-    "//dailymail.com/news/article-16055495/TV-presenter-exposed-people-smugglers-death-threats.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A man died in Tasmanian prison custody; a separate case involves a TV presenter receiving death threats after exposing human trafficking.",
-   "assembly_score": -1.15
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "83f4a98025ecb2fa",
-   "title": "Djokovic knocked out of Cincinnati by unknown opponent",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//aljazeera.com/sports/2026/8/16/cincinnati-open-djokovic-stunned-by-tirante-in-second-round?traffic_source=rss",
-    "//dailymail.com/sport/tennis/article-16056175/Novak-Djokovic-health-concern-tennis.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Novak Djokovic lost to an unranked opponent at Cincinnati Open, citing unspecified health issues.",
-   "assembly_score": 1.635
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "0b9677d08a352b44",
-   "title": "NPR solicits podcasts from older Americans; musician backs gun restrictions",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "NPR",
-    "CNN"
-   ],
-   "urls": [
-    "//cnn.com/audio/podcasts/the-assignment/episodes/42a2f0e2-066a-4675-82ff-afe2016a0bb5",
-    "//npr.org/2026/08/16/nx-s1-5911853/npr-senior-podcast-challenge-for-65-and-older",
-    "//npr.org/2026/08/16/nx-s1-5929441/npr-senior-podcast-challenge-official-rules"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 2,
-    "conversational_currency": 1
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 1.585
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "5ed2ff548826d4fa",
-   "title": "Settler attacks intensify against Palestinians in West Bank",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "France 24",
-    "The Independent"
-   ],
-   "urls": [
-    "//france24.com/en/west-bank-palestinian-families-besieged-for-a-week-as-settler-violence-continues",
-    "//independent.co.uk/news/world/middle-east/israeli-settler-attack-west-bank-fire-homes-children-inside-b3032645.html"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Israeli settlers have attacked Palestinian homes in the West Bank, with families reporting arson and weeks-long sieges.",
-   "assembly_score": 1.555
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "937e3d921f8dda40",
-   "title": "King Charles opens Sandringham water tower to paying guests",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox News",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/travel/article-16044647/Glamping-King-Charles-Sandringham-weekend-royal.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//foxnews.com/travel/rentals-now-allowed-historic-water-tower-king-charles-sandringham-estate-where-royals-spend-christmas"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 3,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "King Charles's Sandringham Estate is now renting out a converted water tower to tourists as a glamping site.",
-   "assembly_score": 1.13
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "f4cc983d2f09a89f",
-   "title": "Trump staff tensions, disputed credit on drug prices",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Atlanta Black Star",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//atlantablackstar.com/2026/08/16/trumps-white-house-blowup-over-melania-dinner-that-set-him-off",
-    "//memeorandum.com/260816/p1"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 1.12
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "3fe1eb28877b0204",
-   "title": "Va. State shooting: Suspect arrested, found hiding in dorm closet, police say",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "ABC News",
-    "The Independent"
-   ],
-   "urls": [
-    "//abcnews.com/US/5-injured-shooting-virginia-state-university-arrests-made/story?id=135669705",
-    "//independent.co.uk/news/world/americas/crime/virginia-state-university-shooting-arrest-b3033778.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 0.29
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "6f2cee30a4d21401",
-   "title": "Doctors perform amputations without anesthesia in Gaza and Lebanon",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "France 24"
-   ],
-   "urls": [
-    "//aljazeera.com/video/newsfeed/2026/8/16/doctor-describes-amputating-girls-leg-in-gaza-without-anaesthesia?traffic_source=rss",
-    "//france24.com/en/south-lebanon-doctor-describes-escalating-humanitarian-toll"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Doctors in Gaza and Lebanon report performing emergency amputations without anesthesia amid supply shortages.",
-   "assembly_score": 1.945
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "e6559277665b1674",
-   "title": "New York Times asks if Democrats face Tea Party-style fracture",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/260816/p2",
-    "//nytimes.com/2026/08/16/us/politics/democratic-party-tea-party-moment.html"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 1.35
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "a0481176687f7081",
-   "title": "Premier League season preview and talking points",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Al Jazeera"
-   ],
-   "urls": [
-    "//aljazeera.com/sports/2026/8/16/premier-league-key-talking-points-heading-into-the-new-2026-27-season?traffic_source=rss",
-    "//bbc.co.uk/sport/football/articles/c0l5927xr89o?at_campaign=rss&at_medium=RSS",
-    "//bbc.co.uk/sport/football/articles/c1e1v64q256o?at_campaign=rss&at_medium=RSS"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 1.33
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "b448c66713567c04",
-   "title": "Beckham family vacation photos",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "Daily Mail",
-    "Vogue"
-   ],
-   "urls": [
-    "//dailymail.com/tvshowbiz/article-16056307/Victoria-Beckham-little-imagination-nude-bikini.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//vogue.com/article/david-beckham-takes-his-instagram-husband-duties-very-seriously"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 2.7
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "bdf16d21d882eb24",
-   "title": "Woman, 90, dies in Gloucestershire fire; murder arrest made",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "The Independent",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16056339/Shoppers-homeowners-evacuated-fire-breaks-industrial-estate.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//independent.co.uk/news/uk/crime/hardwicke-house-fire-gloucestershire-police-b3033794.html"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A 90-year-old woman died in a house fire in Gloucestershire; police arrested someone on a murder charge.",
-   "assembly_score": 2.61
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "3d285b66778a3492",
-   "title": "Multiple dead in head-on motorway crash in Ireland",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "The Independent",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16056283/Multiple-people-killed-head-crash-Irish-motorway.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//independent.co.uk/news/world/europe/m9-kildare-crash-closed-ireland-b3033783.html"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Head-on collision on Irish motorway kills multiple people including children.",
-   "assembly_score": 1.74
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "c59aab6e5f3afa0f",
-   "title": "Ariana Grande begins London O2 residency",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "Daily Mail",
-    "Vogue"
-   ],
-   "urls": [
-    "//dailymail.com/tvshowbiz/article-16055117/Ariana-Grande-London-10-day-residency-O2-announcing-plans-step-public-eye.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//vogue.com/article/ariana-grande-debuts-a-new-tattoo"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 1.315
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "2c46dcc02322ee67",
-   "title": "New York Times profile of Ocasio-Cortez",
-   "beat": "other",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/260816/p8",
-    "//nytimes.com/2026/08/16/opinion/aoc-egg-freezing-women-politics.html"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 1,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 1.15
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "cab71fe864eaf71e",
-   "title": "NSW launches gun buyback after Bondi shooting",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "The Independent"
-   ],
-   "urls": [
-    "//aljazeera.com/video/newsfeed/2026/8/16/australia-to-begin-gun-buyback-scheme-in-response-to-bondi-shooting?traffic_source=rss",
-    "//independent.co.uk/news/world/australasia/australia-gun-buyback-scheme-nsw-bondi-attack-b3033799.html"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "New South Wales will launch a gun buyback program in November following a mass shooting in Bondi that killed multiple people.",
-   "assembly_score": 1.14
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "5ae909c6a7f49257",
-   "title": "ICE deports wife of Trump supporter",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/260816/p7",
-    "//nytimes.com/2026/08/16/us/trump-immigration-crackdown.html"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "ICE deported the wife of a Trump supporter who says immigration enforcement contradicted his political beliefs.",
-   "assembly_score": 0.98
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "6db3ee753423a0f7",
-   "title": "Putin visits contested islands as Russia deploys outdated tanks",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "CNN",
-    "The Independent"
-   ],
-   "urls": [
-    "//cnn.com/europe/live-news/russia-ukraine-war-news-04-18-23/index.html",
-    "//independent.co.uk/asia/japan/vladimir-putin-japan-kuril-island-sanae-takaichi-b3033551.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Putin visits disputed islands claimed by Japan while Russia deploys obsolete Soviet-era tanks in Ukraine, signaling resource strain.",
-   "assembly_score": 0.83
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "d197bf7b473664e2",
-   "title": "Election previews: Brazil, Israel heading to polls",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "France 24"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/8/16/a-nation-divided-what-do-israelis-want-in-octobers-elections?traffic_source=rss",
-    "//france24.com/en/brazil-election-lula-and-the-new-face-of-bolsonaro-s-right"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 2,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 0.09
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "faf45be7e3536180",
-   "title": "Ukraine strikes Moscow warehouse with British drones in rare mainland attack",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "ABC News",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//abcnews.com/International/ukraine-launches-600-drones-moscow-major-barrage-mayor/story?id=135684267",
-    "//dailymail.com/news/article-16056105/Fire-engulfs-Russian-Amazon-warehouse-Moscow.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Ukraine used British-made drones to strike a major Moscow warehouse complex, causing a large fire and disrupting flights.",
-   "assembly_score": 0.09
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "63f379813d524c38",
-   "title": "European Championships security scare keeps fans and athletes stuck at stadium",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/sport/othersports/article-16056293/amy-hunt-team-gb-birmingham-police-arrest.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//theguardian.com/sport/2026/aug/16/european-athletics-championships-security-scare-stadium"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.26
+   "line": "Four Renaissance paintings by Antonello da Messina were stolen from a museum in Sicily during what authorities are treating as a coordinated heist.",
+   "assembly_score": 6.24
   }
  ],
  "excluded_sample": [
   {
-   "title": "Podcast: One country musician is calling for other artists to oppose assault rifles",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Bidets save you money and reduce waste \u2014 we tested the best options out there",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "50+ products to make your life easier and our planet cleaner",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Mother's Day is around the corner. Here are 50+ thoughtful gifts she'll love",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "A head-to-toe guide of how men should dress this spring, and where they should shop",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "42 of the most useful travel products you can buy on Amazon",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "The 7 best high-yield savings accounts of April 2023",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Composting is an easy way to reduce food waste. Here's how to do it",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "We stopped using aluminum foil for cooking and you should too. Here's what to use instead",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "The beloved Dyson Supersonic hair dryer is at its lowest price ever",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Everything you need to know about Way Day 2023, Wayfair's biggest sale of the year",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "The 2024 presidential alternative many voters will want",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "08152026-PITvCHS-ChrisCowger-24212.jpg",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Son Heung-min's MLS scoring streak snapped at 4 matches",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Esce 'Vuoto cosmico', il nuovo singolo di Giusy Ferreri",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "\u2018Good Lord\u2019: Trump\u2019s Strange Bulge Has the Internet Zooming In on One Enlarged Area \u2014 as Health Questions Mount Amid White House Silence",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Live: Stars hit red carpet ahead of 2026 Logie Awards",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Is your partner micro-cheating? ROSIE GREEN reveals how to spot the signs",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Shane Richie, 62, and his wife Christie Goddard, 47, 'officially divorce' after 19 years of marriage - just days before he was arrested for drink-driving",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Sleepeezee mattress review: I tested the King Charles-endorsed mattress during the heatwave - and I'm finally getting a decent night's sleep",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Glamping with the King at Sandringham: A nature-filled weekend - that's surprisingly cheap - in Charles' back garden",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Hawaii braces for potential first direct hit by a hurricane in 34 years",
-   "why": "ledger: INCREMENT"
-  },
-  {
-   "title": "That diet your friend swears by isn\u2019t magic \u2013 this is why it works",
+   "title": "Carolina Panthers betting outlook: 2026 season hinges on Bryce Young hitting 20.5 touchdowns",
    "why": "triage verdict NO"
   },
   {
@@ -1116,67 +176,155 @@
    "why": "triage verdict NO"
   },
   {
-   "title": "Princess Andre wows in a semi-sheer corset gown while Helen Flanagan brings the glamour in a black dress at the Hair and Beauty Awards",
+   "title": "Bae Ji-hwan designated for assignment by Brewers",
    "why": "triage verdict NO"
   },
   {
-   "title": "Routine California traffic stop leads to seizure of 30 pounds of cocaine worth more than $800K",
+   "title": "Cardinals vs Cubs baseball betting picks: Why the over looks strong in this afternoon matchup",
    "why": "triage verdict NO"
   },
   {
-   "title": "Sealed with a kiss: Zara Tindall beams and jumps for joy after winning first major championship in nearly 20 years at the British Open Championships",
+   "title": "Business Models, Coherence, And Not Being an Agitated, Sickly Lab Rat",
    "why": "triage verdict NO"
   },
   {
-   "title": "The road to nowhere! Dozens board 40 vintage red buses for annual one-day-only visit to 'ghost' village",
+   "title": "DAN HODGES: Reform have peaked, Labour's honeymoon won't last and Trump's war is set to tank the economy. All the signs are pointing to one thing...",
    "why": "triage verdict NO"
   },
   {
-   "title": "What a blazing idiot! Ranger has stern word with man cooking over open flame near prime minister's country home as wildfires burn across the UK",
+   "title": "Ocasio-Cortez Rewrites the Rules",
    "why": "triage verdict NO"
   },
   {
-   "title": "Princess Charlotte, 11, inherits Kate's sporty side as she joins top-flight netball team",
+   "title": "Could El-Sayed Cost Democrats Michigan? (Nate Cohn/New York Times)",
    "why": "triage verdict NO"
   },
   {
-   "title": "'Gare di nuoto, ricotta calda e arance', Tiziana Baudo ricorda pap\u00e0 Pippo",
+   "title": "Ariana Grande says she feels 'overwhelmed' as she kicks off her London 10-day residency at The O2 after announcing plans to step out of the spotlight",
    "why": "triage verdict NO"
   },
   {
-   "title": "World\u2019s Ugliest Dog contest 2026 \u2013 in pictures",
+   "title": "Coach Sean McVay on Aaron Donald return to the Los Angeles Rams: 'We are not at that point quite yet'",
    "why": "triage verdict NO"
   },
   {
-   "title": "Murder in the Parking Garage",
+   "title": "Coventry agree deal for Forest striker Awoniyi",
    "why": "triage verdict NO"
   },
   {
-   "title": "A nation divided: What do Israelis want in October\u2019s elections?",
+   "title": "Family killer Chris Watts seeks prison marriage with new love interest: report",
    "why": "triage verdict NO"
   },
   {
-   "title": "Gorging on bearcam: the livestream of big beasts eating that draws millions",
+   "title": "Move over, Aperol: Viral Italian spritz arrives in US with eye-catching twist",
    "why": "triage verdict NO"
   },
   {
-   "title": "Oldest U.S. Senator, 92, Mourns Yet Another Old Vacuum, 60",
+   "title": "What Taylor Sheridan's biggest stars really think about working with the 'Yellowstone' creator",
    "why": "triage verdict NO"
   },
   {
-   "title": "Strong favourites or tougher task - will Arsenal defend their title?",
+   "title": "Vacation nightmare unfolds as ferry passengers battle seasickness at island hot spot",
    "why": "triage verdict NO"
   },
   {
-   "title": "This week on \"Sunday Morning\" (Aug. 16)",
+   "title": "David Beckham Takes His Instagram Husband Duties Very Seriously",
    "why": "triage verdict NO"
   },
   {
-   "title": "road",
+   "title": "Molly-Mae Hague gives a glimpse of her lavish lifestyle as she kicks back on a first class flight to Dubai before checking into a \u00a31,500 per night hotel with fianc\u00e9 Tommy Fury",
    "why": "triage verdict NO"
   },
   {
-   "title": "Yuri and Luke",
+   "title": "Sam Thompson shows off his buff physique as he joins bikini-clad girlfriend Talitha Balinska as they enjoy watersports on beach in Marbella",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Bronze for Donnelly and team gold for GB in women's marathon",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Trump's legal team shrinks (Erica Orden/Politico)",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Europe's tallest Virgin Mary statue unveiled in rural Poland",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Bot Meets Bot",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Cara Delevingne goes topless with just bubbles protecting her modesty before showing off her cleavage in racy PVC bustier in series of sexy videos",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Samsung Galaxy Z Fold8 and Galaxy Z Fold8 Ultra Review: The Right Shape",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "JONATHAN TURLEY: Newsom thinks he can control the far-left mob, but history disagrees",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "How economics is changing",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Maguire wants 'huge threat' Rashford to stay at Man Utd",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "\u2018I don\u2019t always go full banana!\u2019 From the yellow man to a playful shrink, stylish people on what they wear every day \u2013 and why",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "\u2018If only people knew\u2019: the fascinating lives of flies",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Is the Democratic Party Facing Its Own Tea Party Moment?",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Premier League: Key talking points heading into the new 2026-27 season",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "TOM PARKER BOWLES on the once-mighty burger chain that's now a shadow of its former succulent self: 'A thick, dry patty wedged into an untoasted bun and distinctly average fries'",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "How to downsize without regret: From picking the right property to location, here's what you MUST do",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "How to get an amazing 7% on your cash savings and earn more than \u00a3550 from high street banks",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Melissa was obese - but now she's lost two stone WITHOUT going hungry. It's not thanks to fat jabs or a punishing diet, but something thousands of Britons are already doing...",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Hurricane Lala lashes Hawaii with strong winds and torrential rain",
+   "why": "ledger: INCREMENT"
+  },
+  {
+   "title": "TerraMow V1000 Review: Show Your Lawn Some Love",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Trump's critics say he's a misogynist, others praise his promotion of women to top posts. As president's press chief quits, insiders reveal what it's REALLY like to be a White House Glamazon",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "American Culture Quiz: Test yourself on summer splurges and basketball brilliance",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "The 2-year-old who doted on her 13 kittens, and other extraordinary lives we\u2019ve lost",
    "why": "triage verdict NO"
   }
  ]
