@@ -148,7 +148,23 @@ def call_claude(api_key, ledger, new_items, summaries):
                            **{k: ledger["facts"][k] for k in ("actors", "numbers", "documents", "quotes")},
                            "credits": ledger["credits"]}, indent=1),
         items="\n".join(lines))
-    body = {"model": MODEL, "max_tokens": 4000,
+    # max_tokens raised 4000 -> 8000 (2026-08-17): this ceiling was sized
+    # (see the ~150 tokens/item comment above) assuming the full budget was
+    # available for the diff output alone — true under Sonnet 4.6, no
+    # longer true under Sonnet 5, which defaults to adaptive thinking and
+    # bills thinking tokens out of this SAME max_tokens ceiling. Left
+    # thinking ON here rather than disabling it the way pulse.html's
+    # editorial-writing calls were: contradiction tracking and
+    # DEVELOPMENT/INCREMENT/RECYCLED classification is a genuine multi-step
+    # comparison task, closer to what thinking is built for than Pulse's
+    # rubric-bound prose. The fix is headroom, not suppression — thinking
+    # and the ~1800-token batch output should no longer be competing for
+    # the same small ceiling. _parse_json_lenient already raises a clean,
+    # catchable error on truncated/empty text rather than crashing, so this
+    # was a failure-RATE and cost-exposure risk, not a crash risk — worth
+    # revisiting (numbers below) once real usage shows how much of this
+    # budget thinking is actually consuming.
+    body = {"model": MODEL, "max_tokens": 8000,
             "messages": [{"role": "user", "content": prompt}]}
     req = urllib.request.Request(API_URL, data=json.dumps(body).encode("utf-8"),
         headers={"Content-Type": "application/json", "x-api-key": api_key,
