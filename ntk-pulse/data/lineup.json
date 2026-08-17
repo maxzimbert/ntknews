@@ -1,5 +1,5 @@
 {
- "assembled_at": "2026-08-17T04:47:07.554206+00:00",
+ "assembled_at": "2026-08-17T08:50:19.941570+00:00",
  "slot_plan": "A",
  "displacement": "MANUAL",
  "daytype": "weekday",
@@ -7,44 +7,195 @@
   8,
   10
  ],
- "actual_size": 40,
+ "actual_size": 10,
  "lint_failures": [],
  "slots_unfilled": [],
  "stories": [
   {
    "slot": "unavoidable",
    "slot_label": "Unavoidable",
-   "key": "3984133a7ab0c694",
-   "title": "Actress Hayden Panettiere dies at 36",
-   "beat": "culture",
-   "publisher_count": 10,
+   "key": "2209cbe7b9fd2dfd",
+   "title": "U.S.-Iran ceasefire expires with no broader deal in place",
+   "beat": "international",
+   "publisher_count": 4,
    "publishers": [
-    "BBC",
     "New York Times",
-    "ABC News",
     "CBS News",
-    "Daily Beast",
-    "Fox News",
-    "NBC News",
-    "ABC Australia",
-    "Daily Mail",
-    "Teen Vogue"
+    "CNBC",
+    "The Independent"
    ],
    "scores": {
     "emotional_load": 4,
+    "explainability": 3,
+    "actionability": 1,
+    "conversational_currency": 4
+   },
+   "politician_led": true,
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Ceasefire set to expire Monday with no deal; shipping in Strait of Hormuz hits new low.",
+    "Specifies a 60-day deadline for a wider U.S.-Iran deal and Hormuz reopening, expiring Monday.",
+    "Japanese automakers identified as newly vulnerable to combined Iran war and yen rally pressures.",
+    "Trump quoted saying June ceasefire would limit Iran's nuclear program and end war; deal still unmet.",
+    "Iran war forcing poor families to pull children from school to survive economically"
+   ],
+   "line": "A temporary U.S.-Iran ceasefire expires today with no broader deal reached, risking renewed conflict and disrupting global shipping and supply chains.",
+   "assembly_score": 12.76
+  },
+  {
+   "slot": "money_me",
+   "slot_label": "Money & me",
+   "key": "cc94ad888b9eb06e",
+   "title": "JP Morgan boss lobbies UK chancellor against bank tax increase",
+   "beat": "business",
+   "publisher_count": 2,
+   "publishers": [
+    "The Independent",
+    "Daily Mail"
+   ],
+   "scores": {
+    "emotional_load": 2,
+    "explainability": 5,
+    "actionability": 1,
+    "conversational_currency": 2
+   },
+   "politician_led": true,
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Jamie Dimon warned Chancellor John Healey via phone call against raising bank taxes before Budget."
+   ],
+   "line": "JP Morgan's CEO is lobbying the UK chancellor against raising taxes on banks before the spring Budget announcement.",
+   "assembly_score": 5.68
+  },
+  {
+   "slot": "body_mind",
+   "slot_label": "Body & mind",
+   "key": "f375ef9e5c91d573",
+   "title": "Ebola outbreak in DR Congo becomes deadliest on record",
+   "beat": "health",
+   "publisher_count": 3,
+   "publishers": [
+    "BBC",
+    "France 24",
+    "The Independent"
+   ],
+   "scores": {
+    "emotional_load": 5,
     "explainability": 5,
     "actionability": 1,
     "conversational_currency": 4
    },
    "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Actress Hayden Panettiere, known for roles in Heroes and Nashville, has died at 36.",
-   "assembly_score": 25.52
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Outbreak now deadliest in DRC history; 2,235 deaths, 4,945 cases, 101 new cases in 24h",
+    "Death toll updated to 2,325",
+    "Outbreak caused by rare Bundibugyo Ebola species; already fastest-growing on record"
+   ],
+   "line": "An Ebola outbreak in the Democratic Republic of Congo has killed more people than any previous outbreak in the country's history.",
+   "assembly_score": 10.04
   },
   {
-   "slot": "money_me",
-   "slot_label": "Money & me",
+   "slot": "work_machines",
+   "slot_label": "Work & machines",
+   "key": "9bfc304562ea390f",
+   "title": "AI startups establish Hollywood studios with lower-cost production models",
+   "beat": "tech",
+   "publisher_count": 1,
+   "publishers": [
+    "Techmeme"
+   ],
+   "scores": {
+    "emotional_load": 2,
+    "explainability": 4,
+    "actionability": 1,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "AI film startups opening studios in Hollywood using US/Chinese AI models, citing lower costs and bypassing traditional financing"
+   ],
+   "line": "AI startups are opening production studios in Hollywood, claiming to reduce film costs using both U.S. and Chinese models while bypassing traditional financing.",
+   "assembly_score": 5.44
+  },
+  {
+   "slot": "group_chat",
+   "slot_label": "The group chat",
+   "key": "9cb991e837549e6a",
+   "title": "British swimmer Hunt wins four golds at European Championships",
+   "beat": "culture",
+   "publisher_count": 2,
+   "publishers": [
+    "BBC",
+    "Daily Mail"
+   ],
+   "scores": {
+    "emotional_load": 1,
+    "explainability": 5,
+    "actionability": 1,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Amy Hunt won four European Championship golds, celebrated with champagne, plans eight-week hibernation",
+    "Adds on-record quote 'Are you not entertained?' framing Hunt as GB's new track sensation"
+   ],
+   "line": "British swimmer Amy Hunt won four gold medals at the European Championships.",
+   "assembly_score": 7.7
+  },
+  {
+   "slot": "elsewhere",
+   "slot_label": "Elsewhere, but here",
+   "key": "306ccb9314267ba4",
+   "title": "The Ego Trip by Kimon de Greef review \u2013 a bizarre tale of psychedelic toads and hair-raising treatments",
+   "beat": "international",
+   "publisher_count": 1,
+   "publishers": [
+    "The Guardian"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": 3.87
+  },
+  {
+   "slot": "close",
+   "slot_label": "The close",
+   "key": "85b2cf26c4c3f3fc",
+   "title": "Manchester mayor deceived by White House imposter",
+   "beat": "national",
+   "publisher_count": 2,
+   "publishers": [
+    "BBC",
+    "Daily Mail"
+   ],
+   "scores": {
+    "emotional_load": 2,
+    "explainability": 4,
+    "actionability": 1,
+    "conversational_currency": 2
+   },
+   "politician_led": true,
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Burnham exchanged messages with an imposter posing as a White House official; security breach flagged by Politico.",
+    "Imposter specifically posed as Trump's chief of staff Susie Wiles."
+   ],
+   "line": "Manchester's mayor was deceived in an impersonation scheme targeting a White House official's identity.",
+   "assembly_score": 7.09
+  },
+  {
+   "slot": "unavoidable",
+   "slot_label": "Unavoidable",
    "key": "c1e2fb98094768e5",
    "title": "Tax filing deadline tomorrow; extension process explained",
    "beat": "national",
@@ -62,203 +213,42 @@
    "ledger_class": null,
    "new_facts": [],
    "line": "Tax filing deadline is tomorrow; extensions available for those unable to file by then.",
-   "assembly_score": 8.0
+   "assembly_score": 2.1
   },
   {
-   "slot": "body_mind",
-   "slot_label": "Body & mind",
-   "key": "6fe6481c7152e0e0",
-   "title": "Rare Pallas's cat spotted in Iranian mountains",
-   "beat": "science",
-   "publisher_count": 1,
-   "publishers": [
-    "Al Jazeera"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "ledger_class": "DEVELOPMENT",
-   "new_facts": [
-    "Rare footage captured of a Pallas's cat sighting in northern Iran's mountains."
-   ],
-   "line": "Wildlife biologists documented a rare Pallas's cat in Iran, evidence the endangered species survives in the region.",
-   "assembly_score": 3.05
-  },
-  {
-   "slot": "work_machines",
-   "slot_label": "Work & machines",
-   "key": "ced99e4fe40e5030",
-   "title": "Anthropic's text watermark alters word probabilities to embed a fingerprint, which could degrade Claude's writing, despite its claim of no impact on quality (John Gruber/Daring Fireball)",
-   "beat": "tech",
-   "publisher_count": 1,
-   "publishers": [
-    "Techmeme"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 5.31
-  },
-  {
-   "slot": "group_chat",
-   "slot_label": "The group chat",
-   "key": "9645dc948b772b4a",
-   "title": "WNBA subreddit bans use of player's name after she defends women's sports",
-   "beat": "culture",
-   "publisher_count": 1,
-   "publishers": [
-    "Fox News"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "ledger_class": "DEVELOPMENT",
-   "new_facts": [
-    "Mercury coach Nate Tibbetts criticized WNBA media narratives but defended Stephanie White over Cunningham/Clark.",
-    "WNBA subreddit banned use of Sophie Cunningham's name after her comments on male athletes in women's sports."
-   ],
-   "line": "A WNBA subreddit banned users from naming a player after she defended women's sports against online criticism.",
-   "assembly_score": 2.31
-  },
-  {
-   "slot": "elsewhere",
-   "slot_label": "Elsewhere, but here",
-   "key": "75eaee195d032eb3",
-   "title": "Ukraine strikes Russian e-commerce hub in largest 2026 drone attack",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "The Independent"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": "DEVELOPMENT",
-   "new_facts": [
-    "Reveals weeks-long Ukrainian drone campaign against Wildberries depots, Russia's largest online retailer, causing billions in losses",
-    "Seven dead reported after Kyiv drone strike destroys Wildberries ('Russian Amazon') hub, called largest drone attack of 2026",
-    "Former defence minister Fedorov says Ukraine could strike Russia with domestic ballistic missiles within 3-6 months"
-   ],
-   "line": "Ukraine conducted its largest 2026 drone attack on a Russian e-commerce logistics hub, killing seven; officials claim domestic missile capability within months.",
-   "assembly_score": 10.88
-  },
-  {
-   "slot": "close",
-   "slot_label": "The close",
-   "key": "39e4f57c48258237",
-   "title": "Japan's second-quarter growth misses expectations at 1.1%",
+   "slot": "unavoidable",
+   "slot_label": "Unavoidable",
+   "key": "10dcba814c11f059",
+   "title": "Coles and Woolworths test facial recognition in stores",
    "beat": "business",
-   "publisher_count": 2,
+   "publisher_count": 1,
    "publishers": [
-    "CNBC",
-    "The Independent"
+    "ABC Australia"
    ],
    "scores": {
-    "emotional_load": 1,
+    "emotional_load": 3,
     "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
+    "actionability": 3,
+    "conversational_currency": 4
    },
    "politician_led": false,
-   "ledger_class": "DEVELOPMENT",
-   "new_facts": [
-    "Japan's economy grew 1.1% annualized in Q2 despite flat consumption and slowing export growth",
-    "Japan Q2 GDP grew 1.1% annualized, missing 2% growth estimates"
-   ],
-   "line": "Japan's economy grew 1.1% in the second quarter, below forecasts, signaling slower momentum.",
-   "assembly_score": 4.55
-  },
-  {
-   "slot": "unavoidable",
-   "slot_label": "Unavoidable",
-   "key": "44823bcf52c5acf2",
-   "title": "Trump orders Pentagon to scale back South Korea military drills",
-   "beat": "national",
-   "publisher_count": 15,
-   "publishers": [
-    "Financial Times",
-    "The Guardian",
-    "Al Jazeera",
-    "CBS News",
-    "Daily Beast",
-    "Deutsche Welle",
-    "Fox News",
-    "France 24",
-    "NBC News",
-    "ABC Australia",
-    "Daily Mail",
-    "Fox 5 Atlanta",
-    "Fox 5 DC",
-    "Memeorandum",
-    "Yonhap News"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
    "ledger_class": null,
    "new_facts": [],
-   "line": "Trump orders Pentagon to reduce joint military exercises with South Korea, citing his relationship with North Korea's Kim Jong Un.",
-   "assembly_score": 15.49
-  },
-  {
-   "slot": "unavoidable",
-   "slot_label": "Unavoidable",
-   "key": "80fd10fceb83711d",
-   "title": "UK energy secretary decides on two North Sea oil fields",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "The Independent",
-    "Daily Mail"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "UK energy secretary faces decision on whether to approve two new North Sea oil fields amid climate and economic debate.",
-   "assembly_score": -0.7
+   "line": "Australia's two largest supermarket chains are testing facial recognition to identify shoplifters and monitor customer behavior.",
+   "assembly_score": 1.08
   },
   {
    "slot": "flex",
    "slot_label": "Flex",
-   "key": "c7d68db959018304",
-   "title": "Dominion pushes forward with lawsuits against Trump allies",
-   "beat": "national",
+   "key": "ffb1462c34ce2b1b",
+   "title": "OpenAI funds think tank research projects",
+   "beat": "tech",
    "publisher_count": 1,
    "publishers": [
-    "CNN"
+    "Semafor"
    ],
    "scores": {
-    "emotional_load": 3,
+    "emotional_load": 2,
     "explainability": 4,
     "actionability": 1,
     "conversational_currency": 2
@@ -266,838 +256,135 @@
    "politician_led": false,
    "ledger_class": "DEVELOPMENT",
    "new_facts": [
-    "Dominion has pending lawsuits against Rudy Giuliani and Sidney Powell."
+    "OpenAI is funding think tank projects globally, including groups across US political spectrum and in Europe, Brazil, Singapore, South Korea"
    ],
-   "line": "Dominion's defamation cases against Trump allies remain in court after the company rejected a settlement offer.",
-   "assembly_score": 6.41
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "98aaf2aea56ec958",
-   "title": "Wildfires kill two in Greece as Belgian fire spreads toward Germany",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "The Independent",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16056581/Belgium-wildfire-Germany-forest.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//independent.co.uk/news/world/europe/greek-island-fire-salamina-deaths-b3033860.html"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Fast-moving wildfires in Greece have killed two people on Salamina island; a separate Belgian fire is expanding toward Germany.",
-   "assembly_score": 2.175
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "2d4b21839f92bcb8",
-   "title": "Kushner meets Hamas as Trump pushes Gaza peace plan",
-   "beat": "international",
-   "publisher_count": 3,
-   "publishers": [
-    "BBC",
-    "Al Jazeera",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//aljazeera.com/news/liveblog/2026/8/17/iran-war-live-tehran-us-mou-set-to-expire-hamass-al-khayya-meets-kushner?traffic_source=rss",
-    "//bbc.co.uk/news/articles/c77gg5vn44yo?at_campaign=rss&at_medium=RSS",
-    "//memeorandum.com/260816/p49"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump's Middle East envoy meets Hamas officials as part of push for Gaza ceasefire plan.",
-   "assembly_score": 2.107
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "84b874d2f5275d4d",
-   "title": "Earthquake kills 53 in Indonesia; nearly 1,000 aftershocks hamper aid",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "CBS News",
-    "The Independent"
-   ],
-   "urls": [
-    "//cbsnews.com/news/indonesia-earthquake-tsunami-warning",
-    "//independent.co.uk/news/indonesia-flores-pacific-sulawesi-sumatra-b3034010.html"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A 6.2 magnitude earthquake killed at least 53 people in Indonesia, with nearly 1,000 aftershocks complicating rescue and aid efforts.",
-   "assembly_score": 1.265
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "ce70ff01297f7384",
-   "title": "Trial opens in Tupac's 1996 killing as family questions justice",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "The Independent"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/videos/cj4kglpl55lo?at_campaign=rss&at_medium=RSS",
-    "//independent.co.uk/news/tupac-shakur-davis-las-vegas-grammy-awards-hollywood-walk-of-fame-b3034005.html"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Murder trial begins nearly 30 years after rapper Tupac Shakur was killed in Las Vegas, with family expressing doubt justice is possible.",
-   "assembly_score": 1.145
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "faff5ca9232d19ba",
-   "title": "Europe faces fifth heat wave as drought grips half the continent",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Financial Times",
-    "CBS News"
-   ],
-   "urls": [
-    "//cbsnews.com/video/europe-endures-fifth-heat-wave-summer-drought",
-    "//ft.com/content/c5e27ffb-cfb1-421b-8121-a402cf2d84ac?syn-25a6b1a6=1"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Half of Europe is in drought amid a fifth heat wave this summer, straining water supplies and agriculture.",
-   "assembly_score": 1.075
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "a1257ca7a1c2a7f7",
-   "title": "Iran conflict pushes families to abandon schooling for survival",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "The Independent",
-    "American Spectator"
-   ],
-   "urls": [
-    "//independent.co.uk/news/iran-cambodia-southeast-asia-hanoi-africa-b3034000.html",
-    "//spectator.org/the-iran-war-trump-must-choose-between-victory-and-defeat"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Families in Iran are pulling children from school to afford basic necessities as conflict intensifies.",
-   "assembly_score": 0.935
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "2d129174f8f247c6",
-   "title": "Ossoff campaigns in Atlanta as Democrats attack Trump",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Daily Beast",
-    "Fox 5 Atlanta"
-   ],
-   "urls": [
-    "//fox5atlanta.com/news/sen-jon-ossoff-rallies-supporters-midtown-atlanta-election-nears",
-    "//thedailybeast.com/dem-star-roasts-trump-for-obsession-with-blonde-companion-35"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Senator Jon Ossoff campaigns in Atlanta ahead of an election; Democratic messaging attacks Trump's personal choices.",
-   "assembly_score": -1.85
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "57a1ab6c66912086",
-   "title": "AOC accused of inconsistency over streamer appearances",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "American Spectator",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/260816/p43",
-    "//spectator.org/dear-aoc-hasan-piker-is-not-joe-rogan"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 2,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.97
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "3ddba3fa03c8ee5d",
-   "title": "Trump, 80, Declares Fox News Host an Enemy of MAGA",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "Daily Beast",
-    "Fox News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//foxnews.com/media/todd-blanche-rejects-nbc-anchors-doj-independence-pledge-says-trump-would-never-cross-legal-line",
-    "//memeorandum.com/260816/p46",
-    "//thedailybeast.com/donald-trump-80-declares-fox-news-host-shannon-bream-an-enemy-of-maga"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.35
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "48e3870dc9f74759",
-   "title": "Ebola outbreak in Congo becomes deadliest on record",
-   "beat": "health",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "Al Jazeera"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/8/17/ebola-outbreak-in-dr-congo-becomes-deadliest-in-countrys-history?traffic_source=rss",
-    "//theguardian.com/world/2026/aug/17/ebola-outbreak-drc-democratic-republic-of-congo-deadliest-in-history"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Democratic Republic of Congo's Ebola outbreak has surpassed all previous outbreaks in the country in total deaths.",
-   "assembly_score": -2.65
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "fa94981fe07417a7",
-   "title": "Tropical Storm Lala floods Hawaii, knocks out power to thousands",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "The Guardian",
-    "CBS News",
-    "NBC News"
-   ],
-   "urls": [
-    "//cbsnews.com/news/tropical-storm-lala-big-island-hawaii-hurricane-track",
-    "//cbsnews.com/video/hurricane-lala-hits-hawaii-weakens-tropical-storm",
-    "//nbcnews.com/nightly-news/video/hawaii-flooded-by-lala-with-thousands-without-power-268377669819",
-    "//theguardian.com/world/2026/aug/16/hurricane-lala-hawaii-big-island-avoids-landfall"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Tropical Storm Lala brings flooding and power outages to Hawaii's Big Island after weakening from hurricane strength.",
-   "assembly_score": -3.17
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "13016d389fc3a381",
-   "title": "Trump claims Democrats exploit name confusion in Alaska Senate race",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "ABC News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//abcnews.com/Politics/trump-accuses-democrats-trickery-candidate-same-alaska-sen/story?id=135693218",
-    "//memeorandum.com/260816/p44"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A candidate named Dan Sullivan is running against Alaska Sen. Dan Sullivan; Trump claims Democrats are using the name for advantage.",
-   "assembly_score": -3.18
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "3e3db4d86128979c",
-   "title": "Israeli minister calls for killing \u201930 to 40\u2032 Palestinians in Gaza nightly",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/8/16/israeli-minister-calls-for-killing-30-to-40-palestinians-in-gaza-nightly?traffic_source=rss",
-    "//aljazeera.com/video/newsfeed/2026/8/17/08-17-26-pal-prisoners-release-sv-mp4?traffic_source=rss",
-    "//memeorandum.com/260816/p42"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.85
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "a9fba0546641f3c2",
-   "title": "CENTCOM chief visits USS Abraham Lincoln amid morale concerns",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "CBS News",
-    "The Independent"
-   ],
-   "urls": [
-    "//cbsnews.com/live-updates/iran-war-donald-trump-strait-of-hormuz-uae-accuses-attacks-vance-oil-gas",
-    "//independent.co.uk/news/world/americas/us-politics/joey-jones-fox-uss-lincoln-conditions-b3033959.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -4.43
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "767a2ec1214e74ab",
-   "title": "Scheffler wins St Jude after arrest, McIlroy notes dominance widening",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Post and Courier"
-   ],
-   "urls": [
-    "//bbc.co.uk/sport/golf/articles/cre44r1y17no?at_campaign=rss&at_medium=RSS",
-    "//postandcourier.com/scottie-scheffler/image_4836230c-46e2-4262-aba0-9d44c88297a9.html"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Scottie Scheffler wins golf tournament after recent arrest; Rory McIlroy expresses concern about competitive gap.",
-   "assembly_score": -4.76
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "007a862c443d6da3",
-   "title": "Jeffries rejects Medicare for All, drawing rebuke from progressive wing",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//foxnews.com/media/hakeem-jeffries-rejects-medicare-all-dsa-agenda-ro-khanna-calls-health-plan-most-important-priority",
-    "//memeorandum.com/260816/p41"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "House Democratic leader Hakeem Jeffries rejected Medicare for All, dividing the party on health policy ahead of negotiations.",
-   "assembly_score": -4.76
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "5c059cfda8141753",
-   "title": "Trump blames vandals for National Mall grass damage after July 4 event",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//foxnews.com/politics/trump-blames-vandals-dead-grass-national-mall-4th-july-celebration",
-    "//memeorandum.com/260817/p1"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump attributes damage to the National Mall after his July 4 event to vandals rather than the event itself.",
-   "assembly_score": 1.205
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "42d214b6358fc8d6",
-   "title": "States sue Meta over child safety, risking restructuring of Facebook and Instagram",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "The Independent"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/clyqpx6xk69o?at_campaign=rss&at_medium=RSS",
-    "//independent.co.uk/news/meta-california-instagram-los-angeles-oakland-b3034004.html"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "States are suing Meta in California court, alleging Instagram and Facebook harm children; the outcome could force major changes to both platforms.",
-   "assembly_score": 0.39
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "b57a29eff96bf336",
-   "title": "Six dead in stampede at Bihar temple",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "Deutsche Welle"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/8/17/at-least-six-dead-in-stampede-like-incident-at-india-temple?traffic_source=rss",
-    "//dw.com/en/india-six-dead-in-bihar-temple-stampede/a-78390719?maca=en-rss-en-all-1573-xml-mrss"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "At least six people died in a stampede at a temple in Bihar state, India.",
-   "assembly_score": 1.19
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "c94e2cd616a91e0d",
-   "title": "31 Chinese nationals caught illegally entering South Korea",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Financial Times",
-    "Yonhap News"
-   ],
-   "urls": [
-    "//en.yna.co.kr/view/AEN20260817001800315",
-    "//ft.com/content/2f705a5a-2c4e-4bca-b08a-ed9372ef3b2e"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "South Korean coast guard arrested 31 Chinese nationals attempting illegal entry; separate reports warn of risks from China-developed open-source AI systems.",
-   "assembly_score": 0.995
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "4197a0d4652af199",
-   "title": "Cambridge professor Jason Arday dead; hundreds attend vigil",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/cpw9997g85vo?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/news/article-16056523/Fundraiser-family-Cambridge-professor-Jason-Arday-80k-flag-Jesus-College.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Cambridge professor Jason Arday has died; colleagues and students gathered for a vigil as fundraising for his family exceeded \u00a3115,000.",
-   "assembly_score": 0.525
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "c0e3961db36416d1",
-   "title": "Reform UK pledges to ban foreign nationals from all benefits",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/cly555430nno?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/news/article-16056977/ban-foreign-nationals-benefits-Reform.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Reform UK proposes banning all foreign nationals from benefits, targeting \u00a350 billion in cuts including disability payments.",
-   "assembly_score": 4.22
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "4fa88a80b0f3e766",
-   "title": "One Nation staffer hospitalized after assault; musician calls for gun control",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "CNN",
-    "ABC Australia"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-08-17/one-nation-alleged-ekka-assault/107045782",
-    "//cnn.com/audio/podcasts/the-assignment/episodes/42a2f0e2-066a-4675-82ff-afe2016a0bb5"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 1,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 2.47
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "a20f9c474ff40c34",
-   "title": "Ferrari's first electric car sells for $40 million at auction",
-   "beat": "business",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "CNBC"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/c77ggpgrp2do?at_campaign=rss&at_medium=RSS",
-    "//cnbc.com/2026/08/17/ferrari-luce-electric-car-autos.html"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Ferrari's first electric car sold for $40 million at auction, setting a record for the brand.",
-   "assembly_score": 2.4
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "fb15035e8ee9a1d4",
-   "title": "Reform proposes blanket benefit ban for foreign nationals; Farage associate faces fraud scrutiny",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "The Independent"
-   ],
-   "urls": [
-    "//independent.co.uk/news/uk/politics/reform-welfare-benefits-foreign-nationals-jenrick-b3033834.html",
-    "//nytimes.com/2026/08/17/world/europe/posh-george-nigel-farage-reform.html"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Nigel Farage's Reform UK party proposes banning all foreign nationals from claiming benefits; a convicted fraudster is close to Farage.",
-   "assembly_score": 1.96
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "304b9c69f7d77fe1",
-   "title": "Ukraine strikes Russian logistics hub in largest 2026 drone attack, killing at least six",
-   "beat": "international",
-   "publisher_count": 3,
-   "publishers": [
-    "Post and Courier",
-    "Al Jazeera",
-    "The Independent"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/8/17/at-least-six-people-killed-in-ukrainian-missile-attack-on-russias-belgorod?traffic_source=rss",
-    "//independent.co.uk/news/russia-ukraine-moscow-vladimir-putin-ramzan-kadyrov-b3034006.html",
-    "//independent.co.uk/news/world/europe/ukraine-russia-war-live-news-rocket-facility-hit-b3033769.html",
-    "//independent.co.uk/news/world/europe/ukraine-russia-war-live-putin-zelensky-wildberries-drone-attack-b3033999.html",
-    "//postandcourier.com/nation-world/news/ukrainian-drones-strike-moscow-region-as-russia-delivers-wave-of-attacks/article_dc867c7f-41fa-4667-a347-55cd959dacff.html"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Ukraine conducted its largest drone attack of 2026, killing at least six people and destroying a Russian logistics hub, as both sides escalate strikes on civilian infrastructure.",
-   "assembly_score": 1.593
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "29ed51ac0fa11fa3",
-   "title": "NYPD fatally shoots man with knife after two-day roof standoff",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox News",
-    "The Independent"
-   ],
-   "urls": [
-    "//foxnews.com/us/nypd-officers-fatally-shoot-man-armed-butcher-knife-he-advanced-toward-cops-police",
-    "//independent.co.uk/news/uk/crime/salford-manchester-police-arrest-b3034079.html"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "NYPD officers shot and killed a man on a roof after he advanced toward them with a butcher knife, ending a two-day standoff.",
-   "assembly_score": 0.975
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "2330c3e352a76e7a",
-   "title": "New British prison sits empty while old facilities overflow",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "The Independent"
-   ],
-   "urls": [
-    "//independent.co.uk/news/uk/home-news/hmp-millsike-prison-cells-early-release-yorkshire-b3033907.html",
-    "//theguardian.com/artanddesign/2026/aug/17/incarcerated-life-behind-bars-victorian-prisons"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Britain's newest prison sits hundreds of cells empty a year after opening while Victorian facilities remain overcrowded.",
-   "assembly_score": 0.805
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "891fe43b5a243e98",
-   "title": "Hundreds evacuated as Belgium wildfire spreads near German border",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Deutsche Welle",
-    "The Independent"
-   ],
-   "urls": [
-    "//dw.com/en/germany-news-belgium-blaze-kept-out-of-germany-for-now/live-78391144?maca=en-rss-en-all-1573-xml-mrss",
-    "//dw.com/en/hundreds-flee-as-belgium-battles-wildfire-at-german-border/a-78386242?maca=en-rss-en-all-1573-xml-mrss",
-    "//independent.co.uk/news/world/europe/belgium-wildfires-latest-germany-weather-evacuations-b3034045.html"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A wildfire at Belgium's largest nature reserve has forced hundreds to evacuate and threatens to spread across the German border.",
-   "assembly_score": 0.785
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "6db3ee753423a0f7",
-   "title": "Russia is 'going backwards' in equipment and deploying post WWII-era tanks, according to Western officials",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "CNN",
-    "The Independent"
-   ],
-   "urls": [
-    "//cnn.com/europe/live-news/russia-ukraine-war-news-04-18-23/index.html",
-    "//independent.co.uk/news/min-aung-hlaing-vladimir-putin-myanmar-russia-china-b3034047.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.325
+   "line": "OpenAI is funding research projects through a new think tank, expanding its influence beyond product development.",
+   "assembly_score": 4.94
   }
  ],
  "excluded_sample": [
   {
+   "title": "Progressive Democrats eye Israel policy shift in 2027",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Can Democrats afford to take on Big Tech? Or to leave it alone?",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Ruling DP set to elect new leader",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "AN WILSON: Banksy - aka Robin Gunningham - is a privately educated Leftie stooge whose ugly, worthless art is hastening the collapse of the West",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Opinion: We proved bipartisan health care reform works in North Carolina. Let\u2019s bring it nationwide",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Opinion: Paid paternity leave is pediatric preventive care",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Signings impress but squad issues remain - learnings from Man Utd's summer",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "SHANE WATSON: Don't make the mistake Kate Moss did... follow my guide to make sure your swimwear always suits you - from plunge-fronts to halter-ties and tankinis",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Justin Trudeau's son Xavier, 18, shares his dad and girlfriend Katy Perry's cringe reactions to his new single as they dance with giant plunger in hardware store",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Trump Criticizes Shannon Bream Over Fox Segment on White House Ballroom",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Trump blames Reflecting Pool \u2018vandals\u2019 for dead grass where his July 4 celebrations were held",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Bella Mackie says she'd 'never love a child as much as her dog' and laments her and husband Greg James adopting late pup Barney 'in place of having kids'",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Cincinnati Open: Sabalenka takes six match points to defeat Gibson",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Bronze explains out-of-character contract extension",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Davina McCall finally completes 'nightmare' eight-year renovations on \u00a33.4m Kent dream home after furious neighbours attempted to block plans",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Scott Jennings Faces Legal Threat From Twitch Streamer",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "A Rimbaud review \u2013 legendary poet\u2019s unlikely transformation into entrepreneur is as odd as ever",
+   "why": "triage verdict NO"
+  },
+  {
    "title": "Podcast: One country musician is calling for other artists to oppose assault rifles",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Jackie Apostel stuns in a cut-out dress while larking around with 'bestie' Harper and shares picture of herself kissing boyfriend Cruz on Italian holiday with the Beckhams",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "'No10 North' means Manchester hogs the limelight but there's MUCH more to this region - these are England's northern cities you must visit instead",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Brandon Flowers: Thrasher review \u2013 Killers frontman\u2019s country pivot is a rootin\u2019 tootin\u2019 cowboy-bootin\u2019 hoot!",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Five teenage boys are dead and a family of four going to the airport to go on holiday is seriously injured after head-on crash on Irish motorway at 3am",
+   "why": "ledger: INCREMENT"
+  },
+  {
+   "title": "The top photos of the day by AP's photojournalists",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Trump blames vandals for dead grass on National Mall where he hosted 4th of July celebration",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Lens defeat Paris Saint-Germain and claim second title this year",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Capolavoro Italia: oro di Iapichino e della 4x400, gli azzurri sono campioni d'Europa",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Asian shares are mostly higher while US futures and oil prices hold steady",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Brook on Test captaincy, batting and Wellington",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "From sticky beef to cheesy kimchi, four easy dinners using noodles",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "The Engines of Our Ingenuity 3400: Hell-Broth",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "OPINION: Why investing in rural education can bolster local economies and help students build a future close to home",
    "why": "triage verdict NO"
   },
   {
@@ -1134,126 +421,6 @@
   },
   {
    "title": "The beloved Dyson Supersonic hair dryer is at its lowest price ever",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Everything you need to know about Way Day 2023, Wayfair's biggest sale of the year",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "The 2024 presidential alternative many voters will want",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "How to Pull Off an Influencer Trip in 2026",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "2 S. Koreans finish top 5 in 1st PGA Tour playoff event, move up in key standings",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Triumphant: Resilient Linda Mwananchi defies odds, breaks through Homa Bay barriers",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Police search for alleged burglar caught on camera at Midtown vape shop",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Dem Star Roasts Trump for Obsession With Blonde Companion, 35",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "How AOC is rewriting her own \"Woke 1\" history (Axios)",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Moment Arizona grandmother pulls a GUN on alleged shoplifter while confronting him during tense parking lot standoff",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Trump Will Make South Korea Pay For His Iran Humiliation",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Is Your Home Really \u2018Stolen Land\u2019? The Case for Property Rights",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Von Miller signs with Cowboys in homecoming move for 2-time Super Bowl champion: 'Let's make this one special'",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "The Demonic Possession of Liberal Women",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Conservatives Should Begin Eating Woke Culture for Breakfast",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "The Left Has a Working-Class Problem",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Twitchers excited by sighting of rare migratory shorebird",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Georgia music artist 'Lil Toonk' set for court hearing after murder arrest",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Jennifer Garner beams as she leaves church... after reuniting with ex-husband Ben Affleck on his 54th birthday",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Inside Cristiano Ronaldo and Georgina Rodr\u00edguez's intimate wedding: Billionaire wears a T-shirt to exchange vows in his living room with ex-shop assistant wife in a skirt suit and just their five kids present",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "HopeHealth celebrates partnerships during National Health Center Week",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Tom-Coke bottle",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "100-year-old grandmother skydives in California: \"If you slow down, life is over\"",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Hollywood makes dazzling comeback with $5 billion blockbusters this year",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Majority of Americans not satisfied with U.S. economy, CBS News poll finds",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Tommy John, known in baseball as the \"bionic man,\" dies at 83",
-   "why": "ledger: INCREMENT"
-  },
-  {
-   "title": "Mamdani Speaks Mandarin to Promote Broadway, and Gets Good Reviews",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Get your trousers back on, you're nicked! Moment riot police pull wanted man's pants down as they haul him off a roof",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Nit pickers ban litter pickers: Council jobsworths forbid volunteers from cleaning streets because they bought the wrong red bin bags",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Todd Blanche backs Jeanine Pirro after Lincoln Memorial pool vandalism case dismissal",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "The incredible snaps making a splash: Ocean photographer of the year finalists are revealed",
    "why": "triage verdict NO"
   }
  ]
