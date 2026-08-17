@@ -41,6 +41,20 @@ bar doesn't distinguish that from a real story, so it gets its own check,
 applied before dedup: a roundup-titled cluster is never eligible for
 promotion.
 
+Progress-singleton path (2026-08-14): "our paper is more about who's
+making progress than who's screwed up." Publisher count is simultaneously
+the pipeline's corroboration signal AND its catastrophe filter — wire
+services converge hard on disasters, while a story about a fix in motion
+often runs as a singleton by nature (one outlet followed the thread). The
+2+ publisher bar structurally punishes exactly the stories this bias wants
+to elevate, for reasons that have nothing to do with whether they're true.
+This does not lower the bar — it substitutes a different verification
+signal for singletons specifically: triage.py's progress_coded verdict
+(a real editorial judgment call, not a keyword match) AND a source-tier
+floor (tier 1 or 2 — audited 2026-08-14: tier 3 is a genuinely mixed bag,
+not a clean quality signal, so it's excluded rather than trusted). A
+singleton has to clear BOTH to be promoted this way.
+
 Reads  data/clusters.json (this run's fresh clustering)
 Reads  data/lineup.json   (if present — never required to exist)
 Writes data/lineup.json   (existing entries preserved, new ones appended)
@@ -60,6 +74,15 @@ DATA = ROOT / "data"
 PROMOTE_MIN_PUBLISHERS = 2  # "2-3+ publishers" as specified — floor at 2
 MATCH_THRESHOLD = 0.20      # entity+cosine bar for the title-match fallback
 URL_OVERLAP_MIN = 1         # shared canonical URLs needed to call it a dupe
+
+# Progress-singleton path: the source-tier floor. tier is a plain int
+# (1/2/3) copied unchanged from feeds.json by ingest.py. Gated at <= 2,
+# not just tier 1 — tier 2 includes "confirmed indie voices," exactly the
+# kind of source this bias is partly meant to surface. Tier 3 is excluded
+# because it's a mixed bag on real inspection (legitimate wires like ANSA
+# and Yonhap sit next to genuinely lower-signal outlets) — not a clean cut,
+# so it doesn't get trusted as a singleton's sole corroboration substitute.
+PROGRESS_SINGLETON_MAX_TIER = 2
 
 # Query params that vary per-share/per-click but don't change the article.
 # Extend as new tracking schemes turn up in real feeds.
@@ -136,6 +159,32 @@ def cluster_urls(cluster):
     }
 
 
+def cluster_min_tier(cluster):
+    """Best (lowest-numbered) source tier present in this cluster, or None
+    if no item carries a tier at all. tier is a plain int (1/2/3), copied
+    unchanged from feeds.json by ingest.py."""
+    tiers = [it.get("tier") for it in cluster.get("items", []) if it.get("tier") is not None]
+    return min(tiers) if tiers else None
+
+
+def is_progress_singleton_eligible(cluster):
+    """Alternate promotion path for singletons: bypasses the 2+ publisher
+    corroboration bar, but only when triage.py's progress_coded verdict
+    (a real editorial judgment, not a keyword match) AND a tier <= 2 source
+    both hold. Both conditions required — a progress-coded story from a
+    tier-3 source doesn't qualify, and a tier-1 story that isn't
+    progress-coded doesn't qualify either. This substitutes a different
+    verification signal for singletons; it does not lower the bar for
+    everyone else."""
+    if cluster.get("publisher_count", 0) != 1:
+        return False
+    tri = cluster.get("triage") or {}
+    if tri.get("progress_coded") is not True:
+        return False
+    min_tier = cluster_min_tier(cluster)
+    return min_tier is not None and min_tier <= PROGRESS_SINGLETON_MAX_TIER
+
+
 def title_match(candidate_title, candidate_entities, existing_stories, idf_pool):
     """Fallback for when URL-overlap finds nothing: the original entity+
     cosine title similarity. Covers two genuinely different articles,
@@ -206,13 +255,18 @@ def main():
     idf_pool = [{"id": f"__existing_{i}__", "title": s.get("title", ""), "summary": ""}
                 for i, s in enumerate(existing)]
 
-    candidates = [c for c in clusters
-                  if c.get("publisher_count", 0) >= PROMOTE_MIN_PUBLISHERS
-                  and c["key"] not in existing_keys]
+    candidates = []
+    for c in clusters:
+        if c["key"] in existing_keys:
+            continue
+        if c.get("publisher_count", 0) >= PROMOTE_MIN_PUBLISHERS:
+            candidates.append((c, "corroborated"))
+        elif is_progress_singleton_eligible(c):
+            candidates.append((c, "progress_singleton"))
 
     promoted = 0
     skipped_roundup = 0
-    for c in candidates:
+    for c, path in candidates:
         if is_roundup(c["title"]):
             skipped_roundup += 1
             log(f"  skipped (roundup): {c['title'][:60]}")
@@ -235,6 +289,8 @@ def main():
                        ("emotional_load", "explainability", "actionability",
                         "conversational_currency")},
             "politician_led": tri.get("politician_led", False),
+            "progress_coded": tri.get("progress_coded", False),
+            "promotion_path": path,
             "ledger_class": None,   # ledger hasn't necessarily reached this yet
             "new_facts": [],
             "line": tri.get("line", ""),
@@ -242,7 +298,8 @@ def main():
         })
         existing_keys.add(c["key"])
         promoted += 1
-        log(f"  promoted: {c['title'][:60]} ({c['publisher_count']} pubs)")
+        tag = " [progress singleton]" if path == "progress_singleton" else ""
+        log(f"  promoted{tag}: {c['title'][:60]} ({c['publisher_count']} pubs)")
 
     lineup["actual_size"] = len(existing)
     lineup_path.write_text(json.dumps(lineup, indent=1))
