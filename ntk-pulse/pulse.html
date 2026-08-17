@@ -415,20 +415,28 @@ async function ai(prompt, maxTok=1500){
     method:'POST',
     headers:{'Content-Type':'application/json','x-api-key':SETTINGS.antKey,
       'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-    body:JSON.stringify({model:'claude-sonnet-5',max_tokens:maxTok,messages:[{role:'user',content:prompt}]})
+    // thinking explicitly disabled (2026-08-17): Sonnet 5 defaults to
+    // adaptive thinking when this is omitted, and thinking tokens draw
+    // from the SAME max_tokens ceiling as the response text — confirmed
+    // in Anthropic's own Sonnet 5 migration notes. That's what produced
+    // "[Generation failed: No text content in response (content blocks:
+    // thinking)]" on Truths and a mid-word truncation on Possibilities:
+    // thinking consumed most or all of the budget before any real text
+    // came out, and how much it consumes varies call to call — the same
+    // section can succeed on one run and fail on the next. None of Pulse's
+    // editorial writing is the kind of multi-step logical/math task
+    // thinking is built for, so disabling it trades a marginal, unproven
+    // quality gain for actually reliable output.
+    body:JSON.stringify({model:'claude-sonnet-5',max_tokens:maxTok,
+      thinking:{type:'disabled'},messages:[{role:'user',content:prompt}]})
   });
   const d = await r.json();
   if (d.error) throw new Error(d.error.message);
-  // Sonnet 5 uses adaptive thinking and, at the default effort level, almost
-  // always thinks — the response then arrives as a THINKING block followed
-  // by the TEXT block, not text alone. Blindly reading content[0] (as this
-  // used to) grabs the thinking block whenever that fires, and .text on a
-  // thinking block is silently undefined — no throw here, just a quiet
-  // undefined handed to every caller, surfacing three functions downstream
-  // as "Cannot read properties of undefined (reading 'trim')" or as empty
-  // Jefferson sections with no error at all. Filter by type instead of
-  // trusting position, same defensive pattern triage.py already uses
-  // server-side for Haiku.
+  // Defense in depth, kept even with thinking disabled above: still filter
+  // by block type rather than trusting position, matching the pattern
+  // triage.py already uses server-side for Haiku. Throws a clear,
+  // diagnosable error instead of silently handing undefined to a caller
+  // three functions away.
   const blocks = d.content || [];
   const text = blocks.filter(b => b.type === 'text').map(b => b.text || '').join('');
   if (!text) {
@@ -1203,7 +1211,7 @@ async function generateStory(story){
   const pkg = {};
   for (const sec of SECS){
     setStatus(story, story.title.slice(0,40)+' · '+sec+'…');
-    try { pkg[sec] = cleanSectionText(sec, await ai(makePrompt(sec, artsText+angleBlock+contextBlock(story)+notesBlock()+priorSectionsBlock(pkg), []), 1500)); }
+    try { pkg[sec] = cleanSectionText(sec, await ai(makePrompt(sec, artsText+angleBlock+contextBlock(story)+notesBlock()+priorSectionsBlock(pkg), []), 2500)); }
     catch(e){ pkg[sec] = '[Generation failed: '+e.message+']'; }
   }
   story.packages = pkg; story.generatedAt = new Date().toISOString(); story.outOpen = true;
@@ -1228,7 +1236,7 @@ async function reviseSection(story, sectionName, note){
     : '\n\nThis section is being regenerated at the editor\'s request with no specific note — reconsider it freshly against the source material and the standing editorial notes above.';
   try {
     story.packages[sectionName] = cleanSectionText(sectionName, await ai(makePrompt(sectionName,
-      artsText+angleBlock+contextBlock(story)+notesBlock()+siblings+revisionNote, []), 1500));
+      artsText+angleBlock+contextBlock(story)+notesBlock()+siblings+revisionNote, []), 2500));
     setStatus(story,'Revised '+sectionName+'.');
   } catch(e){ setStatus(story,'Revise failed: '+e.message,true); }
   story.busy=false; saveLineup(); render();
