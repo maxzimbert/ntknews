@@ -53,7 +53,9 @@ For the story below (headlines from one or more publishers), produce:
 
 5. POLITICIAN_LED — true if the story's primary actor is a politician or government official, false otherwise.
 
-6. HEADLINE — write a real headline for this cluster, from what these headlines actually say together. Do NOT copy any single article's headline verbatim. Under 90 characters. If the supplied headlines are themselves a roundup/digest ("Best Shows This Week," "5 things to know") rather than one coherent story, write a headline describing THAT — e.g. "Weekly culture roundup" — never adopt the roundup's own clickbait title.
+6. PROGRESS_CODED — true if the story's primary throughline is an identifiable actor or institution doing something about a problem: reform in motion, an investigation advancing accountability, a fix being built, a whistleblower, a policy correction with real action behind it. False for a pure event/disaster/failure story. False if the "response" is only a statement or promise with no concrete action yet. When in doubt, false — this signal gates promotion eligibility for singleton stories elsewhere in the pipeline, so a false positive costs more than a false negative.
+
+7. HEADLINE — write a real headline for this cluster, from what these headlines actually say together. Do NOT copy any single article's headline verbatim. Under 90 characters. If the supplied headlines are themselves a roundup/digest ("Best Shows This Week," "5 things to know") rather than one coherent story, write a headline describing THAT — e.g. "Weekly culture roundup" — never adopt the roundup's own clickbait title.
 
    Most true headlines are written at the flattest level of the story — the
    administrative fact, not the stakes. Find the sharpest TRUE sentence
@@ -82,7 +84,7 @@ For the story below (headlines from one or more publishers), produce:
    headline always beats a sharp inaccurate one. No wordplay.
 
 Respond ONLY with JSON, no preamble, no markdown fences:
-{"beat": "<one of the beats>", "line": "<one sentence or empty string>", "verdict": "YES"|"MAYBE"|"NO", "emotional_load": <1-5>, "explainability": <1-5>, "actionability": <1-5>, "conversational_currency": <1-5>, "politician_led": true|false, "headline": "<generated headline>"}"""
+{"beat": "<one of the beats>", "line": "<one sentence or empty string>", "verdict": "YES"|"MAYBE"|"NO", "emotional_load": <1-5>, "explainability": <1-5>, "actionability": <1-5>, "conversational_currency": <1-5>, "politician_led": true|false, "progress_coded": true|false, "headline": "<generated headline>"}"""
 
 
 def log(msg):
@@ -93,7 +95,7 @@ def fingerprint(cluster):
     # Re-triage when a cluster roughly doubles in publisher diversity
     d = cluster["publisher_count"]
     bucket = 1 if d < 2 else (2 if d < 4 else 4)
-    return f"{cluster['key']}:{bucket}:v4"   # :v4 — cached pre-punch-up-rubric headlines must re-run
+    return f"{cluster['key']}:{bucket}:v5"   # :v5 — cached pre-progress_coded verdicts must re-run
 
 
 def _parse_json_lenient(text):
@@ -148,6 +150,7 @@ def call_claude(api_key, cluster):
         except (TypeError, ValueError):
             verdict[axis] = 3
     verdict["politician_led"] = bool(verdict.get("politician_led", False))
+    verdict["progress_coded"] = bool(verdict.get("progress_coded", False))
     hl = (verdict.get("headline") or "").strip()
     verdict["headline"] = hl[:120] if hl else None  # None -> caller falls back to raw title
     return verdict
