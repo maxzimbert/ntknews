@@ -844,6 +844,24 @@
     display: block;
   }
 
+  .story-hero-wrap {
+    background: var(--dark);
+  }
+
+  .story-hero-image-wrap {
+    width: 100%;
+    height: 220px;
+    overflow: hidden;
+    clip-path: polygon(0 0, 100% 0, 100% 88%, 0 100%);
+  }
+
+  .story-hero-image-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
   .story-hero {
     background: var(--dark);
     padding: 24px 20px 28px;
@@ -1766,10 +1784,16 @@
       </div>
     </header>
 
-    <div class="story-hero">
-      <div class="story-hero-category" id="storyCategory"></div>
-      <div class="story-hero-headline" id="storyHeadline"></div>
-      <div class="story-hero-lede" id="storyLede"></div>
+    <div class="story-hero-wrap">
+      <div class="story-hero-image-wrap" id="storyHeroImageWrap" style="display:none;">
+        <img id="storyHeroImage" src="" alt="">
+      </div>
+
+      <div class="story-hero">
+        <div class="story-hero-category" id="storyCategory"></div>
+        <div class="story-hero-headline" id="storyHeadline"></div>
+        <div class="story-hero-lede" id="storyLede"></div>
+      </div>
     </div>
 
     <div class="story-sections" id="storySections">
@@ -1970,9 +1994,9 @@ function buildDigest() {
       const b = parseInt(s.overlayColor.slice(5,7),16);
       const op = ((s.overlayOpacity || 45) / 100).toFixed(2);
       html += `
-        <div class="card-wrapper" id="wrap-0" style="margin-bottom:12px; border-radius:10px; overflow:hidden;">
+        <div class="card-wrapper" id="wrap-${i}" style="margin-bottom:12px; border-radius:10px; overflow:hidden;">
           <div class="swipe-bg"><span class="swipe-bg-label">✓ Read</span></div>
-          <div class="featured-hero" id="card-0" onclick="openStory(0)" style="cursor:pointer; margin-bottom:0;">
+          <div class="featured-hero" id="card-${i}" onclick="openStory(${i})" style="cursor:pointer; margin-bottom:0;">
             <div class="featured-hero-image-wrap">
               <img src="${s.featuredImage}" alt="">
               <div class="featured-hero-overlay" style="background:rgba(${r},${g},${b},${op});"></div>
@@ -2391,6 +2415,13 @@ function openStory(index) {
   document.getElementById('storyCategory').textContent = s.category;
   document.getElementById('storyHeadline').textContent = s.headline;
   document.getElementById('storyLede').textContent = s.lede;
+  if (s.featuredImage) {
+    document.getElementById('storyHeroImage').src = s.featuredImage;
+    document.getElementById('storyHeroImageWrap').style.display = 'block';
+  } else {
+    document.getElementById('storyHeroImage').src = '';
+    document.getElementById('storyHeroImageWrap').style.display = 'none';
+  }
   document.getElementById('truth-body').innerHTML = stripOuterQuotes(s.truth);
   document.getElementById('prob-body').innerHTML = stripOuterQuotes(s.prob);
   document.getElementById('poss-body').innerHTML = stripOuterQuotes(s.poss);
