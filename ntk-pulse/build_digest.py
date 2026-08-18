@@ -346,6 +346,51 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
 
   .section-body p:last-child {{ margin-bottom: 0; }}
 
+  .ntk-pullquote {{
+    border-left: 3px solid var(--blue);
+    margin: 18px 0;
+    padding: 12px 16px;
+    background: rgba(7,152,242,0.04);
+  }}
+  .ntk-pq-text {{
+    font-family: 'Source Serif 4', serif;
+    font-size: 19px !important;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.5 !important;
+    color: var(--dark);
+    margin-bottom: 7px !important;
+  }}
+  .ntk-pq-cite {{
+    display: block;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--blue);
+    font-style: normal;
+  }}
+  .ntk-stat {{
+    border-left: 3px solid var(--amber);
+    margin: 18px 0;
+    padding: 14px 16px;
+    background: rgba(242,174,46,0.05);
+  }}
+  .ntk-stat-num {{
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 34px;
+    font-weight: 700;
+    color: var(--amber);
+    line-height: 1.1;
+    margin-bottom: 5px;
+  }}
+  .ntk-stat-ctx {{
+    font-family: 'Source Serif 4', serif;
+    font-size: 14px;
+    color: rgba(38,31,35,0.72);
+    line-height: 1.5;
+  }}
+
   .back-footer {{
     display: block;
     text-align: center;
