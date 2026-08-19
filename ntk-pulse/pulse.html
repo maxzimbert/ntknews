@@ -452,10 +452,24 @@ async function ai(prompt, maxTok=1500){
 // Style is optional and only meaningful on V2/V3 models; the model choice
 // itself (not the style string) is what determines raster vs vector output
 // — anything ending _vector returns SVG.
-async function recraftGenerate(prompt, model, style, size, n){
+// NTK brand defaults — applied to every Recraft call automatically so the
+// "global rules" live in code, not in something typed per-prompt. Recraft
+// itself has no persistent memory between calls; this is how we fake it
+// until there's a real style_id (see the style guide, §7).
+const NTK_BRAND_COLORS = [
+  [7,152,242],   // electric blue
+  [242,174,46],  // amber
+  [220,101,80],  // terracotta
+  [114,90,191],  // purple
+  [1,178,167],   // teal
+];
+const NTK_BRAND_SUFFIX = 'Documentary, restrained composition, no embedded text, no generic corporate iconography.';
+
+async function recraftGenerate(prompt, model, style, size, n, useBrandColors){
   if (!SETTINGS.recraftKey) throw new Error('No Recraft key — set it in ⚙');
   const body = { prompt, model, size, n, response_format:'url' };
   if (style) body.style = style;
+  if (useBrandColors) body.controls = { colors: NTK_BRAND_COLORS.map(rgb=>({rgb})) };
   const r = await fetch('https://external.api.recraft.ai/v1/images/generations', {
     method:'POST',
     headers:{ 'Authorization':'Bearer '+SETTINGS.recraftKey, 'Content-Type':'application/json' },
@@ -512,16 +526,14 @@ async function generateStoryImage(story, promptOverride){
   story.imgBusy = true; story.imgErr = ''; render();
   try {
     const prompt = promptOverride || story.imgGenPrompt || buildImgPrompt(story);
-    story.imgGenPrompt = prompt;
+    story.imgGenPrompt = prompt; // stored/displayed unsuffixed — suffix is applied silently below
     const model = story.imgGenModel || 'recraftv4_1';
-    // Style presets (digital_illustration, vector_illustration/*, etc.) are
-    // V2/V3-only — Recraft rejects them with a 400 on any V4/V4.1 model.
-    // Enforced here regardless of what the dropdown holds, since leaving
-    // this to the UI alone is exactly what produced the 400 just now.
     const styleCompatible = /^recraftv[23]/.test(model);
     const style = styleCompatible ? (story.imgGenStyle || '') : '';
     const size = story.imgGenSize || '1:1';
-    story.imgCandidates = await recraftGenerate(prompt, model, style, size, 4);
+    const useBrandColors = story.imgGenUseColors !== false; // default on
+    const finalPrompt = prompt + ' ' + NTK_BRAND_SUFFIX;
+    story.imgCandidates = await recraftGenerate(finalPrompt, model, style, size, 4, useBrandColors);
   } catch (e) {
     story.imgErr = e.message;
   } finally {
@@ -2114,6 +2126,7 @@ function renderLineup(root){
           `<option value="1:1"${(s.imgGenSize||'1:1')==='1:1'?' selected':''}>square</option>`+
           `<option value="16:9"${s.imgGenSize==='16:9'?' selected':''}>wide (16:9)</option>`+
         `</select>`+
+        `<label style="font-size:11px;display:flex;align-items:center;gap:4px;white-space:nowrap"><input type="checkbox" class="img-gen-usecolors" ${s.imgGenUseColors!==false?'checked':''}> NTK palette</label>`+
         `<button class="mini go img-gen-go" ${s.imgBusy?'disabled':''}>${s.imgBusy?'generating…':'generate'}</button>`+
         `</div>`+
         (s.imgErr ? `<div class="story-status err">${esc(s.imgErr)}</div>` : '')+
@@ -2172,6 +2185,7 @@ function renderLineup(root){
     el.querySelector('.img-gen-model')?.addEventListener('change',e=>{ s.imgGenModel=e.target.value; render(); });
     el.querySelector('.img-gen-style')?.addEventListener('change',e=>{ s.imgGenStyle=e.target.value; });
     el.querySelector('.img-gen-size')?.addEventListener('change',e=>{ s.imgGenSize=e.target.value; });
+    el.querySelector('.img-gen-usecolors')?.addEventListener('change',e=>{ s.imgGenUseColors=e.target.checked; });
     el.querySelector('.img-gen-go')?.addEventListener('click',()=>{
       const p = el.querySelector('.img-gen-prompt');
       generateStoryImage(s, p ? p.value : undefined);
