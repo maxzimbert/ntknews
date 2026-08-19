@@ -514,7 +514,12 @@ async function generateStoryImage(story, promptOverride){
     const prompt = promptOverride || story.imgGenPrompt || buildImgPrompt(story);
     story.imgGenPrompt = prompt;
     const model = story.imgGenModel || 'recraftv4_1';
-    const style = story.imgGenStyle || '';
+    // Style presets (digital_illustration, vector_illustration/*, etc.) are
+    // V2/V3-only — Recraft rejects them with a 400 on any V4/V4.1 model.
+    // Enforced here regardless of what the dropdown holds, since leaving
+    // this to the UI alone is exactly what produced the 400 just now.
+    const styleCompatible = /^recraftv[23]/.test(model);
+    const style = styleCompatible ? (story.imgGenStyle || '') : '';
     const size = story.imgGenSize || '1024x1024';
     story.imgCandidates = await recraftGenerate(prompt, model, style, size, 4);
   } catch (e) {
@@ -2099,7 +2104,7 @@ function renderLineup(root){
           `<option value="recraftv3"${s.imgGenModel==='recraftv3'?' selected':''}>Raster — V3 (style presets)</option>`+
           `<option value="recraftv3_vector"${s.imgGenModel==='recraftv3_vector'?' selected':''}>Vector — V3 (style presets)</option>`+
         `</select>`+
-        `<select class="img-gen-style">`+
+        `<select class="img-gen-style" ${/^recraftv[23]/.test(s.imgGenModel||'recraftv4_1')?'':'disabled title="style presets only apply to V2/V3 models"'}>`+
           `<option value="">no style preset</option>`+
           `<option value="realistic_image"${s.imgGenStyle==='realistic_image'?' selected':''}>realistic</option>`+
           `<option value="digital_illustration"${s.imgGenStyle==='digital_illustration'?' selected':''}>illustration</option>`+
@@ -2164,7 +2169,7 @@ function renderLineup(root){
       saveLineup(); render();
     });
     el.querySelector('.img-gen-prompt')?.addEventListener('change',e=>{ s.imgGenPrompt=e.target.value; });
-    el.querySelector('.img-gen-model')?.addEventListener('change',e=>{ s.imgGenModel=e.target.value; });
+    el.querySelector('.img-gen-model')?.addEventListener('change',e=>{ s.imgGenModel=e.target.value; render(); });
     el.querySelector('.img-gen-style')?.addEventListener('change',e=>{ s.imgGenStyle=e.target.value; });
     el.querySelector('.img-gen-size')?.addEventListener('change',e=>{ s.imgGenSize=e.target.value; });
     el.querySelector('.img-gen-go')?.addEventListener('click',()=>{
