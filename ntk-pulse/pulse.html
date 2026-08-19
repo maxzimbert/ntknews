@@ -541,6 +541,86 @@ async function generateStoryImage(story, promptOverride){
   }
 }
 
+// Wikimedia Commons search, ranked toward 16:9. The MediaWiki API supports
+// anonymous cross-origin calls via origin=* — no key, no CORS uncertainty,
+// unlike Recraft. This can't judge "best" editorially — it surfaces
+// landscape-leaning candidates with real width/height so you're picking from
+// a shortlist instead of scrolling a wall of portrait crops.
+async function commonsSearch(query){
+  const url = 'https://commons.wikimedia.org/w/api.php?action=query&generator=search'+
+    '&gsrsearch='+encodeURIComponent(query)+'&gsrnamespace=6&gsrlimit=40'+
+    '&prop=imageinfo&iiprop=url|size|extmetadata&format=json&origin=*';
+  const r = await fetch(url);
+  if (!r.ok) throw new Error('Commons error '+r.status);
+  const d = await r.json();
+  const pages = d.query && d.query.pages ? Object.values(d.query.pages) : [];
+  const results = pages.map(p=>{
+    const info = p.imageinfo && p.imageinfo[0];
+    if (!info || !info.width || !info.height) return null;
+    const meta = info.extmetadata || {};
+    const strip = html => { const d = document.createElement('div'); d.innerHTML = html||''; return d.textContent.trim(); };
+    return {
+      title: p.title,
+      url: info.url,
+      width: info.width,
+      height: info.height,
+      ratio: info.width / info.height,
+      credit: strip(meta.Artist && meta.Artist.value) || strip(meta.Credit && meta.Credit.value) || '',
+      license: meta.LicenseShortName ? meta.LicenseShortName.value : '',
+      attributionRequired: !(meta.LicenseShortName && /public domain|pd-/i.test(meta.LicenseShortName.value))
+    };
+  }).filter(Boolean)
+    .filter(x=>x.ratio > 1.2) // landscape only — drop portrait crops before ranking
+    .sort((a,b)=>Math.abs(a.ratio-16/9)-Math.abs(b.ratio-16/9)); // closest to 16:9 first
+  return results.slice(0, 12);
+}
+async function searchStoryCommons(story, queryOverride){
+  story.commonsBusy = true; story.commonsErr = ''; render();
+  try {
+    const q = queryOverride || story.commonsQuery || story.title;
+    story.commonsQuery = q;
+    story.commonsResults = await commonsSearch(q);
+  } catch (e) {
+    story.commonsErr = e.message;
+  } finally {
+    story.commonsBusy = false; saveLineup(); render();
+  }
+}
+// Same lock pipeline as Recraft — compress to the standard 800px JPEG so a
+// Commons pick lands in featuredImage identically either way. Commons images
+// are served with CORS headers, so the canvas read should succeed; same
+// URL-fallback safety net as the Recraft path if it doesn't.
+function lockCommonsImage(story, result){
+  story.status = 'Fetching Commons image…'; render();
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => {
+    try {
+      const canvas = document.createElement('canvas');
+      const MAX_W = 800, ratio = Math.min(MAX_W / img.width, 1);
+      canvas.width = Math.round(img.width * ratio);
+      canvas.height = Math.round(img.height * ratio);
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      story.featuredImage = canvas.toDataURL('image/jpeg', 0.85);
+    } catch (e) {
+      story.featuredImage = result.url;
+      story.status = 'Locked (stored as a direct URL — canvas read was CORS-blocked).';
+    }
+    story.featuredImageCredit = result.attributionRequired
+      ? (result.credit + (result.license ? ' · ' + result.license : '')).trim()
+      : '';
+    story.overlayColor = story.overlayColor || '#0798F2';
+    story.overlayOpacity = story.overlayOpacity || 45;
+    story.commonsOpen = false; story.commonsResults = null;
+    saveLineup(); render();
+  };
+  img.onerror = () => {
+    story.status = 'Could not load that Commons image. Try another candidate.';
+    render();
+  };
+  img.src = result.url;
+}
+
 function proxyUrl(params){
   const base = (SETTINGS.proxyBase||'').replace(/\/+$/,'');
   if (!base) throw new Error('No proxy base — set the Netlify domain in ⚙');
@@ -767,7 +847,7 @@ function handleStoryImageUpload(story, file){
   reader.readAsDataURL(file);
 }
 function clearStoryImage(story){
-  delete story.featuredImage; delete story.overlayColor; delete story.overlayOpacity;
+  delete story.featuredImage; delete story.overlayColor; delete story.overlayOpacity; delete story.featuredImageCredit;
   saveLineup(); render();
 }
 
@@ -779,7 +859,8 @@ function toSiteStoryBlock(story){
   const imgFields = story.featuredImage ? `,
     featuredImage: "${jsEsc(story.featuredImage)}",
     overlayColor: "${jsEsc(story.overlayColor || '#0798F2')}",
-    overlayOpacity: ${story.overlayOpacity || 45}` : '';
+    overlayOpacity: ${story.overlayOpacity || 45}${story.featuredImageCredit ? `,
+    featuredImageCredit: "${jsEsc(story.featuredImageCredit)}"` : ''}` : '';
   return `  {
     category: "${jsEsc((story.categoryCustom||'').trim() || story.category)}",
     headline: "${jsEsc(headline)}",
@@ -1371,6 +1452,7 @@ function storyDataExport(){
         featuredImage: s.featuredImage || null,
         overlayColor: s.overlayColor || '#0798F2',
         overlayOpacity: s.overlayOpacity || 45,
+        featuredImageCredit: s.featuredImageCredit || null,
       };
     }), null, 1);
 }
@@ -2102,9 +2184,11 @@ function renderLineup(root){
       (s.featuredImage
         ? `<img class="img-thumb" src="${s.featuredImage}">`
         : `<div class="img-thumb-empty">no photo</div>`)+
+      (s.featuredImageCredit ? `<div style="font-size:10px;color:var(--dim);max-width:160px">credit required: ${esc(s.featuredImageCredit)}</div>` : '')+
       `<input type="file" accept="image/*" class="img-file" id="imgfile-${s.id}">`+
       `<label for="imgfile-${s.id}" class="mini img-upload-label" style="cursor:pointer">${s.featuredImage?'replace photo':'add photo'}</label>`+
       `<button class="mini img-gen-toggle">${s.imgGenOpen?'close':'generate photo'}</button>`+
+      `<button class="mini img-commons-toggle">${s.commonsOpen?'close':'find photo'}</button>`+
       (s.featuredImage ? `<button class="mini img-clear">remove</button>` : '')+
       `</div>`+
       (s.imgGenOpen ? `<div class="qpanel">`+
@@ -2133,6 +2217,21 @@ function renderLineup(root){
         (s.imgCandidates && s.imgCandidates.length ? `<div class="qrow" style="flex-wrap:wrap">`+
           s.imgCandidates.map((u,i)=>`<div style="text-align:center"><img src="${u}" style="width:110px;height:110px;object-fit:cover;border:1px solid var(--rule);display:block"><button class="mini img-gen-lock" data-i="${i}" style="margin-top:2px">use this</button></div>`).join('')+
           `</div>` : '')+
+        `</div>` : '')+
+      (s.commonsOpen ? `<div class="qpanel">`+
+        `<div class="qrow">`+
+        `<input type="text" class="img-commons-q" value="${esc(s.commonsQuery || s.title || '')}" placeholder="person, place, or thing — e.g. Marco Rubio">`+
+        `<button class="mini go img-commons-go" ${s.commonsBusy?'disabled':''}>${s.commonsBusy?'searching…':'search'}</button>`+
+        `</div>`+
+        `<div style="font-size:11px;color:var(--dim);margin-top:4px">Landscape results only, ranked closest to 16:9. Editorial pick is still yours.</div>`+
+        (s.commonsErr ? `<div class="story-status err">${esc(s.commonsErr)}</div>` : '')+
+        (s.commonsResults && s.commonsResults.length ? `<div class="qrow" style="flex-wrap:wrap;margin-top:8px">`+
+          s.commonsResults.map((r,i)=>`<div style="text-align:center;width:140px">`+
+            `<img src="${r.url}" style="width:140px;height:79px;object-fit:cover;border:1px solid var(--rule);display:block">`+
+            `<div style="font-size:10px;color:var(--dim);margin-top:2px">${r.width}×${r.height} · ${esc(r.license||'unknown license')}</div>`+
+            `<button class="mini img-commons-lock" data-i="${i}" style="margin-top:2px">use this</button>`+
+            `</div>`).join('')+
+          `</div>` : (s.commonsResults ? `<div style="font-size:12px;color:var(--dim);margin-top:8px">No landscape results — try a different search term.</div>` : ''))+
         `</div>` : '')+
       `<div class="concept-row">`+
       `<span style="font-size:10.5px;color:var(--dim)">concept:</span>`+
@@ -2192,6 +2291,18 @@ function renderLineup(root){
     });
     el.querySelectorAll('.img-gen-lock').forEach(btn=>{
       btn.addEventListener('click',()=>lockGeneratedImage(s, s.imgCandidates[+btn.dataset.i]));
+    });
+    el.querySelector('.img-commons-toggle').addEventListener('click',()=>{
+      s.commonsOpen = !s.commonsOpen;
+      saveLineup(); render();
+    });
+    el.querySelector('.img-commons-q')?.addEventListener('change',e=>{ s.commonsQuery=e.target.value; });
+    el.querySelector('.img-commons-go')?.addEventListener('click',()=>{
+      const q = el.querySelector('.img-commons-q');
+      searchStoryCommons(s, q ? q.value : undefined);
+    });
+    el.querySelectorAll('.img-commons-lock').forEach(btn=>{
+      btn.addEventListener('click',()=>lockCommonsImage(s, s.commonsResults[+btn.dataset.i]));
     });
     el.querySelector('.reconnect-accept')?.addEventListener('click',()=>acceptReconnect(s));
     el.querySelector('.reconnect-dismiss')?.addEventListener('click',()=>dismissReconnect(s));
