@@ -238,6 +238,8 @@
       <input id="set-proxy" type="text" placeholder="https://your-site.netlify.app">
       <label>GitHub token (scoped: contents write, this repo only) — powers Publish</label>
       <input id="set-ghtoken" type="password" placeholder="github_pat_…">
+      <label>Recraft API key — powers Generate photo</label>
+      <input id="set-recraftkey" type="password" placeholder="paste from Recraft → profile → API">
     </div>
     <div>
       <label>Body chars per article</label>
@@ -279,7 +281,7 @@ const LS = {
   manual:   'ntk_pulse_manual_clusters_v1',
 };
 function load(k, fallback) { try { const v = JSON.parse(localStorage.getItem(k)); return v ?? fallback; } catch { return fallback; } }
-let SETTINGS = load(LS.settings, { antKey:'', proxyBase:'', ghToken:'', bodyLen:4000, maxArts:15 });
+let SETTINGS = load(LS.settings, { antKey:'', proxyBase:'', ghToken:'', recraftKey:'', bodyLen:4000, maxArts:15 });
 let LINEUP = load(LS.lineup, []);          // [{id, title, angle, beat, category, conceptEntity, narrowKeyword, articles:[], enrichedAt, packages, busy?, status?, open?, outOpen?}]
 let SUP = load(LS.sup, {});                 // canonical url -> true  (editor suppressions, global, persistent)
 // Standing editorial notes: ongoing directives that ride into every
@@ -445,6 +447,83 @@ async function ai(prompt, maxTok=1500){
   }
   return text;
 }
+// Recraft image generation. Direct browser call, same convention as ai()
+// above — key lives in SETTINGS/localStorage only, never written to a file.
+// Style is optional and only meaningful on V2/V3 models; the model choice
+// itself (not the style string) is what determines raster vs vector output
+// — anything ending _vector returns SVG.
+async function recraftGenerate(prompt, model, style, size, n){
+  if (!SETTINGS.recraftKey) throw new Error('No Recraft key — set it in ⚙');
+  const body = { prompt, model, size, n, response_format:'url' };
+  if (style) body.style = style;
+  const r = await fetch('https://external.api.recraft.ai/v1/images/generations', {
+    method:'POST',
+    headers:{ 'Authorization':'Bearer '+SETTINGS.recraftKey, 'Content-Type':'application/json' },
+    body: JSON.stringify(body)
+  });
+  const raw = await r.text();
+  if (!r.ok) throw new Error('Recraft error '+r.status+': '+raw.slice(0,400));
+  let d; try { d = JSON.parse(raw); } catch { throw new Error('Non-JSON response: '+raw.slice(0,400)); }
+  return (d.data||[]).map(x=>x.url).filter(Boolean);
+}
+function buildImgPrompt(story){
+  const seed = [story.title, story.angle].filter(Boolean).join('. ');
+  return `Editorial illustration for a news story. ${seed}. `+
+    `Clean composition, no embedded text, suitable as a digest card header image.`;
+}
+// Pulls a generated image down and runs it through the exact same
+// compress-to-800px-JPEG-base64 pipeline as handleStoryImageUpload, so a
+// Recraft pick lands in story.featuredImage identically to an uploaded
+// photo — same schema, same build script decode step downstream. Falls
+// back to storing the bare Recraft URL only if the canvas read is blocked
+// (cross-origin without CORS headers) — flag that to the reader in status
+// if it happens, since a raw URL skips the usual base64-decode-on-build step.
+function lockGeneratedImage(story, url){
+  story.status = 'Fetching generated image…'; render();
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => {
+    try {
+      const canvas = document.createElement('canvas');
+      const MAX_W = 800, ratio = Math.min(MAX_W / img.width, 1);
+      canvas.width = Math.round(img.width * ratio);
+      canvas.height = Math.round(img.height * ratio);
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      story.featuredImage = canvas.toDataURL('image/jpeg', 0.75);
+    } catch (e) {
+      // Tainted canvas — CORS blocked the pixel read. Store the direct URL
+      // instead so the pick isn't lost; note this differs from the uploaded-
+      // photo path and won't go through the base64 decode step in the build script.
+      story.featuredImage = url;
+      story.status = 'Locked (stored as a direct URL — canvas read was CORS-blocked, so this bypasses the usual base64 export step).';
+    }
+    story.overlayColor = story.overlayColor || '#0798F2';
+    story.overlayOpacity = story.overlayOpacity || 45;
+    story.imgGenOpen = false; story.imgCandidates = null;
+    saveLineup(); render();
+  };
+  img.onerror = () => {
+    story.status = 'Could not load the generated image (network or CORS). Try again or download and use "add photo" instead.';
+    render();
+  };
+  img.src = url;
+}
+async function generateStoryImage(story, promptOverride){
+  story.imgBusy = true; story.imgErr = ''; render();
+  try {
+    const prompt = promptOverride || story.imgGenPrompt || buildImgPrompt(story);
+    story.imgGenPrompt = prompt;
+    const model = story.imgGenModel || 'recraftv4_1';
+    const style = story.imgGenStyle || '';
+    const size = story.imgGenSize || '1024x1024';
+    story.imgCandidates = await recraftGenerate(prompt, model, style, size, 4);
+  } catch (e) {
+    story.imgErr = e.message;
+  } finally {
+    story.imgBusy = false; saveLineup(); render();
+  }
+}
+
 function proxyUrl(params){
   const base = (SETTINGS.proxyBase||'').replace(/\/+$/,'');
   if (!base) throw new Error('No proxy base — set the Netlify domain in ⚙');
@@ -2008,8 +2087,35 @@ function renderLineup(root){
         : `<div class="img-thumb-empty">no photo</div>`)+
       `<input type="file" accept="image/*" class="img-file" id="imgfile-${s.id}">`+
       `<label for="imgfile-${s.id}" class="mini img-upload-label" style="cursor:pointer">${s.featuredImage?'replace photo':'add photo'}</label>`+
+      `<button class="mini img-gen-toggle">${s.imgGenOpen?'close':'generate photo'}</button>`+
       (s.featuredImage ? `<button class="mini img-clear">remove</button>` : '')+
       `</div>`+
+      (s.imgGenOpen ? `<div class="qpanel">`+
+        `<div class="qrow"><textarea class="img-gen-prompt" style="min-height:44px">${esc(s.imgGenPrompt || buildImgPrompt(s))}</textarea></div>`+
+        `<div class="qrow">`+
+        `<select class="img-gen-model">`+
+          `<option value="recraftv4_1"${(s.imgGenModel||'recraftv4_1')==='recraftv4_1'?' selected':''}>Raster — V4.1</option>`+
+          `<option value="recraftv4_1_vector"${s.imgGenModel==='recraftv4_1_vector'?' selected':''}>Vector — V4.1</option>`+
+          `<option value="recraftv3"${s.imgGenModel==='recraftv3'?' selected':''}>Raster — V3 (style presets)</option>`+
+          `<option value="recraftv3_vector"${s.imgGenModel==='recraftv3_vector'?' selected':''}>Vector — V3 (style presets)</option>`+
+        `</select>`+
+        `<select class="img-gen-style">`+
+          `<option value="">no style preset</option>`+
+          `<option value="realistic_image"${s.imgGenStyle==='realistic_image'?' selected':''}>realistic</option>`+
+          `<option value="digital_illustration"${s.imgGenStyle==='digital_illustration'?' selected':''}>illustration</option>`+
+          `<option value="vector_illustration/line_art"${s.imgGenStyle==='vector_illustration/line_art'?' selected':''}>line art</option>`+
+        `</select>`+
+        `<select class="img-gen-size">`+
+          `<option value="1024x1024"${(s.imgGenSize||'1024x1024')==='1024x1024'?' selected':''}>square</option>`+
+          `<option value="1820x1024"${s.imgGenSize==='1820x1024'?' selected':''}>wide</option>`+
+        `</select>`+
+        `<button class="mini go img-gen-go" ${s.imgBusy?'disabled':''}>${s.imgBusy?'generating…':'generate'}</button>`+
+        `</div>`+
+        (s.imgErr ? `<div class="story-status err">${esc(s.imgErr)}</div>` : '')+
+        (s.imgCandidates && s.imgCandidates.length ? `<div class="qrow" style="flex-wrap:wrap">`+
+          s.imgCandidates.map((u,i)=>`<div style="text-align:center"><img src="${u}" style="width:110px;height:110px;object-fit:cover;border:1px solid var(--rule);display:block"><button class="mini img-gen-lock" data-i="${i}" style="margin-top:2px">use this</button></div>`).join('')+
+          `</div>` : '')+
+        `</div>` : '')+
       `<div class="concept-row">`+
       `<span style="font-size:10.5px;color:var(--dim)">concept:</span>`+
       `<input type="text" class="concept-in" placeholder="Wikipedia entity — disambiguate here if needed" value="${esc(s.conceptEntity)}">`+
@@ -2052,6 +2158,22 @@ function renderLineup(root){
       handleStoryImageUpload(s, e.target.files[0]);
     });
     el.querySelector('.img-clear')?.addEventListener('click',()=>clearStoryImage(s));
+    el.querySelector('.img-gen-toggle').addEventListener('click',()=>{
+      s.imgGenOpen = !s.imgGenOpen;
+      if (s.imgGenOpen && !s.imgGenPrompt) s.imgGenPrompt = buildImgPrompt(s);
+      saveLineup(); render();
+    });
+    el.querySelector('.img-gen-prompt')?.addEventListener('change',e=>{ s.imgGenPrompt=e.target.value; });
+    el.querySelector('.img-gen-model')?.addEventListener('change',e=>{ s.imgGenModel=e.target.value; });
+    el.querySelector('.img-gen-style')?.addEventListener('change',e=>{ s.imgGenStyle=e.target.value; });
+    el.querySelector('.img-gen-size')?.addEventListener('change',e=>{ s.imgGenSize=e.target.value; });
+    el.querySelector('.img-gen-go')?.addEventListener('click',()=>{
+      const p = el.querySelector('.img-gen-prompt');
+      generateStoryImage(s, p ? p.value : undefined);
+    });
+    el.querySelectorAll('.img-gen-lock').forEach(btn=>{
+      btn.addEventListener('click',()=>lockGeneratedImage(s, s.imgCandidates[+btn.dataset.i]));
+    });
     el.querySelector('.reconnect-accept')?.addEventListener('click',()=>acceptReconnect(s));
     el.querySelector('.reconnect-dismiss')?.addEventListener('click',()=>dismissReconnect(s));
     el.querySelectorAll('.punch-pick').forEach(btn=>{
@@ -2408,14 +2530,16 @@ document.getElementById('gear').addEventListener('click',()=>{
   document.getElementById('set-key').value=SETTINGS.antKey;
   document.getElementById('set-proxy').value=SETTINGS.proxyBase;
   document.getElementById('set-ghtoken').value=SETTINGS.ghToken||'';
+  document.getElementById('set-recraftkey').value=SETTINGS.recraftKey||'';
   document.getElementById('set-bodylen').value=SETTINGS.bodyLen;
   document.getElementById('set-maxarts').value=SETTINGS.maxArts;
 });
-['set-key','set-proxy','set-ghtoken','set-bodylen','set-maxarts'].forEach(id=>{
+['set-key','set-proxy','set-ghtoken','set-recraftkey','set-bodylen','set-maxarts'].forEach(id=>{
   document.getElementById(id).addEventListener('change',e=>{
     if(id==='set-key') SETTINGS.antKey=e.target.value.trim();
     if(id==='set-proxy') SETTINGS.proxyBase=e.target.value.trim();
     if(id==='set-ghtoken') SETTINGS.ghToken=e.target.value.trim();
+    if(id==='set-recraftkey') SETTINGS.recraftKey=e.target.value.trim();
     if(id==='set-bodylen') SETTINGS.bodyLen=Math.max(500,parseInt(e.target.value)||4000);
     if(id==='set-maxarts') SETTINGS.maxArts=Math.min(30,Math.max(5,parseInt(e.target.value)||15));
     saveSettings();
