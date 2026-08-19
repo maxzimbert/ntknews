@@ -1,5 +1,5 @@
 {
- "assembled_at": "2026-08-19T08:45:23.211876+00:00",
+ "assembled_at": "2026-08-19T12:55:43.981701+00:00",
  "slot_plan": "A",
  "displacement": "MANUAL",
  "daytype": "weekday",
@@ -7,7 +7,7 @@
   8,
   10
  ],
- "actual_size": 58,
+ "actual_size": 10,
  "lint_failures": [
   "no item answers 'what do I do with this'"
  ],
@@ -16,59 +16,158 @@
   {
    "slot": "unavoidable",
    "slot_label": "Unavoidable",
-   "key": "9fdc44bd2ada8714",
-   "title": "Trump pauses Canadian tariffs after deal, hints at Keystone XL revival",
-   "beat": "business",
-   "publisher_count": 14,
+   "key": "8668d68cce10dcc6",
+   "title": "UAE cuts trade ties with Iran after missile strikes",
+   "beat": "international",
+   "publisher_count": 6,
    "publishers": [
-    "BBC",
-    "NPR",
     "New York Times",
-    "The Guardian",
     "ABC News",
-    "CBS News",
     "CNBC",
-    "Daily Beast",
-    "Deutsche Welle",
+    "Semafor",
     "The Independent",
-    "Daily Mail",
-    "Fox 5 Atlanta",
-    "Fox 5 DC",
     "Memeorandum"
    ],
    "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 3,
-    "conversational_currency": 4
+    "emotional_load": 4,
+    "explainability": 3,
+    "actionability": 1,
+    "conversational_currency": 3
    },
-   "politician_led": true,
+   "politician_led": false,
    "ledger_class": "DEVELOPMENT",
    "new_facts": [
-    "Trump paused the 50% Canada tariffs for three days via a 10:15pm Truth Social post",
-    "Deal could revive the Keystone XL pipeline project",
-    "Includes partial direct Trump quote explaining basis for the pause",
-    "Threatened tariffs would have covered about 5% of Canada's annual goods exports to the U.S."
+    "UAE imposes indefinite trade embargo on Iran over alleged missile attacks; Iran denies, calls it a false flag",
+    "Iran war nears six-month mark next week, both sides betting they can outlast the other",
+    "Iran reportedly took delivery of military materiel from Russia amid continued Strait of Hormuz strikes",
+    "US has ~50,000 troops and ~20 bases in region; drawdown possible after war ends",
+    "Iran threatens Trump's allies after alleged missile strikes on UAE shipping",
+    "Trump administration touts a formal naval blockade of the Strait of Hormuz and previews new sanctions"
    ],
-   "line": "Trump postpones 50% tariffs on Canadian goods after announcing a deal; Keystone XL pipeline revival appears linked.",
-   "assembly_score": 13.89
+   "line": "UAE halts trade with Iran after missile attacks; regional conflict enters sixth month with no clear end.",
+   "assembly_score": 15.71
   },
   {
    "slot": "money_me",
    "slot_label": "Money & me",
-   "key": "b50d220c649b09da",
-   "title": "Seoul tech stocks sink 6% as chip makers struggle",
+   "key": "fc1c78a3134f13c3",
+   "title": "Chinese robot maker Unitree surges 600% in Shanghai trading debut",
    "beat": "business",
+   "publisher_count": 7,
+   "publishers": [
+    "Financial Times",
+    "The Guardian",
+    "Al Jazeera",
+    "CNBC",
+    "NBC News",
+    "The Independent",
+    "ANSA"
+   ],
+   "scores": {
+    "emotional_load": 1,
+    "explainability": 5,
+    "actionability": 1,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Unitree's Shanghai market debut with shares surging as much as 620%, first report of the event.",
+    "Unitree unveiled new 'Superman' robot with 6-foot vertical jump and 40 ft/s top speed.",
+    "Adds market capitalization figure of $66 billion following the debut surge."
+   ],
+   "line": "Unitree, a Chinese humanoid robot maker, saw its shares surge 500-600% on its first day of trading in Shanghai.",
+   "assembly_score": 9.58
+  },
+  {
+   "slot": "body_mind",
+   "slot_label": "Body & mind",
+   "key": "62196d599537c8e7",
+   "title": "mRNA vaccine shown to prevent melanoma recurrence in trial",
+   "beat": "health",
    "publisher_count": 2,
    "publishers": [
-    "Al Jazeera",
-    "Yonhap News"
+    "Techmeme",
+    "Memeorandum"
    ],
    "scores": {
     "emotional_load": 2,
-    "explainability": 3,
+    "explainability": 4,
     "actionability": 1,
-    "conversational_currency": 2
+    "conversational_currency": 4
+   },
+   "politician_led": false,
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "An mRNA vaccine reduced melanoma recurrence in a clinical trial, marking the first proven preventive use of the technology against cancer.",
+   "assembly_score": 4.86
+  },
+  {
+   "slot": "work_machines",
+   "slot_label": "Work & machines",
+   "key": "62cf25f54fc61bf0",
+   "title": "Flock releases AI tool combining license plate data and case files for police",
+   "beat": "tech",
+   "publisher_count": 2,
+   "publishers": [
+    "Techmeme",
+    "Wired"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 4,
+    "actionability": 1,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "Police software company Flock deployed an AI system that combines license plate data, case files, and other records to assist investigations.",
+   "assembly_score": 4.26
+  },
+  {
+   "slot": "group_chat",
+   "slot_label": "The group chat",
+   "key": "c646f520eacbe320",
+   "title": "Hayden Panettiere dead at 36; police investigate with ex-partner's help",
+   "beat": "culture",
+   "publisher_count": 3,
+   "publishers": [
+    "Fox News",
+    "NBC News",
+    "Daily Mail"
+   ],
+   "scores": {
+    "emotional_load": 5,
+    "explainability": 5,
+    "actionability": 1,
+    "conversational_currency": 4
+   },
+   "politician_led": false,
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "New actor Hilary Duff shares personal tribute recalling past friendship with Panettiere.",
+    "Brian Hickerson called 911, found Panettiere unresponsive, handed police a bag of medication.",
+    "Redacted incident report shows Hickerson and brother Zach present; mother Lesley Vogel gives first public comment."
+   ],
+   "line": "Actress Hayden Panettiere found dead at 36; police investigating circumstances with ex-partner's cooperation.",
+   "assembly_score": 10.8
+  },
+  {
+   "slot": "elsewhere",
+   "slot_label": "Elsewhere, but here",
+   "key": "8c6a5fe442513e78",
+   "title": "S. Korea's venture investments touch new high in H1: data",
+   "beat": "international",
+   "publisher_count": 1,
+   "publishers": [
+    "Yonhap News"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
    },
    "politician_led": false,
    "ledger_class": "DEVELOPMENT",
@@ -79,170 +178,68 @@
     "Land minister says government is considering part of Yongsan Park as a housing site.",
     "SK hynix announces 40 trillion won share buyback (24.07 million shares) to boost shareholder returns.",
     "Special counsel seeks 10 million-won fine for ex-President Yoon over perjury.",
-    "South Korea's venture investments hit a new high in H1 data.",
-    "Seoul plans to cover all sidewalks with shade by 2028 to combat heat waves.",
-    "KDI raises 2026 growth outlook to 3.2 pct amid AI boom",
-    "Household credit rose at fastest pace in nearly 5 years to record high in Q2",
-    "S. Korea's industry minister met Howard Lutnick in Washington on trade/investment",
-    "Unification ministry to push for resumption of inter-Korean rail project next year",
-    "S. Korea won 4 medals at International Olympiad in Informatics"
-   ],
-   "line": "South Korean tech stocks plummet 6% as memory chip makers SK hynix and others navigate weak demand and rising interest rates.",
-   "assembly_score": 22.42
-  },
-  {
-   "slot": "body_mind",
-   "slot_label": "Body & mind",
-   "key": "5aadcbc4d287b348",
-   "title": "Salmonella outbreak tied to eggs kills one, sickens 200",
-   "beat": "health",
-   "publisher_count": 1,
-   "publishers": [
-    "Daily Mail"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 3,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": "DEVELOPMENT",
-   "new_facts": [
-    "Salmonella outbreak linked to imported eggs: one dead, ~200 sick, per health officials."
-   ],
-   "line": "A salmonella outbreak linked to eggs has killed one person and sickened around 200; health officials are investigating the source.",
-   "assembly_score": 6.77
-  },
-  {
-   "slot": "work_machines",
-   "slot_label": "Work & machines",
-   "key": "62196d599537c8e7",
-   "title": "US tech companies are offering community investments, guaranteed jobs, and hosting open houses to address concerns and win public support for AI data centers (Wall Street Journal)",
-   "beat": "tech",
-   "publisher_count": 1,
-   "publishers": [
-    "Techmeme"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 3.76
-  },
-  {
-   "slot": "group_chat",
-   "slot_label": "The group chat",
-   "key": "558f6eacaad3bdb3",
-   "title": "Sydney Swans bans 5 players for season over alleged hotel misconduct",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "The Independent",
-    "ABC Australia"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": "DEVELOPMENT",
-   "new_facts": [
-    "The five stood-down players publicly apologised to club, fans and community.",
-    "Swans banned 5 players for season over Melbourne hotel misconduct tied to police probe"
-   ],
-   "line": "Sydney Swans bans five players for the season following alleged hotel misconduct under police investigation.",
-   "assembly_score": 7.24
-  },
-  {
-   "slot": "elsewhere",
-   "slot_label": "Elsewhere, but here",
-   "key": "cb2ba543d0c98e10",
-   "title": "South Korea opposition demands Supreme Court chief resign; Khan moved amid Pakistan tensions",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Deutsche Welle",
-    "Yonhap News"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 2,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "ledger_class": "DEVELOPMENT",
-   "new_facts": [
-    "Pakistan's Supreme Court ordered Imran Khan moved to a private hospital; government seeks review.",
     "New DP leader Kim Min-seok visited ex-President Moon, pledging to heal internal party wounds.",
-    "DP leader Kim Min-seok urged the Supreme Court chief to resign over a written justice-nomination recommendation.",
-    "Appeals court increased former spy chief's sentence to 2 1/2 years in the martial law-linked trial."
+    "South Korea's venture investments hit a new high in H1 data."
    ],
-   "line": "South Korea's opposition party escalates pressure on judiciary over martial law aftermath; Pakistan moves detained ex-PM Khan.",
-   "assembly_score": 8.61
+   "line": "",
+   "assembly_score": 16.31
   },
   {
    "slot": "close",
    "slot_label": "The close",
-   "key": "586a7e0a89c578ad",
-   "title": "Federal judge blocks Virginia's law banning masks for police",
-   "beat": "national",
-   "publisher_count": 1,
+   "key": "a58938d10fb4675e",
+   "title": "Amazon releases Jason Statham film on Prime Video ahead of theater date",
+   "beat": "business",
+   "publisher_count": 2,
    "publishers": [
-    "NBC Washington"
+    "Techmeme",
+    "The Verge"
    ],
    "scores": {
-    "emotional_load": 2,
+    "emotional_load": 1,
     "explainability": 5,
     "actionability": 1,
-    "conversational_currency": 2
+    "conversational_currency": 3
    },
-   "politician_led": true,
+   "politician_led": false,
    "ledger_class": "DEVELOPMENT",
    "new_facts": [
-    "Federal judge Robert E. Payne rejected Virginia's mask ban for law enforcement, citing Supremacy Clause violation."
+    "Amazon Prime Video (US) is streaming Jason Statham's Mutiny in full ahead of its Aug 21 theatrical release"
    ],
-   "line": "A federal judge blocked Virginia's law banning mask-wearing by law enforcement, ruling it violated officers' constitutional rights.",
-   "assembly_score": 5.6
+   "line": "Amazon accidentally made a Jason Statham film available on Prime Video before its theatrical release date.",
+   "assembly_score": 6.77
   },
   {
    "slot": "unavoidable",
    "slot_label": "Unavoidable",
-   "key": "c298294ca0ad0653",
-   "title": "Trump halts joint US-South Korea war games to pursue North Korea talks",
+   "key": "9f9f04ea92499cdb",
+   "title": "Trump halts US-South Korea drills to pursue North Korea talks",
    "beat": "national",
-   "publisher_count": 7,
+   "publisher_count": 6,
    "publishers": [
-    "BBC",
-    "New York Times",
     "ABC News",
     "Al Jazeera",
-    "Deutsche Welle",
+    "Fox News",
+    "Semafor",
     "The Independent",
     "Yonhap News"
    ],
    "scores": {
     "emotional_load": 3,
-    "explainability": 5,
+    "explainability": 4,
     "actionability": 1,
     "conversational_currency": 4
    },
    "politician_led": true,
    "ledger_class": "DEVELOPMENT",
    "new_facts": [
+    "Adds claim that the drill scale-back has shaken confidence among US allies in Asia.",
+    "Unrelated story about South Korean wrestling team preparing for Asian Games.",
+    "Cites pressure over Seoul's investment delays as a driver behind the drill pullback, alongside the Kim diplomacy incentive.",
     "North Korea publicly condemned the joint US-Seoul drills, though it avoided naming Trump."
    ],
-   "line": "Trump orders early end to joint US-South Korea military exercises, signaling shift toward North Korea diplomacy.",
-   "assembly_score": 6.64
+   "line": "Trump ordered early halt to US-South Korea military exercises to pursue talks with North Korea.",
+   "assembly_score": 11.81
   },
   {
    "slot": "unavoidable",
@@ -253,1654 +250,83 @@
    "publisher_count": 8,
    "publishers": [
     "BBC",
+    "Financial Times",
+    "New York Times",
     "Al Jazeera",
-    "CBS News",
     "CNBC",
     "Deutsche Welle",
     "France 24",
-    "The Independent",
-    "Daily Mail"
+    "The Independent"
    ],
    "scores": {
     "emotional_load": 3,
     "explainability": 4,
     "actionability": 1,
     "conversational_currency": 4
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Ukraine's fired defense minister Fedorov is calling for presidential elections during the war with Russia, challenging Zelenskyy's wartime authority.",
-   "assembly_score": 5.54
-  },
-  {
-   "slot": "flex",
-   "slot_label": "Flex",
-   "key": "497bfbfd6e2ef5d9",
-   "title": "UK inflation rises to 2.9% on surging energy prices",
-   "beat": "business",
-   "publisher_count": 2,
-   "publishers": [
-    "The Independent",
-    "Daily Mail"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
    },
    "politician_led": true,
    "ledger_class": "DEVELOPMENT",
    "new_facts": [
-    "UK CPI inflation rose to 2.9% in July (from 2.6% in June), highest since March, per ONS.",
-    "Adds political angle: rising inflation framed as fresh headache for Andy Burnham."
+    "Fedorov's YouTube address calls for wartime elections, citing 'crisis of governance'; quotes his 'complexity does not mean impossibility' line.",
+    "Anti-corruption investigators raided the home of a top Zelenskyy aide hours after Fedorov's speech."
    ],
-   "line": "UK inflation rose to 2.9%, driven by energy prices, complicating government efforts to control costs.",
-   "assembly_score": 6.83
+   "line": "Ukraine's fired defense minister Fedorov is calling for presidential elections during the war with Russia, challenging Zelenskyy's wartime authority.",
+   "assembly_score": 10.85
   },
   {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "fc1c78a3134f13c3",
-   "title": "Chinese robot maker Unitree surges 600% in Shanghai trading debut",
-   "beat": "business",
-   "publisher_count": 5,
-   "publishers": [
-    "Financial Times",
-    "The Guardian",
-    "CNBC",
-    "The Independent",
-    "ANSA"
-   ],
-   "urls": [
-    "//ansa.it/sito/notizie/economia/2026/08/19/la-produttrice-cinese-di-robot-unitree-debutta-a-shanghai-con-il-629_ad2d2030-bd64-4825-b2ae-911e4eaa8816.html",
-    "//cnbc.com/2026/08/19/china-backflipping-robot-maker-unitree-jumps-shanghai-ipo.html",
-    "//ft.com/content/14cd8246-7fb1-4f8f-81b4-8de11ced79e5?syn-25a6b1a6=1",
-    "//independent.co.uk/news/business/china-unitree-robotics-stock-prices-b3035407.html",
-    "//independent.co.uk/news/chinese-shares-shanghai-hong-kong-morningstar-b3035374.html",
-    "//theguardian.com/technology/2026/aug/19/unitree-shares-surge-humanoid-robot-firm-chinese-stock-market-debut"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Unitree, a Chinese humanoid robot maker, saw its shares surge 500-600% on its first day of trading in Shanghai.",
-   "assembly_score": 1.09
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "8645345fff651b6b",
-   "title": "Mushroom murder defendant appeals convictions over jury hotel mix-up",
-   "beat": "national",
-   "publisher_count": 6,
-   "publishers": [
-    "BBC",
-    "ABC News",
-    "Deutsche Welle",
-    "The Independent",
-    "ABC Australia",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-08-19/erin-patterson-appeals-mushroom-murder-conviction-day-1/107054134",
-    "//abcnews.com/International/wireStory/erin-patterson-appeals-3-murder-convictions-australia-death-135760199",
-    "//bbc.co.uk/news/articles/czjlxenlgkko?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/news/article-16062465/erin-patterson-blunder.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dw.com/en/australia-erin-patterson-appeals-mushroom-murder-conviction/a-78421118?maca=en-rss-en-all-1573-xml-mrss",
-    "//independent.co.uk/news/erin-patterson-australia-melbourne-court-of-appeal-victoria-b3035346.html",
-    "//independent.co.uk/news/world/australasia/erin-patterson-appeal-live-mushroom-killer-australia-b3035341.html"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": true,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "An Australian woman convicted of poisoning three people with death cap mushrooms is appealing her murder convictions, citing a hotel lodging error that may have compromised jury impartiality.",
-   "assembly_score": 1.08
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "683c9d764296d671",
-   "title": "Graham's sister stumbles on national security in Senate debate",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "New York Times",
-    "Post and Courier",
-    "Daily Beast"
-   ],
-   "urls": [
-    "//nytimes.com/2026/08/18/us/politics/south-carolina-senate-runoff-debate-graham-norman.html",
-    "//postandcourier.com/opinion/letters_to_editor/letters-south-of-the-border-darline-for-senate-traffic-insight/article_547e201c-07df-48d6-8216-418ac7ea61c1.html",
-    "//thedailybeast.com/lindsey-grahams-sister-booed-by-crowd-in-embarrassing-debate-flop"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Lindsey Graham's sister, running for Senate, said she's not well-informed on national security during a debate.",
-   "assembly_score": 0.67
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "4df2c6b3c20e6c88",
-   "title": "Trump declares Strait of Hormuz U.S. territory as shipping strikes push oil prices higher",
-   "beat": "international",
-   "publisher_count": 4,
-   "publishers": [
-    "New York Times",
-    "CBS News",
-    "The Independent",
-    "ABC Australia"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-08-19/oil-prices-spike-as-ships-in-strait-of-hormuz-hit/107055414",
-    "//cbsnews.com/live-updates/us-iran-war-deal-strait-of-hormuz",
-    "//independent.co.uk/news/world/middle-east/iran-us-war-live-trump-hormuz-dubai-uae-missile-news-b3035365.html",
-    "//nytimes.com/2026/08/19/arts/television/rosie-odonnell-late-night-trump-strait-of-hormuz.html"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Ships struck in the Strait of Hormuz; Trump claims the waterway is now U.S. territory with mines removed, but oil prices are rising.",
-   "assembly_score": 0.64
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "3f8d9ec845d07384",
-   "title": "Kyrgios provisionally suspended after testing positive for cocaine",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//bbc.co.uk/sport/tennis/articles/c4g612r12yno?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/sport/tennis/article-16063367/Tennis-bad-boy-Nick-Kyrgios-tests-positive-cocaine-step-away-public-life-right-faces-controversial-end-career-aged-31.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "progress_coded": true,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Tennis player Nick Kyrgios tested positive for cocaine and faces provisional suspension from competition.",
-   "assembly_score": 0.44
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "77103a88673b5d9d",
-   "title": "White House delay stalls SEC crypto rule; Trump's whisper to child draws scrutiny",
+   "slot": "flex",
+   "slot_label": "Flex",
+   "key": "7ef63ece8bffda2c",
+   "title": "Trump nominates White House aide Overton to lead FDA",
    "beat": "national",
    "publisher_count": 2,
    "publishers": [
-    "Semafor",
-    "Atlanta Black Star"
-   ],
-   "urls": [
-    "//atlantablackstar.com/2026/08/19/trump-meets-with-teen-lifeguard-in-the-oval-office-and-admits-he-wouldnt-have-saved-the-kid",
-    "//semafor.com/article/08/19/2026/white-house-mix-up-delayed-sec-crypto-rule"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 2,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "White House mixup delayed SEC crypto regulation; Trump whispered something cruel to a child at a public event.",
-   "assembly_score": 0.42
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "e7383131d4ba91f9",
-   "title": "Iran weighs European military strikes if Trump escalates, officials say",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Financial Times",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16063209/Irans-hardline-mullahs-considering-attacks-European-military-targets-Trump-escalates-war.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//ft.com/content/9ea0cde8-129e-4d88-976f-e367b7dd4d2c?syn-25a6b1a6=1"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Iranian officials are reportedly considering military strikes on European targets if Trump administration actions escalate regional conflict.",
-   "assembly_score": 0.26
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "9d37be0b3d2e1644",
-   "title": "States allege Meta deliberately designed apps to addict children as trial begins",
-   "beat": "business",
-   "publisher_count": 4,
-   "publishers": [
-    "Post and Courier",
-    "Al Jazeera",
-    "France 24",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//aljazeera.com/video/newsfeed/2026/8/19/trial-begins-that-could-force-meta-to-change-facebook-and-instagram?traffic_source=rss",
-    "//dailymail.com/news/article-16063193/Meta-exploited-childre-Instagram-Facebook-addictive-huge-US-trial.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//france24.com/en/americas/20260819-meta-sued-by-us-states-for-hooking-and-exploiting-kids-in-pursuit-of-profit",
-    "//postandcourier.com/business/meta-rejects-claims-it-sought-to-hook-kids-as-landmark-trial-begins/article_3b504a24-b8bc-4847-9cf4-73f12f89af82.html"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "progress_coded": true,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "US states allege Meta deliberately designed Facebook and Instagram to addict children; Meta denies the charge as trial opens.",
-   "assembly_score": 0.17
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "d8655a7e63d5c636",
-   "title": "Congo Ebola outbreak exceeds 5,000 cases as miners complicate containment",
-   "beat": "health",
-   "publisher_count": 2,
-   "publishers": [
-    "France 24",
-    "The Independent"
-   ],
-   "urls": [
-    "//france24.com/en/africa/20260819-attempts-to-curb-ebola-cases-in-dr-congo-fail-with-more-than-5-000-confirmed",
-    "//independent.co.uk/news/congo-ebola-data-tedros-adhanom-ghebreyesus-west-africa-b3035468.html",
-    "//independent.co.uk/news/congo-ebola-people-doctors-without-borders-west-africa-b3035388.html"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Ebola cases in eastern Congo exceed 5,000 as mobile gold miners move through outbreak zones, hampering containment efforts.",
-   "assembly_score": 0.03
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "5abb279e95c43750",
-   "title": "New UK PM establishes Manchester power base, drew contact from Trump aide impersonator",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "The Independent",
-    "ABC Australia",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-08-19/andy-burnham-scam-call-susie-wiles-trump-chief-of-staff/107054116",
-    "//dailymail.com/news/article-16063205/Andy-Burnham-strips-responsibility-economic-growth-Treasury-attempts-No10-North-isnt-gimmick.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//independent.co.uk/news/uk/politics/andy-burnham-no-10-north-b3035434.html"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 2,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "UK's new Prime Minister is centralizing economic power through a Manchester-based office while facing questions about unsecured communications.",
-   "assembly_score": -0.18
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "d9e0357181fe8a06",
-   "title": "Nigeria's 2027 campaign opens as attackers kill 25 villagers",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "Deutsche Welle"
-   ],
-   "urls": [
-    "//aljazeera.com/video/newsfeed/2026/8/19/attackers-go-house-to-house-killing-25-villagers-in-central-nigeria?traffic_source=rss",
-    "//dw.com/en/nigeria-campaign-kicks-off-for-2027-presidential-election/a-78421873?maca=en-rss-en-all-1573-xml-mrss"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Nigeria's 2027 election campaign begins amid ongoing mass killings in central villages.",
-   "assembly_score": -0.23
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "50483ff82906b481",
-   "title": "Israel strikes Syria air base amid Turkish deployment tensions",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "NPR",
-    "France 24"
-   ],
-   "urls": [
-    "//france24.com/en/middle-east/20260819-middle-east-live-turkey-rejects-israeli-claims-after-strike-on-syria-air-base",
-    "//npr.org/2026/08/19/nx-s1-5937400/israel-strikes-syria"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Israel struck a Syrian air base to prevent Turkish military deployment; Turkey disputes Israeli claims about the strike.",
-   "assembly_score": -0.47
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "f2502705c5ecd4e9",
-   "title": "Competition watchdog investigates Trainline, Virgin Atlantic, Red Driving School over pricing",
-   "beat": "business",
-   "publisher_count": 2,
-   "publishers": [
-    "The Independent",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/money/markets/article-16063175/Trainline-Virgin-Atlantic-investigated-competition-watchdog-pricing.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//independent.co.uk/news/business/competition-and-markets-authority-virgin-atlantic-trainline-consumers-press-association-b3035415.html"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": true,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "UK competition watchdog is investigating Trainline, Virgin Atlantic, and Red Driving School for potential pricing violations.",
-   "assembly_score": -0.58
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "3ca4508e511fd3c9",
-   "title": "UAE cuts all trade with Iran after missile strikes, Tehran weighs European targets",
-   "beat": "international",
-   "publisher_count": 3,
-   "publishers": [
-    "ABC News",
-    "Al Jazeera",
-    "CNBC"
-   ],
-   "urls": [
-    "//abcnews.com/International/live-updates/iran-live-updates-tehran-adopt-offensive-aspect-irgc?id=135700072",
-    "//aljazeera.com/news/2026/8/19/uae-imposes-indefinite-trade-embargo-on-iran-over-alleged-missile-attacks?traffic_source=rss",
-    "//cnbc.com/2026/08/19/us-iran-war-trump-hormuz.html"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Iran and UAE are in direct military and economic conflict, with Iranian missiles striking UAE territory and the emirate cutting off all trade.",
-   "assembly_score": -0.94
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "0ab383d37d206ac8",
-   "title": "Gaza strikes kill zoo animals, leave thousands unaccounted for",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Post and Courier"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/ce34r0er75go?at_campaign=rss&at_medium=RSS",
-    "//postandcourier.com/nation-world/at-gaza-zoo-bombing-takes-toll-on-beloved-animals/article_499fd35b-7f25-4538-a4d9-d145ffef6a05.html"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Airstrikes in Gaza have killed animals at a zoo and separated thousands of families with no accounting of the missing.",
-   "assembly_score": -1.33
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "024f0019973a9a24",
-   "title": "Queen Camilla on strain of keeping King's cancer diagnosis private",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "The Guardian",
-    "The Independent",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/royals/article-16061289/Queen-Camilla-cancer-centre-Maggies-diagnosis-King-Charles-emotional.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//independent.co.uk/news/uk/home-news/camilla-charles-cancer-diagnosis-secret-b3035079.html",
-    "//theguardian.com/uk-news/2026/aug/19/queen-camilla-difficult-king-charles-cancer-diagnosis-private"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Queen Camilla describes strain of keeping King Charles's cancer diagnosis secret before public announcement.",
-   "assembly_score": -1.4
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "643ff991c9efb994",
-   "title": "Mary Peltola and Dan Sullivan Advance in Key Alaska Senate Contest",
-   "beat": "national",
-   "publisher_count": 5,
-   "publishers": [
-    "New York Times",
-    "ABC News",
-    "Fox News",
     "NBC News",
     "Memeorandum"
    ],
-   "urls": [
-    "//abcnews.com/Politics/alaska-2026-live-primary-election-results/story?id=134597797",
-    "//foxnews.com/politics/gop-senator-ex-house-dem-emerge-alaskas-jungle-primary-despite-far-left-meddling",
-    "//memeorandum.com/260819/p4",
-    "//nbcnews.com/politics/2026-election/gop-sen-dan-sullivan-democrat-mary-peltola-advance-battleground-senate-rcna592389",
-    "//nytimes.com/2026/08/19/us/politics/peltola-sullivan-alaska-senate-primary.html"
-   ],
    "scores": {
     "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.65
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "f361f1fc17bcd6a7",
-   "title": "Trump-backed Hageman wins Wyoming GOP Senate primary",
-   "beat": "national",
-   "publisher_count": 6,
-   "publishers": [
-    "New York Times",
-    "ABC News",
-    "CBS News",
-    "Fox News",
-    "NBC News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//abcnews.com/Politics/takeaways-tuesday-primaries-trump-endorsement/story?id=135754500",
-    "//cbsnews.com/news/florida-governors-race-primary-results-byron-donalds-david-jolly",
-    "//cbsnews.com/news/florida-senate-primary-results-ashley-moody-angie-nixon",
-    "//foxnews.com/politics/americas-reddest-state-crowns-gop-governor-nominee",
-    "//foxnews.com/politics/democrats-pick-fighter-uphill-bid-flip-deep-red-senate-seat",
-    "//foxnews.com/politics/former-state-rep-tops-ranked-choice-slugfest-alaska-advances-nominees-governor",
-    "//foxnews.com/politics/republican-kicked-liz-cheney-congress-seeks-higher-office-reddest-state",
-    "//foxnews.com/politics/trump-aligned-conservative-emerges-from-crowded-primary-decide-wyoming-house-seat",
-    "//memeorandum.com/260818/p159",
-    "//memeorandum.com/260818/p160",
-    "//memeorandum.com/260818/p161",
-    "//nbcnews.com/politics/2026-election/trump-backed-pharriet-hageman-wins-republican-senate-primary-wyoming-rcna592388",
-    "//nytimes.com/2026/08/18/us/politics/wyoming-senate-trump-republican-hageman.html",
-    "//nytimes.com/2026/08/19/us/politics/florida-primaries-takeaways.html"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump-backed Harriet Hageman wins Wyoming's Republican Senate primary; Democrats nominate a candidate for an uphill general election fight.",
-   "assembly_score": -1.69
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "f5e4fbd981c299bd",
-   "title": "Hotel fire in Kolkata kills at least 9",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Deutsche Welle",
-    "The Independent"
-   ],
-   "urls": [
-    "//dw.com/en/india-news-several-killed-in-kolkata-hotel-fire/live-78421640?maca=en-rss-en-all-1573-xml-mrss",
-    "//independent.co.uk/news/india-kolkata-west-bengal-new-delhi-press-trust-of-india-b3035394.html"
-   ],
-   "scores": {
-    "emotional_load": 4,
     "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A hotel fire in Kolkata killed at least 9 people and injured 6 others.",
-   "assembly_score": -1.7
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "b11bb497efd00a31",
-   "title": "Burnham pledges \u00a3442m to end rough sleeping by Christmas",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "The Independent"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/cvgvy2n6grno?at_campaign=rss&at_medium=RSS",
-    "//independent.co.uk/news/uk/politics/burnham-end-homelessness-christmas-rough-sleepers-b3035285.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Manchester mayor announces \u00a3442 million plan to house rough sleepers by Christmas, with unclear funding and delivery mechanisms.",
-   "assembly_score": -1.84
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "a0c177698ecc7e45",
-   "title": "Russians withdraw billions from banks as Putin tightens grip; West plans Russia shows",
-   "beat": "international",
-   "publisher_count": 3,
-   "publishers": [
-    "CNN",
-    "The Bulwark",
-    "The Independent"
-   ],
-   "urls": [
-    "//cnn.com/europe/live-news/russia-ukraine-war-news-04-18-23/index.html",
-    "//independent.co.uk/news/world/europe/ukraine-russia-war-live-putin-zelensky-drones-uk-threat-b3035352.html",
-    "//thebulwark.com/p/the-real-danger-of-russias-fake-elections-fraud-war-ukraine-putin-yabloko"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Russian individuals are moving money out of banks as Putin faces potential capital controls; separately, Kanye West plans performances in Russia after European concert cancellations.",
-   "assembly_score": -2.72
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "dc62cf9c20f4a191",
-   "title": "Another House Republican loser, and three other primary takeaways",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Semafor",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/260818/p155",
-    "//memeorandum.com/260819/p2",
-    "//semafor.com/article/08/19/2026/another-house-republican-loser-and-three-other-primary-takeaways"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
     "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.22
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "164a494efdc8ddf3",
-   "title": "Scott Jennings Stages Epic Trump-Pleasing Meltdown Over Natalie Harp",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Daily Beast",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16062645/Natalie-Harp-traveled-SUV-trunk-stay-Trump-New-claims-spread-like-wildfire-political-brawling-breaks-White-House-aide.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//thedailybeast.com/scott-jennings-stages-epic-trump-pleasing-meltdown-over-natalie-harp"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -4.61
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "415a4736dbc7c80a",
-   "title": "Judge blocks Virginia mask ban for police; 15 states retain school corporal punishment",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "NPR",
-    "NBC Washington"
-   ],
-   "urls": [
-    "//nbcwashington.com/news/local/northern-virginia/federal-judge-rejects-virginia-mask-ban-for-law-enforcement/4143830",
-    "//npr.org/2026/08/19/nx-s1-5803505/school-corporal-punishment-policy-tracker"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 2,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A federal judge blocked Virginia's ban on mask-wearing by police; separately, 15 states still permit corporal punishment in schools.",
-   "assembly_score": 1.5
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "7668cae464317247",
-   "title": "Psychologist testifies on mother's claims of command voices in children's deaths",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "CBS News",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//cbsnews.com/news/lindsay-clancy-trial-watch-live-day-15",
-    "//dailymail.com/crime-desk/article-16061441/lindsay-clancy-trial-usa-podcast-google-searches-diary.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dailymail.com/crime-desk/article-16062239/lindsay-clancy-confession-patrick-male-voice-head-kill-children.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A Massachusetts mother accused of killing her three children claims she heard voices commanding the murders; a psychologist testified about her account during trial.",
-   "assembly_score": 0.44
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "bfbe1fad05bdd9d9",
-   "title": "Musiala collapses for Bayern again as \u2018neurological disorder\u2019 diagnosed",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//aljazeera.com/sports/2026/8/19/musiala-collapses-for-bayern-again-as-neurological-disorder-diagnosed?traffic_source=rss",
-    "//dailymail.com/sport/football/article-16062295/Jamal-Musiala-collapses-pitch-second-time-four-days-Bayern-Munich-star-provides-health-update.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.46
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "aca3ab39f278bcad",
-   "title": "Amazon expands drone delivery to nearly 500 cities",
-   "beat": "business",
-   "publisher_count": 2,
-   "publishers": [
-    "CNBC",
-    "CNN"
-   ],
-   "urls": [
-    "//cnbc.com/2026/08/19/amazon-plans-drone-expansion-as-top-exec-projects-1-million-deliveries.html",
-    "//cnn.com/cnn-underscored/deals/best-amazon-deals-2023-04-12?iid=CNNUnderscoredHPcontainer",
-    "//cnn.com/cnn-underscored/travel/amazon-travel-products?iid=CNNUnderscoredHPcontainer"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": true,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Amazon is expanding drone delivery to nearly 500 cities and aims for 1 million deliveries in 2024.",
-   "assembly_score": 0.41
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "4b4f478b8cc9cb41",
-   "title": "U.S. sanctions ICC president and prosecutor",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "The Independent",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//independent.co.uk/news/icc-state-department-netherlands-human-rights-watch-trump-b3035514.html",
-    "//memeorandum.com/260819/p7"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "The U.S. sanctioned the International Criminal Court's president and a prosecutor, escalating a dispute over the court's authority and independence.",
-   "assembly_score": -0.03
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "66211f92f2cacaaf",
-   "title": "Iran war forces America to confront the strategic cost of deterring China",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox News",
-    "France 24"
-   ],
-   "urls": [
-    "//foxnews.com/opinion/iran-war-forces-america-confront-strategic-cost-deterring-china",
-    "//france24.com/en/video/20260819-iran-parliament-speaker-ghalibaf-in-iraq-for-talks"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.23
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "8668d68cce10dcc6",
-   "title": "Iran war: Trump tries economic pressure \u2014 again",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "Al Jazeera"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/8/19/south-africa-to-australia-why-coal-profits-are-surging-during-iran-war?traffic_source=rss",
-    "//nytimes.com/2026/08/19/world/africa/dangote-iran-refinery-oil-nigeria.html",
-    "//nytimes.com/2026/08/19/world/europe/iran-trump-economic-sanctions-leverage.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.58
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "956d205349d0cb27",
-   "title": "Today in history: August 19 (copy)",
-   "beat": "tech",
-   "publisher_count": 2,
-   "publishers": [
-    "Post and Courier",
-    "Wired"
-   ],
-   "urls": [
-    "//postandcourier.com/dupe-asset/today-in-history-august-19-copy/article_58ba6fcc-aa80-419a-b175-71a4270906f9.html",
-    "//wired.com/story/att-promo-code",
-    "//wired.com/story/dyson-cordless-vacuum-promo-code",
-    "//wired.com/story/hotels-com-coupon",
-    "//wired.com/story/lg-promo-code",
-    "//wired.com/story/loop-earplugs-discount-code",
-    "//wired.com/story/newegg-promo-code",
-    "//wired.com/story/ulta-coupon",
-    "//wired.com/story/wayfair-promo-code",
-    "//wired.com/story/whoop-promo-code"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.59
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "0314a7e6df5bb8ed",
-   "title": "Moderna-Merck mRNA cancer vaccine succeeds in melanoma trial",
-   "beat": "health",
-   "publisher_count": 2,
-   "publishers": [
-    "STAT News",
-    "CNBC"
-   ],
-   "urls": [
-    "//cnbc.com/2026/08/19/moderna-merck-cancer-vaccine-shows-initial-late-stage-melanoma-data.html",
-    "//statnews.com/2026/08/19/mrna-cancer-vaccine-trial-melanoma-merck-moderna"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "progress_coded": true,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Moderna and Merck's personalized mRNA cancer vaccine reduced recurrence and death risk in melanoma patients during late-stage testing.",
-   "assembly_score": 1.97
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "01e92f85320dfb72",
-   "title": "Target posts stronger sales, boosted by $994M tariff refund",
-   "beat": "business",
-   "publisher_count": 2,
-   "publishers": [
-    "CNBC",
-    "The Independent"
-   ],
-   "urls": [
-    "//cnbc.com/2026/08/19/target-tgt-q2-2026-earnings.html",
-    "//independent.co.uk/news/target-ceo-new-york-b3035561.html"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Target reports stronger sales and profit after receiving nearly $1 billion in tariff refunds from the government.",
-   "assembly_score": 1.9
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "ae2c1c0dfe78c428",
-   "title": "Zelenskyy removes deputy as Ukrainian investigators probe alleged laundering by presidential aide",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "France 24"
-   ],
-   "urls": [
-    "//france24.com/en/europe/20260819-ukraine-anti-graft-agencies-uncover-alleged-laundering-group-tied-to-presidential-official",
-    "//theguardian.com/world/live/2026/aug/19/europe-ukraine-zelenskyy-mykhailo-fedorov-parliament-vote-corruption-probe-russia-belgium-wildfires-latest-news-updates"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": true,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Ukraine's anti-corruption agencies are investigating alleged money laundering tied to a presidential official, leading Zelenskyy to remove his deputy chief of staff.",
-   "assembly_score": 1.31
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "d5c40aebcc48ce67",
-   "title": "Russians withdraw billions from banks fearing Putin will seize deposits for war",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "The Independent",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16063241/Russians-billions-banks-fears-Putin-raid-savings-Ukraine.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//independent.co.uk/news/world/europe/moscow-ukraine-russia-drones-b3035380.html",
-    "//independent.co.uk/news/world/europe/russia-banks-withdraw-money-putin-war-b3035506.html"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 1,
     "conversational_currency": 4
    },
    "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Russians are withdrawing billions from banks amid fears Putin will seize deposits to fund the Ukraine war.",
-   "assembly_score": 0.11
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "8a706cf685aea272",
-   "title": "Unrelated items: rally coverage and financial product comparison",
-   "beat": "other",
-   "publisher_count": 2,
-   "publishers": [
-    "CNN",
-    "Fox News"
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Trump expected to nominate Dr. Heidi Overton, a White House aide, as FDA commissioner.",
+    "Overton described as abortion-rights opponent and supporter of RFK Jr.'s MAHA agenda."
    ],
-   "urls": [
-    "//cnn.com/cnn-underscored/money/high-yield-savings-accounts?iid=CNNUnderscoredHPcontainer",
-    "//foxnews.com/outkick-sports/canadian-powerlifting-champion-april-hutchinson-leads-first-sophie-cunningham-rally-outside-us"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 1,
-    "actionability": 1,
-    "conversational_currency": 1
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 0.06
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "e1046de9fac62a2d",
-   "title": "A rightwing witch-hunt focused on Jason Arday \u2013 but so did legitimate journalism | Hugh Muir",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "The Independent"
-   ],
-   "urls": [
-    "//independent.co.uk/news/james-cleverly-black-universities-london-charles-moore-b3035547.html",
-    "//theguardian.com/commentisfree/2026/aug/19/rightwing-witch-hunt-jason-arday-legitimate-journalism"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.22
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "8cb3988d86894c2e",
-   "title": "Second Ukrainian suspect arrested over Nord Stream pipeline blasts",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Deutsche Welle",
-    "The Independent"
-   ],
-   "urls": [
-    "//dw.com/en/nord-stream-second-suspect-arrested-over-pipeline-blasts/a-78427413?maca=en-rss-en-all-1573-xml-mrss",
-    "//dw.com/en/second-ukrainian-suspect-arrested-over-nord-stream-pipeline-blasts/a-78427413?maca=en-rss-en-all-1573-xml-mrss",
-    "//independent.co.uk/news/germany-croatia-berlin-russia-pula-b3035539.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.35
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "5ee9d1655b845af6",
-   "title": "Five in Five: Football quiz No 3",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//bbc.co.uk/sport/football/articles/c74gde30nryo?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/news/article-16063359/football-lap-dancer-scandal-suspended-hotel-sex-assault.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.69
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "4dfa7f546c5d9b0f",
-   "title": "Democratic socialist unexpectedly wins Florida primary",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Financial Times",
-    "New York Times"
-   ],
-   "urls": [
-    "//ft.com/content/115fc315-66f3-4eee-b717-4105f13f4d9a?syn-25a6b1a6=1",
-    "//nytimes.com/2026/08/19/us/politics/florida-primary-progressives-upset.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.3
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "39892647fc6778f0",
-   "title": "Trump cuts short US-Korea military drills, pivots toward North Korea talks",
-   "beat": "national",
-   "publisher_count": 5,
-   "publishers": [
-    "ABC News",
-    "Al Jazeera",
-    "Fox News",
-    "The Independent",
-    "Yonhap News"
-   ],
-   "urls": [
-    "//abcnews.com/International/us-south-korea-military-drills-end-early-after/story?id=135763052",
-    "//aljazeera.com/news/2026/8/19/tit-for-tat-why-is-trump-cozying-up-to-north-koreas-kim-jong-un-again?traffic_source=rss",
-    "//aljazeera.com/video/newsfeed/2026/8/19/scaling-back-us-south-korea-drills-may-fail-to-woo-kim-away-from-china?traffic_source=rss",
-    "//en.yna.co.kr/view/AEN20260819002653315",
-    "//en.yna.co.kr/view/AEN20260819004251320",
-    "//en.yna.co.kr/view/AEN20260819006251315",
-    "//en.yna.co.kr/view/AEN20260819007000315",
-    "//en.yna.co.kr/view/AEN20260819007100315",
-    "//en.yna.co.kr/view/AEN20260819007300315",
-    "//en.yna.co.kr/view/AEN20260819007351315",
-    "//en.yna.co.kr/view/AEN20260819007400320",
-    "//en.yna.co.kr/view/AEN20260819007451320",
-    "//en.yna.co.kr/view/AEN20260819007452320",
-    "//en.yna.co.kr/view/AEN20260819007900320",
-    "//en.yna.co.kr/view/AEN20260819008500315",
-    "//en.yna.co.kr/view/AEN20260819008600320",
-    "//en.yna.co.kr/view/AEN20260819008651320",
-    "//en.yna.co.kr/view/AEN20260819008700320",
-    "//en.yna.co.kr/view/AEN20260819010000320",
-    "//en.yna.co.kr/view/AEN20260819010700315",
-    "//en.yna.co.kr/view/AEN20260819010800315",
-    "//en.yna.co.kr/view/AEN20260819011000315",
-    "//foxnews.com/politics/tension-drove-trumps-south-korea-alliance-historic-new-era-military-pullback",
-    "//independent.co.uk/asia/east-asia/south-korea-trump-military-drill-cancelled-kim-b3035363.html"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump orders early end to joint US-South Korea military exercises, shifting approach to North Korea diplomacy.",
-   "assembly_score": 1.7
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "d9a229c43c96966f",
-   "title": "BBC presenter Emma Barnett had hysterectomy for endometriosis",
-   "beat": "health",
-   "publisher_count": 2,
-   "publishers": [
-    "The Independent",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16063567/Emma-Barnett-hysterectomy-endometriosis-Radio-4-Today-programme.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//independent.co.uk/news/uk/home-news/bbc-emma-barnett-endometriosis-hysterectomy-b3035463.html"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "BBC radio host Emma Barnett discloses she had a hysterectomy to treat endometriosis, a chronic condition affecting millions of women.",
-   "assembly_score": 1.43
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "5556a1db19f83777",
-   "title": "Consumer tips roundup: used hybrids, staycations",
-   "beat": "other",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "The Independent"
-   ],
-   "urls": [
-    "//independent.co.uk/news/honda-toyota-carvana-americans-b3035580.html",
-    "//nytimes.com/2026/08/19/nyregion/nyc-high-cost-of-fun.html"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 3,
-    "conversational_currency": 1
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 1.13
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "69d9ff6b3a38c10c",
-   "title": "Israel policy debate: archaeology and diplomacy",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "Fox News"
-   ],
-   "urls": [
-    "//aljazeera.com/opinions/2026/8/19/why-white-house-envoys-cannot-sway-israels-war-leader?traffic_source=rss",
-    "//foxnews.com/opinion/undisputed-answer-israels-legitimacy-dead-sea-scrolls"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 1,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 1.05
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "350ecebee04cf060",
-   "title": "Israeli military opens probes into Gaza strikes as settlement expansion advances",
-   "beat": "international",
-   "publisher_count": 3,
-   "publishers": [
-    "Al Jazeera",
-    "Deutsche Welle",
-    "The Independent"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/8/19/palestinians-condemn-israeli-step-to-advance-illegal-e1-settlement-plan?traffic_source=rss",
-    "//dw.com/en/israeli-military-to-open-criminal-probes-into-2-gaza-attacks/a-78429726?maca=en-rss-en-all-1573-xml-mrss",
-    "//independent.co.uk/news/israeli-gaza-palestinian-palestinians-jerusalem-b3035600.html"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "progress_coded": true,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Israel opens criminal investigations into military strikes that killed a child and paramedics in Gaza, while advancing a West Bank settlement the U.S. deems illegal.",
-   "assembly_score": 2.75
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "f28d7468e73d4eb5",
-   "title": "Fashion preview and DC mayoral candidate profile",
-   "beat": "other",
-   "publisher_count": 2,
-   "publishers": [
-    "Vogue",
-    "Washingtonian"
-   ],
-   "urls": [
-    "//vogue.com/fashion-shows/spring-2027-ready-to-wear/bode",
-    "//washingtonian.com/2026/08/19/robert-white-is-ready-to-fight-for-dc-can-he-win"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 1.92
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "a34c7d726fde215b",
-   "title": "Track defect found at Lewes derailment site",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "The Independent",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16063859/Lewes-train-derailment-track-defect.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//independent.co.uk/news/uk/home-news/lewes-train-derailment-cause-fault-b3035597.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": true,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Investigators found a track defect at the site of a train derailment in Lewes; the cause of the crash remains under investigation.",
-   "assembly_score": 1.92
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "5d2883d40d52eb57",
-   "title": "Pinewood Technologies sold to US private equity firm for \u00a3545 million",
-   "beat": "business",
-   "publisher_count": 2,
-   "publishers": [
-    "Techmeme",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/money/markets/article-16063529/Pinewood-Technologies-agrees-545m-takeover-US-private-equity-firm.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//techmeme.com/260819/p16"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "UK automotive software maker Pinewood sold to US private equity firm Ridgeview for \u00a3545 million after a previous deal collapsed.",
-   "assembly_score": 1.41
+   "line": "Trump nominates Heidi Overton, a White House domestic policy aide with no medical or pharmaceutical background, to lead the FDA.",
+   "assembly_score": 9.46
   }
  ],
  "excluded_sample": [
   {
-   "title": "Donna uccisa nel Cosentino, convalidato il fermo del presunto femminicida",
+   "title": "Trump Aides Unnerved by Natalie Harp Mess as Ossoff Takedown Hits Home",
    "why": "triage verdict NO"
   },
   {
-   "title": "She grew up unvaccinated. Now she\u2019s a leading voice for science \u2014 and empathy",
+   "title": "Trump\u2019s Secret Police Spying on Americans? It\u2019s Darker than We Knew.",
    "why": "triage verdict NO"
   },
   {
-   "title": "Woman dies in car park, is brought back to life... then gets a parking ticket",
+   "title": "Husband and wife died from impact trauma in plane crash, inquest hears",
    "why": "triage verdict NO"
   },
   {
-   "title": "Shaun the Sheep could lend his name to UK storm as Met Office opens vote",
+   "title": "James Jordan admits he spends his evenings sitting alone in a one-bed flat watching TV following split from wife Ola",
    "why": "triage verdict NO"
   },
   {
-   "title": "Ricky Gervais reveals the one thing that would make him marry his longtime partner Jane Fallon",
+   "title": "Trump\u2019s Tariffs on Hold as President Claims Deal With Canada Is Near",
+   "why": "ledger: INCREMENT"
+  },
+  {
+   "title": "Local middle school student displays rock collection at Aiken library",
    "why": "triage verdict NO"
   },
   {
-   "title": "The turbulent lives of the Jackson kids and their varied fates as rift threatens to tear them apart - after Paris opened up about her troubled past",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Sandra Bullock shares rare glimpse at life with her kids in family summer snaps",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Todd Blanche\u2019s One Promise: Dishonesty",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Susannah, 57, is letting nature take its course. Claudia, 60, uses Botox, fat jabs, cosmetic surgery and isn't ruling out a face lift. They both think the other is utterly mad. So... who do YOU think is right?",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Camilla found it \u2018difficult\u2019 keeping king\u2019s cancer diagnosis private before announcement",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Celebrity MasterChef fans struggle to adapt to new judging lineup and ask 'is that just John Torode talking with an Italian accent?' as show relaunches with Giorgio Locatelli and Grace Dent",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "\u2018Why Are People Laughing?\u2019: Trump Honors Teen Lifeguard During Oval Office Meeting, Then Leans In to Whisper Something Cruel to a 10-Year-Old",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Around the world in 2 days",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Revealed: The films and series you HAVE to see to be cultured",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Madonna takes over tiny Corfu village made famous by ITV's The Durrells for wild 68th birthday party as she dances with her children and boyfriend Akeem Morris until 2am",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "How will your club fare? Phil McNulty's Premier League predictions",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Five in Five: Football quiz No 3",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Alaskan political scion hopes to hold onto state's single House seat",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Moment pedestrians narrowly avoid being run down by cyclists who fail to stop for bike lane zebra crossing at one of Sadiq Khan's 'floating bus stops'",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Z.ai prices GLM-5.3 API access at $1.40 per million input tokens and $4.40 per million output tokens, unchanged from GLM-5.2 (Carl Franzen/VentureBeat)",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Former US official calls shift in relations with Syria \u2018surreal\u2019",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Champions League: Everything still to play for between Lyon and Fenerbahce",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "The Engines of Our Ingenuity 3402: Absolute Zero",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "\u2018Prolier-than-thou!\u2019 Burnham accused of \u2018desperate\u2019 attempt to play up working class roots by novelist",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Uber Eats Promo Codes: $15 Off\u2502August 2026",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Hotels.com Coupon Codes for August 2026",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "A rightwing witch-hunt focused on Jason Arday \u2013 but so did legitimate journalism | Hugh Muir",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Podcast: One country musician is calling for other artists to oppose assault rifles",
+   "title": "Robert White Is Ready to Fight for DC. Can He Win?",
    "why": "triage verdict NO"
   },
   {
@@ -1924,10 +350,6 @@
    "why": "triage verdict NO"
   },
   {
-   "title": "The 7 best high-yield savings accounts of April 2023",
-   "why": "triage verdict NO"
-  },
-  {
    "title": "Composting is an easy way to reduce food waste. Here's how to do it",
    "why": "triage verdict NO"
   },
@@ -1944,11 +366,99 @@
    "why": "triage verdict NO"
   },
   {
-   "title": "The 2024 presidential alternative many voters will want",
+   "title": "STAT+: What Epic did \u2014 and didn\u2019t \u2014 say about AI at its annual meeting",
    "why": "triage verdict NO"
   },
   {
-   "title": "Bode Spring 2027 Ready-to-Wear",
+   "title": "Carlsberg boosted by strong sales of soft drinks and alcohol-free beer",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "\u2018I\u2019ve Hit My Limit\u2019: Some New Yorkers Opt for Fun at Home to Save Money",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Freedom 250 Grand Prix of DC: Full list of parking restrictions and street closures",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "After the Storm",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Experts reveal little-known hacks for staying safe in the sea that everyone MUST remember - as family is killed in drowning horror",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "This Freshman Congressman Is Out-Legislating All Other Lawmakers (Mark Alfred/NOTUS)",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Ossoff tests Democrats' appetite for going low (Mike Zapler/Axios)",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Is it true what they say about your neighbourhood? England's friendliest places are revealed as part of major study on community life",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Melania Has Not Been Spotted in Public for a Full Month",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Dell XPS 13 vs. MacBook Neo: A Surprising Upset",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Two kinds of moderate Democrats",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "\u2018Have You Forgotten?\u2019: Trump Loses It Over Damage at the Reflecting Pool, But the Reality Is Too Brutal to Blame on Vandals",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Summerville 10-year-old yo-yo champ gives back to community",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "The Marshall Project Wins NABJ Salute to Excellence Award",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Trump\u2019s Ballroom Is Rising at Breakneck Speed: 20 Hours a Day, 7 Days a Week",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Huge \u00a332million car park which has been empty for two years has opening delayed AGAIN as road linking to it is still not finished",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Amanda Holden, 55, looks incredible as she poses in a skimpy white bikini on sun-soaked business trip to Crete",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Meta sued by US states for hooking and exploiting kids in pursuit of profit",
+   "why": "ledger: INCREMENT"
+  },
+  {
+   "title": "Nicole Kidman embraces her natural curls in a serene snap before slipping into a bikini for a dip in a hot tub as she relaxes during 'trip of a lifetime' \u00a339k Icelandic cruise",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "We ditched our stable nine-to-five jobs to sell coins and bullion online and now both earn \u00a350,000 a year. This is how to tell if you are (literally) sitting on a goldmine",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "SARAH VINE: After the endless summer, I want to throttle everyone, family included. Here's who I would pick first...",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Warren sends Democrats $600K for midterms",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Fowl play! The judge, his peacocks, and locals who can't stand the noise any more",
    "why": "triage verdict NO"
   }
  ]
