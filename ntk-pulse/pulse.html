@@ -520,7 +520,7 @@ async function generateStoryImage(story, promptOverride){
     // this to the UI alone is exactly what produced the 400 just now.
     const styleCompatible = /^recraftv[23]/.test(model);
     const style = styleCompatible ? (story.imgGenStyle || '') : '';
-    const size = story.imgGenSize || '1024x1024';
+    const size = story.imgGenSize || '1:1';
     story.imgCandidates = await recraftGenerate(prompt, model, style, size, 4);
   } catch (e) {
     story.imgErr = e.message;
@@ -2111,8 +2111,8 @@ function renderLineup(root){
           `<option value="vector_illustration/line_art"${s.imgGenStyle==='vector_illustration/line_art'?' selected':''}>line art</option>`+
         `</select>`+
         `<select class="img-gen-size">`+
-          `<option value="1024x1024"${(s.imgGenSize||'1024x1024')==='1024x1024'?' selected':''}>square</option>`+
-          `<option value="1820x1024"${s.imgGenSize==='1820x1024'?' selected':''}>wide</option>`+
+          `<option value="1:1"${(s.imgGenSize||'1:1')==='1:1'?' selected':''}>square</option>`+
+          `<option value="16:9"${s.imgGenSize==='16:9'?' selected':''}>wide (16:9)</option>`+
         `</select>`+
         `<button class="mini go img-gen-go" ${s.imgBusy?'disabled':''}>${s.imgBusy?'generating…':'generate'}</button>`+
         `</div>`+
