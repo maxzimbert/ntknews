@@ -1,5 +1,5 @@
 {
- "assembled_at": "2026-08-24T04:50:43.183635+00:00",
+ "assembled_at": "2026-08-24T08:55:05.531070+00:00",
  "slot_plan": "A",
  "displacement": "MANUAL",
  "daytype": "weekday",
@@ -7,7 +7,7 @@
   8,
   10
  ],
- "actual_size": 35,
+ "actual_size": 10,
  "lint_failures": [
   "no item answers 'what do I do with this'"
  ],
@@ -16,43 +16,72 @@
   {
    "slot": "unavoidable",
    "slot_label": "Unavoidable",
-   "key": "d75b5f6762c9f0f0",
-   "title": "Human-caused wildfire forces 42,000 from Reno area",
+   "key": "fd503a60c1d975b7",
+   "title": "Two police officers killed in A66 crash; authorities demand social media remove driving glorification content",
    "beat": "national",
-   "publisher_count": 4,
+   "publisher_count": 3,
    "publishers": [
-    "NPR",
-    "Al Jazeera",
-    "NBC News",
+    "BBC",
+    "The Independent",
     "Daily Mail"
    ],
    "scores": {
-    "emotional_load": 4,
+    "emotional_load": 5,
     "explainability": 5,
-    "actionability": 1,
+    "actionability": 3,
     "conversational_currency": 4
    },
    "politician_led": false,
    "ledger_class": "DEVELOPMENT",
    "new_facts": [
-    "Fire is zero percent contained.",
-    "45,000 additional residents placed on evacuation alert.",
-    "At least six people injured; a hospital was forced to evacuate.",
-    "Fire has grown to over 15,000 acres, larger than prior reported size."
+    "More than \u00a3300k has been raised for the families of PC Blades and PC Clough.",
+    "Names teen joyrider Makai Saddington, 18, revealed to be awaiting trial for assaulting/racially abusing officers.",
+    "Adds on-record family quote: 'Pain of losing him is beyond words.'",
+    "Social media companies urged to remove content celebrating dangerous driving after the crash.",
+    "Families' tribute adds they 'served and died in the line of duty'."
    ],
-   "line": "A human-caused wildfire near Reno has forced 42,000 people to evacuate, including patients from a hospital.",
-   "assembly_score": 11.32
+   "line": "Two police officers died in a crash involving a teen joyrider on the A66; families grieve while authorities push social media platforms to remove content glorifying dangerous driving.",
+   "assembly_score": 14.51
   },
   {
    "slot": "money_me",
    "slot_label": "Money & me",
-   "key": "8bcb9c0fd42695b9",
-   "title": "Shein seeks $27bn valuation in Hong Kong IPO",
+   "key": "dedbf6afc2a454c9",
+   "title": "Fed official Warsh to address markets as bond pressure rises",
    "beat": "business",
-   "publisher_count": 2,
+   "publisher_count": 4,
    "publishers": [
-    "BBC",
-    "The Guardian"
+    "Financial Times",
+    "The Guardian",
+    "CNBC",
+    "The Independent"
+   ],
+   "scores": {
+    "emotional_load": 2,
+    "explainability": 3,
+    "actionability": 1,
+    "conversational_currency": 2
+   },
+   "politician_led": true,
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Introduces new Fed chair Kevin Warsh and his upcoming Jackson Hole keynote amid bond market fears.",
+    "Adds that economists are criticizing Warsh's communication strategy.",
+    "Adds broader market impact: Asian shares declining and oil prices falling amid bond pressure.",
+    "Links bond market anxiety to Donald Trump's tax and spending plans, introducing new actor/context."
+   ],
+   "line": "Fed official Warsh addresses investors at Jackson Hole as bond yields fall and economic strain signals mount.",
+   "assembly_score": 10.08
+  },
+  {
+   "slot": "body_mind",
+   "slot_label": "Body & mind",
+   "key": "6aeb7613d61a0ae2",
+   "title": "Pot use among Americans rises, survey finds",
+   "beat": "health",
+   "publisher_count": 1,
+   "publishers": [
+    "Semafor"
    ],
    "scores": {
     "emotional_load": 2,
@@ -63,34 +92,9 @@
    "politician_led": false,
    "ledger_class": "DEVELOPMENT",
    "new_facts": [
-    "Shein to debut on Hong Kong exchange Sept 1, valued near $27bn after Beijing IPO approval",
-    "Reveals Shein's prior $100bn valuation from 2022 private fundraising round, now far lower"
+    "Poll finds more Americans smoking marijuana while cigarette smoking hits record low"
    ],
-   "line": "Shein, a Chinese fast-fashion retailer known for ultra-cheap clothing, plans to list on Hong Kong's stock exchange at a $27 billion valuation.",
-   "assembly_score": 6.88
-  },
-  {
-   "slot": "body_mind",
-   "slot_label": "Body & mind",
-   "key": "df0505ff1f0c5010",
-   "title": "Counterfeit peptide causes acute liver damage in another user",
-   "beat": "health",
-   "publisher_count": 1,
-   "publishers": [
-    "ABC Australia"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "ledger_class": "DEVELOPMENT",
-   "new_facts": [
-    "Seventh case of liver toxicity in Victoria linked to counterfeit peptides; doctors suspect contaminated batch."
-   ],
-   "line": "A person using counterfeit peptides developed acute liver damage, adding to a pattern of injuries from fake compounds sold online.",
+   "line": "Survey data shows cannabis use among Americans is rising, reversing a decades-long decline.",
    "assembly_score": 5.46
   },
   {
@@ -115,19 +119,18 @@
     "AI researcher Luke Metz leaves OpenAI to join Meta's Superintelligence Labs, reporting to Alexandr Wang"
    ],
    "line": "An OpenAI researcher who left for a startup rejoins the AI competition by moving to Meta's new superintelligence unit.",
-   "assembly_score": 4.2
+   "assembly_score": -0.62
   },
   {
    "slot": "group_chat",
    "slot_label": "The group chat",
-   "key": "1f962eed50b7a8f2",
-   "title": "Enes Kanter Freedom ejected from WNBA game after altercation with Natasha Cloud",
+   "key": "ad7a198f8522ed98",
+   "title": "England cricketer under investigation after nightclub incident",
    "beat": "culture",
-   "publisher_count": 3,
+   "publisher_count": 2,
    "publishers": [
-    "The Guardian",
-    "Fox News",
-    "ABC Australia"
+    "ABC Australia",
+    "Daily Mail"
    ],
    "scores": {
     "emotional_load": 2,
@@ -138,905 +141,185 @@
    "politician_led": false,
    "ledger_class": "DEVELOPMENT",
    "new_facts": [
-    "New confrontation: Natasha Cloud vs Enes Kanter Freedom during Sky-Fever game; Cloud posts pro-trans message.",
-    "Kanter Freedom ejected, wore shirt reading 'WOMAN. Noun. Adult human female.', criticized WNBA trans policy.",
-    "Kanter Freedom was swarmed by a hostile crowd outside the arena before the game."
+    "England bowler Brydon Carse is under investigation after video shows him in handcuffs outside a nightclub",
+    "Adds that Carse was released without charge, and that Ben Stokes was seen watching"
    ],
-   "line": "NBA player Enes Kanter Freedom was ejected from a WNBA game after a confrontation with player Natasha Cloud.",
-   "assembly_score": 9.83
+   "line": "England cricketer Brydon Carse faces investigation after a nightclub incident captured on video.",
+   "assembly_score": 8.43
   },
   {
    "slot": "elsewhere",
    "slot_label": "Elsewhere, but here",
-   "key": "fd503a60c1d975b7",
-   "title": "Families of two police officers killed in crash say they were heroes",
+   "key": "dcf228b9887c704a",
+   "title": "U.S. prepares expanded Iran sanctions as rial collapses",
    "beat": "international",
-   "publisher_count": 3,
+   "publisher_count": 6,
    "publishers": [
-    "BBC",
+    "Post and Courier",
+    "Al Jazeera",
+    "CBS News",
+    "CNBC",
     "The Independent",
     "Daily Mail"
    ],
    "scores": {
     "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
+    "explainability": 4,
+    "actionability": 1,
     "conversational_currency": 3
    },
-   "politician_led": false,
+   "politician_led": true,
    "ledger_class": "DEVELOPMENT",
    "new_facts": [
-    "Names the teenage joyrider as Jacob Matusiak, 23, previously unnamed.",
-    "Adds on-record family quote: 'Pain of losing him is beyond words.'",
-    "Reveals VW crashed into police car ten seconds after pursuit ended; describes all five young victims as joyriders."
+    "Iran's rial currency hits a new record low ahead of sanctions announcement",
+    "Iran calls the US 'desperate' and predicts the new sanctions will fail",
+    "Bessent teases 'single greatest financial offensive' ahead of Monday news conference; calls Iran regime 'tyrannical'",
+    "Oil prices fall Monday as markets await new, unprecedented US sanctions on Iran",
+    "Iran's FM Araghchi mocks new US sanctions, expected to be unveiled Monday, as 'the same movie'"
    ],
-   "line": "",
-   "assembly_score": 5.03
+   "line": "The U.S. Treasury is preparing to announce expanded sanctions on Iran amid currency collapse; oil markets are already pricing in the move.",
+   "assembly_score": 14.17
   },
   {
    "slot": "close",
    "slot_label": "The close",
-   "key": "c489cd5585a65c91",
-   "title": "Luxury brands enter resale market as secondhand sales surge",
+   "key": "0c19b22ec7dd311c",
+   "title": "Shein seeks $27bn valuation in Hong Kong IPO",
    "beat": "business",
-   "publisher_count": 1,
-   "publishers": [
-    "Vogue"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 3,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "ledger_class": "DEVELOPMENT",
-   "new_facts": [
-    "The RealReal's 2026 resale report highlights rising consumer specificity and savviness in luxury resale market."
-   ],
-   "line": "Luxury resale marketplaces are reshaping how high-end goods move, with retailers and brands now competing in a secondhand market once considered beneath them.",
-   "assembly_score": 6.13
-  },
-  {
-   "slot": "unavoidable",
-   "slot_label": "Unavoidable",
-   "key": "ef54c1488c07fde1",
-   "title": "Burnham pledges UK support for Ukraine missile production in Kyiv visit",
-   "beat": "national",
-   "publisher_count": 6,
+   "publisher_count": 4,
    "publishers": [
     "BBC",
     "Financial Times",
     "The Guardian",
-    "Deutsche Welle",
-    "The Independent",
-    "Daily Mail"
+    "The Independent"
+   ],
+   "scores": {
+    "emotional_load": 2,
+    "explainability": 5,
+    "actionability": 1,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Reveals Shein's prior $100bn valuation from 2022 private fundraising round, now far lower",
+    "Shein to debut on Hong Kong exchange Sept 1, valued near $27bn after Beijing IPO approval"
+   ],
+   "line": "Shein, a fast-fashion retailer criticized for labor and environmental practices, is seeking a $27 billion valuation in a Hong Kong IPO this September.",
+   "assembly_score": 7.38
+  },
+  {
+   "slot": "unavoidable",
+   "slot_label": "Unavoidable",
+   "key": "378b7b18fea5b091",
+   "title": "Five bodies found on Oregon property; suspected killer dead",
+   "beat": "national",
+   "publisher_count": 4,
+   "publishers": [
+    "CBS News",
+    "Fox News",
+    "NBC News",
+    "The Independent"
+   ],
+   "scores": {
+    "emotional_load": 5,
+    "explainability": 5,
+    "actionability": 1,
+    "conversational_currency": 4
+   },
+   "politician_led": false,
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Establishes quintuple murder: five bodies found at Oregon property, suspect found dead in Enumclaw, WA vehicle",
+    "Specifies killing site as a Forest Grove, Oregon property",
+    "Reveals several animals were also killed at the property along with the five people"
+   ],
+   "line": "Five bodies found on remote Oregon property; the suspected killer was found dead the next day.",
+   "assembly_score": 11.69
+  },
+  {
+   "slot": "unavoidable",
+   "slot_label": "Unavoidable",
+   "key": "e9ed118c08adcfd8",
+   "title": "Canada retaliates after Trump tariffs take effect",
+   "beat": "national",
+   "publisher_count": 3,
+   "publishers": [
+    "New York Times",
+    "Post and Courier",
+    "Daily Beast"
    ],
    "scores": {
     "emotional_load": 3,
     "explainability": 4,
     "actionability": 1,
-    "conversational_currency": 2
+    "conversational_currency": 4
    },
    "politician_led": true,
    "ledger_class": "DEVELOPMENT",
    "new_facts": [
-    "Zelenskyy says Germany is 'well aware' Kyiv had no role in planning or executing the Nord Stream sabotage",
-    "Burnham's first foreign trip: co-chairs meeting of Ukraine's main backers, meets Zelenskyy in Kyiv.",
-    "Moscow warned of 'consequences' over reported British drone use by Ukraine.",
-    "UK to share classified Storm Shadow missile-component info, boosting Ukraine's own missile production."
+    "Wall Street Journal editorial board publicly condemned Trump's tariffs on Canada as politically damaging"
    ],
-   "line": "UK Labour leader Burnham travels to Kyiv to pledge support for Ukrainian long-range missile production.",
-   "assembly_score": 6.75
-  },
-  {
-   "slot": "unavoidable",
-   "slot_label": "Unavoidable",
-   "key": "97adab58bc3a8446",
-   "title": "Tech giants push unproven AI into schools amid resistance",
-   "beat": "education",
-   "publisher_count": 1,
-   "publishers": [
-    "Techmeme"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 3,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Tech companies are placing AI tools in schools with limited evidence of benefit, using influence and resources to shape curriculum.",
-   "assembly_score": 2.37
+   "line": "Trump imposed tariffs on Canadian goods; Canada's finance minister Carney announced retaliatory measures in response.",
+   "assembly_score": 8.19
   },
   {
    "slot": "flex",
    "slot_label": "Flex",
-   "key": "4829cb10c60f3c69",
-   "title": "White House vows fresh Iran sanctions; Tehran unmoved",
-   "beat": "national",
-   "publisher_count": 3,
+   "key": "01f965df2839aa1d",
+   "title": "UK PM Burnham visits Kyiv on Independence Day as drone attacks continue",
+   "beat": "international",
+   "publisher_count": 5,
    "publishers": [
-    "Al Jazeera",
-    "CBS News",
-    "CNBC"
+    "The Guardian",
+    "ABC News",
+    "Deutsche Welle",
+    "The Independent",
+    "Daily Mail"
    ],
    "scores": {
     "emotional_load": 3,
-    "explainability": 4,
+    "explainability": 5,
     "actionability": 1,
     "conversational_currency": 3
    },
    "politician_led": true,
    "ledger_class": "DEVELOPMENT",
    "new_facts": [
-    "Iran's FM Araghchi mocks new US sanctions, expected to be unveiled Monday, as 'the same movie'",
-    "Oil prices fall Monday as markets await new, unprecedented US sanctions on Iran"
+    "Drones hit three Russian retail hubs and attempted to strike Putin's military cosmodrome, not just one warehouse.",
+    "UK to help France set up missile assembly lines for Ukraine, alongside sharing long-range missile blueprints."
    ],
-   "line": "White House announces new Iran sanctions plan; Iran dismisses it as familiar pressure, oil markets respond with price decline.",
-   "assembly_score": 7.42
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "5400628a8e7ef84c",
-   "title": "Trump escalates Iran sanctions as Tehran threatens Hormuz blockade",
-   "beat": "international",
-   "publisher_count": 5,
-   "publishers": [
-    "New York Times",
-    "Al Jazeera",
-    "CNBC",
-    "The Independent",
-    "American Spectator"
-   ],
-   "urls": [
-    "//aljazeera.com/news/liveblog/2026/8/24/iran-war-live-iranian-assembly-advances-plans-for-hormuz-service-fees?traffic_source=rss",
-    "//cnbc.com/2026/08/24/us-iran-war-trump-hormuz-bessent-economic-sanctions-.html",
-    "//independent.co.uk/news/world/middle-east/iran-us-war-live-trump-hormuz-power-plant-sanctions-b3037936.html",
-    "//nytimes.com/2026/08/24/opinion/iran-strait-of-hormuz-oil-trump.html",
-    "//spectator.org/trumps-iran-gamble-economic-d-day-and-the-strait-of-hormuz"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 5
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump administration escalates financial pressure on Iran; Tehran threatens to seize ships and block the Strait of Hormuz, a critical global oil route.",
-   "assembly_score": 3.355
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "10822dd80fb6c52f",
-   "title": "New Zealand proposes social media ban for under-16s with steep platform penalties",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Techmeme",
-    "The Independent"
-   ],
-   "urls": [
-    "//independent.co.uk/news/world/australasia/new-zealand-under-16-social-media-ban-bill-b3037943.html",
-    "//techmeme.com/260824/p2"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 3,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "progress_coded": true,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "New Zealand proposes legislation banning social media for under-16s, with platforms facing fines up to 10% of global revenue for noncompliance.",
-   "assembly_score": 2.075
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "e9ed118c08adcfd8",
-   "title": "Carney enters Canadian politics as US trade talks stall",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/260823/p43",
-    "//nytimes.com/2026/08/24/opinion/mark-carney-tariffs-canada-america.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 2,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Mark Carney enters Canadian politics as trade tensions with the US threaten border-state economies.",
-   "assembly_score": 1.49
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "bb6cfb8cc972a462",
-   "title": "Kenya's eCitizen platform under investigation for fraud and audit obstruction",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "Standard (Kenya)"
-   ],
-   "urls": [
-    "//aljazeera.com/economy/2026/8/24/can-kenyas-ai-ambitions-coexist-with-naivashas-water-needs?traffic_source=rss",
-    "//standardmedia.co.ke/article/2001556036/from-fraud-to-audit-obstruction-why-ecitizen-empire-is-under-scrutiny"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 2,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": true,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Kenya's eCitizen digital platform faces fraud allegations and audit obstruction while raising questions about water resource competition with AI infrastructure projects.",
-   "assembly_score": 1.49
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "a10204ad4d321357",
-   "title": "Alaska senator endorses himself against primary rival with same name",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "NBC News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/260823/p44",
-    "//memeorandum.com/260824/p3",
-    "//nbcnews.com/politics/2026-election/dan-sullivan-endorses-dan-sullivan-beat-dan-sullivan-perplexing-alaska-rcna594063"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Alaska Republican Dan Sullivan endorsed his own re-election against a primary challenger also named Dan Sullivan, creating ballot confusion.",
-   "assembly_score": 1.32
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "12b5708544a935d6",
-   "title": "Sailor's father detained by immigration while awaiting son's return from deployment",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "NBC News",
-    "The Independent",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//independent.co.uk/news/border-patrol-florida-pete-hegseth-key-west-navy-b3037914.html",
-    "//memeorandum.com/260824/p2",
-    "//nbcnews.com/news/us-news/father-sailor-uss-abraham-lincoln-detained-immigration-family-says-rcna593961"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A man waiting to see his sailor son was detained by immigration authorities; family questions the timing and circumstances.",
-   "assembly_score": 1.16
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "c5d323f51002b686",
-   "title": "DHS officials attack Trump's stalled ICE nominee",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "The Independent",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//independent.co.uk/news/world/americas/us-politics/dhs-officials-attack-trump-ice-nominee-lance-schroyer-b3037890.html",
-    "//memeorandum.com/260824/p1"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump's nominee to lead ICE faces Senate delay as Department of Homeland Security officials publicly criticize the pick.",
-   "assembly_score": 0.49
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "756af7ad93fc221e",
-   "title": "Zelensky reports Russian troop draft as Ukraine strategy debate continues",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "The Independent",
-    "American Spectator"
-   ],
-   "urls": [
-    "//independent.co.uk/news/world/europe/ukraine-russia-war-live-putin-zelensky-missiles-ambassador-b3037670.html",
-    "//spectator.org/peace-in-ukraine-what-nazi-germany-can-teach-us-about-defeating-putins-russia"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Zelensky says Russia is drafting 300,000 troops; U.S. commentary compares Putin to Nazi Germany in debate over Ukraine strategy.",
-   "assembly_score": -1.81
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "7a90f299ebae4218",
-   "title": "Former deputy convicted of killing Sonya Massey dies in prison",
-   "beat": "national",
-   "publisher_count": 4,
-   "publishers": [
-    "ABC News",
-    "CBS News",
-    "NBC News",
-    "The Independent"
-   ],
-   "urls": [
-    "//abcnews.com/US/wireStory/sean-grayson-former-illinois-deputy-convicted-killing-sonya-135893521",
-    "//cbsnews.com/news/sean-grayson-former-sangamon-county-deputy-dies-in-prison",
-    "//independent.co.uk/news/illinois-chicago-justice-department-black-springfield-b3037918.html",
-    "//independent.co.uk/news/world/americas/crime/sonya-massey-cop-dies-sean-grayson-b3037907.html",
-    "//nbcnews.com/news/us-news/sean-grayson-ex-deputy-convicted-fatally-shooting-sonya-massey-dies-pr-rcna594044"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Sean Grayson, the Illinois deputy convicted of fatally shooting Sonya Massey in 2023, has died in prison at age 32.",
-   "assembly_score": -2.2
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "6bfcb57cafe3e838",
-   "title": "Five dead in rural Portland area; suspect found at scene",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "ABC News",
-    "NBC News"
-   ],
-   "urls": [
-    "//abcnews.com/US/wireStory/police-investigate-after-5-bodies-found-rural-area-135891949",
-    "//nbcnews.com/news/us-news/suspect-quintuple-homicide-rural-property-portland-found-dead-rcna594055"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Five people found dead on a rural property outside Portland; the suspected killer was found dead at the scene.",
-   "assembly_score": -2.29
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "37a113a65dc39a0e",
-   "title": "Kushner meets with House Democratic leader ahead of midterms",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "CBS News",
-    "The Independent",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//cbsnews.com/news/jared-kushner-hakeem-jeffries-meeting-2026-midterm-elections",
-    "//dailymail.com/news/article-16074227/Trumps-son-law-meets-house-Democrat-Republicans-stare-potential-midterm-disaster.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//independent.co.uk/news/world/americas/us-politics/trump-midterms-jared-kushner-b3037802.html"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Jared Kushner met with House Democratic leader Hakeem Jeffries as midterm elections approach.",
-   "assembly_score": -3.03
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "03b741194ba64909",
-   "title": "Trump shrugs off assassination attempts, remarking 'only consequential presidents get shot'",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "Fox News",
-    "Techmeme",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//foxnews.com/media/trump-shrugs-off-assassination-attempts-remarking-only-consequential-presidents-get-shot",
-    "//memeorandum.com/260823/p40",
-    "//techmeme.com/260823/p13"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.61
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "017850db45bb380f",
-   "title": "Shameless Trump Turns Foreign Visit Into Plug for His Golf Empire",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Daily Beast",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/260823/p38",
-    "//thedailybeast.com/shameless-trump-turns-foreign-visit-into-plug-for-his-golf-empire"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -4.02
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "e4c782c759e40cbe",
-   "title": "Norway: King Harald's health has 'deteriorated,' palace says",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Deutsche Welle",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/royals/article-16074161/Norway-King-Harald-health-deteriorating.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dw.com/en/norway-king-harald-s-health-has-deteriorated-palace-says/a-78479515?maca=en-rss-en-all-1573-xml-mrss"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -5.39
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "5e43678ff8f8210c",
-   "title": "UK PM visits Kyiv as Russian attacks intensify and Ukraine's defenses strain",
-   "beat": "international",
-   "publisher_count": 5,
-   "publishers": [
-    "The Guardian",
-    "CBS News",
-    "Deutsche Welle",
-    "France 24",
-    "The Independent"
-   ],
-   "urls": [
-    "//cbsnews.com/news/ukraine-election-war-russia-zelenskyy",
-    "//dw.com/en/ukraine-news-uk-pm-burnham-to-visit-kyiv-in-show-of-support/live-78479580?maca=en-rss-en-all-1573-xml-mrss",
-    "//dw.com/en/ukraine-uk-pm-andy-burnham-to-visit-kyiv-in-show-of-support/live-78479580?maca=en-rss-en-all-1573-xml-mrss",
-    "//dw.com/en/ukraine-uk-prime-minister-andy-burnham-to-visit-kyiv-in-show-of-support-on-ukraine-s-independence-day/live-78479580?maca=en-rss-en-all-1573-xml-mrss",
-    "//france24.com/en/europe/20260824-live-ukraine-backers-gather-as-russian-attacks-escalate-air-defence-runs-low",
-    "//independent.co.uk/news/uk/politics/burnham-kyiv-visit-zelensky-russia-ukraine-b3037952.html",
-    "//theguardian.com/world/2026/aug/24/ukraine-war-briefing-nord-stream-bombings-were-not-us-zelenskyy-insists"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "UK PM Burnham visits Kyiv as Russia escalates attacks and Ukraine's air defenses weaken; Zelenskyy rules out wartime elections.",
-   "assembly_score": 2.575
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "dedbf6afc2a454c9",
-   "title": "New Fed chair tested by rising yields and falling Asian stocks",
-   "beat": "business",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "The Independent"
-   ],
-   "urls": [
-    "//independent.co.uk/news/asian-scott-bessent-bangkok-kospi-jackson-hole-b3037959.html",
-    "//theguardian.com/business/2026/aug/24/fed-chair-kevin-warsh-faces-critical-test-jackson-hole-inflation-fears-mount"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 2,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "New Federal Reserve chair faces market pressure as bond yields rise and Asian stocks fall amid persistent inflation concerns.",
-   "assembly_score": 1.775
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "1684eb66b6619f8e",
-   "title": "Unrelated stories clustered together",
-   "beat": "other",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "The Independent"
-   ],
-   "urls": [
-    "//independent.co.uk/news/world/americas/uganda-israel-gaza-burundi-donald-trump-b3037939.html",
-    "//theguardian.com/film/2026/aug/24/mark-ruffalo-fires-back-paramount-oracle-accused-antisemitic-tropes-israel"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 2,
-    "actionability": 1,
-    "conversational_currency": 1
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.23
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "9f24d9699963ac73",
-   "title": "UEFA chief calls for Infantino's resignation but won't challenge him",
-   "beat": "other",
-   "publisher_count": 2,
-   "publishers": [
-    "France 24",
-    "The Independent"
-   ],
-   "urls": [
-    "//france24.com/en/sport/20260824-uefa-chief-ceferin-calls-for-infantino-to-quit-but-not-interested-in-replacing-him",
-    "//independent.co.uk/news/aleksander-ceferin-uefa-gianni-infantino-fifa-london-b3037911.html"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "UEFA's president publicly calls for FIFA's leader to resign but rules out running to replace him.",
-   "assembly_score": -2.16
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "91593e58b84781ff",
-   "title": "Hayden Panettiere's death reignites child safety debate in Hollywood",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "ABC News",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//abcnews.com/GMA/Culture/hayden-panettieres-mother-breaks-silence-after-death/story?id=135891947",
-    "//dailymail.com/tvshowbiz/article-16073327/melissa-gilbert-hollywood-protect-child-stars-hayden-panettiere-death.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Actress Hayden Panettiere is dead; her mother spoke publicly; child protection concerns resurfaced in Hollywood.",
-   "assembly_score": -2.89
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "1899bf76f24fbfa6",
-   "title": "Russia deploys World War II tanks as Britain withdraws ambassador",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "CNN",
-    "The Independent"
-   ],
-   "urls": [
-    "//cnn.com/europe/live-news/russia-ukraine-war-news-04-18-23/index.html",
-    "//independent.co.uk/news/uk/politics/russia-ambassador-uk-withdrawal-andrey-kelin-b3037966.html"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Russia is deploying obsolete tanks and Britain recalled its ambassador amid escalating tensions.",
-   "assembly_score": 1.98
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "35e497cb07d75ec0",
-   "title": "Maradona's Hand of God ball sells for $3.35 million",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Al Jazeera"
-   ],
-   "urls": [
-    "//aljazeera.com/video/newsfeed/2026/8/24/08-24-26-mardona-ball-sold-clip?traffic_source=rss",
-    "//bbc.co.uk/sport/football/articles/cqxvj8j7gy8o?at_campaign=rss&at_medium=RSS"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "The soccer ball Diego Maradona used to score the disputed 'Hand of God' goal in 1986 sold at auction for roughly $3.35 million.",
-   "assembly_score": 1.17
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "ea8fe4a7a456daa5",
-   "title": "US widens AI-driven investment gap with Europe",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Financial Times",
-    "Techmeme"
-   ],
-   "urls": [
-    "//ft.com/content/77b94c4a-4b4b-4983-9138-7db6926150f4?syn-25a6b1a6=1",
-    "//techmeme.com/260824/p3"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 0.27
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "c0d9e99955837ed0",
-   "title": "SNAP limits on sugary drinks cut soda purchases by 12%, study shows",
-   "beat": "health",
-   "publisher_count": 2,
-   "publishers": [
-    "Post and Courier",
-    "STAT News"
-   ],
-   "urls": [
-    "//postandcourier.com/health/most-americans-drink-at-least-one-soda-a-day-its-associated-with-this-type-of/article_0c9bc147-f11d-4913-ba17-1be2b0acd311.html",
-    "//statnews.com/2026/08/24/snap-restrictions-12-percent-drop-soda-purchases"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": true,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A study finds soda purchases dropped 12% when food stamps restricted sugary drinks; major health consequence unclear from data alone.",
-   "assembly_score": 1.35
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "cff087719cbd2db8",
-   "title": "Cricket captains renew appeal for Imran Khan medical care",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "The Independent"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/cx2z889l0dxo?at_campaign=rss&at_medium=RSS",
-    "//independent.co.uk/news/imran-khan-pakistan-shehbaz-sharif-australian-india-b3038012.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Former cricket captains are calling for medical treatment access for imprisoned Pakistani politician Imran Khan.",
-   "assembly_score": 1.04
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "a6606c62da89052b",
-   "title": "Canada-US trade war: Who wins? Who loses?",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "American Spectator"
-   ],
-   "urls": [
-    "//aljazeera.com/video/newsfeed/2026/8/24/canada-us-trade-war-who-wins-who-loses?traffic_source=rss",
-    "//spectator.org/trumps-canada-tariffs-arent-the-betrayal-ottawa-claims"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 0.35
+   "line": "UK Prime Minister Burnham visits Kyiv on Ukraine's Independence Day amid ongoing Russian attacks.",
+   "assembly_score": 10.17
   }
  ],
  "excluded_sample": [
   {
-   "title": "N. Korea slams Japan's Yasukuni shrine visits as 'neo-militarist frenzy'",
+   "title": "Trump boasts \u2018there has never been anything close\u2019 to his endorsement winning streak",
    "why": "triage verdict NO"
   },
   {
-   "title": "Are Creators Up to the Task of Their New Marketing Roles?",
+   "title": "Girl, 8, dies after contracting brain-eating amoeba she likely caught swimming in Louisiana lake",
+   "why": "ledger: INCREMENT"
+  },
+  {
+   "title": "Maine Democrat Jackson goes positive in statewide ad",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Elizabeth Hurley, 61, displays her incredible figure in a white bikini as she kicks back on a summer holiday in 'paradise' with friends",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Married at First Sight star Jessika Power hits back at 'clearly fake' viral video that appears to show her smoking from glass pipe",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Sleepless Trump, 80, Unravels in Deranged 1AM Posting Spree",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "STAT+: FDA digital health leader promises generative AI regulatory guidance is coming",
    "why": "triage verdict NO"
   },
   {
@@ -1044,144 +327,16 @@
    "why": "triage verdict NO"
   },
   {
-   "title": "The top photos of the day by AP's photojournalists",
+   "title": "My Arms Are Longer Now \u2013 comedy stealth game sends lawlessness into new territory",
    "why": "triage verdict NO"
   },
   {
-   "title": "Maradona\u2019s \u2018Hand of God\u2019 ball from Mexico sells for $3.35m",
+   "title": "Betrayal by Luke Harding review \u2013 is Donald Trump a Russian asset?",
    "why": "triage verdict NO"
   },
   {
-   "title": "Country Star Kacey Musgraves Causes MAGA Outrage Online",
+   "title": "Around the world in 2 minutes",
    "why": "triage verdict NO"
-  },
-  {
-   "title": "\u2018I didn\u2019t miss a thing\u2019: How Nick Haymes photographed his sons\u2019 entire lives from verrucas to homemade hamster coffin",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "What to Stream: Alabama Shakes, 'The Whisper Man,' 'Leanne' and 'Star Wars Zero Company'",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "AI is coming for your glasses",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Dan Sullivan endorses Dan Sullivan to beat Dan Sullivan in perplexing Alaska Senate race",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Ex-cricket captains urge 'proper medical care' for Imran Khan",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "We Know How to Solve the Housing Crisis. We Just Have to Remember. (New York Times)",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Insiders Expose Trump\u2019s Dodgy New Excuse for Ballroom",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "DP leader orders launch of task force to promote political unity",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Lawrence W. Reed\u2019s Born of Ideas Revisits the Principles That Forged America",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Palantir\u2019s Mission: Peter Thiel, AI, and the Defense of the West",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Katie Miller Posts Birthday Tribute to Husband Stephen Miller",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Fergie's hurt over new granddaughter: Sarah fears 'the wheel has turned' in the York family as Eugenie keeps her distance amid Epstein scandal, says royal expert",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Victoria Beckham shows off her toned figure in a black bikini as she relaxes with shirtless husband David on their yacht near Capri amid summer break",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Live: How has AI and tech changed your life? Australians share their stories",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "How to Stop Spiraling If Health Anxiety Is Taking Over Your Brain",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Shield of the Republic Says Farewell",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Finance minister discusses tech, infrastructure cooperation with AIIB",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Runner smashes half-marathon record, heads straight to the football",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Khloe Kardashian and her business partner Emma Grede 'are no longer on speaking terms' - after reality star unfollowed her on Instagram",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "riverdogs.jpg",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "The comeback of sewing: Not just your grandmother's hobby anymore",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Missing cat named Ginge is found 86 miles away from home... almost a year later",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "What a fun guy! Sweet mouse stands tall as it tries to reach for food",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Where are the cast of Willy Wonka & The Chocolate Factory now? The varied fates of the child stars - from a tragic death to quitting fame - as iconic film turns 55",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Week1STNA12.JPG",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Week1STNA13.JPG",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Week1STNA14.JPG",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Week1STNA11.JPG",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Week1STNA2.JPG",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "If walls could talk... just where have Parliament's missing artworks gone?",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Tom Cruise's sex life crisis: Insiders reveal actor's secret 'frustration' at 64... real reason Ana de Armas fling collapsed... lover's name he can't bear to hear... and Victoria Beckham's failed interventions",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "The Papers: 'Pain beyond words' and 'Graduates face worst job market'",
-   "why": "ledger: RECYCLED"
   },
   {
    "title": "Podcast: One country musician is calling for other artists to oppose assault rifles",
@@ -1189,6 +344,114 @@
   },
   {
    "title": "Bidets save you money and reduce waste \u2014 we tested the best options out there",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "50+ products to make your life easier and our planet cleaner",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Mother's Day is around the corner. Here are 50+ thoughtful gifts she'll love",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "A head-to-toe guide of how men should dress this spring, and where they should shop",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "42 of the most useful travel products you can buy on Amazon",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "The 7 best high-yield savings accounts of April 2023",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Taxes are due tomorrow. Here's how to file for an extension",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Composting is an easy way to reduce food waste. Here's how to do it",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "We stopped using aluminum foil for cooking and you should too. Here's what to use instead",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "The beloved Dyson Supersonic hair dryer is at its lowest price ever",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Everything you need to know about Way Day 2023, Wayfair's biggest sale of the year",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "The 2024 presidential alternative many voters will want",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Was Meghan's supposed role in Guy Ritchie Netflix series leaked as a PR tactic? Mystery over Duchess and The Gentleman",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Father of USS Lincoln sailor taken into ICE detention while son deployed in Middle East",
+   "why": "ledger: INCREMENT"
+  },
+  {
+   "title": "DP leader orders launch of task force to promote political unity",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Ligue 1: Ferran Torres saves Paris Saint-Germain against Rennes",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "How giving up alcohol changed my face: Menopause coach who secretly drank white wine and regularly flew into a rage reveals how being sober transformed her looks",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "My gummy smile meant I always hid from photos or stopped myself laughing - until I found the five-minute solution. It's something I swore I'd NEVER do... but it finally has me grinning again",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Dan Sullivan endorses Dan Sullivan to beat Dan Sullivan in perplexing Alaska Senate race",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Let your oven do the hard work with four of our favourite roast recipes",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "The Engines of Our Ingenuity 3403: Telephone in 1904",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "The Vogue Business People Moves Tracker",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Are Creators Up to the Task of Their New Marketing Roles?",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "The top photos of the day by AP's photojournalists",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "The Papers: 'Pain beyond words' and 'Graduates face worst job market'",
+   "why": "ledger: RECYCLED"
+  },
+  {
+   "title": "Country Star Kacey Musgraves Causes MAGA Outrage Online",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "What to Stream: Alabama Shakes, 'The Whisper Man,' 'Leanne' and 'Star Wars Zero Company'",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "\u2018I didn\u2019t miss a thing\u2019: How Nick Haymes photographed his sons\u2019 entire lives from verrucas to homemade hamster coffin",
    "why": "triage verdict NO"
   }
  ]
