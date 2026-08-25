@@ -274,16 +274,19 @@ const LINEUP_MAX = 8;
 
 /* ─── persisted state ─── */
 const LS = {
-  settings: 'ntk_pulse_settings_v1',
-  lineup:   'ntk_pulse_lineup_v1',
-  sup:      'ntk_pulse_suppressed_v1',
-  notes:    'ntk_pulse_notes_v1',
-  manual:   'ntk_pulse_manual_clusters_v1',
+  settings:  'ntk_pulse_settings_v1',
+  lineup:    'ntk_pulse_lineup_v1',
+  sup:       'ntk_pulse_suppressed_v1',
+  notes:     'ntk_pulse_notes_v1',
+  manual:    'ntk_pulse_manual_clusters_v1',
+  dismissed: 'ntk_pulse_dismissed_candidates_v1',
 };
 function load(k, fallback) { try { const v = JSON.parse(localStorage.getItem(k)); return v ?? fallback; } catch { return fallback; } }
 let SETTINGS = load(LS.settings, { antKey:'', proxyBase:'', ghToken:'', recraftKey:'', bodyLen:4000, maxArts:15 });
 let LINEUP = load(LS.lineup, []);          // [{id, title, angle, beat, category, conceptEntity, narrowKeyword, articles:[], enrichedAt, packages, busy?, status?, open?, outOpen?}]
 let SUP = load(LS.sup, {});                 // canonical url -> true  (editor suppressions, global, persistent)
+let DISMISSED = load(LS.dismissed, {});      // candidate key -> true  (recommended-zone dismissals, persistent, reversible)
+function saveDismissed(){ localStorage.setItem(LS.dismissed, JSON.stringify(DISMISSED)); }
 // Standing editorial notes: ongoing directives that ride into every
 // generation call until removed or promoted into v14 itself. genCounter
 // increments once per completed generateStory call; each note's baseline
@@ -901,6 +904,13 @@ function certify(cluster){
   saveLineup(); render();
 }
 function removeStory(id){ LINEUP = LINEUP.filter(s=>s.id!==id); saveLineup(); render(); }
+function clearLineup(){
+  if (!LINEUP.length) return;
+  if (!confirm(`Remove all ${LINEUP.length} stories from the lineup? This clears drafts, angles, and generated packages for every story currently in the digest. This can't be undone.`)) return;
+  LINEUP = [];
+  saveLineup();
+  render();
+}
 // Replaces the old up/down-arrow moveStory — reordering now happens by
 // drag-and-drop or by typing a target position directly, both funneling
 // into this one function. Moves the story to a 1-indexed target position,
@@ -2024,10 +2034,132 @@ function editionScoreChips(key){
     (s.ledger_class ? ` · <b>${esc(s.ledger_class)}</b>` : '');
 }
 
+// ─── recommended-zone (edition candidates) selection/expand state ───
+// Ephemeral — resets on reload, same posture as Stream's SELECTED/OPEN_CLUSTERS.
+let CAND_SELECTED = new Set();   // candidate keys checked for batch dismiss
+let OPEN_CANDIDATES = new Set(); // candidate keys currently expanded to show sources
+let candLastIndex = null;        // last clicked row index, for shift-click range select
+
+function visibleCandidates(){
+  return (EDITION?._candidates||[]).filter(s=>!DISMISSED[s.key]);
+}
+function dismissedCandidateCount(){
+  return (EDITION?._candidates||[]).filter(s=>DISMISSED[s.key]).length;
+}
+function dismissCandidate(key){
+  DISMISSED[key]=true; CAND_SELECTED.delete(key); saveDismissed(); render();
+}
+function dismissSelectedCandidates(){
+  if (!CAND_SELECTED.size) return;
+  for (const k of CAND_SELECTED) DISMISSED[k]=true;
+  CAND_SELECTED.clear(); saveDismissed(); render();
+}
+function restoreDismissedCandidates(){
+  if (!dismissedCandidateCount()) return;
+  if (!confirm('Restore all dismissed candidates back into the recommended list?')) return;
+  DISMISSED = {}; saveDismissed(); render();
+}
+function toggleCandOpen(key){
+  if (OPEN_CANDIDATES.has(key)) OPEN_CANDIDATES.delete(key); else OPEN_CANDIDATES.add(key);
+  render();
+}
+function toggleCandSelect(key, shiftKey, index, visibleKeys){
+  if (shiftKey && candLastIndex!==null){
+    const [a,b] = [candLastIndex, index].sort((x,y)=>x-y);
+    for (let i=a;i<=b;i++) CAND_SELECTED.add(visibleKeys[i]);
+  } else if (CAND_SELECTED.has(key)) {
+    CAND_SELECTED.delete(key);
+  } else {
+    CAND_SELECTED.add(key);
+  }
+  candLastIndex = index;
+  render();
+}
+function toggleCandSelectAll(visibleKeys, checked){
+  if (checked) visibleKeys.forEach(k=>CAND_SELECTED.add(k)); else CAND_SELECTED.clear();
+  render();
+}
+// Same source detail Stream shows — pulled from the live 6h window when the
+// cluster is still there. Clusters age out of that window over the course
+// of a day, so candidates promoted earlier fall back to the canonical URLs
+// lineup_promote.py recorded at promotion time (no per-article title/pub
+// pairing in that case — best available, not the full picture).
+function candidateArticles(key){
+  const sc = (STREAM?.clusters||[]).find(c=>c.key===key);
+  if (sc && sc.items && sc.items.length){
+    return sc.items.map(it=>
+      `<div class="article"><span class="pub">${esc(it.publisher)}</span> · `+
+      `<a href="${esc(it.url)}" target="_blank" rel="noopener">${esc(it.title)}</a> `+
+      `<span class="t">${rel(it.published)}</span></div>`
+    ).join('');
+  }
+  const s = (EDITION?._candidates||[]).find(x=>x.key===key);
+  const urls = (s && s.urls) || [];
+  if (!urls.length){
+    return `<div style="font-size:11px;color:var(--dim);padding:2px 0">No source detail available — cluster aged out of the stream window and no URLs were recorded.</div>`;
+  }
+  return `<div style="font-size:10.5px;color:var(--dim);padding:2px 0 4px">cluster aged out of the stream window — showing recorded source URLs only</div>`+
+    urls.map(u=>`<div class="article"><a href="${esc(u)}" target="_blank" rel="noopener">${esc(u)}</a></div>`).join('');
+}
+
 function wireCandidateButtons(root){
+  const keys = visibleCandidates().map(s=>s.key);
   root.querySelectorAll('.add-candidate').forEach(btn=>{
     btn.addEventListener('click',()=>addEditionCandidate(btn.dataset.key));
   });
+  root.querySelectorAll('.cand-dismiss').forEach(btn=>{
+    btn.addEventListener('click',()=>dismissCandidate(btn.dataset.key));
+  });
+  root.querySelectorAll('.cand-label').forEach(lbl=>{
+    lbl.addEventListener('click',()=>toggleCandOpen(lbl.dataset.key));
+  });
+  root.querySelectorAll('.cand-chk').forEach(cb=>{
+    cb.addEventListener('click',e=>{
+      e.stopPropagation();
+      toggleCandSelect(cb.dataset.key, e.shiftKey, +cb.dataset.i, keys);
+    });
+  });
+  root.querySelector('#cand-select-all')?.addEventListener('change', e=>{
+    toggleCandSelectAll(keys, e.target.checked);
+  });
+  root.querySelector('#cand-dismiss-sel')?.addEventListener('click', dismissSelectedCandidates);
+  root.querySelector('#cand-restore-dismissed')?.addEventListener('click', restoreDismissedCandidates);
+}
+
+function candidatesPanel(){
+  const cands = visibleCandidates();
+  const dismissedN = dismissedCandidateCount();
+  if (!cands.length && !dismissedN) return '';
+  const allSelected = cands.length>0 && cands.every(s=>CAND_SELECTED.has(s.key));
+  const header = `<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:6px">
+      <div style="font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px">
+        ${cands.length} from today's edition not yet in your lineup — choose what to add`+
+        (LINEUP.length>=LINEUP_MAX?' (full — remove a story first)':'')+
+        (dismissedN?` · ${dismissedN} dismissed <button class="mini" id="cand-restore-dismissed" style="margin-left:2px">restore</button>`:'')+`
+      </div>`+
+      (cands.length ? `<div style="display:flex;gap:10px;align-items:center">
+        <label style="font-size:11px;display:flex;gap:4px;align-items:center;cursor:pointer">
+          <input type="checkbox" id="cand-select-all" ${allSelected?'checked':''}> select all
+        </label>
+        <button class="mini" id="cand-dismiss-sel" ${CAND_SELECTED.size?'':'disabled'}>dismiss selected (${CAND_SELECTED.size})</button>
+      </div>` : '')+
+    `</div>`;
+  const rows = cands.map((s,i)=>{
+    const open = OPEN_CANDIDATES.has(s.key);
+    return `<div class="cand-row" data-key="${esc(s.key)}" style="border-bottom:1px solid var(--rule);padding:4px 0">
+      <div style="display:flex;gap:6px;align-items:baseline">
+        <input type="checkbox" class="cand-chk" data-key="${esc(s.key)}" data-i="${i}" ${CAND_SELECTED.has(s.key)?'checked':''}>
+        <label class="cand-label" data-key="${esc(s.key)}" style="flex:1;cursor:pointer">
+          <span class="slot-tag" style="background:#666">${esc(s.slot_label||'')}</span> ${esc(s.title)}
+          <span style="color:var(--dim);font-size:10.5px"> · ${s.publisher_count||0} pub${s.publisher_count===1?'':'s'}</span>
+        </label>
+        <button class="mini add-candidate" data-key="${esc(s.key)}" ${LINEUP.length>=LINEUP_MAX?'disabled':''}>+ add</button>
+        <button class="mini cand-dismiss" data-key="${esc(s.key)}">dismiss</button>
+      </div>`+
+      (open ? `<div style="padding-left:22px;margin-top:2px">${candidateArticles(s.key)}</div>` : '')+
+    `</div>`;
+  }).join('');
+  return `<div class="ed-head" style="margin-top:8px">${header}${rows}</div>`;
 }
 
 function editionStrip(){
@@ -2046,16 +2178,7 @@ function editionStrip(){
       ${unfilled.length?`<div class="lint-fail">✕ unfilled: ${esc(unfilled.join(', '))}</div>`:''}
     </div>
   </div>` +
-  ((EDITION._candidates||[]).length ? `<div class="ed-head" style="margin-top:8px">
-    <div style="font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">
-      ${EDITION._candidates.length} from today's edition not yet in your lineup — choose what to add`+
-      (LINEUP.length>=LINEUP_MAX?' (full — remove a story first)':'')+`
-    </div>`+
-    EDITION._candidates.map(s=>`<div class="qres">`+
-      `<label style="flex:1"><span class="slot-tag" style="background:#666">${esc(s.slot_label||'')}</span> ${esc(s.title)}</label>`+
-      `<button class="mini add-candidate" data-key="${esc(s.key)}" ${LINEUP.length>=LINEUP_MAX?'disabled':''}>+ add</button>`+
-      `</div>`).join('')+
-    `</div>` : '') +
+  candidatesPanel() +
   ((EDITION.excluded_sample||[]).length ? `<details class="killed"><summary style="cursor:pointer;color:var(--dim);font-size:11px">`+
     `${EDITION.excluded_sample.length} candidates excluded before slot-filling</summary>`+
     EDITION.excluded_sample.map(x=>`<div class="k-item">✕ ${esc(x.why)} — ${esc(x.title||'')}</div>`).join('')+
@@ -2082,6 +2205,7 @@ function renderLineup(root){
   root.innerHTML = strip + `<div class="lineup-bar">
     <button class="mini go" id="gen-all" ${LINEUP.some(s=>s.busy)?'disabled':''}>Generate all ungenerated</button>
     <button class="mini" id="q-toggle">${Q.open?'close search':'+ new story from search'}</button>
+    <button class="mini" id="clear-lineup" style="border-color:var(--stale);color:var(--stale)">clear all stories</button>
     <span class="spacer"></span>
     <button class="mini go" id="publish-btn" ${nGen?'':'disabled'}>Publish to digest v2</button>
     <span class="copied">${copiedFlag==='all'?'copied':copiedFlag==='site'?'copied':''}</span>
@@ -2115,6 +2239,7 @@ function renderLineup(root){
   }
   document.getElementById('q-toggle').addEventListener('click',()=>{ Q.open=!Q.open; render(); });
   document.getElementById('gen-all').addEventListener('click',generateAll);
+  document.getElementById('clear-lineup').addEventListener('click',clearLineup);
   wireCandidateButtons(root);
   document.getElementById('publish-btn').addEventListener('click',publishToDigest);
   renderPublishStatus();
