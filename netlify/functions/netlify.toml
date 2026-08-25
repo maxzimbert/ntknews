@@ -1,3 +1,12 @@
 [build]
   publish = "."
   functions = "netlify/functions"
+[[redirects]]
+  from = "/digest/latest"
+  to = "/digest/v2/"
+  status = 200
+
+[[redirects]]
+  from = "/digest/latest/*"
+  to = "/digest/v2/:splat"
+  status = 200
