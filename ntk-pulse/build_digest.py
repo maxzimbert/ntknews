@@ -541,7 +541,7 @@ def main():
     repo_root = Path(os.environ.get("GITHUB_WORKSPACE", "."))
     story_json_path = Path(sys.argv[1]) if len(sys.argv) > 1 else DATA_DEFAULT
     date_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    base_url = "https://maxzimbert.github.io/ntknews"
+    base_url = "https://ntknews.org"
     api_key = os.environ.get("ANTHROPIC_API_KEY", "")
 
     digest_dir = repo_root / "digest" / "v2"
