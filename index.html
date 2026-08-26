@@ -142,11 +142,11 @@
   .story-meta{font-size:11px; font-weight:500; letter-spacing:.14em; text-transform:uppercase;
     color:rgba(234,217,197,.45); text-align:right; line-height:2;}
   .story-card{background:var(--cream); color:var(--ink); display:grid; grid-template-columns:.88fr 1.12fr;}
-  .story-image-panel{position:relative; min-height:520px; overflow:hidden; background:var(--blue);
+  .story-image-panel{position:relative; overflow:hidden; background:var(--blue);
     background-image:repeating-linear-gradient(135deg,#0798F2 0 9px,#4FB4F6 9px 18px);}
   .story-image-panel img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center;}
   .story-image-panel .duotone{position:absolute; inset:0; mix-blend-mode:multiply; background:var(--blue); opacity:.35; pointer-events:none;}
-  .story-image-overlay{position:absolute; inset:0; padding:34px; display:flex; flex-direction:column;
+  .story-image-overlay{position:relative; min-height:520px; padding:34px; display:flex; flex-direction:column;
     justify-content:space-between; z-index:2;}
   .story-image-eyebrow{font-size:10px; font-weight:500; letter-spacing:.16em; text-transform:uppercase;
     color:#fff; text-shadow:0 1px 6px rgba(0,0,0,.45);}
@@ -222,7 +222,7 @@
     .hero-grid{grid-template-columns:1fr;}
     .hero-left{padding:48px 0 32px;}
     .hero-h1{font-size:clamp(44px,9vw,104px);}
-    .hero-right{order:-1;}
+    .hero-right{order:-1; display:block;}
     .hero-image-panel{aspect-ratio:16/10; flex:none; width:100%;}
     .hero-card{position:static; left:auto; bottom:auto; max-width:none; box-shadow:none; margin-top:-1px;}
     .stat-grid{grid-template-columns:1fr 1fr;}
@@ -237,7 +237,8 @@
     .story-h2{font-size:clamp(32px,7vw,56px);}
     .story-meta{text-align:left;}
     .story-card{grid-template-columns:1fr;}
-    .story-image-panel{min-height:0; aspect-ratio:16/10;}
+    .story-image-overlay{min-height:280px; padding:24px;}
+    .story-image-headline{font-size:28px;}
     .editor-grid{grid-template-columns:1fr; gap:32px;}
     .editor-portrait{max-width:280px;}
     .editor-quote{font-size:clamp(26px,6vw,38px);}
