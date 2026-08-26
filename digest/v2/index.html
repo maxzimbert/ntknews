@@ -1108,6 +1108,40 @@
   .share-btn.listen { background: var(--teal); color: var(--white); }
   .share-btn.listen.speaking { background: rgba(234,217,197,0.08); color: var(--teal); border: 1px solid var(--teal); }
 
+  .story-suggest-cta {
+    margin: 20px 20px 32px;
+    padding: 18px 20px;
+    border-radius: 10px;
+    border: 1px solid rgba(234,217,197,0.14);
+    background: rgba(1,178,167,0.08);
+    text-align: center;
+  }
+  .story-suggest-cta .ssc-head {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 6px;
+  }
+  .story-suggest-cta .ssc-body {
+    font-size: 12.5px;
+    color: rgba(38,31,35,0.65);
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+  .story-suggest-cta a.ssc-btn {
+    display: inline-block;
+    padding: 10px 22px;
+    border-radius: 6px;
+    background: var(--teal);
+    color: var(--white);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    text-decoration: none;
+  }
+
 
   /* ── SUBSCRIBE MODAL ─────────────────────── */
   .modal-overlay {
@@ -1731,6 +1765,11 @@
       <div class="today-date" id="todayDate">Loading...</div>
     </div>
     <div id="todayList"></div>
+    <div class="story-suggest-cta">
+      <div class="ssc-head">Anything missing?</div>
+      <div class="ssc-body">Pitch topics, ideas, musings, contemplations, and stories that merit sustained attention.</div>
+      <a href="#" id="storySuggestBtnToday" class="ssc-btn">Pitch it →</a>
+    </div>
   </div>
 </div>
 
@@ -1769,6 +1808,11 @@
 
   <div class="story-list" id="storyList">
     <!-- Cards injected by JS -->
+  </div>
+  <div class="story-suggest-cta">
+    <div class="ssc-head">Anything missing?</div>
+    <div class="ssc-body">Pitch topics, ideas, musings, contemplations, and stories that merit sustained attention.</div>
+    <a href="#" id="storySuggestBtnDigest" class="ssc-btn">Pitch it →</a>
   </div>
 </div>
 
@@ -2882,6 +2926,24 @@ function buildFeedbackMailto() {
   return `mailto:max.zimbert@icloud.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
+// ── Story-suggestion CTA — distinct from the bullhorn: asks specifically
+// for topics/story pitches, not general app feedback. Own subject line
+// so it's easy to filter separately in your inbox.
+function buildStorySuggestMailto() {
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  const subject = `NTK Story Idea — ${dateStr}`;
+  const body = `Story or topic I think deserves sustained attention:\n\n`;
+  return `mailto:max.zimbert@icloud.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+function updateStorySuggestCtas() {
+  ['storySuggestBtnToday', 'storySuggestBtnDigest'].forEach(id => {
+    const btn = document.getElementById(id);
+    if (btn) btn.href = buildStorySuggestMailto();
+  });
+}
+
 function updateFeedbackBtn() {
   const btn = document.getElementById('feedbackBtn');
   if (!btn) return;
@@ -2896,6 +2958,7 @@ buildDigest();
 buildToday();
 updateBeatChip();
 updateFeedbackBtn();
+updateStorySuggestCtas();
 
 // Rebuild mailto on every tap so it's always current (fixes iOS load-time href issue)
 document.addEventListener('DOMContentLoaded', function() {
@@ -2908,6 +2971,12 @@ document.addEventListener('DOMContentLoaded', function() {
       btn.href = buildFeedbackMailto();
     });
   }
+  ['storySuggestBtnToday', 'storySuggestBtnDigest'].forEach(id => {
+    const sbtn = document.getElementById(id);
+    if (!sbtn) return;
+    sbtn.addEventListener('touchstart', function() { sbtn.href = buildStorySuggestMailto(); }, { passive: true });
+    sbtn.addEventListener('mousedown', function() { sbtn.href = buildStorySuggestMailto(); });
+  });
 });
 
 
