@@ -5,6 +5,35 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NTK News — Know what matters. Enjoy it.</title>
 <meta name="description" content="Three minutes every morning. The stories that are actually important, told in a way that's actually interesting. Every story runs through Truths, Probabilities, Possibilities, and Lies.">
+
+<!-- Favicon / home-screen icon — real hosted files, not data URIs.
+     Link-preview crawlers (iMessage, Slack, Facebook, Twitter) fetch these
+     by URL over HTTP; they do not render inline base64, so this is the one
+     place in the page that has to point at actual files sitting next to
+     index.html at the repo root. See the three PNGs shipped alongside this
+     file: favicon.png, apple-touch-icon.png, og-image.png. -->
+<link rel="icon" type="image/png" sizes="64x64" href="https://ntknews.org/favicon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://ntknews.org/apple-touch-icon.png">
+<meta name="theme-color" content="#261F23">
+
+<!-- Open Graph — this is what iMessage, Slack, and Facebook read for the
+     link-preview card. og:image must be an absolute URL per spec. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="NTK News">
+<meta property="og:url" content="https://ntknews.org/">
+<meta property="og:title" content="NTK News — Know what matters. Enjoy it.">
+<meta property="og:description" content="Three minutes every morning. The stories that are actually important, told in a way that's actually interesting.">
+<meta property="og:image" content="https://ntknews.org/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="NTK News">
+
+<!-- Twitter Card — same image, its own tag namespace -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="NTK News — Know what matters. Enjoy it.">
+<meta name="twitter:description" content="Three minutes every morning. The stories that are actually important, told in a way that's actually interesting.">
+<meta name="twitter:image" content="https://ntknews.org/og-image.png">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&display=swap" rel="stylesheet">
