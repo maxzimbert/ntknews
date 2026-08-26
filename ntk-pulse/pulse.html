@@ -218,6 +218,7 @@
   <h1>PULSE</h1>
   <button class="tab on" id="tab-stream">stream</button>
   <button class="tab" id="tab-lineup">lineup</button>
+  <button class="tab" id="tab-today">today</button>
   <span class="meta" id="clock"></span>
   <span class="stale" id="stale"></span>
   <span class="right">
@@ -280,6 +281,7 @@ const LS = {
   notes:     'ntk_pulse_notes_v1',
   manual:    'ntk_pulse_manual_clusters_v1',
   dismissed: 'ntk_pulse_dismissed_candidates_v1',
+  today:     'ntk_pulse_today_v1',
 };
 function load(k, fallback) { try { const v = JSON.parse(localStorage.getItem(k)); return v ?? fallback; } catch { return fallback; } }
 let SETTINGS = load(LS.settings, { antKey:'', proxyBase:'', ghToken:'', recraftKey:'', bodyLen:4000, maxArts:15 });
@@ -287,6 +289,8 @@ let LINEUP = load(LS.lineup, []);          // [{id, title, angle, beat, category
 let SUP = load(LS.sup, {});                 // canonical url -> true  (editor suppressions, global, persistent)
 let DISMISSED = load(LS.dismissed, {});      // candidate key -> true  (recommended-zone dismissals, persistent, reversible)
 function saveDismissed(){ localStorage.setItem(LS.dismissed, JSON.stringify(DISMISSED)); }
+let TODAY_OV = load(LS.today, {text:'', generatedAt:null, busy:false});
+function saveToday(){ localStorage.setItem(LS.today, JSON.stringify(TODAY_OV)); }
 // Standing editorial notes: ongoing directives that ride into every
 // generation call until removed or promoted into v14 itself. genCounter
 // increments once per completed generateStory call; each note's baseline
@@ -761,7 +765,25 @@ Lies are false or manipulative narratives in active circulation by identifiable 
 
 FORMAT: Open with an *italicized subhead* — do NOT bold it; bold is reserved for item headlines only, so the two never read as duplicate lines. Then each lie as a **bold headline** (the distortion stated clearly) followed by the claim, who's making it, who benefits, the factual reality, and a historical parallel when one is earned — built as a sequence toward the reveal, not a checklist. Most dangerous to most absurd. Register: controlled precision — a prosecutor laying out a case, not a pundit venting.
 
-LENGTH: Aim for 400-450 words. One well-constructed lie, fully prosecuted, is more effective than three that each get two sentences.`
+LENGTH: Aim for 400-450 words. One well-constructed lie, fully prosecuted, is more effective than three that each get two sentences.`,
+
+today:`You are producing TODAY — the overview screen a reader sees first, before the full Digest.
+
+This is NOT an essay. It is a digest of the digest — a compressed, well-written pass over what's already in today's edition, not a new piece of writing about the news. Long enough to cover what matters, short enough to stay interesting: your journalism-teacher test, not a length target.
+
+INPUT: the finished, edited Truths for each of today's stories (headline + lede + body), plus Probabilities and Possibilities where supplied. Lies is never included — do not reference, allude to, or hint at anything from a Lies section under any circumstance.
+
+STRUCTURE: Two to three short paragraphs of real prose doing the connective work — why today's edition holds together, what's actually going on across it. Bullets only where something is genuinely list-shaped (e.g. several smaller items that don't need a paragraph each) — not the default unit of the whole thing. This is Axios's *format* discipline without Axios's *voice*: no "Why it matters," no smart-brevity fragments, no bolded one-liners standing in for sentences. Full prose, same voice as the rest of NTK.
+
+PROBABILITIES AND POSSIBILITIES ARE SEASONING, NOT STRUCTURE: pull one in only if it genuinely sharpens what's happening today — a kicker, a bit of spice. Truths is the main event. Most stories in a given edition will appear here via Truths alone.
+
+TEASE, DON'T WITHHOLD: cover the actual substance of each story you mention — this is "long enough to cover the important points." A curiosity-gap tease that makes someone open the story to find out what happened is the failure mode, not the goal.
+
+ONRAMPS: when a sentence references a specific story, tag it inline: [STORY: story_key | 2-4 word label]. Place the marker immediately after the clause it supports. Every story mentioned needs exactly one marker; do not tag the same story twice.
+
+Follow all VOICE_REF rules, including the signpost-verb ban — this piece is read first and sets the voice for everything after it.
+
+LENGTH: Aim for 200-300 words total.`
 };
 
 function makePrompt(section, articlesText, suppUrls) {
@@ -781,6 +803,38 @@ Use only when a specific number is the sharpest way to land the stakes. The numb
 
 A section without a visual marker is not incomplete. Omit both if neither earns its place.`;
   return `${GLOBAL}\n\n${VOICE_REF}\n\n${SEC_PROMPTS[section]}${visualBlock}${suppBlock}\n\nARTICLES TO ANALYZE:\n\n${articlesText}`;
+}
+
+// ─── Today overview — digest of the digest ───
+// Fed the FINISHED, edited Truths/Probabilities/Possibilities of everything
+// in today's lineup — never raw sources, never Lies. Separate from
+// makePrompt() deliberately: the input here is already-written prose, not
+// source articles, and labeling it "ARTICLES TO ANALYZE" would be wrong.
+function todayInputBlock(){
+  return LINEUP
+    .filter(s => s.packages && s.packages.truths)
+    .map(s => {
+      const { headline, lede, body } = extractTruthsTags(s.packages.truths || '');
+      const prob = s.packages.probabilities || '';
+      const poss = s.packages.possibilities || '';
+      return `STORY KEY: ${s.key || s.id}\nHEADLINE: ${headline}\nLEDE: ${lede}\nTRUTHS BODY:\n${body}\n\nPROBABILITIES:\n${prob}\n\nPOSSIBILITIES:\n${poss}`;
+    })
+    .join('\n\n===\n\n');
+}
+function makeTodayPrompt(storiesBlock){
+  return `${GLOBAL}\n\n${VOICE_REF}\n\n${SEC_PROMPTS.today}\n\nTODAY'S FINISHED STORIES (Truths/Probabilities/Possibilities only — Lies intentionally excluded):\n\n${storiesBlock}`;
+}
+async function generateToday(){
+  const block = todayInputBlock();
+  if (!block){ alert('No generated stories in the lineup yet — generate story packages first, then Generate Today.'); return; }
+  TODAY_OV.busy = true; saveToday(); render();
+  try {
+    TODAY_OV.text = await ai(makeTodayPrompt(block), 1200);
+    TODAY_OV.generatedAt = new Date().toISOString();
+  } catch(e){
+    TODAY_OV.text = '[Generation failed: '+e.message+']';
+  }
+  TODAY_OV.busy = false; saveToday(); render();
 }
 
 /* ─── export (ported from ntk-production) ─── */
@@ -2207,6 +2261,7 @@ function renderLineup(root){
     <button class="mini" id="q-toggle">${Q.open?'close search':'+ new story from search'}</button>
     <button class="mini" id="clear-lineup" style="border-color:var(--stale);color:var(--stale)">clear all stories</button>
     <span class="spacer"></span>
+    <button class="mini" id="gen-today-lineup" ${TODAY_OV.busy?'disabled':''}>${TODAY_OV.busy?'Generating…':'Generate Today'}</button>
     <button class="mini go" id="publish-btn" ${nGen?'':'disabled'}>Publish to digest v2</button>
     <span class="copied">${copiedFlag==='all'?'copied':copiedFlag==='site'?'copied':''}</span>
     <span id="publish-status" style="font-size:10.5px;color:var(--warn)"></span>
@@ -2240,6 +2295,7 @@ function renderLineup(root){
   document.getElementById('q-toggle').addEventListener('click',()=>{ Q.open=!Q.open; render(); });
   document.getElementById('gen-all').addEventListener('click',generateAll);
   document.getElementById('clear-lineup').addEventListener('click',clearLineup);
+  document.getElementById('gen-today-lineup').addEventListener('click',generateToday);
   wireCandidateButtons(root);
   document.getElementById('publish-btn').addEventListener('click',publishToDigest);
   renderPublishStatus();
@@ -2766,6 +2822,49 @@ function syncEditionToLineup(){
 /* ─── edition view: what assembly.py decided, and why ─── */
 let EDITION = null;
 
+function renderToday(root){
+  const n = LINEUP.filter(s => s.packages && s.packages.truths).length;
+  root.innerHTML = `<div class="lineup-bar">
+      <button class="mini go" id="gen-today" ${TODAY_OV.busy?'disabled':''}>${TODAY_OV.busy?'Generating…':'Generate Today'}</button>
+      <span style="font-size:11px;color:var(--dim);align-self:center">${n} of ${LINEUP.length} lineup stories have finished Truths — feeds this generation</span>
+      <span class="spacer"></span>
+      ${TODAY_OV.generatedAt ? `<span style="font-size:11px;color:var(--dim);align-self:center">generated ${rel(TODAY_OV.generatedAt)} ago</span>` : ''}
+    </div>
+    <div class="ed-head out" style="margin-top:8px">
+      <div style="font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">
+        Today overview — click the text below to edit the raw draft
+      </div>
+      <div class="body today-body" id="today-body">${TODAY_OV.text
+        ? esc(TODAY_OV.text).replace(/\n/g,'<br>')
+        : '<span style="color:var(--dim)">Nothing generated yet. Click Generate Today above — it reads Truths/Probabilities/Possibilities from every lineup story that has finished packages, and skips Lies entirely.</span>'}</div>
+    </div>`;
+
+  document.getElementById('gen-today').addEventListener('click', generateToday);
+
+  const bodyEl = document.getElementById('today-body');
+  bodyEl.addEventListener('click', function startEdit(){
+    if (bodyEl.querySelector('textarea')) return;
+    const raw = TODAY_OV.text || '';
+    bodyEl.innerHTML = '';
+    const ta = document.createElement('textarea');
+    ta.className = 'body-edit';
+    ta.value = raw;
+    bodyEl.appendChild(ta);
+    ta.focus();
+    ta.setSelectionRange(ta.value.length, ta.value.length);
+    ta.style.height = Math.min(Math.max(ta.scrollHeight, 160), 600) + 'px';
+    let cancelled = false;
+    const finish = (save) => {
+      if (save && !cancelled){ TODAY_OV.text = ta.value; saveToday(); }
+      render();
+    };
+    ta.addEventListener('keydown', e=>{
+      if (e.key === 'Escape'){ cancelled = true; finish(false); }
+    });
+    ta.addEventListener('blur', ()=>finish(true));
+  });
+}
+
 
 /* ─── shell ─── */
 function render(){
@@ -2773,12 +2872,15 @@ function render(){
   document.getElementById('notesBadge').textContent = NOTES.items.length ? ' '+NOTES.items.length : '';
   document.getElementById('tab-stream').classList.toggle('on', TAB==='stream');
   document.getElementById('tab-lineup').classList.toggle('on', TAB==='lineup');
+  document.getElementById('tab-today').classList.toggle('on', TAB==='today');
   document.getElementById('tab-lineup').textContent = 'lineup'+(LINEUP.length?' ('+LINEUP.length+')':'');
   if (TAB==='stream') renderStream(root);
+  else if (TAB==='today') renderToday(root);
   else renderLineup(root);
 }
 document.getElementById('tab-stream').addEventListener('click',()=>{ TAB='stream'; render(); });
 document.getElementById('tab-lineup').addEventListener('click',()=>{ TAB='lineup'; render(); });
+document.getElementById('tab-today').addEventListener('click',()=>{ TAB='today'; render(); });
 document.getElementById('notesToggle').addEventListener('click',()=>{ notesOpen=!notesOpen; renderNotes(); });
 document.getElementById('gear').addEventListener('click',()=>{
   const p=document.getElementById('settings'); p.classList.toggle('open');
