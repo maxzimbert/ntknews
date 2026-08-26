@@ -1105,6 +1105,8 @@
 
   .share-btn.msg  { background: var(--blue);  color: var(--white); }
   .share-btn.done { background: rgba(234,217,197,0.08); color: rgba(234,217,197,0.6); border: 1px solid rgba(234,217,197,0.1); }
+  .share-btn.listen { background: var(--teal); color: var(--white); }
+  .share-btn.listen.speaking { background: rgba(234,217,197,0.08); color: var(--teal); border: 1px solid var(--teal); }
 
 
   /* ── SUBSCRIBE MODAL ─────────────────────── */
@@ -1857,6 +1859,7 @@
     </div>
 
     <div class="share-bar">
+      <button class="share-btn listen" id="listenBtn" onclick="toggleListen()">🔊 Listen</button>
       <button class="share-btn msg" onclick="shareStory()">↑ Share this story</button>
       <button class="share-btn done" onclick="closeStory()">← Back</button>
     </div>
@@ -2003,6 +2006,7 @@ let currentStoryIndex = 0;
 let scrollTracked25 = false;
 let scrollTracked50 = false;
 let scrollTracked90 = false;
+let currentUtterance = null;   // Listen — Web Speech API, browser-native voice (v1; neural voice upgrade later)
 
 // ── GA4 event helper ─────────────────────────────────────────────
 function track(eventName, params = {}) {
@@ -2010,6 +2014,87 @@ function track(eventName, params = {}) {
     gtag('event', eventName, params);
   }
 }
+
+// ── Listen (Web Speech API — browser-native voice, v1) ────────────
+// No server call, no cost, no new infra. Reads the story that's already
+// on the page in the reader's own browser voice. A neural-voice upgrade
+// is a swap of this function's internals later, once there's real usage
+// data — nothing else about the UI needs to change for that.
+function htmlToText(html) {
+  if (!html) return '';
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  return tmp.textContent.replace(/\s+/g, ' ').trim();
+}
+
+function buildListenText(s) {
+  const parts = [s.headline, s.lede,
+    htmlToText(stripOuterQuotes(s.truth)),
+    htmlToText(stripOuterQuotes(s.prob)),
+    htmlToText(stripOuterQuotes(s.poss))];
+  // Lies stays under its hold-to-reveal gesture — only read aloud once
+  // the reader has actually revealed it, same rule as the visual version.
+  const liesShown = document.getElementById('liesRevealed') &&
+    document.getElementById('liesRevealed').style.display === 'block';
+  if (liesShown) parts.push(htmlToText(stripOuterQuotes(s.lies)));
+  return parts.filter(Boolean).join('. ');
+}
+
+function resetListenBtn() {
+  const btn = document.getElementById('listenBtn');
+  if (!btn) return;
+  btn.textContent = '🔊 Listen';
+  btn.classList.remove('speaking');
+}
+
+function stopListening() {
+  if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+  currentUtterance = null;
+  resetListenBtn();
+}
+
+function toggleListen() {
+  if (!('speechSynthesis' in window)) return;
+  const synth = window.speechSynthesis;
+  const btn = document.getElementById('listenBtn');
+
+  if (synth.speaking && !synth.paused) {
+    synth.pause();
+    btn.textContent = '▶ Resume';
+    return;
+  }
+  if (synth.paused) {
+    synth.resume();
+    btn.textContent = '⏸ Pause';
+    return;
+  }
+
+  const s = stories[currentStoryIndex];
+  const text = buildListenText(s);
+  if (!text) return;
+
+  synth.cancel(); // clear anything stray before starting fresh
+  currentUtterance = new SpeechSynthesisUtterance(text);
+  currentUtterance.rate = 1.0;
+  currentUtterance.onend = resetListenBtn;
+  currentUtterance.onerror = resetListenBtn;
+  synth.speak(currentUtterance);
+  btn.textContent = '⏸ Pause';
+  btn.classList.add('speaking');
+  track('story_listen', {
+    story_index: currentStoryIndex + 1,
+    story_headline: s.headline
+  });
+}
+
+// Hide the control entirely on browsers without Web Speech support,
+// rather than showing a button that would silently do nothing.
+document.addEventListener('DOMContentLoaded', () => {
+  if (!('speechSynthesis' in window)) {
+    const btn = document.getElementById('listenBtn');
+    if (btn) btn.style.display = 'none';
+  }
+});
 
 // ── Date ─────────────────────────────────────────────────────────
 const d = new Date();
@@ -2461,6 +2546,7 @@ function markStoryRead(index) {
 function openStory(index) {
   currentStoryIndex = index;
   const s = stories[index];
+  stopListening();
 
   document.getElementById('storyCategory').textContent = s.category;
   document.getElementById('storyHeadline').textContent = s.headline;
@@ -2515,6 +2601,7 @@ function closeStory() {
   const cat = stories[currentStoryIndex] ? stories[currentStoryIndex].category : null;
   const prevIdx = cat ? beatIdx((beatsLoad())[cat]) : -1;
 
+  stopListening();
   markStoryRead(currentStoryIndex);
 
   document.getElementById('storyView').classList.remove('active');
