@@ -1555,10 +1555,21 @@
   .today-header {
     padding: 20px 20px 16px;
     border-bottom: 1px solid rgba(234,217,197,0.08);
+    position: relative;
   }
   @media (prefers-color-scheme: light) {
     .today-header { border-bottom-color: rgba(38,31,35,0.1); }
   }
+  .today-weather-corner {
+    position: absolute; top: 20px; right: 20px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px; font-weight: 700;
+    color: rgba(234,217,197,0.7);
+    display: flex; align-items: center; gap: 5px;
+    white-space: nowrap;
+  }
+  @media (prefers-color-scheme: light) { .today-weather-corner { color: rgba(38,31,35,0.7); } }
+  .today-weather-corner .twc-emoji { font-size: 16px; }
   .today-kicker {
     font-family: 'Space Grotesk', sans-serif;
     font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
@@ -1830,6 +1841,7 @@
     <div class="today-header">
       <div class="today-kicker">Today's Digest</div>
       <div class="today-date" id="todayDate">Loading...</div>
+      <div class="today-weather-corner" id="todayWeatherCorner"></div>
     </div>
     <div id="todayList"></div>
     <div id="todayLocalBlock"></div>
@@ -2656,25 +2668,45 @@ function localCacheSave(data) {
   } catch (e) {}
 }
 
+// Keyword match against NWS's shortForecast strings, most-specific first
+// (a thunderstorm forecast also contains "rain" as a word, so order
+// matters). isDaytime picks the day/night variant where one exists.
+function weatherEmoji(shortForecast, isDaytime) {
+  const f = (shortForecast || '').toLowerCase();
+  if (/thunder/.test(f)) return '⛈️';
+  if (/snow|flurr|blizzard|sleet/.test(f)) return '🌨️';
+  if (/rain|shower|drizzle/.test(f)) return isDaytime === false ? '🌧️' : '🌦️';
+  if (/fog|haze|mist/.test(f)) return '🌫️';
+  if (/partly|mostly cloudy|mostly sunny|mostly clear/.test(f)) return isDaytime === false ? '🌙' : '⛅';
+  if (/wind|breezy|gusty/.test(f)) return '🌬️';
+  if (/overcast|cloudy/.test(f)) return '☁️';
+  if (/clear|sunny|fair/.test(f)) return isDaytime === false ? '🌙' : '☀️';
+  return '🌡️';
+}
+
+function renderWeatherCorner(weather) {
+  var el = document.getElementById('todayWeatherCorner');
+  if (!el) return;
+  if (!weather || weather.error || weather.temperature == null) { el.innerHTML = ''; return; }
+  var emoji = weatherEmoji(weather.shortForecast, weather.isDaytime);
+  el.innerHTML = '<span class="twc-emoji">' + emoji + '</span><span>' +
+    weather.temperature + '°' + escHtmlSafe(weather.temperatureUnit) + '</span>';
+}
+
 function renderLocalBlock(data) {
   var el = document.getElementById('todayLocalBlock');
   if (!el) return;
-  var hasWeather = data && data.weather && !data.weather.error;
+  renderWeatherCorner(data && data.weather);
+
   var hasArticles = data && data.articles && data.articles.length;
-  if (!hasWeather && !hasArticles) { el.innerHTML = ''; return; }
+  if (!hasArticles) { el.innerHTML = ''; return; }
 
   var html = '<div class="today-local">';
   html += '<div class="today-local-head">Near ' + escHtmlSafe(data.city || 'you') + '</div>';
-  if (hasWeather) {
-    html += '<div class="today-local-weather">' + data.weather.temperature + '°' + escHtmlSafe(data.weather.temperatureUnit) +
-      ' · ' + escHtmlSafe(data.weather.shortForecast) + '</div>';
-  }
-  if (hasArticles) {
-    html += '<ul class="today-local-list">' + data.articles.slice(0, 5).map(function (a) {
-      return '<li><a href="' + escAttrSafe(a.url) + '" target="_blank" rel="noopener">' + escHtmlSafe(a.title) +
-        '</a><span class="today-local-src">' + escHtmlSafe(a.source) + '</span></li>';
-    }).join('') + '</ul>';
-  }
+  html += '<ul class="today-local-list">' + data.articles.slice(0, 5).map(function (a) {
+    return '<li><a href="' + escAttrSafe(a.url) + '" target="_blank" rel="noopener">' + escHtmlSafe(a.title) +
+      '</a><span class="today-local-src">' + escHtmlSafe(a.source) + '</span></li>';
+  }).join('') + '</ul>';
   html += '</div>';
   el.innerHTML = html;
 }
