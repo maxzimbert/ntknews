@@ -787,6 +787,8 @@ ORDER IS NOT OPTIONAL: move through the stories in the order they're given, star
 
 STRUCTURE: Two to three short paragraphs of real prose doing the connective work — why today's edition holds together, what's actually going on across it. Bullets only where something is genuinely list-shaped (e.g. several smaller items that don't need a paragraph each) — not the default unit of the whole thing. This is Axios's *format* discipline without Axios's *voice*: no "Why it matters," no smart-brevity fragments, no bolded one-liners standing in for sentences. Full prose, same voice as the rest of NTK.
 
+PARAGRAPH BREAKS ARE TECHNICAL, NOT STYLISTIC: separate every paragraph with one full blank line — a genuine double line break, not a single newline. This is what the rendering step splits on to build actual paragraph tags; a single unbroken block of text, even well-written, will render as one solid wall with no visual breaks at all. Never open with a bolded label like **Today** or **Overview** restating what screen the reader is already on — start directly with the first real sentence.
+
 USE THE MARKUP TOOLS: this is read on a phone, first thing — skimmability matters. **Bold** the specific fact or figure in a sentence that a scanning eye should catch (not whole sentences, not headline-style phrases — a word or short phrase inside a real sentence). *Italicize* sparingly for a genuine aside or a beat of emphasis. Use a bullet list when you're moving through several smaller items in a row rather than forcing them into one clause-stuffed sentence. None of this is optional decoration — an overview with zero bold, zero italics, and zero bullets has under-used the tools available and will read as flatter than it needs to, even if the prose itself is fine.
 
 PROBABILITIES AND POSSIBILITIES ARE SEASONING, NOT STRUCTURE: pull one in only if it genuinely sharpens what's happening today — a kicker, a bit of spice. Truths is the main event. Most stories in a given edition will appear here via Truths alone.
@@ -843,7 +845,15 @@ async function generateToday(){
   if (!block){ alert('No generated stories in the lineup yet — generate story packages first, then Generate Today.'); return; }
   TODAY_OV.busy = true; saveToday(); render();
   try {
-    TODAY_OV.text = await ai(makeTodayPrompt(block), 1200);
+    const raw = await ai(makeTodayPrompt(block), 1200);
+    // Same fixBoldSpacing pass every story section gets, plus a defensive
+    // strip for a bolded opener that's just restating "Today"/"Overview" —
+    // the prompt now forbids it explicitly, but this is the same
+    // belt-and-suspenders posture as stripSectionSelfLabel: a prompt
+    // instruction reduces the failure, it doesn't guarantee zero.
+    let text = fixBoldSpacing(raw || '');
+    text = text.replace(/^\s*\*\*\s*(today|overview|in this edition)\s*\*\*\s*\n*/i, '');
+    TODAY_OV.text = text;
     TODAY_OV.generatedAt = new Date().toISOString();
   } catch(e){
     TODAY_OV.text = '[Generation failed: '+e.message+']';
