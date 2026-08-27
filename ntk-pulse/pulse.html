@@ -463,6 +463,13 @@ async function ai(prompt, maxTok=1500){
 // "global rules" live in code, not in something typed per-prompt. Recraft
 // itself has no persistent memory between calls; this is how we fake it
 // until there's a real style_id (see the style guide, §7).
+const NTK_SWATCHES = [
+  {hex:'#0798F2', name:'electric blue'},
+  {hex:'#F2AE2E', name:'amber'},
+  {hex:'#DC6550', name:'terracotta'},
+  {hex:'#725ABF', name:'purple'},
+  {hex:'#01B2A7', name:'teal'},
+];
 const NTK_BRAND_COLORS = [
   [7,152,242],   // electric blue
   [242,174,46],  // amber
@@ -470,7 +477,8 @@ const NTK_BRAND_COLORS = [
   [114,90,191],  // purple
   [1,178,167],   // teal
 ];
-const NTK_BRAND_SUFFIX = 'Documentary, restrained composition, no embedded text, no generic corporate iconography.';
+const NTK_PHOTO_SUFFIX = 'Documentary, restrained composition, no embedded text, no generic corporate iconography.';
+const NTK_ILLUSTRATION_SUFFIX = 'Loose gouache and ink texture, visible brushwork, imperfect linework, warm human specificity — not vector-clean, not glossy digital rendering, not airbrushed. No embedded text.';
 
 async function recraftGenerate(prompt, model, style, size, n, useBrandColors){
   if (!SETTINGS.recraftKey) throw new Error('No Recraft key — set it in ⚙');
@@ -539,7 +547,9 @@ async function generateStoryImage(story, promptOverride){
     const style = styleCompatible ? (story.imgGenStyle || '') : '';
     const size = story.imgGenSize || '1:1';
     const useBrandColors = story.imgGenUseColors !== false; // default on
-    const finalPrompt = prompt + ' ' + NTK_BRAND_SUFFIX;
+    const register = story.imgGenRegister || 'photo';
+    const suffix = register === 'illustration' ? NTK_ILLUSTRATION_SUFFIX : NTK_PHOTO_SUFFIX;
+    const finalPrompt = prompt + ' ' + suffix;
     story.imgCandidates = await recraftGenerate(finalPrompt, model, style, size, 4, useBrandColors);
   } catch (e) {
     story.imgErr = e.message;
@@ -771,9 +781,13 @@ today:`You are producing TODAY — the overview screen a reader sees first, befo
 
 This is NOT an essay. It is a digest of the digest — a compressed, well-written pass over what's already in today's edition, not a new piece of writing about the news. Long enough to cover what matters, short enough to stay interesting: your journalism-teacher test, not a length target.
 
-INPUT: the finished, edited Truths for each of today's stories (headline + lede + body), plus Probabilities and Possibilities where supplied. Lies is never included — do not reference, allude to, or hint at anything from a Lies section under any circumstance.
+INPUT: the finished, edited Truths for each of today's stories (headline + lede + body), plus Probabilities and Possibilities where supplied, IN THE EXACT ORDER GIVEN — that order is the Digest tab's actual story order, story 1 is the lead. Lies is never included — do not reference, allude to, or hint at anything from a Lies section under any circumstance.
+
+ORDER IS NOT OPTIONAL: move through the stories in the order they're given, starting with story 1. Do not reorder by what you judge more interesting or more narratively convenient to open with — the reader will see this overview, then scroll into a Digest tab where story 1 is the lead, and the two need to agree. If story 1 doesn't seem like the best opener to you, that's a signal for the editor to reorder the Digest, not license to reorder the overview out of sync with it.
 
 STRUCTURE: Two to three short paragraphs of real prose doing the connective work — why today's edition holds together, what's actually going on across it. Bullets only where something is genuinely list-shaped (e.g. several smaller items that don't need a paragraph each) — not the default unit of the whole thing. This is Axios's *format* discipline without Axios's *voice*: no "Why it matters," no smart-brevity fragments, no bolded one-liners standing in for sentences. Full prose, same voice as the rest of NTK.
+
+USE THE MARKUP TOOLS: this is read on a phone, first thing — skimmability matters. **Bold** the specific fact or figure in a sentence that a scanning eye should catch (not whole sentences, not headline-style phrases — a word or short phrase inside a real sentence). *Italicize* sparingly for a genuine aside or a beat of emphasis. Use a bullet list when you're moving through several smaller items in a row rather than forcing them into one clause-stuffed sentence. None of this is optional decoration — an overview with zero bold, zero italics, and zero bullets has under-used the tools available and will read as flatter than it needs to, even if the prose itself is fine.
 
 PROBABILITIES AND POSSIBILITIES ARE SEASONING, NOT STRUCTURE: pull one in only if it genuinely sharpens what's happening today — a kicker, a bit of spice. Truths is the main event. Most stories in a given edition will appear here via Truths alone.
 
@@ -813,11 +827,11 @@ A section without a visual marker is not incomplete. Omit both if neither earns 
 function todayInputBlock(){
   return LINEUP
     .filter(s => s.packages && s.packages.truths)
-    .map(s => {
+    .map((s, i) => {
       const { headline, lede, body } = extractTruthsTags(s.packages.truths || '');
       const prob = s.packages.probabilities || '';
       const poss = s.packages.possibilities || '';
-      return `STORY KEY: ${s.key || s.id}\nHEADLINE: ${headline}\nLEDE: ${lede}\nTRUTHS BODY:\n${body}\n\nPROBABILITIES:\n${prob}\n\nPOSSIBILITIES:\n${poss}`;
+      return `DIGEST POSITION: ${i + 1}${i === 0 ? ' (LEAD STORY — open with this one)' : ''}\nSTORY KEY: ${s.key || s.id}\nHEADLINE: ${headline}\nLEDE: ${lede}\nTRUTHS BODY:\n${body}\n\nPROBABILITIES:\n${prob}\n\nPOSSIBILITIES:\n${poss}`;
     })
     .join('\n\n===\n\n');
 }
@@ -1503,22 +1517,29 @@ function siteExport(){
 // JS-literal format siteExport() produces. A script parsing untrusted JS
 // as code is the wrong shape for anything automated; this is the same
 // data, in the format the build script actually expects.
+// Wrapped as {stories, today} rather than a bare array (2026-08-27) so the
+// Today overview travels through the same publish step as the stories it
+// summarizes — one commit, one build run, never two payloads that can
+// drift out of sync with each other.
 function storyDataExport(){
-  return JSON.stringify(
-    LINEUP.filter(s=>s.packages).map(s=>{
-      const {headline, lede, body} = extractTruthsTags(s.packages.truths||'');
-      return {
-        key: s.key, category: s.category, headline, lede,
-        truth: toSiteHtml(body),
-        prob: toSiteHtml(s.packages.probabilities||''),
-        poss: toSiteHtml(s.packages.possibilities||''),
-        lies: toSiteHtml(s.packages.lies||''),
-        featuredImage: s.featuredImage || null,
-        overlayColor: s.overlayColor || '#0798F2',
-        overlayOpacity: s.overlayOpacity || 45,
-        featuredImageCredit: s.featuredImageCredit || null,
-      };
-    }), null, 1);
+  const stories = LINEUP.filter(s=>s.packages).map(s=>{
+    const {headline, lede, body} = extractTruthsTags(s.packages.truths||'');
+    return {
+      key: s.key, category: s.category, headline, lede,
+      truth: toSiteHtml(body),
+      prob: toSiteHtml(s.packages.probabilities||''),
+      poss: toSiteHtml(s.packages.possibilities||''),
+      lies: toSiteHtml(s.packages.lies||''),
+      featuredImage: s.featuredImage || null,
+      overlayColor: s.overlayColor || '#0798F2',
+      overlayOpacity: s.overlayOpacity || 45,
+      featuredImageCredit: s.featuredImageCredit || null,
+    };
+  });
+  return JSON.stringify({
+    stories,
+    today: TODAY_OV.text ? { text: TODAY_OV.text, generatedAt: TODAY_OV.generatedAt } : null,
+  }, null, 1);
 }
 const GH_REPO = 'maxzimbert/ntknews';
 const GH_PUBLISH_PATH = 'ntk-pulse/data/lineup-publish.json';
@@ -2372,6 +2393,12 @@ function renderLineup(root){
       `<button class="mini img-commons-toggle">${s.commonsOpen?'close':'find photo'}</button>`+
       (s.featuredImage ? `<button class="mini img-clear">remove</button>` : '')+
       `</div>`+
+      (s.featuredImage ? `<div class="img-row" style="margin-top:4px">`+
+        `<span style="font-size:10.5px;color:var(--dim)">digest overlay:</span>`+
+        NTK_SWATCHES.map(sw=>`<button class="overlay-swatch${(s.overlayColor||'#0798F2')===sw.hex?' sel':''}" data-hex="${sw.hex}" title="${sw.name}" style="width:18px;height:18px;border-radius:50%;background:${sw.hex};border:2px solid ${(s.overlayColor||'#0798F2')===sw.hex?'var(--ink)':'transparent'};cursor:pointer;padding:0"></button>`).join('')+
+        `<input type="range" class="overlay-opacity" min="10" max="80" value="${s.overlayOpacity||45}" style="width:70px">`+
+        `<span style="font-size:10.5px;color:var(--dim)">${s.overlayOpacity||45}%</span>`+
+        `</div>` : '')+
       (s.imgGenOpen ? `<div class="qpanel">`+
         `<div class="qrow"><textarea class="img-gen-prompt" style="min-height:44px">${esc(s.imgGenPrompt || buildImgPrompt(s))}</textarea></div>`+
         `<div class="qrow">`+
@@ -2380,6 +2407,10 @@ function renderLineup(root){
           `<option value="recraftv4_1_vector"${s.imgGenModel==='recraftv4_1_vector'?' selected':''}>Vector — V4.1</option>`+
           `<option value="recraftv3"${s.imgGenModel==='recraftv3'?' selected':''}>Raster — V3 (style presets)</option>`+
           `<option value="recraftv3_vector"${s.imgGenModel==='recraftv3_vector'?' selected':''}>Vector — V3 (style presets)</option>`+
+        `</select>`+
+        `<select class="img-gen-register" title="separate from raster/vector, which is format not look">`+
+          `<option value="photo"${(s.imgGenRegister||'photo')==='photo'?' selected':''}>Photo-realistic</option>`+
+          `<option value="illustration"${s.imgGenRegister==='illustration'?' selected':''}>Illustration (gouache/ink)</option>`+
         `</select>`+
         `<select class="img-gen-style" ${/^recraftv[23]/.test(s.imgGenModel||'recraftv4_1')?'':'disabled title="style presets only apply to V2/V3 models"'}>`+
           `<option value="">no style preset</option>`+
@@ -2456,6 +2487,12 @@ function renderLineup(root){
       handleStoryImageUpload(s, e.target.files[0]);
     });
     el.querySelector('.img-clear')?.addEventListener('click',()=>clearStoryImage(s));
+    el.querySelectorAll('.overlay-swatch').forEach(btn=>{
+      btn.addEventListener('click',()=>{ s.overlayColor = btn.dataset.hex; saveLineup(); render(); });
+    });
+    el.querySelector('.overlay-opacity')?.addEventListener('input',e=>{
+      s.overlayOpacity = +e.target.value; saveLineup(); render();
+    });
     el.querySelector('.img-gen-toggle').addEventListener('click',()=>{
       s.imgGenOpen = !s.imgGenOpen;
       if (s.imgGenOpen && !s.imgGenPrompt) s.imgGenPrompt = buildImgPrompt(s);
@@ -2463,6 +2500,7 @@ function renderLineup(root){
     });
     el.querySelector('.img-gen-prompt')?.addEventListener('change',e=>{ s.imgGenPrompt=e.target.value; });
     el.querySelector('.img-gen-model')?.addEventListener('change',e=>{ s.imgGenModel=e.target.value; render(); });
+    el.querySelector('.img-gen-register')?.addEventListener('change',e=>{ s.imgGenRegister=e.target.value; });
     el.querySelector('.img-gen-style')?.addEventListener('change',e=>{ s.imgGenStyle=e.target.value; });
     el.querySelector('.img-gen-size')?.addEventListener('change',e=>{ s.imgGenSize=e.target.value; });
     el.querySelector('.img-gen-usecolors')?.addEventListener('change',e=>{ s.imgGenUseColors=e.target.checked; });
