@@ -106,6 +106,18 @@ def jsEsc(s):
     return (s or "").replace("\\", "\\\\").replace('"', '\\"').replace("\n", " ").strip()
 
 
+def jsEscMultiline(s):
+    """Same as jsEsc but preserves paragraph structure — collapsing to a
+    real newline for a JS string literal isn't valid, so this escapes to
+    the two-character \\n sequence instead of jsEsc's newline-to-space,
+    which would otherwise flatten every paragraph break to nothing.
+    Today's overview is the one field where that structure actually
+    matters — the client-side parser splits on blank lines to rebuild
+    paragraphs and bullet blocks, and jsEsc alone would silently destroy
+    the very thing it's splitting on."""
+    return (s or "").replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n").strip()
+
+
 def build_stories_block(stories):
     lines = ["const stories = ["]
     for s in stories:
@@ -140,7 +152,7 @@ def regenerate_today(html, today):
     if not today or not today.get("text"):
         return html
     today_re = re.compile(r'const todayOverview = "[^"]*";')
-    new_html, n = today_re.subn(f'const todayOverview = "{jsEsc(today["text"])}";', html)
+    new_html, n = today_re.subn(f'const todayOverview = "{jsEscMultiline(today["text"])}";', html)
     if n != 1:
         log(f"  WARNING: expected 1 todayOverview match, found {n} — leaving Today overview untouched")
         return html
