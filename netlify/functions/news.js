@@ -25,6 +25,32 @@ const NTK_SOURCES = [
 
 const RECENT_WINDOW_DAYS = 7;
 
+// ── Generic HTTPS GET, JSON response ──────────────────────────────────────────
+function getJson(hostname, path, extraHeaders) {
+  return new Promise((resolve) => {
+    const options = {
+      hostname,
+      path,
+      method: 'GET',
+      headers: Object.assign({ 'Accept': 'application/json' }, extraHeaders || {})
+    };
+    const req = https.request(options, (res) => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => {
+        if ([301, 302, 303, 307, 308].includes(res.statusCode) && res.headers.location) {
+          return resolve({ redirect: res.headers.location });
+        }
+        try { resolve({ statusCode: res.statusCode, json: JSON.parse(data) }); }
+        catch { resolve({ statusCode: res.statusCode, error: 'non-JSON response' }); }
+      });
+    });
+    req.on('error', err => resolve({ statusCode: 500, error: err.message }));
+    req.setTimeout(8000, () => { req.destroy(); resolve({ statusCode: 500, error: 'timeout' }); });
+    req.end();
+  });
+}
+
 // ── EventRegistry: POST to eventregistry.org ─────────────────────────────────
 function post(path, body) {
   return new Promise((resolve) => {
@@ -74,6 +100,44 @@ function exaPost(body, path='/search') {
 exports.handler = async (event) => {
   const q = event.queryStringParameters || {};
   const mode = q.mode || 'fetch-by-uri';
+
+  // National Weather Service — server-side because api.weather.gov's CORS
+  // support is unreliable in practice (their own issue tracker has open
+  // reports of it failing, and the User-Agent header their API requires
+  // turns a simple request into a preflighted one that then fails too).
+  // Proxying through here sidesteps that entirely — this is a normal
+  // server-to-server call, no CORS involved.
+  if (mode === 'weather') {
+    const lat = parseFloat(q.lat), lon = parseFloat(q.lon);
+    if (!isFinite(lat) || !isFinite(lon)) {
+      return { statusCode: 400, headers: { 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify({ error: 'lat/lon required' }) };
+    }
+    const uaHeaders = { 'User-Agent': '(ntknews.org, max.zimbert@icloud.com)' };
+    try {
+      const points = await getJson('api.weather.gov', `/points/${lat.toFixed(4)},${lon.toFixed(4)}`, uaHeaders);
+      const forecastPath = points.json && points.json.properties && points.json.properties.forecast;
+      if (!forecastPath) {
+        return { statusCode: 200, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify({ error: 'no forecast for this location (likely outside the US)' }) };
+      }
+      const forecastUrl = new URL(forecastPath);
+      const forecast = await getJson(forecastUrl.hostname, forecastUrl.pathname + forecastUrl.search, uaHeaders);
+      const periods = (forecast.json && forecast.json.properties && forecast.json.properties.periods) || [];
+      const todayPeriod = periods[0] || null;
+      return {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+        body: JSON.stringify(todayPeriod ? {
+          name: todayPeriod.name,
+          temperature: todayPeriod.temperature,
+          temperatureUnit: todayPeriod.temperatureUnit,
+          shortForecast: todayPeriod.shortForecast,
+          isDaytime: todayPeriod.isDaytime
+        } : { error: 'no forecast periods returned' })
+      };
+    } catch (e) {
+      return { statusCode: 200, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify({ error: e.message }) };
+    }
+  }
 
   // ── Simple URL metadata scrape ──────────────────────────────────────────────
   // Fetches a URL server-side (no CORS) and extracts title + meta description.
@@ -277,6 +341,48 @@ exports.handler = async (event) => {
       // "top ~15% of sources" intent — change if you want it tighter.
       endSourceRankPercentile: 20
     };
+  } else if (mode === 'resolve-location') {
+    // Resolves a city/state string to an EventRegistry location URI — same
+    // shape as resolve-concept above, just against the location index
+    // instead of the concept index. 'place' covers cities/towns; 'country'
+    // is included as a fallback for a reverse-geocode that only manages to
+    // resolve a country (rare, but cheaper than failing outright).
+    path = '/api/v1/suggestLocationsFast';
+    body = {
+      apiKey: process.env.NEWSAPI_KEY,
+      prefix: q.q || '',
+      source: ['place', 'country'],
+      lang: 'eng',
+      count: 5
+    };
+  } else if (mode === 'local-news') {
+    // Today's local-blend feature. sourceLocationUri (outlets based in the
+    // reader's city) and locationUri (articles about an event there) are
+    // separate EventRegistry filter dimensions — combining both in one
+    // call would almost certainly AND-narrow to near-zero results, same
+    // as conceptUri + keyword do elsewhere in this file. The client calls
+    // this mode twice, once per filterBy, and merges/dedupes by URL —
+    // same client-side-dedupe posture as everywhere else in this codebase.
+    const locUri = q.locationUri || '';
+    if (!locUri) {
+      return { statusCode: 400, headers: { 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify({ error: 'locationUri required' }) };
+    }
+    body = {
+      apiKey: process.env.NEWSAPI_KEY,
+      action: 'getArticles',
+      lang: 'eng',
+      articlesCount: Math.min(parseInt(q.articlesCount) || 8, 15),
+      articlesSortBy: 'date',
+      articlesSortByAsc: false,
+      resultType: 'articles',
+      includeArticleBody: false,
+      includeArticleDate: true,
+      includeSourceInfo: true,
+      isDuplicateFilter: 'skipDuplicates',
+      forceMaxDataTimeWindow: 2,
+    };
+    if (q.filterBy === 'source') body.sourceLocationUri = [locUri];
+    else body.locationUri = [locUri];
   } else if (mode === 'resolve-concept') {
     // NEW: resolves a person/org/topic name to its EventRegistry concept URI.
     // Use this for stories with no good keyword string to match — named
