@@ -118,6 +118,7 @@ def build_stories_block(stories):
         if s.get("permalink"):
             permalink_field = f',\n    permalink: "{jsEsc(s["permalink"])}"'
         lines.append(f'  {{\n'
+                      f'    key: "{jsEsc(s.get("key",""))}",\n'
                       f'    category: "{jsEsc(s.get("category",""))}",\n'
                       f'    headline: "{jsEsc(s.get("headline",""))}",\n'
                       f'    lede: "{jsEsc(s.get("lede",""))}",\n'
@@ -128,6 +129,22 @@ def build_stories_block(stories):
                       f'  }},')
     lines.append("]; // ← END OF DAILY CONTENT. Do not edit below this line.")
     return "\n".join(lines)
+
+
+def regenerate_today(html, today):
+    """Same pattern as the funFact block: one hand-pasted `const` marker,
+    regex-replaced in place. `today` is {"text": "...", "generatedAt": "..."}
+    or None if nothing's been generated yet in Pulse — in which case this
+    leaves whatever's already live untouched rather than blanking it out,
+    same defensive posture as pick_fun_fact's fallback."""
+    if not today or not today.get("text"):
+        return html
+    today_re = re.compile(r'const todayOverview = "[^"]*";')
+    new_html, n = today_re.subn(f'const todayOverview = "{jsEsc(today["text"])}";', html)
+    if n != 1:
+        log(f"  WARNING: expected 1 todayOverview match, found {n} — leaving Today overview untouched")
+        return html
+    return new_html
 
 
 def regenerate_homepage(html, stories, fun_fact):
@@ -151,56 +168,6 @@ def regenerate_homepage(html, stories, fun_fact):
             log(f"  WARNING: expected 1 funFact match, found {n2} — leaving funFact untouched")
             new_html = html if n != 1 else new_html  # safety, though n==1 already checked above
 
-    return new_html
-
-
-# ─── marketing homepage (ntknews.org/) regeneration ───
-# Separate from regenerate_homepage() above, which touches digest/v2/index.html
-# (the swipe-app reader). This touches the *other* index.html — the public
-# landing page at the repo root — so that it always shows today's real lead
-# story instead of hardcoded placeholder copy. Same technique: replace one
-# clearly-delimited JS object literal, leave every other byte of the file
-# untouched.
-def build_hero_story_block(lead_story, story_count, date_str_human):
-    """lead_story is stories[0], already carrying its final `permalink`
-    (set in main() before this is called). Text fields are pulled through
-    strip_html_for_description so the landing page gets clean plain-text
-    excerpts, never raw HTML/citation markup, no matter how the section
-    prose is authored in Pulse."""
-    fields = {
-        "date": f"{date_str_human} · today's edition",
-        "storyCount": f"01 / {story_count:02d}",
-        "category": lead_story.get("category", ""),
-        "headline": lead_story.get("headline", ""),
-        "truth": strip_html_for_description(lead_story.get("truth", ""), 220),
-        "prob": strip_html_for_description(lead_story.get("prob", ""), 220),
-        "poss": strip_html_for_description(lead_story.get("poss", ""), 220),
-        "lies": strip_html_for_description(lead_story.get("lies", ""), 220),
-        "featuredImage": lead_story.get("featuredImage", ""),
-        "overlayColor": lead_story.get("overlayColor", "#0798F2"),
-        "permalink": lead_story.get("permalink", "https://ntknews.org/digest/latest"),
-    }
-    lines = ["const heroStory = {"]
-    for key in ("date", "storyCount", "category", "headline", "truth", "prob",
-                "poss", "lies", "featuredImage", "overlayColor", "permalink"):
-        lines.append(f'  {key}: "{jsEsc(fields[key])}",')
-    lines[-1] = lines[-1].rstrip(",")  # drop trailing comma on last field
-    lines.append("};")
-    return "\n".join(lines)
-
-
-def regenerate_landing_page(html, stories, date_str_human):
-    """Regex-replace the `const heroStory = {...};` block in the root
-    index.html. Refuses to guess if the template has drifted — same
-    fail-loud contract as regenerate_homepage()."""
-    if not stories:
-        log("  WARNING: no stories to promote to the landing page hero — leaving it untouched")
-        return html
-    hero_re = re.compile(r"const heroStory = \{.*?\};", re.DOTALL)
-    new_html, n = hero_re.subn(build_hero_story_block(stories[0], len(stories), date_str_human), html)
-    if n != 1:
-        raise RuntimeError(f"expected exactly 1 heroStory block match in root index.html, found {n} — "
-                            "landing page template may have changed; refusing to guess")
     return new_html
 
 
@@ -597,8 +564,16 @@ def main():
     digest_dir = repo_root / "digest" / "v2"
     live_index_path = digest_dir / "index.html"
 
-    stories = json.loads(story_json_path.read_text())
-    log(f"{len(stories)} stories loaded from {story_json_path}")
+    payload = json.loads(story_json_path.read_text())
+    # Back-compat: a bare array is the old (pre-2026-08-27) shape, in case
+    # this ever runs against a stale lineup-publish.json left over from
+    # before Today overview was wired through the same publish step.
+    if isinstance(payload, list):
+        stories, today = payload, None
+    else:
+        stories, today = payload.get("stories", []), payload.get("today")
+    log(f"{len(stories)} stories loaded from {story_json_path}"
+        + (" (no Today overview in this payload)" if not today else ""))
 
     # 1. Fun fact — real source, graceful fallback to whatever's already there.
     fun_fact = pick_fun_fact(api_key) if api_key else None
@@ -621,6 +596,7 @@ def main():
     # makes the whole chain zero-click: no more paste, ever.
     current_html = live_index_path.read_text()
     new_html = regenerate_homepage(current_html, stories, fun_fact)
+    new_html = regenerate_today(new_html, today)
     live_index_path.write_text(new_html)
     log(f"live homepage regenerated: {live_index_path}")
 
@@ -628,21 +604,6 @@ def main():
     dated_dir = digest_dir / date_str
     dated_dir.mkdir(parents=True, exist_ok=True)
     (dated_dir / "index.html").write_text(new_html)
-
-    # 4b. Regenerate the PUBLIC marketing page (repo root index.html) so it
-    # shows today's real lead story — headline, photo, and a live excerpt of
-    # all four sections — instead of hardcoded sample copy. This is the page
-    # ntknews.org actually serves; until now nothing in the pipeline touched
-    # it, so it always showed the Fed-rates placeholder from launch day.
-    landing_path = repo_root / "index.html"
-    if landing_path.exists():
-        date_str_human = datetime.now(timezone.utc).strftime("%A, %B %-d")
-        landing_html = landing_path.read_text()
-        new_landing_html = regenerate_landing_page(landing_html, stories, date_str_human)
-        landing_path.write_text(new_landing_html)
-        log(f"landing page regenerated: {landing_path}")
-    else:
-        log("  NOTE: repo-root index.html not found — skipping landing page regeneration")
 
     # 5. Per-story permalinks + images. Slugs already computed in step 2 —
     # reused here rather than recomputed, so the permalink written into the
