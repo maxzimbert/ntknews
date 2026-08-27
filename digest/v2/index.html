@@ -1624,6 +1624,55 @@
   }
   .today-onramp:active { opacity: 0.7; }
 
+  .today-local {
+    margin: 0 20px 20px;
+    padding: 14px 16px;
+    border-radius: 10px;
+    border: 1px dashed rgba(234,217,197,0.18);
+    background: rgba(234,217,197,0.03);
+  }
+  @media (prefers-color-scheme: light) {
+    .today-local { border-color: rgba(38,31,35,0.16); background: rgba(38,31,35,0.03); }
+  }
+  .today-local-head {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+    color: rgba(234,217,197,0.4); margin-bottom: 6px;
+  }
+  @media (prefers-color-scheme: light) { .today-local-head { color: rgba(38,31,35,0.4); } }
+  .today-local-weather {
+    font-family: 'Source Serif 4', serif;
+    font-size: 13px; color: rgba(234,217,197,0.75); margin-bottom: 8px;
+  }
+  @media (prefers-color-scheme: light) { .today-local-weather { color: rgba(38,31,35,0.75); } }
+  .today-local-list { list-style: none; margin: 0; padding: 0; }
+  .today-local-list li {
+    font-family: 'Source Serif 4', serif; font-size: 12.5px; line-height: 1.5;
+    padding: 4px 0; border-top: 1px solid rgba(234,217,197,0.06);
+  }
+  @media (prefers-color-scheme: light) { .today-local-list li { border-top-color: rgba(38,31,35,0.06); } }
+  .today-local-list li:first-child { border-top: none; }
+  .today-local-list a { color: inherit; text-decoration: none; }
+  .today-local-list a:active { opacity: 0.7; }
+  .today-local-src {
+    display: block; font-family: 'Space Grotesk', sans-serif;
+    font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.5px;
+    color: rgba(234,217,197,0.35); margin-top: 2px;
+  }
+  @media (prefers-color-scheme: light) { .today-local-src { color: rgba(38,31,35,0.35); } }
+  .today-local-prompt {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    font-family: 'Source Serif 4', serif; font-size: 12.5px;
+    color: rgba(234,217,197,0.6);
+  }
+  @media (prefers-color-scheme: light) { .today-local-prompt { color: rgba(38,31,35,0.6); } }
+  .today-local-prompt button {
+    font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 700;
+    border: none; border-radius: 5px; padding: 6px 12px; cursor: pointer;
+  }
+  .today-local-prompt button:first-of-type { background: var(--teal); color: var(--white); }
+  .today-local-prompt button:last-of-type { background: transparent; color: inherit; text-decoration: underline; padding: 6px 4px; }
+
   /* ── BACKSTORY PLACEHOLDER ─────────────────────────────────────── */
   .backstory-view {
     min-height: 100vh; background: var(--dark);
@@ -1783,6 +1832,7 @@
       <div class="today-date" id="todayDate">Loading...</div>
     </div>
     <div id="todayList"></div>
+    <div id="todayLocalBlock"></div>
     <div class="story-suggest-cta">
       <div class="ssc-head">Anything missing?</div>
       <div class="ssc-body">Pitch topics, ideas, musings, contemplations, and stories that merit sustained attention.</div>
@@ -2548,6 +2598,7 @@ function buildToday() {
 
   if (todayOverview && todayOverview.trim()) {
     listEl.innerHTML = renderTodayOverviewHtml(todayOverview);
+    initLocalAndWeather();
     return;
   }
 
@@ -2565,6 +2616,7 @@ function buildToday() {
     '</div>';
   });
   document.getElementById('todayList').innerHTML = html;
+  initLocalAndWeather();
 }
 
 function openStoryFromToday(index) {
@@ -2572,6 +2624,156 @@ function openStoryFromToday(index) {
   openStory(index);
 }
 window.openStoryFromToday = openStoryFromToday;
+
+// ── Local + Weather (Today tab, Layer 2) ───────────────────────────────
+// Fully automated, no editorial pass — bare local headlines + today's
+// forecast, deliberately NOT blended into the curated overview prose
+// above. That blend is the more ambitious version discussed but not
+// built here: it would need a public-facing endpoint that calls Claude
+// on every visitor's behalf, which is real, ongoing cost and abuse
+// surface with no auth in front of it — worth a deliberate go/no-go, not
+// something to fold in by default. This version is honest about what it
+// is: a distinctly-styled local news + weather block, cached once per
+// day per browser so a second visit doesn't re-hit geolocation or the
+// API on every load.
+var LOCAL_KEY = 'ntk_local_v1';
+
+function todayDateStamp() {
+  var d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+function localCacheLoad() {
+  try {
+    var d = JSON.parse(localStorage.getItem(LOCAL_KEY));
+    if (d && d.dateStamp === todayDateStamp()) return d;
+  } catch (e) {}
+  return null;
+}
+function localCacheSave(data) {
+  try {
+    var withStamp = Object.assign({ dateStamp: todayDateStamp() }, data);
+    localStorage.setItem(LOCAL_KEY, JSON.stringify(withStamp));
+  } catch (e) {}
+}
+
+function renderLocalBlock(data) {
+  var el = document.getElementById('todayLocalBlock');
+  if (!el) return;
+  var hasWeather = data && data.weather && !data.weather.error;
+  var hasArticles = data && data.articles && data.articles.length;
+  if (!hasWeather && !hasArticles) { el.innerHTML = ''; return; }
+
+  var html = '<div class="today-local">';
+  html += '<div class="today-local-head">Near ' + escHtmlSafe(data.city || 'you') + '</div>';
+  if (hasWeather) {
+    html += '<div class="today-local-weather">' + data.weather.temperature + '°' + escHtmlSafe(data.weather.temperatureUnit) +
+      ' · ' + escHtmlSafe(data.weather.shortForecast) + '</div>';
+  }
+  if (hasArticles) {
+    html += '<ul class="today-local-list">' + data.articles.slice(0, 5).map(function (a) {
+      return '<li><a href="' + escAttrSafe(a.url) + '" target="_blank" rel="noopener">' + escHtmlSafe(a.title) +
+        '</a><span class="today-local-src">' + escHtmlSafe(a.source) + '</span></li>';
+    }).join('') + '</ul>';
+  }
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+function renderLocalPrompt() {
+  var el = document.getElementById('todayLocalBlock');
+  if (!el) return;
+  el.innerHTML = '<div class="today-local-prompt">' +
+    '<span>Enable location for local news and weather</span>' +
+    '<button onclick="requestLocalPermission()">Enable</button>' +
+    '<button onclick="dismissLocalPrompt()">Not now</button>' +
+    '</div>';
+}
+function dismissLocalPrompt() {
+  var el = document.getElementById('todayLocalBlock');
+  if (el) el.innerHTML = '';
+}
+window.dismissLocalPrompt = dismissLocalPrompt;
+function requestLocalPermission() { fetchLocalAndWeather(); }
+window.requestLocalPermission = requestLocalPermission;
+
+function escHtmlSafe(s) {
+  var d = document.createElement('div');
+  d.textContent = s == null ? '' : String(s);
+  return d.innerHTML;
+}
+function escAttrSafe(s) { return escHtmlSafe(s).replace(/"/g, '&quot;'); }
+
+function fetchLocalAndWeather() {
+  if (!('geolocation' in navigator)) return;
+  navigator.geolocation.getCurrentPosition(
+    async function (pos) {
+      var lat = pos.coords.latitude, lon = pos.coords.longitude;
+      try {
+        // 1. Reverse geocode client-side — BigDataCloud's free endpoint,
+        // no key, designed for direct browser calls. Only the resolved
+        // place name goes onward from here, never the raw coordinates.
+        var geoResp = await fetch('https://api-bdc.net/data/reverse-geocode-client?latitude=' + lat + '&longitude=' + lon + '&localityLanguage=en');
+        var geo = await geoResp.json();
+        var city = geo.city || geo.locality || '';
+        var state = geo.principalSubdivisionCode ? geo.principalSubdivisionCode.split('-').pop() : (geo.principalSubdivision || '');
+        var cityLabel = [city, state].filter(Boolean).join(', ');
+
+        // 2. Weather — proxied server-side (see news.js: NWS's CORS
+        // support isn't reliable enough to call directly).
+        var weatherPromise = fetch('/.netlify/functions/news?mode=weather&lat=' + lat + '&lon=' + lon)
+          .then(function (r) { return r.json(); }).catch(function () { return null; });
+
+        // 3. Local news — resolve the city to an EventRegistry location
+        // URI, then two separate calls (source-based, event-based; see
+        // news.js for why these can't be safely combined into one query),
+        // merged and deduped by URL client-side.
+        var articles = [];
+        if (city) {
+          var locResp = await fetch('/.netlify/functions/news?mode=resolve-location&q=' + encodeURIComponent(city));
+          var locData = await locResp.json();
+          var locUri = locData && locData[0] && locData[0].uri;
+          if (locUri) {
+            var results = await Promise.all([
+              fetch('/.netlify/functions/news?mode=local-news&locationUri=' + encodeURIComponent(locUri) + '&filterBy=source')
+                .then(function (r) { return r.json(); }).catch(function () { return null; }),
+              fetch('/.netlify/functions/news?mode=local-news&locationUri=' + encodeURIComponent(locUri) + '&filterBy=event')
+                .then(function (r) { return r.json(); }).catch(function () { return null; })
+            ]);
+            var seen = {};
+            results.forEach(function (resp) {
+              var list = (resp && resp.articles && resp.articles.results) || [];
+              list.forEach(function (a) {
+                if (!a.url || seen[a.url]) return;
+                seen[a.url] = true;
+                articles.push({ url: a.url, title: a.title || 'Untitled', source: (a.source && a.source.title) || 'Unknown' });
+              });
+            });
+          }
+        }
+
+        var weather = await weatherPromise;
+        var data = { city: cityLabel, weather: weather, articles: articles };
+        localCacheSave(data);
+        renderLocalBlock(data);
+      } catch (e) {
+        // Local/weather is a nice-to-have — fail quiet, never show an
+        // error state on the one screen every reader sees first.
+        var el = document.getElementById('todayLocalBlock');
+        if (el) el.innerHTML = '';
+      }
+    },
+    function () { renderLocalPrompt(); },   // denied or unavailable
+    { timeout: 8000 }
+  );
+}
+
+function initLocalAndWeather() {
+  var el = document.getElementById('todayLocalBlock');
+  if (!el) return;
+  var cached = localCacheLoad();
+  if (cached) { renderLocalBlock(cached); return; }
+  fetchLocalAndWeather();
+}
 
 function renderProfileTab() {
   var data = beatsLoad();
