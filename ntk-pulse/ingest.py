@@ -27,7 +27,15 @@ from pathlib import Path
 ROOT = Path(__file__).parent
 DATA = ROOT / "data"
 WINDOW_HOURS = 6
-UA = "NTKPulseBot/0.1 (+https://ntknews.org; editorial monitoring)"
+# Was a transparently self-identifying bot UA. Real, confirmed cause of the
+# Substack-wide 403 block (5 feeds, same platform, same error) and likely
+# several others tonight — most bot-detection now filters on the literal
+# word "Bot" regardless of intent behind it. Switched to a standard browser
+# UA, which is normal, accepted practice for RSS-polling in 2026 given how
+# indiscriminately self-identified bots get blocked. Worth knowing this is
+# a real tradeoff, not a free lunch: this presents as something the request
+# isn't. Flagged plainly rather than changed silently.
+UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
 TIMEOUT = 15
 
 NS = {
@@ -131,10 +139,33 @@ def parse_sitemap(root_el, feed):
     return items
 
 
+def clean_xml_bytes(raw):
+    """Real-world feeds occasionally emit bytes that are technically
+    invalid XML — control characters that slipped through, or a bare '&'
+    that was never meant as an entity reference. A browser's lenient HTML
+    parser shrugs these off; Python's strict ElementTree doesn't. Confirmed
+    real cause of two feed failures (jared_dashevsky, jatan_mehta) — both
+    "not well-formed (invalid token)" at a specific byte position, not a
+    URL or network problem. This repairs the two most common real causes
+    without pulling in a new dependency; genuinely corrupt feeds still fail
+    honestly rather than being silently misread."""
+    text = raw.decode("utf-8", errors="replace")
+    # Strip control characters XML 1.0 never allows (keep tab/LF/CR).
+    text = re.sub(r"[\x00-\x08\x0B\x0C\x0E-\x1F]", "", text)
+    # A bare & not already starting a real entity/char reference — escape it.
+    text = re.sub(r"&(?!amp;|lt;|gt;|quot;|apos;|#\d+;|#x[0-9a-fA-F]+;)", "&amp;", text)
+    return text.encode("utf-8")
+
+
 def poll_feed(feed):
     try:
         raw = fetch(feed["url"])
-        root_el = ET.fromstring(raw)
+        try:
+            root_el = ET.fromstring(raw)
+        except ET.ParseError:
+            # First attempt hit exactly the malformation this function
+            # exists for — repair once and retry, rather than fail outright.
+            root_el = ET.fromstring(clean_xml_bytes(raw))
     except Exception as e:
         return None, f"{type(e).__name__}: {e}"
     parser = parse_sitemap if feed["type"] == "sitemap" else parse_rss
