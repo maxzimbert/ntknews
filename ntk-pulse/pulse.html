@@ -85,7 +85,7 @@
     padding: 10px 12px; margin-bottom: 10px;
   }
   .story-top { display: flex; gap: 8px; align-items: baseline; }
-  .ord { font-size: 15px; font-weight: bold; color: var(--ink); min-width: 26px; max-width: 26px;
+  .ord { font-size: 15px; font-weight: bold; color: var(--ink); min-width: 38px; max-width: 38px;
     text-align: center; border: 1px solid var(--rule); background: transparent; padding: 1px 2px; }
   .ord:focus { outline: 1px solid var(--dim); background: #fff; }
   .drag-handle { cursor: grab; color: var(--faint); font-size: 14px; padding: 0 2px; user-select: none; }
@@ -218,6 +218,7 @@
   <h1>PULSE</h1>
   <button class="tab on" id="tab-stream">stream</button>
   <button class="tab" id="tab-lineup">lineup</button>
+  <button class="tab" id="tab-today">today</button>
   <span class="meta" id="clock"></span>
   <span class="stale" id="stale"></span>
   <span class="right">
@@ -274,16 +275,22 @@ const LINEUP_MAX = 8;
 
 /* ─── persisted state ─── */
 const LS = {
-  settings: 'ntk_pulse_settings_v1',
-  lineup:   'ntk_pulse_lineup_v1',
-  sup:      'ntk_pulse_suppressed_v1',
-  notes:    'ntk_pulse_notes_v1',
-  manual:   'ntk_pulse_manual_clusters_v1',
+  settings:  'ntk_pulse_settings_v1',
+  lineup:    'ntk_pulse_lineup_v1',
+  sup:       'ntk_pulse_suppressed_v1',
+  notes:     'ntk_pulse_notes_v1',
+  manual:    'ntk_pulse_manual_clusters_v1',
+  dismissed: 'ntk_pulse_dismissed_candidates_v1',
+  today:     'ntk_pulse_today_v1',
 };
 function load(k, fallback) { try { const v = JSON.parse(localStorage.getItem(k)); return v ?? fallback; } catch { return fallback; } }
 let SETTINGS = load(LS.settings, { antKey:'', proxyBase:'', ghToken:'', recraftKey:'', bodyLen:4000, maxArts:15 });
 let LINEUP = load(LS.lineup, []);          // [{id, title, angle, beat, category, conceptEntity, narrowKeyword, articles:[], enrichedAt, packages, busy?, status?, open?, outOpen?}]
 let SUP = load(LS.sup, {});                 // canonical url -> true  (editor suppressions, global, persistent)
+let DISMISSED = load(LS.dismissed, {});      // candidate key -> true  (recommended-zone dismissals, persistent, reversible)
+function saveDismissed(){ localStorage.setItem(LS.dismissed, JSON.stringify(DISMISSED)); }
+let TODAY_OV = load(LS.today, {text:'', generatedAt:null, busy:false});
+function saveToday(){ localStorage.setItem(LS.today, JSON.stringify(TODAY_OV)); }
 // Standing editorial notes: ongoing directives that ride into every
 // generation call until removed or promoted into v14 itself. genCounter
 // increments once per completed generateStory call; each note's baseline
@@ -456,13 +463,6 @@ async function ai(prompt, maxTok=1500){
 // "global rules" live in code, not in something typed per-prompt. Recraft
 // itself has no persistent memory between calls; this is how we fake it
 // until there's a real style_id (see the style guide, §7).
-const NTK_SWATCHES = [
-  {hex:'#0798F2', name:'electric blue'},
-  {hex:'#F2AE2E', name:'amber'},
-  {hex:'#DC6550', name:'terracotta'},
-  {hex:'#725ABF', name:'purple'},
-  {hex:'#01B2A7', name:'teal'},
-];
 const NTK_BRAND_COLORS = [
   [7,152,242],   // electric blue
   [242,174,46],  // amber
@@ -470,8 +470,7 @@ const NTK_BRAND_COLORS = [
   [114,90,191],  // purple
   [1,178,167],   // teal
 ];
-const NTK_PHOTO_SUFFIX = 'Documentary, restrained composition, no embedded text, no generic corporate iconography.';
-const NTK_ILLUSTRATION_SUFFIX = 'Loose gouache and ink texture, visible brushwork, imperfect linework, warm human specificity — not vector-clean, not glossy digital rendering, not airbrushed. No embedded text.';
+const NTK_BRAND_SUFFIX = 'Documentary, restrained composition, no embedded text, no generic corporate iconography.';
 
 async function recraftGenerate(prompt, model, style, size, n, useBrandColors){
   if (!SETTINGS.recraftKey) throw new Error('No Recraft key — set it in ⚙');
@@ -540,9 +539,7 @@ async function generateStoryImage(story, promptOverride){
     const style = styleCompatible ? (story.imgGenStyle || '') : '';
     const size = story.imgGenSize || '1:1';
     const useBrandColors = story.imgGenUseColors !== false; // default on
-    const register = story.imgGenRegister || 'photo';
-    const suffix = register === 'illustration' ? NTK_ILLUSTRATION_SUFFIX : NTK_PHOTO_SUFFIX;
-    const finalPrompt = prompt + ' ' + suffix;
+    const finalPrompt = prompt + ' ' + NTK_BRAND_SUFFIX;
     story.imgCandidates = await recraftGenerate(finalPrompt, model, style, size, 4, useBrandColors);
   } catch (e) {
     story.imgErr = e.message;
@@ -697,7 +694,7 @@ VOICE — STUDY THESE EXAMPLES:
 HEADLINE: "Norway Gave Every Five-Year-Old an iPad in 2016. A Decade Later, 500,000 Norwegians Can't Read a Text Message." Two sentences — scale, then consequence with a unit the reader can feel.
 BODY (worked example, illustrative — adjust to taste): "Kash Patel Said the FBI Stopped Snipers and Bomb Drones at a White House UFC Event. The Secret Service Wishes He'd Stayed Quiet. The FBI says it broke up a plot to attack a UFC card at the White House using explosive-rigged drones and at least one sniper position — the kind of detail prosecutors usually keep sealed until they're ready to use it. Patel announced it anyway. Secret Service officials were reportedly furious, telling reporters he'd put the case at risk to make himself the man who saved fight night. Then JD Vance, defending his own FBI director without quite agreeing with him, said the plotters 'weren't even in town' when the event happened — which either means the threat was contained early, or that 'thwarted' was doing more work than the facts could carry. It's Patel's third stumbled rollout this year. That's not bad luck anymore. That's a pattern."
 DETAIL: "Researchers appended FAQs asking media not to use the words 'stupid,' 'dumb,' or 'brain rot' — a tell that the findings are exactly as bad as they sound." The meta-detail reveals more than the finding.
-RULES: (1) Headline = fact + consequence with a unit. (2) Every number needs a unit. (3) One surgical quote from a named person only if it does something prose cannot. (4) Name the real mechanism beneath the stated one. (5) Don't open with the verdict — let the sequence of facts earn it. (6) End with weight, not a moral.
+RULES: (1) Headline = fact + consequence with a unit. (2) Every number needs a unit. (3) One surgical quote from a named person only if it does something prose cannot. (4) Name the real mechanism beneath the stated one. (5) Don't open with the verdict — let the sequence of facts earn it. (6) End with weight, not a moral. (7) No signpost verbs — banned: underscores, highlights, demonstrates, reveals, showcases, reflects, signals, represents, speaks to, illustrates, emphasizes, spotlights, exemplifies. If a report, memo, study, or "this" is the grammatical subject doing one of these to the reader, nothing happened in the sentence — find the actor and rewrite so they did something. "The settlement underscores growing scrutiny of social media's effect on kids" → "Meta agreed to pay $18 billion. States said in court filings Meta hid its own research on teen addiction for years." Applies everywhere — headlines, ledes, and every section body alike.
 CYNIC TEST: "Does this sound like someone trying to sell me something, or someone just telling me what happened?" If it reads like spin — even spin in the reader's favor — rewrite it flatter and let the facts carry the weight instead.`;
 
 const SEC_PROMPTS = {
@@ -768,7 +765,25 @@ Lies are false or manipulative narratives in active circulation by identifiable 
 
 FORMAT: Open with an *italicized subhead* — do NOT bold it; bold is reserved for item headlines only, so the two never read as duplicate lines. Then each lie as a **bold headline** (the distortion stated clearly) followed by the claim, who's making it, who benefits, the factual reality, and a historical parallel when one is earned — built as a sequence toward the reveal, not a checklist. Most dangerous to most absurd. Register: controlled precision — a prosecutor laying out a case, not a pundit venting.
 
-LENGTH: Aim for 400-450 words. One well-constructed lie, fully prosecuted, is more effective than three that each get two sentences.`
+LENGTH: Aim for 400-450 words. One well-constructed lie, fully prosecuted, is more effective than three that each get two sentences.`,
+
+today:`You are producing TODAY — the overview screen a reader sees first, before the full Digest.
+
+This is NOT an essay. It is a digest of the digest — a compressed, well-written pass over what's already in today's edition, not a new piece of writing about the news. Long enough to cover what matters, short enough to stay interesting: your journalism-teacher test, not a length target.
+
+INPUT: the finished, edited Truths for each of today's stories (headline + lede + body), plus Probabilities and Possibilities where supplied. Lies is never included — do not reference, allude to, or hint at anything from a Lies section under any circumstance.
+
+STRUCTURE: Two to three short paragraphs of real prose doing the connective work — why today's edition holds together, what's actually going on across it. Bullets only where something is genuinely list-shaped (e.g. several smaller items that don't need a paragraph each) — not the default unit of the whole thing. This is Axios's *format* discipline without Axios's *voice*: no "Why it matters," no smart-brevity fragments, no bolded one-liners standing in for sentences. Full prose, same voice as the rest of NTK.
+
+PROBABILITIES AND POSSIBILITIES ARE SEASONING, NOT STRUCTURE: pull one in only if it genuinely sharpens what's happening today — a kicker, a bit of spice. Truths is the main event. Most stories in a given edition will appear here via Truths alone.
+
+TEASE, DON'T WITHHOLD: cover the actual substance of each story you mention — this is "long enough to cover the important points." A curiosity-gap tease that makes someone open the story to find out what happened is the failure mode, not the goal.
+
+ONRAMPS: when a sentence references a specific story, tag it inline: [STORY: story_key | 2-4 word label]. Place the marker immediately after the clause it supports. Every story mentioned needs exactly one marker; do not tag the same story twice.
+
+Follow all VOICE_REF rules, including the signpost-verb ban — this piece is read first and sets the voice for everything after it.
+
+LENGTH: Aim for 200-300 words total.`
 };
 
 function makePrompt(section, articlesText, suppUrls) {
@@ -788,6 +803,38 @@ Use only when a specific number is the sharpest way to land the stakes. The numb
 
 A section without a visual marker is not incomplete. Omit both if neither earns its place.`;
   return `${GLOBAL}\n\n${VOICE_REF}\n\n${SEC_PROMPTS[section]}${visualBlock}${suppBlock}\n\nARTICLES TO ANALYZE:\n\n${articlesText}`;
+}
+
+// ─── Today overview — digest of the digest ───
+// Fed the FINISHED, edited Truths/Probabilities/Possibilities of everything
+// in today's lineup — never raw sources, never Lies. Separate from
+// makePrompt() deliberately: the input here is already-written prose, not
+// source articles, and labeling it "ARTICLES TO ANALYZE" would be wrong.
+function todayInputBlock(){
+  return LINEUP
+    .filter(s => s.packages && s.packages.truths)
+    .map(s => {
+      const { headline, lede, body } = extractTruthsTags(s.packages.truths || '');
+      const prob = s.packages.probabilities || '';
+      const poss = s.packages.possibilities || '';
+      return `STORY KEY: ${s.key || s.id}\nHEADLINE: ${headline}\nLEDE: ${lede}\nTRUTHS BODY:\n${body}\n\nPROBABILITIES:\n${prob}\n\nPOSSIBILITIES:\n${poss}`;
+    })
+    .join('\n\n===\n\n');
+}
+function makeTodayPrompt(storiesBlock){
+  return `${GLOBAL}\n\n${VOICE_REF}\n\n${SEC_PROMPTS.today}\n\nTODAY'S FINISHED STORIES (Truths/Probabilities/Possibilities only — Lies intentionally excluded):\n\n${storiesBlock}`;
+}
+async function generateToday(){
+  const block = todayInputBlock();
+  if (!block){ alert('No generated stories in the lineup yet — generate story packages first, then Generate Today.'); return; }
+  TODAY_OV.busy = true; saveToday(); render();
+  try {
+    TODAY_OV.text = await ai(makeTodayPrompt(block), 1200);
+    TODAY_OV.generatedAt = new Date().toISOString();
+  } catch(e){
+    TODAY_OV.text = '[Generation failed: '+e.message+']';
+  }
+  TODAY_OV.busy = false; saveToday(); render();
 }
 
 /* ─── export (ported from ntk-production) ─── */
@@ -911,6 +958,13 @@ function certify(cluster){
   saveLineup(); render();
 }
 function removeStory(id){ LINEUP = LINEUP.filter(s=>s.id!==id); saveLineup(); render(); }
+function clearLineup(){
+  if (!LINEUP.length) return;
+  if (!confirm(`Remove all ${LINEUP.length} stories from the lineup? This clears drafts, angles, and generated packages for every story currently in the digest. This can't be undone.`)) return;
+  LINEUP = [];
+  saveLineup();
+  render();
+}
 // Replaces the old up/down-arrow moveStory — reordering now happens by
 // drag-and-drop or by typing a target position directly, both funneling
 // into this one function. Moves the story to a 1-indexed target position,
@@ -2034,10 +2088,132 @@ function editionScoreChips(key){
     (s.ledger_class ? ` · <b>${esc(s.ledger_class)}</b>` : '');
 }
 
+// ─── recommended-zone (edition candidates) selection/expand state ───
+// Ephemeral — resets on reload, same posture as Stream's SELECTED/OPEN_CLUSTERS.
+let CAND_SELECTED = new Set();   // candidate keys checked for batch dismiss
+let OPEN_CANDIDATES = new Set(); // candidate keys currently expanded to show sources
+let candLastIndex = null;        // last clicked row index, for shift-click range select
+
+function visibleCandidates(){
+  return (EDITION?._candidates||[]).filter(s=>!DISMISSED[s.key]);
+}
+function dismissedCandidateCount(){
+  return (EDITION?._candidates||[]).filter(s=>DISMISSED[s.key]).length;
+}
+function dismissCandidate(key){
+  DISMISSED[key]=true; CAND_SELECTED.delete(key); saveDismissed(); render();
+}
+function dismissSelectedCandidates(){
+  if (!CAND_SELECTED.size) return;
+  for (const k of CAND_SELECTED) DISMISSED[k]=true;
+  CAND_SELECTED.clear(); saveDismissed(); render();
+}
+function restoreDismissedCandidates(){
+  if (!dismissedCandidateCount()) return;
+  if (!confirm('Restore all dismissed candidates back into the recommended list?')) return;
+  DISMISSED = {}; saveDismissed(); render();
+}
+function toggleCandOpen(key){
+  if (OPEN_CANDIDATES.has(key)) OPEN_CANDIDATES.delete(key); else OPEN_CANDIDATES.add(key);
+  render();
+}
+function toggleCandSelect(key, shiftKey, index, visibleKeys){
+  if (shiftKey && candLastIndex!==null){
+    const [a,b] = [candLastIndex, index].sort((x,y)=>x-y);
+    for (let i=a;i<=b;i++) CAND_SELECTED.add(visibleKeys[i]);
+  } else if (CAND_SELECTED.has(key)) {
+    CAND_SELECTED.delete(key);
+  } else {
+    CAND_SELECTED.add(key);
+  }
+  candLastIndex = index;
+  render();
+}
+function toggleCandSelectAll(visibleKeys, checked){
+  if (checked) visibleKeys.forEach(k=>CAND_SELECTED.add(k)); else CAND_SELECTED.clear();
+  render();
+}
+// Same source detail Stream shows — pulled from the live 6h window when the
+// cluster is still there. Clusters age out of that window over the course
+// of a day, so candidates promoted earlier fall back to the canonical URLs
+// lineup_promote.py recorded at promotion time (no per-article title/pub
+// pairing in that case — best available, not the full picture).
+function candidateArticles(key){
+  const sc = (STREAM?.clusters||[]).find(c=>c.key===key);
+  if (sc && sc.items && sc.items.length){
+    return sc.items.map(it=>
+      `<div class="article"><span class="pub">${esc(it.publisher)}</span> · `+
+      `<a href="${esc(it.url)}" target="_blank" rel="noopener">${esc(it.title)}</a> `+
+      `<span class="t">${rel(it.published)}</span></div>`
+    ).join('');
+  }
+  const s = (EDITION?._candidates||[]).find(x=>x.key===key);
+  const urls = (s && s.urls) || [];
+  if (!urls.length){
+    return `<div style="font-size:11px;color:var(--dim);padding:2px 0">No source detail available — cluster aged out of the stream window and no URLs were recorded.</div>`;
+  }
+  return `<div style="font-size:10.5px;color:var(--dim);padding:2px 0 4px">cluster aged out of the stream window — showing recorded source URLs only</div>`+
+    urls.map(u=>`<div class="article"><a href="${esc(u)}" target="_blank" rel="noopener">${esc(u)}</a></div>`).join('');
+}
+
 function wireCandidateButtons(root){
+  const keys = visibleCandidates().map(s=>s.key);
   root.querySelectorAll('.add-candidate').forEach(btn=>{
     btn.addEventListener('click',()=>addEditionCandidate(btn.dataset.key));
   });
+  root.querySelectorAll('.cand-dismiss').forEach(btn=>{
+    btn.addEventListener('click',()=>dismissCandidate(btn.dataset.key));
+  });
+  root.querySelectorAll('.cand-label').forEach(lbl=>{
+    lbl.addEventListener('click',()=>toggleCandOpen(lbl.dataset.key));
+  });
+  root.querySelectorAll('.cand-chk').forEach(cb=>{
+    cb.addEventListener('click',e=>{
+      e.stopPropagation();
+      toggleCandSelect(cb.dataset.key, e.shiftKey, +cb.dataset.i, keys);
+    });
+  });
+  root.querySelector('#cand-select-all')?.addEventListener('change', e=>{
+    toggleCandSelectAll(keys, e.target.checked);
+  });
+  root.querySelector('#cand-dismiss-sel')?.addEventListener('click', dismissSelectedCandidates);
+  root.querySelector('#cand-restore-dismissed')?.addEventListener('click', restoreDismissedCandidates);
+}
+
+function candidatesPanel(){
+  const cands = visibleCandidates();
+  const dismissedN = dismissedCandidateCount();
+  if (!cands.length && !dismissedN) return '';
+  const allSelected = cands.length>0 && cands.every(s=>CAND_SELECTED.has(s.key));
+  const header = `<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:6px">
+      <div style="font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px">
+        ${cands.length} from today's edition not yet in your lineup — choose what to add`+
+        (LINEUP.length>=LINEUP_MAX?' (full — remove a story first)':'')+
+        (dismissedN?` · ${dismissedN} dismissed <button class="mini" id="cand-restore-dismissed" style="margin-left:2px">restore</button>`:'')+`
+      </div>`+
+      (cands.length ? `<div style="display:flex;gap:10px;align-items:center">
+        <label style="font-size:11px;display:flex;gap:4px;align-items:center;cursor:pointer">
+          <input type="checkbox" id="cand-select-all" ${allSelected?'checked':''}> select all
+        </label>
+        <button class="mini" id="cand-dismiss-sel" ${CAND_SELECTED.size?'':'disabled'}>dismiss selected (${CAND_SELECTED.size})</button>
+      </div>` : '')+
+    `</div>`;
+  const rows = cands.map((s,i)=>{
+    const open = OPEN_CANDIDATES.has(s.key);
+    return `<div class="cand-row" data-key="${esc(s.key)}" style="border-bottom:1px solid var(--rule);padding:4px 0">
+      <div style="display:flex;gap:6px;align-items:baseline">
+        <input type="checkbox" class="cand-chk" data-key="${esc(s.key)}" data-i="${i}" ${CAND_SELECTED.has(s.key)?'checked':''}>
+        <label class="cand-label" data-key="${esc(s.key)}" style="flex:1;cursor:pointer">
+          <span class="slot-tag" style="background:#666">${esc(s.slot_label||'')}</span> ${esc(s.title)}
+          <span style="color:var(--dim);font-size:10.5px"> · ${s.publisher_count||0} pub${s.publisher_count===1?'':'s'}</span>
+        </label>
+        <button class="mini add-candidate" data-key="${esc(s.key)}" ${LINEUP.length>=LINEUP_MAX?'disabled':''}>+ add</button>
+        <button class="mini cand-dismiss" data-key="${esc(s.key)}">dismiss</button>
+      </div>`+
+      (open ? `<div style="padding-left:22px;margin-top:2px">${candidateArticles(s.key)}</div>` : '')+
+    `</div>`;
+  }).join('');
+  return `<div class="ed-head" style="margin-top:8px">${header}${rows}</div>`;
 }
 
 function editionStrip(){
@@ -2056,16 +2232,7 @@ function editionStrip(){
       ${unfilled.length?`<div class="lint-fail">✕ unfilled: ${esc(unfilled.join(', '))}</div>`:''}
     </div>
   </div>` +
-  ((EDITION._candidates||[]).length ? `<div class="ed-head" style="margin-top:8px">
-    <div style="font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">
-      ${EDITION._candidates.length} from today's edition not yet in your lineup — choose what to add`+
-      (LINEUP.length>=LINEUP_MAX?' (full — remove a story first)':'')+`
-    </div>`+
-    EDITION._candidates.map(s=>`<div class="qres">`+
-      `<label style="flex:1"><span class="slot-tag" style="background:#666">${esc(s.slot_label||'')}</span> ${esc(s.title)}</label>`+
-      `<button class="mini add-candidate" data-key="${esc(s.key)}" ${LINEUP.length>=LINEUP_MAX?'disabled':''}>+ add</button>`+
-      `</div>`).join('')+
-    `</div>` : '') +
+  candidatesPanel() +
   ((EDITION.excluded_sample||[]).length ? `<details class="killed"><summary style="cursor:pointer;color:var(--dim);font-size:11px">`+
     `${EDITION.excluded_sample.length} candidates excluded before slot-filling</summary>`+
     EDITION.excluded_sample.map(x=>`<div class="k-item">✕ ${esc(x.why)} — ${esc(x.title||'')}</div>`).join('')+
@@ -2092,7 +2259,9 @@ function renderLineup(root){
   root.innerHTML = strip + `<div class="lineup-bar">
     <button class="mini go" id="gen-all" ${LINEUP.some(s=>s.busy)?'disabled':''}>Generate all ungenerated</button>
     <button class="mini" id="q-toggle">${Q.open?'close search':'+ new story from search'}</button>
+    <button class="mini" id="clear-lineup" style="border-color:var(--stale);color:var(--stale)">clear all stories</button>
     <span class="spacer"></span>
+    <button class="mini" id="gen-today-lineup" ${TODAY_OV.busy?'disabled':''}>${TODAY_OV.busy?'Generating…':'Generate Today'}</button>
     <button class="mini go" id="publish-btn" ${nGen?'':'disabled'}>Publish to digest v2</button>
     <span class="copied">${copiedFlag==='all'?'copied':copiedFlag==='site'?'copied':''}</span>
     <span id="publish-status" style="font-size:10.5px;color:var(--warn)"></span>
@@ -2125,6 +2294,8 @@ function renderLineup(root){
   }
   document.getElementById('q-toggle').addEventListener('click',()=>{ Q.open=!Q.open; render(); });
   document.getElementById('gen-all').addEventListener('click',generateAll);
+  document.getElementById('clear-lineup').addEventListener('click',clearLineup);
+  document.getElementById('gen-today-lineup').addEventListener('click',generateToday);
   wireCandidateButtons(root);
   document.getElementById('publish-btn').addEventListener('click',publishToDigest);
   renderPublishStatus();
@@ -2201,12 +2372,6 @@ function renderLineup(root){
       `<button class="mini img-commons-toggle">${s.commonsOpen?'close':'find photo'}</button>`+
       (s.featuredImage ? `<button class="mini img-clear">remove</button>` : '')+
       `</div>`+
-      (s.featuredImage ? `<div class="img-row" style="margin-top:4px">`+
-        `<span style="font-size:10.5px;color:var(--dim)">digest overlay:</span>`+
-        NTK_SWATCHES.map(sw=>`<button class="overlay-swatch${(s.overlayColor||'#0798F2')===sw.hex?' sel':''}" data-hex="${sw.hex}" title="${sw.name}" style="width:18px;height:18px;border-radius:50%;background:${sw.hex};border:2px solid ${(s.overlayColor||'#0798F2')===sw.hex?'var(--ink)':'transparent'};cursor:pointer;padding:0"></button>`).join('')+
-        `<input type="range" class="overlay-opacity" min="10" max="80" value="${s.overlayOpacity||45}" style="width:70px">`+
-        `<span style="font-size:10.5px;color:var(--dim)">${s.overlayOpacity||45}%</span>`+
-        `</div>` : '')+
       (s.imgGenOpen ? `<div class="qpanel">`+
         `<div class="qrow"><textarea class="img-gen-prompt" style="min-height:44px">${esc(s.imgGenPrompt || buildImgPrompt(s))}</textarea></div>`+
         `<div class="qrow">`+
@@ -2215,10 +2380,6 @@ function renderLineup(root){
           `<option value="recraftv4_1_vector"${s.imgGenModel==='recraftv4_1_vector'?' selected':''}>Vector — V4.1</option>`+
           `<option value="recraftv3"${s.imgGenModel==='recraftv3'?' selected':''}>Raster — V3 (style presets)</option>`+
           `<option value="recraftv3_vector"${s.imgGenModel==='recraftv3_vector'?' selected':''}>Vector — V3 (style presets)</option>`+
-        `</select>`+
-        `<select class="img-gen-register" title="separate from raster/vector, which is format not look">`+
-          `<option value="photo"${(s.imgGenRegister||'photo')==='photo'?' selected':''}>Photo-realistic</option>`+
-          `<option value="illustration"${s.imgGenRegister==='illustration'?' selected':''}>Illustration (gouache/ink)</option>`+
         `</select>`+
         `<select class="img-gen-style" ${/^recraftv[23]/.test(s.imgGenModel||'recraftv4_1')?'':'disabled title="style presets only apply to V2/V3 models"'}>`+
           `<option value="">no style preset</option>`+
@@ -2295,12 +2456,6 @@ function renderLineup(root){
       handleStoryImageUpload(s, e.target.files[0]);
     });
     el.querySelector('.img-clear')?.addEventListener('click',()=>clearStoryImage(s));
-    el.querySelectorAll('.overlay-swatch').forEach(btn=>{
-      btn.addEventListener('click',()=>{ s.overlayColor = btn.dataset.hex; saveLineup(); render(); });
-    });
-    el.querySelector('.overlay-opacity')?.addEventListener('input',e=>{
-      s.overlayOpacity = +e.target.value; saveLineup(); render();
-    });
     el.querySelector('.img-gen-toggle').addEventListener('click',()=>{
       s.imgGenOpen = !s.imgGenOpen;
       if (s.imgGenOpen && !s.imgGenPrompt) s.imgGenPrompt = buildImgPrompt(s);
@@ -2308,7 +2463,6 @@ function renderLineup(root){
     });
     el.querySelector('.img-gen-prompt')?.addEventListener('change',e=>{ s.imgGenPrompt=e.target.value; });
     el.querySelector('.img-gen-model')?.addEventListener('change',e=>{ s.imgGenModel=e.target.value; render(); });
-    el.querySelector('.img-gen-register')?.addEventListener('change',e=>{ s.imgGenRegister=e.target.value; });
     el.querySelector('.img-gen-style')?.addEventListener('change',e=>{ s.imgGenStyle=e.target.value; });
     el.querySelector('.img-gen-size')?.addEventListener('change',e=>{ s.imgGenSize=e.target.value; });
     el.querySelector('.img-gen-usecolors')?.addEventListener('change',e=>{ s.imgGenUseColors=e.target.checked; });
@@ -2668,6 +2822,49 @@ function syncEditionToLineup(){
 /* ─── edition view: what assembly.py decided, and why ─── */
 let EDITION = null;
 
+function renderToday(root){
+  const n = LINEUP.filter(s => s.packages && s.packages.truths).length;
+  root.innerHTML = `<div class="lineup-bar">
+      <button class="mini go" id="gen-today" ${TODAY_OV.busy?'disabled':''}>${TODAY_OV.busy?'Generating…':'Generate Today'}</button>
+      <span style="font-size:11px;color:var(--dim);align-self:center">${n} of ${LINEUP.length} lineup stories have finished Truths — feeds this generation</span>
+      <span class="spacer"></span>
+      ${TODAY_OV.generatedAt ? `<span style="font-size:11px;color:var(--dim);align-self:center">generated ${rel(TODAY_OV.generatedAt)} ago</span>` : ''}
+    </div>
+    <div class="ed-head out" style="margin-top:8px">
+      <div style="font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">
+        Today overview — click the text below to edit the raw draft
+      </div>
+      <div class="body today-body" id="today-body">${TODAY_OV.text
+        ? esc(TODAY_OV.text).replace(/\n/g,'<br>')
+        : '<span style="color:var(--dim)">Nothing generated yet. Click Generate Today above — it reads Truths/Probabilities/Possibilities from every lineup story that has finished packages, and skips Lies entirely.</span>'}</div>
+    </div>`;
+
+  document.getElementById('gen-today').addEventListener('click', generateToday);
+
+  const bodyEl = document.getElementById('today-body');
+  bodyEl.addEventListener('click', function startEdit(){
+    if (bodyEl.querySelector('textarea')) return;
+    const raw = TODAY_OV.text || '';
+    bodyEl.innerHTML = '';
+    const ta = document.createElement('textarea');
+    ta.className = 'body-edit';
+    ta.value = raw;
+    bodyEl.appendChild(ta);
+    ta.focus();
+    ta.setSelectionRange(ta.value.length, ta.value.length);
+    ta.style.height = Math.min(Math.max(ta.scrollHeight, 160), 600) + 'px';
+    let cancelled = false;
+    const finish = (save) => {
+      if (save && !cancelled){ TODAY_OV.text = ta.value; saveToday(); }
+      render();
+    };
+    ta.addEventListener('keydown', e=>{
+      if (e.key === 'Escape'){ cancelled = true; finish(false); }
+    });
+    ta.addEventListener('blur', ()=>finish(true));
+  });
+}
+
 
 /* ─── shell ─── */
 function render(){
@@ -2675,12 +2872,15 @@ function render(){
   document.getElementById('notesBadge').textContent = NOTES.items.length ? ' '+NOTES.items.length : '';
   document.getElementById('tab-stream').classList.toggle('on', TAB==='stream');
   document.getElementById('tab-lineup').classList.toggle('on', TAB==='lineup');
+  document.getElementById('tab-today').classList.toggle('on', TAB==='today');
   document.getElementById('tab-lineup').textContent = 'lineup'+(LINEUP.length?' ('+LINEUP.length+')':'');
   if (TAB==='stream') renderStream(root);
+  else if (TAB==='today') renderToday(root);
   else renderLineup(root);
 }
 document.getElementById('tab-stream').addEventListener('click',()=>{ TAB='stream'; render(); });
 document.getElementById('tab-lineup').addEventListener('click',()=>{ TAB='lineup'; render(); });
+document.getElementById('tab-today').addEventListener('click',()=>{ TAB='today'; render(); });
 document.getElementById('notesToggle').addEventListener('click',()=>{ notesOpen=!notesOpen; renderNotes(); });
 document.getElementById('gear').addEventListener('click',()=>{
   const p=document.getElementById('settings'); p.classList.toggle('open');
