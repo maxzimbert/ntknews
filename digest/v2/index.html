@@ -2736,10 +2736,12 @@ function escHtmlSafe(s) {
 function escAttrSafe(s) { return escHtmlSafe(s).replace(/"/g, '&quot;'); }
 
 function fetchLocalAndWeather() {
-  if (!('geolocation' in navigator)) return;
+  if (!('geolocation' in navigator)) { console.log('[local] geolocation not supported by this browser'); return; }
+  console.log('[local] requesting geolocation permission…');
   navigator.geolocation.getCurrentPosition(
     async function (pos) {
       var lat = pos.coords.latitude, lon = pos.coords.longitude;
+      console.log('[local] permission granted:', lat.toFixed(3), lon.toFixed(3));
       try {
         // 1. Reverse geocode client-side — BigDataCloud's free endpoint,
         // no key, designed for direct browser calls. Only the resolved
@@ -2749,11 +2751,12 @@ function fetchLocalAndWeather() {
         var city = geo.city || geo.locality || '';
         var state = geo.principalSubdivisionCode ? geo.principalSubdivisionCode.split('-').pop() : (geo.principalSubdivision || '');
         var cityLabel = [city, state].filter(Boolean).join(', ');
+        console.log('[local] resolved city:', cityLabel || '(none — geocode returned no city/locality)');
 
         // 2. Weather — proxied server-side (see news.js: NWS's CORS
         // support isn't reliable enough to call directly).
         var weatherPromise = fetch('/.netlify/functions/news?mode=weather&lat=' + lat + '&lon=' + lon)
-          .then(function (r) { return r.json(); }).catch(function () { return null; });
+          .then(function (r) { return r.json(); }).catch(function (e) { console.log('[local] weather fetch failed:', e); return null; });
 
         // 3. Local news — resolve the city to an EventRegistry location
         // URI, then two separate calls (source-based, event-based; see
@@ -2764,12 +2767,13 @@ function fetchLocalAndWeather() {
           var locResp = await fetch('/.netlify/functions/news?mode=resolve-location&q=' + encodeURIComponent(city));
           var locData = await locResp.json();
           var locUri = locData && locData[0] && locData[0].uri;
+          console.log('[local] location URI:', locUri || '(none — resolve-location returned no match)');
           if (locUri) {
             var results = await Promise.all([
               fetch('/.netlify/functions/news?mode=local-news&locationUri=' + encodeURIComponent(locUri) + '&filterBy=source')
-                .then(function (r) { return r.json(); }).catch(function () { return null; }),
+                .then(function (r) { return r.json(); }).catch(function (e) { console.log('[local] source-based fetch failed:', e); return null; }),
               fetch('/.netlify/functions/news?mode=local-news&locationUri=' + encodeURIComponent(locUri) + '&filterBy=event')
-                .then(function (r) { return r.json(); }).catch(function () { return null; })
+                .then(function (r) { return r.json(); }).catch(function (e) { console.log('[local] event-based fetch failed:', e); return null; })
             ]);
             var seen = {};
             results.forEach(function (resp) {
@@ -2782,19 +2786,24 @@ function fetchLocalAndWeather() {
             });
           }
         }
+        console.log('[local] articles found:', articles.length);
 
         var weather = await weatherPromise;
+        console.log('[local] weather result:', weather);
         var data = { city: cityLabel, weather: weather, articles: articles };
         localCacheSave(data);
         renderLocalBlock(data);
+        console.log('[local] done — rendered.');
       } catch (e) {
-        // Local/weather is a nice-to-have — fail quiet, never show an
-        // error state on the one screen every reader sees first.
+        console.log('[local] unexpected error, failing quiet to the reader:', e);
         var el = document.getElementById('todayLocalBlock');
         if (el) el.innerHTML = '';
       }
     },
-    function () { renderLocalPrompt(); },   // denied or unavailable
+    function (err) {
+      console.log('[local] permission denied or unavailable:', err && err.message);
+      renderLocalPrompt();
+    },
     { timeout: 8000 }
   );
 }
