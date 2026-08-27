@@ -840,6 +840,27 @@ function todayInputBlock(){
 function makeTodayPrompt(storiesBlock){
   return `${GLOBAL}\n\n${VOICE_REF}\n\n${SEC_PROMPTS.today}\n\nTODAY'S FINISHED STORIES (Truths/Probabilities/Possibilities only — Lies intentionally excluded):\n\n${storiesBlock}`;
 }
+// Guarantees real paragraph breaks exist, regardless of whether the model
+// remembered to insert them. The prompt asks for blank-line breaks, but
+// that's a request, not a guarantee — this makes the blob failure mode
+// structurally impossible rather than hoping the instruction is followed.
+// Leaves already-correct output (real blank lines present) untouched.
+function autoParagraph(text){
+  if (!text) return text;
+  if (/\n\s*\n/.test(text)) return text;   // already has real paragraph breaks
+  // Protect periods inside [STORY: ...] markers from being treated as
+  // sentence boundaries, then split on sentence-ending punctuation
+  // followed by a capital letter, quote, or markup character.
+  const protectedText = text.replace(/\[[^\]]*\]/g, m => m.replace(/\./g, '\u0000DOT\u0000'));
+  const sentences = protectedText
+    .split(/(?<=[.!?])\s+(?=[A-Z"'\u201c*\[])/)
+    .map(s => s.replace(/\u0000DOT\u0000/g, '.'));
+  if (sentences.length <= 3) return text;   // too short to bother chunking
+  const paragraphs = [];
+  for (let i = 0; i < sentences.length; i += 3) paragraphs.push(sentences.slice(i, i + 3).join(' '));
+  return paragraphs.join('\n\n');
+}
+
 async function generateToday(){
   const block = todayInputBlock();
   if (!block){ alert('No generated stories in the lineup yet — generate story packages first, then Generate Today.'); return; }
@@ -853,6 +874,7 @@ async function generateToday(){
     // instruction reduces the failure, it doesn't guarantee zero.
     let text = fixBoldSpacing(raw || '');
     text = text.replace(/^\s*\*\*\s*(today|overview|in this edition)\s*\*\*\s*\n*/i, '');
+    text = autoParagraph(text);
     TODAY_OV.text = text;
     TODAY_OV.generatedAt = new Date().toISOString();
   } catch(e){
