@@ -2784,7 +2784,13 @@ function fetchLocalAndWeather() {
         if (city) {
           var locResp = await fetch('/.netlify/functions/news?mode=resolve-location&q=' + encodeURIComponent(city));
           var locData = await locResp.json();
-          var locUri = locData && locData[0] && locData[0].uri;
+          console.log('[local] raw resolve-location response:', locData);
+          // EventRegistry's suggestLocationsFast returns each match with a
+          // wikiUri field (confirmed against their API schema) — location
+          // URIs are Wikipedia URLs, same shape as concept URIs elsewhere
+          // in this codebase. Reading .uri here was always undefined,
+          // which is why every city looked like "no match" including LA.
+          var locUri = locData && locData[0] && locData[0].wikiUri;
           console.log('[local] location URI:', locUri || '(none — resolve-location returned no match)');
           if (locUri) {
             var results = await Promise.all([
