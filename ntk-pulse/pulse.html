@@ -840,25 +840,29 @@ function todayInputBlock(){
 function makeTodayPrompt(storiesBlock){
   return `${GLOBAL}\n\n${VOICE_REF}\n\n${SEC_PROMPTS.today}\n\nTODAY'S FINISHED STORIES (Truths/Probabilities/Possibilities only — Lies intentionally excluded):\n\n${storiesBlock}`;
 }
-// Guarantees real paragraph breaks exist, regardless of whether the model
-// remembered to insert them. The prompt asks for blank-line breaks, but
-// that's a request, not a guarantee — this makes the blob failure mode
-// structurally impossible rather than hoping the instruction is followed.
-// Leaves already-correct output (real blank lines present) untouched.
+// Guarantees no paragraph runs longer than ~3 sentences, regardless of
+// what the model did. Evaluated per-paragraph, not as an all-or-nothing
+// check on the whole text — a text with SOME real breaks but one or two
+// overly dense stretches used to skip entirely, since "any break exists
+// anywhere" was treated as "trust it completely." Now every paragraph
+// (including ones the model already broke out correctly) gets the same
+// length check, so uneven output can't ship uneven.
 function autoParagraph(text){
   if (!text) return text;
-  if (/\n\s*\n/.test(text)) return text;   // already has real paragraph breaks
-  // Protect periods inside [STORY: ...] markers from being treated as
-  // sentence boundaries, then split on sentence-ending punctuation
-  // followed by a capital letter, quote, or markup character.
-  const protectedText = text.replace(/\[[^\]]*\]/g, m => m.replace(/\./g, '\u0000DOT\u0000'));
-  const sentences = protectedText
-    .split(/(?<=[.!?])\s+(?=[A-Z"'\u201c*\[])/)
-    .map(s => s.replace(/\u0000DOT\u0000/g, '.'));
-  if (sentences.length <= 3) return text;   // too short to bother chunking
-  const paragraphs = [];
-  for (let i = 0; i < sentences.length; i += 3) paragraphs.push(sentences.slice(i, i + 3).join(' '));
-  return paragraphs.join('\n\n');
+  const existingParagraphs = text.split(/\n\s*\n/);
+  const rechunked = existingParagraphs.map(para => {
+    const trimmed = para.trim();
+    if (!trimmed) return '';
+    const protectedText = trimmed.replace(/\[[^\]]*\]/g, m => m.replace(/\./g, '\u0000DOT\u0000'));
+    const sentences = protectedText
+      .split(/(?<=[.!?])\s+(?=[A-Z"'\u201c*\[])/)
+      .map(s => s.replace(/\u0000DOT\u0000/g, '.'));
+    if (sentences.length <= 3) return trimmed;
+    const chunks = [];
+    for (let i = 0; i < sentences.length; i += 3) chunks.push(sentences.slice(i, i + 3).join(' '));
+    return chunks.join('\n\n');
+  }).filter(Boolean);
+  return rechunked.join('\n\n');
 }
 
 async function generateToday(){
