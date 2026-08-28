@@ -143,6 +143,45 @@ def build_stories_block(stories):
     return "\n".join(lines)
 
 
+def regenerate_hero_story(html, stories, date_str):
+    """Fills in the root landing page's `heroStory` block — this const and
+    the JS that applies it to the DOM were already built (comment in the
+    file literally says 'regenerated automatically by build_digest.py on
+    every publish'), but nothing ever actually wrote to it, so it's been
+    permanently frozen on whatever story was hardcoded in as a demo.
+    json.dumps rather than jsEsc here deliberately: this object holds much
+    messier content than jsEsc's single-line fields were built for —
+    multi-paragraph HTML, base64 images, arbitrary quotes — and JSON is a
+    valid (if differently-styled) JS object literal, so it's the safer
+    serializer for content this large and unpredictable."""
+    if not stories:
+        return html
+    lead = stories[0]
+    date_label = datetime.now(timezone.utc).strftime("%A, %B %-d") + " · today's edition"
+    hero = {
+        "date": date_label,
+        "storyCount": f"{1:02d} / {len(stories):02d}",
+        "category": lead.get("category", ""),
+        "headline": lead.get("headline", ""),
+        "truth": lead.get("truth", ""),
+        "prob": lead.get("prob", ""),
+        "poss": lead.get("poss", ""),
+        "lies": lead.get("lies", ""),
+        "permalink": lead.get("permalink", ""),
+    }
+    if lead.get("featuredImage"):
+        hero["featuredImage"] = lead["featuredImage"]
+        hero["overlayColor"] = lead.get("overlayColor", "#0798F2")
+    hero_js = "const heroStory = " + json.dumps(hero, indent=2) + ";"
+
+    hero_re = re.compile(r"const heroStory = \{.*?\n\};", re.DOTALL)
+    new_html, n = hero_re.subn(lambda m: hero_js, html)
+    if n != 1:
+        log(f"  WARNING: expected 1 heroStory match, found {n} — leaving root landing page's lead story untouched")
+        return html
+    return new_html
+
+
 def regenerate_today(html, today):
     """Same pattern as the funFact block: one hand-pasted `const` marker,
     regex-replaced in place. `today` is {"text": "...", "generatedAt": "..."}
@@ -151,8 +190,8 @@ def regenerate_today(html, today):
     same defensive posture as pick_fun_fact's fallback."""
     if not today or not today.get("text"):
         return html
-    today_re = re.compile(r'const todayOverview = "[^"]*";')
-    new_html, n = today_re.subn(f'const todayOverview = "{jsEscMultiline(today["text"])}";', html)
+    today_re = re.compile(r'const todayOverview = "(?:[^"\\]|\\.)*";')
+    new_html, n = today_re.subn(lambda m: f'const todayOverview = "{jsEscMultiline(today["text"])}";', html)
     if n != 1:
         log(f"  WARNING: expected 1 todayOverview match, found {n} — leaving Today overview untouched")
         return html
@@ -168,14 +207,16 @@ def regenerate_homepage(html, stories, fun_fact):
     stories_re = re.compile(
         r"const stories = \[.*?\];\s*// ← END OF DAILY CONTENT\. Do not edit below this line\.",
         re.DOTALL)
-    new_html, n = stories_re.subn(build_stories_block(stories), html)
+    stories_block = build_stories_block(stories)
+    new_html, n = stories_re.subn(lambda m: stories_block, html)
     if n != 1:
         raise RuntimeError(f"expected exactly 1 stories block match, found {n} — "
                             "homepage template may have changed; refusing to guess")
 
     if fun_fact:
-        fact_re = re.compile(r'const funFact = "[^"]*";')
-        new_html, n2 = fact_re.subn(f'const funFact = "{jsEsc(fun_fact)}";', new_html)
+        fact_re = re.compile(r'const funFact = "(?:[^"\\]|\\.)*";')
+        fact_replacement = f'const funFact = "{jsEsc(fun_fact)}";'
+        new_html, n2 = fact_re.subn(lambda m: fact_replacement, new_html)
         if n2 != 1:
             log(f"  WARNING: expected 1 funFact match, found {n2} — leaving funFact untouched")
             new_html = html if n != 1 else new_html  # safety, though n==1 already checked above
@@ -611,6 +652,18 @@ def main():
     new_html = regenerate_today(new_html, today)
     live_index_path.write_text(new_html)
     log(f"live homepage regenerated: {live_index_path}")
+
+    # 3b. Root landing page's lead-story teaser — separate file from the
+    # digest app above, was never wired to real data until now.
+    root_index_path = repo_root / "index.html"
+    if root_index_path.exists():
+        root_html = root_index_path.read_text()
+        new_root_html = regenerate_hero_story(root_html, stories, date_str)
+        if new_root_html != root_html:
+            root_index_path.write_text(new_root_html)
+            log(f"root landing page lead story updated: {root_index_path}")
+    else:
+        log(f"  root index.html not found at {root_index_path} — skipping hero story update")
 
     # 4. Freeze today's now-correct homepage at a permanent dated path.
     dated_dir = digest_dir / date_str
