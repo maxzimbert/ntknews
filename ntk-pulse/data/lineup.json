@@ -1,5 +1,5 @@
 {
- "assembled_at": "2026-08-29T22:34:22.285619+00:00",
+ "assembled_at": "2026-08-30T04:08:33.561292+00:00",
  "slot_plan": "A",
  "displacement": "MANUAL",
  "daytype": "weekend",
@@ -7,1253 +7,69 @@
   4,
   6
  ],
- "actual_size": 44,
- "lint_failures": [],
+ "actual_size": 6,
+ "lint_failures": [
+  "under 3 fully self-contained items",
+  "no item answers 'what do I do with this'"
+ ],
  "slots_unfilled": [],
  "stories": [
   {
    "slot": "unavoidable",
    "slot_label": "Unavoidable",
-   "key": "53b5e686ebc307e7",
-   "title": "Israeli settlers attack Palestinians and NBC crew in West Bank; Netanyahu condemns violence",
+   "key": "6d3e0aaac24f0491",
+   "title": "Russia kills 37 in Kyiv strike, warns British defense firms are targets",
    "beat": "international",
-   "publisher_count": 8,
+   "publisher_count": 2,
    "publishers": [
-    "New York Times",
-    "The Guardian",
-    "Al Jazeera",
-    "Deutsche Welle",
-    "France 24",
-    "NBC News",
-    "ABC Australia",
-    "Memeorandum"
+    "The Independent",
+    "Daily Mail"
    ],
    "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
+    "emotional_load": 5,
+    "explainability": 5,
     "actionability": 1,
-    "conversational_currency": 4
+    "conversational_currency": 5
    },
-   "politician_led": true,
+   "politician_led": false,
    "ledger_class": "DEVELOPMENT",
    "new_facts": [
-    "New attack: masked settlers assault Palestinian woman and NBC crew; Netanyahu quote condemning 'handful of rioters'.",
-    "Adds scale detail: 'dozens' of settlers attacked Qusra village after weeks of tension.",
-    "Characterizes Saturday assault as 'first major attack' since Qusra siege began; notes rare Netanyahu criticism.",
-    "New Netanyahu quote 'criminal acts of violence'; names second village Jalud and earlier August attack on family and media crew.",
-    "Original NBC News account confirming its own team and a Palestinian woman were attacked and injured.",
-    "Israeli army arrested six Palestinians following the settler violence in Qusra."
+    "Ukrainian president promises to punish those responsible for the strike; toll at 37",
+    "Strike also damaged dozens of nearby homes and buildings; described as deadliest Russian attack on Ukraine this year",
+    "Senior Kremlin adviser warns Russia may launch hybrid attack on Britain, naming drone factory and missile firm as 'legal targets'",
+    "UK defence firm CEOs warned of elevated Russian spy threat during a government roundtable this summer"
    ],
-   "line": "Israeli settlers attacked Palestinians and an NBC News crew in the West Bank; Netanyahu condemned the violence while the military arrested Palestinians, not settlers.",
-   "assembly_score": 16.96
+   "line": "Russia struck Kyiv with missiles killing 37 people including civilians in a care home; Russian officials threaten British weapons manufacturers.",
+   "assembly_score": 11.63
   },
   {
    "slot": "money_me",
    "slot_label": "Money & me",
-   "key": "c1e2fb98094768e5",
-   "title": "Tax deadline tomorrow; extension process explained",
-   "beat": "other",
+   "key": "d273b4db19d90ee9",
+   "title": "Samsung, SK Hynix corporate taxes top 11 trillion won in H1",
+   "beat": "business",
    "publisher_count": 1,
    "publishers": [
-    "CNN"
+    "Yonhap News"
    ],
    "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 5,
-    "conversational_currency": 3
+    "emotional_load": 1,
+    "explainability": 4,
+    "actionability": 1,
+    "conversational_currency": 2
    },
    "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Tax filing deadline is tomorrow; you can request a six-month extension if you're not ready.",
-   "assembly_score": 5.61
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Samsung Electronics and SK hynix paid over 11 trillion won in corporate tax in H1",
+    "Poll shows Seoul residents cite traffic, nighttime crime, fine dust as top smart city concerns"
+   ],
+   "line": "Samsung and SK Hynix paid combined corporate taxes exceeding 11 trillion won in the first half of 2024.",
+   "assembly_score": 6.56
   },
   {
    "slot": "body_mind",
    "slot_label": "Body & mind",
-   "key": "989d442f1bc87edb",
-   "title": "Missouri college football player dies after medical emergency during game",
-   "beat": "health",
-   "publisher_count": 1,
-   "publishers": [
-    "CBS News"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": "DEVELOPMENT",
-   "new_facts": [
-    "William Jewell running back MicahJo Barnett died Saturday after medical emergency during season opener"
-   ],
-   "line": "A college football player died during a season opener; cause under investigation.",
-   "assembly_score": 6.86
-  },
-  {
-   "slot": "work_machines",
-   "slot_label": "Work & machines",
-   "key": "bf8d25a653d5b065",
-   "title": "Vicariously hike the Appalachian in the gorgeous A Trail Tale",
-   "beat": "tech",
-   "publisher_count": 1,
-   "publishers": [
-    "The Verge"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 2.69
-  },
-  {
-   "slot": "group_chat",
-   "slot_label": "The group chat",
-   "key": "1a730abdcf3cd8f1",
-   "title": "Come Up to the Lab and See What's on the Slab",
-   "beat": "education",
-   "publisher_count": 1,
-   "publishers": [
-    "Audrey Watters (Second Breakfast)"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 1.62
-  },
-  {
-   "slot": "close",
-   "slot_label": "The close",
-   "key": "1333f99be55bdee8",
-   "title": "Trump orders Lake Ontario renamed, faces swift rejection from Canada and tribes",
-   "beat": "national",
-   "publisher_count": 4,
-   "publishers": [
-    "CBS News",
-    "Daily Beast",
-    "Fox News",
-    "The Independent"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "ledger_class": "DEVELOPMENT",
-   "new_facts": [
-    "Reveals Trump signed executive order renaming Lake Ontario 'Lake America'; Maher mocks liberal backlash",
-    "Ford unveils giant billboard reading 'Lake Ontario. Now and Always' on Canadian shoreline",
-    "Seneca Nation leader calls renaming 'unpresidential', says it violates 1794 Canandaigua treaty",
-    "Trump posted AI video of Trump-haired, rifle-carrying geese set to Hawaii Five-O theme before golfing"
-   ],
-   "line": "Trump ordered Lake Ontario renamed Lake America; Canada and Indigenous leaders rejected it; Trump posted AI video mocking the backlash.",
-   "assembly_score": 13.35
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "81a44a535ca8d536",
-   "title": "Trump secures US access to Venezuelan oil reserves amid domestic opposition",
-   "beat": "international",
-   "publisher_count": 5,
-   "publishers": [
-    "Financial Times",
-    "Al Jazeera",
-    "CBS News",
-    "Fox News",
-    "The Independent"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/8/29/whats-behind-the-us-deal-to-seize-control-of-venezuelan-oil-reserves?traffic_source=rss",
-    "//cbsnews.com/news/trumps-oil-gas-stock-trades-iran-war",
-    "//foxnews.com/media/top-energy-trader-hails-trumps-venezuela-oil-deal-generational-win-gas-prices",
-    "//foxnews.com/politics/trump-touts-access-65-billion-barrels-venezuelan-oil-deal-he-says-slash-gas-prices",
-    "//ft.com/content/b3c98ca2-fe67-459d-89ff-4728993110b7?syn-25a6b1a6=1",
-    "//independent.co.uk/news/world/americas/trump-us-venezuela-oil-deal-detail-iran-b3041607.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "The Trump administration has negotiated access to Venezuelan oil reserves; critics across Venezuela's political spectrum oppose the deal, while US officials tout potential gas price cuts.",
-   "assembly_score": 2.79
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "2cfea3c26610729e",
-   "title": "Norway's King Harald dies at 89; son Haakon succeeds him",
-   "beat": "international",
-   "publisher_count": 6,
-   "publishers": [
-    "BBC",
-    "Post and Courier",
-    "Al Jazeera",
-    "Deutsche Welle",
-    "The Independent",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/8/29/norways-new-king-pays-tribute-to-his-late-father-as-the-country-mourns?traffic_source=rss",
-    "//bbc.co.uk/news/articles/cvgy79wmv4jo?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/news/royals/article-16089575/Thousands-mourning-Norwegians-flowers-Oslos-Royal-Palace-King-Harald-died.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dailymail.com/news/royals/article-16089953/Norway-Haakon-nation-father-tribute-King-Harald.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dw.com/en/norway-s-new-king-haakon-remembers-dear-father-harald-in-first-speech-as-sovereign/a-78560155?maca=en-rss-en-all-1573-xml-mrss",
-    "//independent.co.uk/news/world/europe/king-harald-v-norway-death-mourning-b3041611.html",
-    "//postandcourier.com/norways-king-harald-dies-aged-89/image_ed90c3ce-2c39-40b3-aaa9-836742ee8217.html"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Norway's King Harald, Europe's oldest reigning monarch, died at 89; his son Haakon has assumed the throne.",
-   "assembly_score": 2.765
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "a2b0f0ad81f63b56",
-   "title": "El-Sayed apologizes for synagogue attack comments",
-   "beat": "national",
-   "publisher_count": 4,
-   "publishers": [
-    "New York Times",
-    "Yahoo News",
-    "ABC News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//abcnews.com/Politics/wireStory/el-sayed-apologizes-comments-made-responding-attack-michigan-136061970",
-    "//memeorandum.com/260829/p35",
-    "//nytimes.com/2026/08/29/us/politics/el-sayed-apology-jewish-democrats.html",
-    "//yahoo.com/news/politics/articles/el-sayed-apologizes-comments-made-220242502.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 2,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Michigan political candidate El-Sayed apologizes for statements made in response to a synagogue attack.",
-   "assembly_score": 2.59
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "e0444b2aedb49b48",
-   "title": "Itauma loses IBF title to Hrgovic in heavyweight bout",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "The Telegraph"
-   ],
-   "urls": [
-    "//bbc.co.uk/sport/boxing/articles/cpd0n46we13o?at_campaign=rss&at_medium=RSS",
-    "//telegraph.co.uk/boxing/2026/08/29/itauma-vs-hrgovic-latest-fight-updates-and-undercard"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Heavyweight boxer Moses Itauma lost his IBF title to Filip Hrgovic and was carried out of the ring.",
-   "assembly_score": 2.205
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "d3e7c3140988c520",
-   "title": "Healey reverses military funding plan amid security criticism",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "The Independent",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16090157/Ex-defence-ministers-John-Healey-security-military.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//independent.co.uk/news/uk/politics/healey-windfall-tax-banks-oil-companies-budget-b3041612.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Defence secretary reverses military funding plan; ex-ministers say it weakens UK security.",
-   "assembly_score": 2.105
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "8c6759ad38034a88",
-   "title": "Trump administration deports relative of U.S.-allied Afghans to Central African Republic",
-   "beat": "national",
-   "publisher_count": 4,
-   "publishers": [
-    "New York Times",
-    "Deutsche Welle",
-    "The Independent",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//dw.com/en/zimbabwe-crash-involving-church-minibus-kills-27/a-78558710?maca=en-rss-en-all-1573-xml-mrss",
-    "//independent.co.uk/news/afghans-central-african-republic-trump-dakar-senegal-b3041637.html",
-    "//memeorandum.com/260829/p31",
-    "//nytimes.com/2026/08/29/us/afghans-deported-us-central-african-republic.html"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump administration deported a relative of Afghans who aided U.S. forces, sending her to Central African Republic instead of a safe country.",
-   "assembly_score": 1.94
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "0a629ea914dd5987",
-   "title": "Burnham agrees train driver pay deal; early election rumors swirl",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "The Independent",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16090133/Kemi-Badenoch-civil-service-government-Andy-Burnham-election.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//independent.co.uk/news/uk/politics/burnham-train-strike-pay-deal-b3041635.html"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "progress_coded": true,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Manchester's mayor agrees pay raises for train drivers to avert strikes; speculation mounts about early election timing.",
-   "assembly_score": 1.905
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "95b02b899e494a0c",
-   "title": "Man City in talks to sign Liverpool's Gakpo for \u00a385 million",
-   "beat": "culture",
-   "publisher_count": 3,
-   "publishers": [
-    "BBC",
-    "Fox News",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//bbc.co.uk/sport/football/articles/c39m0z4m2mpo?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/sport/football/article-16089639/liverpool-fan-steals-alexander-isak-shirt-anfield.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dailymail.com/sport/football/article-16090083/man-city-liverpool-cody-gakpo.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//foxnews.com/outkick-sports/social-media-rips-dude-snatched-liverpool-star-match-worn-jersey-two-kids"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 1.562
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "2458fe404ed33e6f",
-   "title": "Russian strike on Kyiv weapons depot kills 37",
-   "beat": "international",
-   "publisher_count": 5,
-   "publishers": [
-    "BBC",
-    "Post and Courier",
-    "ABC News",
-    "The Independent",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//abcnews.com/International/27-killed-bucha-russian-strike/story?id=136052711",
-    "//bbc.co.uk/news/articles/c86xwqez4npo?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/news/article-16090147/Britains-defence-firms-supply-weapons-Ukraine-warned-Russian-spy-threat.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//independent.co.uk/news/ukraine-kyiv-moscow-b3041591.html",
-    "//independent.co.uk/news/world/europe/ukraine-russia-war-live-putin-zelensky-uk-nato-missile-b3041389.html",
-    "//postandcourier.com/aftermath-of-a-russian-drone-strike-in-kyiv-region/image_0ad56721-82f8-475d-abe2-04987ba73cbb.html"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A Russian strike on a weapons depot near Kyiv killed at least 37 people and triggered secondary explosions that forced hundreds to evacuate.",
-   "assembly_score": 1.53
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "b4ca1d5a9105712c",
-   "title": "Trump's Great Lakes renaming order draws pushback from Canada and tribal leaders",
-   "beat": "national",
-   "publisher_count": 4,
-   "publishers": [
-    "Al Jazeera",
-    "CBS News",
-    "Fox News",
-    "The Independent"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/8/29/ontarios-doug-ford-prods-trump-with-sign-rejecting-lake-america-name?traffic_source=rss",
-    "//cbsnews.com/news/lake-ontario-trump-renaming-doug-ford",
-    "//foxnews.com/media/bill-maher-ridicules-liberals-lake-america-outrage-jab-left-wing-language-police",
-    "//foxnews.com/politics/seneca-nation-leader-calls-trumps-lake-america-renaming-unpresidential-demands-reversal",
-    "//independent.co.uk/news/world/americas/lake-ontario-lake-america-trump-order-doug-ford-b3041614.html"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump ordered the Great Lakes renamed; Ontario and Native American leaders are publicly rejecting it.",
-   "assembly_score": 1.48
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "f5c367ce27316877",
-   "title": "Premier League referee suspended over alleged inappropriate conduct",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//bbc.co.uk/iplayer/live/bbcone?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/sport/football/article-16090227/premier-league-linesman-simon-bennett-suspended.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": true,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A Premier League referee is suspended pending investigation into alleged inappropriate behavior with a woman.",
-   "assembly_score": 1.355
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "627c6dfa54ca0038",
-   "title": "ICE deports far-right commentator Milo Yiannopoulos to UK",
-   "beat": "national",
-   "publisher_count": 15,
-   "publishers": [
-    "BBC",
-    "NPR",
-    "New York Times",
-    "ABC News",
-    "Al Jazeera",
-    "CBS News",
-    "Fox News",
-    "NBC News",
-    "The Independent",
-    "The Verge",
-    "ABC Australia",
-    "Daily Mail",
-    "Fox 5 Atlanta",
-    "Fox 5 DC",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-08-30/milo-yiannopoulos-deported-us-overstaying-visa/107094660",
-    "//abcnews.com/US/milo-yiannopoulos-british-commentator-detained-ice/story?id=136038107",
-    "//aljazeera.com/news/2026/8/29/us-says-far-right-provocateur-milo-yiannopoulos-has-been-deported-to-uk?traffic_source=rss",
-    "//bbc.co.uk/news/articles/cqlw52vr0dwo?at_campaign=rss&at_medium=RSS",
-    "//cbsnews.com/news/milo-yiannopoulos-deported-us-immigration-arrest-dhs",
-    "//dailymail.com/news/article-16089845/milo-yiannopoulos-deported-uk-ice.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//fox5atlanta.com/news/milo-yiannopoulos-deported",
-    "//fox5dc.com/news/milo-yiannopoulos-deported",
-    "//foxnews.com/us/milo-yiannopoulos-deported-after-ice-arrest-detention-major-louisiana-removal-hub",
-    "//independent.co.uk/news/world/americas/us-politics/milo-yiannopoulos-deported-ice-laura-loomer-b3041603.html",
-    "//memeorandum.com/260829/p25",
-    "//memeorandum.com/260829/p29",
-    "//memeorandum.com/260829/p30",
-    "//nbcnews.com/news/us-news/milo-yiannopoulos-deported-uk-rcna595025",
-    "//npr.org/2026/08/29/nx-s1-5948731/milo-yiannopoulos-arrested-overstaying-us-visa",
-    "//nytimes.com/2026/08/29/us/politics/milo-yiannopoulos-deported.html",
-    "//theverge.com/policy/986456/milo-yiannopoulos-deported-ice"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "ICE arrested and deported far-right commentator Milo Yiannopoulos to the UK after detention in New Orleans.",
-   "assembly_score": 1.29
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "67f60dc6b6c8e3e5",
-   "title": "NASA's Roman Space Telescope cleared for SpaceX launch",
-   "beat": "science",
-   "publisher_count": 2,
-   "publishers": [
-    "CBS News",
-    "Space.com"
-   ],
-   "urls": [
-    "//cbsnews.com/news/roman-space-telescope-nasa-launch-preview",
-    "//space.com/space-exploration/launches-spacecraft/nasas-roman-space-telescope-is-ready-for-launch-aboard-spacex-falcon-heavy-rocket"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": true,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "NASA's Roman Space Telescope is cleared for launch on SpaceX's Falcon Heavy, offering dramatically wider views of distant galaxies and exoplanets.",
-   "assembly_score": 0.88
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "e4eb736114c36fd6",
-   "title": "Dutch drug institute warns Trump-shaped ecstasy pills contain lethal ingredient",
-   "beat": "health",
-   "publisher_count": 3,
-   "publishers": [
-    "CBS News",
-    "Fox News",
-    "Fox 5 Atlanta"
-   ],
-   "urls": [
-    "//cbsnews.com/news/trump-shaped-ecstasy-pills-lethal-pmma",
-    "//fox5atlanta.com/news/trump-shaped-ecstasy-spurs-red-alert-absolutely-do-not-use-pills",
-    "//foxnews.com/health/drug-institute-warns-trump-shaped-ecstasy-pills-contain-potentially-fatal-ingredient"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 3,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "progress_coded": true,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Dutch drug testing lab warns that ecstasy pills shaped like Trump contain a potentially fatal ingredient.",
-   "assembly_score": 0.873
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "9c5d65b17c5b7816",
-   "title": "Rabies-infected goats at North Carolina petting zoo prompt exposure alert",
-   "beat": "health",
-   "publisher_count": 2,
-   "publishers": [
-    "Yahoo News",
-    "NBC News"
-   ],
-   "urls": [
-    "//nbcnews.com/news/us-news/four-baby-goats-mobile-petting-zoo-north-carolina-test-positive-rabies-rcna594981",
-    "//yahoo.com/news/us/articles/multiple-baby-goats-had-rabies-175131520.html"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 5,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Rabies-infected baby goats at a North Carolina petting zoo exposed unknown numbers of visitors; health officials urge immediate contact for post-exposure shots.",
-   "assembly_score": 0.77
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "aca3ab39f278bcad",
-   "title": "42 of the most useful travel products you can buy on Amazon",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "CNN",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//cnn.com/cnn-underscored/deals/best-amazon-deals-2023-04-12?iid=CNNUnderscoredHPcontainer",
-    "//cnn.com/cnn-underscored/travel/amazon-travel-products?iid=CNNUnderscoredHPcontainer",
-    "//dailymail.com/tvshowbiz/article-16090039/slow-Horses-Amazon-Apple-Jack-Lowden-James-Bond.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 0.24
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "a36fba843ae3416f",
-   "title": "Footage of Tibet floods isn't being shown in China - and we know little about victims there",
-   "beat": "international",
-   "publisher_count": 6,
-   "publishers": [
-    "The Guardian",
-    "Yahoo News",
-    "ABC News",
-    "Al Jazeera",
-    "France 24",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//abcnews.com/International/hundreds-dead-1000-remain-missing-massive-nepal-tibet/story?id=136022919",
-    "//aljazeera.com/video/newsfeed/2026/8/29/anger-mounts-in-nepal-over-the-governments-response-to-flash-flood?traffic_source=rss",
-    "//dailymail.com/news/article-16089145/Nepal-floods-Death-toll-jumps-missing-iforeigners-search-survivors-fourth-day.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dailymail.com/news/article-16090091/New-video-reveals-moment-hikers-witnessed-collapse-giant-glacier-Himalayas-triggering-Nepal-Tibet-flash-floods-mudslides.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//france24.com/en/asia-pacific/20260829-missing-toll-from-nepal-china-flood-nears-3-000-as-race-for-survivors-continues",
-    "//theguardian.com/world/live/2026/aug/29/nepal-tibet-floods-latest-updates-death-toll-missing-search-and-rescue",
-    "//yahoo.com/news/world/articles/footage-tibet-floods-isnt-being-220545364.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.54
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "285f8292eee9fade",
-   "title": "Tennessee governor says he backs airport name change to honor Dolly Parton",
-   "beat": "international",
-   "publisher_count": 4,
-   "publishers": [
-    "The Guardian",
-    "CNBC",
-    "ABC Australia",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-08-30/dolly-parton-more-or-less-quiz/107080056",
-    "//cnbc.com/2026/08/29/dolly-parton-success-business-lessons.html",
-    "//dailymail.com/news/article-16089483/Dolly-Parton-tribute-road-signs-Hochul-rules.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//theguardian.com/music/2026/aug/29/tennessee-dolly-parton-airport-name-change"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.87
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "ab30f6d32f2e1793",
-   "title": "Vessel with five people in distress in English Channel",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/czeznrgyd1go?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/news/article-16090103/Vessel-distress-English-Channel-Coastguard-rescue.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A vessel with five people reported distress in the English Channel; coastguard rescue underway.",
-   "assembly_score": -1.27
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "bb5478d46cebd133",
-   "title": "Newcastle defeats big-spending Tottenham in Premier League match",
-   "beat": "culture",
-   "publisher_count": 3,
-   "publishers": [
-    "BBC",
-    "The Guardian",
-    "The Telegraph"
-   ],
-   "urls": [
-    "//bbc.co.uk/sport/football/articles/c14d0elejzdo?at_campaign=rss&at_medium=RSS",
-    "//bbc.co.uk/sport/football/articles/c93e8qv2qq0o?at_campaign=rss&at_medium=RSS",
-    "//bbc.co.uk/sport/football/articles/clyqn158n5jo?at_campaign=rss&at_medium=RSS",
-    "//telegraph.co.uk/football/2026/08/29/tottenham-vs-newcastle-live-score-updates-premier-league",
-    "//theguardian.com/football/2026/aug/29/tottenham-newcastle-premier-league-match-report"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Newcastle beat Tottenham 2-0 despite Spurs spending \u00a3300m on new players this season.",
-   "assembly_score": -1.39
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "49e271f37d87e5e6",
-   "title": "Abbott blocks Texas state funding for Flock license plate cameras",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Houston Public Media",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//houstonpublicmedia.org/articles/news/public-safety/2026/08/29/560700/texas-greg-abbott-flock-cameras-order-state-mone",
-    "//memeorandum.com/260829/p34"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": true,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Texas governor blocks state funding for Flock cameras used by police for automated license plate reading.",
-   "assembly_score": -1.41
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "9afb8a66cf7c5bed",
-   "title": "Celebrity fashion at Daisy Chain Fields festival",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "Teen Vogue",
-    "Vogue"
-   ],
-   "urls": [
-    "//teenvogue.com/story/olivia-rodrigo-daisy-chain-fields-2026-celebrity-outfits",
-    "//vogue.com/article/olivia-rodrigo-first-daisy-chain-fields-festival-look"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.43
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "641a640895e1f5f6",
-   "title": "US judge rules against Trump\u2019s effort to deport pro-Palestinian students",
-   "beat": "international",
-   "publisher_count": 4,
-   "publishers": [
-    "Al Jazeera",
-    "CBS News",
-    "The Independent",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/8/29/us-judge-rules-against-trumps-effort-to-deport-pro-palestinian-students?traffic_source=rss",
-    "//cbsnews.com/news/trump-cannot-deport-students-for-criticizing-israel-federal-judge-rules",
-    "//independent.co.uk/news/world/americas/us-politics/stanford-newspaper-trump-israel-visa-lawsuit-b3041586.html",
-    "//memeorandum.com/260829/p32"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.49
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "31778ed284af6af9",
-   "title": "Heavyweight boxing matches in progress",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "The Guardian"
-   ],
-   "urls": [
-    "//bbc.co.uk/sport/boxing/articles/c07lnmv755go?at_campaign=rss&at_medium=RSS",
-    "//theguardian.com/sport/live/2026/aug/29/moses-itauma-v-filip-hrgovic-ibf-heavyweight-championship-live"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.82
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "7785103384425aa4",
-   "title": "Normandy veteran who lied about age to enlist dies at 101",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/cy5z3e64vpyo?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/news/article-16089923/Tributes-World-War-Two-veteran-Normandy-dies.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.49
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "1b2b0173c1390e0b",
-   "title": "James Cleverly quits shadow cabinet to run for London mayor",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "The Independent",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16089659/James-Cleverly-run-London-mayor.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//independent.co.uk/news/uk/politics/james-cleverly-london-mayor-sadiq-khan-b3041600.html",
-    "//independent.co.uk/news/uk/politics/james-cleverly-quits-tories-london-mayor-sadiq-khan-b3041537.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.93
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "f243c40e16d550b1",
-   "title": "Man dies after train hits van on level crossing",
-   "beat": "international",
-   "publisher_count": 4,
-   "publishers": [
-    "BBC",
-    "The Independent",
-    "Daily Mail",
-    "Fox 5 Atlanta"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/clylkwl5nd4o?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/news/article-16090025/Man-dies-crash-train-van-police-say.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//fox5atlanta.com/news/24-year-old-man-shot-overnight-atlanta-police-say",
-    "//independent.co.uk/news/uk/home-news/train-hit-van-burscough-lancashire-btp-b3041596.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.0
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "74cc76d22b27e85a",
-   "title": "Beer bandits swipe PBR truck hauling 50,000 cans in California, leaving brand pleading for help",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox News",
-    "Fox 5 DC"
-   ],
-   "urls": [
-    "//fox5dc.com/news/california-police-investigate-pabst-beer-cargo-theft",
-    "//foxnews.com/us/beer-bandits-swipe-pbr-truck-hauling-50000-cans-california-leaving-brand-pleading-help"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.14
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "530c866b7b8027e3",
-   "title": "ADHD and CVD; Hospice Care in City vs Country",
-   "beat": "health",
-   "publisher_count": 2,
-   "publishers": [
-    "CNBC",
-    "MedPage Today"
-   ],
-   "urls": [
-    "//cnbc.com/2026/08/29/tech-backlash-ai-data-centers-elections.html",
-    "//medpagetoday.com/podcasts/healthwatch/122811"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.19
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "058a5c44910f8e66",
-   "title": "Lawrence gets Test chance as rain delays Lord's match",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "The Telegraph"
-   ],
-   "urls": [
-    "//bbc.co.uk/sport/cricket/articles/c1l6njn2vm8o?at_campaign=rss&at_medium=RSS",
-    "//bbc.co.uk/sport/cricket/articles/cgrvw52zdrpo?at_campaign=rss&at_medium=RSS",
-    "//telegraph.co.uk/cricket/2026/08/29/england-vs-pakistan-day-three-score-latest-updates-lords"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 2,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.59
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "249dc864f630acdd",
-   "title": "Time To Relax About Whether Abdul El-Sayed Can Win Michigan",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Talking Points Memo",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/260829/p27",
-    "//talkingpointsmemo.com/edblog/time-to-relax-about-whether-abdul-el-sayed-can-win-michigan"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -4.08
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "202512972a826b19",
-   "title": "Sony Music and Warner Chappell are suing Anthropic",
-   "beat": "tech",
-   "publisher_count": 2,
-   "publishers": [
-    "TechCrunch",
-    "The Verge"
-   ],
-   "urls": [
-    "//techcrunch.com/2026/08/29/sony-music-warner-sue-anthropic-alleging-a-brazen-campaign-of-intellectual-property-theft",
-    "//theverge.com/ai-artificial-intelligence/986438/sony-music-warner-chappell-anthropic-lawsuit-copyright"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -4.41
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "23fe0289616968a6",
-   "title": "CIA director's Moscow visit included discussion of Trump-Putin-Zelensky summit",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Daily Mail",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//dailymail.com/debate/article-16090013/Moscow-CIA-Putin-nuclear-weapon-NATO-PHILIP-INGRAM.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dailymail.com/debate/article-16090313/MAIL-SUNDAY-COMMENT-frustrated-Putin-dangerous-enemy-time-Labour-got-grip.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//memeorandum.com/260829/p41"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "CIA director visited Moscow and discussed a possible summit between Trump, Putin, and Zelensky, according to sources.",
-   "assembly_score": 1.55
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "24cb3de11b01a498",
-   "title": "Two killed in highway crashes in Maryland and Georgia",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox 5 Atlanta",
-    "Fox 5 DC"
-   ],
-   "urls": [
-    "//fox5atlanta.com/news/driver-seriously-injured-single-vehicle-crash-i-75-cobb-county",
-    "//fox5dc.com/news/2-killed-i-270-crash-maryland-involving-wrong-way-driver-police"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Two separate highway crashes, including a wrong-way driver collision, killed at least two people in Maryland and Georgia.",
-   "assembly_score": 0.95
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
    "key": "22a8245c01859636",
    "title": "College football player dies after sideline medical emergency",
    "beat": "health",
@@ -1264,12 +80,6 @@
     "Fox News",
     "Fox 5 Atlanta"
    ],
-   "urls": [
-    "//cbsnews.com/news/micahjo-barnett-william-jewell-football-player-dies",
-    "//fox5atlanta.com/news/jewell-college-running-back-dies-after-medical-emergency-sideline",
-    "//foxnews.com/outkick-sports/division-ii-running-back-pronounced-dead-after-medical-emergency-teams-season-opener",
-    "//theguardian.com/sport/2026/aug/29/division-ii-running-back-dies-after-experiencing-medical-emergency-on-the-sideline-shortly-after-scoring-touchdown"
-   ],
    "scores": {
     "emotional_load": 5,
     "explainability": 5,
@@ -1277,128 +87,167 @@
     "conversational_currency": 3
    },
    "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "William Jewell running back MicahJo Barnett died Saturday after medical emergency during season opener"
+   ],
    "line": "A Division II college football player died after a medical emergency during a game; cause unknown.",
-   "assembly_score": 0.63
+   "assembly_score": 2.45
   },
   {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "0b88aa817d69677a",
-   "title": "Turkish, Somali forces free vessel seized by pirates in Somalia",
-   "beat": "international",
-   "publisher_count": 2,
+   "slot": "work_machines",
+   "slot_label": "Work & machines",
+   "key": "05ccfe76a5a9494a",
+   "title": "Producers flag suspected AI-generated tracks as tools spread",
+   "beat": "tech",
+   "publisher_count": 1,
    "publishers": [
-    "Al Jazeera",
-    "Deutsche Welle"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/8/30/turkiye-somalia-forces-frees-cargo-vessel-hijacked-by-pirates?traffic_source=rss",
-    "//dw.com/en/turkish-somali-forces-free-vessel-seized-by-pirates-in-somalia/a-78560087?maca=en-rss-en-all-1573-xml-mrss"
+    "Techmeme"
    ],
    "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
+    "emotional_load": 2,
+    "explainability": 4,
+    "actionability": 1,
     "conversational_currency": 3
    },
    "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
    "ledger_class": null,
    "new_facts": [],
-   "line": "",
-   "assembly_score": 0.11
+   "line": "Music producers are identifying AI-generated tracks in circulation, raising questions about detection and attribution as AI music tools proliferate.",
+   "assembly_score": 1.09
   },
   {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "4fa88a80b0f3e766",
-   "title": "Podcast: One country musician is calling for other artists to oppose assault rifles",
-   "beat": "national",
-   "publisher_count": 2,
+   "slot": "group_chat",
+   "slot_label": "The group chat",
+   "key": "0eff08453bf6d7e1",
+   "title": "Trump named honorary chairman of Presidents Cup golf event",
+   "beat": "culture",
+   "publisher_count": 1,
    "publishers": [
-    "ABC News",
-    "CNN"
-   ],
-   "urls": [
-    "//abcnews.com/US/wireStory/officer-dead-injured-shooting-south-carolina-park-police-136062162",
-    "//cnn.com/audio/podcasts/the-assignment/episodes/42a2f0e2-066a-4675-82ff-afe2016a0bb5"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.12
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "7956985cf0df1ed5",
-   "title": "James Carville predicts a 2028 'reckoning' as socialist candidates eye the Democratic ticket",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Yahoo News",
     "Fox News"
    ],
-   "urls": [
-    "//foxnews.com/media/james-carville-predicts-2028-reckoning-socialist-candidates-eye-democratic-ticket",
-    "//yahoo.com/news/politics/articles/james-carville-predicts-2028-reckoning-213014436.html"
-   ],
    "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
+    "emotional_load": 2,
+    "explainability": 4,
+    "actionability": 1,
     "conversational_currency": 3
    },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.67
+   "politician_led": true,
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Unrelated story: Trump named honorary chairman of 2026 Presidents Cup golf tournament at Medinah Country Club."
+   ],
+   "line": "Trump returns to ceremonial role overseeing Presidents Cup golf tournament after previous involvement with PGA Tour merger talks.",
+   "assembly_score": 4.76
+  },
+  {
+   "slot": "close",
+   "slot_label": "The close",
+   "key": "43944174c6f27727",
+   "title": "Lee nominates six ministers in cabinet reshuffle",
+   "beat": "national",
+   "publisher_count": 1,
+   "publishers": [
+    "Yonhap News"
+   ],
+   "scores": {
+    "emotional_load": 1,
+    "explainability": 4,
+    "actionability": 1,
+    "conversational_currency": 2
+   },
+   "politician_led": true,
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Lee Jae Myung nominates six new Cabinet ministers in a major reshuffle, including finance minister.",
+    "Kim Seung-won named justice minister nominee; Yong Hye-in named gender equality minister nominee.",
+    "Vice Land Minister Hong Jee-sun named new land minister nominee.",
+    "Kang Shin-chul, ex-deputy commander of Combined Forces Command, named defense minister nominee.",
+    "Vice Finance Minister Lee Hyoung-il named new finance minister nominee."
+   ],
+   "line": "South Korea's president Lee nominates six new cabinet ministers, including justice, defense, finance, and gender equality posts.",
+   "assembly_score": 11.11
   }
  ],
  "excluded_sample": [
   {
-   "title": "Man City open talks with Liverpool over Gakpo",
+   "title": "Live: Another Cleary joins the NRL as Warriors chase top spot against Knights",
    "why": "triage verdict NO"
   },
   {
-   "title": "Natasha Cloud dismisses Enes Kanter Freedom as Sky ban him from home games",
+   "title": "Finance minister cancels planned trip to attend G20 meeting in U.S.: sources",
    "why": "triage verdict NO"
   },
   {
-   "title": "Dubois beats Moore to keep Baumgardner in picture",
+   "title": "A wife is accused of her husband's murder. Can she clear her name?",
    "why": "triage verdict NO"
   },
   {
-   "title": "Parents call Dolly Parton's book charity for children \"a gift\"",
+   "title": "Donald Trump Suddenly Has a Favorite CNN Star",
    "why": "triage verdict NO"
   },
   {
-   "title": "Tonali struggles but Gonzalez impresses - player ratings for Tottenham v Newcastle",
+   "title": "Man wanted for armed robbery arrested after hours-long SWAT standoff",
    "why": "triage verdict NO"
   },
   {
-   "title": "Gov. Abbott blocks funding in Texas for Flock cameras as bipartisan fury brews (Danielle Paquette/Washington Post)",
+   "title": "AI Won\u2019t Ruin Civilization \u2014 Unless We Let It",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Saving Masculinity From the Left and the Manosphere",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Canada installs large Lake Ontario sign in latest jab at US",
    "why": "ledger: INCREMENT"
   },
   {
-   "title": "Olivia Rodrigo\u2019s First Daisy Chain Fields Festival Look Comes With a Feminist Message",
+   "title": "Milo Yiannopoulos, Right-Wing Agitator, Deported Home to U.K.",
+   "why": "ledger: INCREMENT"
+  },
+  {
+   "title": "Last weekend of August brings storms across Utah, beyond",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Revellers told to brace for more mixes of sunshine and showers - as Reading Festival wraps up and Notting Hill Carnival hits the streets",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "A MAGA Uproar Ensued After a Bill Was Given a Nick Shirley Nickname",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Scott turns back clock in Tour Championship title tilt",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "QUENTIN LETTS: I played the hit new game that makes you the PM...and was bundled out of office by a merciless Press!",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Itauma punches himself out against Hrgovic in world-title fight",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Triple-barrelled bust-up! Baronet's ex-wife tells her lover: You owe me \u00a3427,000 for rent, dentistry... and kite-surfing gear",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Furious Harry 'still expects apology' from Royal Family: Prince remains 'just as angry' and is 'spitting blood', friends have warned",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "'She's slowly being consumed by a sense of crushing shame': Inside Constance Marten's very busy life in prison, the high-profile inmate she's grown close to ... and why she may finally turn on her convicted rapist partner",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "\"48 Hours\" show schedule",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Germany news: Merkel tells voters to 'stand up' for democracy",
    "why": "triage verdict NO"
   },
   {
@@ -1406,79 +255,7 @@
    "why": "triage verdict NO"
   },
   {
-   "title": "Cozy up with this fall's most anticipated books",
-   "why": "triage verdict NO"
-  },
-  {
    "title": "You Won\u2019t Believe What Marjorie Taylor Greene Did | The Trio",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Andrew Mountbatten-Windsor is spotted driving brand new \u00a3120,000 Range Rover as it's revealed ex-wife Sarah Ferguson is moving back to the UK",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Robert De Niro complains his stardom can have a 'negative impact' on his nepo babies in their acting careers",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Tamme Tokyo Spring 2027",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Podcast: One country musician is calling for other artists to oppose assault rifles",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Bidets save you money and reduce waste \u2014 we tested the best options out there",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "50+ products to make your life easier and our planet cleaner",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Mother's Day is around the corner. Here are 50+ thoughtful gifts she'll love",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "A head-to-toe guide of how men should dress this spring, and where they should shop",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "The 7 best high-yield savings accounts of April 2023",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Composting is an easy way to reduce food waste. Here's how to do it",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "We stopped using aluminum foil for cooking and you should too. Here's what to use instead",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "The beloved Dyson Supersonic hair dryer is at its lowest price ever",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Everything you need to know about Way Day 2023, Wayfair's biggest sale of the year",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "The 2024 presidential alternative many voters will want",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Cleverly finally turns battle for London into serious contest again - and why it\u2019s good news for Badenoch",
-   "why": "ledger: INCREMENT"
-  },
-  {
-   "title": "Vaughan backs Lawrence for extended run in England team",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Serie A: in campo Fiorentina-Frosinone 0-3 DIRETTA e FOTO",
    "why": "triage verdict NO"
   }
  ]
