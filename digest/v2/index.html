@@ -2622,6 +2622,81 @@ function switchTab(tab) {
 }
 window.switchTab = switchTab;
 
+// ── BACKSTORY TAB ─────────────────────────────────────────────────
+// Reads data/backstory.json — published independently from Pulse's
+// Backstory tab, decoupled from the daily digest's stories array and
+// publish pipeline entirely. Array order in the file IS display order
+// (editor-set in Pulse, defaults recent-to-distant, not computed here).
+let BSR_DATA = null;
+
+function fetchBackstory(){
+  const list = document.getElementById('bsrList');
+  if (list) list.innerHTML = '<div class="bsr-empty">Loading…</div>';
+  fetch('/digest/v2/data/backstory.json?t=' + Date.now())
+    .then(function(r){ if (!r.ok) throw 0; return r.json(); })
+    .then(function(d){ BSR_DATA = (d && d.rows) || []; renderBackstoryTab(); })
+    .catch(function(){ BSR_DATA = []; renderBackstoryTab(); });
+}
+
+function bsrDaysSince(dateStr){
+  return Math.floor((Date.now() - new Date(dateStr + 'T00:00:00Z')) / 86400000);
+}
+// Approximate, display-only — not calendar-exact, matching the precision
+// the mockup used. Good enough for "how long has this been going on."
+function bsrFormatDuration(days){
+  if (days < 60) return days + (days === 1 ? ' day' : ' days');
+  const years = Math.floor(days / 365.25);
+  const months = Math.floor((days - years * 365.25) / 30.44);
+  if (years >= 1) return years + (years === 1 ? ' yr, ' : ' yrs, ') + months + ' mo';
+  return months + (months === 1 ? ' month' : ' months');
+}
+
+function renderBackstoryTab(){
+  const list = document.getElementById('bsrList');
+  if (!list) return;
+  if (!BSR_DATA || !BSR_DATA.length){
+    list.innerHTML = '<div class="bsr-empty">Nothing here yet. Check back shortly.</div>';
+    return;
+  }
+  list.innerHTML = BSR_DATA.map(function(r, i){
+    const days = bsrDaysSince(r.start_date);
+    return '<div class="bsr-row" data-idx="' + i + '">' +
+      (r.updated ? '<div class="bsr-updated"><span class="dot"></span>Updated</div>' : '') +
+      '<div class="bsr-num">' + bsrFormatDuration(days) + '</div>' +
+      '<div class="bsr-caption">' + days.toLocaleString() + ' days</div>' +
+      '<h3>' + escBsr(r.title) + '</h3>' +
+      (r.milestone ? '<div class="bsr-milestone">' + escBsr(r.milestone) + '</div>' : '') +
+      '</div>';
+  }).join('');
+  Array.prototype.forEach.call(list.querySelectorAll('.bsr-row'), function(el){
+    el.addEventListener('click', function(){ openBsrDetail(parseInt(el.dataset.idx, 10)); });
+  });
+}
+
+function escBsr(s){ const d = document.createElement('span'); d.textContent = s == null ? '' : s; return d.innerHTML; }
+
+function openBsrDetail(idx){
+  const r = BSR_DATA[idx];
+  if (!r) return;
+  const days = bsrDaysSince(r.start_date);
+  document.getElementById('bsrDetailKicker').textContent = r.title;
+  document.getElementById('bsrDetailNum').innerHTML = days.toLocaleString() + ' <span style="font-size:13px;font-weight:600;letter-spacing:2px;text-transform:uppercase;opacity:0.75">days</span>';
+  document.getElementById('bsrDetailTitle').textContent = r.title;
+  document.getElementById('bsrDetailMilestone').textContent = r.milestone || '';
+  // Narrative HTML comes from Pulse's Register 3 rewrite pass, same trust
+  // level as the daily digest's own story content — not raw user input.
+  document.getElementById('bsrDetailNarrative').innerHTML = r.narrative || '<p>No narrative yet.</p>';
+  const photo = document.getElementById('bsrDetailPhoto');
+  photo.style.background = r.photo && r.photo.url
+    ? 'linear-gradient(0deg, rgba(38,31,35,0.55), rgba(38,31,35,0.55)), url(' + r.photo.url + ') center/cover'
+    : 'var(--purple)';
+  document.getElementById('bsrDetailModal').classList.add('show');
+}
+function closeBsrDetail(){
+  document.getElementById('bsrDetailModal').classList.remove('show');
+}
+window.closeBsrDetail = closeBsrDetail;
+
 // ── Today overview parsing: **bold**, *italic*, "- " bullet blocks, and
 // [STORY: key | label] onramp markers -> tappable links into the Digest
 // tab. Text is escaped first — this is source-derived prose, never trusted
