@@ -219,6 +219,7 @@
   <button class="tab on" id="tab-stream">stream</button>
   <button class="tab" id="tab-lineup">lineup</button>
   <button class="tab" id="tab-today">today</button>
+  <button class="tab" id="tab-backstory">backstory</button>
   <span class="meta" id="clock"></span>
   <span class="stale" id="stale"></span>
   <span class="right">
@@ -282,7 +283,30 @@ const LS = {
   manual:    'ntk_pulse_manual_clusters_v1',
   dismissed: 'ntk_pulse_dismissed_candidates_v1',
   today:     'ntk_pulse_today_v1',
+  backstory: 'ntk_pulse_backstory_v1',
 };
+// Seeded once, only if localStorage is empty — the seven rows locked in
+// the Backstory design conversation. Narrative and milestone start blank;
+// each needs a real Rewrite pass against real source material rather than
+// carrying over hand-written sample text from that conversation.
+// created_at defaults to start_date (not "just added today"), since none
+// of these are breaking news as of first publish — the 48-hour summary-lede
+// rule shouldn't apply to a backfilled historical row.
+function seedBackstory(){
+  return [
+    { id:'bs-us-canada',  title:'US–Canada trade war',       start_date:'2026-08-22' },
+    { id:'bs-iran',       title:'US–Israel–Iran',             start_date:'2026-02-28' },
+    { id:'bs-venezuela',  title:'Venezuela, post-Maduro',     start_date:'2026-01-03' },
+    { id:'bs-lebanon',    title:'Israel–Hezbollah, Lebanon',  start_date:'2023-10-08' },
+    { id:'bs-gaza',       title:'Israel–Gaza',                start_date:'2023-10-07' },
+    { id:'bs-sudan',      title:'Sudan civil war',            start_date:'2023-04-15' },
+    { id:'bs-ukraine',    title:'Ukraine–Russia',             start_date:'2022-02-24' },
+  ].map(r => ({
+    ...r, created_at:r.start_date, close_condition:'', close_condition_met:false,
+    black_swan_override:false, milestone:'', narrative:'', updated:false,
+    last_rewritten_at:null, photo:{url:'',credit:''}, source_material:[],
+  }));
+}
 function load(k, fallback) { try { const v = JSON.parse(localStorage.getItem(k)); return v ?? fallback; } catch { return fallback; } }
 let SETTINGS = load(LS.settings, { antKey:'', proxyBase:'', ghToken:'', recraftKey:'', bodyLen:4000, maxArts:15 });
 let LINEUP = load(LS.lineup, []);          // [{id, title, angle, beat, category, conceptEntity, narrowKeyword, articles:[], enrichedAt, packages, busy?, status?, open?, outOpen?}]
@@ -291,6 +315,11 @@ let DISMISSED = load(LS.dismissed, {});      // candidate key -> true  (recommen
 function saveDismissed(){ localStorage.setItem(LS.dismissed, JSON.stringify(DISMISSED)); }
 let TODAY_OV = load(LS.today, {text:'', generatedAt:null, busy:false});
 function saveToday(){ localStorage.setItem(LS.today, JSON.stringify(TODAY_OV)); }
+let BACKSTORY = load(LS.backstory, null) || seedBackstory();
+function saveBackstory(){
+  const clean = BACKSTORY.map(({busy,status,err,...r})=>r);
+  localStorage.setItem(LS.backstory, JSON.stringify(clean));
+}
 // Standing editorial notes: ongoing directives that ride into every
 // generation call until removed or promoted into v14 itself. genCounter
 // increments once per completed generateStory call; each note's baseline
@@ -1031,6 +1060,214 @@ function reorderStory(id, targetPos){
   saveLineup(); render();
 }
 function setStatus(story, msg, err){ story.status=msg; story.err=!!err; render(); }
+
+/* ─── Backstory tab — standing, cross-day storylines. See NTK Editorial
+   Prompt System, Register 3. Deliberately separate from LINEUP: publishes
+   its own data/backstory.json on its own clock (manual trigger, no daily
+   cron), and never touches the daily digest's publish path or story data. ─── */
+
+function reorderBackstoryRow(id, targetPos){
+  const from = BACKSTORY.findIndex(r=>r.id===id);
+  if (from < 0) return;
+  const to = Math.max(0, Math.min(BACKSTORY.length - 1, targetPos - 1));
+  if (from === to) return;
+  const [row] = BACKSTORY.splice(from, 1);
+  BACKSTORY.splice(to, 0, row);
+  saveBackstory(); render();
+}
+function addBackstoryRow(){
+  const title = prompt('Row title (e.g. "Venezuela, post-Maduro"):');
+  if (!title || !title.trim()) return;
+  const startDate = prompt('Start date (YYYY-MM-DD) — the day this story actually began:');
+  if (!startDate || !/^\d{4}-\d{2}-\d{2}$/.test(startDate.trim())){ alert('Start date must be YYYY-MM-DD.'); return; }
+  const isBreaking = confirm('Is this breaking right now? OK = yes, start the 48-hour summary-lede clock today. Cancel = no, this is a backfilled historical row — the clock starts on its start date (already passed).');
+  BACKSTORY.unshift({
+    id: 'bs-'+Date.now(),
+    title: title.trim(),
+    start_date: startDate.trim(),
+    created_at: isBreaking ? new Date().toISOString().slice(0,10) : startDate.trim(),
+    close_condition: '', close_condition_met: false, black_swan_override: false,
+    milestone: '', narrative: '', updated: false, last_rewritten_at: null,
+    photo: { url:'', credit:'' }, source_material: [],
+  });
+  saveBackstory(); render();
+}
+function removeBackstoryRow(id){
+  const row = BACKSTORY.find(r=>r.id===id);
+  if (!row) return;
+  if (!confirm('Remove "'+row.title+'" from Backstory? This deletes its narrative and history.')) return;
+  BACKSTORY = BACKSTORY.filter(r=>r.id!==id);
+  saveBackstory(); render();
+}
+function daysSince(dateStr){ return Math.floor((Date.now() - new Date(dateStr+'T00:00:00Z')) / 86400000); }
+function hoursSince(dateStr){ return (Date.now() - new Date(dateStr+'T00:00:00Z')) / 3600000; }
+
+// Builds the full Register 3 prompt for one row's rewrite pass.
+function makeBackstoryPrompt(row, newMaterialText){
+  const feature = row.black_swan_override || hoursSince(row.created_at) >= 48;
+  const priorBlock = row.narrative
+    ? `PRIOR NARRATIVE (the standing account before this rewrite):\n${row.narrative}\n\nPRIOR MILESTONE: ${row.milestone || '(none)'}\n\n`
+    : `This is the FIRST DRAFT — no prior narrative exists yet.\n\n`;
+  const closeBlock = row.close_condition
+    ? `CLOSE CONDITION (check new material against this explicitly; if met, say so in the JSON output but do not declare the story resolved in the narrative prose itself — closing is an editor decision, not yours): ${row.close_condition}\n\n`
+    : `No close condition has been defined for this story yet. Do not invent one.\n\n`;
+  return `You are the journalist-historian for NTK News, writing at Register 3 — the full Tuchman register: narrative, scenic, evidentiary, wry. The literature of actuality, not a digest card. Target reading level: grade 6-8.
+
+STORY: ${row.title}
+STARTED: ${row.start_date} (Day ${daysSince(row.start_date)} as of today)
+
+${priorBlock}${closeBlock}NEW SOURCE MATERIAL:
+${(newMaterialText||'').trim() || '(none provided this pass — reassess whether the prior narrative still holds, but do not invent new facts)'}
+
+RULES:
+- Not a Jefferson-framework item. No Truths/Probabilities/Possibilities/Lies structure.
+- Not a form. No labeled Who/What/When/Where/Why fields — recoverable in the prose, never boxed.
+- Full name on first mention in THIS piece, last name only thereafter — check fresh, every rewrite, regardless of what prior versions did.
+- Citations: real HTML anchor tags inline, embedded before the closing punctuation of the sentence they support — <a href="URL">Source Name</a>. Never markdown link syntax.
+- Real <p> tags for paragraph breaks. No wall of text.
+- Length: 250-450 words.
+- Structure is NOT fixed. The opening scene comes from the MOST RECENT verified development, not the story's origin. What led last time can be demoted to background now if something more consequential has happened since.
+- Lede gating: ${feature
+    ? 'Past the first 48 hours (or editor override is on) — a FEATURE LEDE is appropriate. Open on a concrete, dated scene, then pivot within a sentence or two to a clear nut graf stating what is happening and why it matters now.'
+    : 'Within the first 48 hours as a NEW Backstory item — SUMMARY LEDE ONLY. Front-load the facts plainly. No scene-setting yet; the story is still forming.'}
+- A ceasefire, truce, pause, or "de-escalation" is a MILESTONE, never a close condition, unless the close condition above explicitly says otherwise. State it as a pause that may or may not hold — never as resolution.
+- Casualty counts alone are not sufficient grounds for updated:true. The question is whether the state of play changed — a diplomatic move, a shift in control, a broken or renewed commitment, a new actor.
+- Close the narrative on a real, two-part open question: what's failing, and who or what could actually counter it. Never a boxed "next steps" line.
+
+Respond with ONLY a JSON object, no markdown fences, no preamble:
+{"narrative": "<p>...</p><p>...</p>", "milestone": "one sentence, present tense, or empty string if nothing changed", "updated": true or false, "close_condition_met": true, false, or null}`;
+}
+
+async function rewriteBackstoryRow(row, newMaterialText){
+  row.busy = true; row.status = 'Writing…'; render();
+  try {
+    const raw = await ai(makeBackstoryPrompt(row, newMaterialText), 2500);
+    const out = parseJSON(raw);
+    row.narrative = out.narrative || row.narrative;
+    row.milestone = out.milestone || row.milestone;
+    row.updated = !!out.updated;
+    row.close_condition_met = (out.close_condition_met === true);
+    row.last_rewritten_at = new Date().toISOString();
+    if ((newMaterialText||'').trim()){
+      row.source_material = row.source_material || [];
+      row.source_material.push({ text: newMaterialText.trim(), url:'', source_name:'', ingestion_method:'manual', addedAt: new Date().toISOString() });
+    }
+    row.status = out.updated ? 'Rewritten — marked updated.' : 'Checked — no material change, not marked updated.';
+    row.err = false;
+  } catch(e){
+    row.status = 'Rewrite failed: '+e.message; row.err = true;
+  }
+  row.busy = false; saveBackstory(); render();
+}
+
+// ASSUMPTION, not confirmed against the live repo layout — check this path
+// actually matches where digest v2 fetches Backstory data from before
+// relying on it. Deliberately separate from GH_PUBLISH_PATH: a Backstory
+// publish never touches lineup-publish.json or the daily digest pipeline.
+const GH_BACKSTORY_PATH = 'digest/v2/data/backstory.json';
+function backstoryDataExport(){
+  return JSON.stringify({ rows: BACKSTORY.map(({busy,status,err,...r})=>r) }, null, 1);
+}
+let backstoryPublishStatus = '';
+function renderBackstoryPublishStatus(){
+  const el = document.getElementById('backstory-publish-status');
+  if (el) el.textContent = backstoryPublishStatus;
+}
+async function publishBackstory(){
+  if (!SETTINGS.ghToken){ alert('Add a GitHub token in ⚙ first — scoped to contents:write on this repo only.'); return; }
+  if (!BACKSTORY.length){ alert('No Backstory rows to publish.'); return; }
+  backstoryPublishStatus = 'Publishing…'; renderBackstoryPublishStatus();
+  try {
+    const content = backstoryDataExport();
+    const b64 = btoa(unescape(encodeURIComponent(content)));
+    const apiUrl = `https://api.github.com/repos/${GH_REPO}/contents/${GH_BACKSTORY_PATH}`;
+    const headers = { 'Authorization': 'Bearer '+SETTINGS.ghToken, 'Accept': 'application/vnd.github+json' };
+    let sha = null;
+    const getResp = await fetch(apiUrl, {headers});
+    if (getResp.ok){ sha = (await getResp.json()).sha; }
+    else if (getResp.status !== 404){ throw new Error('GitHub GET failed: '+getResp.status); }
+    const putResp = await fetch(apiUrl, {
+      method:'PUT', headers:{...headers,'Content-Type':'application/json'},
+      body: JSON.stringify({ message:'publish: '+BACKSTORY.length+' backstory rows from Pulse',
+        content:b64, branch:'main', ...(sha?{sha}:{}) }),
+    });
+    if (!putResp.ok){ const t=await putResp.text(); throw new Error('GitHub PUT failed: '+putResp.status+' '+t.slice(0,200)); }
+    backstoryPublishStatus = 'Published — live in a minute or two.';
+  } catch(e){ backstoryPublishStatus = 'Publish failed: '+e.message; }
+  renderBackstoryPublishStatus();
+}
+
+function renderBackstory(root){
+  root.innerHTML = `
+    <div class="lineup-bar">
+      <button class="mini primary" id="bs-add">+ add row</button>
+      <span class="spacer"></span>
+      <button class="mini go" id="bs-publish">Publish Backstory</button>
+      <span id="backstory-publish-status" style="font-size:11px;color:var(--dim)"></span>
+    </div>
+    <div id="bs-list"></div>`;
+  document.getElementById('bs-add').addEventListener('click', addBackstoryRow);
+  document.getElementById('bs-publish').addEventListener('click', publishBackstory);
+
+  const list = document.getElementById('bs-list');
+  list.innerHTML = BACKSTORY.map((r, i) => `
+    <div class="story" data-id="${esc(r.id)}" draggable="true">
+      <div class="story-top">
+        <span class="drag-handle">⠿</span>
+        <input class="ord" type="text" value="${i+1}">
+        <input class="story-title bs-title" value="${esc(r.title)}">
+        <span class="mini" style="border:none;color:var(--dim)">Day ${daysSince(r.start_date)}</span>
+        <button class="mini rm">remove</button>
+      </div>
+      <div class="story-meta">
+        <label>Start date <input type="text" class="bs-start" value="${esc(r.start_date)}" style="width:100px"></label>
+        <label>Added to Backstory <input type="text" class="bs-created" value="${esc(r.created_at||r.start_date)}" style="width:100px"></label>
+        <label><input type="checkbox" class="bs-override" ${r.black_swan_override?'checked':''}> Black-swan override (skip 48hr rule)</label>
+      </div>
+      <div class="story-meta">
+        <label style="flex:1">Close condition <input type="text" class="bs-close" value="${esc(r.close_condition||'')}" style="width:100%" placeholder="e.g. signed accord between the relevant parties — leave blank if not yet defined"></label>
+      </div>
+      ${r.close_condition_met ? '<div class="story-status">Close condition flagged as MET — confirm and hand off to the daily lineup as its own story.</div>' : ''}
+      <div class="angle-row">
+        <textarea class="bs-material" placeholder="Paste new source material here (archive.ph text, EventRegistry snippet, etc.) before rewriting — or leave blank to just re-check the existing narrative."></textarea>
+      </div>
+      <div class="story-meta">
+        <button class="mini go bs-rewrite" ${r.busy?'disabled':''}>${r.busy?'Writing…':'Rewrite'}</button>
+        <span>${r.updated ? '<span style="color:var(--certified)">● updated</span>' : '<span style="color:var(--dim)">no recent update</span>'}</span>
+        ${r.last_rewritten_at ? '<span style="color:var(--dim)">last rewritten '+rel(r.last_rewritten_at)+' ago</span>' : ''}
+      </div>
+      <div class="story-status ${r.err?'err':''}">${esc(r.status||'')}</div>
+      ${r.milestone ? '<div class="line"><strong>Milestone:</strong> '+esc(r.milestone)+'</div>' : ''}
+      ${r.narrative ? '<div class="pkg out">'+r.narrative+'</div>' : '<div class="line" style="color:var(--dim)">No narrative yet — paste source material and click Rewrite.</div>'}
+    </div>`).join('') || '<div class="empty">No Backstory rows yet. Click + add row.</div>';
+
+  BACKSTORY.forEach((r, i) => {
+    const el = list.querySelector(`.story[data-id="${CSS.escape(r.id)}"]`);
+    if (!el) return;
+    el.querySelector('.ord').addEventListener('change', e=>{
+      const n = parseInt(e.target.value)||(i+1);
+      if (n !== i+1) reorderBackstoryRow(r.id, n); else render();
+    });
+    el.querySelector('.bs-title').addEventListener('change', e=>{ r.title=e.target.value; saveBackstory(); });
+    el.querySelector('.bs-start').addEventListener('change', e=>{ r.start_date=e.target.value.trim(); saveBackstory(); render(); });
+    el.querySelector('.bs-created').addEventListener('change', e=>{ r.created_at=e.target.value.trim(); saveBackstory(); });
+    el.querySelector('.bs-override').addEventListener('change', e=>{ r.black_swan_override=e.target.checked; saveBackstory(); });
+    el.querySelector('.bs-close').addEventListener('change', e=>{ r.close_condition=e.target.value.trim(); saveBackstory(); });
+    el.querySelector('.bs-rewrite').addEventListener('click', ()=>{
+      rewriteBackstoryRow(r, el.querySelector('.bs-material').value);
+    });
+    el.querySelector('.rm').addEventListener('click', ()=>removeBackstoryRow(r.id));
+    el.addEventListener('dragstart', e=>{ el.classList.add('dragging'); e.dataTransfer.setData('text/plain', r.id); e.dataTransfer.effectAllowed='move'; });
+    el.addEventListener('dragend', ()=>{ el.classList.remove('dragging'); });
+    el.addEventListener('dragover', e=>{ e.preventDefault(); el.classList.add('drag-over'); });
+    el.addEventListener('dragleave', ()=>{ el.classList.remove('drag-over'); });
+    el.addEventListener('drop', e=>{
+      e.preventDefault(); el.classList.remove('drag-over');
+      const draggedId = e.dataTransfer.getData('text/plain');
+      if (draggedId && draggedId !== r.id) reorderBackstoryRow(draggedId, i+1);
+    });
+  });
+}
 
 // One Haiku call drafts angle + concept targeting together.
 // Same craft rules as the default triage.py headline generation, applied
@@ -2947,14 +3184,18 @@ function render(){
   document.getElementById('tab-stream').classList.toggle('on', TAB==='stream');
   document.getElementById('tab-lineup').classList.toggle('on', TAB==='lineup');
   document.getElementById('tab-today').classList.toggle('on', TAB==='today');
+  document.getElementById('tab-backstory').classList.toggle('on', TAB==='backstory');
   document.getElementById('tab-lineup').textContent = 'lineup'+(LINEUP.length?' ('+LINEUP.length+')':'');
+  document.getElementById('tab-backstory').textContent = 'backstory'+(BACKSTORY.length?' ('+BACKSTORY.length+')':'');
   if (TAB==='stream') renderStream(root);
   else if (TAB==='today') renderToday(root);
+  else if (TAB==='backstory') renderBackstory(root);
   else renderLineup(root);
 }
 document.getElementById('tab-stream').addEventListener('click',()=>{ TAB='stream'; render(); });
 document.getElementById('tab-lineup').addEventListener('click',()=>{ TAB='lineup'; render(); });
 document.getElementById('tab-today').addEventListener('click',()=>{ TAB='today'; render(); });
+document.getElementById('tab-backstory').addEventListener('click',()=>{ TAB='backstory'; render(); });
 document.getElementById('notesToggle').addEventListener('click',()=>{ notesOpen=!notesOpen; renderNotes(); });
 document.getElementById('gear').addEventListener('click',()=>{
   const p=document.getElementById('settings'); p.classList.toggle('open');
