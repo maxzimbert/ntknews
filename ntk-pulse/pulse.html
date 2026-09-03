@@ -1227,6 +1227,13 @@ function renderBackstory(root){
       <div class="story-meta">
         <label style="flex:1">Close condition <input type="text" class="bs-close" value="${esc(r.close_condition||'')}" style="width:100%" placeholder="e.g. signed accord between the relevant parties — leave blank if not yet defined"></label>
       </div>
+      <div class="story-meta">
+        <label style="flex:1">Photo URL <input type="text" class="bs-photo-url" value="${esc((r.photo&&r.photo.url)||'')}" style="width:100%" placeholder="https://... — a real hosted image, not a data URI (crawlers/fetches won't resolve those)"></label>
+      </div>
+      <div class="story-meta">
+        <label style="flex:1">Photo credit <input type="text" class="bs-photo-credit" value="${esc((r.photo&&r.photo.credit)||'')}" style="width:100%" placeholder="e.g. Reuters / Wikimedia Commons"></label>
+        ${r.photo&&r.photo.url ? '<img src="'+esc(r.photo.url)+'" style="height:40px;border:1px solid var(--rule);vertical-align:middle" onerror="this.style.display=\'none\'">' : ''}
+      </div>
       ${r.close_condition_met ? '<div class="story-status">Close condition flagged as MET — confirm and hand off to the daily lineup as its own story.</div>' : ''}
       <div class="angle-row">
         <textarea class="bs-material" placeholder="Paste new source material here (archive.ph text, EventRegistry snippet, etc.) before rewriting — or leave blank to just re-check the existing narrative."></textarea>
@@ -1253,6 +1260,8 @@ function renderBackstory(root){
     el.querySelector('.bs-created').addEventListener('change', e=>{ r.created_at=e.target.value.trim(); saveBackstory(); });
     el.querySelector('.bs-override').addEventListener('change', e=>{ r.black_swan_override=e.target.checked; saveBackstory(); });
     el.querySelector('.bs-close').addEventListener('change', e=>{ r.close_condition=e.target.value.trim(); saveBackstory(); });
+    el.querySelector('.bs-photo-url').addEventListener('change', e=>{ r.photo=r.photo||{}; r.photo.url=e.target.value.trim(); saveBackstory(); render(); });
+    el.querySelector('.bs-photo-credit').addEventListener('change', e=>{ r.photo=r.photo||{}; r.photo.credit=e.target.value.trim(); saveBackstory(); });
     el.querySelector('.bs-rewrite').addEventListener('click', ()=>{
       rewriteBackstoryRow(r, el.querySelector('.bs-material').value);
     });
