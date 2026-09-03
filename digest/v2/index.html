@@ -511,6 +511,7 @@
 
   /* ── Backstory tab ── */
   .bsr-list { padding: 4px 16px 24px; display: grid; gap: 10px; }
+  .bsr-header { padding: 20px 16px 4px; }
   .bsr-row {
     background: var(--white); border: 1.5px solid var(--dark); border-radius: 10px;
     padding: 20px 22px 16px; text-align: center; position: relative; cursor: pointer;
@@ -548,12 +549,12 @@
   }
   .bsr-detail-num { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 44px; line-height: 0.9; }
   .bsr-detail-body { padding: 22px 24px 26px; overflow-y: auto; }
-  .bsr-detail-body h2 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 22px; color: var(--dark); margin-bottom: 8px; }
+  .bsr-detail-body h2 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 22px; color: var(--cream); margin-bottom: 8px; }
   .bsr-detail-milestone {
     font-family: 'Source Serif 4', serif; font-style: italic; font-size: 13px;
-    color: var(--dark); opacity: 0.6; margin-bottom: 18px;
+    color: var(--cream); opacity: 0.7; margin-bottom: 18px;
   }
-  .bsr-detail-narrative { font-family: 'Source Serif 4', serif; font-size: 16px; line-height: 1.65; color: var(--dark); }
+  .bsr-detail-narrative { font-family: 'Source Serif 4', serif; font-size: 16px; line-height: 1.65; color: var(--cream); }
   .bsr-detail-narrative p { margin-bottom: 14px; }
   .bsr-detail-narrative a { color: var(--blue); }
 
@@ -1752,6 +1753,7 @@
     min-height: 100vh; background: var(--dark);
     display: flex; flex-direction: column;
   }
+  @media (prefers-color-scheme: light) { .backstory-view { background: #F5F0E8; } }
   .backstory-placeholder {
     flex: 1; display: flex; flex-direction: column;
     align-items: center; justify-content: center;
@@ -3862,6 +3864,10 @@ document.addEventListener('DOMContentLoaded', function() {
         <button class="header-subscribe" onclick="handleSubscribeClick()">Subscribe</button>
       </div>
     </header>
+    <div class="bsr-header">
+      <div class="today-kicker">BACKSTORY</div>
+      <div class="today-date">Standing storylines — <em>newest first, origins never dropped.</em></div>
+    </div>
     <div id="bsrList" class="bsr-list"></div>
   </div>
 </div>
