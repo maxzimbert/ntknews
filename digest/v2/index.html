@@ -509,6 +509,54 @@
     text-transform: uppercase;
   }
 
+  /* ── Backstory tab ── */
+  .bsr-list { padding: 4px 16px 24px; display: grid; gap: 10px; }
+  .bsr-row {
+    background: var(--white); border: 1.5px solid var(--dark); border-radius: 10px;
+    padding: 20px 22px 16px; text-align: center; position: relative; cursor: pointer;
+  }
+  .bsr-row .bsr-updated {
+    position: absolute; top: 14px; right: 16px; display: flex; align-items: center; gap: 5px;
+    font-family: 'Space Grotesk', sans-serif; font-size: 9px; letter-spacing: 1px;
+    text-transform: uppercase; color: var(--teal);
+  }
+  .bsr-row .bsr-updated .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); }
+  .bsr-row .bsr-num {
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 40px;
+    line-height: 1; color: var(--dark);
+  }
+  .bsr-row .bsr-caption {
+    font-family: 'Space Grotesk', sans-serif; font-size: 10px; letter-spacing: 1px;
+    color: var(--dark); opacity: 0.4; margin: 4px 0 14px;
+  }
+  .bsr-row h3 { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 16px; margin-bottom: 5px; color: var(--dark); }
+  .bsr-row .bsr-milestone {
+    font-family: 'Source Serif 4', serif; font-style: italic; font-size: 13px;
+    color: var(--dark); opacity: 0.65; max-width: 420px; margin: 0 auto;
+  }
+  .bsr-empty { padding: 40px 20px; text-align: center; font-family: 'Source Serif 4', serif; color: var(--dark); opacity: 0.5; }
+
+  .bsr-detail-box { max-width: 480px; padding: 0; overflow: hidden; max-height: 88vh; display: flex; flex-direction: column; }
+  .bsr-detail-photo {
+    height: 220px; flex-shrink: 0; background: var(--purple); position: relative;
+    display: flex; align-items: flex-end;
+  }
+  .bsr-detail-clock { padding: 18px 20px 16px; color: var(--white); }
+  .bsr-detail-kicker {
+    font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 600;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--amber); margin-bottom: 4px;
+  }
+  .bsr-detail-num { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 44px; line-height: 0.9; }
+  .bsr-detail-body { padding: 22px 24px 26px; overflow-y: auto; }
+  .bsr-detail-body h2 { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 22px; color: var(--dark); margin-bottom: 8px; }
+  .bsr-detail-milestone {
+    font-family: 'Source Serif 4', serif; font-style: italic; font-size: 13px;
+    color: var(--dark); opacity: 0.6; margin-bottom: 18px;
+  }
+  .bsr-detail-narrative { font-family: 'Source Serif 4', serif; font-size: 16px; line-height: 1.65; color: var(--dark); }
+  .bsr-detail-narrative p { margin-bottom: 14px; }
+  .bsr-detail-narrative a { color: var(--blue); }
+
   .story-card {
     position: relative;
     background: var(--white);
@@ -2568,6 +2616,7 @@ function switchTab(tab) {
   if (activeBtn) activeBtn.classList.add('active');
   activeTab = tab;
   if (tab === 'profile') renderProfileTab();
+  if (tab === 'backstory' && !BSR_DATA) fetchBackstory();
   window.scrollTo(0, 0);
   track('tab_switch', { tab: tab });
 }
@@ -3738,19 +3787,24 @@ document.addEventListener('DOMContentLoaded', function() {
         <button class="header-subscribe" onclick="handleSubscribeClick()">Subscribe</button>
       </div>
     </header>
-    <div class="backstory-placeholder">
-      <div class="backstory-placeholder-icon">
-        <svg width="60" height="60" viewBox="0 0 28 28">
-          <circle cx="13" cy="12" r="7" fill="none" stroke="#EAD9C5" stroke-width="1.5"/>
-          <circle cx="13" cy="12" r="3.5" fill="#EAD9C5" opacity="0.15"/>
-          <line x1="20" y1="12" x2="23" y2="10" stroke="#EAD9C5" stroke-width="1.75" stroke-linecap="round"/>
-          <path d="M6.5 17 Q5 20 6 24" stroke="#EAD9C5" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-        </svg>
+    <div id="bsrList" class="bsr-list"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="bsrDetailModal" onclick="if(event.target===this) closeBsrDetail()">
+  <div class="modal-box bsr-detail-box">
+    <div class="bsr-detail-photo" id="bsrDetailPhoto">
+      <div class="bsr-detail-clock">
+        <div class="bsr-detail-kicker" id="bsrDetailKicker"></div>
+        <div class="bsr-detail-num" id="bsrDetailNum"></div>
       </div>
-      <div class="backstory-placeholder-kicker">Backstory</div>
-      <div class="backstory-placeholder-text">The context layer. Stories don't begin when they break.</div>
-      <div class="backstory-placeholder-sub">Coming soon.</div>
     </div>
+    <div class="bsr-detail-body">
+      <h2 id="bsrDetailTitle"></h2>
+      <div class="bsr-detail-milestone" id="bsrDetailMilestone"></div>
+      <div class="bsr-detail-narrative" id="bsrDetailNarrative"></div>
+    </div>
+    <button class="modal-close" onclick="closeBsrDetail()">Close</button>
   </div>
 </div>
 
