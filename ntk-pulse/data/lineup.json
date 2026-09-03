@@ -1,5 +1,5 @@
 {
- "assembled_at": "2026-09-03T03:27:10.790714+00:00",
+ "assembled_at": "2026-09-03T08:41:52.820035+00:00",
  "slot_plan": "A",
  "displacement": "MANUAL",
  "daytype": "weekday",
@@ -7,9 +7,8 @@
   8,
   10
  ],
- "actual_size": 50,
+ "actual_size": 10,
  "lint_failures": [
-  "under 3 fully self-contained items",
   "no item answers 'what do I do with this'"
  ],
  "slots_unfilled": [],
@@ -17,68 +16,89 @@
   {
    "slot": "unavoidable",
    "slot_label": "Unavoidable",
-   "key": "f59fce606867a570",
-   "title": "Judge blocks Trump order to limit birthright citizenship",
-   "beat": "national",
-   "publisher_count": 5,
+   "key": "1869a7a62c6d066c",
+   "title": "Uber launches self-driving taxis in London after mass layoffs",
+   "beat": "tech",
+   "publisher_count": 2,
    "publishers": [
-    "Al Jazeera",
-    "CBS News",
-    "NBC News",
-    "The Independent",
-    "Fox 5 Atlanta"
+    "The Guardian",
+    "The Independent"
    ],
    "scores": {
     "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "ledger_class": "DEVELOPMENT",
-   "new_facts": [
-    "New story: Trump endorses federal tax incentives to keep film/TV productions in US, backed by Georgia film executives",
-    "New story: federal judge temporarily blocks Trump's latest executive order narrowing birthright citizenship",
-    "Adds that ruling follows a 6-3 Supreme Court decision finding Trump's prior effort illegal",
-    "Adds judge's on-record quote calling Trump's 'carveouts' to citizenship 'almost certainly unconstitutional'",
-    "New story: DeKalb Superior Court Judge Yolanda Parker-Smith faces suspension for jailing a lawyer over court delay"
-   ],
-   "line": "A federal judge blocked Trump's executive order restricting birthright citizenship, citing established Supreme Court precedent that grants citizenship to children born in the U.S.",
-   "assembly_score": 12.83
-  },
-  {
-   "slot": "money_me",
-   "slot_label": "Money & me",
-   "key": "e727c54f8c5fa5d4",
-   "title": "Moonshot files for Hong Kong IPO, seeks $50B funding round",
-   "beat": "business",
-   "publisher_count": 1,
-   "publishers": [
-    "Techmeme"
-   ],
-   "scores": {
-    "emotional_load": 1,
     "explainability": 5,
     "actionability": 1,
-    "conversational_currency": 2
+    "conversational_currency": 4
    },
    "politician_led": false,
    "ledger_class": "DEVELOPMENT",
    "new_facts": [
-    "Moonshot AI filed confidentially for Hong Kong IPO; in talks for pre-IPO round at $50B valuation"
+    "Launch comes after Uber cut thousands of jobs; notes Europe's regulators slower than US to approve robotaxis",
+    "Adds context number: over 100,000 private hire vehicles operate in London, dwarfing the 15 robotaxis"
    ],
-   "line": "Chinese AI startup Moonshot seeks Hong Kong listing and $50 billion pre-IPO funding.",
-   "assembly_score": 5.45
+   "line": "Uber deploys self-driving taxis in London while laying off thousands of workers globally.",
+   "assembly_score": 7.57
+  },
+  {
+   "slot": "money_me",
+   "slot_label": "Money & me",
+   "key": "cbee36537d50486f",
+   "title": "NBA suspends Clippers owner Ballmer, fines team over Leonard salary cap breach",
+   "beat": "business",
+   "publisher_count": 2,
+   "publishers": [
+    "Al Jazeera",
+    "CNBC"
+   ],
+   "scores": {
+    "emotional_load": 2,
+    "explainability": 4,
+    "actionability": 1,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Clippers publicly dispute the NBA's conclusions and the validity of the investigation.",
+    "Specifies forfeited picks span one per draft starting in 2029"
+   ],
+   "line": "NBA suspends Clippers owner Steve Ballmer for one year and fines the team $30 million over salary cap violations tied to Kawhi Leonard's contract.",
+   "assembly_score": 6.56
   },
   {
    "slot": "body_mind",
    "slot_label": "Body & mind",
-   "key": "2a5a729ed2fa2c0f",
-   "title": "Giant mega-Earth is 23 times more massive than Earth",
-   "beat": "science",
+   "key": "8e09eb44465c1e8a",
+   "title": "Pediatricians accept vaccine-skeptical families other doctors reject",
+   "beat": "health",
    "publisher_count": 1,
    "publishers": [
-    "EarthSky"
+    "STAT News"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 5,
+    "actionability": 3,
+    "conversational_currency": 4
+   },
+   "politician_led": false,
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Profiles pediatricians running a 'practice of last resort' for vaccine-skeptical parents, engaging without hardline dismissal."
+   ],
+   "line": "Some pediatricians are accepting vaccine-skeptical families that other practices have rejected, creating a two-tiered medical system.",
+   "assembly_score": 6.72
+  },
+  {
+   "slot": "work_machines",
+   "slot_label": "Work & machines",
+   "key": "c0c2a3d4bdbac73e",
+   "title": "South Korean semiconductor exports surged 209% YoY to a record $46.65B in August, accounting for 47.5% of the country's goods exports, according to officials (Lim Hui Jie/CNBC)",
+   "beat": "tech",
+   "publisher_count": 2,
+   "publishers": [
+    "Techmeme",
+    "Yonhap News"
    ],
    "scores": {
     "emotional_load": 3,
@@ -90,1427 +110,236 @@
    "ledger_class": null,
    "new_facts": [],
    "line": "",
-   "assembly_score": 2.13
-  },
-  {
-   "slot": "work_machines",
-   "slot_label": "Work & machines",
-   "key": "970f8b61bfa50fd9",
-   "title": "Uber launches London's first commercial robotaxi service",
-   "beat": "tech",
-   "publisher_count": 4,
-   "publishers": [
-    "BBC",
-    "Techmeme",
-    "The Verge",
-    "Daily Mail"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 2,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": "DEVELOPMENT",
-   "new_facts": [
-    "First-hand reporter account of riding the new Uber self-driving taxi in London",
-    "Uber launched 15 self-driving taxis in the UK with safety drivers aboard",
-    "Uber beat Waymo to launch London's first robotaxi service; Wayve partnership years in the making"
-   ],
-   "line": "Uber launches commercial robotaxi service in London using Wayve's autonomous driving tech, with human safety drivers aboard.",
-   "assembly_score": 9.62
+   "assembly_score": 3.81
   },
   {
    "slot": "group_chat",
    "slot_label": "The group chat",
-   "key": "6aa0d34df1ba0191",
-   "title": "Federal courts split on transgender athlete policies in schools",
+   "key": "95498a6c55c2fc3f",
+   "title": "Prince George's schools address bus route problems at town hall",
    "beat": "education",
-   "publisher_count": 2,
+   "publisher_count": 1,
    "publishers": [
-    "Fox News",
-    "Fox 5 Atlanta"
+    "NBC Washington"
    ],
    "scores": {
-    "emotional_load": 4,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 4
+    "emotional_load": 2,
+    "explainability": 5,
+    "actionability": 3,
+    "conversational_currency": 2
    },
    "politician_led": false,
    "ledger_class": "DEVELOPMENT",
    "new_facts": [
-    "Federal judge dismissed DOJ lawsuit against California over transgender athletes in girls' sports, on procedural grounds.",
-    "DOJ filed its first lawsuit against a school district (Kansas) over transgender student policies, alleging federal law violation."
+    "Unrelated new story: PGCPS addresses school bus route problems at town hall with parent complaints and quotes."
    ],
-   "line": "Courts are splitting on whether schools can restrict transgender athlete participation, creating legal uncertainty across states.",
-   "assembly_score": 7.4
+   "line": "Prince George's County school officials met with residents to discuss problems with student bus routes.",
+   "assembly_score": 6.4
   },
   {
    "slot": "elsewhere",
    "slot_label": "Elsewhere, but here",
-   "key": "ed223c8e9093c082",
-   "title": "U.S. and Iran escalate threats as civilian deaths mount",
+   "key": "15381f586f47af32",
+   "title": "Russia closes German cultural centers after Berlin blames Moscow for airport drone plot",
    "beat": "international",
    "publisher_count": 4,
    "publishers": [
+    "BBC",
     "Al Jazeera",
-    "CBS News",
-    "France 24",
-    "Memeorandum"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 5
-   },
-   "politician_led": true,
-   "ledger_class": "DEVELOPMENT",
-   "new_facts": [
-    "New Iran war escalation story: 18 dead from US strikes, including 4 killed at a wedding party",
-    "Trump quoted threatening more strikes, says US can hit Iran 'anytime we want'",
-    "Iran's security chief warns Washington will face a 'new strategy'",
-    "Trump floats renaming Strait of Hormuz 'Trump Strait' on Truth Social"
-   ],
-   "line": "U.S. and Iran trade threats after strikes kill civilians; Trump signals readiness for further military action.",
-   "assembly_score": 12.78
-  },
-  {
-   "slot": "close",
-   "slot_label": "The close",
-   "key": "59bd5d28dd452c62",
-   "title": "Hegseth under fire over body-shaming post as Pentagon tests service members for testosterone",
-   "beat": "national",
-   "publisher_count": 4,
-   "publishers": [
-    "Al Jazeera",
-    "CBS News",
-    "Semafor",
+    "Deutsche Welle",
     "The Independent"
    ],
    "scores": {
-    "emotional_load": 2,
-    "explainability": 3,
+    "emotional_load": 3,
+    "explainability": 4,
     "actionability": 1,
     "conversational_currency": 3
    },
    "politician_led": true,
    "ledger_class": "DEVELOPMENT",
    "new_facts": [
-    "George Clooney publicly criticized Hegseth for mocking appearance of Canadian military cadets in a post",
-    "Pentagon will require testosterone screening for male service members 30+, per Hegseth's summer directive",
-    "New actors: Parnell (Pentagon spokesman) and Rep. Brian Mast emerge as contenders for Army Secretary post.",
-    "Sen. Thom Tillis publicly calls on Trump to fire Hegseth over 'inept mismanagement' amid Iran war strain."
+    "Russia to close Goethe-Institut centres after Germany closes two Russian institutions.",
+    "Explosive-laden drone found near a Ukrainian plane at Leipzig/Halle Airport.",
+    "Lavrov says closures are retaliation for Germany shutting the Russian House in Berlin.",
+    "EU and NATO vow to step up pressure on Russia after what they call a 'new escalation' in Germany."
    ],
-   "line": "Defense Secretary Hegseth faces criticism over a body-shaming social media post and is under pressure as testosterone-testing guidelines roll out for service members.",
-   "assembly_score": 10.7
+   "line": "Russia is closing German cultural centers after Berlin blamed Moscow for a drone attack plot at a Berlin airport.",
+   "assembly_score": 9.98
   },
   {
-   "slot": "unavoidable",
-   "slot_label": "Unavoidable",
-   "key": "ebd65e2f381b918c",
-   "title": "Musk launches midterm spending as insider account questions his judgment",
+   "slot": "close",
+   "slot_label": "The close",
+   "key": "e2bcb656055e4aae",
+   "title": "Green candidate enters race for Starmer's former seat",
    "beat": "national",
-   "publisher_count": 2,
+   "publisher_count": 4,
    "publishers": [
-    "Politico",
-    "Daily Beast"
+    "BBC",
+    "The Guardian",
+    "The Independent",
+    "Daily Mail"
    ],
    "scores": {
-    "emotional_load": 2,
+    "emotional_load": 1,
     "explainability": 4,
     "actionability": 1,
-    "conversational_currency": 4
+    "conversational_currency": 2
    },
-   "politician_led": false,
+   "politician_led": true,
    "ledger_class": "DEVELOPMENT",
    "new_facts": [
-    "Musk discloses first independent campaign expenditures in midterm races after meeting Speaker Mike Johnson."
+    "Zack Polanski confirms Green candidacy for Holborn & St Pancras by-election, says he 'loves' the seat",
+    "Polanski accuses Labour of being the party of 'big money' while announcing his by-election run"
    ],
-   "line": "Musk begins funding midterm candidates while a former associate describes personal dysfunction affecting his decision-making.",
+   "line": "Green Party candidate Zack Polanski announces he will run in the Holborn and St Pancras by-election, Keir Starmer's former seat.",
    "assembly_score": 6.64
   },
   {
    "slot": "unavoidable",
    "slot_label": "Unavoidable",
-   "key": "f528b72006602cf4",
-   "title": "NYC bans AI use in elementary and middle schools",
-   "beat": "education",
+   "key": "c6fc8a33a9b0b98a",
+   "title": "Iran attacks Kuwait with missiles and drones in retaliation for U.S. strikes",
+   "beat": "international",
    "publisher_count": 3,
    "publishers": [
-    "Chalkbeat",
-    "CBS News",
-    "Memeorandum"
+    "ABC News",
+    "France 24",
+    "The Independent"
+   ],
+   "scores": {
+    "emotional_load": 4,
+    "explainability": 4,
+    "actionability": 1,
+    "conversational_currency": 5
+   },
+   "politician_led": true,
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Iran launched missile/drone attacks on US allies Kuwait, Jordan, UAE, Bahrain, Iraq's Kurdistan after US bombing Tuesday."
+   ],
+   "line": "Iran launched missiles and drones at Kuwait, claiming retaliation for U.S. strikes; Kuwait says its air defenses intercepted the attack.",
+   "assembly_score": 6.12
+  },
+  {
+   "slot": "unavoidable",
+   "slot_label": "Unavoidable",
+   "key": "283c10260519ff2c",
+   "title": "Labour releases 2,500+ prisoners early to ease jail overcrowding",
+   "beat": "national",
+   "publisher_count": 1,
+   "publishers": [
+    "Daily Mail"
    ],
    "scores": {
     "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 3,
+    "explainability": 5,
+    "actionability": 1,
     "conversational_currency": 4
    },
    "politician_led": true,
    "ledger_class": "DEVELOPMENT",
    "new_facts": [
-    "Details the ban: no student-facing generative AI tools (chatbots, tutors), released 8 days before school year.",
-    "Specifies ban and screen-time restrictions target elementary and middle school students specifically."
+    "Official MoJ timetable to release over 2,500 prisoners before Christmas under early release scheme, including violent offenders and domestic abusers."
    ],
-   "line": "New York City public schools ban AI use for elementary and middle students; details of enforcement and exceptions remain unclear.",
-   "assembly_score": 4.81
+   "line": "UK Labour government is releasing 2,500+ prisoners early to reduce jail overcrowding before the holidays.",
+   "assembly_score": 5.87
   },
   {
    "slot": "flex",
    "slot_label": "Flex",
-   "key": "425ab88cedc9f4f2",
-   "title": "Trump plans midterm campaign tour as Xi meeting looms",
-   "beat": "national",
-   "publisher_count": 2,
+   "key": "35bddf21952dcb93",
+   "title": "S\u00e1nchez: No evidence Morocco planned Ceuta migrant surge",
+   "beat": "international",
+   "publisher_count": 3,
    "publishers": [
-    "CNBC",
-    "Memeorandum"
+    "The Guardian",
+    "Al Jazeera",
+    "France 24"
    ],
    "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
+    "emotional_load": 3,
+    "explainability": 3,
     "actionability": 1,
-    "conversational_currency": 3
+    "conversational_currency": 2
    },
    "politician_led": true,
    "ledger_class": "DEVELOPMENT",
    "new_facts": [
-    "New story: analysis of Democrats' midterm strategy risk of overpromising against Trump",
-    "Trump-Xi summit set for DC less than six weeks before midterms; low expectations noted",
-    "Trump says he will make 'a lot of stops' in high-stakes states before midterms"
-   ],
-   "line": "Trump plans campaign stops before midterms; Democrats debate electoral strategy amid Xi summit talk.",
-   "assembly_score": 8.75
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "f355b898c5698773",
-   "title": "Shooting at Virginia elementary school leaves staffer injured, gunman dead",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "ABC News",
-    "NBC Washington",
-    "Fox 5 DC"
-   ],
-   "urls": [
-    "//abcnews.com/US/staffer-injured-gunman-dead-shooting-virginia-elementary-school/story?id=136144930",
-    "//fox5dc.com/news/suspect-accused-breaking-northern-virginia-home-wanted-police",
-    "//nbcwashington.com/news/local/northern-virginia/virginia-lt-gov-launches-listening-tour-as-possible-dominion-energy-merger-looms/4149604"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 5
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A shooting at a Virginia elementary school left a staffer injured and the gunman dead; authorities are investigating.",
-   "assembly_score": 1.748
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "95498a6c55c2fc3f",
-   "title": "Prince George's schools hold town hall on persistent bus route problems",
-   "beat": "education",
-   "publisher_count": 2,
-   "publishers": [
-    "NBC Washington",
-    "Fox 5 DC"
-   ],
-   "urls": [
-    "//fox5dc.com/news/dc-man-convicted-murder-prince-georges-county-activist",
-    "//fox5dc.com/news/prince-georges-county-school-officials-work-fix-bus-system-issues-persist",
-    "//nbcwashington.com/news/local/prince-georges-school-leaders-address-bus-route-issues-at-town-hall/4149621"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 3,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": true,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Prince George's County schools are addressing bus routing failures at a public meeting while a separate murder case closes.",
-   "assembly_score": 1.5
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "1fbe521d36173c8e",
-   "title": "Trump threatens fresh Iran strikes as death toll from recent attack rises to 18",
-   "beat": "international",
-   "publisher_count": 5,
-   "publishers": [
-    "Al Jazeera",
-    "CBS News",
-    "France 24",
-    "The Independent",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/9/3/trump-threatens-more-strikes-as-death-toll-in-iran-rises-to-19?traffic_source=rss",
-    "//aljazeera.com/news/liveblog/2026/9/3/iran-war-live-trump-says-renewed-us-iran-clashes-will-not-last-too?traffic_source=rss",
-    "//cbsnews.com/live-updates/us-iran-war-trump-dismisses-diplomacy-tehran-says-wedding-hit-in-strike",
-    "//cbsnews.com/video/iran-accuses-us-of-war-crime-after-strike-near-strait-of-hormuz-kills-4-at-wedding-event",
-    "//cbsnews.com/video/trump-says-us-very-heavy-attack-iran-prepared-another-one-anytime",
-    "//france24.com/en/middle-east/20260903-iran-us-trade-threats-wedding-strike",
-    "//independent.co.uk/news/world/middle-east/iran-us-war-live-trump-strikes-oil-tankers-jordan-news-b3043187.html",
-    "//memeorandum.com/260902/p145"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 5
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump says U.S. is prepared to strike Iran again after a recent attack; Iran reports at least 18 dead including wedding guests and accuses U.S. of war crimes.",
-   "assembly_score": 1.1
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "8fb73ac5f2ed12c4",
-   "title": "3 killed in Minneapolis apartment shooting",
-   "beat": "national",
-   "publisher_count": 9,
-   "publishers": [
-    "Yahoo News",
-    "Al Jazeera",
-    "CBS News",
-    "Deutsche Welle",
-    "France 24",
-    "NBC News",
-    "The Independent",
-    "Daily Mail",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/9/3/minneapolis-shooting-kills-two-wounds-three-police-officers?traffic_source=rss",
-    "//cbsnews.com/news/downtown-minneapolis-police-response-sept-2-2026",
-    "//cbsnews.com/video/2-killed-6-injured-suspected-gunman-dead-mass-shooting-downtown-minneapolis",
-    "//cbsnews.com/video/2-officers-several-people-injured-minneapolis-shooting",
-    "//cbsnews.com/video/at-least-1-killed-6-injured-in-downtown-minneapolis-shooting-hospital-says",
-    "//dailymail.com/news/article-16100729/Minneapolis-apartment-shooting.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dw.com/en/us-3-dead-including-suspect-in-minneapolis-shooting/a-78815092?maca=en-rss-en-all-1573-xml-mrss",
-    "//france24.com/en/americas/20260903-minneapolis-apartment-shooting",
-    "//independent.co.uk/news/tim-walz-minnesota-minneapolis-police-department-grateful-b3043813.html",
-    "//independent.co.uk/news/world/americas/crime/minneapolis-shooting-news-police-injuries-victims-b3043810.html",
-    "//memeorandum.com/260902/p136",
-    "//nbcnews.com/news/us-news/multiple-people-officers-shot-minneapolis-rcna595798",
-    "//nbcnews.com/nightly-news/video/3-killed-including-gunman-in-minneapolis-mass-shooting-269255749649",
-    "//nbcnews.com/nightly-news/video/police-officers-injured-in-minneapolis-shooting-269248581656",
-    "//yahoo.com/news/us/articles/2-dead-multiple-people-including-014151218.html"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A gunman opened fire at a Minneapolis apartment building, killing at least two people and wounding several others including police officers before being killed.",
-   "assembly_score": 0.76
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "b7a0263deee706d4",
-   "title": "UNICEF: One in five teens worldwide targeted by online sexual abuse",
-   "beat": "health",
-   "publisher_count": 2,
-   "publishers": [
-    "Deutsche Welle",
-    "Techmeme"
-   ],
-   "urls": [
-    "//dw.com/en/unicef-1-in-5-youths-targeted-by-online-sexual-abuse/a-78654173?maca=en-rss-en-all-1573-xml-mrss",
-    "//techmeme.com/260903/p3"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "UNICEF survey of 21,000 children across 21 countries finds nearly 20% experienced online sexual exploitation or abuse.",
-   "assembly_score": 0.46
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "8685cef34bd33a9f",
-   "title": "Chevron invests $7 billion in Venezuela as Maduro seeks immunity from drug charges",
-   "beat": "business",
-   "publisher_count": 3,
-   "publishers": [
-    "Al Jazeera",
-    "CBS News",
-    "The Independent"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/9/3/uss-chevron-italys-eni-to-expand-oil-projects-in-venezuela?traffic_source=rss",
-    "//aljazeera.com/news/2026/9/3/venezuelas-maduro-asserts-immunity-in-us-court-urges-dismissal-of-charges?traffic_source=rss",
-    "//cbsnews.com/video/oil-giant-chevron-to-invest-7-billion-in-venezuelan-projects-after-trump-deal",
-    "//independent.co.uk/news/nicolas-maduro-new-york-donald-trump-manhattan-american-b3043852.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Chevron and Eni are expanding oil investments in Venezuela as Maduro seeks immunity from US drug trafficking charges.",
-   "assembly_score": 0.36
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "780c2a0a5541dba8",
-   "title": "Ukraine escalates Russian strikes as internal conflicts surface",
-   "beat": "international",
-   "publisher_count": 4,
-   "publishers": [
-    "The Guardian",
-    "France 24",
-    "NBC News",
-    "The Independent"
-   ],
-   "urls": [
-    "//france24.com/en/europe/20260902-un-civilian-flight-safety-russian-airspace-ukraine",
-    "//independent.co.uk/news/vladimir-putin-ukraine-moscow-kremlin-people-b3043863.html",
-    "//nbcnews.com/sports/college-basketball/kate-koval-lsu-basketball-kim-mulkey-ukraine-russia-rcna595808",
-    "//nbcnews.com/video/inside-a-ukrainian-maternity-ward-as-russian-strikes-intensify-269255237562",
-    "//theguardian.com/world/2026/sep/03/ukraine-war-briefing-shameful-zelenskyy-furious-after-shootout-between-kyivs-spy-services"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Ukraine intensifies strikes on Russian territory while internally fractious over military priorities; civilian infrastructure under sustained attack.",
-   "assembly_score": 0.33
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "e1d104740a42c697",
-   "title": "Equinix and Nvidia team on AI data center services",
-   "beat": "business",
-   "publisher_count": 2,
-   "publishers": [
-    "CNBC",
-    "Techmeme"
-   ],
-   "urls": [
-    "//cnbc.com/2026/09/02/equinix-partners-with-nvidia-carves-niche-in-ai-data-center-boom.html",
-    "//techmeme.com/260903/p2"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Data center operator Equinix partners with Nvidia to offer AI model hosting, betting on explosive growth in computing infrastructure.",
-   "assembly_score": 0.12
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "608a9487eb92791c",
-   "title": "Clancy jury deadlocked again; judge pushes for verdict",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "BBC",
-    "CBS News",
-    "The Independent"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/c93vgv4kr49o?at_campaign=rss&at_medium=RSS",
-    "//cbsnews.com/news/lindsay-clancy-trial-updates-hung-jury-deliberations-mistrial",
-    "//cbsnews.com/video/judge-could-declare-mistrial-as-jury-in-lindsay-clancy-case-remains-deadlocked",
-    "//cbsnews.com/video/lindsay-clancy-jury-deadlocked-second-time-judge-orders-dynamite-charge",
-    "//independent.co.uk/news/mass-plymouth-massachusetts-b3043862.html"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 2,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Jury remains deadlocked in Lindsay Clancy case; judge orders continued deliberation to avoid mistrial.",
-   "assembly_score": 0.08
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "422fad25177e735d",
-   "title": "Trump claims Apple Maps renamed Lake Ontario for him",
-   "beat": "tech",
-   "publisher_count": 2,
-   "publishers": [
-    "Daily Beast",
-    "The Independent"
-   ],
-   "urls": [
-    "//independent.co.uk/news/world/americas/us-politics/trump-apple-maps-lake-america-b3043796.html",
-    "//thedailybeast.com/mapquest-app-boss-reveals-stunning-surge-after-defying-trump"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 2,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 0.04
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "661aba9e689434d2",
-   "title": "Federal panel reviews Trump's Lafayette Park fence proposal",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "The Independent",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//independent.co.uk/news/donald-trump-white-house-washington-pete-hegseth-rand-paul-b3043866.html",
-    "//memeorandum.com/260903/p1"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump-era fence proposal at Lafayette Park faces federal review; White House shifts midterm messaging toward Trump.",
-   "assembly_score": 0.03
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "4f6042464a9c5c84",
-   "title": "Deadlocked jury ordered back to work in Clancy murder trial",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox News",
-    "NBC News"
-   ],
-   "urls": [
-    "//foxnews.com/us/social-media-lindsay-clancy-wild-card-could-tilt-potential-retrial-defense-retired-judge-says",
-    "//nbcnews.com/nightly-news/video/lindsay-clancy-jury-deadlocked-again-as-judge-orders-jurors-to-keep-deliberating-269246533503"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 2,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A jury deadlocked in the Lindsay Clancy murder trial after the judge ordered continued deliberation; legal experts debate whether social media exposure will help her defense in a potential retrial.",
-   "assembly_score": -0.2
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "1f4d736d72930c61",
-   "title": "VW, Amazon disclose supplier screening against blacklists",
-   "beat": "business",
-   "publisher_count": 2,
-   "publishers": [
-    "Financial Times",
-    "CNN"
-   ],
-   "urls": [
-    "//cnn.com/cnn-underscored/deals/best-amazon-deals-2023-04-12?iid=CNNUnderscoredHPcontainer",
-    "//cnn.com/cnn-underscored/travel/amazon-travel-products?iid=CNNUnderscoredHPcontainer",
-    "//ft.com/content/70fdf5c3-6b3a-494d-a141-85aba60d14d5?syn-25a6b1a6=1"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Volkswagen and Amazon disclosed they screen suppliers against lists of groups deemed security or compliance risks.",
-   "assembly_score": -0.21
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "05666c7cbb120d4f",
-   "title": "Political analysts on Trump and Democratic strategy",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Politico",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/260902/p146",
-    "//politico.com/video/2026/09/02/stephen-a-smith-on-trump-democrats-and-the-politics-of-chaos-2156846"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.23
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "234b2b952ddf2a73",
-   "title": "US forces board and destroy alleged cartel boat in eastern Pacific",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "Fox News"
-   ],
-   "urls": [
-    "//aljazeera.com/video/newsfeed/2026/9/3/us-forces-board-and-destroy-alleged-cartel-boat-in-eastern-pacific?traffic_source=rss",
-    "//foxnews.com/us/us-military-boards-searches-sinks-vessel-allegedly-supporting-los-choneros-narco-terrorists"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.44
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "15381f586f47af32",
-   "title": "EU and NATO vow pressure on Russia after Germany escalation",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Deutsche Welle"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/ce9e810pg7ko?at_campaign=rss&at_medium=RSS",
-    "//dw.com/en/russia-to-close-branches-of-germany-s-goethe-institut/a-78815269?maca=en-rss-en-all-1573-xml-mrss"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 2,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "EU and NATO say they will increase pressure on Russia after an escalation in Germany; a former CIA officer argues a Trump official's comments aid Putin.",
-   "assembly_score": -0.48
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "6f1eb204bf6a6623",
-   "title": "South Korea's semiconductor exports just tripled year-over-year. Is it too much of a good thing?",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "CNBC",
-    "Techmeme"
-   ],
-   "urls": [
-    "//cnbc.com/2026/09/03/south-korea-semiconductor-exports-surging-concerns.html",
-    "//techmeme.com/260902/p51"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.88
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "9794507341950519",
-   "title": "Mixed signals on abortion politics and Charleston waterfront",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Post and Courier",
-    "American Spectator"
-   ],
-   "urls": [
-    "//postandcourier.com/01-riverfront-revival-2026/image_b6bccab1-a70b-4d41-95c3-b89500564353.html",
-    "//spectator.org/the-pro-life-revival-may-already-be-underway"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 1,
-    "actionability": 1,
-    "conversational_currency": 1
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.03
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "fb351b7c92cd2ea5",
-   "title": "Kuwait fends off Iranian attack as Trump says renewed Mideast hostilities will not last 'too long'",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "CNBC",
-    "France 24"
-   ],
-   "urls": [
-    "//cnbc.com/2026/09/03/us-iran-war-trump-hormuz-israel-middle-east-europe-kuwait.html",
-    "//france24.com/en/middle-east/20260903-mideast-live-kuwait-army-says-intercepting-missile-drone-attack-from-iran"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.08
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "91099fd0ee7a53e6",
-   "title": "Thousands protest in Spain as Ceuta\u2019s migration crisis festers a month on",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "Deutsche Welle"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/9/2/thousands-protest-in-spain-as-ceutas-migrant-crisis-festers-a-month-on?traffic_source=rss",
-    "//aljazeera.com/video/newsfeed/2026/9/3/aje-onl-nf_mass-protests-across-spain-020926?traffic_source=rss",
-    "//dw.com/en/spain-tens-of-thousands-rally-over-ceuta-crisis/a-78814756?maca=en-rss-en-all-1573-xml-mrss"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.11
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "4622c59243b34bde",
-   "title": "Data centers emerge as midterm issue in Virginia communities",
-   "beat": "tech",
-   "publisher_count": 2,
-   "publishers": [
-    "Techmeme",
-    "American Spectator"
-   ],
-   "urls": [
-    "//spectator.org/like-it-or-not-data-centers-are-part-of-the-midterms-now",
-    "//techmeme.com/260902/p48"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 3,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Data centers in Virginia are becoming a political issue as communities weigh power consumption, land use, and tax revenue against local infrastructure strain.",
-   "assembly_score": -1.13
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "8f9767c6b02e5323",
-   "title": "Teen charged in Seattle mass shooting claims self-defense",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "CBS News",
-    "Fox News"
-   ],
-   "urls": [
-    "//cbsnews.com/video/police-bobcat-93-year-old-womans-home-seattle",
-    "//foxnews.com/us/15-year-old-accused-firing-crowd-deadly-seattle-mass-shooting-claims-self-defense"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "progress_coded": true,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A 15-year-old faces charges in a deadly Seattle mass shooting; police separately discovered a bobcat in a nearby elderly resident's home.",
-   "assembly_score": -1.15
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "b9bb6dcd7cddfc4c",
-   "title": "Malta businessman found not guilty in car bomb killing of journalist",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "CBS News"
-   ],
-   "urls": [
-    "//aljazeera.com/video/newsfeed/2026/9/3/maltese-tycoon-acquitted-of-killing-journalist-daphne-caruana-galizia?traffic_source=rss",
-    "//cbsnews.com/news/yorgen-fenech-acquitted-daphne-caruana-galizia-killing"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.2
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "836ede9f9d5da1f5",
-   "title": "George Clooney honored as Venice Film Festival opens, in photos",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "The Independent",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/tvshowbiz/article-16099881/Celebrities-Ink-premiere-opening-night-Venice-Film-Festival.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dailymail.com/tvshowbiz/article-16100823/ClooneyCam-Star-turns-snapper-celebrates-Venice-film-award.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//independent.co.uk/news/world/europe/george-clooney-venice-italy-hollywood-danny-boyle-b3043822.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.44
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "5291e514b0ac5367",
-   "title": "Meta softens internal AI metrics, promotes Hatch agent tool",
-   "beat": "tech",
-   "publisher_count": 2,
-   "publishers": [
-    "Techmeme",
-    "Wired"
-   ],
-   "urls": [
-    "//techmeme.com/260902/p49",
-    "//wired.com/story/meta-pushes-its-new-ai-agent-on-employees-but-eases-off-on-tokenmaxxing"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Meta is shifting internal performance reviews away from rewarding AI token usage and toward promoting its new AI agent tool, Hatch.",
-   "assembly_score": -1.54
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "fb02443f1ea05226",
-   "title": "Democrats clash over party defections before midterms",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/260902/p144",
-    "//nytimes.com/2026/09/02/us/politics/democrats-defections-internal-feud-midterms.html"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Some Democratic officials are leaving the party weeks before midterm elections, creating internal conflict over strategy and messaging.",
-   "assembly_score": -1.79
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "604b6567c0bc26a0",
-   "title": "The Papers: 'City warns Burnham' and 'One in the eye'",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/c4gj0y82jwwo?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/news/article-16099491/The-Morning-Poll-Andy-Burnham-cut-spending-benefits-fund-defence.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dailymail.com/news/article-16100087/DAILY-MAIL-COMMENT-PMs-Left-wing-rhetoric-bond-markets-harsh-lesson-economics.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dailymail.com/news/article-16100827/need-cut-spending-ally-Burnham.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.92
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "ba024e58e161ef07",
-   "title": "The NBA Drops the Hammer on Kawhi Leonard and the Clippers",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "NBC News"
-   ],
-   "urls": [
-    "//nbcnews.com/nightly-news/video/nba-hits-los-angeles-clippers-with-major-penalties-over-salary-cap-probe-269248069551",
-    "//nytimes.com/2026/09/02/podcasts/the-nba-brings-the-hammer-on-kawhi-leonard-and-the-clippers.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.93
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "0d58600d2f8773ec",
-   "title": "Trump to campaign for 35 Republican midterm candidates",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Daily Beast",
-    "NBC News"
-   ],
-   "urls": [
-    "//nbcnews.com/politics/2026-election/trump-says-will-campaign-republicans-35-races-ahead-midterms-rcna595807",
-    "//thedailybeast.com/trumps-new-blunder-proves-hes-a-loser-james-carville"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump plans to campaign for Republican candidates in 35 races before November midterms.",
-   "assembly_score": -1.95
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "81a303d0b6d5cef2",
-   "title": "Rocky Horror star Tim Curry's cause of death revealed",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Fox News"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/cy8z7wypzqxo?at_campaign=rss&at_medium=RSS",
-    "//foxnews.com/entertainment/tim-currys-cause-death-revealed"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.18
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "cd85df0adba6b32a",
-   "title": "Democratic socialists endorse Raman in LA mayoral contest",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "LAist",
-    "New York Times"
-   ],
-   "urls": [
-    "//laist.com/news/politics/democratic-socialists-endorse-raman-in-la-mayoral-contest",
-    "//nytimes.com/2026/09/02/us/nithya-raman-dsa-la-mayor.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.32
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "7e7bda0d9be11bd5",
-   "title": "'We need to return immediately,' flight crew warns as pilot health emergency unfolds",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox 5 Atlanta",
-    "Fox 5 DC"
-   ],
-   "urls": [
-    "//fox5atlanta.com/news/we-need-return-immediately-flight-crew-warns-pilot-health-emergency-unfolds",
-    "//fox5dc.com/news/we-need-return-immediately-flight-crew-warns-pilot-health-emergency-unfolds"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.34
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "f62695dcee0f8f05",
-   "title": "Hello, sailors! USS Lincoln\u2019s port-deprived troops finally get to hit the town in Thailand\u2019s \u2018Sin City\u2019",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "The Independent",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16100833/nine-months-sea-US-sailors-Thai-happy.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//independent.co.uk/news/world/americas/uss-lincoln-sailors-thailand-pattaya-prostitution-b3043829.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.43
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "09189998f2ee6231",
-   "title": "Daily digest roundup",
-   "beat": "other",
-   "publisher_count": 2,
-   "publishers": [
-    "Semafor",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/260902/p142",
-    "//semafor.com/article/09/02/2026/textual-sleuths-wage-crusade-against-ai-slop-with-pangram"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 1,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.46
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "fed017c7e23d5a2d",
-   "title": "DHS boss reveals Oval Office plan to 'withhold funding' from sanctuary cities after aggressive New York bust",
-   "beat": "national",
-   "publisher_count": 4,
-   "publishers": [
-    "Fox News",
-    "NBC News",
-    "Daily Mail",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16100561/Plane-carrying-Trumps-DHS-Secretary-Markwayne-Mullin-forced-emergency-landing.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//foxnews.com/media/dhs-boss-reveals-oval-office-plan-withhold-funding-sanctuary-cities-aggressive-new-york-bust",
-    "//memeorandum.com/260902/p131",
-    "//nbcnews.com/politics/trump-administration/coast-guard-plane-dhs-secretary-markwayne-mullin-emergency-landing-rcna595804"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.67
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "fb0dbdae7967c05a",
-   "title": "Trump\u2019s DOJ Blocked Serious ICE Shooting Charge Over Federal Prosecutor\u2019s \u201cStrongest Possible\u201d Objections",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "ProPublica",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/260902/p140",
-    "//propublica.org/article/doj-blocks-charges-ice-agent-minneapolis-julio-cesar-sosa-celis"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.71
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "509f4777eaf3dcaa",
-   "title": "From Boba Fett to Banksy: We take you inside Exposition Park's new Lucas Museum",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "LAist",
-    "New York Times"
-   ],
-   "urls": [
-    "//laist.com/news/los-angeles-activities/lucas-museum-sneak-peek",
-    "//nytimes.com/2026/09/02/arts/design/george-lucas-museum-narrative-art-opening.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.14
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "6a915b05c87daf11",
-   "title": "A hurricane is not headed for Southern California. But it will send dangerous surf our way",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "LAist",
-    "CBS News"
-   ],
-   "urls": [
-    "//cbsnews.com/video/tropical-storm-edouard-spins-east-texas-pours-dangerous-amounts-rain",
-    "//laist.com/news/climate-environment/southern-california-hurricane-maria-forecast-dangerous-surf"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -4.38
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "e54d1c1e8577db19",
-   "title": "Palo Alto Networks acquires Console for $500M",
-   "beat": "tech",
-   "publisher_count": 2,
-   "publishers": [
-    "TechCrunch",
-    "Techmeme"
-   ],
-   "urls": [
-    "//techcrunch.com/2026/09/02/palo-alto-networks-paid-500m-for-thrive-backed-console-sources-say",
-    "//techmeme.com/260902/p44"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Palo Alto Networks buys Console, an AI startup for IT support, at more than triple its last known valuation.",
-   "assembly_score": -5.13
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "e65ee57319065b51",
-   "title": "Jeffries vows party discipline; Democrats outline 2026 healthcare agenda",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Politico Congress",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/260902/p134",
-    "//politico.com/news/2026/09/02/hakeem-jeffries-rogue-members-01062691"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "House Democratic leader Jeffries signals discipline over party members; Democrats plan healthcare focus if they gain House control in 2026.",
-   "assembly_score": -5.14
+    "Spanish PM Sanchez denies solid proof Morocco planned the Ceuta migrant rush.",
+    "Sanchez pledges to restore normalcy in Ceuta and promises complete honesty to residents.",
+    "Tens of thousands protest across Spain over government's handling of Ceuta migrant crisis."
+   ],
+   "line": "Spain's PM defends Morocco against claims it orchestrated a mass migrant crossing into Ceuta; tensions over the incident persist.",
+   "assembly_score": 7.66
   }
  ],
  "excluded_sample": [
   {
-   "title": "Acclaimed Author Brutally Predicts Trump\u2019s Place in History",
+   "title": "Alcaraz 'stays calm' in US Open fightback",
    "why": "triage verdict NO"
   },
   {
-   "title": "01) Riverfront Revival 2026",
+   "title": "Guy Ritchie, 57, is proudly supported by his glamorous wife Jacqui Ainsley, 44, and son Rocco at season two premiere of his drama The Gentlemen",
    "why": "triage verdict NO"
   },
   {
-   "title": "Venice Film Festival opens with George Clooney, Murdoch film and geopolitics",
+   "title": "Vinnie Jones looks loved up with girlfriend Emma Ford at The Gentlemen afterparty - seven years after the death of his wife Tanya",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "US sailors go shopping and bar-hopping in Thailand after 250-day voyage",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Moment 'stolen' van is 'driven wrong way down dual carriageway at high speed' during 15-mile police chase",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Opinion: I was a doula before I was an OB-GYN. I wish the two professions understood each other more",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Dalla sicurezza alle tasse, i 'record' del Governo raccolti in un opuscolo di FdI",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "I know so many women who tick every box but just can't find love. The problem? They're TOO intelligent. Here's why being clever can secretly sabotage your romantic life - and 5 ways to put things right : TRACEY COX",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "I've fallen for a large flat in a coastal town but it's next door to a 20-bed HMO - should I steer well clear?",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Cassandra Wilson, Star Jazz Singer, Dies at 70",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Yonhap News Summary",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Breaking: Maroons unveil Boyd as Origin coach on two-year deal",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Meet the Indian Wedding Stylists Brands Need to Know",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "How CEO Olivier Bron Capitalized on Bloomingdale\u2019s Big Moment",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Beyond Lab-Grown: How Dorsey Is Building a New Kind of Jewelry Brand",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "The New Rules for Raising Money in Fashion",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Stephen A. Smith on Trump, Democrats and the politics of chaos",
    "why": "triage verdict NO"
   },
   {
@@ -1530,72 +359,8 @@
    "why": "triage verdict NO"
   },
   {
-   "title": "Stan Kroenke's record-setting LA Angels purchase should make longterm MLB lockout less likely",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Textual sleuths fight AI slop with Pangram",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Amazon\u2019s 2026 Holiday Deals Are About to Look Better Than They Are",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Podcast: One country musician is calling for other artists to oppose assault rifles",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Bidets save you money and reduce waste \u2014 we tested the best options out there",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "50+ products to make your life easier and our planet cleaner",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Mother's Day is around the corner. Here are 50+ thoughtful gifts she'll love",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "A head-to-toe guide of how men should dress this spring, and where they should shop",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "The 7 best high-yield savings accounts of April 2023",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Composting is an easy way to reduce food waste. Here's how to do it",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "We stopped using aluminum foil for cooking and you should too. Here's what to use instead",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "TechCrunch Disrupt 2026\u2019s new Real World AI Stage features Nvidia, robots, and extinct animals",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Burning Man murder mystery deepens as new details emerge 1 year after desert festival killing",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Hugh Jackman Says One Take Told Him Exactly How Big Zendaya Would Be, But Directors Still Made Her Prove It",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Trump Says White House Helipad Is Complete (Torrie Herrington/NOTUS)",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "US Open tennis 2026: Britain\u2019s Jones beats Linette, Shelton sees off Hurkacz, and more on day four \u2013 live",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Bodycam video captures mother\u2019s arrest after golf club attack",
-   "why": "triage verdict NO"
+   "title": "Sources: Meta adjusts employee review language around \"AI-driven impact\" and token usage, easing off on tokenmaxxing, while promoting the use of AI agent Hatch (Wired)",
+   "why": "ledger: RECYCLED"
   }
  ]
 }
