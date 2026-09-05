@@ -1,5 +1,5 @@
 {
- "assembled_at": "2026-09-05T08:13:21.967683+00:00",
+ "assembled_at": "2026-09-05T14:53:53.111260+00:00",
  "slot_plan": "A",
  "displacement": "MANUAL",
  "daytype": "weekend",
@@ -7,73 +7,108 @@
   4,
   6
  ],
- "actual_size": 38,
- "lint_failures": [],
- "slots_unfilled": [
-  "Body & mind"
+ "actual_size": 6,
+ "lint_failures": [
+  "under 3 fully self-contained items",
+  "no item answers 'what do I do with this'"
  ],
+ "slots_unfilled": [],
  "stories": [
   {
    "slot": "unavoidable",
    "slot_label": "Unavoidable",
-   "key": "800fdf44556d10c8",
-   "title": "Trump sends envoys to Russia and Ukraine with peace plan",
+   "key": "87562cbce25e9f0d",
+   "title": "U.S. strikes Iranian tanker and oil facility as Trump threatens further attacks",
    "beat": "international",
-   "publisher_count": 5,
+   "publisher_count": 10,
    "publishers": [
+    "BBC",
+    "New York Times",
+    "Post and Courier",
+    "Yahoo News",
+    "ABC News",
     "Al Jazeera",
     "CBS News",
-    "France 24",
+    "NBC News",
     "The Independent",
-    "ANSA"
+    "ABC Australia"
    ],
    "scores": {
-    "emotional_load": 3,
-    "explainability": 5,
+    "emotional_load": 4,
+    "explainability": 3,
     "actionability": 1,
     "conversational_currency": 4
    },
    "politician_led": true,
    "ledger_class": "DEVELOPMENT",
    "new_facts": [
-    "Trump sends envoys Witkoff and Kushner to Moscow and Kyiv with new peace proposal, first Kyiv trip since Trump's return",
-    "Moscow reported to have violated a Zelenskyy-proposed air truce as envoys depart for talks",
-    "Drone strike hits Kyiv intelligence (SBU) building; Trump says Russia does not intend to attack NATO"
+    "US strikes 3 Iranian oil tankers after Iran fired ballistic missiles at 2 US Navy warships, CENTCOM says.",
+    "Iranian state media claims US missiles hit an Iranian oil tanker near Kharg Island; US has not confirmed.",
+    "Unrelated new story: guide to family activities on Sullivan's Island.",
+    "Trump threatens to strike Iran's Pickaxe Mountain nuclear complex again amid tanker strikes."
    ],
-   "line": "Trump administration sends envoys to Moscow and Kyiv with an undisclosed peace proposal for ending the Ukraine war.",
-   "assembly_score": 9.31
+   "line": "U.S. strikes hit Iranian oil infrastructure near Kharg Island; Trump signals potential additional military action against Iran.",
+   "assembly_score": 21.15
   },
   {
    "slot": "money_me",
    "slot_label": "Money & me",
-   "key": "c1e2fb98094768e5",
-   "title": "Tax deadline tomorrow; how to request an extension",
+   "key": "773fe8045143b9af",
+   "title": "Communities block data center expansion over power and environmental costs",
    "beat": "business",
    "publisher_count": 1,
    "publishers": [
-    "CNN"
+    "The Atlantic"
    ],
    "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 5,
-    "conversational_currency": 3
+    "emotional_load": 3,
+    "explainability": 4,
+    "actionability": 3,
+    "conversational_currency": 4
    },
    "politician_led": false,
    "ledger_class": null,
    "new_facts": [],
-   "line": "Tax filing deadline is tomorrow; extensions are available to delay payment.",
-   "assembly_score": 5.53
+   "line": "Communities are pushing back against power-hungry data centers, citing environmental and infrastructure costs.",
+   "assembly_score": 5.83
+  },
+  {
+   "slot": "body_mind",
+   "slot_label": "Body & mind",
+   "key": "24fd29acb2ee72d4",
+   "title": "UN adopts new world map standard to correct geographic distortions",
+   "beat": "science",
+   "publisher_count": 3,
+   "publishers": [
+    "BBC",
+    "Al Jazeera",
+    "The Independent"
+   ],
+   "scores": {
+    "emotional_load": 1,
+    "explainability": 4,
+    "actionability": 1,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "UN adopted a new world map correcting Mercator's distortion of Africa's true size.",
+    "New map enlarges Africa, Latin America, South Asia and Oceania relative to Mercator projection.",
+    "Africa-led campaign urged governments, schools and tech firms to abandon the Mercator projection."
+   ],
+   "line": "UN adopts new map projection that more accurately represents country sizes, correcting distortions in the century-old Mercator projection.",
+   "assembly_score": 9.17
   },
   {
    "slot": "work_machines",
    "slot_label": "Work & machines",
-   "key": "83489ee8d1f8cf06",
-   "title": "In response to the \"wiki incident\", OpenAI says it is working on a framework for reporting misalignment incidents during training, evaluation, and deployment (@openai)",
+   "key": "4030cb8a813d0014",
+   "title": "The weird and wonderful headphones of CanJam 2026",
    "beat": "tech",
    "publisher_count": 1,
    "publishers": [
-    "Techmeme"
+    "The Verge"
    ],
    "scores": {
     "emotional_load": 3,
@@ -85,21 +120,20 @@
    "ledger_class": null,
    "new_facts": [],
    "line": "",
-   "assembly_score": 3.6
+   "assembly_score": 2.4
   },
   {
    "slot": "group_chat",
    "slot_label": "The group chat",
-   "key": "9c8de0a0e9bec645",
-   "title": "Bayeux Tapestry arrives at British Museum",
-   "beat": "culture",
-   "publisher_count": 2,
+   "key": "f6fb8742f8a74b64",
+   "title": "Schools ban smartphones as teachers clash over enforcement",
+   "beat": "education",
+   "publisher_count": 1,
    "publishers": [
-    "The Guardian",
     "The Independent"
    ],
    "scores": {
-    "emotional_load": 1,
+    "emotional_load": 2,
     "explainability": 5,
     "actionability": 3,
     "conversational_currency": 3
@@ -107,1147 +141,121 @@
    "politician_led": false,
    "ledger_class": "DEVELOPMENT",
    "new_facts": [
-    "Bayeux Tapestry arrived in UK in July via secret high-security operation; two threads torn in transit",
-    "Macron confirmed 2018 Sandhurst announcement of tapestry's return, quoting his remarks with then-PM Theresa May present"
+    "Schools now have a legal obligation to keep children off mobile phones for the first time."
    ],
-   "line": "The Bayeux Tapestry is being shown at the British Museum, prompting discussion of its historical accuracy and Franco-British cultural ties.",
-   "assembly_score": 6.87
+   "line": "Schools are banning student smartphones, but staff disagree on enforcement methods and how strictly to apply the rules.",
+   "assembly_score": 7.21
   },
   {
    "slot": "close",
    "slot_label": "The close",
-   "key": "16b0a709210eb02b",
-   "title": "Reform UK officials resign as Farage battles donations scandal",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "France 24",
-    "The Independent",
-    "Daily Mail"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "ledger_class": "DEVELOPMENT",
-   "new_facts": [
-    "Farage pledges radical tax-cut package; two close aides suspended amid new donations storm",
-    "Hidden-camera probe shows officials soliciting foreign funds, including possible \u00a3500,000 US donor gift; officials resigned, not just suspended"
-   ],
-   "line": "Farage's Reform UK faces a widening donations scandal as two senior officials resign; he pledges tax cuts amid the crisis.",
-   "assembly_score": 7.05
-  },
-  {
-   "slot": "unavoidable",
-   "slot_label": "Unavoidable",
-   "key": "0c2260fc15829e01",
-   "title": "Far-right AfD surges in German state election, challenging postwar taboo",
-   "beat": "international",
-   "publisher_count": 3,
-   "publishers": [
-    "New York Times",
-    "The Guardian",
-    "Deutsche Welle"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "ledger_class": "DEVELOPMENT",
-   "new_facts": [
-    "Magdeburg hosts a civil-society democracy festival plus AfD's final rally ahead of Sunday's vote.",
-    "Details AfD's Saxony-Anhalt plans: deportation detention centers, mandatory work for asylum-seekers, vigilante groups.",
-    "Adds 1.7 million eligible voters figure and upcoming Mecklenburg-Vorpommern/Berlin elections on Sept 20."
-   ],
-   "line": "Germany's far-right AfD party is gaining ground in a state election, testing whether postwar political norms will hold if extremists win power.",
-   "assembly_score": 7.69
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "38bd10b3742afb27",
-   "title": "Mistrial declared in Clancy triple-murder case",
-   "beat": "national",
-   "publisher_count": 4,
-   "publishers": [
-    "BBC",
-    "Daily Beast",
-    "ABC Australia",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-09-05/lindsay-clancy-murder-trial-declared-mistrial-what-next/107119826",
-    "//bbc.co.uk/news/articles/cx2z0xnw2d6o?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/news/article-16093655/Lindsay-Clancy-MISTRIAL.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dailymail.com/news/article-16107249/How-Lindsay-Clancy-murder-trial-eerie-similarities-haunting-Irish-case.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//thedailybeast.com/trump-weighs-in-on-lindsay-clancy-triple-murder-case-in-bonkers-rant"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 2,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Massachusetts court declares mistrial in high-profile case of mother accused of killing three children; retrial likely.",
-   "assembly_score": 0.92
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "87562cbce25e9f0d",
-   "title": "U.S. strikes Iranian tanker and oil facility as Trump threatens further attacks",
-   "beat": "international",
-   "publisher_count": 4,
-   "publishers": [
-    "Post and Courier",
-    "Yahoo News",
-    "Al Jazeera",
-    "Deutsche Welle"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/9/5/why-is-trump-threatening-to-strike-irans-pickaxe-mountain-again-now?traffic_source=rss",
-    "//dw.com/en/iran-war-explosions-reported-near-kharg-island/live-79044467?maca=en-rss-en-all-1573-xml-mrss",
-    "//postandcourier.com/things-to-do-with-kids-on-sullivan-s-island/article_0afa8c62-8392-4d8f-85af-0bbef15e9ac7.html",
-    "//yahoo.com/news/articles/blasts-heard-near-irans-kharg-082127359.html"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "U.S. strikes hit Iranian oil infrastructure near Kharg Island; Trump signals potential additional military action against Iran.",
-   "assembly_score": 0.65
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "999cf403e4399ec0",
-   "title": "Reform UK pledges \u00a315,000 personal tax allowance in first budget",
+   "key": "e9457c13a248632d",
+   "title": "Reform UK pledges tax cuts amid donations scandal and party discord",
    "beat": "national",
    "publisher_count": 2,
    "publishers": [
     "BBC",
     "Daily Mail"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/cgk5g51xk57o?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/news/article-16107261/Reform-UK-eyes-tax-cut-nearly-40-million-Brits-Robert-Jenrick-pledges-raise-personal-allowance-15-000-Budget-end-decade-long-stealth-raid.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
    ],
    "scores": {
     "emotional_load": 2,
     "explainability": 4,
-    "actionability": 2,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Reform UK pledges to raise the personal tax-free allowance to \u00a315,000, affecting millions of workers and reducing tax revenue.",
-   "assembly_score": 0.48
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "f48643fb31db38e8",
-   "title": "Masked protesters block Port of Dover access",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "BBC",
-    "The Guardian",
-    "The Independent"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/cy8znyzgkjjo?at_campaign=rss&at_medium=RSS",
-    "//independent.co.uk/news/uk/home-news/port-of-dover-masked-protesters-police-traffic-b3045148.html",
-    "//theguardian.com/uk-news/2026/sep/05/black-clad-protesters-balaclavas-block-road-port-of-dover-kent"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Masked protesters blocked access to the Port of Dover, disrupting one of Britain's busiest shipping hubs.",
-   "assembly_score": 0.32
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "7444d35567b0fb99",
-   "title": "Nepal rescuers find survivors 10 days after catastrophic floods",
-   "beat": "international",
-   "publisher_count": 3,
-   "publishers": [
-    "CBS News",
-    "France 24",
-    "The Independent"
-   ],
-   "urls": [
-    "//cbsnews.com/news/nepal-floods-rescue-tunnel-man-woman",
-    "//france24.com/en/video/20260905-nepal-temporary-education-centres-help-flood-displaced-children",
-    "//independent.co.uk/news/nepal-chinese-kathmandu-b3045153.html"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": true,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Rescuers in Nepal continue finding survivors ten days after floods killed hundreds; temporary schools open for displaced children.",
-   "assembly_score": 0.07
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "4fe8ad7e56f888f7",
-   "title": "Alcaraz, Sabalenka advance to US Open round of 16",
-   "beat": "culture",
-   "publisher_count": 3,
-   "publishers": [
-    "Al Jazeera",
-    "ANSA",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//aljazeera.com/sports/2026/9/5/alcaraz-sabalenka-into-us-open-last-16-as-williams-sisters-lose-on-return?traffic_source=rss",
-    "//ansa.it/sito/notizie/sport/tennis/2026/09/05/us-open-alcaraz-agli-ottavi-ma-non-convince-ancora.-riecco-tsitsipas_806f682b-e336-40e6-9e31-ea8c6052b974.html",
-    "//dailymail.com/sport/tennis/article-16106829/carlos-alcaraz-open-shirtless-fans.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 0.05
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "b85f782a24dfb703",
-   "title": "Venice Film Festival programming includes Pattinson, Oasis",
-   "beat": "culture",
-   "publisher_count": 3,
-   "publishers": [
-    "The Independent",
-    "ANSA",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//ansa.it/sito/notizie/cultura/2026/09/04/mostra-del-cinema-il-programma-del-5-settembre-a-venezia-ecco-moretti-gli_fcfc173a-ae8e-423d-a60a-c4b7b8bfd545.html",
-    "//dailymail.com/tvshowbiz/article-16107341/Amal-Clooney-1-700-snake-print-Ellie-Saab-skirt-husband-George-Clooney-leave-Venice-Film-Festival.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//independent.co.uk/news/robert-pattinson-oasis-italy-liam-gallagher-george-clooney-b3045122.html"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.05
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "e44b7f42b087b1da",
-   "title": "What Will Happen to Lindsay Clancy in the Long Term?",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/crime-desk/article-16079147/lindsay-clancy-trial-verdict.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dailymail.com/crime-desk/article-16106879/lindsay-clancy-trial-mistrial-plymouth-massachusetts.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dailymail.com/crime-desk/article-16107087/lindsay-clancy-fundraiser-supporters-gofundme.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dailymail.com/news/article-16106671/Lindsay-Clancy-patrick-breaks-silence-mistrial.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dailymail.com/news/article-16107101/Lindsay-Clancy-lawyer-message-holdout-juror-mistrial.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//nytimes.com/2026/09/05/us/lindsay-clancy-psychiatric-hospital.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.28
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "fc404b940103d3c4",
-   "title": "Milei escalates Falklands pressure with oil sanctions threat",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/c980g0g7yyjo?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/money/markets/article-16107245/Rockhopper-rocked-Argentine-threats-Falklands-oil.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dailymail.com/news/article-16106601/Argentina-Burnhams-weakness-Kemi-Badenoch-blasts-PM-Falklands.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dailymail.com/news/article-16106609/Argentina-Falklands-Islands-cash-4billion-new-oil-field.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dailymail.com/news/article-16107229/Argentina-ramps-Falklands-pressure.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Argentina's president escalates pressure on the Falkland Islands by threatening oil company sanctions, reviving a decades-old territorial dispute.",
-   "assembly_score": -0.29
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "27280acfa40979ff",
-   "title": "Missouri AG files petition asking Supreme Court to revive Trump-backed redistricting map",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//foxnews.com/politics/missouri-ag-files-petition-asking-supreme-court-revive-trump-backed-redistricting-map",
-    "//memeorandum.com/260905/p1"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.57
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "b1f9e68959a82223",
-   "title": "Voters are fed up with data centers. Both parties are trying to cash in for midterms",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "NPR",
-    "New York Times"
-   ],
-   "urls": [
-    "//npr.org/2026/09/05/nx-s1-5913671/ai-data-center-campaign-spending",
-    "//nytimes.com/2026/09/05/us/politics/democrats-republicans-voters-gallup-midterms.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.8
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "ad8ea57b2679f553",
-   "title": "Flock cameras draw opposition from across the political spectrum",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "NPR",
-    "New York Times"
-   ],
-   "urls": [
-    "//npr.org/2026/09/05/nx-s1-5955778/flock-surveillance-camera-opposition-politics",
-    "//nytimes.com/2026/09/05/us/red-states-republicans-flock-cameras.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.81
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "79ebb26d9320327a",
-   "title": "Everything you need to know about Way Day 2023, Wayfair's biggest sale of the year",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "CNN",
-    "Vogue"
-   ],
-   "urls": [
-    "//cnn.com/cnn-underscored/deals/wayfair-way-day-2023-04-17?iid=CNNUnderscoredHPcontainer",
-    "//vogue.com/article/everything-we-know-so-far-heated-rivalry-season-2"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.85
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "671fd3d4caee3fb9",
-   "title": "Source: Betaworks has a 5.5% stake in Hugging Face, worth ~$650M at its $11.9B acquisition price for stockholders; A.Capital says it could bag $1.5B on the sale (Yuliya Chernova/Wall Street Journal)",
-   "beat": "tech",
-   "publisher_count": 2,
-   "publishers": [
-    "Techmeme",
-    "The Independent"
-   ],
-   "urls": [
-    "//independent.co.uk/news/wall-street-new-york-inflation-strait-of-hormuz-consumer-price-index-b3045149.html",
-    "//techmeme.com/260905/p5"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.85
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "adc3d056219637ac",
-   "title": "Trump gets testy and calls Iran war \u2018small potatoes\u2019 when pressed on length of fight",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "CBS News",
-    "The Independent"
-   ],
-   "urls": [
-    "//cbsnews.com/live-updates/iran-war-us-trump-diesel-gas-prices-labor-day",
-    "//independent.co.uk/news/world/americas/us-politics/trump-iran-war-small-potatoes-length-timeline-b3045133.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.39
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "796f81def09bc1d7",
-   "title": "1,000s of Lebanese students displaced by war as school starts",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Post and Courier",
-    "France 24"
-   ],
-   "urls": [
-    "//france24.com/en/middle-east/20260905-middle-east-live-israeli-strikes-on-south-and-east-lebanon-kill-three-people",
-    "//postandcourier.com/nation-world/1-000s-of-lebanese-students-displaced-by-war-as-school-starts/article_d5188600-5c22-4120-8315-34d242c6c77f.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.85
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "e817c39a74229dec",
-   "title": "U.S. ambassador pledges Palestinian protection as West Bank settler violence escalates",
-   "beat": "international",
-   "publisher_count": 3,
-   "publishers": [
-    "Al Jazeera",
-    "France 24",
-    "ABC Australia"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-09-05/israel-not-planning-gaza-forced-displacement-us-ambassador-says/107120558",
-    "//aljazeera.com/news/2026/9/5/israel-must-guarantee-safety-of-west-bank-population-ambassador?traffic_source=rss",
-    "//aljazeera.com/video/newsfeed/2026/9/5/us-ambassador-to-israel-meets-palestinian-americans-in-occupied-west-bank?traffic_source=rss",
-    "//france24.com/en/middle-east/20260905-us-ambassador-to-israel-visits-palestinian-town-hit-by-west-bank-settler-violence"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 3,
     "actionability": 1,
     "conversational_currency": 3
    },
    "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "U.S. ambassador to Israel visits West Bank and Gaza amid escalating Israeli settler violence against Palestinians, pledging protection but offering no enforcement mechanism.",
-   "assembly_score": 1.968
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "9d41d86c70922e8e",
-   "title": "Newcastle draws with Bournemouth in Premier League",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "Daily Mail"
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Farage tells BBC's Kuenssberg he 'wasn't listening' to recorded donor talks; family 'begging' him to quit.",
+    "New conference incident: Reform members pulled heckler's hair; Yusuf condemns it, police urge woman to come forward."
    ],
-   "urls": [
-    "//dailymail.com/sport/football/article-16104651/newcastle-bournemouth-premier-league-live.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//theguardian.com/football/live/2026/sep/05/newcastle-united-v-bournemouth-premier-league-live"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 1.595
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "e6e36c4228d49fe6",
-   "title": "LSU opens season with Kiffin debut against Clemson",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "Post and Courier",
-    "Fox News"
-   ],
-   "urls": [
-    "//foxnews.com/outkick-sports/lsu-ready-party-lane-kiffin-debut-brings-fireworks-death-valley-revival-like-buildup",
-    "//postandcourier.com/videos/clemson-football-lsu-vizzina-baton-rouge/video_18e18ec2-465e-407a-8b56-427641f4fe11.html"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "LSU and Clemson open their football seasons against each other, with new LSU coach Lane Kiffin making his debut.",
-   "assembly_score": 1.155
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "a85f1bfaeb406c3c",
-   "title": "Fetterman staffers promise more revelations; U.S. leverages chip access in Armenia-Azerbaijan talks",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//foxnews.com/politics/ex-fetterman-staffers-promise-more-damaging-details-after-brutal-report-tip-of-the-iceberg",
-    "//memeorandum.com/260905/p12"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 2,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Former staffers of Senator John Fetterman say a critical report is incomplete and promise additional disclosures; separately, U.S. offered Nvidia chips to broker Armenia-Azerbaijan peace.",
-   "assembly_score": 1.125
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "88cae01d5d47280f",
-   "title": "Tennis players' outfits at U.S. Open",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "Vogue"
-   ],
-   "urls": [
-    "//nytimes.com/2026/09/05/style/naomi-osaka-fashion-us-open.html",
-    "//vogue.com/slideshow/best-on-court-style-moments-2026-us-open"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 1.05
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "0bf22bad110b4c03",
-   "title": "UN adopts new world map standard correcting Africa's size",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "The Independent"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/9/5/how-big-is-africa-really-why-the-un-voted-to-change-the-world-map?traffic_source=rss",
-    "//independent.co.uk/news/world/new-world-map-un-africa-mercator-b3045192.html"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": true,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "UN adopts new cartographic standard showing Africa's actual size, correcting a 400-year-old projection that systematically undersized the continent.",
-   "assembly_score": 0.58
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "c9f298c4bac8c472",
-   "title": "Prince Harry, Meghan Markle accused of seeking \u2018best of both worlds\u2019 with UK move: expert",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox News",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/royals/article-16096401/Charles-powerful-fondness-Harry-Body-language.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dailymail.com/news/royals/article-16107251/Video-William-reconcile-Harry-King-two-options-Demand-apology-strip-titles-says-RICHARD-EDEN.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//foxnews.com/entertainment/prince-harry-meghan-markle-accused-seeking-best-both-worlds-uk-move-expert"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 0.27
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "fb882402ef3415d9",
-   "title": "ICE given permission to force-feed Cuban hunger striker with gastric tube",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "ABC News"
-   ],
-   "urls": [
-    "//abcnews.com/US/ice-whistleblower-alleged-agency-shortcutting-vetting-process-new/story?id=136210462",
-    "//theguardian.com/us-news/2026/sep/05/cuban-hunger-striker-ice-force-feeding"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 0.21
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "21e3c2cb952b2872",
-   "title": "A College Caught in the Middle of America\u2019s Football Obsession",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "Fox News",
-    "The Independent",
-    "The New Yorker"
-   ],
-   "urls": [
-    "//foxnews.com/outkick-sports/college-football-first-full-saturday-celebration-america-best",
-    "//independent.co.uk/news/lsu-ohio-state-associated-press-mississippi-georgia-b3045204.html",
-    "//newyorker.com/culture/the-lede/a-college-caught-in-the-middle-of-americas-football-obsession"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 0.0
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "7fe806e5781256c9",
-   "title": "Oil and politics: What Trump\u2019s \u2018historic\u2019 deal means for Venezuela",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "CNBC"
-   ],
-   "urls": [
-    "//aljazeera.com/features/2026/9/5/oil-and-politics-what-trumps-historic-deal-means-for?traffic_source=rss",
-    "//cnbc.com/2026/09/05/trump-venezuela-oil-north-america-blue-energy-partners-nabep.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.01
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "86d3f4a2af78765b",
-   "title": "What Led to Maria Bartiromo\u2019s Downfall at Fox News",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/260905/p11",
-    "//nytimes.com/2026/09/05/business/media/maria-bartiromo-fox-news.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.17
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "a1955934a2388e15",
-   "title": "The Citadel puts lopsided loss to Wofford in the past, focuses on Charlotte",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Post and Courier",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16100053/Charlotte-Church-puts-real-Tardis-Welsh-cottage-market-featuring-interiors-inspired-singers-travels-Africa-Morocco.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//postandcourier.com/the-citadel-puts-lopsided-loss-to-wofford-in-the-past-focuses-on-charlotte/article_00ce252c-d73c-48d4-a7b6-b70c72a470ab.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.26
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "ab9591961d2da7d3",
-   "title": "16-year-old girl killed, 21-year-old man injured in Old Town Manassas shooting",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "NBC Washington",
-    "Fox 5 DC"
-   ],
-   "urls": [
-    "//fox5dc.com/news/16-year-old-killed-man-injured-shooting-disrupts-manassas-first-friday",
-    "//nbcwashington.com/news/local/16-year-old-girl-killed-21-year-old-man-injured-in-old-town-manassas-shooting/4150666"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.48
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "832917ee2d9989df",
-   "title": "Europe would not be able to sustain war of attrition with Russia, defence officials say",
-   "beat": "international",
-   "publisher_count": 3,
-   "publishers": [
-    "The Guardian",
-    "Fox News",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16102455/Putin-Europe-hybrid-attacks-airport-drone-bombs-EU.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//foxnews.com/world/russias-shadow-war-putting-europe-edge-germany-confronts-growing-threat",
-    "//theguardian.com/world/2026/sep/05/europe-unable-sustain-war-of-attrition-russia-defence-officials-say"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.75
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "86eb66f8b0a90058",
-   "title": "The beloved Dyson Supersonic hair dryer is at its lowest price ever",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "CNN",
-    "The Telegraph"
-   ],
-   "urls": [
-    "//cnn.com/cnn-underscored/deals/dyson-supersonic-sale-2023-04-17?iid=CNNUnderscoredHPcontainer%3Fiid%3DCNNUnderscoredHPcontainer",
-    "//telegraph.co.uk/recommended/health-and-fitness/tech-accessories/dyson-camera-jet-is-it-worth-it"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.01
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "a9a3444f4a666297",
-   "title": "It's about to feel like fall (kind of). Fall forecast 2026 update",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Yahoo News",
-    "Vogue"
-   ],
-   "urls": [
-    "//vogue.com/fashion-shows/fall-1994-ready-to-wear/isaac-mizrahi",
-    "//yahoo.com/news/weather-news/articles/feel-fall-kind-fall-forecast-100422320.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.93
+   "line": "Reform UK promises tax-cut policies while facing internal turmoil over donations and a physical altercation at a campaign event.",
+   "assembly_score": 8.85
   }
  ],
  "excluded_sample": [
   {
-   "title": "Podcast: One country musician is calling for other artists to oppose assault rifles",
+   "title": "How Naomi Osaka Became the Fashion Queen of the Tennis Court",
    "why": "triage verdict NO"
   },
   {
-   "title": "Bidets save you money and reduce waste \u2014 we tested the best options out there",
+   "title": "Oasis reunion tour documentary rocks Venice Film Festival",
    "why": "triage verdict NO"
   },
   {
-   "title": "50+ products to make your life easier and our planet cleaner",
+   "title": "Ramsey caps Newcastle fightback for draw as Bournemouth concede late again",
    "why": "triage verdict NO"
   },
   {
-   "title": "Mother's Day is around the corner. Here are 50+ thoughtful gifts she'll love",
+   "title": "Newcastle United v Bournemouth: Premier League \u2013 live",
    "why": "triage verdict NO"
   },
   {
-   "title": "A head-to-toe guide of how men should dress this spring, and where they should shop",
+   "title": "Monaco rally to edge winless PSG and reclaim top spot",
    "why": "triage verdict NO"
   },
   {
-   "title": "42 of the most useful travel products you can buy on Amazon",
+   "title": "Formula One 2026: Italian Grand Prix qualifying \u2013 live",
    "why": "triage verdict NO"
   },
   {
-   "title": "The 7 best high-yield savings accounts of April 2023",
+   "title": "Manchester City v Coventry, Nottingham Forest v Tottenham and more: football clockwatch \u2013 live",
    "why": "triage verdict NO"
   },
   {
-   "title": "Composting is an easy way to reduce food waste. Here's how to do it",
+   "title": "Famiglia nel bosco, video genitori, 'decisione ci spezza il cuore'",
    "why": "triage verdict NO"
   },
   {
-   "title": "We stopped using aluminum foil for cooking and you should too. Here's what to use instead",
+   "title": "Meghan Markle\u2019s First Outing Back in U.K. Revealed",
    "why": "triage verdict NO"
   },
   {
-   "title": "The beloved Dyson Supersonic hair dryer is at its lowest price ever",
+   "title": "How to survive a national debt scare (Vox)",
    "why": "triage verdict NO"
   },
   {
-   "title": "Everything you need to know about Way Day 2023, Wayfair's biggest sale of the year",
+   "title": "Photos show daily life in Iran on the beach along the Strait of Hormuz",
    "why": "triage verdict NO"
   },
   {
-   "title": "The 2024 presidential alternative many voters will want",
+   "title": "Lionel Messi and Cristiano Ronaldo in line to play TOGETHER for the first time ever as their former team-mate plots star-studded farewell match",
    "why": "triage verdict NO"
   },
   {
-   "title": "Isaac Mizrahi Fall 1994 Ready-to-Wear",
+   "title": "Robert Pattinson e i fratelli Gallagher, Hollywood e il brit rock al Lido di Venezia",
    "why": "triage verdict NO"
   },
   {
-   "title": "Khoki Tokyo Spring 2027",
+   "title": "Switch to a Google Pixel for free with these T-Mobile offers",
    "why": "triage verdict NO"
   },
   {
-   "title": "The most lucrative locations for student lets... including two where landlords make over a 9% return",
+   "title": "Clemson football kicks off its season at LSU",
    "why": "triage verdict NO"
   },
   {
-   "title": "\u2018Liar!\u2019: Trump Finally Breaks His Silence on the Rumor That\u2019s Followed Him for Years \u2014 Skeptics Say His Story Isn\u2019t Adding Up",
+   "title": "The Pussycat Dolls' Kimberly Wyatt hints this reunion will 'be their last' as they prepare to wrap up tour after cancelling US dates due to poor ticket sales",
    "why": "triage verdict NO"
   },
   {
-   "title": "Beauty Marks: The Best Beauty Looks of the Week",
+   "title": "Un diamante dalle ceneri di un sacerdote, 'per riflettere la luce di Dio'",
    "why": "triage verdict NO"
   },
   {
-   "title": "NewWSHSStadium76.JPG",
+   "title": "Bargain Britain: As sales of UK firms top \u00a380bn for the year, you can snag yourself a profit",
    "why": "triage verdict NO"
   },
   {
-   "title": "Williams sisters exit US Open but excite - what does future hold?",
+   "title": "Strictly Come Dancing first look: Hosts Emma Willis and Josh Widdicombe get glammed up as they make their dancing debut alongside Johannes Radebe in new series trailer",
    "why": "triage verdict NO"
   },
   {
-   "title": "Jensen Interceptor returns - but it's nothing like the Sixties original: Iconic British name reborn as 960bhp track car",
+   "title": "Andi Peters responds to Miriam Margolyes 'racism row' as Jeremy Vine praises This Morning presenter for his professionalism",
    "why": "triage verdict NO"
   },
   {
-   "title": "The Engines of Our Ingenuity 1625: Elisha Gray and Miracles",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "\u2018There is light at the end of this tunnel. But the tunnel is filled with sewage\u2019: Marina Hyde on finding hope in political chaos",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Tim Dowling: my twice-daily baths are giving me a sinking feeling",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Blind date: \u2018Bizarrely, she suddenly realised she knew my daughter\u2019",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Losing a parent is a bewildering, lonely experience. Here are the things I wish I had known before | Gaby Hinsliff",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "A family affair! Zara Tindall joins her stylish sister-in-law Harriet and brother Peter as well as their father Captain Mark Phillips, 77, and his Belgian equestrian girlfriend Florence Standaert, 44, at Burghley Horse Trials",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "riverdogs.jpg",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "A Long Winter review \u2013 hope, desire and subversion in Andrew Haigh\u2019s beautiful winter western",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Ben Simmons handed NBA lifeline in one-year deal with Sacramento Kings",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Exclusive-White House reviews candidates to replace Hegseth deputy Feinberg, sources say",
+   "title": "\u2018It struck me as a minimalist tableau\u2019: Henk Stam\u2019s best phone picture",
    "why": "triage verdict NO"
   }
  ]
