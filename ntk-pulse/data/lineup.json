@@ -1,5 +1,5 @@
 {
- "assembled_at": "2026-09-07T03:24:03.964809+00:00",
+ "assembled_at": "2026-09-07T09:07:55.026738+00:00",
  "slot_plan": "A",
  "displacement": "MANUAL",
  "daytype": "holiday",
@@ -7,103 +7,109 @@
   4,
   6
  ],
- "actual_size": 24,
- "lint_failures": [],
+ "actual_size": 6,
+ "lint_failures": [
+  "under 3 fully self-contained items",
+  "no item answers 'what do I do with this'"
+ ],
  "slots_unfilled": [],
  "stories": [
   {
    "slot": "unavoidable",
    "slot_label": "Unavoidable",
-   "key": "60b68f673e5a97af",
-   "title": "Armed assailant injures multiple people at Ohio governor candidate's campaign event",
-   "beat": "national",
+   "key": "966a44eb614012de",
+   "title": "AfD wins German state election but lacks coalition partners to govern",
+   "beat": "international",
    "publisher_count": 11,
    "publishers": [
+    "BBC",
+    "Financial Times",
     "New York Times",
     "The Guardian",
-    "ABC News",
+    "Yahoo News",
     "CBS News",
-    "Daily Beast",
-    "Fox News",
-    "NBC News",
+    "Deutsche Welle",
+    "France 24",
+    "The Independent",
     "Daily Mail",
-    "Fox 5 Atlanta",
-    "Fox 5 DC",
     "Memeorandum"
    ],
    "scores": {
     "emotional_load": 4,
-    "explainability": 5,
+    "explainability": 4,
     "actionability": 1,
     "conversational_currency": 4
    },
    "politician_led": true,
    "ledger_class": "DEVELOPMENT",
    "new_facts": [
-    "Suspect arrested; identified as an armed Canfield resident who lunged at Acton",
-    "Suspect charged with misdemeanor assault; authorities say he did not draw his weapon",
-    "Describes attacker as a heavily armed Republican; gives Acton's age (60); quotes campaign statement naming husband Eric Acton",
-    "New on-record quote from Mahoning County Democratic Party chairperson describing suspect knocking volunteers down and being found with weapons",
-    "Amy Acton, Ohio gubernatorial candidate, attacked by armed individual at Canfield Fair near Youngstown; multiple injured",
-    "Confirms armed person confronted Acton at Canfield Fair, Mahoning County, identifies her as gubernatorial candidate"
+    "An AfD leader predicts Chancellor Merz's government will fall by Christmas; Musk publicly hails the win.",
+    "Confirms AfD won but fell short of a majority; adds Weidel's 'dream result' quote and Chrupalla's 'clear mandate'/anti-Ukraine-funding quote.",
+    "Precise exit-poll figures: AfD 44.5%, CDU 18.5%",
+    "France 24 correspondent Nick Holdsworth says it's 'hard to say' whether the win reflects a protest vote or explicit AfD endorsement.",
+    "Polish Foreign Minister calls the AfD victory 'very worrying'.",
+    "Unclear if AfD can form government; would be first far-right regional govt since WWII",
+    "BBC Europe editor Katya Adler analyzes the result as ringing alarm bells for the EU and traditional parties.",
+    "Explains AfD's failure to overcome the mainstream parties' 'firewall' refusal to govern with it."
    ],
-   "line": "An armed person lunged at Democratic Ohio gubernatorial candidate Amy Acton at a campaign event, injuring multiple people.",
-   "assembly_score": 15.24
+   "line": "Germany's far-right AfD won a state election in Saxony-Anhalt with no clear path to govern, as European allies and adversaries watch the result.",
+   "assembly_score": 18.69
   },
   {
    "slot": "money_me",
    "slot_label": "Money & me",
-   "key": "3c78c53ae0dbac6f",
-   "title": "Seoul shares rise on tech gains amid Middle East tensions",
+   "key": "2b5e7ee4f53bfa8a",
+   "title": "Gas prices hit record Labor Day high as Iran tensions tighten supply",
    "beat": "business",
-   "publisher_count": 1,
+   "publisher_count": 3,
    "publishers": [
-    "Yonhap News"
+    "Financial Times",
+    "ABC News",
+    "The Independent"
    ],
    "scores": {
-    "emotional_load": 2,
+    "emotional_load": 3,
     "explainability": 5,
     "actionability": 1,
-    "conversational_currency": 2
+    "conversational_currency": 4
    },
    "politician_led": false,
    "ledger_class": "DEVELOPMENT",
    "new_facts": [
-    "Market update: shares extend gains into late morning, driven by strong chip sector gains.",
-    "Seoul shares open sharply higher on tech gains despite Middle East tensions."
+    "US gas prices hit record $4.14/gallon on Labor Day, tied to Iran war impact.",
+    "Iran to raise domestic petrol prices as war-triggered shortages make subsidies unsustainable.",
+    "Adds refinery issues as a second cause, alongside Iran war, for record US fuel prices."
    ],
-   "line": "South Korean stock market rose on technology sector strength, unaffected by Middle East conflict escalation.",
-   "assembly_score": 5.57
+   "line": "Gas prices hit record Labor Day highs amid Iran tensions and US refinery disruptions.",
+   "assembly_score": 9.46
   },
   {
    "slot": "body_mind",
    "slot_label": "Body & mind",
-   "key": "5e1a2bf2b4b8bce6",
-   "title": "Fingernail infection in days-old baby led to brain tumor diagnosis",
+   "key": "1dc5655557ffb3a1",
+   "title": "BBC presenter discloses diagnosis of incurable blood cancer",
    "beat": "health",
    "publisher_count": 1,
    "publishers": [
-    "Daily Mail"
+    "The Independent"
    ],
    "scores": {
-    "emotional_load": 5,
-    "explainability": 5,
+    "emotional_load": 4,
+    "explainability": 4,
     "actionability": 1,
-    "conversational_currency": 3
+    "conversational_currency": 2
    },
    "politician_led": false,
-   "ledger_class": "DEVELOPMENT",
-   "new_facts": [
-    "Newborn Joey, from Penicuik near Edinburgh, diagnosed with brain tumour after a fingernail infection led to detection at 11 days old"
-   ],
-   "line": "Infant's fingernail infection led doctors to discover an undiagnosed brain tumor, raising questions about early detection.",
-   "assembly_score": 2.67
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "BBC presenter Maryam Moshiri has polycythaemia vera, a rare blood cancer with no cure.",
+   "assembly_score": 2.77
   },
   {
    "slot": "work_machines",
    "slot_label": "Work & machines",
-   "key": "8b4e171915ef363b",
-   "title": "How everyday US investors are vibe-coding algorithms to automate trading strategies by connecting their stock portfolios to AI agents built with Claude or Codex (Hannah Erin Lang/Wall Street Journal)",
+   "key": "3d7e404f2e008621",
+   "title": "A record 12.7M graduates are entering China's workforce in 2026 as AI adds uncertainty to an oversaturated job market with a shrinking pool of entry-level roles (Yan Zhuang/New York Times)",
    "beat": "tech",
    "publisher_count": 1,
    "publishers": [
@@ -119,618 +125,53 @@
    "ledger_class": null,
    "new_facts": [],
    "line": "",
-   "assembly_score": 3.42
+   "assembly_score": 3.21
   },
   {
    "slot": "group_chat",
    "slot_label": "The group chat",
-   "key": "4fa88a80b0f3e766",
-   "title": "Country musician calls on peers to oppose assault rifles",
+   "key": "3effe7e29d653dba",
+   "title": "Netflix begins production on third Inbetweeners film",
    "beat": "culture",
    "publisher_count": 1,
    "publishers": [
-    "CNN"
+    "Daily Mail"
    ],
    "scores": {
-    "emotional_load": 3,
-    "explainability": 5,
+    "emotional_load": 1,
+    "explainability": 4,
     "actionability": 1,
-    "conversational_currency": 2
+    "conversational_currency": 3
    },
    "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A country musician is publicly calling on peers to oppose assault rifles.",
-   "assembly_score": 3.32
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Netflix confirms The Inbetweeners third film has started production, with a teaser image released"
+   ],
+   "line": "Netflix has begun production on a third Inbetweeners film, reviving the British comedy series after a decade.",
+   "assembly_score": 5.07
   },
   {
    "slot": "close",
    "slot_label": "The close",
-   "key": "c1e2fb98094768e5",
-   "title": "Tax filing deadline tomorrow; extension options available",
-   "beat": "business",
+   "key": "0674a4023655fdf3",
+   "title": "Thousands of camera-detected seatbelt fines voided after administrative error",
+   "beat": "national",
    "publisher_count": 1,
    "publishers": [
-    "CNN"
+    "ABC Australia"
    ],
    "scores": {
     "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 5,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Tax deadline is tomorrow; filing an extension delays payment but doesn't eliminate the underlying obligation.",
-   "assembly_score": 4.92
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "e70ccac633eec917",
-   "title": "Indonesia volcano closes eight airports, strands 170,000 travelers",
-   "beat": "national",
-   "publisher_count": 6,
-   "publishers": [
-    "BBC",
-    "Financial Times",
-    "The Guardian",
-    "CBS News",
-    "CNBC",
-    "ABC Australia"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-09-07/mount-anak-krakatau-volcano-indonesia-flights-jakarta/107122890",
-    "//bbc.co.uk/news/articles/czezydp4l97o?at_campaign=rss&at_medium=RSS",
-    "//cbsnews.com/news/indonesia-volcano-eruption-flights-airport",
-    "//cnbc.com/2026/09/07/flights-canceled-jakarta-airport-anak-krakatau-eruption-disrupts-regional-travel-volcano.html",
-    "//ft.com/content/64acb80a-b577-44cd-87c4-2ec979b76fff?syn-25a6b1a6=1",
-    "//theguardian.com/world/2026/sep/07/volcano-eruption-indonesia-map-airports-closed-flights-mount-anak-krakatau"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A volcano eruption in Indonesia has closed eight airports and stranded 170,000 travelers, disrupting major regional air traffic.",
-   "assembly_score": 0.95
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "d6b86199ac13923c",
-   "title": "Gas prices hit record high for Labor Day weekend",
-   "beat": "business",
-   "publisher_count": 4,
-   "publishers": [
-    "ABC News",
-    "CBS News",
-    "The Bulwark",
-    "The Independent"
-   ],
-   "urls": [
-    "//abcnews.com/Business/wireStory/fuel-prices-record-labor-day-high-us-iran-136247961",
-    "//cbsnews.com/video/labor-day-weekend-gas-prices-hit-record-high",
-    "//independent.co.uk/news/fuel-prices-gas-aaa-iran-philadelphia-b3045686.html",
-    "//thebulwark.com/p/labor-day-building-breaking-rebuilding"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Gas prices hit record highs over Labor Day weekend due to refinery outages and Middle East tensions.",
-   "assembly_score": 0.43
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "ba6b44cde018811f",
-   "title": "US envoys leave Kyiv without breakthrough on Ukraine peace talks",
-   "beat": "international",
-   "publisher_count": 3,
-   "publishers": [
-    "The Guardian",
-    "France 24",
-    "The Independent"
-   ],
-   "urls": [
-    "//france24.com/en/europe/20260907-us-envoys-more-effective-ukraine-peace-proposals-kyiv",
-    "//independent.co.uk/news/world/europe/ukraine-russia-war-live-trump-putin-zelensky-peace-talks-news-b3045696.html",
-    "//theguardian.com/world/2026/sep/07/ukraine-war-briefing-us-envoys-leave-kyiv-no-breakthrough"
-   ],
-   "scores": {
-    "emotional_load": 3,
     "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "US envoys met with Ukrainian officials about peace proposals but left without agreement on ending the war.",
-   "assembly_score": 0.15
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "d83b5a9b54498d0f",
-   "title": "Iran vows retaliation, threatens new shipping restrictions near Strait of Hormuz",
-   "beat": "international",
-   "publisher_count": 3,
-   "publishers": [
-    "Al Jazeera",
-    "CBS News",
-    "The Independent"
-   ],
-   "urls": [
-    "//aljazeera.com/news/liveblog/2026/9/7/iran-war-live-tehran-to-announce-new-hormuz-shipping-route-in-coming-days?traffic_source=rss",
-    "//aljazeera.com/video/newsfeed/2026/9/7/aje-onl-nf_iran-to-announce-restricted-zone-around-hormuz-060926?traffic_source=rss",
-    "//cbsnews.com/live-updates/iran-war-us-trump-diesel-gas-prices-labor-day",
-    "//independent.co.uk/news/world/middle-east/iran-us-war-live-trump-hormuz-strikes-oil-tankers-b3045692.html",
-    "//independent.co.uk/news/world/middle-east/iran-us-war-live-trump-hormuz-strikes-ships-oil-tankers-b3045459.html"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Iran threatens escalation in Strait of Hormuz after U.S. strikes on Iranian tankers; both sides attacking commercial shipping.",
-   "assembly_score": -0.05
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "3f79c93d337785b0",
-   "title": "Israel orders Lebanon evacuations as Hezbollah clashes threaten truce",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "CNBC",
-    "France 24"
-   ],
-   "urls": [
-    "//cnbc.com/2026/09/07/us-iran-war-trump-hormuz-israel-hezbollah-fighting-strikes-.html",
-    "//france24.com/en/middle-east/20260907-middle-east-live-israel-army-orders-evacuation-of-zone-in-south-lebanon-ahead-of-strikes"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Israel orders evacuations in southern Lebanon as clashes with Hezbollah intensify, threatening a fragile ceasefire.",
-   "assembly_score": -0.14
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "4b1c72f67cec5a24",
-   "title": "North Korea commissions nuclear-capable destroyer as U.S., allies begin drills",
-   "beat": "international",
-   "publisher_count": 4,
-   "publishers": [
-    "Yahoo News",
-    "Al Jazeera",
-    "The Independent",
-    "Yonhap News"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/9/7/north-korea-deploys-warship-capable-of-annihilating-retaliatory-strikes?traffic_source=rss",
-    "//en.yna.co.kr/view/AEN20260907001151315",
-    "//independent.co.uk/news/kim-jong-un-north-korea-donald-trump-south-korea-seoul-b3045668.html",
-    "//yahoo.com/news/world/articles/nuclear-capable-warship-capsized-launched-044230801.html"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "North Korea commissioned a nuclear-capable destroyer after years of failed launches, as U.S., South Korea, and Japan began joint military drills.",
-   "assembly_score": -0.19
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "85e21207cd706cd4",
-   "title": "Amazon cargo plane crashes at Miami airport, killing at least 5",
-   "beat": "national",
-   "publisher_count": 6,
-   "publishers": [
-    "BBC",
-    "ABC News",
-    "CBS News",
-    "The Independent",
-    "Daily Mail",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//abcnews.com/US/cargo-plane-overruns-runway-miami-international-airport-faa/story?id=136242081",
-    "//bbc.co.uk/news/articles/c0e3p1j7n3ro?at_campaign=rss&at_medium=RSS",
-    "//cbsnews.com/news/miami-airport-plane-disabled-9-6-2026",
-    "//dailymail.com/news/article-16109917/Amazon-plane-skids-runway-crashes-roadway-Miami-reports-say.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//independent.co.uk/news/amazon-miami-national-transportation-safety-board-miami-international-airport-puerto-rico-b3045689.html",
-    "//independent.co.uk/news/world/americas/miami-airport-amazon-plane-crash-b3045603.html",
-    "//memeorandum.com/260906/p63"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 5
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Amazon cargo plane crashed during landing at Miami airport, killing at least 5 people and injuring 5 others; investigators are determining the cause.",
-   "assembly_score": -0.23
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "af28608005f2da39",
-   "title": "Germany's far-right AfD notches historic regional election win",
-   "beat": "international",
-   "publisher_count": 6,
-   "publishers": [
-    "BBC",
-    "The Guardian",
-    "CBS News",
-    "Deutsche Welle",
-    "Fox News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/c986w38r4j5o?at_campaign=rss&at_medium=RSS",
-    "//cbsnews.com/news/afd-german-election-saxony-anhalt",
-    "//dw.com/en/saxony-anhalt-preliminary-official-results-show-afd-tops-vote/live-78754934?maca=en-rss-en-all-1573-xml-mrss",
-    "//foxnews.com/world/germanys-far-right-party-afd-surges-historic-victory-state-election",
-    "//memeorandum.com/260906/p70",
-    "//theguardian.com/world/2026/sep/07/afd-thanks-elon-musk-german-state-elections-2026-win"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 5
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Germany's far-right AfD won a regional election in Saxony-Anhalt with historic support, reshaping European politics without a governing majority.",
-   "assembly_score": -0.28
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "b5860efbef60c1d9",
-   "title": "Fireworks explosion in central Mexico kills at least 10, injures 64",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "ABC News",
-    "Al Jazeera"
-   ],
-   "urls": [
-    "//abcnews.com/International/wireStory/explosion-fireworks-central-mexico-kills-10-injures-64-136243489",
-    "//aljazeera.com/video/newsfeed/2026/9/7/ten-killed-and-dozens-injured-in-mexico-fireworks-blast?traffic_source=rss"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A fireworks explosion in central Mexico killed at least 10 people and injured 64, with the toll still being assessed.",
-   "assembly_score": -0.45
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "7cad3ff9a1075e76",
-   "title": "Anti-immigration protesters clash with UK police after asylum seekers land",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//aljazeera.com/video/newsfeed/2026/9/7/anti-immigration-protesters-clash-with-police-in-uk-after-boat-arrival?traffic_source=rss",
-    "//dailymail.com/news/article-16110099/Hundreds-anti-migrant-protestors-descend-Portsmouth.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Anti-immigration protesters clashed with police in Portsmouth after 140 asylum seekers arrived by boat, raising tensions over migration policy.",
-   "assembly_score": -0.47
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "9b5e433aad402bd7",
-   "title": "Susan Sarandon says she is losing movie roles because of her support for Palestine",
-   "beat": "international",
-   "publisher_count": 3,
-   "publishers": [
-    "The Guardian",
-    "The Independent",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/tvshowbiz/article-16109879/Alicia-Vikander-husband-Michael-Fassbender-Echo-Chamber-Venice-Film-Festival.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//independent.co.uk/news/world/europe/alex-gibney-donald-trump-abu-ghraib-scientology-italy-b3045691.html",
-    "//theguardian.com/film/2026/sep/07/susan-sarandon-says-she-is-losing-movie-roles-because-of-her-support-for-palestine"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
     "actionability": 3,
     "conversational_currency": 3
    },
    "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
    "ledger_class": null,
    "new_facts": [],
-   "line": "",
-   "assembly_score": -0.92
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "681db6f07567805b",
-   "title": "China to pump $54bn into state banks and insurers to boost economy",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Financial Times"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/cx2z37qj4wno?at_campaign=rss&at_medium=RSS",
-    "//ft.com/content/8012b60e-c74e-49bc-9200-d37f13b4a135?syn-25a6b1a6=1"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.05
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "13e4c74b1c421b1a",
-   "title": "Trump is putting European security in peril",
-   "beat": "international",
-   "publisher_count": 3,
-   "publishers": [
-    "Financial Times",
-    "The Independent",
-    "American Spectator"
-   ],
-   "urls": [
-    "//ft.com/content/3fd1541c-7e1f-44c0-bd10-0d94174e5c0a",
-    "//independent.co.uk/news/world/americas/us-politics/donald-trump-new-hair-brunette-brown-colour-b3045680.html",
-    "//independent.co.uk/news/world/americas/us-politics/trump-approval-rating-new-poll-iran-war-economy-b3045676.html",
-    "//spectator.org/america-is-at-war-with-iran-whether-we-call-it-a-war-or-not"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.14
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "6063936f51275662",
-   "title": "Defending champs advance at Open",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Post and Courier"
-   ],
-   "urls": [
-    "//bbc.co.uk/sport/tennis/articles/cn4kge7gl99o?at_campaign=rss&at_medium=RSS",
-    "//postandcourier.com/defending-champs-advance-at-open/article_42086304-7bf0-49e4-948c-49e99d318a2e.html",
-    "//postandcourier.com/sabalenka-us-open/image_07799708-4f2f-4bae-b98e-fe01fc4ca6e9.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.43
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "ecb1595b40b712fb",
-   "title": "EU to boost Greenland investment amid Trump annexation claims",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Deutsche Welle",
-    "France 24"
-   ],
-   "urls": [
-    "//dw.com/en/von-der-leyen-in-greenland-with-eu-investments-amid-trump-pressure/a-79109197?maca=en-rss-en-all-1573-xml-mrss",
-    "//france24.com/en/europe/20260907-eu-greenland-investment-trump-annexation"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.43
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "628c4af9a18fa8d2",
-   "title": "The moment a Nepali woman found alive days after devastating floods",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "ABC Australia",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-09-07/rescuers-in-nepal-pull-64-year-old-woman-house-floods/107123264",
-    "//dailymail.com/news/article-16109531/Nepal-search-rescue-mission-enters-12th-day-hopes-remain-miracles-woman-64-alive-mud-buried-home.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.6
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "1f90cfc6f8f0fe18",
-   "title": "US calls Iran\u2019s claim to have struck an unmanned vessel 'a total lie'",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox 5 Atlanta",
-    "Fox 5 DC"
-   ],
-   "urls": [
-    "//fox5atlanta.com/news/us-calls-irans-claim-have-struck-unmanned-vessel-a-total-lie",
-    "//fox5dc.com/news/us-calls-irans-claim-have-struck-unmanned-vessel-a-total-lie"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.8
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "133ec5963a5519dd",
-   "title": "Socialism 2026 speaker slams diet industry for policing 'Black fat flesh,' calls it 'body fascism'",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Yahoo News",
-    "Fox News"
-   ],
-   "urls": [
-    "//foxnews.com/media/socialism-2026-speaker-slams-diet-industry-policing-black-fat-flesh-calls-body-fascism",
-    "//yahoo.com/news/politics/articles/socialism-2026-speaker-slams-diet-000015311.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -5.39
+   "line": "Australian authorities may void thousands of seatbelt fines issued by camera systems due to an administrative error in how violations were recorded or processed.",
+   "assembly_score": 0.94
   }
  ],
  "excluded_sample": [
@@ -739,8 +180,52 @@
    "why": "triage verdict NO"
   },
   {
-   "title": "Volcano eruption in Indonesia leaves 170,000 travellers stranded as eight airports closed",
-   "why": "ledger: INCREMENT"
+   "title": "Labor Day: \u2018Building, Breaking, Rebuilding\u2019",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Documentarian Alex Gibney on the power and influence of Elon Musk",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "The world's longest cruise sets sail on a 371-day voyage - with stops including Zanzibar, Alaska and even Japan",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Africa should stop treating energy shocks as surprises",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Moronic, infantile, dull... Lineker's new game show is the worst ever: CHRISTOPHER STEVENS reviews The Box",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "The \u00a370 refund letter that isn't a scam",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Eric Idle brands John Cleese 'a grumpy old man' as he bemoans still having to work aged 83 after bitter feud with his Monty Python co-stars over money",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Knee scans reveal heartbreaking verdict for luckless Swans captain",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Tech giants know honesty can cost billions. Do we trust them with the truth?",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Ligue 1: Paris FC and Sinayoko beat Marseille and climb to 2nd",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "The Engines of Our Ingenuity 3406: Short Subjects",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Cheese pie, seed crackers and prawn rolls: Ravinder Bhogal\u2019s recipes for cooking with filo",
+   "why": "triage verdict NO"
   },
   {
    "title": "Bidets save you money and reduce waste \u2014 we tested the best options out there",
@@ -783,10 +268,6 @@
    "why": "triage verdict NO"
   },
   {
-   "title": "The 10 best Amazon deals to shop this week",
-   "why": "triage verdict NO"
-  },
-  {
    "title": "The 2024 presidential alternative many voters will want",
    "why": "triage verdict NO"
   },
@@ -799,87 +280,7 @@
    "why": "triage verdict NO"
   },
   {
-   "title": "Barbara Eden, 95, says she\u2019s \u2018okay\u2019 after last-minute cancelation of festival appearance",
-   "why": "triage verdict NO"
-  },
-  {
    "title": "Charlton Singleton-135",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Top headlines in major S. Korean newspapers",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Ukraine war briefing: US envoys leave Kyiv without breakthrough on ending war",
-   "why": "ledger: INCREMENT"
-  },
-  {
-   "title": "Asking questions just so you can talk next? You're a 'boomerasker'",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Wasn't It JUST July 4th? by",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "What a wind-erful day! Kites fill the skies at annual festival",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "STEPHEN GLOVER: Burnham is profiting from Farage's troubles. To save Britain from Labour we MUST have a Tory and Reform pact",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "'Oh Hell No!' Democrats Object to Trump's Suggestion to Rename New Mexico (Jenna Monnin/NOTUS)",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "From the 'Human Rottweiler' to a true Gentleman: The trials and tragedy that reinvented Vinnie Jones from a dirty football player to a hit actor topping the Netflix charts",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Golf cart parking in Myrtle Beach",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "riverdogs.jpg",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "ss3.jpg",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "SS1.jpg",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "N2311P48004C.TIF",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "MLB legend Alex Rodriguez reveals the foods he keeps in his kitchen fridge",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "King Charles and Queen Camilla are joined by Andy Burnham at church service near Balmoral",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Jeremy Holst",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Commentary: I stumbled upon this rare workforce model. It changed my life.",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "For Trump's Former Fixer, a Tortured Path From 'Rat' to Reconciliation (Peter Baker/New York Times)",
-   "why": "ledger: RECYCLED"
-  },
-  {
-   "title": "Has National Championship picture in college football already changed after a stunning first week?",
    "why": "triage verdict NO"
   }
  ]
