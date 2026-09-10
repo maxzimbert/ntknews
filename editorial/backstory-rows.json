@@ -1,0 +1,217 @@
+{
+  "_comment": "Backstory row registry. Source of truth for the Lifetimes stratum. Consumed by the classifier prompt, the pairing-line prompt, and the front end. Clocks are computed from start_date at render — never stored.",
+  "version": "1.0",
+  "roots": {
+    "membership": "Who fully belongs, and on what terms?",
+    "distribution": "How should wealth, risk, and economic power be distributed?",
+    "authority": "Who may govern, through which institutions, and under what limits?",
+    "moral-order": "Which moral commitments should public law protect, permit, or enforce?",
+    "modernization": "How much disruption should the country accept in exchange for adaptation?",
+    "security": "What does America owe, and risk, beyond its borders?"
+  },
+  "rows": [
+    {
+      "id": "climate",
+      "title": "Climate",
+      "start_date": "1988-06-23",
+      "start_line": "since a government scientist told Congress the planet was warming, June 1988",
+      "contest": "Whether long-term planetary risk warrants remaking how the country makes energy, or whether the remaking costs more than the risk.",
+      "roots": ["modernization"],
+      "subgenres": [
+        "energy transition",
+        "environmental protection",
+        "industrial policy",
+        "regional economic disruption",
+        "disasters and adaptation"
+      ]
+    },
+    {
+      "id": "media",
+      "title": "The Media",
+      "start_date": "1987-08-04",
+      "start_line": "since Washington stopped requiring broadcasters to air both sides, August 1987",
+      "contest": "Whether a democracy needs common facts from common institutions, or works better when citizens choose their own sources.",
+      "roots": ["authority", "modernization"],
+      "subgenres": [
+        "information and misinformation",
+        "platforms and attention",
+        "press legitimacy",
+        "shared civic knowledge"
+      ]
+    },
+    {
+      "id": "immigration",
+      "title": "Immigration",
+      "start_date": "1986-11-06",
+      "start_line": "since the last time Congress passed a big immigration law, November 1986",
+      "contest": "Whether America renews itself through immigration, or must first settle who belongs and on what terms.",
+      "roots": ["membership"],
+      "subgenres": [
+        "borders and enforcement",
+        "legal immigration and visas",
+        "citizenship and naturalization",
+        "assimilation and national identity",
+        "refugees and asylum"
+      ]
+    },
+    {
+      "id": "faith",
+      "title": "Faith",
+      "start_date": "1979-06-01",
+      "start_line": "since a preacher told Christians to organize as a voting bloc, June 1979",
+      "contest": "Whether public life should stay secular and plural, or reflect a moral inheritance most Americans still hold.",
+      "roots": ["moral-order"],
+      "subgenres": [
+        "religion in public life",
+        "religious liberty and exemptions",
+        "schools and curriculum",
+        "moral authority"
+      ]
+    },
+    {
+      "id": "taiwan",
+      "title": "Taiwan",
+      "start_date": "1979-01-01",
+      "start_line": "since Washington recognized Beijing and kept arming Taipei, January 1979",
+      "contest": "Whether deliberate ambiguity is what has kept the peace, or what invites the miscalculation that ends it.",
+      "roots": ["security"],
+      "subgenres": [
+        "cross-strait military balance",
+        "strategic ambiguity",
+        "semiconductor dependence"
+      ]
+    },
+    {
+      "id": "government",
+      "title": "Government",
+      "start_date": "1978-06-06",
+      "start_line": "since California voters capped their own property taxes, June 1978",
+      "contest": "Whether government is the country's common instrument for security and opportunity, or the thing citizens must keep from growing too powerful.",
+      "roots": ["authority", "distribution"],
+      "subgenres": [
+        "taxes and distribution",
+        "regulation and the administrative state",
+        "federalism",
+        "health care",
+        "welfare and the safety net",
+        "fiscal capacity and debt",
+        "state capacity and competence"
+      ]
+    },
+    {
+      "id": "order",
+      "title": "Order",
+      "start_date": "1977-05-21",
+      "start_line": "since gun owners took over their own lobby, May 1977",
+      "contest": "Whether safety comes from stronger enforcement and armed self-reliance, or from limiting coercion and repairing what produces disorder.",
+      "roots": ["authority"],
+      "subgenres": [
+        "guns and gun rights",
+        "policing",
+        "punishment and incarceration",
+        "crime and public disorder",
+        "surveillance"
+      ]
+    },
+    {
+      "id": "america-abroad",
+      "title": "America Abroad",
+      "start_date": "1975-04-30",
+      "start_line": "since the last helicopter left Saigon, April 1975",
+      "contest": "Whether American power should actively shape the world, or husband its strength and stay out.",
+      "roots": ["security"],
+      "subgenres": [
+        "military intervention",
+        "alliances and commitments",
+        "foreign aid",
+        "Israel-Palestine policy"
+      ]
+    },
+    {
+      "id": "power",
+      "title": "Power",
+      "start_date": "1974-08-09",
+      "start_line": "since a president resigned rather than face impeachment, August 1974",
+      "contest": "Whether institutions should constrain elected power even when that means overruling what voters chose.",
+      "roots": ["authority"],
+      "subgenres": [
+        "elections and representation",
+        "courts and judicial power",
+        "executive power",
+        "constitutional restraints",
+        "partisan realignment"
+      ]
+    },
+    {
+      "id": "work",
+      "title": "Work",
+      "start_date": "1973-10-17",
+      "start_line": "since the oil shock, October 1973",
+      "contest": "Whether prosperity comes from freeing capital, or from restoring the bargaining power that once made a job enough.",
+      "roots": ["distribution"],
+      "subgenres": [
+        "wages and bargaining power",
+        "unions and organized labor",
+        "trade and globalization",
+        "inequality and wealth concentration",
+        "housing and cost of living",
+        "automation and AI displacement"
+      ]
+    },
+    {
+      "id": "family",
+      "title": "Family",
+      "start_date": "1971-12-09",
+      "start_line": "since a president vetoed universal childcare, December 1971",
+      "contest": "Whether raising children is a private family responsibility or a shared public one.",
+      "roots": ["moral-order"],
+      "subgenres": [
+        "children and parental authority",
+        "childcare and family economics",
+        "child welfare and protection",
+        "children and technology"
+      ]
+    },
+    {
+      "id": "equality",
+      "title": "Equality",
+      "start_date": "1954-05-17",
+      "start_line": "since the Court ruled that separate could not be equal, May 1954",
+      "contest": "Whether equal citizenship requires the law to act on inherited disadvantage, or requires the law to stop sorting people at all.",
+      "roots": ["membership"],
+      "subgenres": [
+        "civil rights law",
+        "affirmative action and race-conscious remedy",
+        "segregation and integration",
+        "reparative claims",
+        "sex and disability equality",
+        "abortion and bodily autonomy"
+      ]
+    },
+    {
+      "id": "korea",
+      "title": "Korea",
+      "start_date": "1953-07-27",
+      "start_line": "since the shooting stopped without a peace treaty, July 1953",
+      "contest": "Whether an armistice meant to last months and lasting a lifetime is stability, or just a very long pause.",
+      "roots": ["security"],
+      "subgenres": [
+        "armistice and the DMZ",
+        "North Korean nuclear program"
+      ]
+    },
+    {
+      "id": "bomb",
+      "title": "The Bomb",
+      "start_date": "1945-08-06",
+      "start_line": "since the first use of a nuclear weapon in war, August 1945",
+      "contest": "Whether eighty years without a second use proves deterrence works, or only that we haven't run out of luck.",
+      "roots": ["security"],
+      "subgenres": [
+        "arms control and treaties",
+        "proliferation",
+        "deterrence doctrine"
+      ]
+    }
+  ]
+}
