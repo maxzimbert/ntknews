@@ -5,11 +5,21 @@ Runs unattended, triggered by a push from Pulse's Publish button. Takes
 whatever's currently in the lineup and turns it into the live site: no
 paste, no download, no terminal.
 
+URLs (v2 dropped from public paths, 2026-09-10 — netlify.toml 301s every
+old /digest/v2/... link to its /digest/... equivalent):
+  /digest/                      live app (Today at /today, Backstory at
+                                /backstory, Profile at /me — all rewrites
+                                to this same file, see netlify.toml)
+  /digest/YYYY-MM-DD/           frozen edition
+  /digest/YYYY-MM-DD/<slug>/    story permalink page
+  /digest/images/<slug>.jpg     decoded story image
+  /digest/archive/              archive index
+
 What it does, in order:
   1. Reads the published story data (committed by Pulse's Publish button).
   2. Picks today's "fun fact" — grounded in Wikipedia's real On This Day
      feed, never invented (see pick_fun_fact()).
-  3. Regenerates digest/v2/index.html's `const stories` and `const funFact`
+  3. Regenerates digest/index.html's `const stories` and `const funFact`
      blocks in place — the live homepage, not a copy. Everything else in
      that file (the swipe-app shell, styling, JS) is left untouched; this
      only touches the two blocks that used to be hand-pasted.
@@ -19,7 +29,7 @@ What it does, in order:
   7. Rebuilds the archive index from what's actually on disk.
   8. Writes a last-published timestamp Pulse can read and show you.
 
-Writes DIRECTLY to digest/v2/ — no test-folder detour. That was the right
+Writes DIRECTLY to digest/ — no test-folder detour. That was the right
 call while this was unverified; it's a deliberate, later decision to skip
 it now that the mechanics are proven and there's no live audience yet.
 
@@ -595,10 +605,10 @@ def rebuild_archive(digest_dir, base_url):
             continue
         headlines = json.loads(meta_path.read_text())
         items = "\n".join(
-            f'    <li><a href="{base_url}/digest/v2/{d.name}/{h["slug"]}/">{html_esc(h["headline"])}</a></li>'
+            f'    <li><a href="{base_url}/digest/{d.name}/{h["slug"]}/">{html_esc(h["headline"])}</a></li>'
             for h in headlines)
         blocks.append(f'<div class="ed"><div class="ed-date">{d.name}</div>'
-                       f'<a class="day" href="{base_url}/digest/v2/{d.name}/">Full edition</a>'
+                       f'<a class="day" href="{base_url}/digest/{d.name}/">Full edition</a>'
                        f'<ul>\n{items}\n  </ul></div>')
     archive_dir = digest_dir / "archive"
     archive_dir.mkdir(parents=True, exist_ok=True)
@@ -614,7 +624,7 @@ def main():
     base_url = "https://ntknews.org"
     api_key = os.environ.get("ANTHROPIC_API_KEY", "")
 
-    digest_dir = repo_root / "digest" / "v2"
+    digest_dir = repo_root / "digest"
     live_index_path = digest_dir / "index.html"
 
     payload = json.loads(story_json_path.read_text())
@@ -643,7 +653,7 @@ def main():
     # written — the bug behind the share button sharing the wrong URL.)
     slugs = unique_slugs(stories)
     for story, slug in zip(stories, slugs):
-        story["permalink"] = f"{base_url}/digest/v2/{date_str}/{slug}/"
+        story["permalink"] = f"{base_url}/digest/{date_str}/{slug}/"
 
     # 3. Regenerate the LIVE homepage in place. This is the piece that
     # makes the whole chain zero-click: no more paste, ever.
@@ -685,7 +695,7 @@ def main():
             img_name = f"{slug}.jpg"
             if decode_image(story["featuredImage"], digest_dir / "images" / img_name):
                 image_rel_url = f"../../images/{img_name}"
-                image_abs_url = f"{base_url}/digest/v2/images/{img_name}"
+                image_abs_url = f"{base_url}/digest/images/{img_name}"
 
         page = build_story_page(story, image_rel_url, image_abs_url, canonical_url)
         (story_dir / "index.html").write_text(page)
@@ -703,7 +713,7 @@ def main():
         json.dumps({"at": datetime.now(timezone.utc).isoformat(), "stories": len(stories)}, indent=1))
 
     log("")
-    log(f"Done. Live at {base_url}/digest/v2/")
+    log(f"Done. Live at {base_url}/today")
 
 
 DATA_DEFAULT = Path("ntk-pulse/data/lineup-publish.json")
