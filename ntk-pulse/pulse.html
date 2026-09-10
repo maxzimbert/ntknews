@@ -1164,7 +1164,7 @@ async function rewriteBackstoryRow(row, newMaterialText){
 // actually matches where digest v2 fetches Backstory data from before
 // relying on it. Deliberately separate from GH_PUBLISH_PATH: a Backstory
 // publish never touches lineup-publish.json or the daily digest pipeline.
-const GH_BACKSTORY_PATH = 'digest/v2/data/backstory.json';
+const GH_BACKSTORY_PATH = 'digest/data/backstory.json';
 function backstoryDataExport(){
   return JSON.stringify({ rows: BACKSTORY.map(({busy,status,err,...r})=>r) }, null, 1);
 }
