@@ -1,5 +1,5 @@
 {
- "assembled_at": "2026-09-13T15:52:44.543770+00:00",
+ "assembled_at": "2026-09-13T18:44:19.312962+00:00",
  "slot_plan": "A",
  "displacement": "MANUAL",
  "daytype": "weekend",
@@ -7,44 +7,53 @@
   4,
   6
  ],
- "actual_size": 53,
+ "actual_size": 6,
  "lint_failures": [
   "under 3 fully self-contained items"
  ],
- "slots_unfilled": [
-  "The group chat"
- ],
+ "slots_unfilled": [],
  "stories": [
   {
    "slot": "unavoidable",
    "slot_label": "Unavoidable",
-   "key": "5904a264623cc9ef",
-   "title": "Russian drone hits Kyiv-Warsaw passenger train carrying dignitaries near Polish border",
+   "key": "60c143ff7934adeb",
+   "title": "Russian drone strikes train in Ukraine after Johnson's departure; Trump urges halt to refinery attacks",
    "beat": "international",
-   "publisher_count": 5,
+   "publisher_count": 11,
    "publishers": [
-    "Financial Times",
+    "BBC",
     "The Guardian",
+    "Yahoo News",
+    "Al Jazeera",
+    "CBS News",
+    "Daily Beast",
     "Deutsche Welle",
     "The Independent",
-    "Daily Mail"
+    "ABC Australia",
+    "Daily Mail",
+    "Memeorandum"
    ],
    "scores": {
     "emotional_load": 4,
-    "explainability": 5,
+    "explainability": 4,
     "actionability": 1,
     "conversational_currency": 4
    },
    "politician_led": true,
    "ledger_class": "DEVELOPMENT",
    "new_facts": [
+    "Trump publicly urges Ukraine to halt strikes on Russian oil refineries citing surging diesel prices.",
+    "Ukrainian drone evades Russian helicopter fire to strike an oil tanker, per released footage.",
+    "Boris Johnson gives on-record quote condemning Putin over the train strike.",
     "Boris Johnson's train was evacuated after a Russian drone strike hit the Kyiv-Warsaw rail line near the Polish border.",
+    "Jared Kushner mocked at diplomatic forum for saying Ukraine should cede Russian-demanded territory.",
     "Overnight barrage of 450+ drones/missiles killed at least six and injured 40+ across Ukraine; foreign minister calls strike 'Putin's terror knocking on EU/Nato doors'.",
-    "Names ex-Swedish PM Carl Bildt among foreign officials whose train had passed on the struck line minutes earlier.",
-    "Ukrainian and Polish officials describe the rail strikes as a 'systemic attack' on Ukraine's railway network, broadening the campaign beyond fuel sites."
+    "Russia claims four killed in Ukrainian drone strikes, an updated casualty figure.",
+    "Ukrainian and Polish officials describe the rail strikes as a 'systemic attack' on Ukraine's railway network, broadening the campaign beyond fuel sites.",
+    "Identifies strike location as Yahodyn, a town just 2km from the Polish border."
    ],
-   "line": "Russian drone struck a passenger train traveling between Kyiv and Warsaw, forcing evacuation of dignitaries including Boris Johnson near the Polish border.",
-   "assembly_score": 11.42
+   "line": "Russian drone struck a Ukrainian train minutes after Boris Johnson and European officials departed the station; Trump separately called for Ukraine to stop attacking Russian oil refineries.",
+   "assembly_score": 19.93
   },
   {
    "slot": "money_me",
@@ -69,71 +78,104 @@
     "Bipartisan lawmakers considering taxing high earners to fund Social Security amid looming shortfall."
    ],
    "line": "Tax deadline arrives tomorrow; separate proposals to shore up Social Security by taxing higher earners are drawing bipartisan interest.",
-   "assembly_score": 6.58
+   "assembly_score": 3.74
   },
   {
    "slot": "body_mind",
    "slot_label": "Body & mind",
-   "key": "ab8f11d943e3b9e0",
-   "title": "The 10 best underground sci-fi movies to dig into now that 'Silo' season 3 has ended",
-   "beat": "science",
-   "publisher_count": 1,
+   "key": "d92ae1b9717a28d6",
+   "title": "Pennsylvania reports third measles death this year",
+   "beat": "health",
+   "publisher_count": 3,
    "publishers": [
-    "Space.com"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 3.4
-  },
-  {
-   "slot": "work_machines",
-   "slot_label": "Work & machines",
-   "key": "9e45ff75931a7d5d",
-   "title": "AI executives acknowledge safety concerns while resisting regulatory oversight",
-   "beat": "tech",
-   "publisher_count": 4,
-   "publishers": [
-    "BBC",
-    "CBS News",
+    "The Guardian",
     "NBC News",
     "Memeorandum"
    ],
    "scores": {
-    "emotional_load": 4,
-    "explainability": 3,
-    "actionability": 1,
+    "emotional_load": 5,
+    "explainability": 5,
+    "actionability": 3,
     "conversational_currency": 4
    },
    "politician_led": false,
    "ledger_class": "DEVELOPMENT",
    "new_facts": [
-    "Dario Amodei's 3,800-word essay warns of possible rogue-agent internet takeover within six months, urges slower AI pace.",
-    "Ex-Anthropic researcher tells BBC staff are 'genuinely frightened' for humanity's future amid Amodei's slowdown call.",
-    "Coxon calls on Congress to let AI labs self-regulate until a formal regulatory body is established.",
-    "Amodei tells CBS 'For too long the industry lied' about AI risks, calling exponential growth a 'warning sign.'"
+    "40-year-old unvaccinated woman from Jefferson County, PA, died of measles complications, coroner says.",
+    "Death marks PA's third measles death this year; US having worst resurgence in 35 years.",
+    "Woman died Saturday; two prior PA deaths were infants, one with a genetic defect."
    ],
-   "line": "Anthropic's ex-researcher says AI staff fear catastrophic risks; CEO calls for industry honesty while opposing external regulation.",
-   "assembly_score": 10.62
+   "line": "Pennsylvania reports its third measles death this year as the state deals with an active outbreak.",
+   "assembly_score": 10.17
+  },
+  {
+   "slot": "work_machines",
+   "slot_label": "Work & machines",
+   "key": "1a5b6e6fbf0a18ca",
+   "title": "Trump rejects AI safety warnings, cites China race",
+   "beat": "tech",
+   "publisher_count": 4,
+   "publishers": [
+    "BBC",
+    "Financial Times",
+    "Daily Mail",
+    "Memeorandum"
+   ],
+   "scores": {
+    "emotional_load": 2,
+    "explainability": 5,
+    "actionability": 1,
+    "conversational_currency": 3
+   },
+   "politician_led": true,
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Trump publicly dismisses AI existential-risk warnings, calling them from 'negative forces' predicting 'things that won't happen', citing China rivalry.",
+    "Trump says guardrails can be placed on AI but insists U.S. cannot lose the AI race to China.",
+    "Democrats are escalating attacks on the administration's hands-off AI regulation stance ahead of midterms."
+   ],
+   "line": "Trump dismisses warnings about AI safety risks, prioritizing competition with China over regulatory caution.",
+   "assembly_score": 8.67
+  },
+  {
+   "slot": "group_chat",
+   "slot_label": "The group chat",
+   "key": "24ae343f2542352e",
+   "title": "C\u00e9line Dion returns to stage in Paris after Stiff Person Syndrome diagnosis",
+   "beat": "culture",
+   "publisher_count": 2,
+   "publishers": [
+    "ANSA",
+    "Vogue"
+   ],
+   "scores": {
+    "emotional_load": 2,
+    "explainability": 4,
+    "actionability": 1,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Michelle Obama attended Dion's Paris comeback show, noted for her fashion choices.",
+    "Michelle Obama in audience; Dion quoted saying the comeback was harder than expected."
+   ],
+   "line": "C\u00e9line Dion performed her first show since being diagnosed with Stiff Person Syndrome, with Michelle Obama in attendance.",
+   "assembly_score": 6.75
   },
   {
    "slot": "close",
    "slot_label": "The close",
    "key": "162a032f2fe57bf9",
-   "title": "Trump backs united Ireland; UK politicians criticize interference",
-   "beat": "international",
-   "publisher_count": 3,
+   "title": "Trump doubles down on Irish unification remarks amid press criticism",
+   "beat": "national",
+   "publisher_count": 5,
    "publishers": [
     "BBC",
+    "The Guardian",
+    "Daily Beast",
     "The Independent",
-    "Daily Mail"
+    "Memeorandum"
    ],
    "scores": {
     "emotional_load": 2,
@@ -144,1480 +186,14 @@
    "politician_led": true,
    "ledger_class": "DEVELOPMENT",
    "new_facts": [
-    "Trump reaffirmed support for united Ireland while speaking at the Irish Open, saying 'many people agree'",
-    "New actor Natalie Harp identified as traveling with Trump on Ireland visit, prompting reporter scrutiny and pushback from Trump's team",
-    "Tory leader and other UK politicians condemned Trump's united Ireland remarks made during meeting with Micheal Martin in Dublin",
-    "Reform UK publicly hit back at Trump after he said Irish reunification 'may as well happen now'"
-   ],
-   "line": "Trump expressed support for Irish reunification during a visit; UK and Irish politicians criticized the comments as interference in internal affairs.",
-   "assembly_score": 10.12
-  },
-  {
-   "slot": "unavoidable",
-   "slot_label": "Unavoidable",
-   "key": "421a46d87194a2e8",
-   "title": "Wisconsin congressman swims to safety after plane emergency landing on lake",
-   "beat": "national",
-   "publisher_count": 8,
-   "publishers": [
-    "ABC News",
-    "CBS News",
-    "Daily Beast",
-    "NBC News",
-    "The Independent",
-    "Fox 5 Atlanta",
-    "Fox 5 DC",
-    "Memeorandum"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Wisconsin congressman Tom Tiffany survived an emergency plane landing on a lake with minor injuries.",
-   "assembly_score": 4.6
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "b2f536b536df3e16",
-   "title": "Antonelli wins Spanish Grand Prix as rivals hit trouble",
-   "beat": "culture",
-   "publisher_count": 6,
-   "publishers": [
-    "BBC",
-    "The Guardian",
-    "Al Jazeera",
-    "NBC News",
-    "The Telegraph",
-    "ABC Australia"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-09-14/f1-spanish-grand-prix-piastri-eighth-antonelli-wins/106998642",
-    "//aljazeera.com/sports/2026/9/13/f1-leader-antonelli-wins-spanish-grand-prix-as-unlucky-norris-misses-out?traffic_source=rss",
-    "//bbc.co.uk/sport/formula1/articles/c5yeln1j175o?at_campaign=rss&at_medium=RSS",
-    "//nbcnews.com/sports/formula-1/kimi-antonelli-wins-formula-1-race-madrid-rcna597467",
-    "//telegraph.co.uk/formula-1/2026/09/13/f1-spanish-grand-prix-live-2026-madring-latest-updates",
-    "//theguardian.com/sport/2026/sep/13/kimi-antonelli-max-verstappen-madring-circuit-f1-spanish-gp"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 1.12
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "916d8d4530c8bd61",
-   "title": "Scottish, Welsh and Northern Irish leaders meet on independence push",
-   "beat": "national",
-   "publisher_count": 4,
-   "publishers": [
-    "The Guardian",
-    "The Independent",
-    "Daily Mail",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16127715/Nationalist-leaders-Scotland-Wales-Northern-Ireland-separatist-summit.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//independent.co.uk/news/uk/home-news/scottish-independence-referendum-mairi-mcallan-b3049351.html",
-    "//memeorandum.com/260913/p15",
-    "//theguardian.com/politics/2026/sep/13/first-ministers-to-affirm-right-to-seek-independence-from-the-uk"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Leaders of Scotland, Wales, and Northern Ireland are meeting to coordinate on independence referendums and the breakup of the UK.",
-   "assembly_score": 0.8
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "e7d41ae66b1b03b0",
-   "title": "Kosovo government formed after months of deadlock",
-   "beat": "national",
-   "publisher_count": 4,
-   "publishers": [
-    "BBC",
-    "Al Jazeera",
-    "The Independent",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/9/13/kosovo-approves-new-government-after-months-of-political-deadlock?traffic_source=rss",
-    "//bbc.co.uk/news/articles/cew9n2j47ygo?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/news/article-16127581/running-Andy-Burnham-Great-North-Run-Prime-Minister.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//independent.co.uk/news/kosovo-pristina-serbia-europe-nato-b3049420.html"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 2,
-    "actionability": 1,
-    "conversational_currency": 1
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Kosovo forms government after political deadlock; UK mayor runs charity race.",
-   "assembly_score": 0.72
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "00dcc2e8e6ce90b3",
-   "title": "Indonesian ferry capsizes; 6 dead, 130 missing in Java Sea",
-   "beat": "international",
-   "publisher_count": 5,
-   "publishers": [
-    "NPR",
-    "The Guardian",
-    "ABC News",
-    "Al Jazeera",
-    "France 24"
-   ],
-   "urls": [
-    "//abcnews.com/International/6-dead-130-missing-after-indonesian-ferry-capsizes/story?id=136400801",
-    "//aljazeera.com/video/newsfeed/2026/9/13/six-killed-130-missing-after-indonesian-passenger-ship-capsizes?traffic_source=rss",
-    "//france24.com/en/indonesia-second-ferry-disaster-in-five-days",
-    "//npr.org/2026/09/13/g-s1-143114/about-130-missing-after-indonesian-passenger-ship-overturns",
-    "//theguardian.com/world/2026/sep/13/indonesian-rescue-crews-searching-for-140-people-after-ferry-hit-bad-weather"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Indonesian ferry capsized in Java Sea; at least 6 confirmed dead and 130 unaccounted for, rescue operations underway.",
-   "assembly_score": 0.62
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "f3d6044a8f5b86ae",
-   "title": "Trump tells Ukraine to halt Russian oil strikes amid fuel shortage",
-   "beat": "international",
-   "publisher_count": 3,
-   "publishers": [
-    "Yahoo News",
-    "Al Jazeera",
-    "ABC Australia"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-09-13/russian-strike-on-ukraine-poland-border-stirs-fears-of-war/107148616",
-    "//aljazeera.com/video/newsfeed/2026/9/13/09-12-ukraine-drone-russian-tanker-sv?traffic_source=rss",
-    "//yahoo.com/news/world/articles/ukrainian-drones-kill-2-russia-115917585.html"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Ukraine's oil strikes strain Russian fuel supply; Trump urges Ukraine to stop, citing shortages affecting global markets.",
-   "assembly_score": 0.47
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "d1c5a4dbc6e73528",
-   "title": "Europe wins Solheim Cup over USA",
-   "beat": "culture",
-   "publisher_count": 3,
-   "publishers": [
-    "BBC",
-    "The Guardian",
-    "The Telegraph"
-   ],
-   "urls": [
-    "//bbc.co.uk/sport/golf/articles/c0m3pnlyl9vo?at_campaign=rss&at_medium=RSS",
-    "//telegraph.co.uk/golf/2026/09/13/solheim-cup-live-team-europe-vs-team-usa-final-day-singles",
-    "//theguardian.com/sport/2026/sep/13/europe-win-solheim-cup-against-usa-anna-nordqvist-golf-report",
-    "//theguardian.com/sport/live/2026/sep/13/solheim-cup-golf-2026-final-day-live"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Europe defeats USA in Solheim Cup women's golf tournament; captain Anna Nordqvist wins in her final event.",
-   "assembly_score": 0.45
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "d67f3907da998885",
-   "title": "Viral videos roundup",
-   "beat": "other",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox News",
-    "Atlanta Black Star"
-   ],
-   "urls": [
-    "//atlantablackstar.com/2026/09/13/viral-video-shows-white-woman-screaming-at-neighbors-black-boyfriend",
-    "//foxnews.com/outkick-culture/viral-video-shows-bystanders-warning-elderly-man-no-clue-hes-being-followed-huge-black-bear"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 0.33
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "56c8385d1004a0f4",
-   "title": "Obama warns Democrats to prioritize AI as political issue",
-   "beat": "tech",
-   "publisher_count": 2,
-   "publishers": [
-    "Politico",
-    "Fox News"
-   ],
-   "urls": [
-    "//foxnews.com/media/obama-privately-sounds-alarm-dangerous-ai-urges-democrats-put-issue-center-agenda",
-    "//politico.com/news/2026/09/13/obama-ai-democrats-fundraiser-01073778"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Former president Obama warns Democrats that AI poses dangers and should be a political priority.",
-   "assembly_score": 0.28
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "496cbdd2639a36a1",
-   "title": "Republican lawmaker declines Trump pledge; Democrats push AI action",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "ABC News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//abcnews.com/Politics/house-democratic-leader-jeffries-calls-lawmakers-act-urgently/story?id=136401544",
-    "//memeorandum.com/260913/p25",
-    "//memeorandum.com/260913/p32"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Republican lawmaker declines to pledge allegiance to Trump; Democratic leader calls for urgent AI regulation.",
-   "assembly_score": 0.27
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "39ee7368a82724f4",
-   "title": "Lawmakers acknowledge AI risks, propose no solutions",
-   "beat": "tech",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/260913/p31",
-    "//nytimes.com/2026/09/13/us/politics/congress-ai-risks-johnson-jeffries.html"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Congressional leaders acknowledge AI risks are growing but offer no concrete regulatory or legislative plans.",
-   "assembly_score": 0.27
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "91fbb3ea42c3ddba",
-   "title": "Candidates raise AI oversight and Islamophobic rhetoric in midterm race",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "CBS News"
-   ],
-   "urls": [
-    "//cbsnews.com/news/abdul-el-sayed-ai-public-oversight-hugging-face-spencer-cox",
-    "//cbsnews.com/news/abdul-el-sayed-michigan-democrat-senate-face-the-nation-transcript-09-13-2026",
-    "//cbsnews.com/news/spencer-cox-utah-governor-face-the-nation-transcript-09-13-2026",
-    "//cbsnews.com/video/abdul-el-sayed-says-public-oversight-needed-on-ai-to-avoid-serving-interests-of-a-few",
-    "//theguardian.com/us-news/2026/sep/13/republicans-islamophobic-rhetoric-democrats"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 2,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Two candidates discuss AI regulation and Islamophobic rhetoric emerging in midterm campaign messaging.",
-   "assembly_score": 0.2
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "6bdb0204461fd7f7",
-   "title": "Democrat Angie Nixon enters Florida Senate race",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/260913/p29",
-    "//nytimes.com/2026/09/13/us/politics/angie-nixon-florida-senate.html"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 4,
-    "actionability": 2,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Democrat Angie Nixon is running for Florida Senate, mounting a challenge in a Republican-leaning state.",
-   "assembly_score": 0.19
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "a6b118a32dfb99fe",
-   "title": "Farage invested in crypto knowing Putin used it for sanctions evasion",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "The Independent"
-   ],
-   "urls": [
-    "//independent.co.uk/news/uk/politics/nigel-farage-putin-russia-sanctions-cryptocurrency-b3045512.html",
-    "//independent.co.uk/news/uk/politics/reform-farage-crypto-donations-labour-rayner-b3049355.html",
-    "//theguardian.com/commentisfree/picture/2026/sep/13/nicola-jennings-nigel-farage-fundraising-cartoon"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Nigel Farage invested in cryptocurrency despite knowing Putin used it to evade sanctions on Russia.",
-   "assembly_score": 0.15
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "1a5b6e6fbf0a18ca",
-   "title": "Trump rejects tech leaders' call for AI slowdown, citing China",
-   "beat": "tech",
-   "publisher_count": 2,
-   "publishers": [
-    "Financial Times",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//ft.com/content/cae60732-f929-4735-a627-db8c14e7c7ed?syn-25a6b1a6=1",
-    "//memeorandum.com/260913/p28"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump rejects AI safety warnings from tech leaders, citing competitive pressure from China.",
-   "assembly_score": 0.11
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "9fa4b6c9c6a4ccc6",
-   "title": "Police name six men sought over violent Portsmouth anti-immigration protest",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/c158p587w4no?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/news/article-16127595/Protester-charged-concealing-identity-anti-immigration-Portsmouth.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dailymail.com/news/article-16127945/Police-pictures-men-want-speak-violent-protest-Portsmouth.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": true,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Police are identifying protesters from a violent anti-immigration demonstration in Portsmouth; one 76-year-old was charged for disguising his identity.",
-   "assembly_score": 0.06
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "3bc11b70e4258529",
-   "title": "Johnson: Congress won't lead on AI regulation, uncertain on Trump checks",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "NBC News",
-    "Techmeme",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/260913/p16",
-    "//memeorandum.com/260913/p18",
-    "//memeorandum.com/260913/p19",
-    "//nbcnews.com/meet-the-press/video/speaker-johnson-i-certainly-pray-trump-s-prediction-on-iran-war-ending-after-midterms-is-right-269787717779",
-    "//nbcnews.com/politics/congress/johnson-congress-work-deliver-5000-checks-trump-midterm-elections-rcna597459",
-    "//techmeme.com/260913/p7"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "House Speaker Johnson says Congress won't regulate AI safety, deflects Trump's $5K check promise to future negotiations.",
-   "assembly_score": 0.02
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "774aa0351c2f4c08",
-   "title": "Houthis claim attack on Saudi base as fighting flares with Yemeni forces",
-   "beat": "international",
-   "publisher_count": 4,
-   "publishers": [
-    "The Guardian",
-    "Al Jazeera",
-    "France 24",
-    "The Independent"
-   ],
-   "urls": [
-    "//aljazeera.com/economy/2026/9/13/red-sea-nations-watch-as-houthis-seize-bab-al-mandeb-strait?traffic_source=rss",
-    "//aljazeera.com/news/2026/9/13/fighting-continues-between-yemen-govt-forces-houthis-what-is-the-latest?traffic_source=rss",
-    "//aljazeera.com/opinions/2026/9/13/the-houthis-escalation-in-yemen-could-flop?traffic_source=rss",
-    "//aljazeera.com/video/newsfeed/2026/9/13/more-than-2000-yemenis-flee-to-djibouti-amid-houthi-advances?traffic_source=rss",
-    "//aljazeera.com/video/newsfeed/2026/9/13/renewed-fighting-worsens-yemens-humanitarian-crisis?traffic_source=rss",
-    "//france24.com/en/video/20260913-yemen-the-houthis-test-iran-s-regional-influence",
-    "//france24.com/en/yemen-fighting-escalates-around-the-bab-el-mandeb-strait",
-    "//independent.co.uk/news/djibouti-somalia-strait-of-hormuz-mogadishu-iran-b3049424.html",
-    "//independent.co.uk/news/world/middle-east/iran-us-war-latest-live-houthis-yemen-saudi-arabia-pipeline-b3049346.html",
-    "//theguardian.com/world/2026/sep/13/houthis-claim-attack-on-saudi-base-as-fighting-flares-with-yemeni-forces"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 0.0
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "c8e454609c958594",
-   "title": "Celine Dion makes triumphant return in Paris after six years sidelined by rare diagnosis",
-   "beat": "international",
-   "publisher_count": 3,
-   "publishers": [
-    "NBC News",
-    "The Independent",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/tvshowbiz/article-16127677/Celine-Dion-delivers-emotional-speech-opening-night-Paris-residency-says-shes-decided-make-devastating-health-battle-reason-living.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//independent.co.uk/news/celine-dion-france-michelle-obama-quebec-nantes-b3049427.html",
-    "//nbcnews.com/pop-culture/music/celine-dion-triumphant-return-paris-rare-condition-rcna597461"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.03
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "8d9096343604e1bd",
-   "title": "Food-borne illnesses, funding cuts and layoffs: Maha movement\u2019s glaring limitations are now showing",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/260913/p27",
-    "//theguardian.com/us-news/2026/sep/13/maha-movement-food-illness-funding-cuts-layoffs"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.06
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "722857128ffb7307",
-   "title": "OpenAI boss and Elon Musk back calls to put brakes on \u2018reckless\u2019 AI development",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "CNBC"
-   ],
-   "urls": [
-    "//cnbc.com/2026/09/12/anthropics-amodei-proposes-plan-to-slow-the-pace-of-advancing-ai-capabilities.html",
-    "//cnbc.com/2026/09/13/china-dilemma-ai-slowdown-anthropic.html",
-    "//theguardian.com/technology/2026/sep/13/openai-sam-altman-elon-musk-back-anthropic-calls-brakes-ai-development"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.2
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "2da8da4404563cde",
-   "title": "Iran war reshapes Brics ties but also exposes divisions",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Al Jazeera"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/9/13/brics-summit-2026-what-are-the-key-takeaways?traffic_source=rss",
-    "//aljazeera.com/opinions/2026/9/13/the-iran-war-reveals-the-limits-of?traffic_source=rss",
-    "//aljazeera.com/video/newsfeed/2026/9/13/world-leaders-gather-in-new-delhi-for-final-day-of-brics-summit?traffic_source=rss",
-    "//bbc.co.uk/news/articles/ce8767g4jdpo?at_campaign=rss&at_medium=RSS"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.3
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "0e0876d3a6121e40",
-   "title": "9/13: Sunday Morning",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "CBS News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//cbsnews.com/news/anthropic-ceo-dario-amodei-on-ai-risks",
-    "//cbsnews.com/video/091326-sunday-morning",
-    "//cbsnews.com/video/anthropic-ceo-dario-amodei-for-too-long-the-industry-lied-about-ai-risks",
-    "//cbsnews.com/video/extended-interview-dario-amodei",
-    "//memeorandum.com/260913/p20"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.31
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "db0e3430b933a564",
-   "title": "Will Congress pass Trump's $5,000 dividends? Johnson says GOP will 'try'",
-   "beat": "international",
-   "publisher_count": 3,
-   "publishers": [
-    "The Guardian",
-    "Yahoo News",
-    "ABC Australia"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-09-14/irish-reunification-natural-trump-says/107148712",
-    "//theguardian.com/us-news/2026/sep/13/trump-5000-dividend-pledge",
-    "//yahoo.com/news/politics/articles/mike-johnson-doesnt-commit-donald-134457047.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.39
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "783e368ae6711d37",
-   "title": "Manchester derby live coverage",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "Al Jazeera"
-   ],
-   "urls": [
-    "//aljazeera.com/sports/liveblog/2026/9/13/live-manchester-united-vs-manchester-city-premier-league-2?traffic_source=rss",
-    "//theguardian.com/football/live/2026/sep/13/manchester-united-v-manchester-city-premier-league-live"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.45
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "f2a45b9bb4f082a7",
-   "title": "Four dead in Louisiana stabbing spree as police search for person of interest",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "The Independent"
-   ],
-   "urls": [
-    "//independent.co.uk/news/world/americas/crime/manhunt-person-of-interest-louisiana-stabbing-spree-b3049395.html",
-    "//theguardian.com/us-news/2026/sep/13/louisiana-stabbing-spree-deaths"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.56
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "7e99dba63bc612ea",
-   "title": "Trump says 'very negative forces' raising exaggerated concerns over AI",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Yahoo News",
-    "France 24"
-   ],
-   "urls": [
-    "//france24.com/en/the-race-to-make-ai-safer",
-    "//yahoo.com/news/politics/articles/trump-says-very-negative-forces-142843614.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.7
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "7a11f0c502893143",
-   "title": "Ukraine-Russia war latest: First naval drone battle takes place in Black Sea as latest strikes kill 12",
-   "beat": "international",
-   "publisher_count": 4,
-   "publishers": [
-    "Al Jazeera",
-    "CBS News",
-    "The Independent",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/9/13/ukraine-drone-strikes-kill-four-as-russia-attacks-close-to-poland-border?traffic_source=rss",
-    "//cbsnews.com/news/trump-ukraine-russia-strikes-refineries",
-    "//dailymail.com/news/article-16127855/Europe-prepare-hard-winter-economic-pressure-Russia-security-adviser-warns.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//independent.co.uk/news/russia-kyiv-moscow-poland-crimea-b3049358.html",
-    "//independent.co.uk/news/world/europe/ukraine-russia-war-live-naval-drone-battle-dayana-yastremska-b3049332.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.74
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "9623edb083652609",
-   "title": "Sweden general election: close race as far right eyes role in government \u2013 Europe live",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "France 24"
-   ],
-   "urls": [
-    "//france24.com/en/swedish-far-right-eyes-role-in-government",
-    "//theguardian.com/world/live/2026/sep/13/sweden-general-election-social-democrats-magdalena-sweden-democrats-ulf-kristersson-andersson-far-right-europe-latest-news-updates"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.77
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "32205952992b1290",
-   "title": "Pope marks 9/11 anniversary with prayers for peace",
-   "beat": "culture",
-   "publisher_count": 3,
-   "publishers": [
-    "ABC News",
-    "CBS News",
-    "The Independent"
-   ],
-   "urls": [
-    "//abcnews.com/International/wireStory/pope-commemorates-911-attacks-prayers-peace-died-136401078",
-    "//cbsnews.com/news/pope-leo-9-11-attacks-angelus-prayer-vatican",
-    "//independent.co.uk/news/vatican-city-american-lord-chicago-st-peters-square-b3049338.html",
-    "//independent.co.uk/news/world/americas/pope-leo-911-speech-anniversary-b3049338.html"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 1
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.84
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "a77325ae29d24c78",
-   "title": "Trump\u2019s Son-in-Law Is Brutally Mocked at Major Diplomatic Forum",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Daily Beast",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/260913/p4",
-    "//thedailybeast.com/trumps-son-in-law-is-brutally-mocked-at-major-diplomatic-forum"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.95
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "fd7777f12e97c26d",
-   "title": "Voting under way in Sweden with far right eyeing first role in government",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "CBS News"
-   ],
-   "urls": [
-    "//cbsnews.com/news/sweden-democrats-election-populist-right-europe",
-    "//theguardian.com/world/2026/sep/13/voting-under-way-in-sweden-with-far-right-eyeing-first-role-in-government"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.0
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "653066cdf3daa8ec",
-   "title": "Teenager travelled over 150 miles from Leeds to kill man he accused of stalking",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "The Independent",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16127751/Afghan-refugee-buys-knife-murdering-stalker-victim.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//independent.co.uk/news/uk/crime/sulaiman-tajzai-leeds-farmanullah-sherzad-b3049345.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.05
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "fcee508a52c7536a",
-   "title": "Apple\u2019s new phones are here",
-   "beat": "tech",
-   "publisher_count": 2,
-   "publishers": [
-    "Techmeme",
-    "The Verge"
-   ],
-   "urls": [
-    "//techmeme.com/260913/p6",
-    "//theverge.com/tech/994218/apple-iphone-18-pro-airpods-5-meta-muse-ai-sony-headphones"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.06
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "2c315545f60a26fd",
-   "title": "A Look at the Health Toll of 9/11, 25 Years After the Attacks",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Yahoo News",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16127867/Toll-booth-Britain-Labour-set-hand-sweeping-powers-private-firms-allowing-clobber-drivers-new-road-tolls-latest-war-motorist.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//yahoo.com/news/videos/look-health-toll-9-11-124533735.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.1
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "9834bdc0ed0c2737",
-   "title": "US Open men\u2019s singles final live: Alexander Zverev vs Ben Shelton",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "The Independent"
-   ],
-   "urls": [
-    "//aljazeera.com/sports/liveblog/2026/9/13/us-open-mens-singles-final-live-alexander-zverev-vs-ben-shelton?traffic_source=rss",
-    "//independent.co.uk/news/ben-shelton-american-grand-slam-alexander-zverev-andy-roddick-b3049405.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.15
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "1e5eed591318e9ba",
-   "title": "CBS News Battleground Tracker poll: Democrats hold edge in bid for House control",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "CBS News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//cbsnews.com/news/poll-trump-battleground-tracker-house-control-2026-midterm-elections",
-    "//cbsnews.com/video/open-this-is-face-the-nation-with-margaret-brennan-sept-13-2026",
-    "//memeorandum.com/260913/p17"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.18
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "afcdebd2945353c4",
-   "title": "Turkish police detain dozens in raids on gay bars and homes of LGBTQ+ activists",
-   "beat": "international",
-   "publisher_count": 3,
-   "publishers": [
-    "BBC",
-    "Deutsche Welle",
-    "The Independent"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/cpve191wy47o?at_campaign=rss&at_medium=RSS",
-    "//dw.com/en/turkey-162-arrested-in-lgbtq-raids/a-79251409?maca=en-rss-en-all-1573-xml-mrss",
-    "//independent.co.uk/news/hiv-lgbtq-turkish-istanbul-justice-and-development-party-b3049363.html",
-    "//independent.co.uk/news/world/europe/turkey-lgbtq-arrests-gay-erdogan-b3049335.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.3
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "e86f6e9f3e83cf61",
-   "title": "How Iran\u2019s Hard-liners Blew Up the Peace Deal with Trump",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/260913/p11",
-    "//nytimes.com/2026/09/13/world/middleeast/iran-hard-liners-sabotaged-peace-deal.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.33
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "345804a2825b9b53",
-   "title": "Arch Manning leads Texas back from 20 points down in fourth quarter to shock No 1 Ohio State",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "Fox News"
-   ],
-   "urls": [
-    "//foxnews.com/outkick-sports/college-football-chaos-era-texas-rallies-oregon-falls-lane-kiffin-eyes-return-ole-miss",
-    "//foxnews.com/outkick-sports/texas-coach-steve-sarkisian-awkward-espn-interview-divides-internet-during-team-win-over-ohio-state",
-    "//theguardian.com/sport/2026/sep/13/arch-manning-leads-texas-back-from-20-points-down-in-fourth-quarter-to-shock-no-1-ohio-state"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.42
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "dab51b668e53f562",
-   "title": "Iran seeks Gulf talks as Houthis escalate attacks on Saudi Arabia",
-   "beat": "international",
-   "publisher_count": 3,
-   "publishers": [
-    "New York Times",
-    "Al Jazeera",
-    "CNBC"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/9/13/iran-gcc-summit-whats-behind-the-meeting-why-is-bahrain-not-attending?traffic_source=rss",
-    "//cnbc.com/2026/09/13/vessel-struck-strait-of-hormuz-ukmto.html",
-    "//nytimes.com/2026/09/13/world/middleeast/iran-meeting-gulf-arab-states.html"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "progress_coded": true,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Iran signals diplomatic talks with Gulf states while Houthi attacks on Saudi Arabia and fighting in Yemen intensify.",
-   "assembly_score": -1.74
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "d5228d49d4a28808",
-   "title": "US embassy child abuse images suspect flown from UK before police interview",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/c4gjw1j1eq7o?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/news/article-16127415/US-secretly-American-diplomat-UK-child-abuse.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.78
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "93c69d856407dc47",
-   "title": "Iraq\u2019s militias grow bolder in Iran war",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "Financial Times",
-    "CNBC",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//cnbc.com/2026/09/13/iran-war-oil-prices-freight-tankers-shipping.html",
-    "//ft.com/content/b60624fb-0a09-45e6-b148-b7a5ca38f83e?syn-25a6b1a6=1",
-    "//memeorandum.com/260913/p7"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.89
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "48cf557b55494868",
-   "title": "Nicole Kidman Found the Prettiest Way to Wear Baggy Jeans This Fall",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Daily Mail",
-    "Glamour"
-   ],
-   "urls": [
-    "//dailymail.com/tvshowbiz/article-16127665/Nicole-Kidman-reveals-forced-change-Ibiza-rave-disguise-giving-away-secret-passion-clubbing.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//glamour.com/story/nicole-kidman-found-the-prettiest-way-to-wear-baggy-jeans-this-fall"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.88
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "5ffb9cd0d8cc13e7",
-   "title": "Reform UK\u2019s \u00a372m donations may be caught by new bill, Rayner suggests",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16127493/Angela-Rayner-Labour-toughen-ban-huge-donations-Reform-72million.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//theguardian.com/politics/2026/sep/13/reform-uk-donations-new-bill-retrospective-effect-angela-rayner"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.9
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "28f7e5cdf733336e",
-   "title": "Democrats eye a new tool to hold Trump accountable if they win the House",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Yahoo News",
-    "Fox News"
-   ],
-   "urls": [
-    "//foxnews.com/opinion/democrats-punish-members-put-working-americans-ahead-party-loyalty",
-    "//yahoo.com/news/politics/articles/democrats-plan-ramp-investigations-trump-103029984.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.97
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "25f28b117e80cc43",
-   "title": "Sports forecasters and prediction markets eye NFL season",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "CNBC",
-    "Fox News"
-   ],
-   "urls": [
-    "//cnbc.com/2026/09/13/nfl-and-midterms-mark-key-fall-season-for-prediction-markets.html",
-    "//foxnews.com/outkick-sports/2026-nfl-season-predictions-division-winners-playoff-teams-super-bowl-pick-revealed"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -4.06
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "f7b677bd8cf8142c",
-   "title": "Carney pushes idea of making Canada 'associate member' of EU, WSJ reports",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Yahoo News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//finance.yahoo.com/news/carney-pushes-idea-making-canada-112959452.html",
-    "//memeorandum.com/260913/p3"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -4.48
+    "Reform (UK party) publicly criticizes Trump's Irish reunification remarks; new quote 'may as well happen now'",
+    "New actor (female PA reporter) and scene of Trump dodging a protest question with a bizarre quip",
+    "New on-record Trump quotes doubling down on unification and dismissing Burnham's opposition",
+    "New story: Trump says he's not worried about Xi Jinping cancelling upcoming summit",
+    "New scene: Trump rambling about Scottish windmills when asked about Irish unification remarks; names UK PM Andy Burnham"
+   ],
+   "line": "Trump makes unsolicited comments about Irish unification and responds defensively to press scrutiny during Ireland trip.",
+   "assembly_score": 11.59
   }
  ],
  "excluded_sample": [
@@ -1626,15 +202,75 @@
    "why": "triage verdict NO"
   },
   {
+   "title": "Fiba Women\u2019s Basketball World Cup final: USA v France \u2013 live",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "US Open tennis 2026 men\u2019s final: Alexander Zverev v Ben Shelton \u2013 live",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Haaland scores controversial winner as 10-man City beat Man Utd",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Elena Velez Spring 2027 Ready-to-Wear",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Questions mount over what an AI 'slowdown' would look like",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "9/13: Face The Nation",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Mytheresa and Chlo\u00eb Sevigny\u2014and a Best-Dressed Crowd\u2014Brought New York Style to the Forefront",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Romeo Beckham's queer tennis romance film shares new look at his character in promotional image ahead of his acting debut in Forty Love",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Schlein: 'Noi pronti per il voto, prima \u00e8 meglio \u00e8. Accelerare sul programma comune'",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Suni Lee Has a \u2018Love Island\u2019-Like Connection With Tommy Hilfiger",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "On this day in space! Sept. 13, 2007: Japan launches Kaguya spacecraft to the moon to map the lunar surface in HD",
+   "why": "triage verdict NO"
+  },
+  {
    "title": "Antonelli wins as Norris loses out under virtual safety car",
    "why": "triage verdict NO"
   },
   {
-   "title": "Andy Burnham among Great North Run finishers",
+   "title": "Viral video shows bystanders warning elderly man who has no clue he's being followed by a huge black bear",
    "why": "triage verdict NO"
   },
   {
-   "title": "Manchester United v Manchester City: Premier League \u2013 live",
+   "title": "Top Lawmakers Agree A.I.\u2019s Risks Are Rising but Say They Have No Quick Fix",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "The Guardian view on Russian parliamentary elections: glimpses of weakness behind the facade | Editorial",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "John Elliott Fall 2026 Menswear",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Veronica Beard Gathered Trailblazers for a Golden Hour Toast to Fall 2026",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "The subtle signs you're about to be made redundant... and how to tell what people at work REALLY think of you",
    "why": "triage verdict NO"
   },
   {
@@ -1686,64 +322,8 @@
    "why": "triage verdict NO"
   },
   {
-   "title": "Man United vs Man City - Premier League LIVE: Chances for both sides in frantic start as Red Devils fans target Sir Jim Ratcliffe and the Glazers in protest at Old Trafford",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Pope commemorates 9/11 attacks with prayers for peace and for those who died",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "OpenAI boss and Elon Musk back calls to put brakes on \u2018reckless\u2019 AI development",
+   "title": "Renewed fighting worsens Yemen\u2019s humanitarian crisis",
    "why": "ledger: INCREMENT"
-  },
-  {
-   "title": "If the Emmys were up to us ... Plus, how to watch the show",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "NFL and midterm elections set up prediction markets for a critical fall season",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Time to start dusting off those boxes in the loft! This week's Pok\u00e9mon card release could send prices soaring. Here's how to tell if YOUR old collection could now be worth thousands!",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Brad Pitt, 62, snaps selfies with adoring fans and cuddles up to girlfriend Ines de Ramon, 33, during carefree day at US Open as ex Angelina Jolie speaks out on raising his estranged kids",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Todd Snyder Spring 2027 Menswear",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "How to break up with WINE, by DR MAX PEMBERTON: I've seen the damage caused by the insidious creep of holiday drinking. But doing THIS before your first sip will transform your relationship with alcohol for good",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Lose 5lbs in ten days with an 'autumn reset': The exact plan to ditch your holiday weight gain and snap back, by top nutritionist GABRIELA PEACOCK",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "\u2018It's heartbreaking': Friends hope for safe return of missing DC mom",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Prince William will not have an awkward moment facing brother Harry at Lady Amelia Windsor's wedding because one of them is not on the guest list",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Koreatown\u2019s stories get a new digital home",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "This Glendale singer made the finals of 'M\u00e9xico Canta' \u2014 Mexico's answer to 'The Voice'",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "From the Archives: Catch George Clooney if You Can",
-   "why": "triage verdict NO"
   }
  ]
 }
