@@ -8,9 +8,36 @@ Verified 2026-09-15.
 
 ---
 
-## The decision
+## The decisions
 
 **Part 2 — per-story pairings — is the plan.** Confirmed 2026-09-15.
+
+**The six live Part 1 rows are replaced, not migrated.** Confirmed 2026-09-16.
+Their ids don't match Part 2's (`bs-gaza` vs `gaza`, `bs-iran` vs
+`us-israel-iran`), so `build_backstory.py`'s preserve-by-id logic would match
+nothing anyway. Every narrative is empty, so nothing is lost — **but that stops
+being true the moment a narrative is written.** Do the replacement before any
+Register 4 work, not after.
+
+**Free for now, possibly paid later.** No gating is built and none should be
+built yet. Note the live disagreement in the project's own documents: the
+roadmap says $5/mo for the narrative layer, while
+`README-digest-assembly-and-acquisition` argues backstory is the most
+commoditized good on the internet in 2026 and that continuity and identity are
+the defensible thing to charge for. That deserves its own conversation.
+
+**What it is, in the editor's words (2026-09-16):**
+
+> Words, content etc on Backstory should be summoned/generated from whatever
+> stories are covered by the Digest. It becomes less of an Atomic Clock
+> tracking current shooting wars and distant cold wars and instead becomes a
+> destination for readers who want to go deeper into the origins of current
+> events and conflicts that dominated the headlines.
+
+This settles the framing question. The seven conflict rows do not disappear —
+they stop being *the surface* and become part of the vocabulary, surfacing only
+when a digest story pairs to them. Duration still leads, but reading as "this
+argument is 71 years old" rather than "day 1,071 of a war."
 
 Part 1 is what happens to be deployed. It is not the target; it's the thing
 currently occupying the tab.
@@ -173,37 +200,111 @@ Some of Part 1 survives into Part 2 and shouldn't be lost:
 
 ---
 
-## The path from here
+## The build plan
 
-Rough order. Each step is small and verifiable; none of it is decided.
+Six slices, each sized to one pull request, each with a condition for being
+done. Ordered so the tab never regresses in front of readers — the standing-row
+list stays until there is something better to replace it with.
 
-1. **Point `build_backstory.py` at `digest/data/backstory.json`.** One line.
-   Until this is fixed, nothing downstream can work.
-2. **Run it** and confirm the output carries 21 rows, `todays_pairings: []`,
-   four objects per row, and correctly-shaped indicators.
-3. **Decide the render path** — wire `digest/v2/js/backstory.js` into
-   `digest/index.html` per its own header instructions, or port its logic
-   inline. The existing `bsr*` functions and modal markup would be replaced.
-   Note the current file has real routing (deep links to `/backstory`, back-
-   button support) that must be preserved.
-4. **Extend `openBsrDetail`** to render the indicator, object case, and episode
-   list. The simplest approach that avoids touching the modal's structural
-   HTML: append them into the existing `bsrDetailNarrative` container.
-5. **Build the Pulse tagging control.** The real blocker. Nothing produces
-   `todays_pairings` in production without it.
-6. **Fold the Backstory publish into the digest publish action.**
+**The ordering constraint worth understanding:** fixing
+`build_backstory.py`'s output path *on its own* makes the product worse. It
+swaps six blank rows for twenty-one blank rows, with Lifetimes durations
+("72 yrs") sitting next to conflict durations ("Day 1,071") and no narrative
+behind either. That's why it is bundled into Slice 1 with a real empty state
+rather than shipped as a standalone one-line fix.
 
-### Before step 1
+---
 
-The Part 1 rows currently live are real reader-facing content, however empty.
-Decide what happens to them — migrated into the Still Counting set, or dropped.
-Six of the seven Still Counting rows match them by name.
+### Slice 1 — Library and schema
+
+Point `build_backstory.py` at `digest/data/backstory.json`, run it, and land a
+correct 21-row library: `todays_pairings: []`, four auto-picked objects per row
+(two pre-1981, two post-1981), correctly-shaped unverified indicators.
+
+Update the renderer minimally to read `todays_pairings` rather than `rows`, and
+show an honest empty state — *"Backstory publishes with each digest"* — instead
+of a wall of blank rows.
+
+**Done when:** `digest/data/backstory.json` has 21 rows in Part 2 shape; the
+tab shows the empty state; deep-linking to `/backstory` and the back gesture
+still work.
+
+### Slice 2 — Renderer
+
+Bring in the Part 2 render module. `digest/v2/js/backstory.js` already exists
+with wiring instructions in its header, but it lives in the inert tree and
+nothing loads it — decide between wiring it as a real script include or porting
+its logic inline. Row card is duration + title + pairing line. Detail view adds
+the indicator, the object case, and the episode list.
+
+Test against hand-seeded `todays_pairings`, which is how this was tested before.
+
+**Done when:** a seeded pairing renders end to end, card through detail; the
+existing routing, `navOverlay` history handling, and modal IDs are preserved.
+
+### Slice 3 — Generation
+
+A script that takes the published lineup, runs `classifier-backstory.md`
+(Haiku) to assign exactly one sub-genre per story, then `pairing-lines.md`
+(Sonnet) to write one sentence per story, and writes `todays_pairings`.
+
+Run the classifier's built-in calibration set. Two cases specifically: the
+electricity-prices story must reach Work (distribution), not Climate (energy);
+the Ground Zero air-quality story must reach Government (did an agency tell the
+truth), not Climate (surface-matched on "air quality").
+
+**Done when:** a real published digest produces one correct pairing per story,
+and the calibration set passes.
+
+### Slice 4 — Publish integration
+
+Fold the Backstory build into the digest publish so both ship on one action, as
+was always intended. Today they are separate buttons and separate commits.
+
+**Done when:** one publish updates the digest and Backstory together.
+
+### Slice 5 — Pulse tagging control
+
+A control in Pulse's certification flow that pre-fills the classifier's row
+assignment and lets the editor override it before publish. This is what turns
+`todays_pairings` from raw model output into reviewed editorial, and what
+populates `instances[]`.
+
+**Done when:** a row assignment can be swapped in Pulse and survives a publish.
+
+### Slice 6 — Register 4 narratives
+
+Editor-triggered rewrite for an individual row using `register4-lifetimes.md`
+(Opus for first drafts). Not part of the daily publish — a few times a year per
+row.
+
+**Done when:** one row has a real narrative rendering in the detail view.
+
+---
+
+### Running alongside: object curation
+
+Not a slice and not blocking. `build_backstory.py` already auto-picks four
+objects per row, so the feature works without this. Curation replaces
+mechanical picks with good ones — which matters for a museum feature, but is an
+upgrade to a working default.
+
+Nine rows nearly pick themselves (Family, Taiwan, Korea, Immigration, The
+Media, Faith, Climate, The Bomb, Order — six to thirteen candidates each; scan,
+don't deliberate). Five are real editorial work: Equality (64 objects), America
+Abroad (58), Government (58), Power (39), Work (36).
+
+The pattern to reach for: two documents on opposite sides of the same question,
+close in time. Jefferson and Hamilton on the Bank, twenty-three days apart.
+Plessy and Harlan's dissent. Those do the evenhandedness work without the
+narrative having to hedge.
+
+See `backstory-matrix-triage.md` in the ReadMes folder for the full breakdown.
 
 ---
 
 ## Also unresolved
 
-- **Free or paid.** Explicitly deferred. Do not assume either.
 - **A "Coming soon" subscription gate** appeared in a raw fetch of
   `/backstory` in an earlier session. Unconfirmed whether it's a visible wall
   or inert markup. If real, it contradicts the decision that the row list and
