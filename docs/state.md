@@ -257,8 +257,16 @@ the source of truth regardless of where the page is served.
 - **Two feeds fail XML parsing** — `jatan_mehta` has a known cause (the
   configured URL is a human subscribe page; the real feed is `jatan.space/rss`,
   never applied). `jared_dashevsky`'s cause is still unknown.
-- **`ntknewscms.netlify.app`** — a second Netlify site on the same repo with no
-  custom domain. Candidate for deletion; status unverified.
+- **Two Netlify sites build from this repo — every deploy runs twice.**
+  Verified 2026-09-16: `rainbow-sherbet-b2f0e9.netlify.app` and
+  `ntknewscms.netlify.app` both serve production and both built a deploy
+  preview for PR #2. All three of those and `ntknews.org` return byte-identical
+  content. On an account where a deploy flood already consumed ~250 credits,
+  this is doubling ongoing build spend for no benefit.
+
+  **Before deleting either, confirm in the Netlify dashboard which site holds
+  the `ntknews.org` custom domain.** Content hashes cannot distinguish them,
+  and deleting the wrong one takes the site down.
 
 ---
 
