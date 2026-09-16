@@ -189,7 +189,11 @@ def main():
 
     cls_user, raw = classify(api_key, stories, vocab_block, args.mock or args.dry_run)
     if args.dry_run:
-        print("===== 5A CLASSIFIER =====\n" + cls_user)
+        print("=" * 72)
+        print(f"5A CLASSIFIER  —  {CLASSIFIER_MODEL}")
+        print("=" * 72)
+        print("\n--- SYSTEM ---\n" + read_system_prompt("classifier-backstory.md"))
+        print("\n--- USER ---\n" + cls_user)
 
     # ── Roll-up, in code, not by the model (classifier-backstory.md §Roll-up):
     # one entry per story, always; no dedup, no cap, no floor. Story count in
@@ -213,7 +217,16 @@ def main():
     pair_user, pairs = write_lines(api_key, entries, rows_by_id,
                                    args.mock or args.dry_run)
     if args.dry_run:
-        print("\n===== 5B PAIRING LINES =====\n" + pair_user)
+        print("\n\n" + "=" * 72)
+        print(f"5B PAIRING LINES  —  {PAIRING_MODEL}")
+        print("=" * 72)
+        print("\n--- SYSTEM ---\n" + read_system_prompt("pairing-lines.md"))
+        print("\n--- USER ---\n" + pair_user)
+        print("\n" + "=" * 72)
+        print("NOTE: row assignments above are round-robin placeholders. A dry "
+              "run makes\nno API call, so 5B is fed a stand-in classification "
+              "rather than a real one.\nThe wording and structure are exact; "
+              "which row each story landed on is not.")
         log("dry run — nothing written")
         return
 
