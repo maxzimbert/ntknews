@@ -152,7 +152,46 @@ with a comment claiming it's authoritative is the worst of the three.
 
 ---
 
-### 5. Smaller items
+### 5. Pulse served from Netlify reads two-day-stale data
+
+**Severity: high. Affects every editorial decision made in the tool.**
+
+`netlify.toml`'s build-skip rule excludes `ntk-pulse/data/`:
+
+```toml
+ignore = "git diff --quiet HEAD^ HEAD -- . ':(exclude)ntk-pulse/data/' …"
+```
+
+`pulse-scan` and `pulse` write **only** into that folder, so **every bot commit
+is skipped and never deploys.** Netlify's copy of `clusters.json`,
+`lineup.json` and `window.json` therefore freezes until a commit touches
+something outside the excluded paths — in practice, only a publish.
+
+Measured 2026-09-16:
+
+| | `lineup.json` assembled | lineup entries | window items |
+|---|---|---|---|
+| `ntknews.org/ntk-pulse/` | 2026-09-14T09:39 | 78 | 703 |
+| `maxzimbert.github.io/ntknews/ntk-pulse/` | 2026-09-16T16:28 | 84 | 754 |
+
+Last deploying commit was `8d5a46a` (publish: 6 backstory rows), Sept 14.
+
+**The `pulse.html` file itself is byte-identical across both hosts** — only the
+data differs. Comparing the HTML and concluding the hosts are equivalent is the
+exact mistake that hid this.
+
+**Workaround: author in Pulse from GitHub Pages**, which deploys every commit.
+`?cache=clear` is a genuine cache-buster there (Pages CDN), though `pulse.html`
+never reads the parameter.
+
+**Do not "fix" this by removing the ignore rule** — that restores ~72 deploys a
+day and the build-credit flood it was written to stop. The real fix is making
+Pulse fetch its data from GitHub's API rather than relative paths, so it reads
+the source of truth regardless of where the page is served.
+
+---
+
+### 6. Smaller items
 
 - **Haiku model string is inconsistent.** `triage.py:27` pins
   `claude-haiku-4-5-20251001`; `build_digest.py:53` uses `claude-haiku-4-5`.
