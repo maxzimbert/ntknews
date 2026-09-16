@@ -69,15 +69,12 @@ the app and only two are.
 
 ### Orphans — nothing routes to these
 
-`ntk-production.html` · `ntknews-index.html` · `ntknews-momtest.html` ·
+`ntknews-index.html` · `ntknews-momtest.html` ·
 `editor.html` · `article-generator.html` · `ntk-desk/` · `rss-scanner/`
 
 `ntk-desk/` is a **retired** system, kept as a lessons-learned artifact. Its
 workflow is manual-dispatch only. Do not revive it, and do not tune its
 clustering — that decision is recorded in `docs/decisions.md`.
-
-`ntk-production.html` is a special case: it is an orphan, but it holds a second
-copy of the editorial prompt system. See `docs/state.md`.
 
 ---
 

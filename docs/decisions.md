@@ -179,19 +179,47 @@ They measure format, not need.
 
 ---
 
+## Settled
+
+**Goal A — public understanding of news.** Decided 2026-09-16, resolving the
+tension recorded in `README-digest-assembly-and-acquisition` §6.
+
+In the editor's own terms: get something out the door to a friend group, learn
+from feedback, surveys and usage data, iterate, and pursue marketing TBD.
+
+**Why this matters downstream:** Goal A makes reaching people *through* other
+surfaces a legitimate outcome rather than a consolation prize, and it
+deprioritizes the institution-building instruments — accounts, membership,
+paywalls — that Goal B would have required first. Ship-and-learn beats
+audience-architecture. When a feature can be built free and gated later, build
+it free.
+
+**Publish-time integrity gate: warn, with a choice.** Decided 2026-09-16.
+When the Today overview doesn't match the lineup shipping with it, Pulse should
+raise a dialog offering two paths — regenerate Today now, or publish with the
+current Today anyway. Not a hard block, not a silent pass.
+
+This is a deliberate softening of the earlier "no approval gate" decision
+above. The reasoning still holds — gates smooth over failure modes worth
+seeing — but this failure has now shipped twice silently, and a dialog that
+names the problem while leaving the editor in control satisfies both concerns.
+
+**`ntk-production.html` deleted.** 2026-09-16. Its prompt system was a strict
+subset of Pulse's, missing five rules (double-attribution, bold-vs-italic
+subheads, bold-spacing, section self-labeling, banned signpost verbs). Nothing
+was lost. `pulse.html` is now the only copy.
+
+---
+
 ## Open questions, not defaults
 
 These are genuinely unresolved. Don't assume either way.
 
-1. **Goal A or Goal B.** Public understanding of news (mission, where reaching
-   people *through* chatbots counts as success) versus building an institution
-   with members and a base. The roadmaps diverge sharply. This blocks
-   sequencing on most acquisition work.
-2. **Is Backstory free or paid?** Explicitly deferred.
-3. **Should there now be a publish-time integrity gate?** See defect #2.
-4. **Reconcile or delete the second prompt-system copy** in
-   `ntk-production.html`. See defect #4.
-5. **Do the 14 indicator values get automated** (FRED, NOAA) or stay
+1. **Is Backstory free or paid?** Free for now, possibly paid later. See
+   `docs/backstory.md` for the live disagreement between the roadmap's $5/mo
+   narrative tier and the argument that continuity and identity are the
+   defensible thing to charge for.
+2. **Do the 14 indicator values get automated** (FRED, NOAA) or stay
    hand-maintained annually? Leaning hand-maintained.
-6. **Is "the close" machine-selectable at all?** The most taste-dependent slot;
+3. **Is "the close" machine-selectable at all?** The most taste-dependent slot;
    may need a curated pool rather than a scorer.

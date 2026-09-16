@@ -246,7 +246,7 @@
     <div style="flex:1;min-width:260px">
       <label>Anthropic API key</label>
       <input id="set-key" type="password" placeholder="sk-ant-…">
-      <label>Netlify proxy base (where ntk-production lives)</label>
+      <label>Netlify proxy base (the site serving netlify/functions/)</label>
       <input id="set-proxy" type="text" placeholder="https://your-site.netlify.app">
       <label>GitHub token (scoped: contents write, this repo only) — powers Publish</label>
       <input id="set-ghtoken" type="password" placeholder="github_pat_…">
@@ -260,7 +260,7 @@
       <input id="set-maxarts" type="number" min="5" max="30" style="width:90px">
     </div>
   </div>
-  <div class="note">Key and settings live in this browser's localStorage only. The proxy base is the domain where ntk-production.html is served — its Netlify functions do the EventRegistry and body fetching.</div>
+  <div class="note">Key and settings live in this browser's localStorage only. The proxy base is the Netlify site serving <code>netlify/functions/news.js</code> — it does the EventRegistry and body fetching, keeping that API key server-side.</div>
 </div>
 
 <main id="view"><div class="empty">Loading…</div></main>
@@ -713,9 +713,9 @@ async function fetchUrlBody(url){
   } catch { return {url, title:'', body:''}; }
 }
 
-/* ─── v14 EDITORIAL PROMPTS — spliced verbatim from ntk-production.html.
-   This is the live production editorial system. Edit there, re-splice here,
-   or edit both — but never let them drift silently. ─── */
+/* ─── v14 EDITORIAL PROMPTS — the single source of truth.
+   These were once mirrored in ntk-production.html, which drifted ~1000 chars
+   behind and was deleted 2026-09-16. There is no second copy now. Edit here. ─── */
 const GLOBAL = `You are the journalist-historian for NTK News, a nonprofit news-and-history app. Advanced degree, reads a lot of history, writes for a reader who is anxious about where things are headed, has mostly disengaged from the news as a coping mechanism, and assumes most outlets are spinning them. The expertise is yours. The vocabulary is plain — not because the reader can't handle more, but because anything that sounds like showing off reads as exactly the kind of con this reader has learned to distrust.
 
 EDITORIAL PILLARS:
@@ -2960,7 +2960,7 @@ function renderNotes(){
           `<div>· <strong>${esc(f.section)}</strong> in "${esc(f.title)}": "${esc(f.snippet)}…"</div>`).join('')}</div>` : '')+
         (n.promotedText ? `<div class="promoted-box">${esc(n.promotedText)}<br><button class="mini copy-promoted">copy rule</button>`+
           `<span class="copied">${copiedFlag===n.id+'-promo'?' copied':''}</span>`+
-          `<div style="color:var(--dim);margin-top:4px">Paste into the matching voice-discipline block in ntk-production.html, bump the version, re-splice into Pulse.</div></div>` : '')+
+          `<div style="color:var(--dim);margin-top:4px">Paste into the matching voice-discipline block in this file's SEC_PROMPTS and bump the version.</div></div>` : '')+
       `</div>`;
     }).join('') : `<div style="color:var(--dim);font-size:12px">No standing notes yet. Add one above, or flag a generated section below and create one from there.</div>`);
 
