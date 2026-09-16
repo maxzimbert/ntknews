@@ -1,0 +1,130 @@
+# wrangler.toml for the NTK News CMS Worker (example; copy to repo root as wrangler.toml)
+# Resource names below are the production names. Staging overrides at the bottom.
+
+name = "ntknews"
+main = "src/index.tsx"
+compatibility_date = "2026-09-01"
+compatibility_flags = ["nodejs_compat"]
+workers_dev = false
+
+# Static files (CSS, client JS islands, icons, fonts). Served by the assets binding,
+# falling through to the Worker for everything else.
+[assets]
+directory = "./public"
+binding = "ASSETS"
+not_found_handling = "none"
+
+# Production hostnames. Requires ntknews.org to be a Cloudflare zone.
+routes = [
+  { pattern = "ntknews.org", custom_domain = true },
+  { pattern = "www.ntknews.org", custom_domain = true },
+]
+
+[observability]
+enabled = true
+
+[placement]
+mode = "smart"
+
+# ── Bindings ────────────────────────────────────────────────────────────────
+
+[[d1_databases]]
+binding = "DB"
+database_name = "ntknews-db"
+database_id = "<set after: wrangler d1 create ntknews-db>"
+migrations_dir = "migrations"
+
+[[r2_buckets]]
+binding = "MEDIA"                     # media/<id>.<ext>, editions/<date>.json, backstory/<id>.json, logs/<run>/<step>.txt
+bucket_name = "ntknews-media"
+
+[[kv_namespaces]]
+binding = "CACHE"                     # rendered fragments, weather/local-news responses, search results, feed fetch state
+id = "<set after: wrangler kv namespace create CACHE>"
+
+[[queues.producers]]
+binding = "INGEST_QUEUE"              # one message per feed per scan
+queue = "ntknews-ingest"
+
+[[queues.producers]]
+binding = "AI_QUEUE"                  # triage and ledger jobs, rate-limited consumer
+queue = "ntknews-ai"
+
+[[queues.consumers]]
+queue = "ntknews-ingest"
+max_batch_size = 10
+max_batch_timeout = 5
+max_retries = 3
+dead_letter_queue = "ntknews-dlq"
+
+[[queues.consumers]]
+queue = "ntknews-ai"
+max_batch_size = 5
+max_batch_timeout = 2
+max_retries = 2
+max_concurrency = 2                   # keeps Anthropic concurrency bounded
+dead_letter_queue = "ntknews-dlq"
+
+[[durable_objects.bindings]]
+name = "COORDINATOR"                  # run mutex + live progress (SSE) for the Runs page
+class_name = "Coordinator"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["Coordinator"]
+
+[[workflows]]
+binding = "PIPELINE_WF"               # scan / full runs as durable steps
+name = "ntknews-pipeline"
+class_name = "PipelineWorkflow"
+
+[[workflows]]
+binding = "STORY_WF"                  # five-step story workflow, one instance per (story, step)
+name = "ntknews-story"
+class_name = "StoryWorkflow"
+
+[[workflows]]
+binding = "PUBLISH_WF"                # edition publish: snapshot -> R2 -> settings -> purge
+name = "ntknews-publish"
+class_name = "PublishWorkflow"
+
+[[analytics_engine_datasets]]
+binding = "METRICS"
+dataset = "ntknews_metrics"
+
+[ai]
+binding = "AI"                        # Workers AI; optional (embeddings for near-duplicate detection, phase 2)
+
+[browser]
+binding = "BROWSER"                   # Browser Rendering; optional (OG image generation, phase 2)
+
+# ── Cron ────────────────────────────────────────────────────────────────────
+[triggers]
+crons = [
+  "*/20 * * * *",                     # scan: ingest, cluster, triage, promote
+  "0 */4 * * *",                      # full: scan + ledger + assembly
+  "15 6 * * *",                       # daily: fun fact for today (UTC), feed health digest
+]
+
+# ── Plain-text config (not secrets) ─────────────────────────────────────────
+[vars]
+SITE_ORIGIN = "https://ntknews.org"
+ACCESS_TEAM_DOMAIN = "<team>.cloudflareaccess.com"
+ACCESS_AUD = "<application audience tag from Zero Trust>"
+AI_GATEWAY_URL = "https://gateway.ai.cloudflare.com/v1/<account-id>/ntknews/anthropic"
+CACHE_TTL_PUBLIC_HTML = "300"
+CACHE_TTL_NEWS_PROXY = "900"
+
+# Secrets are set with `wrangler secret put <NAME>` and never appear in this file:
+#   ANTHROPIC_API_KEY, RECRAFT_API_KEY, NEWSAPI_KEY (EventRegistry), EXA_API_KEY,
+#   TURNSTILE_SECRET, CF_API_TOKEN_CACHE_PURGE (zone cache purge), AI_GATEWAY_TOKEN (if gateway auth is on)
+
+# ── Staging ─────────────────────────────────────────────────────────────────
+[env.staging]
+name = "ntknews-staging"
+routes = [ { pattern = "staging.ntknews.org", custom_domain = true } ]
+vars = { SITE_ORIGIN = "https://staging.ntknews.org", ACCESS_TEAM_DOMAIN = "<team>.cloudflareaccess.com", ACCESS_AUD = "<staging aud>", AI_GATEWAY_URL = "https://gateway.ai.cloudflare.com/v1/<account-id>/ntknews-staging/anthropic", CACHE_TTL_PUBLIC_HTML = "30", CACHE_TTL_NEWS_PROXY = "900" }
+d1_databases = [ { binding = "DB", database_name = "ntknews-db-staging", database_id = "<id>", migrations_dir = "migrations" } ]
+r2_buckets = [ { binding = "MEDIA", bucket_name = "ntknews-media-staging" } ]
+kv_namespaces = [ { binding = "CACHE", id = "<id>" } ]
+triggers = { crons = ["*/20 * * * *", "0 */4 * * *", "15 6 * * *"] }
