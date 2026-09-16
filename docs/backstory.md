@@ -273,6 +273,22 @@ truth), not Climate (surface-matched on "air quality").
 **Done when:** a real published digest produces one correct pairing per story,
 and the calibration set passes.
 
+**Built 2026-09-16 as `editorial/build_pairings.py`** — prompts read out of the
+`.md` files rather than duplicated, `--mock` and `--dry-run` modes, roll-up and
+review-threshold applied in code per the classifier's own spec. **Not yet run
+against the real models** (no API key in the build environment), so the
+plumbing is verified and the output quality is not. Run it with a key and check
+the calibration cases before trusting a publish.
+
+**Open design gap found while building it: the seven Still Counting rows are
+unreachable by the classifier.** It classifies against sub-genres, and those
+rows are created with `subgenres: []` in `build_backstory.py`. So a Gaza story
+can reach America Abroad but never `gaza`. That may be correct — the Lifetimes
+rows are the argument vocabulary and the conflict rows are editor-assigned in
+Slice 5 — but it was never decided, and right now it means seven of twenty-one
+rows can only ever surface by hand. Give them sub-genres if they should be
+machine-reachable.
+
 ### Slice 4 — Publish integration
 
 Fold the Backstory build into the digest publish so both ship on one action, as
