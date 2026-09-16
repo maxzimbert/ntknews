@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """
-Regenerate digest/v2/data/backstory.json.
+Regenerate digest/data/backstory.json — the file the live app actually fetches.
+
+NOTE: this wrote to digest/v2/data/ until 2026-09-16, which is the inert
+pre-routing tree that nothing serves. If a change here appears to have no
+effect, check the path before anything else.
 
 Source of truth:
   editorial/backstory-rows.json        — the 14 Lifetimes rows (hand-edited)
@@ -24,7 +28,7 @@ except ImportError:
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ROWS_IN = os.path.join(ROOT, 'editorial', 'backstory-rows.json')
 MATRIX  = os.path.join(ROOT, 'editorial', 'NTK_Backstory_Object_Matrix.xlsx')
-OUT     = os.path.join(ROOT, 'digest', 'v2', 'data', 'backstory.json')
+OUT     = os.path.join(ROOT, 'digest', 'data', 'backstory.json')
 
 # ── Still Counting ────────────────────────────────────────────────────
 # Edit here. These seven have no start_line by design — the day count is

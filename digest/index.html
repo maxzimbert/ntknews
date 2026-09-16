@@ -570,7 +570,14 @@
     font-family: 'Source Serif 4', serif; font-style: italic; font-size: 13px;
     color: var(--dark); opacity: 0.65; max-width: 420px; margin: 0 auto;
   }
-  .bsr-empty { padding: 40px 20px; text-align: center; font-family: 'Source Serif 4', serif; color: var(--dark); opacity: 0.5; }
+  .bsr-empty { padding: 40px 20px; text-align: center; font-family: 'Source Serif 4', serif; color: var(--dark); opacity: 0.5; line-height: 1.5; max-width: 340px; margin: 0 auto; }
+  /* The daily pairing line — why today's story belongs to this row. Set
+     slightly heavier than the milestone beneath it: this is the sentence
+     that does the work, the milestone is standing context. */
+  .bsr-pairline {
+    font-family: 'Source Serif 4', serif; font-size: 14px; line-height: 1.5;
+    color: var(--dark); opacity: 0.9; max-width: 420px; margin: 8px auto 0;
+  }
 
   .bsr-detail-box { max-width: 480px; padding: 0; overflow: hidden; max-height: 88vh; display: flex; flex-direction: column; }
   .bsr-detail-photo {
@@ -2765,9 +2772,29 @@ let BSR_DATA = null;
 function fetchBackstory(){
   const list = document.getElementById('bsrList');
   if (list) list.innerHTML = '<div class="bsr-empty">Loading…</div>';
+  // Backstory is generated from each day's digest, not browsed as a standing
+  // list. backstory.json carries two layers: rows[] is the fixed 21-row
+  // library (inventory, edited a few times a year) and todays_pairings[] is
+  // what actually renders — one entry per digest story, pairing it to a row.
+  // A conflict untouched by today's news does not appear, by design.
   fetch('/digest/data/backstory.json?t=' + Date.now())
     .then(function(r){ if (!r.ok) throw 0; return r.json(); })
-    .then(function(d){ BSR_DATA = (d && d.rows) || []; renderBackstoryTab(); })
+    .then(function(d){
+      var rows = (d && d.rows) || [];
+      var byId = {};
+      rows.forEach(function(r){ byId[r.id] = r; });
+      var pairings = (d && d.todays_pairings) || [];
+      BSR_DATA = pairings.map(function(p){
+        var row = byId[p.row];
+        if (!row) return null;               // row retired or renamed since publish
+        var merged = Object.assign({}, row, p);
+        merged.pairline = p.line || '';
+        return merged;
+      }).filter(Boolean).sort(function(a, b){
+        return bsrDaysSince(a.start_date) - bsrDaysSince(b.start_date);
+      });
+      renderBackstoryTab();
+    })
     .catch(function(){ BSR_DATA = []; renderBackstoryTab(); });
 }
 
@@ -2788,7 +2815,8 @@ function renderBackstoryTab(){
   const list = document.getElementById('bsrList');
   if (!list) return;
   if (!BSR_DATA || !BSR_DATA.length){
-    list.innerHTML = '<div class="bsr-empty">Nothing here yet. Check back shortly.</div>';
+    list.innerHTML = '<div class="bsr-empty">Backstory publishes with each digest — '
+      + 'one thread for each of today’s stories, and how far back it runs.</div>';
     return;
   }
   list.innerHTML = BSR_DATA.map(function(r, i){
@@ -2798,6 +2826,10 @@ function renderBackstoryTab(){
       '<div class="bsr-num">' + bsrFormatDuration(days) + '</div>' +
       '<div class="bsr-caption">' + days.toLocaleString() + ' days</div>' +
       '<h3>' + escBsr(r.title) + '</h3>' +
+      // The daily line: why today's story is an instance of this row's
+      // argument. Carries the feature — the row title alone says nothing
+      // about what happened today.
+      (r.pairline ? '<div class="bsr-pairline">' + escBsr(r.pairline) + '</div>' : '') +
       (r.milestone ? '<div class="bsr-milestone">' + escBsr(r.milestone) + '</div>' : '') +
       '</div>';
   }).join('');
@@ -4008,7 +4040,7 @@ document.addEventListener('DOMContentLoaded', function() {
     </header>
     <div class="bsr-header">
       <div class="today-kicker">BACKSTORY</div>
-      <div class="today-date">Standing storylines — <em>newest first, origins never dropped.</em></div>
+      <div class="today-date">Today's stories — <em>and how far back they run.</em></div>
     </div>
     <div id="bsrList" class="bsr-list"></div>
   </div>
