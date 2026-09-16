@@ -579,6 +579,68 @@
     color: var(--dark); opacity: 0.9; max-width: 420px; margin: 8px auto 0;
   }
 
+  /* ── Detail view: pairing line, indicator, object case, episodes ──
+     The modal box is always dark by app-wide design, so everything here
+     is set light regardless of the reader's colour scheme. */
+  .bsr-detail-pairline {
+    font-size: 15px; line-height: 1.55; color: var(--cream);
+    border-left: 2px solid var(--amber); padding-left: 12px; margin-bottom: 14px;
+  }
+  .bsr-nonarr { color: rgba(234,217,197,0.5); font-style: italic; }
+
+  .bsr-ind {
+    margin: 18px 0; padding: 14px; border: 1px solid rgba(234,217,197,0.18);
+    border-radius: 6px; background: rgba(234,217,197,0.04);
+  }
+  .bsr-ind-label {
+    font-family: 'Space Grotesk', sans-serif; font-size: 10px; letter-spacing: 1px;
+    text-transform: uppercase; color: rgba(234,217,197,0.55); margin-bottom: 10px;
+  }
+  .bsr-ind-unver {
+    margin-left: 7px; padding: 1px 5px; border: 1px solid var(--terra);
+    color: var(--terra); border-radius: 3px; letter-spacing: 0.5px;
+  }
+  .bsr-ind-row { display: flex; align-items: center; justify-content: center; gap: 16px; }
+  .bsr-ind-cell { display: flex; flex-direction: column; align-items: center; }
+  .bsr-ind-v { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; color: var(--cream); }
+  .bsr-ind-y { font-family: 'Space Grotesk', sans-serif; font-size: 10px; color: rgba(234,217,197,0.45); margin-top: 2px; }
+  .bsr-ind-arrow { font-size: 18px; color: rgba(234,217,197,0.4); }
+  .bsr-ind-arrow.dir-worse { color: var(--terra); }
+  .bsr-ind-arrow.dir-better { color: var(--teal); }
+  .bsr-ind-arrow.dir-contested { color: var(--amber); }
+  .bsr-ind-src {
+    margin-top: 10px; text-align: center; font-family: 'Space Grotesk', sans-serif;
+    font-size: 10px; letter-spacing: 0.5px; text-transform: uppercase;
+    color: rgba(234,217,197,0.4);
+  }
+
+  .bsr-case, .bsr-eps { margin-top: 18px; }
+  .bsr-case-head {
+    font-family: 'Space Grotesk', sans-serif; font-size: 10px; letter-spacing: 1px;
+    text-transform: uppercase; color: rgba(234,217,197,0.5);
+    padding-bottom: 6px; border-bottom: 1px solid rgba(234,217,197,0.15); margin-bottom: 10px;
+  }
+  .bsr-obj { padding: 7px 0; border-bottom: 1px solid rgba(234,217,197,0.07); }
+  .bsr-obj:last-child { border-bottom: none; }
+  .bsr-obj-title { font-size: 14px; line-height: 1.4; color: var(--cream); }
+  .bsr-obj-meta {
+    font-family: 'Space Grotesk', sans-serif; font-size: 10.5px;
+    color: rgba(234,217,197,0.45); margin-top: 2px;
+  }
+  /* Scoped past `.bsr-detail-narrative a`, which colours citation links inside
+     the prose blue — correct there, wrong for a whole-row episode link. */
+  .bsr-ep,
+  .bsr-detail-narrative a.bsr-ep {
+    display: block; padding: 8px 0; font-size: 14px; line-height: 1.4;
+    color: var(--cream); text-decoration: none;
+    border-bottom: 1px solid rgba(234,217,197,0.07);
+  }
+  .bsr-ep:last-child { border-bottom: none; }
+  .bsr-ep-date {
+    display: block; font-family: 'Space Grotesk', sans-serif; font-size: 10.5px;
+    color: rgba(234,217,197,0.45); margin-top: 2px;
+  }
+
   .bsr-detail-box { max-width: 480px; padding: 0; overflow: hidden; max-height: 88vh; display: flex; flex-direction: column; }
   .bsr-detail-photo {
     height: 220px; flex-shrink: 0; background: var(--purple); position: relative;
@@ -2840,6 +2902,84 @@ function renderBackstoryTab(){
 
 function escBsr(s){ const d = document.createElement('span'); d.textContent = s == null ? '' : s; return d.innerHTML; }
 
+/* ── Detail view ─────────────────────────────────────────────────────
+   Everything below the milestone is composed here and injected into the
+   existing bsrDetailNarrative container, deliberately, so the modal's
+   structural markup and IDs stay untouched.
+
+   Four parts in order: today's pairing line, the standing narrative, the
+   indicator (a then/now stat with a direction), and the object case
+   (primary sources — two before 1981, two after). The card says 48 years;
+   the case says 235. ── */
+
+function bsrIndicatorHtml(ind){
+  if (!ind || !ind.then_value || !ind.now_value) return '';
+  // Unverified values are the default out of build_backstory.py and must
+  // not be presented as settled fact — every one of them is a starting
+  // point someone still has to check against the named source.
+  const pending = ind.verified ? '' :
+    '<span class="bsr-ind-unver" title="Not yet checked against the source">unverified</span>';
+  return '<div class="bsr-ind">'
+    + '<div class="bsr-ind-label">' + escBsr(ind.label) + pending + '</div>'
+    + '<div class="bsr-ind-row">'
+      + '<div class="bsr-ind-cell"><span class="bsr-ind-v">' + escBsr(ind.then_value) + '</span>'
+        + '<span class="bsr-ind-y">' + escBsr(ind.then_year) + '</span></div>'
+      + '<div class="bsr-ind-arrow dir-' + escBsr(ind.direction || 'flat') + '">&rarr;</div>'
+      + '<div class="bsr-ind-cell"><span class="bsr-ind-v">' + escBsr(ind.now_value) + '</span>'
+        + '<span class="bsr-ind-y">' + escBsr(ind.as_of || 'now') + '</span></div>'
+    + '</div>'
+    + '<div class="bsr-ind-src">' + escBsr(ind.direction || '') + ' &middot; '
+      + escBsr(ind.source || '') + '</div>'
+    + '</div>';
+}
+
+function bsrObjectsHtml(objects){
+  if (!objects || !objects.length) return '';
+  return '<div class="bsr-case">'
+    + '<div class="bsr-case-head">In the record</div>'
+    + objects.map(function(o){
+        return '<div class="bsr-obj">'
+          + '<div class="bsr-obj-title">' + escBsr(o.title) + '</div>'
+          + '<div class="bsr-obj-meta">'
+            + (o.author ? escBsr(o.author) + ' &middot; ' : '') + escBsr(o.year)
+          + '</div></div>';
+      }).join('')
+    + '</div>';
+}
+
+function bsrEpisodesHtml(instances){
+  if (!instances || !instances.length) return '';
+  return '<div class="bsr-eps">'
+    + '<div class="bsr-case-head">Earlier episodes</div>'
+    + instances.map(function(x){
+        const head = escBsr(x.headline || x.title || '');
+        const when = x.date ? '<span class="bsr-ep-date">' + escBsr(x.date) + '</span>' : '';
+        return x.permalink
+          ? '<a class="bsr-ep" href="' + encodeURI(x.permalink) + '">' + head + when + '</a>'
+          : '<div class="bsr-ep">' + head + when + '</div>';
+      }).join('')
+    + '</div>';
+}
+
+function bsrDetailHtml(r){
+  // narrative is an ARRAY of paragraphs from register4-lifetimes.md. An empty
+  // array is truthy in JS, so a plain `||` fallback silently renders nothing —
+  // check length, not truthiness.
+  const paras = Array.isArray(r.narrative) ? r.narrative
+              : (r.narrative ? [r.narrative] : []);
+  const body = paras.length
+    ? paras.map(function(p){ return '<p>' + p + '</p>'; }).join('')
+    : '<p class="bsr-nonarr">' + (r.start_line
+        ? 'Running ' + escBsr(r.start_line) + '.' : '')
+      + ' The full account of this one hasn’t been written yet.</p>';
+
+  return (r.pairline ? '<p class="bsr-detail-pairline">' + escBsr(r.pairline) + '</p>' : '')
+    + body
+    + bsrIndicatorHtml(r.indicator)
+    + bsrObjectsHtml(r.objects)
+    + bsrEpisodesHtml(r.instances);
+}
+
 function openBsrDetail(idx, opts){
   const r = BSR_DATA[idx];
   if (!r) return;
@@ -2848,9 +2988,7 @@ function openBsrDetail(idx, opts){
   document.getElementById('bsrDetailNum').innerHTML = days.toLocaleString() + ' <span style="font-size:13px;font-weight:600;letter-spacing:2px;text-transform:uppercase;opacity:0.75">days</span>';
   document.getElementById('bsrDetailTitle').textContent = r.title;
   document.getElementById('bsrDetailMilestone').textContent = r.milestone || '';
-  // Narrative HTML comes from Pulse's Register 3 rewrite pass, same trust
-  // level as the daily digest's own story content — not raw user input.
-  document.getElementById('bsrDetailNarrative').innerHTML = r.narrative || '<p>No narrative yet.</p>';
+  document.getElementById('bsrDetailNarrative').innerHTML = bsrDetailHtml(r);
   const photo = document.getElementById('bsrDetailPhoto');
   photo.style.background = r.photo && r.photo.url
     ? 'linear-gradient(0deg, rgba(38,31,35,0.55), rgba(38,31,35,0.55)), url(' + r.photo.url + ') center/cover'
