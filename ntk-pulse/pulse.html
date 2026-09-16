@@ -34,6 +34,14 @@
   .tab.on { color: var(--ink); font-weight: bold; border-bottom: 2px solid var(--ink); }
   header .meta { color: var(--dim); font-size: 11px; }
   header .stale { color: var(--stale); font-size: 11px; }
+  /* Stale data is the one failure here that looks like normal operation —
+     the tool renders fine and just recommends worse stories. Loud by design. */
+  #staleBanner { display: none; background: var(--stale); color: #fff;
+    padding: 10px 14px; font-size: 13px; line-height: 1.45; }
+  #staleBanner.show { display: block; }
+  #staleBanner b { font-weight: 700; }
+  #staleBanner a { color: #fff; text-decoration: underline; }
+  #staleBanner .sb-why { display: block; margin-top: 3px; font-size: 12px; opacity: 0.9; }
   header .right { margin-left: auto; display: flex; gap: 10px; align-items: baseline; }
   header .count { color: var(--dim); font-size: 11px; }
   .gear { background: none; border: none; color: var(--dim); font-size: 13px; }
@@ -228,6 +236,8 @@
     <button class="gear" id="gear" title="settings">⚙</button>
   </span>
 </header>
+
+<div id="staleBanner"></div>
 
 <div id="notesPanel"></div>
 
@@ -2193,7 +2203,7 @@ function renderStream(root){
   document.getElementById('count').textContent = (organic.length+MANUAL.length) + ((organic.length+MANUAL.length)===1?' story':' stories');
   if (data){
     const ageMin = Math.round((Date.now()-new Date(data.updated))/60000);
-    document.getElementById('stale').textContent = ageMin>60 ? '· data '+rel(data.updated)+' old — run the workflow' : '';
+    document.getElementById('stale').textContent = ageMin>60 ? '· data '+rel(data.updated)+' old' : '';
   }
   if (!organic.length && !MANUAL.length){ root.innerHTML='<div class="empty">Nothing in the window. Run the pipeline.</div>'; return; }
 
@@ -2544,7 +2554,8 @@ function editionStrip(){
 
 function renderLineup(root){
   document.getElementById('count').textContent = LINEUP.length+'/'+LINEUP_MAX+' in lineup';
-  document.getElementById('stale').textContent = '';
+  // Deliberately NOT cleared here. This is the tab where story picks get
+  // judged, so it is the tab where knowing the data is stale matters most.
   const strip = editionStrip();
   if (!LINEUP.length){
     root.innerHTML = strip + '<div class="empty">Nothing certified yet — assembled edition will populate automatically once the workflow runs, or expand a cluster in the stream and hit “→ lineup”.</div>';
@@ -3230,16 +3241,66 @@ function tick(){ document.getElementById('clock').textContent =
   new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}); }
 tick(); setInterval(tick,30000);
 
+/* ─── data freshness ───────────────────────────────────────────────
+   Pulse fetches its data relative to whatever host serves this file, so a
+   host that lags shows a completely normal-looking tool that simply
+   recommends worse stories. There is no error to notice — the failure
+   presents as bad editorial judgement. Hence a banner rather than the
+   11px header note, which is easy to miss and which renderLineup() used
+   to clear on the one tab where picks actually get judged.
+
+   Thresholds allow real slack: the scan workflow is nominally every 20
+   minutes but GitHub's free tier runs it closer to hourly, and the full
+   pipeline is every 4 hours. */
+const STALE_LIMITS = { stream: 3, lineup: 9 };   // hours
+
+function ageHours(iso){
+  if (!iso) return null;
+  const h = (Date.now() - new Date(iso)) / 3600000;
+  return isFinite(h) ? h : null;
+}
+function ageWords(h){
+  if (h < 1)  return Math.max(1, Math.round(h * 60)) + ' minutes old';
+  if (h < 36) return (h < 10 ? h.toFixed(1) : Math.round(h)) + ' hours old';
+  return Math.round(h / 24) + ' days old';
+}
+
+function renderStaleBanner(){
+  const el = document.getElementById('staleBanner');
+  if (!el) return;
+
+  const bad = [];
+  const s = ageHours(STREAM && STREAM.updated);
+  if (s !== null && s > STALE_LIMITS.stream)  bad.push('Stream is ' + ageWords(s));
+  const l = ageHours(EDITION && EDITION.assembled_at);
+  if (l !== null && l > STALE_LIMITS.lineup)  bad.push('Lineup is ' + ageWords(l));
+
+  if (!bad.length){ el.className = ''; el.innerHTML = ''; return; }
+
+  // The known trap: netlify.toml's build-skip rule excludes ntk-pulse/data/,
+  // so the scan pipelines' commits never deploy and this host's copy freezes
+  // until a publish. Name it directly rather than blaming the workflow.
+  const host = location.hostname;
+  const netlifyServed = host === 'ntknews.org' || host.endsWith('.netlify.app');
+  const why = netlifyServed
+    ? 'This host does not receive Pulse data updates — <code>netlify.toml</code> skips deploys for commits that only touch <code>ntk-pulse/data/</code>. Use the GitHub&nbsp;Pages copy: <a href="https://maxzimbert.github.io/ntknews/ntk-pulse/pulse.html">maxzimbert.github.io/ntknews/ntk-pulse/pulse.html</a>'
+    : 'The scan workflow may not have run. Check the Actions tab.';
+
+  el.innerHTML = '<b>Stale data — recommendations below are not current.</b> '
+    + bad.join(' · ') + '.<span class="sb-why">' + why + '</span>';
+  el.className = 'show';
+}
+
 fetch('data/clusters.json?t='+Date.now())
   .then(r=>{ if(!r.ok) throw 0; return r.json(); })
-  .then(d=>{ STREAM=d; syncEditionToLineup(); render(); })
+  .then(d=>{ STREAM=d; syncEditionToLineup(); render(); renderStaleBanner(); })
   .catch(()=>{ STREAM=null; render(); });
 
 // The assembled edition. Absent until the workflow's Assemble step has run —
 // a 404 here is normal, not an error worth surfacing.
 fetch('data/lineup.json?t='+Date.now())
   .then(r=>{ if(!r.ok) throw 0; return r.json(); })
-  .then(d=>{ EDITION=d; syncEditionToLineup(); render(); })
+  .then(d=>{ EDITION=d; syncEditionToLineup(); render(); renderStaleBanner(); })
   .catch(()=>{ EDITION=null; });
 
 fetchLastPublished();
