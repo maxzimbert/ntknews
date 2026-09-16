@@ -10,9 +10,17 @@ Each defect below names the file and line. Every claim was checked.
 
 ## What is live right now
 
-- **The digest contains one story** — "Anthropic Warned AI Could Cause $100
-  Billion in Damage," published 2026-09-14T17:19Z. `last-published.json`
-  confirms `"stories": 1`.
+- **The digest contains six stories**, published 2026-09-16T18:12Z. The publish
+  path works end to end: dated edition, six permalinks with OG tags, six
+  decoded images, archive index, and the root landing-page hero all regenerated
+  correctly from one button press. The prior edition (2026-09-14) was a single
+  story.
+- **Backstory has not been published since 2026-09-14** and is untouched by
+  digest publishes — the two are decoupled by design, on separate buttons and
+  separate commits. All six rows still carry empty narratives and
+  `last_rewritten_at: null`; no Register 3 rewrite pass has ever been run. This
+  is why the tab reads as out of date: not a wiring fault, an unpopulated
+  feature. See defect #3 and `docs/backstory.md`.
 - **v14 editorial prompts are deployed** in `ntk-pulse/pulse.html`. The July
   handoff's open item "v14 has not been deployed yet" is **resolved**.
 - **URL routing works.** `/today`, `/backstory`, `/me` all rewrite to
@@ -65,9 +73,53 @@ unnoticed.
 
 ---
 
-### 2. The Today overview describes six stories the digest does not contain
+### 2. Pulse publishes a stale Today overview, and nothing notices
 
-**Severity: high. This is a design gap, not a typo.**
+**Severity: high. Confirmed systemic across two consecutive publishes.**
+
+**Root cause, precisely:** Pulse sends whatever `today` object is in its state
+at publish time, however old. Nothing — not Pulse, not `build_digest.py` —
+checks that the overview was generated *for the lineup shipping beside it*.
+
+Measured on the 2026-09-16 publish:
+
+```
+stories:              6   (keys 0443510d…, 4d768292…, 1ca48810…, …)
+today.generatedAt:    2026-09-14T17:20:25Z     ← two days old
+today onramp refs:    1   →  0 resolve, 1 dead (c9fd58cf808108bb)
+```
+
+`c9fd58cf808108bb` was the *September 14* lead story. The overview describes
+Monday's AI-regulation news; the digest beneath it contains six unrelated
+Tuesday stories.
+
+The prior publish failed the same way and worse — a six-story overview carrying
+seven onramp keys, over a one-story digest, **zero** of them resolving.
+
+**Two independent checks are missing:**
+
+1. `today.generatedAt` is never compared against the lineup it ships with.
+2. The `[STORY: key]` markers are never validated against `stories[].key`.
+
+`build_digest.py::regenerate_today()` (line 195) faithfully writes whatever it
+is handed; it has no visibility into either question. The `idx === -1`
+degradation guard in `renderTodayOverviewHtml()` works correctly — it drops
+dead labels to plain text rather than emitting broken links — but that means
+the failure is silent and reads as garbled prose rather than an error.
+
+**Immediate operational workaround:** regenerate the Today tab in Pulse
+immediately before every publish. There is currently nothing enforcing this.
+
+**Proper fix** requires a decision (see `docs/decisions.md`): the absence of a
+publish-time gate was deliberate, chosen so real failure modes would surface.
+This one has now surfaced twice. Options are fail-hard (refuse the publish),
+warn-and-continue, or auto-regenerate.
+
+---
+
+### 2b. Prior instance, for reference
+
+**Severity: resolved into 2 above — kept because it shows the failure shape.**
 
 `ntk-pulse/data/lineup-publish.json` — the single file that drives a publish —
 contains:
