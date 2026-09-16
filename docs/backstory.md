@@ -225,9 +225,26 @@ Update the renderer minimally to read `todays_pairings` rather than `rows`, and
 show an honest empty state — *"Backstory publishes with each digest"* — instead
 of a wall of blank rows.
 
+**Also required in this slice — neutralize Pulse's Backstory publish.** This is
+not optional cleanup; it is a data-loss hazard.
+
+`pulse.html:328` is `let BACKSTORY = load(LS.backstory, null) || seedBackstory();`
+— Pulse's Backstory tab lives entirely in the editor's browser `localStorage`,
+seeded from a hardcoded 7-row list. **It never fetches
+`digest/data/backstory.json`.** `publishBackstory()` then does a blind
+`PUT` of that localStorage array over the whole file.
+
+So the moment Slice 1 writes the 21-row library to that path, one click of
+"Publish Backstory" replaces it with seven Part 1 rows and the slice is gone.
+The button must be disabled, removed, or repointed before the library lands.
+(Pulse's Backstory tab gets its real replacement in Slice 5.)
+
+Note the seed has **seven** rows while the live file has **six** — the two have
+already diverged, which is itself evidence that nothing reconciles them.
+
 **Done when:** `digest/data/backstory.json` has 21 rows in Part 2 shape; the
 tab shows the empty state; deep-linking to `/backstory` and the back gesture
-still work.
+still work; and no path in Pulse can overwrite the library.
 
 ### Slice 2 — Renderer
 
