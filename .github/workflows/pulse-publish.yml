@@ -39,6 +39,18 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python build_digest.py data/lineup-publish.json
 
+      # Backstory publishes with the digest, on one action, as always intended.
+      # continue-on-error deliberately: the digest is the product and Backstory
+      # is additive, so a classifier hiccup or a spent API budget must never
+      # block a publish. A failure here leaves the previous pairings in place
+      # and the digest ships regardless — check the step's log when the
+      # Backstory tab looks like yesterday.
+      - name: Build Backstory pairings
+        continue-on-error: true
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python editorial/build_pairings.py
+
       - name: Commit
         run: |
           git config user.name "ntk-publish-bot"

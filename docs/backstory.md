@@ -296,6 +296,17 @@ was always intended. Today they are separate buttons and separate commits.
 
 **Done when:** one publish updates the digest and Backstory together.
 
+**Done 2026-09-16.** `pulse-publish.yml` runs `editorial/build_pairings.py`
+after `build_digest.py`, using the `ANTHROPIC_API_KEY` secret that workflow
+already carries. The existing `git add digest/` picks up the rewritten
+`backstory.json` with no change to the commit step.
+
+Marked `continue-on-error: true` deliberately. The digest is the product and
+Backstory is additive, so a classifier failure or an exhausted API budget must
+never block a publish — a failure leaves the previous pairings in place and the
+digest ships regardless. **If the Backstory tab looks like yesterday, check
+that step's log first;** it fails quietly by design.
+
 ### Slice 5 — Pulse tagging control
 
 A control in Pulse's certification flow that pre-fills the classifier's row
