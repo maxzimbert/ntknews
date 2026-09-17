@@ -85,7 +85,8 @@ clustering — that decision is recorded in `docs/decisions.md`.
 | `docs/architecture.md` | How the pipeline actually runs, end to end. |
 | `docs/state.md` | What is true right now, and the open defects. **Rots fastest — check the date at the top.** |
 | `docs/decisions.md` | Choices that were made deliberately and should not be silently re-decided. |
-| `docs/backstory.md` | The Backstory feature, which currently exists as two incompatible designs sharing one name. |
+| `docs/backstory.md` | The Backstory feature and its build plan. |
+| `docs/backlog.md` | What's next, roughly prioritized. A working list, not a commitment. |
 
 ---
 
