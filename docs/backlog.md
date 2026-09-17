@@ -37,8 +37,9 @@ Hook point is `openStory()` / `closeStory()` in `digest/index.html`, alongside
 the existing `navOverlay` handling. The back gesture already works and must
 keep working.
 
-Related, and the editor wants to see it before deciding: the back affordance
-becoming `Digest: <category>` or a story number rather than a bare arrow.
+A related idea — the back affordance becoming `Digest: <category>` or a story
+number rather than a bare arrow — was **discarded 2026-09-17**. Not wanted. Do
+not revive it as a side effect of other navigation work.
 
 **4. Backstory button on a digest story opens that story's pairing.**
 Now possible for the first time — `todays_pairings` carries `story_id`, so the
@@ -47,11 +48,6 @@ only from the tab.
 
 Note the naming collision flagged in `docs/backstory.md`: an older per-story
 "Backstory ↓" coming-soon modal already exists and is unrelated. Reconcile.
-
-**5. Orientation cards — remove or rebuild.**
-Currently the first thing a new reader sees, and they describe an April
-product. Either cut them entirely or rewrite around what exists now. Cheap
-either way; the decision is the work.
 
 ---
 
@@ -62,11 +58,18 @@ either way; the decision is the work.
 can't tell what it is or how it works. It surfaces throughout the experience,
 so this is not a Profile-tab task.
 
-**Analytics.** GA4 is attached but the event model predates most of what now
-exists. Two separate problems: deciding *what is worth tracking* against the
-Goal A questions (completion rate, caught-up confidence — the north stars in
-`README-digest-assembly-and-acquisition`), and then instrumenting it. Do the
-first before the second.
+**Analytics and onboarding.** One epic, held. Paired deliberately
+(2026-09-17): the orientation cards are the first thing a new reader sees and
+currently describe an April product, and what they should say depends on what
+you have decided to learn from a new reader. Rewriting the cards before the
+measurement question is settled means writing them twice.
+
+GA4 is attached but the event model predates most of what now exists. Two
+problems in order: decide *what is worth tracking* against the Goal A
+questions — completion rate and self-reported caught-up confidence are the
+stated north stars, with sessions-per-day an explicit **anti**-metric — and
+only then instrument it. Then either cut the orientation cards entirely or
+rebuild them around what exists now.
 
 **Journalism Atlas sourcing.** Adding as many independent journalists from
 journalismatlas.com to Pulse's feed list as possible.
