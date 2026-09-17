@@ -5,7 +5,7 @@ If something here contradicts a README in `~/Desktop/NTK/ReadMes (post 9:10)/`,
 **this wins** — those files are per-conversation records, frozen at the moment
 each chat ended, and several are now wrong about the code.
 
-Last verified against the repo: **2026-09-15**.
+Last verified against the repo: **2026-09-17**.
 
 ---
 
@@ -83,10 +83,42 @@ clustering — that decision is recorded in `docs/decisions.md`.
 | File | What it holds |
 |---|---|
 | `docs/architecture.md` | How the pipeline actually runs, end to end. |
-| `docs/state.md` | What is true right now, and the open defects. **Rots fastest — check the date at the top.** |
+| `docs/state.md` | Narrative state — what is live right now. **Rots fastest — check the date at the top.** |
+| `docs/tickets/` | **Open work, each with a check that can fail.** Start here. |
+| `docs/log.md` | Dated notes on what turned out to be wrong. Corpus material. |
 | `docs/decisions.md` | Choices that were made deliberately and should not be silently re-decided. |
 | `docs/backstory.md` | The Backstory feature and its build plan. |
 | `docs/backlog.md` | What's next, roughly prioritized. A working list, not a commitment. |
+
+---
+
+## The flow
+
+Open work lives in `docs/tickets/`. Each ticket carries an executable check, so
+a claim about this codebase can fail rather than quietly rot. Run them:
+
+```bash
+bash scripts/rot.sh
+```
+
+`OPEN` is expected — that is work not done yet. `STALE` means something marked
+VERIFIED stopped being true, and it exits 1. The same script runs daily and on
+every PR (`.github/workflows/rot.yml`).
+
+To open one, ask for it — "open a ticket for X" — and the `ticket` skill writes
+it in house format, check block included. Do not format these by hand.
+
+Then: branch `T-00xx-short-slug`, PR, look at the Netlify deploy preview, merge,
+delete. Put the ticket ID in the commit subject so `git log` answers "why does
+this line exist."
+
+If you built something without saying up front how you'd know it worked — which
+is normal — derive the check at the end from the diff. The question is not "did
+we meet the criteria," it is **what would I check to know this still works six
+months from now.**
+
+If something surprised you, three lines in `docs/log.md`. Only if it would
+change someone's behaviour.
 
 ---
 
@@ -105,7 +137,11 @@ clustering — that decision is recorded in `docs/decisions.md`.
    pipeline against fixtures for Python.
 5. **Never commit API keys.** Anthropic and Recraft keys live in the editor's
    browser `localStorage` and in GitHub Actions secrets. Nowhere else.
-6. **Say when something is unverified.** Several READMEs in this project
+6. **A ticket's check must be run, not just written.** `bash scripts/rot.sh
+   T-00xx` before you commit it, and read the output — a check that reports the
+   wrong number carries the authority of having executed and is worse than no
+   check. Never weaken a check to make it pass.
+7. **Say when something is unverified.** Several READMEs in this project
    asserted things with more confidence than the evidence supported, and the
    cost was real debugging time. "I haven't checked this" is a useful sentence.
 

@@ -1,8 +1,19 @@
 # Proposal — a stateless ticketing system for NTK
 
-**Status: proposal, not decided.** Written 2026-09-17 at the end of a two-day
-session, as the handoff for a separate conversation that will design this
-properly.
+**Status: implemented 2026-09-17.** See `docs/tickets/README.md` for what
+shipped and `scripts/rot.sh` for the detector. This file is kept as the
+argument, not the manual.
+
+Decisions taken from the seven questions at the bottom: tickets are Markdown
+files with five frontmatter fields; checks are inline shell; the rot detector
+fails rather than opening a PR; seven retroactive tickets, not six, because one
+regression guard was worth adding; `prepublish` is filed as T-0008 but held,
+since its checks now run on a schedule anyway; the tag vocabulary is eight
+areas and four kinds, enforced by the detector rather than by discipline; and
+the `.docx` corpus gap is T-0009 and is probably worth more than all of this.
+
+Originally written at the end of a two-day session as the handoff for a
+separate conversation that would design this properly.
 
 A note on "stateless": the word that matters is not *ticket*, it is *stateless*.
 The requirement is that a session which begins knowing nothing can pick up a
