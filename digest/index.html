@@ -3105,6 +3105,12 @@ window.openStoryFromToday = openStoryFromToday;
 // API on every load.
 var LOCAL_KEY = 'ntk_local_v1';
 
+// Directory / marketplace sections that EventRegistry's crawler tags as news.
+// Deliberately matched on path, not host: clasificados.laopinion.com is a
+// classifieds subdomain of a real newspaper, and la opinion's actual
+// reporting should still come through.
+var LOCAL_NONNEWS_PATH = /\/(ads?|clasificados|classifieds|marketplace|listings|coupons|directory|jobs|autos|real-?estate)(\/|$|\?)/i;
+
 function todayDateStamp() {
   var d = new Date();
   return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
@@ -3237,13 +3243,32 @@ function fetchLocalAndWeather() {
               fetch('/.netlify/functions/news?mode=local-news&locationUri=' + encodeURIComponent(locUri) + '&filterBy=event')
                 .then(function (r) { return r.json(); }).catch(function (e) { console.log('[local] event-based fetch failed:', e); return null; })
             ]);
-            var seen = {};
+            // Three filters, in increasing order of reliability.
+            //
+            // URL dedup alone was never enough: a classifieds listing on
+            // clasificados.laopinion.com appeared five times under five
+            // different URLs with one identical title. EventRegistry's
+            // crawler does not reliably separate reporting from directory
+            // content on a local outlet's own domain.
+            var seen = {}, seenTitle = {};
             results.forEach(function (resp) {
               var list = (resp && resp.articles && resp.articles.results) || [];
               list.forEach(function (a) {
                 if (!a.url || seen[a.url]) return;
+                var title = (a.title || '').trim();
+                // A real story does not publish the identical headline five
+                // times under different links. This is the signal that
+                // actually catches directory content.
+                var tkey = title.toLowerCase();
+                if (!tkey || seenTitle[tkey]) return;
+                // Structural tell, not a domain blocklist: directory and
+                // marketplace sections live under recognisable path segments
+                // on otherwise legitimate news domains, so blocking the host
+                // would throw away that outlet's real reporting too.
+                if (LOCAL_NONNEWS_PATH.test(a.url)) return;
                 seen[a.url] = true;
-                articles.push({ url: a.url, title: a.title || 'Untitled', source: (a.source && a.source.title) || 'Unknown' });
+                seenTitle[tkey] = true;
+                articles.push({ url: a.url, title: title || 'Untitled', source: (a.source && a.source.title) || 'Unknown' });
               });
             });
           }

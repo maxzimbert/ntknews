@@ -380,6 +380,15 @@ exports.handler = async (event) => {
       includeSourceInfo: true,
       isDuplicateFilter: 'skipDuplicates',
       forceMaxDataTimeWindow: 2,
+      // EventRegistry's crawler does not reliably separate reporting from
+      // directory content on a local outlet's own domain — a classifieds
+      // listing on clasificados.laopinion.com surfaced as Los Angeles "local
+      // news" five times under five URLs. This is one layer of defence and
+      // may not be sufficient on its own (the crawler can still bucket such
+      // pages as news); the client also dedupes by exact title, which is the
+      // more reliable signal, since a real story does not publish the
+      // identical headline five times under different links.
+      dataType: ['news'],
     };
     if (q.filterBy === 'source') body.sourceLocationUri = [locUri];
     else body.locationUri = [locUri];
