@@ -15,7 +15,7 @@ There was never an em-dash rule in the prompts, and the prompts themselves held
 examples rewritten to match. **Measure the next digest** — if it does not drop
 sharply, escalate to a deterministic pass. See `docs/decisions.md`.
 
-**2. Local news is surfacing classifieds.**
+**2. ~~Local news is surfacing classifieds~~ — fixed 2026-09-17.**
 `clasificados.laopinion.com` job listings render as Los Angeles "local news."
 
 The fix is already described in `pulse-digest-technical-state.md` as shipped.
@@ -28,7 +28,7 @@ Also worth revisiting what "local" should mean: the expectation is local TV,
 radio, affiliates, blogs and digital outlets, and EventRegistry's crawler does
 not reliably distinguish those from directory content on the same domain.
 
-**3. Story permalinks in the address bar.**
+**3. ~~Story permalinks in the address bar~~ — shipped 2026-09-17.**
 Every story already has a real static page with OG tags
 (`digest/YYYY-MM-DD/<slug>/`). `openStory()` pushes a history entry but does
 not change the URL, so sharing only works through the share button.
@@ -68,12 +68,21 @@ Goal A questions (completion rate, caught-up confidence — the north stars in
 `README-digest-assembly-and-acquisition`), and then instrumenting it. Do the
 first before the second.
 
-**Journalism Atlas sourcing.** Adding independent journalists from
-journalismatlas.com to Pulse's feed list. **This reverses a July decision** —
-Atlas was tabled as a poor fit for Pulse v1 on the grounds that Atlas is
-creator-journalist analysis while Pulse's job is right-now reporting. Worth
-re-examining that reasoning explicitly rather than quietly overriding it: it
-may have been right, or the product may have changed.
+**Journalism Atlas sourcing.** Adding as many independent journalists from
+journalismatlas.com to Pulse's feed list as possible.
+
+**Correction 2026-09-17: this is not a reversal.** An earlier note recorded
+Atlas as tabled on editorial grounds (analysis vs. right-now reporting). The
+editor's account is different and more useful: the intent was always to take as
+much of Atlas as possible, and the work ran aground on **importing the authors'
+feeds**. A prior chat proposed a manual import route, which was time-sensitive
+and lost to other priorities.
+
+So the open problem is mechanical, not editorial: how to resolve Atlas author
+pages to working feed URLs at scale. Note the five Substack feeds already
+blocked by TLS fingerprinting (`docs/state.md`) — if Atlas authors are largely
+on Substack, that constraint likely applies here too and should be checked
+first.
 
 **Full-body article sourcing beyond EventRegistry.** Unexplored: GDELT
 (Jigsaw), Microsoft AI Marketplace for Publishers, Yahoo Scout. World News API
