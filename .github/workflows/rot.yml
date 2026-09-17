@@ -1,0 +1,32 @@
+name: NTK — Rot check
+
+# Runs every ticket's check block and fails loudly when something claimed
+# VERIFIED stops being true. See docs/tickets/README.md.
+#
+# Deliberately NOT triggered on push to main. The two pipeline bots commit to
+# ntk-pulse/data/ roughly 72 times a day, and a push trigger would burn Actions
+# minutes on 72 identical runs. Once daily plus every PR is the right cadence:
+# the daily run catches drift, the PR run catches a change that breaks a claim.
+#
+# One hard rule for anyone editing this file: no continue-on-error. The
+# pairings step elsewhere in this repo fails quietly by design and that is
+# appropriate there. A rot detector that fails quietly is a second layer of
+# prose claims with extra steps.
+
+on:
+  workflow_dispatch: {}
+  pull_request:
+  schedule:
+    - cron: "0 13 * * *"   # 13:00 UTC daily, after the morning pulse runs
+
+permissions:
+  contents: read
+
+jobs:
+  rot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run every ticket's check
+        run: bash scripts/rot.sh
