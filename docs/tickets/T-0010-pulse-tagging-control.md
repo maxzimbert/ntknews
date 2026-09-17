@@ -1,7 +1,7 @@
 ---
 id: T-0010
 title: Pulse has no control to review or override a story's Backstory row
-status: DECIDED
+status: VERIFIED
 tags: [pulse, feature]
 anchor: ntk-pulse/pulse.html:1905
 ---
@@ -37,9 +37,9 @@ Stories whose sub-genre does not map are **silently dropped**
 entry count out, despite the roll-up spec saying it does. An editor assignment
 cannot be dropped.
 
-The seven Still Counting rows are created with `subgenres: []` and are
-therefore unreachable by the classifier (T-0012). An editor assignment reaches
-them, which makes this a partial fix for that too.
+Seven of the 21 rows carry no sub-genres and are therefore unreachable by the
+classifier (T-0012). An editor assignment reaches them, which makes this a
+partial fix for that too.
 
 **Scope.** This ticket is the override and the collision warning — the part
 that satisfies the recorded acceptance criterion. Running the classifier inside
@@ -63,7 +63,7 @@ lp = json.loads((root/'ntk-pulse/data/lineup-publish.json').read_text())
 bs = json.loads((root/'digest/data/backstory.json').read_text())
 if not lp.get('stories'): sys.exit('no stories to test with')
 target = lp['stories'][0]['key']
-row = 'gaza'   # a Still Counting row: unreachable by the classifier
+row = 'gaza'   # a row with no sub-genres: unreachable by the classifier
 bak_lp = json.dumps(lp); bak_bs = (root/'digest/data/backstory.json').read_text()
 lp['stories'][0]['backstory_row'] = row
 (root/'ntk-pulse/data/lineup-publish.json').write_text(json.dumps(lp))

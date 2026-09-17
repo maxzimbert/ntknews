@@ -1,7 +1,7 @@
 ---
 id: T-0013
 title: The pairings step fails quietly and the Backstory tab shows yesterday
-status: DECIDED
+status: VERIFIED
 tags: [pipeline, defect]
 anchor: .github/workflows/pulse-publish.yml
 ---

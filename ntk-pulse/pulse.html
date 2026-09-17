@@ -1238,6 +1238,19 @@ async function publishBackstory(){
 // anything; see the note in publishBackstory().
 let BSR_PUBLISHED = null;
 
+// The 21-row library, for the per-story Backstory tag in the Lineup tab
+// (T-0010). Read from the published file, NOT from this tab's BACKSTORY
+// array — that one is a stale seven-row seed in localStorage and is the
+// reason publishing from the Backstory tab had to be disabled. One source.
+let BSR_ROWS = [];
+function loadBsrRows(){
+  return fetchPublishedBackstory().then(d => {
+    BSR_ROWS = ((d && d.rows) || []).map(r => ({id: r.id, title: r.title}));
+    if (BSR_ROWS.length) render();
+    return BSR_ROWS;
+  }).catch(() => BSR_ROWS);
+}
+
 function fetchPublishedBackstory(){
   if (BSR_PUBLISHED) return Promise.resolve(BSR_PUBLISHED);
   return fetch('../digest/data/backstory.json?t='+Date.now())
@@ -1916,6 +1929,10 @@ function storyDataExport(){
       overlayColor: s.overlayColor || '#0798F2',
       overlayOpacity: s.overlayOpacity || 45,
       featuredImageCredit: s.featuredImageCredit || null,
+      // T-0010 — the editor's Backstory row, when they set one. Omitted
+      // entirely when blank so build_pairings.py's `or None` sees nothing and
+      // classifies as before.
+      ...(s.backstoryRow ? {backstory_row: s.backstoryRow} : {}),
     };
   });
   return JSON.stringify({
@@ -2642,6 +2659,36 @@ function editionStrip(){
     `</details>` : '');
 }
 
+// T-0010 — the per-story Backstory row assignment.
+//
+// Empty means "let the classifier decide", which is the previous behaviour and
+// stays the default: the editor should not have to tag eight stories a day to
+// publish. What this buys is the ability to override one, and to SEE when two
+// stories are heading for the same row — which the classifier cannot notice,
+// because it assigns each story independently with no view of the others.
+//
+// The count is over explicit assignments only. A collision between two
+// classifier picks is invisible here by definition; that is T-0014.
+function bsrCollisionCounts(){
+  const n = {};
+  LINEUP.forEach(s => { if (s.backstoryRow) n[s.backstoryRow] = (n[s.backstoryRow]||0)+1; });
+  return n;
+}
+function bsrTagControl(s){
+  if (!BSR_ROWS.length) return '';
+  const counts = bsrCollisionCounts();
+  const dup = s.backstoryRow && counts[s.backstoryRow] > 1;
+  return `<select class="bsr-tag" title="Backstory row — blank lets the classifier choose"`+
+    (dup ? ' style="border-color:var(--warn)"' : '')+`>`+
+    `<option value=""${s.backstoryRow?'':' selected'}>backstory: auto</option>`+
+    BSR_ROWS.map(r=>`<option value="${esc(r.id)}"${s.backstoryRow===r.id?' selected':''}>`+
+      `backstory: ${esc(r.title)}</option>`).join('')+
+    `</select>`+
+    (dup ? `<span class="chip" style="background:var(--warn);color:#fff" `+
+           `title="another story in this lineup is tagged to the same row">`+
+           `${counts[s.backstoryRow]}× same row</span>` : '');
+}
+
 function renderLineup(root){
   document.getElementById('count').textContent = LINEUP.length+'/'+LINEUP_MAX+' in lineup';
   // Deliberately NOT cleared here. This is the tab where story picks get
@@ -2761,6 +2808,7 @@ function renderLineup(root){
       `<div class="story-meta"><span class="beat beat-${esc(s.beat)}">${esc(s.beat)}</span>`+
       `<select class="cat">${CATEGORIES.map(c=>`<option${c===s.category?' selected':''}>${c}</option>`).join('')}</select>`+
       `<input type="text" class="cat-custom" placeholder="or type a custom category…" value="${esc(s.categoryCustom||'')}" style="width:160px">`+
+      bsrTagControl(s)+
       `<span>${nActive} active sources · ${nBody} with ER bodies`+
       (nDup?` · ${nDup} deduped`:'')+(nSup?` · ${nSup} suppressed`:'')+`</span>`+
       editionScoreChips(s.key)+
@@ -2915,6 +2963,11 @@ function renderLineup(root){
     el.querySelector('.angle').addEventListener('change',e=>{ s.angle=e.target.value; saveLineup(); });
     el.querySelector('.cat').addEventListener('change',e=>{ s.category=e.target.value; s.categoryCustom=''; saveLineup(); render(); });
     el.querySelector('.cat-custom').addEventListener('change',e=>{ s.categoryCustom=e.target.value.trim(); saveLineup(); });
+    const bsrSel = el.querySelector('.bsr-tag');
+    if (bsrSel) bsrSel.addEventListener('change',e=>{
+      s.backstoryRow = e.target.value || '';   // '' means leave it to the classifier
+      saveLineup(); render();
+    });
     el.querySelector('.ord').addEventListener('keydown',e=>{
       if (e.key==='Enter'){ e.preventDefault(); reorderStory(s.id, parseInt(e.target.value)||1); }
     });
@@ -3394,6 +3447,12 @@ fetch('data/lineup.json?t='+Date.now())
   .catch(()=>{ EDITION=null; });
 
 fetchLastPublished();
+
+// The Backstory row library, for the per-story tag in the Lineup tab (T-0010).
+// Fired at startup rather than on first visit to the Backstory tab, because the
+// control lives in Lineup and would otherwise be invisible until the editor
+// happened to open a different tab.
+loadBsrRows();
 </script>
 </body>
 </html>

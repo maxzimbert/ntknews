@@ -177,17 +177,43 @@ def main():
 
     pub = json.loads(LINEUP.read_text())
     stories = [{"story_id": s["key"], "headline": s["headline"],
-                "summary": strip_html(s.get("lede")) or strip_html(s.get("truth"))[:220]}
+                "summary": strip_html(s.get("lede")) or strip_html(s.get("truth"))[:220],
+                "editor_row": s.get("backstory_row") or None}
                for s in pub.get("stories", [])]
     if not stories:
         sys.exit("no stories in lineup-publish.json")
     log(f"lineup: {len(stories)} stories")
 
+    # -- Editor assignments (T-0010) win over the classifier.
+    # Pulse writes backstory_row per story at certification time. An assignment
+    # the editor made is reviewed editorial and is not re-litigated by a model.
+    # It also reaches the seven rows that carry no sub-genres and so are
+    # unreachable by classification at all (T-0012).
+    #
+    # An unknown row id falls back to the classifier rather than being trusted:
+    # a stale id left behind by a renamed row would otherwise produce a pairing
+    # against a row the renderer cannot resolve, which is silently dropped at
+    # the far end and looks like a missing card.
+    for s in stories:
+        if s["editor_row"] and s["editor_row"] not in rows_by_id:
+            log(f"  editor row {s['editor_row']!r} on {s['story_id']} is not in "
+                f"the library - falling back to the classifier")
+            s["editor_row"] = None
+    to_classify = [s for s in stories if not s["editor_row"]]
+    if len(to_classify) < len(stories):
+        log(f"editor-assigned: {len(stories) - len(to_classify)} of {len(stories)}")
+
     api_key = os.environ.get("ANTHROPIC_API_KEY")
     if not api_key and not (args.mock or args.dry_run):
         sys.exit("ANTHROPIC_API_KEY not set (use --mock to test the plumbing)")
 
-    cls_user, raw = classify(api_key, stories, vocab_block, args.mock or args.dry_run)
+    if to_classify:
+        cls_user, raw = classify(api_key, to_classify, vocab_block,
+                                 args.mock or args.dry_run)
+    else:
+        cls_user = "(every story carries an editor assignment - 5A skipped)"
+        raw = []
+        log("5A skipped - nothing left to classify")
     if args.dry_run:
         print("=" * 72)
         print(f"5A CLASSIFIER  —  {CLASSIFIER_MODEL}")
@@ -201,6 +227,10 @@ def main():
     by_id = {c.get("story_id"): c for c in raw if isinstance(c, dict)}
     entries, unmapped = [], []
     for s in stories:
+        if s["editor_row"]:
+            entries.append({**s, "row": s["editor_row"], "subgenre": None,
+                            "confidence": 1.0})
+            continue
         c = by_id.get(s["story_id"]) or {}
         sub = (c.get("subgenre") or "").lower()
         row_id = lookup.get(sub)
@@ -238,6 +268,9 @@ def main():
             "story_id": e["story_id"], "headline": e["headline"],
             "row": e["row"], "line": lines_by_id.get(e["story_id"], ""),
             "subgenre": e["subgenre"], "confidence": e["confidence"],
+            # Which of the two paths put this row here. The editor needs to
+            # know whether they are looking at their own call or the model's.
+            "source": "editor" if e.get("editor_row") else "classifier",
             # Surfaced in Pulse for review; never used to hide a card.
             "needs_review": (e["confidence"] or 0) < REVIEW_THRESHOLD,
         })
