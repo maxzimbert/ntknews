@@ -42,3 +42,32 @@ It was caught only because the check's output was read rather than trusted.
 overstates**, and it is more dangerous because it carries the authority of
 having executed. Run a check against real data and read what it says before
 believing it.
+
+## 2026-09-17 — the checker read the wrong copy of the thing it was checking
+
+Pulse publishes through GitHub's API. The commit lands on `origin/main`, not on
+the editor's laptop. `rot.sh` reads local files. So running the checks straight
+after a publish measured the *previous* digest and reported it as current —
+T-0001 read `OPEN` while the publish it was judging actually had zero dead
+onramp keys.
+
+The system built to catch "the artifact is not the system" made exactly that
+error, on its first day, about a publish. `rot.sh` now fetches and refuses to
+run on a tree behind `origin/main`.
+
+Worth noticing the shape rather than the instance: **the thing you are holding
+is not the thing that is live**, and every version of this project's failures
+has been some variant of that sentence. Netlify serving stale data while the
+HTML was byte-identical. A generator writing to a tree nothing serves. A doc
+describing intent as implementation. Now a checker reading a stale checkout.
+
+## 2026-09-17 — testing a guard by rewinding past the guard
+
+Twice in ten minutes, `git reset --hard` to an earlier commit was used to
+simulate a stale tree — which also reverted `rot.sh` to the version that did
+not contain the guard being tested. The test passed by testing nothing, and
+the first time it silently discarded the uncommitted fix as well.
+
+**Rewinding the tree removes the code under test.** To test behaviour against
+an older tree, move the tree and restore the script:
+`git checkout origin/main -- scripts/rot.sh`. And commit before any hard reset.
