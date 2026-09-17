@@ -103,6 +103,13 @@ That last row matters. Some things genuinely cannot be automated, and a ticket
 that says `check: manual — editor reads six lines` is honest. A ticket that
 *pretends* to a check it doesn't have is how you get back to where we started.
 
+**A tension to design for, not resolve.** A check makes a ticket verifiable. A
+check alone makes it worthless as corpus material — `grep -q dataType` records
+nothing about why that filter matches on path rather than host, which is the
+part a future reader needs. So a ticket carries both a check and a why, and
+they serve different readers: the check serves the rot detector, the why serves
+whoever asks six months out. Neither substitutes for the other. See Part II.
+
 ### 4. Every ticket anchors to code
 
 A `file:line` or a grep pattern. A ticket with no anchor is a wish.
@@ -263,36 +270,80 @@ this stateless for a nicer view you'd check twice.
 runs on a schedule and tells you when a claim went false. That's the Action in
 Part I §5.
 
-## The digital trail for everything downstream
+## The corpus is the asset
 
-Marketing, PR, crisis, legal, hiring, investment. This is a genuinely different
-requirement and I want to separate it cleanly, because tickets will not serve
-it.
+Correcting my first pass at this. I had written that tickets will not serve
+marketing, legal or hiring, and proposed a separate artifact for those. That
+misread the requirement.
 
-Tickets answer *what changed and is it still true*. Those functions ask
-different questions:
+The point is not that a lawyer reads tickets. It is that development work should
+**deposit into a corpus** rich enough for a later session to draw on when the
+ask is a funder memo, a hiring brief, a crisis statement, or ad copy that has to
+be true. The consumer is a future agent with no memory, and the corpus is what
+it has to work from.
 
-- **Why does this exist?** → decision records, which you now have in
-  `docs/decisions.md`. Keep the format: the decision, the reasoning, and what
-  would have to change to reverse it. That file is already the most useful
-  document in the repo for a lawyer or an investor, and neither was its
-  intended audience.
-- **What happened, in order?** → git log, if commit messages stay narrative.
-  The messages from this week ("this was recorded as though a rule existed; it
-  did not") are the artifact. Keep writing them that way; a one-line commit
-  message is a lost explanation.
-- **What did we learn?** → this is the gap, and tickets won't close it. A
-  closed ticket records that local news was fixed. It does not record that
-  *three separate documents claimed a fix that was never written*, which is the
-  thing worth telling anyone about how this project works.
+That reframes the design question from *what should a ticket record* to **what
+makes the accumulated record retrievable and usable by something that wasn't
+there.**
 
-For that third one, consider a thin `docs/log.md` — dated, a few lines per
-entry, written only when something surprised you. Not a changelog. The rule
-that keeps it useful: **an entry is only worth writing if it would change
-someone's behavior.** "Fixed local news" wouldn't. "Our documentation asserted
-fixes that didn't exist, three times, and we now verify with executable checks
-instead" would — and that is a paragraph you could hand to a funder, a hire, or
-a reporter without editing.
+### What that changes
+
+**Retrievability becomes a design requirement, not a nicety.** A synthesis task
+("write the case for a second editor") needs to find the relevant material
+without reading everything. That argues for consistent vocabulary in
+frontmatter — a small, fixed tag set reused exactly, not free-text labels that
+drift. Three spellings of the same idea is the same failure as three documents
+claiming the same fix.
+
+**The "why" field stops being optional.** See the tension noted in Part I: a
+check makes a ticket verifiable, and a check alone makes it useless as corpus.
+Both fields are load-bearing, for different readers.
+
+**Learning is the highest-value deposit and nothing currently captures it.**
+A closed ticket records that local news was fixed. It does not record that
+*three separate documents claimed a fix that was never written* — which is the
+genuinely interesting thing about how this project has worked, and the kind of
+sentence that belongs in a grant application.
+
+A thin `docs/log.md` would hold this: dated, a few lines, written only when
+something surprised you. Not a changelog. The rule that keeps it worth reading
+is that **an entry only earns its place if it would change someone's
+behaviour.** "Fixed local news" wouldn't. "Our own documentation asserted fixes
+that did not exist, three times, so we now verify with executable checks" would.
+
+### The real gap in the corpus, which is bigger than ticketing
+
+If the corpus is what a future session draws from, then the most strategically
+valuable material NTK has is currently invisible to it.
+
+The READMEs treat these as authoritative. None is in this repo, and no agent can
+open any of them:
+
+| Document | What it holds |
+|---|---|
+| `NTK_Editorial_Prompt_System_v14.docx` | The authoritative editorial system |
+| `NTK_Editorial_Standards_Memo_v3_final.docx` | The "NTK Constitution" — the philosophy every prompt derives from |
+| `NTK_Story_Selection_Brief_v3.docx` | The selection relay and sourcing rules |
+| `NTK_Roadmap_v1.docx` | Monetization, SWIPE LEFT, the paid layer |
+| `ntk_swot_v2.html` | Positioning and competitive read |
+| `NTK_MomTest_Tracker.numbers` | **The only real audience evidence that exists** |
+
+That last row is the sharpest. Every marketing, funder and hiring conversation
+turns on audience evidence, and the Mom Test data is in an Apple Numbers file
+outside the repo. It is the single highest-value thing that could enter the
+corpus, and right now the answer to "what do we know about our readers" is a
+file I cannot read.
+
+**This is worth more than the ticketing system.** Ticketing prevents future
+drift. Bringing this material in unlocks every downstream ask you named. They
+are different problems and the second one is probably first in line.
+
+Conversion is mechanical and mostly a decision about fidelity: prompts and
+standards want to be text or Markdown in the repo, where they can be diffed and
+where a check can assert the live copy matches; the Mom Test data wants to be
+CSV; the SWOT and Roadmap want to be Markdown. Worth deciding once whether the
+repo copy becomes canonical or stays a mirror — a mirror will drift, and this
+project's whole failure history is drift between copies.
 
 ---
 
@@ -310,6 +361,12 @@ a reporter without editing.
 5. **Which of the four skills to build first.** Recommendation: `prepublish`,
    because it is the one with a failure that has already shipped twice, and
    because it will teach you what a check block needs to contain.
+6. **The tag vocabulary.** A small fixed set, reused exactly, so a synthesis
+   task can retrieve by theme. Decide it once and keep it short; drift here
+   defeats the corpus.
+7. **Whether the `.docx` corpus gap gets its own track.** Recommendation: yes,
+   and ahead of this. The Mom Test tracker especially — it is the only real
+   audience evidence NTK has and no agent can currently read it.
 
 ## One caution for that conversation
 
