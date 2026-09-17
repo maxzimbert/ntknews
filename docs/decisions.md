@@ -74,6 +74,25 @@ genuinely comparing what different outlets reported.
 **Em-dash discipline is prompt-only, on purpose.** Converting an em dash to a
 period requires judgment a regex can't supply. Do not "fix" this with a regex.
 
+**Correction, 2026-09-17.** This decision was recorded as though a prompt rule
+existed. It did not — there was no em-dash instruction anywhere in `pulse.html`.
+Measured output: 33 em dashes across 7 published stories, 24 in a single one.
+
+Worse, the prompts contained 82 em dashes of their own, including throughout
+the VOICE worked examples the model is explicitly told to study. It was not
+ignoring a rule; it was copying the exemplar faithfully.
+
+Fixed by writing the rule (VOICE RULES 8, plus a line in GLOBAL's structural
+rules) **and** rewriting the worked examples to contain none, so the
+instruction and the demonstration agree. Punctuation only; wording preserved.
+
+The 52 em dashes in SEC_PROMPTS' instructional text were left alone
+deliberately — rewriting editorial instructions to fix a formatting tic risks
+damaging meaning for an unproven gain. **Measure the next digest before
+touching them.** If output em dashes do not drop sharply, that is the evidence
+for a bounded deterministic pass, which is the thing this decision was
+originally written to prevent.
+
 **Bold-spacing and section self-labeling get both a prompt rule and a
 deterministic code fix** (`fixBoldSpacing`, `stripSectionSelfLabel` in
 `pulse.html`) — because testing proved the prompt rule alone was insufficient.

@@ -9,22 +9,11 @@ This is a working list, not a commitment. Things move.
 
 ## Next up — small, verified, reader-facing
 
-**1. Em-dashes are leaking into published stories.**
-Measured on the 2026-09-16 digest: **33 em-dashes across 7 stories, 24 in a
-single one**, with others at zero. The prompt rule in `pulse.html` is not
-holding.
-
-`docs/decisions.md` records em-dash reduction as prompt-only *on purpose* —
-a regex can't decide whether an em dash becomes a period, a comma, or stays.
-That reasoning is still right, and the rule is still losing. This is the third
-documented instance of a prompt-only fix looking sufficient and not being
-(bold-spacing and section self-labeling were the first two, and both ended up
-with a deterministic cleanup alongside the prompt rule).
-
-Worth trying in order: strengthen the rule with a worked example, measure
-again, and only then consider a bounded deterministic pass. The uneven
-distribution (24 in one story, 0 in four) suggests it's a prompt-adherence
-problem, not a uniform model tic.
+**1. ~~Em-dashes are leaking~~ — rule written 2026-09-17, unmeasured.**
+There was never an em-dash rule in the prompts, and the prompts themselves held
+82 em dashes including throughout the worked VOICE examples. Rule added, those
+examples rewritten to match. **Measure the next digest** — if it does not drop
+sharply, escalate to a deterministic pass. See `docs/decisions.md`.
 
 **2. Local news is surfacing classifieds.**
 `clasificados.laopinion.com` job listings render as Los Angeles "local news."
