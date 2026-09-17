@@ -1,7 +1,7 @@
 ---
 id: T-0001
 title: The Today overview ships with onramp keys that do not resolve
-status: DECIDED
+status: VERIFIED
 tags: [pulse, defect]
 anchor: ntk-pulse/build_digest.py:197
 ---
