@@ -359,7 +359,7 @@ function removeNote(id){
 function notesBlock(){
   const items = (NOTES.items||[]).filter(n=>n.text && n.text.trim());
   if (!items.length) return '';
-  return `\n\nSTANDING EDITORIAL NOTES — ongoing directives from the editor, apply to every section, every story, until told otherwise:\n`+
+  return `\n\nSTANDING EDITORIAL NOTES. Ongoing directives from the editor. These are constraints, not suggestions, and they outrank anything above that conflicts with them. Apply every one to every section of every story, until told otherwise:\n`+
     items.map(n=>`- ${n.text}`).join('\n');
 }
 function flagSection(story, sectionName, noteId, newNoteText){
@@ -1233,8 +1233,62 @@ async function publishBackstory(){
   renderBackstoryPublishStatus();
 }
 
+// What actually published, read from the repo rather than this browser.
+// The editable row list below is legacy localStorage and does not drive
+// anything; see the note in publishBackstory().
+let BSR_PUBLISHED = null;
+
+function fetchPublishedBackstory(){
+  if (BSR_PUBLISHED) return Promise.resolve(BSR_PUBLISHED);
+  return fetch('../digest/data/backstory.json?t='+Date.now())
+    .then(r => r.ok ? r.json() : null)
+    .then(d => { BSR_PUBLISHED = d || {rows:[],todays_pairings:[]}; return BSR_PUBLISHED; })
+    .catch(() => { BSR_PUBLISHED = {rows:[],todays_pairings:[]}; return BSR_PUBLISHED; });
+}
+
+function pairingsHtml(d){
+  const rows = (d && d.rows) || [];
+  const byId = Object.fromEntries(rows.map(r => [r.id, r]));
+  const pairs = (d && d.todays_pairings) || [];
+  const when = d && d.pairings_generated;
+
+  if (!pairs.length){
+    return `<div class="promoted-box" style="border-style:solid">
+      <b>No pairings yet.</b> They generate on publish, from the lineup that
+      shipped. If the digest published and this is still empty, check the
+      "Build Backstory pairings" step in the Actions log — it is
+      continue-on-error, so it fails quietly and the digest ships anyway.
+    </div>`;
+  }
+
+  const counts = {};
+  pairs.forEach(p => { counts[p.row] = (counts[p.row]||0)+1; });
+
+  return `<div style="margin-bottom:14px">
+    <div style="font-size:11px;color:var(--dim);margin-bottom:6px">
+      TODAY'S PAIRINGS &middot; ${pairs.length} &middot; generated ${when ? rel(when)+' ago' : 'unknown'}
+    </div>
+    ${pairs.map(p => {
+      const row = byId[p.row] || {};
+      const dup = counts[p.row] > 1;
+      const low = p.needs_review;
+      return `<div class="story" style="padding:9px 10px">
+        <div style="display:flex;gap:8px;align-items:baseline;flex-wrap:wrap">
+          <b style="font-size:12px">${esc(row.title || p.row)}</b>
+          <span style="font-size:10.5px;color:var(--dim)">${esc(p.subgenre||'')}</span>
+          ${p.confidence!=null ? `<span style="font-size:10.5px;color:${low?'var(--stale)':'var(--dim)'}">${Number(p.confidence).toFixed(2)}${low?' &middot; review':''}</span>` : ''}
+          ${dup ? `<span style="font-size:10px;color:var(--warn);border:1px solid var(--warn);padding:0 4px">2 stories, same row</span>` : ''}
+        </div>
+        <div style="font-size:12px;margin-top:4px">${esc(p.line||'(no line)')}</div>
+        <div style="font-size:11px;color:var(--dim);margin-top:3px">${esc(p.headline||'')}</div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
 function renderBackstory(root){
   root.innerHTML = `
+    <div id="bs-published">Loading today's pairings&hellip;</div>
     <div class="lineup-bar">
       <button class="mini primary" id="bs-add">+ add row</button>
       <span class="spacer"></span>
@@ -1242,15 +1296,18 @@ function renderBackstory(root){
       <span id="backstory-publish-status" style="font-size:11px;color:var(--dim)"></span>
     </div>
     <div style="background:#fff4e5;border:1px solid var(--warn);color:var(--warn);padding:9px 11px;font-size:12px;line-height:1.5;margin-bottom:10px">
-      <b>This tab no longer publishes.</b> These rows live only in this browser and
-      were never read from the repo. <code>digest/data/backstory.json</code> is now the
-      generated 21-row library, surfaced as one pairing per digest story.
-      Publishing from here would overwrite it. The replacement is the story-tagging
-      control in Backstory Slice 5 — see <code>docs/backstory.md</code>.
+      <b>Everything below is legacy and drives nothing.</b> These rows live only in
+      this browser and were never read from the repo. What publishes is above.
+      The editable replacement is the story-tagging control in Backstory Slice 5
+      — see <code>docs/backstory.md</code>.
     </div>
     <div id="bs-list"></div>`;
   document.getElementById('bs-add').addEventListener('click', addBackstoryRow);
   document.getElementById('bs-publish').addEventListener('click', publishBackstory);
+  fetchPublishedBackstory().then(d => {
+    const el = document.getElementById('bs-published');
+    if (el) el.innerHTML = pairingsHtml(d);
+  });
 
   const list = document.getElementById('bs-list');
   list.innerHTML = BACKSTORY.map((r, i) => `
@@ -1791,7 +1848,7 @@ async function generateStory(story){
   const pkg = {};
   for (const sec of SECS){
     setStatus(story, story.title.slice(0,40)+' · '+sec+'…');
-    try { pkg[sec] = cleanSectionText(sec, await ai(makePrompt(sec, artsText+angleBlock+contextBlock(story)+notesBlock()+priorSectionsBlock(pkg), []), 2500)); }
+    try { pkg[sec] = cleanSectionText(sec, await ai(makePrompt(sec, artsText+angleBlock+contextBlock(story)+priorSectionsBlock(pkg)+notesBlock(), []), 2500)); }
     catch(e){ pkg[sec] = '[Generation failed: '+e.message+']'; }
   }
   story.packages = pkg; story.generatedAt = new Date().toISOString(); story.outOpen = true;
@@ -1816,7 +1873,7 @@ async function reviseSection(story, sectionName, note){
     : '\n\nThis section is being regenerated at the editor\'s request with no specific note — reconsider it freshly against the source material and the standing editorial notes above.';
   try {
     story.packages[sectionName] = cleanSectionText(sectionName, await ai(makePrompt(sectionName,
-      artsText+angleBlock+contextBlock(story)+notesBlock()+siblings+revisionNote, []), 2500));
+      artsText+angleBlock+contextBlock(story)+siblings+revisionNote+notesBlock(), []), 2500));
     setStatus(story,'Revised '+sectionName+'.');
   } catch(e){ setStatus(story,'Revise failed: '+e.message,true); }
   story.busy=false; saveLineup(); render();
