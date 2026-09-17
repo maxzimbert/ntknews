@@ -20,6 +20,34 @@ AREAS="digest pulse pipeline backstory editorial infra corpus process"
 KINDS="defect feature chore decision"
 
 filter="${1:-}"
+
+# --- Is this tree even current?
+# Pulse publishes through GitHub's API, so a publish lands on origin/main and
+# NOT on this laptop. Every check below reads local files, so running this
+# straight after a publish measures the PREVIOUS digest and reports it as
+# current. That is this project's signature failure wearing a new hat --
+# verifying the artifact in front of you rather than the system -- so it is
+# checked first and it is fatal.
+#
+# Only meaningful on main: a feature branch is behind origin/main by design,
+# and CI checks out the PR head. ROT_NO_FETCH=1 skips it.
+if [ -z "${ROT_NO_FETCH:-}" ] && [ "$(git rev-parse --abbrev-ref HEAD 2>/dev/null)" = "main" ]; then
+  if git fetch -q origin main 2>/dev/null; then
+    behind=$(git rev-list --count HEAD..origin/main 2>/dev/null || echo 0)
+    if [ "${behind:-0}" -gt 0 ]; then
+      echo "STALE TREE - $behind commit(s) behind origin/main."
+      echo
+      echo "  Pulse publishes through GitHub, so a publish is not on this"
+      echo "  laptop until you pull. Every check would measure the previous"
+      echo "  digest and report it as current."
+      echo
+      echo "  Run:  git pull --rebase"
+      exit 1
+    fi
+  else
+    SYNC_NOTE="offline - could not confirm this tree matches origin/main"
+  fi
+fi
 stale=0; ok=0; open=0; ready=0; manual=0; skipped=0; badmeta=0
 
 fm() { # fm <file> <key>
@@ -104,6 +132,7 @@ for f in "$TICKETS"/T-*.md; do
 done
 
 echo
+[ -n "${SYNC_NOTE:-}" ] && echo "note: $SYNC_NOTE"
 echo "ok $ok · open $open · ready $ready · manual $manual · skipped $skipped · stale $stale"
 
 if [ "$badmeta" -ne 0 ]; then
