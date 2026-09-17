@@ -178,6 +178,27 @@ valid dimensions differ per model.
 
 ## Retired and rejected
 
+### The Lifetimes / Still Counting two-strata framework
+
+**Retired 2026-09-17, by the editor.** Backstory is pairings — one entry per
+digest story, pairing it to a row. Within that model a row is just a row, and
+sorting the 21 into two classes explains nothing about how any of it behaves.
+
+This was already half-decided: the Part 2 README records that the "Lifetimes"
+naming was dropped and says not to resurrect it in UI copy. The framework
+survived anyway in the docs, in `build_backstory.py`'s `FIRE` list, and in how
+problems were described — T-0012 was first written as "the seven Still Counting
+rows are unreachable," which reads as a design question about two classes of
+row when it is a data gap in seven of them.
+
+**What follows:** describe rows by the property that matters — whether a row
+carries sub-genres, whether it has a narrative, whether it got paired today.
+Not by which stratum it came from. The vocabulary still exists in
+`build_backstory.py` and `docs/backstory.md`; that is a cleanup, not a blocker,
+and nothing depends on it.
+
+
+
 **The Desk is retired.** Its persistent-clustering-and-ledger architecture was
 solving the wrong problem — Max wanted right-now awareness, not persistent-
 memory diffing. **Do not tune its clustering further.** The impulse to "just
