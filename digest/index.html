@@ -2746,11 +2746,32 @@ function navTab(tab) {
   else history.pushState(state, '', path);
 }
 
+// The story's own permalink path, or null if it can't be resolved.
+// build_digest.py writes an ABSOLUTE permalink on production's domain, so
+// only the pathname is usable — pushing the absolute URL would throw on a
+// deploy preview or localhost, where the origin differs.
+//
+// That path is also a real static page (build_digest.py renders one per
+// story with its own OG tags), so a reload or a cold visit is served by
+// Netlify rather than the app. Nothing needs to route it back into the SPA.
+function storyPath(idx) {
+  var s = stories[idx];
+  if (!s || !s.permalink) return null;
+  try { return new URL(s.permalink, location.origin).pathname; }
+  catch (e) { return null; }
+}
+
 function navOverlay(kind, idx) {
   if (!ROUTING_ON) return;
   var state = { ntk: 'overlay', kind: kind, idx: idx, tab: activeTab };
-  if (history.state && history.state.ntk === 'overlay') history.replaceState(state, '');
-  else history.pushState(state, '');
+  // Only stories have a shareable URL. A Backstory pairing has no permalink
+  // yet, so its overlay pushes state without touching the address bar.
+  var url = kind === 'story' ? storyPath(idx) : null;
+  if (history.state && history.state.ntk === 'overlay') {
+    if (url) history.replaceState(state, '', url); else history.replaceState(state, '');
+  } else {
+    if (url) history.pushState(state, '', url); else history.pushState(state, '');
+  }
 }
 
 // True when the current history entry is the overlay entry we pushed —
@@ -3408,6 +3429,15 @@ function closeStory(opts) {
   document.getElementById('storyView').classList.remove('active');
   document.getElementById('bottomNav').classList.remove('hidden');
   switchTab(tabBeforeStory || 'digest', { fromHistory: true });
+  // Closing via navBack() restores the URL through popstate. This is the
+  // other path — closing without a history entry to consume — where the
+  // address bar would otherwise keep pointing at the story we just left.
+  if (ROUTING_ON && !(opts && opts.fromHistory)) {
+    var back = tabPath(tabBeforeStory || 'digest');
+    if (location.pathname !== back) {
+      history.replaceState({ ntk: 'tab', tab: tabBeforeStory || 'digest' }, '', back);
+    }
+  }
   updateFeedbackBtn();
 
   if (cat) {
