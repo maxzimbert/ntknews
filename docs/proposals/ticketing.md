@@ -270,6 +270,53 @@ this stateless for a nicer view you'd check twice.
 runs on a schedule and tells you when a claim went false. That's the Action in
 Part I §5.
 
+### On develop — staging — main
+
+Raised 2026-09-17, and the honest answer is that you already have staging and
+did not recognise it as such.
+
+**Netlify deploy previews are the staging environment.** Every pull request
+gets its own real URL running that change against production data
+(`deploy-preview-2--<site>.netlify.app/today`). That is exactly what a staging
+branch exists to provide, except one per change rather than one shared queue.
+
+Three reasons gitflow would be worse here, not better:
+
+1. **`main` receives automated commits every 20 minutes.** A long-lived
+   `develop` branch would need constant rebasing against bot writes to
+   `ntk-pulse/data/`, for no benefit. This is specific to this repo and it is
+   disqualifying on its own.
+2. **Gitflow coordinates teams shipping versioned releases through QA gates.**
+   One editor, one daily digest, no release train. The ceremony has nobody to
+   coordinate.
+3. **A shared staging branch is a queue.** Put two changes in it and neither
+   ships until both are ready. Per-PR previews have no such coupling.
+
+**Recommended: keep `main` as the only long-lived branch.** Short-lived branch
+per ticket, PR, preview, merge, delete. That is what shipped four changes on
+2026-09-17 without incident.
+
+**The one thing that would genuinely add:** a persistent non-production URL for
+the cohort to look at between publishes. If that's wanted, it is a Netlify
+branch deploy on a single `staging` branch — a settings change, not a workflow
+change, and worth doing only when there is a reason to point someone at a
+stable non-prod address. It does not require moving normal work off `main`.
+
+### Canonical vs mirror, resolved
+
+Decided 2026-09-17: **canonical.** When strategy documents come into the repo,
+the repo copy becomes the real one.
+
+The reasoning is not that the repo holds code — the Roadmap is not code. It is
+that two copies of one truth always drift, and drift between copies is this
+project's whole failure history. A mirrored Constitution would fail exactly the
+way three READMEs claiming a nonexistent fix failed, only more slowly and with
+higher stakes.
+
+Direction of travel matters: generate a `.docx` or PDF **from** the repo copy
+when someone needs one to read. Never re-import an edited Word file over the
+canonical text.
+
 ## The corpus is the asset
 
 Correcting my first pass at this. I had written that tickets will not serve
@@ -366,7 +413,9 @@ project's whole failure history is drift between copies.
    defeats the corpus.
 7. **Whether the `.docx` corpus gap gets its own track.** Recommendation: yes,
    and ahead of this. The Mom Test tracker especially — it is the only real
-   audience evidence NTK has and no agent can currently read it.
+   audience evidence NTK has and no agent can currently read it. Canonical-vs-
+   mirror is already settled (canonical); what remains is conversion order and
+   fidelity per document.
 
 ## One caution for that conversation
 
