@@ -1,7 +1,7 @@
 ---
 id: T-0015
 title: The Expertise ladder has seven rungs and speaks on three of them
-status: BUILT
+status: VERIFIED
 tags: [digest, defect]
 anchor: digest/index.html:2572
 ---
