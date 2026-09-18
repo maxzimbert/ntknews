@@ -709,11 +709,98 @@
   .card-wrapper.featured-wrapper .story-category.cat-dim { color: rgba(234,217,197,0.2); }
 
   /* ── BEAT TOAST ─────────────────────────────────────────────────── */
+  .beat-info-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 70;
+  }
+  .beat-info-overlay.open { display: block; }
+
+  .beat-info {
+    display: none;
+    position: fixed;
+    left: 16px;
+    right: 16px;
+    bottom: calc(var(--nav-h, 64px) + 16px);
+    z-index: 80;
+    max-width: 480px;
+    margin: 0 auto;
+    background: var(--dark);
+    border-top: 3px solid var(--teal);
+    border-radius: 6px;
+    padding: 20px 22px 18px;
+    box-shadow: 0 14px 44px rgba(0,0,0,0.5);
+    animation: fadeUp 0.28s ease forwards;
+  }
+  .beat-info.open { display: block; }
+
+  .beat-info-kicker {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(234,217,197,0.45);
+    margin-bottom: 7px;
+  }
+  .beat-info-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 19px;
+    font-weight: 700;
+    margin-bottom: 9px;
+  }
+  .beat-info-body {
+    font-family: 'Source Serif 4', serif;
+    font-size: 15px;
+    line-height: 1.5;
+    color: rgba(234,217,197,0.82);
+  }
+  .beat-info-close {
+    margin-top: 16px;
+    padding: 9px 18px;
+    border: 1px solid rgba(234,217,197,0.28);
+    border-radius: 3px;
+    background: transparent;
+    color: rgba(234,217,197,0.82);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  /* The scale pills are buttons now; undo the UA styling so the legend on
+     Profile looks exactly as it did before they became tappable. */
+  /* The scale pills are buttons now. Reset only what the UA adds; the rule
+     above still owns the type. `font: inherit` here silently overrode it and
+     rendered them at 16px serif. */
+  .beat-pill {
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+    background: transparent;
+    color: inherit;
+    line-height: inherit;
+  }
+  .beat-pill:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+
   .beat-toast {
     display: none;
+    position: fixed;
+    left: 16px;
+    right: 16px;
+    bottom: calc(var(--nav-h, 64px) + 14px);
+    z-index: 60;
+    max-width: 560px;
+    margin: 0 auto;
     background: var(--dark);
     border-left: 4px solid var(--teal);
+    border-radius: 4px;
     padding: 14px 20px;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.34);
     animation: fadeUp 0.35s ease forwards;
   }
   .beat-toast.show { display: block; }
@@ -2050,7 +2137,7 @@
     <div class="hero-label">Today's Digest</div>
     <div class="hero-date" id="heroDate">Loading...</div>
     <div class="progress-row">
-      <button class="beat-chip" id="beatChip" onclick="switchTab('profile')" aria-label="Your beats">
+      <button class="beat-chip" id="beatChip" onclick="openChipInfo()" aria-label="What your beat means">
         <span class="beat-chip-dot" id="beatChipDot"></span>
         <span id="beatChipLabel"></span>
       </button>
@@ -2061,11 +2148,6 @@
     </div>
   </div>
 
-
-  <div id="beatToast" class="beat-toast">
-    <div class="beat-toast-label">NTK · Orientation</div>
-    <div class="beat-toast-text" id="beatToastText"></div>
-  </div>
 
   <div class="story-list" id="storyList">
     <!-- Cards injected by JS -->
@@ -2398,6 +2480,15 @@ function buildDigest() {
   let html = '';
   const DIVIDER_AT = Math.ceil(stories.length * 0.6);
 
+  // Above the first card, where a returning reader lands, not buried mid-list.
+  if (visitCopy) {
+    html += `
+      <div class="orientation-moment show" id="visitMoment">
+        <div class="orient-label">NTK · Orientation</div>
+        <div class="orient-text">${visitCopy}</div>
+      </div>`;
+  }
+
   stories.forEach((s, i) => {
     const isFeatured = i === 0;
     const num = String(i + 1).padStart(2, '0');
@@ -2511,6 +2602,41 @@ function buildDigest() {
   });
 }
 
+// ── RETURNING READER ────────────────────────────────────────────────────
+// The product assumes the reader did not read yesterday and will not read
+// tomorrow (docs/decisions.md). A reader who came back anyway did the thing
+// the whole thing is trying to earn, and until now nothing noticed.
+//
+// What is stored is the previous visit and a total, and nothing about runs of
+// days. Counting those is how you end up with a scoreboard, and backlog-as-
+// debt is the exact mechanism this audience is avoiding. A longer absence gets
+// a warmer line, never a cooler one: the gap is not the subject, the news is.
+var VISITS_KEY = 'ntk_visits_v1';
+
+function visitsLoad() {
+  try { return JSON.parse(localStorage.getItem(VISITS_KEY)) || {}; } catch(e) { return {}; }
+}
+
+function visitMoment(last) {
+  if (!last) return '';                    // first ever: the intro cards do this job
+  var hours = (Date.now() - last) / 3600000;
+  if (hours < 4) return '';                // same sitting, say nothing
+  if (hours < 48) return 'You came back. <strong>That is the whole idea.</strong>';
+  if (hours < 24 * 8) return 'Been a few days. The news kept going, and this is where it got to.';
+  return 'It has been a while. None of this is a backlog. <strong>Start anywhere.</strong>';
+}
+
+// Read before the visit is recorded, so the copy describes the gap the reader
+// actually arrived after rather than one of zero hours.
+var visitCopy = '';
+(function initVisits() {
+  var v = visitsLoad();
+  visitCopy = visitMoment(v.last);
+  try {
+    localStorage.setItem(VISITS_KEY, JSON.stringify({ last: Date.now(), total: (v.total || 0) + 1 }));
+  } catch(e) {}
+})();
+
 // ── BEATS SYSTEM ─────────────────────────────────────────────────
 var BEATS_KEY = 'ntk_beats_v1';
 var BEATS_SCALE = [
@@ -2530,28 +2656,45 @@ function beatsSave(data) {
   try { localStorage.setItem(BEATS_KEY, JSON.stringify(data)); } catch(e) {}
 }
 
-// Rung 3 and up each require a behavior, not just a count. Before 2026-09-18
-// the only input above rung 2 was how many stories had been opened, so twenty
-// skims reached Witness — which contradicts the one claim the vocabulary rests
-// on, that you cannot skim your way to the top of it.
+// What each rung takes, as data rather than as a chain of ifs. beatIdx scores
+// against this table and beatsNextRung describes it, so what a reader is told
+// cannot drift from what they are actually measured on. The thresholds moved
+// twice on 2026-09-18 alone, which is the argument for one source.
+//
+// Rung 3 and up each require a behavior, not just a count. Before that day the
+// only input above rung 2 was how many stories had been opened, so twenty
+// skims reached Witness, contradicting the one claim the vocabulary rests on.
+//
+// `carry` is an either/or on purpose. Sharing is the briefing's threshold for
+// Carrying It and is a real signal, but it is also a public act, and a reader
+// who never shares was otherwise capped at rung 4 forever: 30 stories over 90
+// days with the ladder silent from day 13. Going back to the Lies layer on
+// separate stories costs something comparable and stays private.
+var BEAT_REQS = [
+  {},                                                                  // 0 Skimmed
+  { depth: 1 },                                                        // 1 Briefed
+  { lies: true },                                                      // 2 Read It
+  { stories: 3, sessions: 2 },                                         // 3 Following It
+  { stories: 5, sessions: 2, depth: 2 },                               // 4 On the Beat
+  { stories: 7, sessions: 3, lies: true, carry: { shares: 1, liesStories: 3 } },   // 5 Carrying It
+  { stories: 10, sessions: 4, depth: 5, lies: true,
+    carry: { shares: 2, liesStories: 5 } },                            // 6 Witness
+];
+
+function beatMeets(s, req) {
+  if (req.stories  && (s.stories  || 0) < req.stories)  return false;
+  if (req.sessions && (s.sessions || 1) < req.sessions) return false;
+  if (req.depth    && (s.depth    || 0) < req.depth)    return false;
+  if (req.lies     && !s.liesRead)                      return false;
+  if (req.carry && !((s.shares || 0) >= req.carry.shares ||
+                     (s.liesStories || []).length >= req.carry.liesStories)) return false;
+  return true;
+}
+
 function beatIdx(s) {
   if (!s || !s.stories) return -1;
-  var st = s.stories || 0, se = s.sessions || 1;
-  var dp = s.depth || 0, sh = s.shares || 0, li = !!s.liesRead;
-  // Two routes past On the Beat. Sharing is the briefing's threshold for
-  // Carrying It, and it is a real signal. It is also a public act, and a
-  // reader who never shares anything was otherwise capped at rung 4 forever:
-  // 30 stories over 90 days and the ladder went silent on day 13. Going after
-  // the Lies layer on separate stories in the same domain costs something
-  // comparable and stays private, so it opens the same door.
-  var lc = (s.liesStories || []).length;
-  if (st >= 10 && se >= 4 && dp >= 5 && li && (sh >= 2 || lc >= 5)) return 6;  // Witness
-  if (st >= 7  && se >= 3 && li && (sh >= 1 || lc >= 3))            return 5;  // Carrying It
-  if (st >= 5  && se >= 2 && dp >= 2)                  return 4;  // On the Beat
-  if (st >= 3  && se >= 2)                             return 3;  // Following It
-  if (li)                                              return 2;  // Read It
-  if (dp >= 1)                                         return 1;  // Briefed
-  return 0;                                                       // Skimmed
+  for (var i = BEAT_REQS.length - 1; i >= 0; i--) if (beatMeets(s, BEAT_REQS[i])) return i;
+  return 0;
 }
 
 function beatsEnsure(data, cat) {
@@ -2670,6 +2813,97 @@ function beatsRecordLies(cat, key) {
   beatsSave(data);
   updateBeatChip();
 }
+
+// One to three sentences per rung. Descriptive, never instructive: the
+// briefing's argument is that the product recognises behaviour that was
+// already happening rather than manufacturing it, so this says what a status
+// is made of and never tells a reader to go and do it.
+function beatsExplain(idx) {
+  if (idx === 0) return 'You opened a story here and saw the surface. Everyone starts here, and stopping here is a real thing to have done.';
+  if (idx === 1) return 'You went past the summary into one of the four sections. You know what happened and why it matters.';
+  if (idx === 2) return 'You opened the Lies layer, the section that names a claim and whoever is making it. Reading it means you did not take the surface at face value.';
+  if (idx === 3) return 'You came back to this subject in a later sitting. Coming back is the part that is hard to fake.';
+  if (idx === 4) return 'Several stories on one subject, and you keep going deeper into them. A reporter on a beat is not an expert; they are someone paying sustained attention.';
+  if (idx === 5) return 'You either passed a story on or kept going back to what was being claimed. Either one means you understood it well enough to do something with it.';
+  if (idx === 6) return 'Months of attention on one subject, into the history and back out again. Not a credential. You were there, and you cannot unsee it.';
+  return '';
+}
+
+function beatsJoin(list) {
+  if (list.length < 2) return list[0] || '';
+  return list.slice(0, -1).join(', ') + ' and ' + list[list.length - 1];
+}
+
+// Reads the same BEAT_REQS the scorer does and calls beatIdx for the current
+// rung, so this cannot describe a threshold that is no longer being measured.
+function beatsNextRung(cat) {
+  var d = (beatsLoad())[cat];
+  var cur = beatIdx(d);
+  if (cur < 0 || cur >= BEAT_REQS.length - 1) return null;
+  var req = BEAT_REQS[cur + 1], next = BEATS_SCALE[cur + 1], bits = [];
+  if (req.stories)  bits.push(req.stories + ' stories on ' + cat);
+  if (req.sessions) bits.push(req.sessions + ' separate sittings');
+  if (req.depth)    bits.push('opening ' + req.depth + ' section' + (req.depth === 1 ? '' : 's') + ' below the summary');
+  if (req.lies)     bits.push('reading the Lies layer');
+  if (req.carry)    bits.push('either sharing one, or going back to the lies on ' +
+                              req.carry.liesStories + ' separate stories');
+  var st = d.stories || 0, se = d.sessions || 1;
+  return {
+    label: next.label,
+    color: next.color,
+    sentence: next.label + ' goes to readers with ' + beatsJoin(bits) + '. You are at ' +
+              st + (st === 1 ? ' story' : ' stories') + ' across ' +
+              se + (se === 1 ? ' sitting' : ' sittings') + ' on ' + cat + '.'
+  };
+}
+
+// ── The explainer sheet, shared by the scale and the chip ──────────────────
+function openBeatInfo(idx) {
+  var b = BEATS_SCALE[idx];
+  showBeatInfo('The beat scale', b.label, beatsExplain(idx), b.color);
+}
+window.openBeatInfo = openBeatInfo;
+
+var CHIP_SEEN_KEY = 'ntk_chip_seen_v1';
+function openChipInfo() {
+  var top = beatsGetTop();
+  if (!top) { switchTab('profile'); return; }
+  var seen = false;
+  try { seen = localStorage.getItem(CHIP_SEEN_KEY) === '1'; } catch(e) {}
+  if (!seen) {
+    try { localStorage.setItem(CHIP_SEEN_KEY, '1'); } catch(e) {}
+    showBeatInfo('What this is', BEATS_SCALE[top.idx].label,
+      'NTK keeps track of what you read, on your own device and nowhere else. This is the furthest you have got on any one subject, right now on ' +
+      top.category + '. ' + beatsExplain(top.idx), BEATS_SCALE[top.idx].color);
+    return;
+  }
+  var nx = beatsNextRung(top.category);
+  if (!nx) {
+    showBeatInfo('Your beat', BEATS_SCALE[top.idx].label,
+      beatsExplain(top.idx) + ' There is nothing above this one.', BEATS_SCALE[top.idx].color);
+    return;
+  }
+  showBeatInfo('What comes next', nx.label, nx.sentence, nx.color);
+}
+window.openChipInfo = openChipInfo;
+
+function showBeatInfo(kicker, title, body, color) {
+  var sheet = document.getElementById('beatInfo');
+  if (!sheet) return;
+  document.getElementById('beatInfoKicker').textContent = kicker;
+  var t = document.getElementById('beatInfoTitle');
+  t.textContent = title; t.style.color = color || 'var(--teal)';
+  document.getElementById('beatInfoBody').textContent = body;
+  sheet.style.borderTopColor = color || 'var(--teal)';
+  document.getElementById('beatInfoOverlay').classList.add('open');
+  sheet.classList.add('open');
+}
+
+function closeBeatInfo() {
+  document.getElementById('beatInfoOverlay').classList.remove('open');
+  document.getElementById('beatInfo').classList.remove('open');
+}
+window.closeBeatInfo = closeBeatInfo;
 
 function beatsGetTop() {
   var data = beatsLoad();
@@ -3333,8 +3567,10 @@ function renderProfileTab() {
     }).join('');
   }
   if (pills) {
-    pills.innerHTML = BEATS_SCALE.map(function(b) {
-      return '<span class="beat-pill" style="color:' + b.color + ';border-color:' + b.color + '35;">' + b.label + '</span>';
+    pills.innerHTML = BEATS_SCALE.map(function(b, i) {
+      return '<button type="button" class="beat-pill" onclick="openBeatInfo(' + i + ')" ' +
+                'aria-label="What ' + b.label + ' means" style="color:' + b.color +
+        ';border-color:' + b.color + '35;">' + b.label + '</button>';
     }).join('');
   }
 }
@@ -4297,6 +4533,26 @@ document.addEventListener('DOMContentLoaded', function() {
     <span>Profile</span>
   </button>
 </nav>
+
+<!-- Explainer sheet. Outside the view stack for the same reason as the toast:
+     it is opened from the chip in the digest header and from the beat scale on
+     Profile, which are two different tabs. -->
+<div id="beatInfoOverlay" class="beat-info-overlay" onclick="closeBeatInfo()"></div>
+<div id="beatInfo" class="beat-info" role="dialog" aria-modal="true" aria-labelledby="beatInfoTitle">
+  <div class="beat-info-kicker" id="beatInfoKicker"></div>
+  <div class="beat-info-title" id="beatInfoTitle"></div>
+  <div class="beat-info-body" id="beatInfoBody"></div>
+  <button type="button" class="beat-info-close" onclick="closeBeatInfo()">Got it</button>
+</div>
+
+<!-- Orientation toast. Deliberately OUTSIDE the view stack: it used to sit
+     inside #digestView, and since Today is the landing tab and closing a
+     story opened from Today returns there, the most common path in the app
+     fired it into a hidden container. See T-0024. -->
+<div id="beatToast" class="beat-toast">
+  <div class="beat-toast-label">NTK · Orientation</div>
+  <div class="beat-toast-text" id="beatToastText"></div>
+</div>
 
 <script>
 // ── ROUTE BOOT (body) ─────────────────────────────────────────────

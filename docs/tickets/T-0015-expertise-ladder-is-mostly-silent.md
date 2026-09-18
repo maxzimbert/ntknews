@@ -94,10 +94,17 @@ if not re.search(r'orientShown[\s\S]{0,600}?localStorage', s):
     sys.exit('orientShown is not persisted')
 
 # You cannot skim your way to Witness. Run the real scorer, do not read it.
-scale = re.search(r'var BEATS_SCALE = \[[\s\S]*?\];', s)
-fn    = re.search(r'function beatIdx\([\s\S]*?\n\}', s)
-if not (scale and fn): sys.exit('BEATS_SCALE or beatIdx not found')
-prog = scale.group(0) + '\n' + fn.group(0) + '''
+# beatIdx became table-driven on 2026-09-18 (T-0025), so its inputs come
+# along too. The assertions below are unchanged; only the extraction is.
+parts = []
+for pat, name in ((r'var BEATS_SCALE = \[[\s\S]*?\];',   'BEATS_SCALE'),
+                  (r'var BEAT_REQS = \[[\s\S]*?\n\];',   'BEAT_REQS'),
+                  (r'function beatMeets\([\s\S]*?\n\}',  'beatMeets'),
+                  (r'function beatIdx\([\s\S]*?\n\}',    'beatIdx')):
+    m = re.search(pat, s)
+    if not m: sys.exit('%s not found' % name)
+    parts.append(m.group(0))
+prog = '\n'.join(parts) + '''
 var L = function(n){ var a=[]; for(var i=0;i<n;i++) a.push('s'+i); return a; };
 var cases = [
   [{stories:20, sessions:9},                                          'lt', 6,
