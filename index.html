@@ -269,7 +269,7 @@
       <a href="#story">Inside a Briefing</a>
       <a href="#editor">Who Writes It</a>
     </nav>
-    <a href="https://ntknews.org/digest/latest" class="nav-cta">Read this morning →</a>
+    <a href="/digest/latest" class="nav-cta">Read this morning →</a>
     <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false">☰</button>
   </div>
   <nav class="mobile-menu" id="mobileMenu">
@@ -289,7 +289,7 @@
       <h1 class="hero-h1">Know what <em>matters.</em><br>Enjoy it.</h1>
       <p class="hero-deck">Three minutes every morning. The stories that matter, written to be read rather than endured. News that ends.</p>
       <div class="cta-row">
-        <a href="https://ntknews.org/digest/latest" class="btn-primary">Start your free briefing →</a>
+        <a href="/digest/latest" class="btn-primary">Start your free briefing →</a>
         <span class="cta-note">No sign-up · No algorithm</span>
       </div>
     </div>
@@ -420,7 +420,7 @@
         </div>
         <div class="story-footer">
           <span class="story-footer-frame" id="storyCategory">Today's briefing</span>
-          <a href="https://ntknews.org/digest/latest" class="story-footer-link" id="storyReadMore">Read the full briefing →</a>
+          <a href="/digest/latest" class="story-footer-link" id="storyReadMore">Read the full briefing →</a>
         </div>
       </div>
     </div>
@@ -451,7 +451,7 @@
     <div class="closing-eyebrow">Tomorrow, 6:00 a.m.</div>
     <h2 class="closing-h2">Three minutes.<br><em>One shared reality.</em></h2>
     <p class="closing-copy">Every other outlet profits when you stay longer. NTK profits when you understand faster.</p>
-    <a href="https://ntknews.org/digest/latest" class="btn-dark">Start reading →</a>
+    <a href="/digest/latest" class="btn-dark">Start reading →</a>
     <div class="closing-note">Free · No sign-up required</div>
   </div>
 </section>
@@ -540,7 +540,7 @@ const heroStory = {
     if(storyCategory && s.category) storyCategory.textContent = "Historical frame \u00b7 " + s.category;
 
     var storyReadMore = document.getElementById("storyReadMore");
-    if(storyReadMore && s.permalink) storyReadMore.href = s.permalink;
+    if(storyReadMore && s.permalink) storyReadMore.href = s.permalink.replace(/^https?:\/\/[^/]+/, "");
 
     var heroImage = document.getElementById("heroImage");
     var heroImagePanel = document.getElementById("heroImagePanel");
