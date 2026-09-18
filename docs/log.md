@@ -71,3 +71,38 @@ the first time it silently discarded the uncommitted fix as well.
 **Rewinding the tree removes the code under test.** To test behaviour against
 an older tree, move the tree and restore the script:
 `git checkout origin/main -- scripts/rot.sh`. And commit before any hard reset.
+
+## 2026-09-18 — the exemplar is the rule
+
+Adding "avoid a succession of loose sentences" to `VOICE_REF` would have
+failed the same way the em-dash rule failed on 2026-09-17, one week apart.
+The BODY worked example the model is told to study closed on three sentences
+under nine words. Measured word counts across it: 16, 7, 26, 17, 4, 23, 24,
+17, 7, 5, 3.
+
+The generalization is not "check the examples." It is that a prompt has two
+channels, the instruction and the demonstration, and the demonstration wins.
+Any rule about *how* something is written has to be measured against the
+exemplar before it ships, because the exemplar is what gets copied.
+
+Second-order, and worth watching: the em-dash ban's own instruction says a
+sentence carrying two ideas "wants to be two sentences." That rule
+systematically converts subordination into parataxis. Flat, staccato output
+in the next digest is the predicted cost of the 2026-09-17 fix, not a
+separate problem.
+
+## 2026-09-18 — Expertise was in the digest the whole time
+
+The working read was that Expertise sat on the Profile tab. It did not. Three
+digest-side surfaces were already shipped. What was missing was that
+`beatsToastCopy` returned `null` for four of seven rungs and the caller gated
+on `newIdx >= 4` on top of that, so the system almost never spoke.
+
+`beatIdx({stories:20, sessions:9})` returned 6. The behaviors the briefing
+calls significant — the Lies layer, depth, sharing — were recorded to
+localStorage and then never read above rung 2. Sharing was not recorded at
+all.
+
+The lesson that changes behaviour: "the feature is not in the UI" and "the
+feature is in the UI and silent" look identical from production, and they
+have completely different fixes. Check the call sites before the placement.
