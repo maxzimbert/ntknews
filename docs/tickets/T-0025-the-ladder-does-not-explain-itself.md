@@ -45,6 +45,10 @@ scores with, not written out by hand. Copy that describes thresholds is copy
 that goes quietly wrong the next time they move, and they moved twice on
 2026-09-18 alone.
 
+The copy shipped here is a first draft written by whoever wrote the
+mechanism. The editor has flagged it for a pass; T-0027 holds that, and
+nothing in this ticket should be read as settling the words.
+
 Deliberately not included: any surface on the story cards themselves. The
 briefing's open question 09 is explicit that per-story status "turns reading
 into performance."
