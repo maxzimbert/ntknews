@@ -294,6 +294,7 @@ const LS = {
   dismissed: 'ntk_pulse_dismissed_candidates_v1',
   today:     'ntk_pulse_today_v1',
   backstory: 'ntk_pulse_backstory_v1',
+  subjects:  'ntk_pulse_subjects_v1',
 };
 // Seeded once, only if localStorage is empty — the seven rows locked in
 // the Backstory design conversation. Narrative and milestone start blank;
@@ -326,6 +327,47 @@ function saveDismissed(){ localStorage.setItem(LS.dismissed, JSON.stringify(DISM
 let TODAY_OV = load(LS.today, {text:'', generatedAt:null, busy:false});
 function saveToday(){ localStorage.setItem(LS.today, JSON.stringify(TODAY_OV)); }
 let BACKSTORY = load(LS.backstory, null) || seedBackstory();
+
+// The subject vocabulary. Free-form by decision (2026-09-18) rather than a
+// fixed list, which buys adaptability and costs drift: "AI" and "Artificial
+// Intelligence" would become two regions on a reader's map, which is their
+// history quietly being halved. Two things hold that off without constraining
+// what the editor can type. draftMeta is shown what is already in use so it
+// reuses instead of reinventing, and normalizeSubject folds a new value onto
+// an existing one when they differ only in case or spacing.
+let SUBJECTS = load(LS.subjects, []);
+
+function knownSubjects() {
+  var seen = {}, out = [];
+  (LINEUP || []).forEach(function(s) {
+    var v = (s.subject || '').trim();
+    if (v && !seen[v.toLowerCase()]) { seen[v.toLowerCase()] = 1; out.push(v); }
+  });
+  SUBJECTS.forEach(function(v) {
+    if (v && !seen[v.toLowerCase()]) { seen[v.toLowerCase()] = 1; out.push(v); }
+  });
+  return out;
+}
+
+function normalizeSubject(raw) {
+  var v = String(raw == null ? '' : raw).replace(/\s+/g, ' ').trim().replace(/[.,;:]+$/, '');
+  if (!v) return '';
+  var known = knownSubjects();
+  for (var i = 0; i < known.length; i++) {
+    if (known[i].toLowerCase() === v.toLowerCase()) return known[i];
+  }
+  return v;
+}
+
+function saveSubjects() { localStorage.setItem(LS.subjects, JSON.stringify(SUBJECTS)); }
+
+function rememberSubject(v) {
+  if (!v) return;
+  if (!SUBJECTS.some(function(x) { return x.toLowerCase() === v.toLowerCase(); })) {
+    SUBJECTS.push(v);
+    saveSubjects();
+  }
+}
 function saveBackstory(){
   const clean = BACKSTORY.map(({busy,status,err,...r})=>r);
   localStorage.setItem(LS.backstory, JSON.stringify(clean));
@@ -1434,9 +1476,17 @@ async function draftMeta(story){
   story.busy=true; setStatus(story,'Drafting angle + concept…');
   try {
     const heds = story.articles.slice(0,8).map(a=>`- [${a.source}] ${a.title}`).join('\n');
-    const prompt = `${VOICE_REF}\n\nToday is ${TODAY}. You are the NTK News editor. Story cluster:\n${heds}\n\nReturn ONLY a JSON object, no fences:\n{"angle":"one sharp NTK sentence — what is actually happening and what's at stake, plain vocabulary, no hype","conceptEntity":"single most distinctive named person/org/place at the story's center, written exactly as a Wikipedia article title (disambiguate surnames), or \\"\\" if none","narrowKeyword":"exactly ONE word likely to appear verbatim in any article about this specific story, or \\"\\""}`;
+    // The known list is shown so the model reuses a subject rather than
+    // coining a near-duplicate. A reader's beat on "AI" and a beat on
+    // "Artificial Intelligence" are the same attention split in half.
+    const known = knownSubjects();
+    const knownBlock = known.length
+      ? `\n\nSubjects already in use. Reuse one EXACTLY as written if it fits; only coin a new one if none does:\n${known.map(k=>`- ${k}`).join('\n')}`
+      : '';
+    const prompt = `${VOICE_REF}\n\nToday is ${TODAY}. You are the NTK News editor. Story cluster:\n${heds}${knownBlock}\n\nReturn ONLY a JSON object, no fences:\n{"angle":"one sharp NTK sentence — what is actually happening and what's at stake, plain vocabulary, no hype","subject":"the ongoing subject a reader could follow across months, two or three words, e.g. Housing, Immigration, Artificial Intelligence, Ukraine. NOT the section of the paper and NOT this one story's peg","conceptEntity":"single most distinctive named person/org/place at the story's center, written exactly as a Wikipedia article title (disambiguate surnames), or \\"\\" if none","narrowKeyword":"exactly ONE word likely to appear verbatim in any article about this specific story, or \\"\\""}`;
     const raw = await ai(prompt, 400);
     const d = parseJSON(raw);
+    if (d.subject) { story.subject = normalizeSubject(d.subject); rememberSubject(story.subject); }
     if (d.angle && !story.angle) story.angle = d.angle;
     else if (d.angle && story.angle && confirm('Replace current angle with draft?\n\n'+d.angle)) story.angle = d.angle;
     if (d.conceptEntity && d.conceptEntity !== story.conceptEntity){
@@ -1922,6 +1972,11 @@ function buildStoryPayload(){
     const {headline, lede, body} = extractTruthsTags(s.packages.truths||'');
     return {
       key: s.key, category: s.category, headline, lede,
+      // subject is what Expertise keys to; entity is texture beneath it and
+      // carries no status. Both were captured in Pulse and dropped here until
+      // 2026-09-18. See T-0016.
+      subject: normalizeSubject(s.subject || ''),
+      entity: (s.conceptMatch || s.conceptEntity || '').trim(),
       truth: toSiteHtml(body),
       prob: toSiteHtml(s.packages.probabilities||''),
       poss: toSiteHtml(s.packages.possibilities||''),
@@ -2933,6 +2988,9 @@ function renderLineup(root){
           `</div>` : (s.commonsResults ? `<div style="font-size:12px;color:var(--dim);margin-top:8px">No landscape results — try a different search term.</div>` : ''))+
         `</div>` : '')+
       `<div class="concept-row">`+
+      `<span style="font-size:10.5px;color:var(--dim)">subject:</span>`+
+      `<input type="text" class="subject-in" list="subject-options-${s.id}" placeholder="what a reader follows for months" value="${esc(s.subject)}">`+
+      `<datalist id="subject-options-${s.id}">${knownSubjects().map(k=>`<option value="${esc(k)}">`).join('')}</datalist>`+
       `<span style="font-size:10.5px;color:var(--dim)">concept:</span>`+
       `<input type="text" class="concept-in" placeholder="Wikipedia entity — disambiguate here if needed" value="${esc(s.conceptEntity)}">`+
       `<input type="text" class="kw-in kw" placeholder="keyword" value="${esc(s.narrowKeyword)}">`+
@@ -3052,6 +3110,11 @@ function renderLineup(root){
       saveLineup(); render();
     });
     el.querySelector('.kw-in').addEventListener('change',e=>{ s.narrowKeyword=e.target.value.trim(); saveLineup(); });
+    el.querySelector('.subject-in').addEventListener('change',e=>{
+      s.subject = normalizeSubject(e.target.value);
+      e.target.value = s.subject;            // show the fold back to the editor
+      rememberSubject(s.subject); saveLineup(); render();
+    });
     el.querySelector('.check-concept').addEventListener('click',()=>checkConcept(s));
     el.querySelector('.wiki-ids').addEventListener('change',e=>{ s.wikiIds=e.target.value; saveLineup(); });
     el.querySelector('.summon').addEventListener('click',()=>summonContext(s));

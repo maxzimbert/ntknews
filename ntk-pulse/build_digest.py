@@ -142,6 +142,14 @@ def build_stories_block(stories):
         lines.append(f'  {{\n'
                       f'    key: "{jsEsc(s.get("key",""))}",\n'
                       f'    category: "{jsEsc(s.get("category",""))}",\n'
+                      # subject is what Expertise keys to; entity is texture
+                      # beneath it. Both fall back to empty rather than to
+                      # category: the digest decides what to do with a missing
+                      # subject, and hiding the gap here would make an edition
+                      # published before T-0016 indistinguishable from one
+                      # where the editor left the field blank.
+                      f'    subject: "{jsEsc(s.get("subject",""))}",\n'
+                      f'    entity: "{jsEsc(s.get("entity",""))}",\n'
                       f'    headline: "{jsEsc(s.get("headline",""))}",\n'
                       f'    lede: "{jsEsc(s.get("lede",""))}",\n'
                       f'    truth: "{jsEsc(s.get("truth",""))}",\n'

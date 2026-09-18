@@ -74,44 +74,73 @@ entirely in `digest/index.html` and need none of this.
 
 ```sh
 python3 - <<'PY'
-import json, re, sys
+import importlib.util, os, re, subprocess, sys, tempfile
 
+def run_js(src, what):
+    fd, path = tempfile.mkstemp(suffix='.js')
+    os.write(fd, src.encode()); os.close(fd)
+    r = subprocess.run(['node', path], capture_output=True, text=True)
+    os.unlink(path)
+    if r.returncode:
+        sys.exit(r.stderr.strip() or (what + ' fixture run failed'))
+
+def grab(text, pat, what):
+    m = re.search(pat, text)
+    if not m: sys.exit(what + ' not found')
+    return m.group(0)
+
+# ── Pulse holds a vocabulary, folds duplicates into it, and drafts into it ──
 p = open('ntk-pulse/pulse.html', encoding='utf-8').read()
-if not re.search(r'\bsubject\b', p):
-    sys.exit('Pulse has no subject field')
-m = re.search(r'async function draftMeta\([\s\S]*?\n\}\n', p)
-if not m: sys.exit('draftMeta not found')
-if 'subject' not in m.group(0):
+draft = grab(p, r'async function draftMeta\([\s\S]*?\n\}\n', 'draftMeta')
+if '"subject"' not in draft:
     sys.exit('draftMeta does not propose a subject')
-if not re.search(r'(?i)(knownSubjects|subjectsInUse|existing subjects)', p):
-    sys.exit('draftMeta is not shown the subjects already in use, so the vocabulary will drift')
-if not re.search(r'function normali[sz]eSubject\(', p):
-    sys.exit('subjects are not normalised on save')
+if 'knownSubjects()' not in draft:
+    sys.exit('draftMeta is not shown the subjects in use, so the vocabulary will drift')
 
-b = open('ntk-pulse/build_digest.py', encoding='utf-8').read()
-if 'subject' not in b or 'entity' not in b:
-    sys.exit('build_digest.py does not publish subject and entity')
+# Folding is the entire defence against drift, so run it rather than read it.
+run_js('var LINEUP=[{subject:"Artificial Intelligence"}], SUBJECTS=["Ukraine"];\n'
+       + grab(p, r'function knownSubjects\([\s\S]*?\n\}', 'knownSubjects') + '\n'
+       + grab(p, r'function normalizeSubject\([\s\S]*?\n\}', 'normalizeSubject') + '\n'
+       + 'var cases = ['
+       + '["artificial intelligence","Artificial Intelligence","a case variant is not folded onto the existing subject"],'
+       + '["  ukraine  ","Ukraine","whitespace and case are not folded"],'
+       + '["Housing.","Housing","trailing punctuation is not stripped"],'
+       + '["","","an empty subject does not stay empty"]];\n'
+       + 'var bad = cases.filter(function(c){ return normalizeSubject(c[0]) !== c[1]; });\n'
+       + 'if (bad.length){ console.error(bad.map(function(c){return c[2];}).join("; ")); process.exit(1); }',
+       'normalizeSubject')
 
+# ── The pipeline carries both fields through ───────────────────────────────
+spec = importlib.util.spec_from_file_location('bd', 'ntk-pulse/build_digest.py')
+bd = importlib.util.module_from_spec(spec); spec.loader.exec_module(bd)
+block = bd.build_stories_block([{'key': 'k', 'category': 'Tech', 'headline': 'h', 'lede': 'l',
+                                 'subject': 'Artificial Intelligence', 'entity': 'Anthropic'}])
+for field, val in (('subject', 'Artificial Intelligence'), ('entity', 'Anthropic')):
+    if '%s: "%s"' % (field, val) not in block:
+        sys.exit('build_digest.py does not publish %s' % field)
+
+# ── The digest keys to the subject, and entities stay texture ──────────────
 d = open('digest/index.html', encoding='utf-8').read()
-m = re.search(r'const stories = \[[\s\S]*?\n\];', d)
-if not m: sys.exit('published stories array not found')
-block = m.group(0)
+run_js(grab(d, r'function storySubject\([\s\S]*?\n\}', 'storySubject') + '\n'
+       + 'if (storySubject({subject:"Ukraine", category:"World"}) !== "Ukraine")'
+       + '{ console.error("the section label wins over the subject"); process.exit(1); }\n'
+       + 'if (storySubject({subject:"  ", category:"World"}) !== "World")'
+       + '{ console.error("an edition published before T-0016 orphans its beats"); process.exit(1); }',
+       'storySubject')
+
+for m in re.finditer(r'beatsRecord\w+\(([^;]{0,120})', d):
+    if '.category' in m.group(1) and 'storySubject' not in m.group(1):
+        sys.exit('a beats call site is still keyed to the section label: ' + m.group(1)[:60])
+
+idx = grab(d, r'function beatIdx\([\s\S]*?\n\}', 'beatIdx')
+if 'entit' in idx.lower():
+    sys.exit('beatIdx consults entities; they were decided to carry no status')
+
+# ── And a published edition actually carries them ──────────────────────────
+block = grab(d, r'const stories = \[[\s\S]*?\n\];', 'the published stories array')
 cats = len(re.findall(r'category:\s*"', block))
 subs = len(re.findall(r'subject:\s*"[^"]+"', block))
 if subs != cats:
-    sys.exit('%d of %d published stories carry a subject' % (subs, cats))
-
-keyed = re.findall(r'beatsRecord\w+\(\s*(?:stories\[[^\]]+\]\s*\?\s*)?stories\[[^\]]+\]\.(\w+)', d)
-keyed += re.findall(r'beatsRecord\w+\(s\.(\w+)', d)
-if 'category' in keyed:
-    sys.exit('beats are still keyed to the section label')
-if 'subject' not in keyed:
-    sys.exit('beats are not keyed to the subject')
-
-# Entities are texture. If they ever reach the scorer, the ladder stops meaning
-# anything, because most entities appear once and can never be climbed.
-m = re.search(r'function beatIdx\([\s\S]*?\n\}', d)
-if m and 'entit' in m.group(0).lower():
-    sys.exit('beatIdx consults entities; they were decided to carry no status')
+    sys.exit('%d of %d published stories carry a subject (publish once from Pulse)' % (subs, cats))
 PY
 ```
