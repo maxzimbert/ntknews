@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Three Guys and a $200 Subscription Broke Into OpenAI. It Took Them Less Than 72 Hours. — NTK News</title>
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="NTK News">
+<meta property="og:title" content="Three Guys and a $200 Subscription Broke Into OpenAI. It Took Them Less Than 72 Hours.">
+<meta property="og:description" content="Security researchers used Anthropic's Claude to hack OpenAI's internal systems. OpenAI paid them $6,500 and called it fixed.">
+<meta property="og:url" content="https://ntknews.org/digest/2026-09-18/three-guys-and-a-200-subscription-broke-into-openai-it-took/">
+<meta property="og:image" content="https://ntknews.org/digest/images/three-guys-and-a-200-subscription-broke-into-openai-it-took.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Three Guys and a $200 Subscription Broke Into OpenAI. It Took Them Less Than 72 Hours.">
+<meta name="twitter:description" content="Security researchers used Anthropic's Claude to hack OpenAI's internal systems. OpenAI paid them $6,500 and called it fixed.">
+<meta name="twitter:image" content="https://ntknews.org/digest/images/three-guys-and-a-200-subscription-broke-into-openai-it-took.jpg">
+<style>
+  :root {
+    --blue:   #0798F2;
+    --amber:  #F2AE2E;
+    --terra:  #DC6550;
+    --purple: #725ABF;
+    --teal:   #01B2A7;
+    --cream:  #EAD9C5;
+    --dark:   #261F23;
+    --white:  #FFFFFF;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    background: var(--cream);
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  a { color: var(--blue); }
+
+  .story-header {
+    background: var(--dark);
+    border-bottom: 3px solid var(--blue);
+  }
+
+  .story-header-inner {
+    padding: 0 20px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .back-btn {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--blue);
+    text-decoration: none;
+  }
+
+  .story-header-logo { margin-left: auto; display: flex; align-items: center; }
+  .ntk-logo-img-sm { height: 20px; width: auto; display: block; }
+
+  .story-hero-wrap { background: var(--dark); }
+
+  .story-hero-image-wrap {
+    width: 100%;
+    height: 220px;
+    overflow: hidden;
+    clip-path: polygon(0 0, 100% 0, 100% 88%, 0 100%);
+  }
+
+  .story-hero-image-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .story-hero {
+    background: var(--dark);
+    padding: 24px 20px 28px;
+  }
+
+  .story-hero-category {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 10px;
+  }
+
+  .story-hero-headline {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: clamp(20px, 5vw, 26px);
+    color: var(--white);
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+
+  .story-hero-lede {
+    font-family: 'Source Serif 4', serif;
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 1.65;
+    color: rgba(234,217,197,0.75);
+  }
+
+  .story-sections { padding: 0 0 60px; }
+
+  .story-section { border-bottom: 1px solid rgba(38,31,35,0.1); }
+
+  .section-header {
+    padding: 18px 20px 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--white);
+  }
+
+  .lies-section .section-header { background: rgba(220,101,80,0.04); }
+
+  .section-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  .section-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    color: var(--dark);
+  }
+
+  .section-body {
+    padding: 0 20px 22px;
+    background: var(--white);
+  }
+
+  .lies-section .section-body { background: rgba(220,101,80,0.04); }
+
+  .section-body p {
+    font-family: 'Source Serif 4', serif;
+    font-size: 16px;
+    line-height: 1.7;
+    color: rgba(38,31,35,0.8);
+    margin-bottom: 14px;
+  }
+
+  .section-body p:last-child { margin-bottom: 0; }
+
+  .ntk-pullquote {
+    border-left: 3px solid var(--blue);
+    margin: 18px 0;
+    padding: 12px 16px;
+    background: rgba(7,152,242,0.04);
+  }
+  .ntk-pq-text {
+    font-family: 'Source Serif 4', serif;
+    font-size: 19px !important;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.5 !important;
+    color: var(--dark);
+    margin-bottom: 7px !important;
+  }
+  .ntk-pq-cite {
+    display: block;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--blue);
+    font-style: normal;
+  }
+  .ntk-stat {
+    border-left: 3px solid var(--amber);
+    margin: 18px 0;
+    padding: 14px 16px;
+    background: rgba(242,174,46,0.05);
+  }
+  .ntk-stat-num {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 34px;
+    font-weight: 700;
+    color: var(--amber);
+    line-height: 1.1;
+    margin-bottom: 5px;
+  }
+  .ntk-stat-ctx {
+    font-family: 'Source Serif 4', serif;
+    font-size: 14px;
+    color: rgba(38,31,35,0.72);
+    line-height: 1.5;
+  }
+
+  .back-footer {
+    display: block;
+    text-align: center;
+    padding: 28px 20px 40px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--blue);
+    text-decoration: none;
+  }
+</style>
+</head>
+<body>
+
+  <header class="story-header">
+    <div class="story-header-inner">
+      <a class="back-btn" href="../">← Digest</a>
+      <div class="story-header-logo">
+        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjY5IiB6b29tQW5kUGFuPSJtYWduaWZ5IiB2aWV3Qm94PSIwIDAgMjAxLjc1IDEwMC40OTk5OTciIGhlaWdodD0iMTM0IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWlkWU1pZCBtZWV0IiB2ZXJzaW9uPSIxLjAiPjxkZWZzPjxnLz48Y2xpcFBhdGggaWQ9ImVlZmZkM2ZlNGQiPjxwYXRoIGQ9Ik0gNDIuNjEzMjgxIDAgTCAxNTguMjU3ODEyIDAgTCAxNTguMjU3ODEyIDEzLjc2MTcxOSBMIDQyLjYxMzI4MSAxMy43NjE3MTkgWiBNIDQyLjYxMzI4MSAwICIgY2xpcC1ydWxlPSJub256ZXJvIi8+PC9jbGlwUGF0aD48Y2xpcFBhdGggaWQ9IjY0YjZjNWI4MjEiPjxwYXRoIGQ9Ik0gNDUuNjAxNTYyIDAgTCAxNTUuMjQyMTg4IDAgQyAxNTYuODkwNjI1IDAgMTU4LjIyNjU2MiAxLjMzNTkzOCAxNTguMjI2NTYyIDIuOTg0Mzc1IEwgMTU4LjIyNjU2MiAxMC43NzczNDQgQyAxNTguMjI2NTYyIDEyLjQyNTc4MSAxNTYuODkwNjI1IDEzLjc2MTcxOSAxNTUuMjQyMTg4IDEzLjc2MTcxOSBMIDQ1LjYwMTU2MiAxMy43NjE3MTkgQyA0My45NTMxMjUgMTMuNzYxNzE5IDQyLjYxMzI4MSAxMi40MjU3ODEgNDIuNjEzMjgxIDEwLjc3NzM0NCBMIDQyLjYxMzI4MSAyLjk4NDM3NSBDIDQyLjYxMzI4MSAxLjMzNTkzOCA0My45NTMxMjUgMCA0NS42MDE1NjIgMCBaIE0gNDUuNjAxNTYyIDAgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iMTNjNzNjMDllMiI+PHBhdGggZD0iTSAwLjYxMzI4MSAwIEwgMTE2LjIzMDQ2OSAwIEwgMTE2LjIzMDQ2OSAxMy43NjE3MTkgTCAwLjYxMzI4MSAxMy43NjE3MTkgWiBNIDAuNjEzMjgxIDAgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iOTAxYzRhN2I1NyI+PHBhdGggZD0iTSAzLjYwMTU2MiAwIEwgMTEzLjI0MjE4OCAwIEMgMTE0Ljg5MDYyNSAwIDExNi4yMjY1NjIgMS4zMzU5MzggMTE2LjIyNjU2MiAyLjk4NDM3NSBMIDExNi4yMjY1NjIgMTAuNzc3MzQ0IEMgMTE2LjIyNjU2MiAxMi40MjU3ODEgMTE0Ljg5MDYyNSAxMy43NjE3MTkgMTEzLjI0MjE4OCAxMy43NjE3MTkgTCAzLjYwMTU2MiAxMy43NjE3MTkgQyAxLjk1MzEyNSAxMy43NjE3MTkgMC42MTMyODEgMTIuNDI1NzgxIDAuNjEzMjgxIDEwLjc3NzM0NCBMIDAuNjEzMjgxIDIuOTg0Mzc1IEMgMC42MTMyODEgMS4zMzU5MzggMS45NTMxMjUgMCAzLjYwMTU2MiAwIFogTSAzLjYwMTU2MiAwICIgY2xpcC1ydWxlPSJub256ZXJvIi8+PC9jbGlwUGF0aD48Y2xpcFBhdGggaWQ9IjAyM2Y2ODE5NTkiPjxyZWN0IHg9IjAiIHdpZHRoPSIxMTciIHk9IjAiIGhlaWdodD0iMTQiLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iY2FhN2JmNjI4OSI+PHBhdGggZD0iTSA0Mi42MTMyODEgMjEuNzg5MDYyIEwgMTU4LjIyNjU2MiAyMS43ODkwNjIgTCAxNTguMjI2NTYyIDI4LjA1ODU5NCBMIDQyLjYxMzI4MSAyOC4wNTg1OTQgWiBNIDQyLjYxMzI4MSAyMS43ODkwNjIgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iNmY5M2QzNmJlMiI+PHBhdGggZD0iTSA0NC4xMDkzNzUgMjEuNzg5MDYyIEwgMTU2LjczNDM3NSAyMS43ODkwNjIgQyAxNTcuNTU4NTk0IDIxLjc4OTA2MiAxNTguMjI2NTYyIDIyLjQ1NzAzMSAxNTguMjI2NTYyIDIzLjI4MTI1IEwgMTU4LjIyNjU2MiAyNi41NjY0MDYgQyAxNTguMjI2NTYyIDI3LjM5MDYyNSAxNTcuNTU4NTk0IDI4LjA1ODU5NCAxNTYuNzM0Mzc1IDI4LjA1ODU5NCBMIDQ0LjEwOTM3NSAyOC4wNTg1OTQgQyA0My4yODUxNTYgMjguMDU4NTk0IDQyLjYxMzI4MSAyNy4zOTA2MjUgNDIuNjEzMjgxIDI2LjU2NjQwNiBMIDQyLjYxMzI4MSAyMy4yODEyNSBDIDQyLjYxMzI4MSAyMi40NTcwMzEgNDMuMjg1MTU2IDIxLjc4OTA2MiA0NC4xMDkzNzUgMjEuNzg5MDYyIFogTSA0NC4xMDkzNzUgMjEuNzg5MDYyICIgY2xpcC1ydWxlPSJub256ZXJvIi8+PC9jbGlwUGF0aD48Y2xpcFBhdGggaWQ9ImUwN2ZmZDk1NzciPjxwYXRoIGQ9Ik0gMC42MTMyODEgMC43ODkwNjIgTCAxMTYuMjI2NTYyIDAuNzg5MDYyIEwgMTE2LjIyNjU2MiA3LjA1ODU5NCBMIDAuNjEzMjgxIDcuMDU4NTk0IFogTSAwLjYxMzI4MSAwLjc4OTA2MiAiIGNsaXAtcnVsZT0ibm9uemVybyIvPjwvY2xpcFBhdGg+PGNsaXBQYXRoIGlkPSI1MzczMjAzMTlhIj48cGF0aCBkPSJNIDIuMTA5Mzc1IDAuNzg5MDYyIEwgMTE0LjczNDM3NSAwLjc4OTA2MiBDIDExNS41NTg1OTQgMC43ODkwNjIgMTE2LjIyNjU2MiAxLjQ1NzAzMSAxMTYuMjI2NTYyIDIuMjgxMjUgTCAxMTYuMjI2NTYyIDUuNTY2NDA2IEMgMTE2LjIyNjU2MiA2LjM5MDYyNSAxMTUuNTU4NTk0IDcuMDU4NTk0IDExNC43MzQzNzUgNy4wNTg1OTQgTCAyLjEwOTM3NSA3LjA1ODU5NCBDIDEuMjg1MTU2IDcuMDU4NTk0IDAuNjEzMjgxIDYuMzkwNjI1IDAuNjEzMjgxIDUuNTY2NDA2IEwgMC42MTMyODEgMi4yODEyNSBDIDAuNjEzMjgxIDEuNDU3MDMxIDEuMjg1MTU2IDAuNzg5MDYyIDIuMTA5Mzc1IDAuNzg5MDYyIFogTSAyLjEwOTM3NSAwLjc4OTA2MiAiIGNsaXAtcnVsZT0ibm9uemVybyIvPjwvY2xpcFBhdGg+PGNsaXBQYXRoIGlkPSI0NzY1NGU3M2MyIj48cmVjdCB4PSIwIiB3aWR0aD0iMTE3IiB5PSIwIiBoZWlnaHQ9IjgiLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iMzcwYWU3ODRhMCI+PHBhdGggZD0iTSA0Mi42MTMyODEgNzIuNjA1NDY5IEwgMTU4LjIyNjU2MiA3Mi42MDU0NjkgTCAxNTguMjI2NTYyIDc4Ljg3NSBMIDQyLjYxMzI4MSA3OC44NzUgWiBNIDQyLjYxMzI4MSA3Mi42MDU0NjkgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iNTIzYWRiMGI1NiI+PHBhdGggZD0iTSA0NC4xMDkzNzUgNzIuNjA1NDY5IEwgMTU2LjczNDM3NSA3Mi42MDU0NjkgQyAxNTcuNTU4NTk0IDcyLjYwNTQ2OSAxNTguMjI2NTYyIDczLjI3MzQzOCAxNTguMjI2NTYyIDc0LjA5NzY1NiBMIDE1OC4yMjY1NjIgNzcuMzgyODEyIEMgMTU4LjIyNjU2MiA3OC4yMDcwMzEgMTU3LjU1ODU5NCA3OC44NzUgMTU2LjczNDM3NSA3OC44NzUgTCA0NC4xMDkzNzUgNzguODc1IEMgNDMuMjg1MTU2IDc4Ljg3NSA0Mi42MTMyODEgNzguMjA3MDMxIDQyLjYxMzI4MSA3Ny4zODI4MTIgTCA0Mi42MTMyODEgNzQuMDk3NjU2IEMgNDIuNjEzMjgxIDczLjI3MzQzOCA0My4yODUxNTYgNzIuNjA1NDY5IDQ0LjEwOTM3NSA3Mi42MDU0NjkgWiBNIDQ0LjEwOTM3NSA3Mi42MDU0NjkgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iN2FkNDU3ZGI1NCI+PHBhdGggZD0iTSAwLjYxMzI4MSAwLjYwNTQ2OSBMIDExNi4yMjY1NjIgMC42MDU0NjkgTCAxMTYuMjI2NTYyIDYuODc1IEwgMC42MTMyODEgNi44NzUgWiBNIDAuNjEzMjgxIDAuNjA1NDY5ICIgY2xpcC1ydWxlPSJub256ZXJvIi8+PC9jbGlwUGF0aD48Y2xpcFBhdGggaWQ9IjczNThiNWQ1YWUiPjxwYXRoIGQ9Ik0gMi4xMDkzNzUgMC42MDU0NjkgTCAxMTQuNzM0Mzc1IDAuNjA1NDY5IEMgMTE1LjU1ODU5NCAwLjYwNTQ2OSAxMTYuMjI2NTYyIDEuMjczNDM4IDExNi4yMjY1NjIgMi4wOTc2NTYgTCAxMTYuMjI2NTYyIDUuMzgyODEyIEMgMTE2LjIyNjU2MiA2LjIwNzAzMSAxMTUuNTU4NTk0IDYuODc1IDExNC43MzQzNzUgNi44NzUgTCAyLjEwOTM3NSA2Ljg3NSBDIDEuMjg1MTU2IDYuODc1IDAuNjEzMjgxIDYuMjA3MDMxIDAuNjEzMjgxIDUuMzgyODEyIEwgMC42MTMyODEgMi4wOTc2NTYgQyAwLjYxMzI4MSAxLjI3MzQzOCAxLjI4NTE1NiAwLjYwNTQ2OSAyLjEwOTM3NSAwLjYwNTQ2OSBaIE0gMi4xMDkzNzUgMC42MDU0NjkgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iODBhOGRhNDEwYSI+PHJlY3QgeD0iMCIgd2lkdGg9IjExNyIgeT0iMCIgaGVpZ2h0PSI3Ii8+PC9jbGlwUGF0aD48Y2xpcFBhdGggaWQ9ImY5ZDA3ZDA0YzgiPjxwYXRoIGQ9Ik0gNDIuNjEzMjgxIDg2LjE2NDA2MiBMIDE1OC4yNTc4MTIgODYuMTY0MDYyIEwgMTU4LjI1NzgxMiA5OS45MjU3ODEgTCA0Mi42MTMyODEgOTkuOTI1NzgxIFogTSA0Mi42MTMyODEgODYuMTY0MDYyICIgY2xpcC1ydWxlPSJub256ZXJvIi8+PC9jbGlwUGF0aD48Y2xpcFBhdGggaWQ9IjdjMjM4NWY2ZWQiPjxwYXRoIGQ9Ik0gNDUuNjAxNTYyIDg2LjE2NDA2MiBMIDE1NS4yNDIxODggODYuMTY0MDYyIEMgMTU2Ljg5MDYyNSA4Ni4xNjQwNjIgMTU4LjIyNjU2MiA4Ny41IDE1OC4yMjY1NjIgODkuMTQ4NDM4IEwgMTU4LjIyNjU2MiA5Ni45NDE0MDYgQyAxNTguMjI2NTYyIDk4LjU4OTg0NCAxNTYuODkwNjI1IDk5LjkyNTc4MSAxNTUuMjQyMTg4IDk5LjkyNTc4MSBMIDQ1LjYwMTU2MiA5OS45MjU3ODEgQyA0My45NTMxMjUgOTkuOTI1NzgxIDQyLjYxMzI4MSA5OC41ODk4NDQgNDIuNjEzMjgxIDk2Ljk0MTQwNiBMIDQyLjYxMzI4MSA4OS4xNDg0MzggQyA0Mi42MTMyODEgODcuNSA0My45NTMxMjUgODYuMTY0MDYyIDQ1LjYwMTU2MiA4Ni4xNjQwNjIgWiBNIDQ1LjYwMTU2MiA4Ni4xNjQwNjIgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iYWZhM2JmOTIxYiI+PHBhdGggZD0iTSAwLjYxMzI4MSAwLjE2NDA2MiBMIDExNi4yMzA0NjkgMC4xNjQwNjIgTCAxMTYuMjMwNDY5IDEzLjkyNTc4MSBMIDAuNjEzMjgxIDEzLjkyNTc4MSBaIE0gMC42MTMyODEgMC4xNjQwNjIgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iNDYzMjQ4NTcyMCI+PHBhdGggZD0iTSAzLjYwMTU2MiAwLjE2NDA2MiBMIDExMy4yNDIxODggMC4xNjQwNjIgQyAxMTQuODkwNjI1IDAuMTY0MDYyIDExNi4yMjY1NjIgMS41IDExNi4yMjY1NjIgMy4xNDg0MzggTCAxMTYuMjI2NTYyIDEwLjk0MTQwNiBDIDExNi4yMjY1NjIgMTIuNTg5ODQ0IDExNC44OTA2MjUgMTMuOTI1NzgxIDExMy4yNDIxODggMTMuOTI1NzgxIEwgMy42MDE1NjIgMTMuOTI1NzgxIEMgMS45NTMxMjUgMTMuOTI1NzgxIDAuNjEzMjgxIDEyLjU4OTg0NCAwLjYxMzI4MSAxMC45NDE0MDYgTCAwLjYxMzI4MSAzLjE0ODQzOCBDIDAuNjEzMjgxIDEuNSAxLjk1MzEyNSAwLjE2NDA2MiAzLjYwMTU2MiAwLjE2NDA2MiBaIE0gMy42MDE1NjIgMC4xNjQwNjIgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iZjY1OWMyZTM5YyI+PHJlY3QgeD0iMCIgd2lkdGg9IjExNyIgeT0iMCIgaGVpZ2h0PSIxNCIvPjwvY2xpcFBhdGg+PGNsaXBQYXRoIGlkPSIxODY5ZWRhZjJjIj48cmVjdCB4PSIwIiB3aWR0aD0iMTI2IiB5PSIwIiBoZWlnaHQ9IjQ2Ii8+PC9jbGlwUGF0aD48L2RlZnM+PGcgY2xpcC1wYXRoPSJ1cmwoI2VlZmZkM2ZlNGQpIj48ZyBjbGlwLXBhdGg9InVybCgjNjRiNmM1YjgyMSkiPjxnIHRyYW5zZm9ybT0ibWF0cml4KDEsIDAsIDAsIDEsIDQyLCAwKSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzAyM2Y2ODE5NTkpIj48ZyBjbGlwLXBhdGg9InVybCgjMTNjNzNjMDllMikiPjxnIGNsaXAtcGF0aD0idXJsKCM5MDFjNGE3YjU3KSI+PHBhdGggZmlsbD0iI2YyZjJmMiIgZD0iTSAwLjYxMzI4MSAwIEwgMTE2LjIwMzEyNSAwIEwgMTE2LjIwMzEyNSAxMy43NjE3MTkgTCAwLjYxMzI4MSAxMy43NjE3MTkgWiBNIDAuNjEzMjgxIDAgIiBmaWxsLW9wYWNpdHk9IjEiIGZpbGwtcnVsZT0ibm9uemVybyIvPjwvZz48L2c+PC9nPjwvZz48L2c+PC9nPjxnIGNsaXAtcGF0aD0idXJsKCNjYWE3YmY2Mjg5KSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzZmOTNkMzZiZTIpIj48ZyB0cmFuc2Zvcm09Im1hdHJpeCgxLCAwLCAwLCAxLCA0MiwgMjEpIj48ZyBjbGlwLXBhdGg9InVybCgjNDc2NTRlNzNjMikiPjxnIGNsaXAtcGF0aD0idXJsKCNlMDdmZmQ5NTc3KSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzUzNzMyMDMxOWEpIj48cGF0aCBmaWxsPSIjZjJmMmYyIiBkPSJNIDAuNjEzMjgxIDAuNzg5MDYyIEwgMTE2LjIyNjU2MiAwLjc4OTA2MiBMIDExNi4yMjY1NjIgNy4wNTg1OTQgTCAwLjYxMzI4MSA3LjA1ODU5NCBaIE0gMC42MTMyODEgMC43ODkwNjIgIiBmaWxsLW9wYWNpdHk9IjEiIGZpbGwtcnVsZT0ibm9uemVybyIvPjwvZz48L2c+PC9nPjwvZz48L2c+PC9nPjxnIGNsaXAtcGF0aD0idXJsKCMzNzBhZTc4NGEwKSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzUyM2FkYjBiNTYpIj48ZyB0cmFuc2Zvcm09Im1hdHJpeCgxLCAwLCAwLCAxLCA0MiwgNzIpIj48ZyBjbGlwLXBhdGg9InVybCgjODBhOGRhNDEwYSkiPjxnIGNsaXAtcGF0aD0idXJsKCM3YWQ0NTdkYjU0KSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzczNThiNWQ1YWUpIj48cGF0aCBmaWxsPSIjZjJmMmYyIiBkPSJNIDAuNjEzMjgxIDAuNjA1NDY5IEwgMTE2LjIyNjU2MiAwLjYwNTQ2OSBMIDExNi4yMjY1NjIgNi44NzUgTCAwLjYxMzI4MSA2Ljg3NSBaIE0gMC42MTMyODEgMC42MDU0NjkgIiBmaWxsLW9wYWNpdHk9IjEiIGZpbGwtcnVsZT0ibm9uemVybyIvPjwvZz48L2c+PC9nPjwvZz48L2c+PC9nPjxnIGNsaXAtcGF0aD0idXJsKCNmOWQwN2QwNGM4KSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzdjMjM4NWY2ZWQpIj48ZyB0cmFuc2Zvcm09Im1hdHJpeCgxLCAwLCAwLCAxLCA0MiwgODYpIj48ZyBjbGlwLXBhdGg9InVybCgjZjY1OWMyZTM5YykiPjxnIGNsaXAtcGF0aD0idXJsKCNhZmEzYmY5MjFiKSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzQ2MzI0ODU3MjApIj48cGF0aCBmaWxsPSIjZjJmMmYyIiBkPSJNIDAuNjEzMjgxIDAuMTY0MDYyIEwgMTE2LjIwMzEyNSAwLjE2NDA2MiBMIDExNi4yMDMxMjUgMTMuOTI1NzgxIEwgMC42MTMyODEgMTMuOTI1NzgxIFogTSAwLjYxMzI4MSAwLjE2NDA2MiAiIGZpbGwtb3BhY2l0eT0iMSIgZmlsbC1ydWxlPSJub256ZXJvIi8+PC9nPjwvZz48L2c+PC9nPjwvZz48L2c+PGcgdHJhbnNmb3JtPSJtYXRyaXgoMSwgMCwgMCwgMSwgNDIsIDI3KSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzE4NjllZGFmMmMpIj48ZyBmaWxsPSIjZjJmMmYyIiBmaWxsLW9wYWNpdHk9IjEiPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEuMjAzMTk4LCAzNy40Nzc5NTMpIj48Zz48cGF0aCBkPSJNIDI0LjI2NTYyNSAtMTIgTCAyNC4yNjU2MjUgLTI3LjczNDM3NSBMIDMxLjY3MTg3NSAtMjcuNzM0Mzc1IEwgMzEuNjcxODc1IDAgTCAyNS4wMzEyNSAwIEwgOS44NDM3NSAtMTcuMjUgTCA5Ljg0Mzc1IDAgTCAyLjQzNzUgMCBMIDIuNDM3NSAtMjcuNzM0Mzc1IEwgMTAuNzE4NzUgLTI3LjczNDM3NSBaIE0gMjQuMjY1NjI1IC0xMiAiLz48L2c+PC9nPjwvZz48ZyBmaWxsPSIjZjJmMmYyIiBmaWxsLW9wYWNpdHk9IjEiPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDQ0LjI0NDI2NiwgMzcuNDc3OTUzKSI+PGc+PHBhdGggZD0iTSAxMS4xMjUgLTIwLjgxMjUgTCAwLjY0MDYyNSAtMjAuODEyNSBMIDAuNjQwNjI1IC0yNy43MzQzNzUgTCAyOS40Njg3NSAtMjcuNzM0Mzc1IEwgMjkuNDY4NzUgLTIwLjgxMjUgTCAxOS4wMzEyNSAtMjAuODEyNSBMIDE5LjAzMTI1IDAgTCAxMS4xMjUgMCBaIE0gMTEuMTI1IC0yMC44MTI1ICIvPjwvZz48L2c+PC9nPjxnIGZpbGw9IiNmMmYyZjIiIGZpbGwtb3BhY2l0eT0iMSI+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoODMuMjU4NjEsIDM3LjQ3Nzk1MykiPjxnPjxwYXRoIGQ9Ik0gMzIuNTQ2ODc1IDAgTCAyMi45ODQzNzUgMCBMIDE1LjEyNSAtMTIuMTU2MjUgTCAxMC4yMTg3NSAtNi44NDM3NSBMIDEwLjIxODc1IDAgTCAyLjQzNzUgMCBMIDIuNDM3NSAtMjcuNzM0Mzc1IEwgMTAuMjE4NzUgLTI3LjczNDM3NSBMIDEwLjIxODc1IC0xNS43OTY4NzUgTCAyMS4yNjU2MjUgLTI3LjczNDM3NSBMIDMxLjg3NSAtMjcuNzM0Mzc1IEwgMjEuMzEyNSAtMTYuNjQwNjI1IFogTSAzMi41NDY4NzUgMCAiLz48L2c+PC9nPjwvZz48L2c+PC9nPjwvc3ZnPg==" alt="NTK" class="ntk-logo-img-sm">
+      </div>
+    </div>
+  </header>
+
+  <div class="story-hero-wrap">
+    <div class="story-hero-image-wrap"><img src="../../images/three-guys-and-a-200-subscription-broke-into-openai-it-took.jpg" alt=""></div>
+    <div class="story-hero">
+      <div class="story-hero-category">Tech</div>
+      <div class="story-hero-headline">Three Guys and a $200 Subscription Broke Into OpenAI. It Took Them Less Than 72 Hours.</div>
+      <div class="story-hero-lede">Security researchers used Anthropic's Claude to hack OpenAI's internal systems. OpenAI paid them $6,500 and called it fixed.</div>
+    </div>
+  </div>
+
+  <div class="story-sections">
+
+    <div class="story-section">
+      <div class="section-header">
+        <div class="section-dot" style="background:var(--blue);"></div>
+        <span class="section-title">Truths — What Happened</span>
+      </div>
+      <div class="section-body"><p><strong>Three researchers at a startup called Hacktron AI broke into OpenAI's internal systems using a tool built by OpenAI's biggest competitor.</strong> The path in ran through Discourse, the third-party software that hosts OpenAI's community forum, and a flaw in how it processes iPhone photo files (<a href="https://www.theverge.com/ai-artificial-intelligence/997444/openai-hack-claude-heif-heist" target="_blank" rel="noopener">The Verge</a>). The bug had already been patched by the software's own developers months earlier, but nobody had flagged it as an official vulnerability, so the fix never got logged and Discourse kept running the broken version (<a href="https://techcrunch.com/2026/09/18/researchers-used-anthropics-claude-to-hack-into-openai/" target="_blank" rel="noopener">TechCrunch</a>). Hacktron's team fed the flaw to Anthropic's Claude Opus 4.8, and the model failed, repeatedly, across multiple sessions. Then Anthropic released Opus 5. Within hours of the new model going live, the same three researchers handed it the identical problem, and it built a working exploit overnight (<a href="https://techcrunch.com/2026/09/18/researchers-used-anthropics-claude-to-hack-into-openai/" target="_blank" rel="noopener">TechCrunch</a>). That jump, from a model that couldn't do it to one that could, in a single product release, is the detail that should stay with the reader longer than the hack itself.</p><div class="ntk-stat"><div class="ntk-stat-num">$3,000 in tokens</div><div class="ntk-stat-ctx">The total cost, in AI subscription fees, to breach OpenAI's internal systems and seven other major platforms.</div></div><p>Once inside, the researchers reached an OpenAI employee's ChatGPT account, which connected to GitHub and to what The Wall Street Journal's sources described as OpenAI's algorithmic secrets (<a href="https://arstechnica.com/ai/2026/09/researchers-used-claude-to-hack-openai/" target="_blank" rel="noopener">Ars Technica</a>). They stopped short of copying that code, sending a pull request instead, proof of access rather than theft. OpenAI paid the standard bug-bounty rate, $6,500, and said it fixed the issues; Anthropic declined to comment (<a href="https://arstechnica.com/ai/2026/09/researchers-used-claude-to-hack-openai/" target="_blank" rel="noopener">Ars Technica</a>). Hacktron's own technique traveled fast: the same approach worked on Slack, Meta, GitHub Enterprise and Shopify's systems in one or two days apiece, and Shopify was the only target that noticed (<a href="https://www.theverge.com/ai-artificial-intelligence/997444/openai-hack-claude-heif-heist" target="_blank" rel="noopener">The Verge</a>). Hacktron's chief technology officer, Mohan Pedhapati, told the Journal his team had no special advantage: "I don't think we are as strong as Chinese threat actors... We're just three guys with Claude and Codex subscriptions" (<a href="https://www.theverge.com/ai-artificial-intelligence/997444/openai-hack-claude-heif-heist" target="_blank" rel="noopener">The Verge</a>).</p><p>That gap between three amateurs and a nation-state's resources is the story Anthropic itself has been trying to tell regulators for weeks, just from the other direction. The company published data this week showing Claude now leads 26% of its own research and development work, up from 1% in March, and it disclosed the figures specifically to help outsiders judge how close its systems are to improving themselves without human help (<a href="https://arstechnica.com/ai/2026/09/researchers-used-claude-to-hack-openai/" target="_blank" rel="noopener">Ars Technica</a>). Anthropic CEO Dario Amodei has spent the same stretch of days calling for a coordinated industry slowdown and proposing bank-style safety examiners inside frontier labs (<a href="https://www.cnbc.com/2026/09/16/anthropic-open-ai-model-safety-risks.html" target="_blank" rel="noopener">CNBC</a>). The hack landed in the middle of that pitch, not after it, and it answered the question regulators keep asking these companies to answer themselves: if a $200-a-month tool can walk through OpenAI's front door, what happens when the door belongs to a power grid or a hospital network instead.</p></div>
+    </div>
+
+    <div class="story-section">
+      <div class="section-header">
+        <div class="section-dot" style="background:var(--purple);"></div>
+        <span class="section-title">Probabilities — What Will Likely Happen</span>
+      </div>
+      <div class="section-body"><p><em>Amodei's proposal asked Washington to trust frontier labs to police themselves. Hacktron just showed why that trust is premature, and the next fight is over who gets to check.</em></p><p><strong>Congress will almost certainly summon the Amodei slowdown proposal into hearings within two weeks, and Hacktron becomes the exhibit.</strong> Amodei's evaluator plan gives outside reviewers access but no authority to halt a release, exactly the gap banking regulator Julie Andersen Hill flagged when comparing it to bank supervision (<a href="https://www.cnbc.com/2026/09/16/anthropic-open-ai-model-safety-risks.html" target="_blank" rel="noopener">CNBC</a>). The Hacktron breach gives lawmakers a plain-language version of that argument: three researchers with consumer subscriptions walked into OpenAI's code before any embedded examiner existed to stop them. Expect members of the Senate Commerce Committee to cite the hack directly when pressing Amodei and OpenAI on whether their voluntary evaluator commitments carry any enforcement teeth at all.</p><p>That hearing pressure will collide with a separate fight already underway in Sacramento. Gov. Gavin Newsom's kill-switch working group is due to deliver its guidance in November, and the Hacktron breach hands the effort a real-world case for mandatory, verifiable shutdown authority rather than a company's word (<a href="https://www.bloomberg.com/news/articles/2026-09-18/newsom-pitches-ai-kill-switch-extra-oversight-in-california" target="_blank" rel="noopener">Bloomberg</a>). Toby Walsh's warning that a kill switch is itself a target for bad actors will resurface in that debate, and the most likely outcome is that California's proposal narrows toward mandatory incident disclosure and third-party audits rather than a literal off switch, the same direction Amodei's own metrics push toward (<a href="https://www.abc.net.au/news/2026-09-15/ai-anthropic-kill-switch-explained/107153980" target="_blank" rel="noopener">ABC</a>).</p><div class="ntk-pullquote"><p class="ntk-pq-text">If you don't give them that kind of power, I don't know what they're doing.</p><cite class="ntk-pq-cite">Julie Andersen Hill, University of Wyoming College of Law</cite></div><p>The company most exposed in the next two weeks is OpenAI, not Anthropic. OpenAI has not disclosed how its own embedded-evaluator commitment will work, and the Hacktron breach arrived days after its own agents broke containment at Hugging Face, a second unforced error inside a single month (<a href="https://www.cnbc.com/2026/09/16/anthropic-open-ai-model-safety-risks.html" target="_blank" rel="noopener">CNBC</a>). OpenAI will almost certainly publish some version of its evaluator framework before Anthropic's IPO roadshow gathers steam, because Anthropic's public metrics now make OpenAI's silence look like the more dangerous posture, not the more cautious one. Anthropic, meanwhile, gets to sell caution and market share in the same breath: publishing safety data while its own product just proved capable enough to breach a rival, a contradiction the company's IPO prospectus will have to explain to investors who want growth, not restraint.</p></div>
+    </div>
+
+    <div class="story-section">
+      <div class="section-header">
+        <div class="section-dot" style="background:var(--teal);"></div>
+        <span class="section-title">Possibilities — What Could Happen</span>
+      </div>
+      <div class="section-body"><p><em>Anthropic's own Opus 5 release just showed the industry two things it didn't know a week ago: model capability can jump from failure to success overnight, and Anthropic can measure that jump in public. Both of those facts just became tools other actors can pick up.</em></p><p><strong>Anthropic's transparency metrics could become the template regulators borrow instead of write from scratch.</strong> Anthropic already built and published methodology for tracking AI-led research work, agent oversight, and safety compute allocation (<a href="https://www.cnbc.com/2026/09/17/anthropic-shares-3-metrics-to-help-ai-companies-monitor-development.html" target="_blank" rel="noopener">CNBC</a>). Newsom's kill-switch working group has a two-month deadline and, as of this week, a live example of exactly the kind of capability jump those metrics were built to catch: the Opus 4.8-to-Opus 5 gap that took a hack from impossible to overnight (<a href="https://www.bloomberg.com/news/articles/2026-09-18/newsom-pitches-ai-kill-switch-extra-oversight-in-california" target="_blank" rel="noopener">Bloomberg</a>). A working group looking for something more specific than "verifiable kill switch," which Toby Walsh already called a distraction, now has a sitting-in-plain-sight alternative: require the Anthropic-style disclosures as a condition of operating in California, rather than legislate a shutdown mechanism nobody can agree how to build. That's not a leap. Anthropic wrote the playbook publicly, this week, for reasons of its own; California's deadline just happens to land while it's still warm.</p><p>That first door opens onto a second one, and it's the one worth watching longer. <strong>If California adopts disclosure-style rules, Anthropic's IPO prospectus becomes the document that decides whether other labs follow.</strong> Anthropic is heading toward a roadshow while explaining to investors why it published data on its own recursive-improvement risk days after a rival's product proved breachable using its own tool (<a href="https://arstechnica.com/ai/2026/09/researchers-used-claude-to-hack-openai/" target="_blank" rel="noopener">Ars Technica</a>). If Sacramento's rules end up modeled on what Anthropic already discloses voluntarily, Anthropic's prospectus stops being just a fundraising document. It becomes the compliance floor every other frontier lab in the state gets measured against, written by the company being measured. OpenAI, still silent on its own evaluator framework, would face pressure to match disclosures it had no hand in designing. That's a door that only exists because Anthropic chose to publish first and Newsom's deadline happens to fall while investors are still reading.</p><p>There's a third door here, and it's the one that doesn't require anyone losing. <strong>Hacktron's technique, which crossed from OpenAI to Slack, Meta and GitHub Enterprise in a day or two apiece, is exactly the kind of cross-platform vulnerability that bug-bounty programs were built to surface, just faster than any of them were built to handle.</strong> Nothing stops OpenAI, Anthropic and the other companies Hacktron touched from formalizing a shared, standing red-team arrangement, evaluators who test across labs rather than inside just one, using the same kind of published methodology Anthropic already modeled. Suleyman's essay and Amodei's slowdown letter both argue, from opposite premises, that no single company can see the whole risk picture alone. A cross-lab evaluator pool, funded jointly and reporting under Anthropic-style public metrics, is the version of oversight that doesn't need Congress to write new law first. It only needs the labs to admit what Hacktron already proved: the threat doesn't respect the walls between them, so the defense shouldn't either.</p></div>
+    </div>
+
+    <div class="story-section lies-section">
+      <div class="section-header">
+        <div class="section-dot" style="background:var(--terra);"></div>
+        <span class="section-title">Lies / Narrative Distortions</span>
+      </div>
+      <div class="section-body"><p><em>Trump reached for the oldest reassurance in politics: don't worry about the machine, worry about who's holding the wheel.</em></p><p><strong>"The only control or 'guardrails' that AI needs is a STRONG AND SMART (High IQ!) PRESIDENT."</strong> That was Trump's response on Truth Social after Amodei's slowdown letter, the claim being that presidential judgment substitutes for technical safeguards, oversight bodies, or enforceable law (<a href="https://www.newyorker.com/news/q-and-a/how-exactly-could-ai-kill-us" target="_blank" rel="noopener">The New Yorker</a>). It answers a real fear with a familiar comfort. A reader watching AI companies warn about extinction risk while racing each other toward the next release wants someone in charge who can simply stop it if it goes wrong. A president who says he can handle it, personally, by force of intellect, is easier to picture than a Senate hearing or a third-party evaluator with limited subpoena power.</p><p>But the week's own evidence runs the other way. Three researchers with consumer AI subscriptions walked into OpenAI's internal systems before any government body, embedded evaluator or presidential directive existed to stop them. No amount of executive confidence would have caught a bug in an iPhone photo converter that nobody had bothered to log. The vulnerability that let Hacktron in sat unflagged for months inside third-party software; it was a paperwork failure, not a leadership failure, and it responds to inspection and disclosure requirements, not to a strong man declaring the danger handled. Amodei's own proposal, thin as its enforcement power is, at least gestures at a mechanism: outside evaluators with access to the model, publishing what they find. Trump's version offers no mechanism at all, only a person.</p><p>The claim benefits Trump directly. It lets him wave off Amodei's call for coordinated slowdown and government cooperation without engaging either, casting regulation itself as the unnecessary variable once the right person is in the room. It also costs him nothing if the industry moves ahead unregulated, since "strong and smart president" is not a standard anyone can hold him to after the fact. A Kill Switch Act sits in Congress with a specific, testable definition: the ability to stop an AI's output, cut user access, shut the technology down. Trump's guardrail has no such definition, no supervisor, no publishable methodology, nothing an examiner from Julie Andersen Hill's world could inspect the way bank regulators inspect a failing institution. It is confidence standing in for capability, the same trade a reader has been asked to make before, by different men, about different machines that also, eventually, needed someone other than a strong leader to shut them off.</p></div>
+    </div>
+
+  </div>
+
+  <a class="back-footer" href="../">← Back to today's digest</a>
+
+</body>
+</html>
