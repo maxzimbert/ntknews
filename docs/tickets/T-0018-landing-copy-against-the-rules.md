@@ -1,7 +1,7 @@
 ---
 id: T-0018
 title: The landing page copy predates the product it describes and breaks three of its own rules
-status: BUILT
+status: VERIFIED
 tags: [editorial, feature]
 anchor: index.html:379
 ---

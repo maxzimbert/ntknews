@@ -1,7 +1,7 @@
 ---
 id: T-0017
 title: Five Strunk and White rules are missing from the prompts, and the worked example contradicts one of them
-status: BUILT
+status: VERIFIED
 tags: [pulse, feature]
 anchor: ntk-pulse/pulse.html:741
 ---
