@@ -27,6 +27,12 @@ Pulse. Not a fixed list.
 `category` stays exactly what it is, a place on the page. `beat` stays pipeline
 plumbing. Neither is removed.
 
+A **subjects tab** in Pulse shows the vocabulary whole: every subject, how many
+lineup stories use it, the concepts that turned up beneath each, and rename in
+place. Rename is the load-bearing part. With nothing to fold onto, the first
+spelling of a subject becomes canonical, and without a rename the only way to
+fix a bad one would be to edit every story that used it.
+
 ## Why
 
 **The earlier scoping of this ticket was wrong and the correction is the
@@ -53,6 +59,21 @@ tariffs — is neither a subject nor an entity. It is a theme. Whether those two
 land in one bucket is decided by how subjects get named, which is an editorial
 judgment no mechanism supplies. This design does not solve that case and
 should not claim to.
+
+**Seeded, then free-form.** The editor expected a drafted starting list and
+said so on 2026-09-18: *"part of me thinks you could do it just as well or
+better (and faster) than I could do it this one-by-one way."* Seeding and
+free-form are not alternatives. `seedSubjects()` writes 21 on first run and
+`draftMeta` may still coin a new one when none fits.
+
+The 21 were derived rather than invented: from the Backstory rows, which are
+already a considered map of what NTK follows; from the 612 article titles in
+the live window, where Trump and the White House, Russia, Anthropic, Iran, the
+Pentagon, Medicaid and the DOJ dominate; and from the editorial pillars in
+`GLOBAL`. Four Backstory rows were left out on purpose. Order, Power, Equality
+and Faith are a historian's categories, right for pairing a story to a long arc
+and wrong for a reader, who does not say they follow Power; they say they
+follow the courts, or guns, or abortion. Those are in the list instead.
 
 **Free-form was the editor's call, over a fixed vocabulary, and it carries one
 real risk: drift.** "AI" and "Artificial Intelligence" become two regions on

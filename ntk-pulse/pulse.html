@@ -30,6 +30,29 @@
     border-bottom: 2px solid var(--ink); padding-bottom: 6px; margin-bottom: 12px;
   }
   header h1 { font-size: 17px; margin: 0; letter-spacing: 1px; }
+  .subj-head { margin-bottom: 14px; }
+  .subj-note { font-size: 12px; color: var(--dim); line-height: 1.5; margin: 0 0 6px; max-width: 74ch; }
+  .subj-add { display: flex; gap: 6px; margin-top: 10px; }
+  .subj-add input { flex: 0 0 260px; }
+  .subj-row {
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--line);
+    border-radius: 3px;
+    padding: 9px 11px;
+    margin-bottom: 7px;
+    opacity: 0.6;
+  }
+  .subj-row.in-use { opacity: 1; border-left-color: var(--accent, #0798F2); }
+  .subj-top { display: flex; align-items: center; gap: 10px; }
+  .subj-name { flex: 0 0 280px; font-weight: 600; }
+  .subj-count { font-size: 11px; color: var(--dim); flex: 1; }
+  .subj-concepts { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+  .subj-concept {
+    font-size: 10.5px; padding: 2px 7px; border-radius: 3px;
+    background: rgba(127,127,127,0.13); color: var(--dim);
+  }
+  .subj-stories { margin-top: 7px; font-size: 11px; color: var(--dim); line-height: 1.65; }
+
   .tab { background: none; border: none; font-size: 12px; color: var(--dim); padding: 0; letter-spacing: 0.5px; }
   .tab.on { color: var(--ink); font-weight: bold; border-bottom: 2px solid var(--ink); }
   header .meta { color: var(--dim); font-size: 11px; }
@@ -228,6 +251,7 @@
   <button class="tab" id="tab-lineup">lineup</button>
   <button class="tab" id="tab-today">today</button>
   <button class="tab" id="tab-backstory">backstory</button>
+  <button class="tab" id="tab-subjects">subjects</button>
   <span class="meta" id="clock"></span>
   <span class="stale" id="stale"></span>
   <span class="right">
@@ -335,7 +359,31 @@ let BACKSTORY = load(LS.backstory, null) || seedBackstory();
 // what the editor can type. draftMeta is shown what is already in use so it
 // reuses instead of reinventing, and normalizeSubject folds a new value onto
 // an existing one when they differ only in case or spacing.
-let SUBJECTS = load(LS.subjects, []);
+// Seeded once, only when localStorage has never held a vocabulary, the same
+// pattern seedBackstory() uses. Derived on 2026-09-18 from three things rather
+// than invented: the 21 Backstory rows, which are already a considered map of
+// what NTK follows; the 612 article titles in the current window, where Trump
+// and the White House, Russia, Anthropic, Iran, the Pentagon, Medicaid, the
+// DOJ and the courts dominate; and the editorial pillars in GLOBAL.
+//
+// Four Backstory rows were deliberately left out. Order, Power, Equality and
+// Faith are a historian's categories and are the right shape for pairing a
+// story to a long arc, which is what they were built for. They are the wrong
+// shape for a reader, who does not say they follow Power; they say they follow
+// the courts, or guns, or abortion. Those are here instead.
+//
+// This is a starting point, not a fixed list. draftMeta may still coin a new
+// subject when none of these fits, and the subjects tab renames and removes.
+function seedSubjects() {
+  return [
+    'Artificial Intelligence', 'Immigration', 'The Courts', 'Executive Power',
+    'Elections and Voting', 'Health Care', 'Housing and Cost of Living',
+    'Trade and Tariffs', 'Markets', 'Climate', 'Energy', 'Ukraine and Russia',
+    'Gaza', 'Iran', 'Taiwan', 'America Abroad', 'Guns and Policing',
+    'Abortion and Bodily Autonomy', 'Education', 'The Media', 'Work and Wages',
+  ];
+}
+let SUBJECTS = load(LS.subjects, null) || seedSubjects();
 
 function knownSubjects() {
   var seen = {}, out = [];
@@ -2800,6 +2848,85 @@ function bsrTagControl(s){
            `${counts[s.backstoryRow]}× same row</span>` : '');
 }
 
+/* ─── Subjects: the vocabulary Expertise keys to ───
+   Every subject in use, what it has been attached to, and which concepts have
+   turned up beneath it. Rename is the point: with nothing to fold onto, the
+   first spelling of a subject becomes canonical, and without this the only way
+   to fix a bad one is to edit every story that used it. */
+function subjectUsage(){
+  var use = {};
+  SUBJECTS.forEach(function(v){ use[v] = { subject: v, stories: [], concepts: {} }; });
+  LINEUP.forEach(function(st){
+    var v = (st.subject || '').trim();
+    if (!v) return;
+    if (!use[v]) use[v] = { subject: v, stories: [], concepts: {} };
+    use[v].stories.push(st.title || '(untitled)');
+    var c = (st.conceptMatch || st.conceptEntity || '').trim();
+    if (c) use[v].concepts[c] = (use[v].concepts[c] || 0) + 1;
+  });
+  return Object.keys(use).map(function(k){ return use[k]; }).sort(function(a,b){
+    return b.stories.length - a.stories.length || a.subject.localeCompare(b.subject);
+  });
+}
+
+function renderSubjects(root){
+  var rows = subjectUsage();
+  var unused = rows.filter(function(r){ return !r.stories.length; }).length;
+  root.innerHTML =
+    '<div class="subj-head">' +
+      '<p class="subj-note">What a reader can build expertise in. Attached to a story in the lineup under <b>subject:</b>, drafted by Step 1 and correctable there or here. ' +
+      'Concepts underneath are the entities that turned up in those stories; they are texture on a reader\'s profile and carry no status.</p>' +
+      '<p class="subj-note">' + rows.length + ' in the vocabulary, ' + (rows.length - unused) + ' used in this lineup. ' +
+      'Renaming one rewrites every story in the lineup that used it.</p>' +
+      '<div class="subj-add"><input type="text" id="subj-new" placeholder="add a subject"><button class="mini" id="subj-add-go">add</button></div>' +
+    '</div>' +
+    rows.map(function(r, i){
+      var cs = Object.keys(r.concepts).sort(function(a,b){ return r.concepts[b]-r.concepts[a] || a.localeCompare(b); });
+      return '<div class="subj-row' + (r.stories.length ? ' in-use' : '') + '">' +
+        '<div class="subj-top">' +
+          '<input type="text" class="subj-name" data-i="' + i + '" value="' + esc(r.subject) + '">' +
+          '<span class="subj-count">' + (r.stories.length || 0) + ' in lineup</span>' +
+          '<button class="mini subj-del" data-i="' + i + '" ' + (r.stories.length ? 'disabled title="in use by ' + r.stories.length + ' story(s)"' : '') + '>remove</button>' +
+        '</div>' +
+        (cs.length ? '<div class="subj-concepts">' + cs.map(function(c){
+            return '<span class="subj-concept">' + esc(c) + (r.concepts[c] > 1 ? ' \u00d7' + r.concepts[c] : '') + '</span>';
+          }).join('') + '</div>' : '') +
+        (r.stories.length ? '<div class="subj-stories">' + r.stories.map(function(t){
+            return '<div>' + esc(t.slice(0, 84)) + '</div>'; }).join('') + '</div>' : '') +
+      '</div>';
+    }).join('');
+
+  var rowData = rows;
+  root.querySelectorAll('.subj-name').forEach(function(el){
+    el.addEventListener('change', function(e){
+      var old = rowData[+e.target.dataset.i].subject;
+      var next = normalizeSubject(e.target.value);
+      if (!next || next === old) { e.target.value = old; return; }
+      var hits = LINEUP.filter(function(st){ return (st.subject || '') === old; }).length;
+      if (hits && !confirm('Rename "' + old + '" to "' + next + '"?\n\n' + hits + ' story(s) in the lineup will be updated.')) {
+        e.target.value = old; return;
+      }
+      LINEUP.forEach(function(st){ if ((st.subject || '') === old) st.subject = next; });
+      SUBJECTS = SUBJECTS.filter(function(v){ return v !== old; });
+      if (!SUBJECTS.some(function(v){ return v.toLowerCase() === next.toLowerCase(); })) SUBJECTS.push(next);
+      saveSubjects(); saveLineup(); render();
+    });
+  });
+  root.querySelectorAll('.subj-del').forEach(function(el){
+    el.addEventListener('click', function(e){
+      var v = rowData[+e.target.dataset.i].subject;
+      if (!confirm('Remove "' + v + '" from the vocabulary? No story is using it.')) return;
+      SUBJECTS = SUBJECTS.filter(function(x){ return x !== v; });
+      saveSubjects(); render();
+    });
+  });
+  var go = root.querySelector('#subj-add-go');
+  if (go) go.addEventListener('click', function(){
+    var v = normalizeSubject(root.querySelector('#subj-new').value);
+    if (v) { rememberSubject(v); render(); }
+  });
+}
+
 function renderLineup(root){
   document.getElementById('count').textContent = LINEUP.length+'/'+LINEUP_MAX+' in lineup';
   // Deliberately NOT cleared here. This is the tab where story picks get
@@ -3467,17 +3594,21 @@ function render(){
   document.getElementById('tab-lineup').classList.toggle('on', TAB==='lineup');
   document.getElementById('tab-today').classList.toggle('on', TAB==='today');
   document.getElementById('tab-backstory').classList.toggle('on', TAB==='backstory');
+  document.getElementById('tab-subjects').classList.toggle('on', TAB==='subjects');
+  document.getElementById('tab-subjects').textContent = 'subjects'+(SUBJECTS.length?' ('+SUBJECTS.length+')':'');
   document.getElementById('tab-lineup').textContent = 'lineup'+(LINEUP.length?' ('+LINEUP.length+')':'');
   document.getElementById('tab-backstory').textContent = 'backstory'+(BACKSTORY.length?' ('+BACKSTORY.length+')':'');
   if (TAB==='stream') renderStream(root);
   else if (TAB==='today') renderToday(root);
   else if (TAB==='backstory') renderBackstory(root);
+  else if (TAB==='subjects') renderSubjects(root);
   else renderLineup(root);
 }
 document.getElementById('tab-stream').addEventListener('click',()=>{ TAB='stream'; render(); });
 document.getElementById('tab-lineup').addEventListener('click',()=>{ TAB='lineup'; render(); });
 document.getElementById('tab-today').addEventListener('click',()=>{ TAB='today'; render(); });
 document.getElementById('tab-backstory').addEventListener('click',()=>{ TAB='backstory'; render(); });
+document.getElementById('tab-subjects').addEventListener('click',()=>{ TAB='subjects'; render(); });
 document.getElementById('notesToggle').addEventListener('click',()=>{ notesOpen=!notesOpen; renderNotes(); });
 document.getElementById('gear').addEventListener('click',()=>{
   const p=document.getElementById('settings'); p.classList.toggle('open');
