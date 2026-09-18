@@ -21,8 +21,19 @@ mechanics.
 **No unread counts, ever.** The audience is news-avoidant by definition and
 lapses by design. Backlog-as-debt is the exact mechanism of the avoidance.
 
-**The digest must end.** 6–10 cards with a defined last card. Closure is the
+**The digest must end.** 4–10 cards with a defined last card. Closure is the
 product promise.
+
+*Range corrected 2026-09-18, by the editor.* It read 6–10 and was recorded as
+locked. It never was: eight was a ballpark target that hardened into a floor
+through repetition in the docs, not through a decision. What is actually load
+bearing is the **defined last card**, not the count. A four-story edition still
+ends, and ending is the entire promise. The ceiling is the real constraint,
+because an edition that does not fit one sitting stops being finishable.
+
+This surfaced because a check fired, which is the system working: T-0018
+compared the landing page's claim against a four-story edition and went STALE.
+The threshold it enforced was wrong. The check was right to fire.
 
 **Sessions per day is an anti-metric.** If it rises, the thing they were
 avoiding has been rebuilt. North star is completion rate plus self-reported

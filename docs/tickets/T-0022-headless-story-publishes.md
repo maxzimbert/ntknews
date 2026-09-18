@@ -1,7 +1,7 @@
 ---
 id: T-0022
 title: A story the model refused to write ships as a blank card and a crawlable permalink
-status: DECIDED
+status: BUILT
 tags: [pulse, defect]
 anchor: ntk-pulse/data/lineup-publish.json
 ---
@@ -67,7 +67,20 @@ skill, which has been sitting at PROPOSED without a failure to point at.
 
 Remediation before the fix lands: republish from Pulse with the story
 removed. The permalink directory needs deleting by hand, since
-`build_digest.py` only adds.
+`build_digest.py` only adds. Done 2026-09-18; `digest/2026-09-18/story/` is
+gone and returns 404.
+
+**Built 2026-09-18.** `drop_headless()` in `build_digest.py` removes them once,
+before slugs are computed, so the card, the hero, the permalink page, the
+archive and `_headlines.json` are all covered by one filter. It skips rather
+than raises: one bad story should cost the edition a card, never the publish.
+`publishPreflight()` in `pulse.html` names them at the button.
+
+**"Ship it anyway" is deliberately not offered.** The 2026-09-16 Today-overview
+decision established warn-with-a-choice, and the two paths there were both
+real. Here they would not be: `build_digest.py` now builds nothing for a
+headless story, so a button promising to publish one would be lying. The
+choice offered instead is real — publish without it, or stop and fix it.
 
 ## Check
 
