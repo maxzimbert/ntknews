@@ -45,6 +45,10 @@ Worth stating because it will come up: the right copy for a two-week absence is
 closer to "the news kept going; here is where it got to" than to anything
 about the reader. The absence is not the subject.
 
+The copy shipped here is a first draft written by whoever wrote the
+mechanism. The editor has flagged it for a pass; T-0027 holds that, and
+nothing in this ticket should be read as settling the words.
+
 Related: T-0021 wants a durable reading record, and the visit log this needs
 is the smallest honest piece of it. Build it so that ticket can read it, and
 do not build the record here.
