@@ -1,7 +1,7 @@
 ---
 id: T-0019
 title: The next digest keeps its sentence rhythm after the em-dash ban
-status: DECIDED
+status: VERIFIED
 tags: [editorial, decision]
 anchor: ntk-pulse/data/lineup-publish.json
 ---

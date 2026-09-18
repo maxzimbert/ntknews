@@ -20,6 +20,15 @@ Measured 2026-09-18 against `index.html`:
 - "3-4 stories daily" (`index.html:379`). The live digest ships eight, and
   `docs/decisions.md` fixes the digest at 6-10 cards. The page understates
   the product by half.
+
+**Check narrowed 2026-09-18, and the reason matters.** It originally compared
+the landing claim against the *current* edition's story count, and went STALE
+the first time an edition shipped four. That was a true failure attached to
+the wrong ticket: the copy had not become inaccurate, the digest had gone out
+of spec. One assertion covering two independent facts fails ambiguously, and a
+check nobody can read an action off is on its way to being ignored. The claim
+is now measured against the locked range in `docs/decisions.md`; T-0023 holds
+the edition count. The signal moved, it was not dropped.
 - The first section is labeled "Truth". Everywhere else in the product, and
   throughout `docs/decisions.md`, it is "Truths".
 
@@ -63,15 +72,21 @@ t = html.unescape(re.sub(r'<[^>]+>', ' ', t))
 n = t.count('—')
 if n: sys.exit('%d em dash(es) in visible landing copy' % n)
 
-d = open('digest/index.html', encoding='utf-8').read()
-m = re.search(r'const stories = \[[\s\S]*?\n\];', d)
-if not m: sys.exit('published stories array not found in the digest')
-live = len(re.findall(r'category:\s*"', m.group(0)))
-for claim in re.findall(r'(\d+)\s*(?:[–-]\s*(\d+))?\s*stories', t):
-    lo = int(claim[0]); hi = int(claim[1]) if claim[1] else lo
-    if not (lo <= live <= hi):
-        sys.exit('landing claims %s stories; the digest ships %d' % (
-            '%d-%d' % (lo, hi) if hi != lo else str(lo), live))
+# Measured against the locked decision, not against today's edition. A digest
+# outside 6-10 is a real problem and it is T-0023's: the copy does not become
+# wrong because one day shipped short.
+dec = open('docs/decisions.md', encoding='utf-8').read()
+m = re.search(r'\*\*The digest must end\.\*\*\s*(\d+)[–-](\d+) cards', dec)
+if not m: sys.exit('the locked story-count range is no longer stated in docs/decisions.md')
+lo_d, hi_d = int(m.group(1)), int(m.group(2))
+claims = re.findall(r'(\d+)\s*(?:[–-]\s*(\d+))?\s*stories', t)
+if not claims:
+    sys.exit('the landing page no longer says how many stories a digest carries')
+for c in claims:
+    lo = int(c[0]); hi = int(c[1]) if c[1] else lo
+    if (lo, hi) != (lo_d, hi_d):
+        sys.exit('landing claims %s stories; docs/decisions.md locks %d-%d' % (
+            '%d-%d' % (lo, hi) if hi != lo else str(lo), lo_d, hi_d))
 
 if re.search(r'>\s*Truth\s*<', s):
     sys.exit('the first section is labeled "Truth" on the landing page and "Truths" in the product')

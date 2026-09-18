@@ -85,6 +85,16 @@ for s in d.get('stories', []):
     if secs and all('INSUFFICIENT SOURCE MATERIAL' in x for x in secs):
         sys.exit('published story with no usable section: %s' % (s.get('key') or '?'))
 
+# Everything above proves today's artifact is clean, which a manual cleanup
+# achieves without any guard existing. These two prove the guard is there, so
+# the ticket cannot go green on a tidy day. Presence checks, not fixture runs:
+# they will not catch a guard that is present and wrong.
+b = open('ntk-pulse/build_digest.py', encoding='utf-8').read()
+if not re.search(r'(?i)(skip[^\n]*headline|headline[^\n]*skip|if not [^\n]*headline)', b):
+    sys.exit('build_digest.py has no guard against a story with an empty headline')
+if 'INSUFFICIENT SOURCE MATERIAL' not in open('ntk-pulse/pulse.html', encoding='utf-8').read():
+    sys.exit('Pulse never looks for a section the model refused to write')
+
 for day in sorted(os.listdir('digest')):
     p = os.path.join('digest', day, 'story', 'index.html')
     if os.path.exists(p):

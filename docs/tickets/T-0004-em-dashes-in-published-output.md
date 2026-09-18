@@ -1,7 +1,7 @@
 ---
 id: T-0004
 title: Em dashes reach published output
-status: BUILT
+status: VERIFIED
 tags: [editorial, defect]
 anchor: ntk-pulse/pulse.html:746
 ---
