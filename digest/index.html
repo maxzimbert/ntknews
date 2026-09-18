@@ -1540,6 +1540,11 @@
   .mot-circle {
     width: 36px;
     height: 36px;
+    padding: 0;
+    margin: 0;
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
     border-radius: 50%;
     border: 1.5px solid rgba(234,217,197,0.2);
     background: transparent;
@@ -1551,6 +1556,11 @@
     font-weight: 700;
     color: rgba(234,217,197,0.25);
     transition: background 0.4s ease, border-color 0.4s ease, color 0.4s ease, transform 0.3s ease;
+  }
+
+  .mot-circle:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 2px;
   }
 
   .mot-circle.filled {
@@ -2517,7 +2527,7 @@ function buildDigest() {
   let topRow = '';
   let bottomRow = '';
   for (let ci = 0; ci < total; ci++) {
-    const circle = `<div class="mot-circle" id="mot-c-${ci}">${ci + 1}</div>`;
+    const circle = `<button type="button" class="mot-circle" id="mot-c-${ci}" onclick="openStory(${ci})" aria-label="Story ${ci + 1}: ${escAttr(stories[ci].headline)}">${ci + 1}</button>`;
     if (ci < topCount) topRow += circle;
     else bottomRow += circle;
   }
@@ -2946,6 +2956,9 @@ function renderBackstoryTab(){
 }
 
 function escBsr(s){ const d = document.createElement('span'); d.textContent = s == null ? '' : s; return d.innerHTML; }
+// escBsr is for text nodes; innerHTML leaves a double quote alone, which is
+// fine between tags and not fine inside an attribute.
+function escAttr(s){ return escBsr(s).replace(/"/g, '&quot;'); }
 
 /* ── Detail view ─────────────────────────────────────────────────────
    Everything below the milestone is composed here and injected into the
