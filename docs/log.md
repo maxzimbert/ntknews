@@ -106,3 +106,28 @@ all.
 The lesson that changes behaviour: "the feature is not in the UI" and "the
 feature is in the UI and silent" look identical from production, and they
 have completely different fixes. Check the call sites before the placement.
+
+## 2026-09-18 — a check that edited what it measured
+
+`rot.sh` left the working tree dirty on every run. The file was
+`lineup-publish.json`, always data-identical to HEAD and always collapsed to
+one line, so it read like an editor or a formatter and got dismissed three
+times as somebody else's doing.
+
+It was T-0010's own check. It writes a test `backstory_row` into the published
+lineup, runs `build_pairings.py --mock`, and restores in a `finally`. The
+restore used `json.dumps(lp)` rather than the bytes it read, so it came back at
+Python's default indent instead of the `indent=1` Pulse writes. The same check
+backed up `backstory.json` correctly with `read_text()`; only one of the two
+was wrong.
+
+Two things worth carrying:
+
+The harmless-looking half is not the point. The same code would have clobbered
+a bot publish that landed between the backup and the restore, silently, and the
+bots commit to that path roughly 72 times a day.
+
+The diagnosis was delayed by a plausible explanation. "You're probably adding
+and removing stories" fit the story and fit nothing in the evidence: the data
+was identical every time. The measurement said formatting-only from the first
+look. Reproducing it took one command once anyone stopped explaining it.

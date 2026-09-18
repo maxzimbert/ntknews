@@ -59,12 +59,17 @@ grep -q "backstory_row" editorial/build_pairings.py
 python3 - <<'PY'
 import json, subprocess, shutil, tempfile, os, sys, pathlib
 root = pathlib.Path('.')
-lp = json.loads((root/'ntk-pulse/data/lineup-publish.json').read_text())
-bs = json.loads((root/'digest/data/backstory.json').read_text())
+# Back BOTH files up as raw bytes. Restoring lineup-publish.json from
+# json.dumps() re-serialized it at Python's default indent instead of the
+# indent=1 Pulse writes, so every run left the file data-identical, byte-
+# different and the working tree dirty. It also meant that a bot publishing
+# between the backup and the restore would have been silently clobbered.
+bak_lp = (root/'ntk-pulse/data/lineup-publish.json').read_text()
+bak_bs = (root/'digest/data/backstory.json').read_text()
+lp = json.loads(bak_lp)
 if not lp.get('stories'): sys.exit('no stories to test with')
 target = lp['stories'][0]['key']
 row = 'gaza'   # a row with no sub-genres: unreachable by the classifier
-bak_lp = json.dumps(lp); bak_bs = (root/'digest/data/backstory.json').read_text()
 lp['stories'][0]['backstory_row'] = row
 (root/'ntk-pulse/data/lineup-publish.json').write_text(json.dumps(lp))
 try:
