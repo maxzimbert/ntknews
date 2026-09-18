@@ -98,13 +98,18 @@ scale = re.search(r'var BEATS_SCALE = \[[\s\S]*?\];', s)
 fn    = re.search(r'function beatIdx\([\s\S]*?\n\}', s)
 if not (scale and fn): sys.exit('BEATS_SCALE or beatIdx not found')
 prog = scale.group(0) + '\n' + fn.group(0) + '''
+var L = function(n){ var a=[]; for(var i=0;i<n;i++) a.push('s'+i); return a; };
 var cases = [
   [{stories:20, sessions:9},                                          'lt', 6,
    'twenty stories, no depth, no lies, no shares reaches Witness'],
   [{stories:20, sessions:9, depth:9, liesRead:true},                  'lt', 5,
-   'Carrying It is reachable without ever sharing'],
+   'Carrying It is reachable on volume alone, with no share and no repeated lies'],
   [{stories:20, sessions:9, depth:9, liesRead:true, shares:2},        'eq', 6,
-   'the full behavioral pattern does not reach Witness']
+   'the full behavioral pattern does not reach Witness'],
+  [{stories:20, sessions:9, depth:9, liesRead:true, liesStories:L(3)},'eq', 5,
+   'the Lies-layer route to Carrying It is closed to a reader who never shares'],
+  [{stories:20, sessions:9, depth:9, liesRead:true, liesStories:L(5)},'eq', 6,
+   'the Lies-layer route to Witness is closed to a reader who never shares']
 ];
 for (var i=0;i<cases.length;i++){
   var c = cases[i], got = beatIdx(c[0]);

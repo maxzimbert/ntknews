@@ -65,8 +65,8 @@ const REQ = [
   'revealed the Lies layer',
   '3 stories, across 2 separate sittings',
   '5 stories, 2 sittings, 2 sections opened',
-  '7 stories, 3 sittings, Lies read, 1 share',
-  '10 stories, 4 sittings, 5 sections, Lies read, 2 shares',
+'7 stories, 3 sittings, Lies read, and 1 share OR Lies on 3 stories',
+  '10 stories, 4 sittings, 5 sections, and 2 shares OR Lies on 5 stories',
 ];
 const WHERE = [
   'chip + Profile only, never interrupts',
@@ -88,7 +88,7 @@ console.log('Everything between gets one toast per sitting, unless the jump is 2
 console.log('A READER ON "' + CAT + '" — one story every ' + EVERY + ' day' + (EVERY === 1 ? '' : 's') +
             ', ' + DAYS + ' days' + (SHARES ? '' : ', never shares') + '\n');
 
-const d = { stories: 0, depth: 0, shares: 0, liesRead: false, sessions: 0, last: -1e12 };
+const d = { stories: 0, depth: 0, shares: 0, liesRead: false, liesStories: [], sessions: 0, last: -1e12 };
 let spoke = 0;
 for (let day = 1; day <= DAYS; day += EVERY) {
   NOW = day * 24 * 3600000;
@@ -97,16 +97,20 @@ for (let day = 1; day <= DAYS; day += EVERY) {
   d.last = NOW;
   d.stories++;
   if (day % 2 === 1) d.depth += 1;                 // opens a section about half the time
-  if (day >= 4) d.liesRead = true;                 // finds the Lies layer early on
+  if (day >= 4) {                                  // finds the Lies layer early on, and
+    d.liesRead = true;                             // keeps going back to it on new stories
+    if (d.liesStories.length < 8) d.liesStories.push('s' + day);
+  }
   if (SHARES && (day % 21 === 1) && day > 1) d.shares++;   // shares every few weeks
   const after = B.beatIdx(d);
   if (after > before && B.beatsShouldToast(after)) {
     spoke++;
     console.log('  day ' + pad(day, 4) + pad(B.BEATS_SCALE[after].label, 15) +
-                B.beatsToastCopy(CAT, after, d.stories).replace(/<[^>]+>/g, ''));
+                B.beatsToastCopy(CAT, after, d).replace(/<[^>]+>/g, ''));
     B.beatsMarkToast(after);
   }
 }
 console.log('\n  ' + spoke + ' orientation moments in ' + DAYS + ' days. Ends at: ' +
             B.BEATS_SCALE[B.beatIdx(d)].label + ' (' + d.stories + ' stories, ' + d.sessions +
-            ' sittings, ' + d.depth + ' sections, ' + d.shares + ' shares).\n');
+            ' sittings, ' + d.depth + ' sections, ' + d.liesStories.length +
+            ' lies layers, ' + d.shares + ' shares).\n');
