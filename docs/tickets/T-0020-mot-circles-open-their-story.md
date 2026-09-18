@@ -1,7 +1,7 @@
 ---
 id: T-0020
 title: The Moment of Then circles stand for stories but do not open them
-status: BUILT
+status: VERIFIED
 tags: [digest, feature]
 anchor: digest/index.html:2520
 ---
