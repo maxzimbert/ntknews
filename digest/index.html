@@ -2584,8 +2584,15 @@ function beatIdx(s) {
   if (!s || !s.stories) return -1;
   var st = s.stories || 0, se = s.sessions || 1;
   var dp = s.depth || 0, sh = s.shares || 0, li = !!s.liesRead;
-  if (st >= 10 && se >= 4 && dp >= 5 && li && sh >= 2) return 6;  // Witness
-  if (st >= 7  && se >= 3 && li && sh >= 1)            return 5;  // Carrying It
+  // Two routes past On the Beat. Sharing is the briefing's threshold for
+  // Carrying It, and it is a real signal. It is also a public act, and a
+  // reader who never shares anything was otherwise capped at rung 4 forever:
+  // 30 stories over 90 days and the ladder went silent on day 13. Going after
+  // the Lies layer on separate stories in the same domain costs something
+  // comparable and stays private, so it opens the same door.
+  var lc = (s.liesStories || []).length;
+  if (st >= 10 && se >= 4 && dp >= 5 && li && (sh >= 2 || lc >= 5)) return 6;  // Witness
+  if (st >= 7  && se >= 3 && li && (sh >= 1 || lc >= 3))            return 5;  // Carrying It
   if (st >= 5  && se >= 2 && dp >= 2)                  return 4;  // On the Beat
   if (st >= 3  && se >= 2)                             return 3;  // Following It
   if (li)                                              return 2;  // Read It
@@ -2637,14 +2644,20 @@ function showBeatToast(html) {
   beatToastTimer = setTimeout(function() { toast.classList.remove('show'); }, 3500);
 }
 
-function beatsToastCopy(cat, idx, n) {
+function beatsToastCopy(cat, idx, st) {
+  var n = (st && st.stories) || 0;
+  var shared = (st && st.shares || 0) > 0;
   if (idx === 0) return 'You saw the surface on ' + cat + '. That is where everyone starts.';
   if (idx === 1) return 'You read past the summary on ' + cat + '. <strong>You know what happened and why.</strong>';
   if (idx === 2) return 'You opened the Lies layer on ' + cat + '. <strong>You did not take the surface at face value.</strong>';
   if (idx === 3) return 'You came back to ' + cat + '. <strong>That is attention, not habit.</strong>';
   if (idx === 4) return n + ' stories on ' + cat + ', and you keep going deeper. <strong>You are on the beat.</strong>';
-  if (idx === 5) return 'You sent a ' + cat + ' story to someone. <strong>You are carrying it now.</strong>';
-  if (idx === 6) return n + ' stories on ' + cat + '. You went into the history, you read the lies, you passed it on. <strong>You are a witness to this one.</strong>';
+  if (idx === 5) return shared
+    ? 'You sent a ' + cat + ' story to someone. <strong>You are carrying it now.</strong>'
+    : 'Three times now you have gone after the lies on ' + cat + '. <strong>You are carrying it.</strong>';
+  if (idx === 6) return shared
+    ? n + ' stories on ' + cat + '. You went into the history, you read the lies, you passed it on. <strong>You are a witness to this one.</strong>'
+    : n + ' stories on ' + cat + ', and you kept checking what was being claimed. <strong>You are a witness to this one.</strong>';
   return null;
 }
 
@@ -2691,11 +2704,15 @@ function beatsRecordShare(cat) {
   updateBeatChip();
 }
 
-function beatsRecordLies(cat) {
+function beatsRecordLies(cat, key) {
   if (!cat) return;
   var data = beatsLoad();
   beatsEnsure(data, cat);
   data[cat].liesRead = true;
+  if (key) {
+    var seen = data[cat].liesStories || (data[cat].liesStories = []);
+    if (seen.indexOf(key) < 0 && seen.length < 8) seen.push(key);
+  }
   beatsSave(data);
   updateBeatChip();
 }
@@ -3491,8 +3508,7 @@ function closeStory(opts) {
   if (cat) {
     const newIdx = beatIdx((beatsLoad())[cat]);
     if (newIdx > prevIdx && beatsShouldToast(newIdx)) {
-      const n = (beatsLoad()[cat] || {}).stories || 0;
-      const copy = beatsToastCopy(cat, newIdx, n);
+      const copy = beatsToastCopy(cat, newIdx, beatsLoad()[cat] || {});
       if (copy) { showBeatToast(copy); beatsMarkToast(newIdx); }
     }
   }
@@ -3531,7 +3547,8 @@ function cancelHold() {
 function revealLies() {
   document.getElementById('liesLocked').style.display = 'none';
   document.getElementById('liesRevealed').style.display = 'block';
-  beatsRecordLies(stories[currentStoryIndex] ? stories[currentStoryIndex].category : null);
+  var ls = stories[currentStoryIndex];
+  beatsRecordLies(ls ? ls.category : null, ls ? (ls.permalink || ls.headline) : null);
   track('lies_revealed', {
     story_index: currentStoryIndex + 1,
     story_headline: stories[currentStoryIndex].headline
