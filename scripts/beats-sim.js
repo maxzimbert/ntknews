@@ -77,9 +77,11 @@ const WHERE = [
   'toast on story close, always speaks',
   'toast on story close, always speaks',
 ];
-console.log(pad('#', 3) + pad('STATUS', 15) + pad('WHAT IT TAKES', 56) + 'WHERE IT SHOWS');
-console.log('-'.repeat(126));
-B.BEATS_SCALE.forEach((b, i) => console.log(pad(i, 3) + pad(b.label, 15) + pad(REQ[i], 56) + WHERE[i]));
+const W = Math.max('WHAT IT TAKES'.length, ...REQ.map(r => r.length)) + 2;
+const HEAD = pad('#', 3) + pad('STATUS', 15) + pad('WHAT IT TAKES', W) + 'WHERE IT SHOWS';
+console.log(HEAD);
+console.log('-'.repeat(HEAD.length));
+B.BEATS_SCALE.forEach((b, i) => console.log(pad(i, 3) + pad(b.label, 15) + pad(REQ[i], W) + WHERE[i]));
 
 console.log('\nFrequency rule: Skimmed never interrupts. Carrying It and Witness always speak.');
 console.log('Everything between gets one toast per sitting, unless the jump is 2+ rungs.\n');
