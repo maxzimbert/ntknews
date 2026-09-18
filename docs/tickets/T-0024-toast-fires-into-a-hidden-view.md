@@ -1,7 +1,7 @@
 ---
 id: T-0024
 title: The orientation toast is only visible if the reader happens to end on the Digest tab
-status: DECIDED
+status: VERIFIED
 tags: [digest, defect]
 anchor: digest/index.html:2065
 ---
