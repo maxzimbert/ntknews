@@ -1,7 +1,7 @@
 ---
 id: T-0026
 title: Nothing marks a reader coming back, which is the moment the product is built for
-status: DECIDED
+status: VERIFIED
 tags: [digest, feature]
 anchor: digest/index.html:3395
 ---

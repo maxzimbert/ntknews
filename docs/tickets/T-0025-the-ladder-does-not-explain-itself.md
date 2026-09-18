@@ -1,7 +1,7 @@
 ---
 id: T-0025
 title: Nothing in the app says what a beat is, what the chip means, or how to reach the next rung
-status: DECIDED
+status: VERIFIED
 tags: [digest, feature]
 anchor: digest/index.html:4244
 ---
