@@ -1,7 +1,7 @@
 ---
 id: T-0023
-title: Today's edition shipped four stories, below the locked 6-10 floor
-status: DECIDED
+title: Nothing notices when an edition falls outside the agreed story range
+status: VERIFIED
 tags: [editorial, defect]
 anchor: docs/decisions.md
 ---
@@ -18,6 +18,17 @@ left.
 
 This ticket is the floor itself, not that incident. Nothing in the pipeline
 or in Pulse currently notices that an edition is short.
+
+**Premise corrected 2026-09-18, by the editor.** This opened saying four was
+below a locked floor of 6. It was not locked. Eight was a ballpark target that
+hardened into a floor by being repeated in the docs, and `docs/decisions.md`
+now reads 4-10 with that correction recorded. Four editions is a fine edition.
+
+The ticket survives the correction because the underlying job did not change:
+nothing in the pipeline or in Pulse notices when an edition falls outside the
+range, whatever the range is. The check reads the number out of
+`docs/decisions.md` rather than hardcoding it, so moving the range moves the
+check, and `publishPreflight()` warns at the button.
 
 ## Why
 

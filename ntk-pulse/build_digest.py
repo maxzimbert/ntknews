@@ -242,6 +242,32 @@ def slugify(text, max_len=60):
     return text[:max_len].strip("-") or "story"
 
 
+def drop_headless(stories):
+    """Remove stories the model refused to write, before anything is built.
+
+    A story with no headline is one that came back as [INSUFFICIENT SOURCE
+    MATERIAL]. That is GLOBAL's anti-invention guardrail working. On
+    2026-09-18 one shipped anyway: a blank card, plus a permalink built from
+    slugify()'s "story" fallback that returned 200 to crawlers.
+
+    Dropping them here is the single place that covers the card, the hero, the
+    slug, the permalink page, the archive and _headlines.json at once, because
+    everything downstream reads this list. Skipped rather than raised: one bad
+    story should cost the edition a card, never the whole publish.
+    """
+    keep = [s for s in stories if (s.get("headline") or "").strip()]
+    for s in stories:
+        if not (s.get("headline") or "").strip():
+            log("SKIPPED - story has no headline, nothing will be built for it: "
+                f"key={s.get('key', '?')} category={s.get('category', '?')}")
+    if len(keep) != len(stories):
+        log(f"{len(stories) - len(keep)} headless story(s) skipped, {len(keep)} remain")
+    if not keep:
+        raise RuntimeError("no publishable stories: every story in the payload "
+                           "has an empty headline")
+    return keep
+
+
 def unique_slugs(stories):
     seen, out = {}, []
     for s in stories:
@@ -637,6 +663,17 @@ def main():
         stories, today = payload.get("stories", []), payload.get("today")
     log(f"{len(stories)} stories loaded from {story_json_path}"
         + (" (no Today overview in this payload)" if not today else ""))
+
+    # A story with no headline is one the model refused to write. GLOBAL tells
+    # it to emit [INSUFFICIENT SOURCE MATERIAL] rather than invent, which is
+    # the guardrail working; on 2026-09-18 one of those shipped anyway, as a
+    # blank card plus a permalink built from slugify()'s "story" fallback that
+    # returned 200 to crawlers. Dropping it here is the single place that
+    # covers the card, the hero, the slug, the permalink page, the archive and
+    # _headlines.json at once, because everything downstream reads this list.
+    # Skipped rather than raised: a late story going bad should cost the
+    # edition one card, never the whole publish.
+    stories = drop_headless(stories)
 
     # 1. Fun fact — real source, graceful fallback to whatever's already there.
     fun_fact = pick_fun_fact(api_key) if api_key else None

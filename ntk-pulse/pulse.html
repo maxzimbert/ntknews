@@ -1917,8 +1917,8 @@ function siteExport(){
 // Today overview travels through the same publish step as the stories it
 // summarizes — one commit, one build run, never two payloads that can
 // drift out of sync with each other.
-function storyDataExport(){
-  const stories = LINEUP.filter(s=>s.packages).map(s=>{
+function buildStoryPayload(){
+  return LINEUP.filter(s=>s.packages).map(s=>{
     const {headline, lede, body} = extractTruthsTags(s.packages.truths||'');
     return {
       key: s.key, category: s.category, headline, lede,
@@ -1936,10 +1936,59 @@ function storyDataExport(){
       ...(s.backstoryRow ? {backstory_row: s.backstoryRow} : {}),
     };
   });
+}
+
+function storyDataExport(stories){
   return JSON.stringify({
-    stories,
+    stories: stories || buildStoryPayload(),
     today: TODAY_OV.text ? { text: TODAY_OV.text, generatedAt: TODAY_OV.generatedAt } : null,
   }, null, 1);
+}
+
+// ─── Publish preflight (T-0022) ───
+// What a dialog at the publish button can honestly check is presence, not
+// taste: it counts and it resolves, and it cannot tell you whether the lede
+// lands. The deeper pass is the prepublish skill (T-0008), which is run
+// deliberately rather than in the half-second before a click.
+//
+// DROP and WARN are different on purpose. A story with no headline is one the
+// model refused to write, and build_digest.py now builds nothing for it, so
+// "publish it anyway" is not a real choice: offering a path the pipeline
+// silently ignores is worse than not offering it. Everything else is the
+// editor's call and the dialog only has to make it visible.
+const PUBLISH_MIN = 4, PUBLISH_MAX = 10;   // docs/decisions.md, corrected 2026-09-18
+const INSUFFICIENT = 'INSUFFICIENT SOURCE MATERIAL';
+
+function publishPreflight(stories){
+  const drop = [], warn = [];
+  stories.forEach(s => {
+    const label = (s.headline || '').trim().slice(0, 52) || ('story ' + (s.key || '?'));
+    if (!(s.headline || '').trim()){
+      drop.push((s.key || '?') + ' (' + (s.category || 'no category') +
+                ') — no headline, so the model returned no usable story');
+      return;
+    }
+    if (['truth','prob','poss','lies'].every(f => (s[f] || '').indexOf(INSUFFICIENT) >= 0))
+      warn.push(label + ' — every section is [' + INSUFFICIENT + ']');
+    if (!s.featuredImage) warn.push(label + ' — no image');
+  });
+  const shipping = stories.length - drop.length;
+  if (shipping < PUBLISH_MIN || shipping > PUBLISH_MAX)
+    warn.push(shipping + (shipping === 1 ? ' story' : ' stories') +
+              ' would publish; the digest is ' + PUBLISH_MIN +
+              '\u2013' + PUBLISH_MAX + ' (docs/decisions.md)');
+  return { drop, warn, shipping };
+}
+
+function preflightDialogText(pf){
+  let m = 'Publish check\n';
+  if (pf.drop.length)
+    m += '\nWill NOT be published, because nothing can be built from them:\n  \u2022 ' +
+         pf.drop.join('\n  \u2022 ') + '\n';
+  if (pf.warn.length)
+    m += '\nWorth a look first:\n  \u2022 ' + pf.warn.join('\n  \u2022 ') + '\n';
+  return m + '\nOK publishes ' + pf.shipping + ' stor' + (pf.shipping === 1 ? 'y' : 'ies') +
+         '. Cancel goes back so you can fix it.';
 }
 const GH_REPO = 'maxzimbert/ntknews';
 const GH_PUBLISH_PATH = 'ntk-pulse/data/lineup-publish.json';
@@ -1952,11 +2001,17 @@ const GH_PUBLISH_PATH = 'ntk-pulse/data/lineup-publish.json';
 // workflow-start call needed.
 async function publishToDigest(){
   if (!SETTINGS.ghToken){ alert('Add a GitHub token in ⚙ first — scoped to contents:write on this repo only.'); return; }
-  const stories = LINEUP.filter(s=>s.packages);
-  if (!stories.length){ alert('Nothing generated yet — nothing to publish.'); return; }
+  const all = buildStoryPayload();
+  if (!all.length){ alert('Nothing generated yet — nothing to publish.'); return; }
+
+  const pf = publishPreflight(all);
+  if ((pf.drop.length || pf.warn.length) && !confirm(preflightDialogText(pf))) return;
+  if (!pf.shipping){ alert('Every story in the lineup is missing a headline — nothing to publish.'); return; }
+  const stories = all.filter(s => (s.headline || '').trim());
+
   publishStatus = 'Publishing…'; renderPublishStatus();
   try {
-    const content = storyDataExport();
+    const content = storyDataExport(stories);
     const b64 = btoa(unescape(encodeURIComponent(content)));
     const apiUrl = `https://api.github.com/repos/${GH_REPO}/contents/${GH_PUBLISH_PATH}`;
     const headers = { 'Authorization': 'Bearer '+SETTINGS.ghToken, 'Accept': 'application/vnd.github+json' };
@@ -1972,7 +2027,7 @@ async function publishToDigest(){
     const putResp = await fetch(apiUrl, {
       method:'PUT', headers:{...headers,'Content-Type':'application/json'},
       body: JSON.stringify({
-        message: 'publish: '+stories.length+' stories from Pulse',
+        message: 'publish: '+stories.length+(stories.length===1?' story':' stories')+' from Pulse',
         content: b64, branch:'main', ...(sha?{sha}:{}),
       }),
     });
