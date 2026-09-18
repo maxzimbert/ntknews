@@ -31,6 +31,14 @@ Measured on production 2026-09-18:
 
 ## Why
 
+**How it got there, from the editor, 2026-09-18:** a rushed publish during
+testing. That is the accurate account and it matters for scoping, because it
+means this was not a pipeline fault and there is no upstream bug to hunt. It
+does not change what the ticket is for. The editor rushing is the expected
+case, not the exceptional one, and nothing between the model's refusal and a
+live crawlable page raised an objection.
+
+
 `docs/decisions.md` requires permalink pages to be static specifically so
 crawlers can index them, and a crawler never executes JS. That decision is
 load-bearing and it is why this page is worse than the card: the card is
