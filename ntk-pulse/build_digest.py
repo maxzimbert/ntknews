@@ -324,6 +324,7 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
 <meta name="twitter:title" content="{headline_esc}">
 <meta name="twitter:description" content="{description_esc}">
 {twitter_image_tag}
+<link href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&display=swap" rel="stylesheet">
 <style>
   :root {{
     --blue:   #0798F2;
@@ -361,7 +362,7 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
   }}
 
   .back-btn {{
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-size: 13px;
     font-weight: 600;
     color: var(--blue);
@@ -393,7 +394,7 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
   }}
 
   .story-hero-category {{
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 2px;
@@ -403,8 +404,8 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
   }}
 
   .story-hero-headline {{
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 700;
+    font-family: 'Source Serif 4', serif;
+    font-weight: 600;
     font-size: clamp(20px, 5vw, 26px);
     color: var(--white);
     line-height: 1.2;
@@ -436,7 +437,7 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
   .section-dot {{ width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }}
 
   .section-title {{
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-weight: 700;
     font-size: 13px;
     letter-spacing: 0.5px;
@@ -477,7 +478,7 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
   }}
   .ntk-pq-cite {{
     display: block;
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-size: 10px;
     letter-spacing: 1.5px;
     text-transform: uppercase;
@@ -491,7 +492,7 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
     background: rgba(242,174,46,0.05);
   }}
   .ntk-stat-num {{
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-size: 34px;
     font-weight: 700;
     color: var(--amber);
@@ -509,7 +510,7 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
     display: block;
     text-align: center;
     padding: 28px 20px 40px;
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Overpass', sans-serif;
     font-size: 13px;
     font-weight: 600;
     color: var(--blue);
@@ -609,12 +610,13 @@ ARCHIVE_TEMPLATE = """<!DOCTYPE html>
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Archive — NTK News</title>
+<link href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&display=swap" rel="stylesheet">
 <style>
   body {{ background:{cream}; color:{ink}; font-family:'Source Serif 4',Georgia,serif;
     max-width:640px; margin:0 auto; padding:24px 20px 60px; }}
-  h1 {{ font-family:'Space Grotesk',sans-serif; }}
+  h1 {{ font-family:'Overpass',sans-serif; }}
   .ed {{ margin-bottom:28px; }}
-  .ed-date {{ font-family:'Space Grotesk',sans-serif; font-size:13px; color:{teal};
+  .ed-date {{ font-family:'Overpass',sans-serif; font-size:13px; color:{teal};
     text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; }}
   .ed a.day {{ font-weight:600; }}
   ul {{ margin:6px 0 0; padding-left:18px; }}
