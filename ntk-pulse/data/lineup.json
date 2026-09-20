@@ -1,5 +1,5 @@
 {
- "assembled_at": "2026-09-20T15:42:05.977458+00:00",
+ "assembled_at": "2026-09-20T18:39:47.424257+00:00",
  "slot_plan": "A",
  "displacement": "MANUAL",
  "daytype": "weekend",
@@ -7,7 +7,7 @@
   4,
   6
  ],
- "actual_size": 33,
+ "actual_size": 6,
  "lint_failures": [
   "under 3 fully self-contained items",
   "no item answers 'what do I do with this'"
@@ -20,9 +20,10 @@
    "key": "4af5d1842f1b52f1",
    "title": "Trump says planned DC arch would house military weapons and drones",
    "beat": "national",
-   "publisher_count": 15,
+   "publisher_count": 16,
    "publishers": [
     "BBC",
+    "Financial Times",
     "NPR",
     "New York Times",
     "The Guardian",
@@ -55,58 +56,64 @@
     "Identifies veterans groups and historic preservationists as organized opposition to the arch project"
    ],
    "line": "Trump describes a planned Washington arch as a military facility for weapons and surveillance equipment.",
-   "assembly_score": 21.41
+   "assembly_score": 16.49
   },
   {
    "slot": "money_me",
    "slot_label": "Money & me",
-   "key": "d639f2cbb2b6f8a2",
-   "title": "Germany faces energy tax shortfall as EV sales rise",
+   "key": "5721ef66e9aef881",
+   "title": "Bessent meets Chinese official as U.S. debt issuance climbs",
    "beat": "business",
-   "publisher_count": 1,
+   "publisher_count": 4,
    "publishers": [
-    "Deutsche Welle"
+    "Financial Times",
+    "Post and Courier",
+    "CNBC",
+    "Memeorandum"
    ],
    "scores": {
     "emotional_load": 2,
-    "explainability": 4,
+    "explainability": 3,
     "actionability": 1,
     "conversational_currency": 2
    },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Germany's shift to electric vehicles erodes tax revenue from fuel sales, forcing budget recalculation.",
-   "assembly_score": 1.49
+   "politician_led": true,
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "New actors: Bessent and He Lifeng met in London (June 9, 2025) for trade talks, unrelated to Russia election story.",
+    "Adds context: meeting precedes Trump-Xi summit Sept 24; topics include trade, AI, critical minerals.",
+    "New figure: US expected to issue ~$1tn in short-term debt as Bessent tries to curb long-term rates."
+   ],
+   "line": "U.S. Treasury chief meets Chinese vice premier as both nations face rising borrowing costs and debt concerns.",
+   "assembly_score": 7.95
   },
   {
    "slot": "body_mind",
    "slot_label": "Body & mind",
-   "key": "0d0d3b80baa1ce69",
-   "title": "RFK Jr.'s vaccine skepticism linked to disease outbreaks and deaths",
+   "key": "ce45161a7950121a",
+   "title": "Doctors, Leave Your Politics at the Clinic Door",
    "beat": "health",
-   "publisher_count": 2,
+   "publisher_count": 1,
    "publishers": [
-    "The Bulwark",
-    "Memeorandum"
+    "MedPage Today"
    ],
    "scores": {
-    "emotional_load": 5,
-    "explainability": 4,
+    "emotional_load": 3,
+    "explainability": 3,
     "actionability": 3,
-    "conversational_currency": 4
+    "conversational_currency": 3
    },
-   "politician_led": true,
+   "politician_led": false,
    "ledger_class": null,
    "new_facts": [],
-   "line": "RFK Jr.'s vaccine skepticism has been linked to disease outbreaks and preventable deaths in communities that followed his advice.",
-   "assembly_score": 3.46
+   "line": "",
+   "assembly_score": 1.61
   },
   {
    "slot": "work_machines",
    "slot_label": "Work & machines",
-   "key": "cb59626962876075",
-   "title": "Apple shifts home strategy with AI Siri hub, cuts Fitness+ staff",
+   "key": "683bcc6179ebc8cf",
+   "title": "AI expansion in Singapore pushes up office rents",
    "beat": "tech",
    "publisher_count": 1,
    "publishers": [
@@ -114,934 +121,177 @@
    ],
    "scores": {
     "emotional_load": 2,
-    "explainability": 4,
+    "explainability": 5,
     "actionability": 1,
-    "conversational_currency": 3
+    "conversational_currency": 2
    },
-   "politician_led": false,
+   "politician_led": true,
    "ledger_class": "DEVELOPMENT",
    "new_facts": [
-    "Reveals Apple's Siri AI-powered home hub as new home strategy pillar; reports Fitness+ staff cuts and iPhone Duo Pencil accessory."
+    "AI firms including OpenAI and Anthropic are driving up office rents in Singapore amid expansion"
    ],
-   "line": "Apple is building an AI-powered Siri home hub while cutting Fitness+ staff, signaling a shift in priorities for its smart-home strategy.",
-   "assembly_score": 5.12
+   "line": "AI companies expanding in Singapore are driving up office rents as the government attracts tech investment with incentives.",
+   "assembly_score": 5.39
   },
   {
    "slot": "group_chat",
    "slot_label": "The group chat",
-   "key": "c195cd5f715acd00",
-   "title": "Earl Spencer revisits royal family tensions after Diana's death",
+   "key": "69dcf0c4ed14efd6",
+   "title": "Earl Spencer accuses King Charles of callous remark about Diana after her death",
    "beat": "culture",
-   "publisher_count": 4,
+   "publisher_count": 3,
    "publishers": [
     "BBC",
     "CBS News",
-    "NBC News",
     "Daily Mail"
    ],
    "scores": {
     "emotional_load": 4,
     "explainability": 4,
     "actionability": 1,
-    "conversational_currency": 3
+    "conversational_currency": 4
    },
    "politician_led": false,
    "ledger_class": "DEVELOPMENT",
    "new_facts": [
+    "Spencer claims Charles said 'we'll forget about Diana soon enough' during funeral row; says William and Harry already knew.",
     "Spencer says Charles had a 'giddy tone' on phone call after Diana's death",
-    "Spencer suggests better treatment of Harry after Diana's death could have led to a 'happier course ahead'",
-    "Spencer says Harry and Meghan's media treatment echoes Diana's, calling it a 'cancerous influence'",
-    "Spencer accuses King Charles of 'gaslighting' him amid Palace pushback on his claims",
-    "Palace aides claim Spencer is 'picking at scars' and resents Charles and Camilla's popularity"
+    "Spencer suggests better treatment of Harry after Diana's death could have led to a 'happier course ahead'"
    ],
-   "line": "Earl Spencer revives claims about the royal family's response to Diana's death in a new BBC interview.",
-   "assembly_score": 13.16
+   "line": "Earl Spencer claims King Charles said 'we'll forget about Diana soon enough' after her death in a BBC interview, suggesting William and Harry were already aware of the allegation.",
+   "assembly_score": 9.25
   },
   {
    "slot": "close",
    "slot_label": "The close",
-   "key": "fa1427a52473fadd",
-   "title": "Trump describes arch project with military features, addresses Russian businessman payment",
+   "key": "92c39b911de9bbd2",
+   "title": "House Republican criticizes Trump's immigration stance to Hispanic voters",
    "beat": "national",
-   "publisher_count": 1,
+   "publisher_count": 3,
    "publishers": [
-    "Memeorandum"
+    "The Guardian",
+    "CBS News",
+    "Daily Beast"
    ],
    "scores": {
     "emotional_load": 2,
-    "explainability": 4,
+    "explainability": 3,
     "actionability": 1,
     "conversational_currency": 3
    },
    "politician_led": true,
    "ledger_class": "DEVELOPMENT",
    "new_facts": [
-    "Trump says his planned 250-foot arch would house drones and snipers, citing national security",
-    "Trump says Donald Trump Jr. will repay a Russian businessman for a lavish wedding gift"
+    "Introduces GOP Rep. Salazar publicly warning Trump immigration enforcement 'gone too far' via campaign ad",
+    "New quote: Salazar says Trump's advisers are 'compromising his legacy' on Face the Nation"
    ],
-   "line": "Trump describes a proposed monument arch as a security structure and says his son will repay a Russian businessman for a wedding expense.",
-   "assembly_score": 6.87
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "5f2c581dad6bd09d",
-   "title": "Merz's CDU hits worst postwar state result, vows to stay and push reforms",
-   "beat": "international",
-   "publisher_count": 4,
-   "publishers": [
-    "BBC",
-    "Financial Times",
-    "France 24",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/cvwyz29n0nn2o?at_campaign=rss&at_medium=RSS",
-    "//france24.com/en/afd-threatens-fresh-blow-to-merz-two-german-states-hold-key-vote",
-    "//france24.com/en/europe/20260920-germany-s-far-right-afd-makes-strong-gains-in-two-state-elections",
-    "//france24.com/en/exit-polls-show-disaster-for-merz-cdu-party-in-two-state-elections",
-    "//ft.com/content/d74ce82a-2a15-404a-ae3a-3921e887bab3?syn-25a6b1a6=1",
-    "//memeorandum.com/260920/p33"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "German Chancellor Merz's party suffered historic losses in two state elections, its worst postwar regional result, but Merz pledged to continue.",
-   "assembly_score": 4.66
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "7c54b34815e5affb",
-   "title": "Trump pursues Greenland, escalates Iran pressure as world leaders convene",
-   "beat": "international",
-   "publisher_count": 5,
-   "publishers": [
-    "The Guardian",
-    "Fox News",
-    "The Bulwark",
-    "Daily Mail",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16140075/trump-showdown-world-leaders-unga.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//foxnews.com/politics/why-trump-zeroed-greenland-worlds-largest-island-mostly-covered-ice-3-charts",
-    "//foxnews.com/world/waltz-delivers-blunt-warning-nations-defying-iran-sanctions-touts-greenland-deal",
-    "//memeorandum.com/260920/p23",
-    "//thebulwark.com/p/trumps-iran-disaster-is-reshaping",
-    "//theguardian.com/commentisfree/2026/sep/20/un-new-leader-wars-climate-crisis-donald-trump"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 2,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump administration pressures Iran sanctions and pursues Greenland acquisition amid global tensions and UN leadership questions.",
-   "assembly_score": 3.365
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "096d6490421490b5",
-   "title": "Bessent meets Chinese vice premier ahead of Trump-Xi summit",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Post and Courier",
-    "CNBC"
-   ],
-   "urls": [
-    "//cnbc.com/2026/09/20/bessent-he-lifeng-trump-xi-summit.html",
-    "//postandcourier.com/u-s-treasury-secretary-scott-bessent-and-chinese-vice-premier-he-lifeng-meet-in-london/image_5b64ad32-b7a2-4635-aa37-6ad21eac147a.html"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "U.S. Treasury Secretary Scott Bessent meets Chinese vice premier He Lifeng in London ahead of a planned Trump-Xi summit.",
-   "assembly_score": 2.225
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "92c39b911de9bbd2",
-   "title": "House Republican criticizes Trump's immigration stance to Hispanic voters",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "CBS News"
-   ],
-   "urls": [
-    "//cbsnews.com/video/rep-salazar-to-trump-on-hispanic-voters-preserve-that-fortune-that-you-have-brought-gop",
-    "//theguardian.com/us-news/2026/sep/20/maria-elvira-salazar-republican-trump-immigration"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
    "line": "A House Republican publicly challenges Trump's immigration approach while appealing to Hispanic voters, widening GOP fissures.",
-   "assembly_score": 1.915
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "40eb8072b7b28610",
-   "title": "Data centers offer 42% wage premium for US maintenance workers",
-   "beat": "business",
-   "publisher_count": 2,
-   "publishers": [
-    "Techmeme",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/260920/p14",
-    "//techmeme.com/260920/p10"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 3,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Data center jobs pay 42% more than similar maintenance work elsewhere, reshaping labor markets in industrial regions.",
-   "assembly_score": 1.465
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "e03e95fac0dfc5e0",
-   "title": "Trump claims Houthi ceasefire as group expands attacks on Saudi Arabia",
-   "beat": "international",
-   "publisher_count": 3,
-   "publishers": [
-    "New York Times",
-    "France 24",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//france24.com/en/houthi-attacks-and-no-western-support-what-are-saudi-arabia-s-options",
-    "//france24.com/en/why-doesn-t-the-us-intervene-to-defend-saudi-arabia-against-the-houthis",
-    "//memeorandum.com/260920/p30",
-    "//nytimes.com/2026/09/20/world/middleeast/saudi-arabia-yemen-houthis-fighting.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 2,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump claims a ceasefire deal with Houthis while the group expands territory and attacks persist, raising questions about U.S. military commitment to Saudi Arabia.",
-   "assembly_score": 1.38
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "e831cde76b53f39d",
-   "title": "GOP donors fault Trump's tone on AI",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Daily Beast",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/260920/p19",
-    "//thedailybeast.com/maga-donors-turn-on-trump-over-key-issue"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 2,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Some Republican donors criticized Trump's recent public statements on artificial intelligence as lacking empathy.",
-   "assembly_score": 1.355
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "72008d5d0b28a399",
-   "title": "Kelsey Parker welcomes baby girl after stillbirth",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/cmzxz260020qo?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/tvshowbiz/article-16139661/Kelsey-Parker-welcomes-baby-girl-partner-Lindsay-year-losing-son-Phoenix-four-years-husband-Tom-Parkers-death.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 1.295
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "42fb11f7853702e3",
-   "title": "Obama criticizes Trump on media access and AI regulation",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//foxnews.com/media/obama-criticizes-trump-approach-ai-escalates-warning-stronger-regulation",
-    "//memeorandum.com/260920/p31"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 1.215
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "d383c30bfa697772",
-   "title": "Impressive defence seals solid start at Liverpool for Iraola",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "The Telegraph"
-   ],
-   "urls": [
-    "//bbc.co.uk/sport/football/articles/cklyjpgj3nv6o?at_campaign=rss&at_medium=RSS",
-    "//telegraph.co.uk/football/2026/09/20/bournemouth-vs-liverpool-live-score-latest-premier-league"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 1.175
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "6489574e0d9921a1",
-   "title": "How President Trump Broke the Kennedy Center",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "New York Times",
-    "Daily Beast",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/260920/p5",
-    "//nytimes.com/2026/09/20/us/politics/trump-kennedy-center.html",
-    "//thedailybeast.com/trump-goon-ric-grenells-secret-plot-to-purge-treasured-gifts-kennedy-center-revealed"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 1.16
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "562e5bcbf71a66c3",
-   "title": "\u2018I feel betrayed\u2019: inside Ed Sheeran\u2019s controversial return to the stage",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/tvshowbiz/article-16145409/Ed-Sheeran-slams-Israel-actions-Gaza-continues-touring-Macklemore-Free-Palestine.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dailymail.com/tvshowbiz/article-16146257/Ed-Sheeran-reveals-changed-Philadelphia-stage-layout-afraid-audience-throw-things-pushed-addressing-politics.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//theguardian.com/music/2026/sep/20/ed-sheeran-return-to-stage-philadelphia-tour"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 0.895
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "87332f4241122654",
-   "title": "Ukraine hits Moscow with \u2018largest ever\u2019 drone attack",
-   "beat": "international",
-   "publisher_count": 8,
-   "publishers": [
-    "Financial Times",
-    "New York Times",
-    "The Guardian",
-    "Al Jazeera",
-    "Fox News",
-    "France 24",
-    "Daily Mail",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//aljazeera.com/video/newsfeed/2026/9/20/moscow-attacked-by-more-than-1000-ukrainian-drones?traffic_source=rss",
-    "//dailymail.com/news/article-16145873/fires-rage-Moscow-Ukraine-strikes-Russia-oil-refinery-drone-attack-day-election.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//foxnews.com/world/ukraine-targets-russia-1000-drones-killing-2-moscow-holds-last-day-elections",
-    "//france24.com/en/ukraine-fires-over-1-000-drones-at-russia-in-largest-ever-attack-on-moscow",
-    "//ft.com/content/2b6f1b4b-4010-4e95-8b5c-dfb2e32cd7ae?syn-25a6b1a6=1",
-    "//memeorandum.com/260920/p26",
-    "//nytimes.com/2026/09/20/world/europe/moscow-russia-ukraine.html",
-    "//theguardian.com/world/2026/sep/20/hundreds-of-drones-target-moscow-on-last-day-of-voting-in-russias-parliamentary-election"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 0.12
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "2a5c61d1ec1a65a6",
-   "title": "Trump Official Clashes With CNN Host on Air Over Press Bans",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Daily Beast",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/260920/p28",
-    "//thedailybeast.com/trump-goon-flips-out-in-cnn-clash-over-press-bans"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.89
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "0d3e2bb76f36ca82",
-   "title": "Russian election, cast as test of support for Ukraine war, enters final day (Reuters)",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Daily Mail",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16146185/Russian-soldiers-gang-raping-torturing-civilians-Ukraine.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//memeorandum.com/260920/p11"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.04
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "4aa88ba99766aae4",
-   "title": "U.S. embassies across Middle East issue security alerts for Americans",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "CBS News",
-    "CNBC",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//cbsnews.com/live-updates/iran-war-trump-us-strait-of-hormuz-oil-houthis",
-    "//cnbc.com/2026/09/20/us-middle-east-travel-warning-iran-war-hormuz.html",
-    "//memeorandum.com/260920/p27"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.05
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "f8cda02b8747314d",
-   "title": "Premier League matches in progress",
-   "beat": "culture",
-   "publisher_count": 3,
-   "publishers": [
-    "The Guardian",
-    "Al Jazeera",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//aljazeera.com/sports/liveblog/2026/9/20/live-fulham-vs-manchester-united-premier-league?traffic_source=rss",
-    "//dailymail.com/sport/football/article-16139115/bournemouth-liverpool-premier-league-live.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//theguardian.com/football/live/2026/sep/20/bournemouth-v-liverpool-premier-league-live",
-    "//theguardian.com/football/live/2026/sep/20/fulham-v-manchester-united-premier-league-live"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.34
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "3a8a1dc7c6d29173",
-   "title": "Majority of voters blame Trump for economic harm, NBC poll finds",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "NBC News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/260920/p24",
-    "//memeorandum.com/260920/p25",
-    "//nbcnews.com/politics/2026-election/poll-voters-say-trump-hurt-economy-competitive-midterm-election-looms-rcna597868"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Poll shows majority of voters blame Trump for economic harm ahead of midterm elections.",
-   "assembly_score": -1.38
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "f87e199b1bc383dc",
-   "title": "PHOTOS: USC vs. Mississippi State",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Post and Courier",
-    "Fox News"
-   ],
-   "urls": [
-    "//foxnews.com/outkick-sports/rutgers-greg-schiano-crashes-out-official-costly-penalty-tough-loss-usc",
-    "//postandcourier.com/aikenstandard/photos/sports/photos-usc-vs-mississippi-state/collection_e53ae74a-d2ef-4ba9-a7f1-42a8a6ec8210.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.41
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "f00c2e5e6c9e2b9a",
-   "title": "Israeli settler and Palestinian killed in West Bank shootings",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "France 24"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/9/20/israeli-forces-kill-palestinian-near-jenin-in-occupied-west-bank?traffic_source=rss",
-    "//aljazeera.com/video/newsfeed/2026/9/20/gazas-children-return-to-classrooms-after-years-of-israeli-attacks?traffic_source=rss",
-    "//france24.com/en/an-israeli-settler-and-a-palestinian-driver-killed-in-west-bank-shootings",
-    "//france24.com/en/middle-east/20260920-israeli-settler-and-palestinian-driver-killed-in-west-bank-shootings"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "An Israeli settler and Palestinian driver were killed in separate West Bank shootings; Israeli forces reported killing a Palestinian near Jenin.",
-   "assembly_score": -1.55
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "67f5af3d77af9e59",
-   "title": "No criminality in death of three sisters who died in sea",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/cqevwp9x4x4po?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/news/article-16145167/Three-sisters-died-sea-Brighton-visited-lake-mother-drowned-just-48-hours-tragedy.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.61
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "f291f2f45600c797",
-   "title": "John Barrasso says President Trump banning media outlets doesn\u2019t violate the U.S. Constitution",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "NBC News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/260920/p20",
-    "//nbcnews.com/meet-the-press/video/john-barrasso-says-president-trump-banning-media-outlets-doesn-t-violate-the-u-s-constitution-270177349901",
-    "//nbcnews.com/politics/white-house/john-barrasso-says-trump-isnt-violating-constitution-banning-reporters-rcna598785"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.97
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "5721ef66e9aef881",
-   "title": "Wall Street briefing",
-   "beat": "business",
-   "publisher_count": 2,
-   "publishers": [
-    "Financial Times",
-    "CNBC"
-   ],
-   "urls": [
-    "//cnbc.com/2026/09/20/top-wall-street-analysts-find-these-3-stocks-attractive-as-long-term-investments.html",
-    "//cnbc.com/2026/09/20/williams-sonoma-stock-rises-housing-market.html",
-    "//ft.com/content/3fcee89f-b69d-4f4b-a944-39fe1c214fb8?syn-25a6b1a6=1"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.05
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "842f8b39afa47fd4",
-   "title": "In Fighting for Every Black Child, Did I Betray My Own?",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/260920/p10",
-    "//nytimes.com/2026/09/20/magazine/ny-public-schools-black-students-segregation.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.05
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "daa15782d191c68f",
-   "title": "Ed Sheeran Addresses War in Gaza After Macklemore Is Dropped From Tour",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "ANSA"
-   ],
-   "urls": [
-    "//ansa.it/sito/notizie/cultura/2026/09/20/ed-sheeran-torna-sul-palco-dopo-la-bufera-e-parla-di-gaza-situazione-ingiustificabile_c8e9f0d5-5296-49f3-9efe-2626f702bb82.html",
-    "//nytimes.com/2026/09/19/arts/music/ed-sheeran-macklemore-gaza-tour.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.72
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "7d4c6ff08a4758d1",
-   "title": "Strictly launch draws smaller audience with new hosting lineup",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/c6m2rkx2evxmo?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/tvshowbiz/article-16144679/Strictlys-Emma-Willis-hailed-goddess-British-TV-launches-series-Johannes-Radebe-Josh-Widdecombe-fans-ask-need-three-hosts.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dailymail.com/tvshowbiz/article-16145897/Chris-Appleton-ropes-best-pal-Kim-Kardashian-judge-Strictly-moves-Shirley-Ballas-begs-lister-join-BBC-panel.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dailymail.com/tvshowbiz/article-16146171/Strictly-launch-viewing-figures-revealed-BBCs-gamble-revamped-line-fails-deliver-ratings-boost.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "BBC's Strictly Come Dancing returns with new hosts and celebrity dancers; launch ratings disappointed.",
-   "assembly_score": -3.27
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "19ece4772e9e2ff3",
-   "title": "North Korea fires two ballistic missiles into the sea in latest weapons display",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "CBS News",
-    "France 24",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//cbsnews.com/news/north-korea-missile-launch-pressure-us",
-    "//france24.com/en/asia-pacific/20260920-north-korea-fires-two-ballistic-missiles-into-the-sea-in-latest-weapons-display",
-    "//memeorandum.com/260920/p7"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.79
+   "assembly_score": 9.29
   }
  ],
  "excluded_sample": [
+  {
+   "title": "Trump set to meet with New York City Mayor Zohran Mamdani on Monday",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Top Gear star Richard Hammond thanks emergency crews 20 years on from crash",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Last-minute Cunha goal saves Man Utd from another defeat - who rated highest at Fulham?",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Labrum London Spring 2027 Ready-to-Wear",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Serie A: Conceicao pi\u00f9 Bremer, la Juve batte l'Atalanta ed \u00e8 a -3 dalla vetta",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Tim Miller Goes Off on the GOP's Trainwreck NC Senate Candidate",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Scary scene as Jayden Reed carted off on spine board during Packers game against the Jets",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Kevin Costner sparks romance rumors after grocery run with lifestyle coach",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Golf: PGA Championship",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Fox News Star Mocks Trump for Fixating on Her",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "MAGA Donors Turn on Trump Over Key Issue",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Kelsey Parker welcomes baby after 'devastating' stillbirth last year",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Podcast: One country musician is calling for other artists to oppose assault rifles",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Bidets save you money and reduce waste \u2014 we tested the best options out there",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "50+ products to make your life easier and our planet cleaner",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Mother's Day is around the corner. Here are 50+ thoughtful gifts she'll love",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "A head-to-toe guide of how men should dress this spring, and where they should shop",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "42 of the most useful travel products you can buy on Amazon",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "The 7 best high-yield savings accounts of April 2023",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Composting is an easy way to reduce food waste. Here's how to do it",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "We stopped using aluminum foil for cooking and you should too. Here's what to use instead",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "The beloved Dyson Supersonic hair dryer is at its lowest price ever",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Obama criticizes Trump on approach to AI, escalates warning for stronger regulation",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Serie A, in campo Parma-Genoa DIRETTA",
+   "why": "triage verdict NO"
+  },
   {
    "title": "Bournemouth v Liverpool: Premier League \u2013 live",
    "why": "triage verdict NO"
   },
   {
-   "title": "US and Denmark reach Greenland security deal",
-   "why": "ledger: INCREMENT"
-  },
-  {
-   "title": "In a world of wars and climate crisis, a new leader could save the UN. But would Trump allow it? | Steve Bloomfield",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Anthems, transport, housing: What\u2019s gone wrong at the Asian Games in Japan?",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Yaku Spring 2027 Ready-to-Wear",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "PHOTOS: USC vs. Mississippi State",
-   "why": "triage verdict NO"
-  },
-  {
    "title": "The Best Behind-the-Scenes Moments From the Spring 2027 Shows in London",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Wall Street expects US to issue about $1tn of short-term debt as borrowing costs climb",
    "why": "triage verdict NO"
   },
   {
@@ -1053,23 +303,7 @@
    "why": "triage verdict NO"
   },
   {
-   "title": "Serie A, in campo Parma-Genoa DIRETTA",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Fox News Star Mocks Trump for Fixating on Her",
-   "why": "triage verdict NO"
-  },
-  {
    "title": "Nancy Mace goes viral at SEC football game after a simple two-word message, poor Lane & LSU fans arrested",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "\u2018Shaq, Really?\u2019: Shaq\u2019s Shocking New Title from Trump\u2019s FBI Director Patel Sparks Backlash as Fans Question Where His Loyalty Lies",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "A small but growing number of founders are betting on bringing people together offline",
    "why": "triage verdict NO"
   },
   {
@@ -1078,6 +312,14 @@
   },
   {
    "title": "The kindness of strangers: I was a ball of stress taking my four children on an international flight \u2013 then a passenger tucked a blanket around my sleeping son",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "\u2018Shaq, Really?\u2019: Shaq\u2019s Shocking New Title from Trump\u2019s FBI Director Patel Sparks Backlash as Fans Question Where His Loyalty Lies",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "A small but growing number of founders are betting on bringing people together offline",
    "why": "triage verdict NO"
   },
   {
@@ -1093,39 +335,7 @@
    "why": "triage verdict NO"
   },
   {
-   "title": "Kelsey Parker welcomes baby girl with partner Will Lindsay a year after losing their son Phoenix and four years on from her husband Tom Parker's death",
-   "why": "triage verdict NO"
-  },
-  {
    "title": "Strictly returns with new hosting trio as celebrities find out dance pairings",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "We Need to Talk About the Apocalypse",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Scientists heard a knock at the door. It was a pelican in need of help.",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "The D.C. barber who considered his job a \u2018vacation,\u2019 and other lives we\u2019ve lost",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "What to Pack for a Weekend Getaway, According to a Vogue Editor",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "\u2018A River Runs Through It\u2019 casts a new line \u2014 as an opera",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Salah scores hat-trick as Trabzonspor beat Galatasaray in Turkish league",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "The Spanish town that stole John Lennon's heart: Almeria 60 years after Beatlemania",
    "why": "triage verdict NO"
   }
  ]
