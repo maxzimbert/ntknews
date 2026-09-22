@@ -546,7 +546,7 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
 
   <header class="story-header">
     <div class="story-header-inner">
-      <a class="back-btn" href="../">← Digest</a>
+      <a class="back-btn" href="../">Digest</a>
       <div class="story-header-logo">
         <img src="{logo}" alt="NTK" class="ntk-logo-img-sm">
       </div>
@@ -598,7 +598,7 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
 
   </div>
 
-  <a class="back-footer" href="../">← Back to today's digest</a>
+  <a class="back-footer" href="../">Back to today's digest</a>
 
 </body>
 </html>
