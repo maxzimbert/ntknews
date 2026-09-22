@@ -488,7 +488,7 @@
 //  missing, so this block can never produce a broken layout.
 // ================================================================
 const heroStory = {
-  "date": "Friday, September 18 \u00b7 today's edition",
+  "date": "Friday, September 18 \u2014 today's edition",
   "storyCount": "01 / 04",
   "category": "World",
   "headline": "France Ordered Its Power Plants Guarded This Week. The Order Came the Same Day Gas Prices Spiked.",
@@ -533,7 +533,7 @@ const heroStory = {
     if(heroCardHeadline && s.headline) heroCardHeadline.textContent = truncate(s.headline, 140);
 
     var storyImageEyebrow = document.getElementById("storyImageEyebrow");
-    if(storyImageEyebrow) storyImageEyebrow.textContent = "Today's briefing \u00b7 story 01";
+    if(storyImageEyebrow) storyImageEyebrow.textContent = "Today's briefing, story 01";
 
     var storyImageHeadline = document.getElementById("storyImageHeadline");
     if(storyImageHeadline && s.headline) storyImageHeadline.textContent = truncate(s.headline, 160);
@@ -551,7 +551,7 @@ const heroStory = {
     if(storyLies && s.lies) storyLies.textContent = truncate(s.lies, 200);
 
     var storyCategory = document.getElementById("storyCategory");
-    if(storyCategory && s.category) storyCategory.textContent = "Historical frame \u00b7 " + s.category;
+    if(storyCategory && s.category) storyCategory.textContent = "Historical frame, " + s.category;
 
     var storyReadMore = document.getElementById("storyReadMore");
     if(storyReadMore && s.permalink) storyReadMore.href = s.permalink.replace(/^https?:\/\/[^/]+/, "");

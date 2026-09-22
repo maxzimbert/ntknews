@@ -180,7 +180,7 @@ def regenerate_hero_story(html, stories, date_str):
     if not stories:
         return html
     lead = stories[0]
-    date_label = datetime.now(timezone.utc).strftime("%A, %B %-d") + " · today's edition"
+    date_label = datetime.now(timezone.utc).strftime("%A, %B %-d") + " — today's edition"
     hero = {
         "date": date_label,
         "storyCount": f"{1:02d} / {len(stories):02d}",
