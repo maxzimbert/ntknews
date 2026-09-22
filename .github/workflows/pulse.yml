@@ -67,6 +67,16 @@ jobs:
       # certainly why Pulse has been showing "data 48h old": several runs in
       # a row did real work and then threw it away at the finish line.
       #
+      # T-0030 cost gate. ledger.py is the expensive stage — up to 15 Sonnet
+      # calls/run, 6 scheduled runs/day, with no awareness of lineup state —
+      # so it was burning credits every 4 hours even on stretches where the
+      # lineup was already full and fresh. check_lineup_stale.py reports
+      # whether the ledger pass has anything worth paying for.
+      - name: Check lineup freshness
+        id: lineup_check
+        working-directory: ntk-pulse
+        run: python check_lineup_stale.py >> "$GITHUB_OUTPUT"
+
       # The `if` below is trigger-aware on purpose. `inputs.run_ledger` is
       # only ever populated on a manual workflow_dispatch run — its default
       # does NOT apply on a schedule-triggered run, which has no dispatch
@@ -75,8 +85,14 @@ jobs:
       # ledger stage entirely, forever, with no error and nothing in the
       # log to suggest why. This was caught and fixed before scheduling was
       # turned on, not after.
+      #
+      # T-0030 added the other half: on a SCHEDULED run, ledger.py now also
+      # requires the lineup to be stale (empty or >12h old) before it runs.
+      # A manual workflow_dispatch is explicit human intent, not a background
+      # tick — it always honors `run_ledger` directly and is never gated on
+      # lineup freshness.
       - name: Story Ledger
-        if: ${{ github.event_name != 'workflow_dispatch' || inputs.run_ledger }}
+        if: ${{ (github.event_name == 'workflow_dispatch' && inputs.run_ledger) || (github.event_name != 'workflow_dispatch' && steps.lineup_check.outputs.stale == 'true') }}
         continue-on-error: true
         working-directory: ntk-pulse
         env:
