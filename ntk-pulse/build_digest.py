@@ -371,13 +371,6 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
     gap: 12px;
   }}
 
-  .back-btn {{
-    font-family: 'Overpass', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--blue);
-    text-decoration: none;
-  }}
 
   .story-header-logo {{ text-decoration: none; margin-left: auto; display: flex; align-items: center; }}
   .ntk-logo-img-sm {{ height: 20px; width: auto; display: block; }}
@@ -546,7 +539,6 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
 
   <header class="story-header">
     <div class="story-header-inner">
-      <a class="back-btn" href="../">Digest</a>
       <a class="story-header-logo" href="/digest" aria-label="Back to the digest">
         <img src="{logo}" alt="NTK" class="ntk-logo-img-sm">
       </a>
