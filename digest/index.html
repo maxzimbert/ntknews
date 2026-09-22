@@ -3198,11 +3198,25 @@ function escAttr(s){ return escBsr(s).replace(/"/g, '&quot;'); }
    (primary sources — two before 1981, two after). The card says 48 years;
    the case says 235. ── */
 
+function dirGlyph(dir){
+  switch (dir) {
+    case 'worse':     return '&darr;';
+    case 'better':    return '&uarr;';
+    case 'contested': return '&harr;';
+    default:          return '&rarr;';
+  }
+}
+
 function bsrIndicatorHtml(ind){
   if (!ind || !ind.then_value || !ind.now_value) return '';
   // Unverified values are the default out of build_backstory.py and must
   // not be presented as settled fact — every one of them is a starting
   // point someone still has to check against the named source.
+  //
+  // The glyph carries the direction, not just the colour. It used to render
+  // a right arrow for every state, which made worse/better/contested
+  // indistinguishable without colour vision — and a right arrow reads as
+  // "flat", so it contradicted two of the three states for everyone else.
   const pending = ind.verified ? '' :
     '<span class="bsr-ind-unver" title="Not yet checked against the source">unverified</span>';
   return '<div class="bsr-ind">'
@@ -3210,7 +3224,8 @@ function bsrIndicatorHtml(ind){
     + '<div class="bsr-ind-row">'
       + '<div class="bsr-ind-cell"><span class="bsr-ind-v">' + escBsr(ind.then_value) + '</span>'
         + '<span class="bsr-ind-y">' + escBsr(ind.then_year) + '</span></div>'
-      + '<div class="bsr-ind-arrow dir-' + escBsr(ind.direction || 'flat') + '">&rarr;</div>'
+      + '<div class="bsr-ind-arrow dir-' + escBsr(ind.direction || 'flat') + '" role="img" aria-label="'
+        + escBsr(ind.direction || 'flat') + '">' + dirGlyph(ind.direction) + '</div>'
       + '<div class="bsr-ind-cell"><span class="bsr-ind-v">' + escBsr(ind.now_value) + '</span>'
         + '<span class="bsr-ind-y">' + escBsr(ind.as_of || 'now') + '</span></div>'
     + '</div>'
