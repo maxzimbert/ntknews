@@ -44,9 +44,22 @@ Four defects follow from the same absence and are fixed here:
 4. **The archive was never designed.** Default blue underlined links and
    browser bullets, emitted by `ARCHIVE_TEMPLATE` in `build_digest.py`.
 
-Also settled by the editor, 2026-09-20: **dark grounds stay on ntknews.org
-only.** The app is dark in four places (header bar, digest cards, story
-permalink hero, Backstory detail panel) and moves to cream.
+**Deferred to T-0030, deliberately.** The editor settled on 2026-09-20 that
+dark grounds stay on ntknews.org only. Measured while starting it: the app is
+not dark in four places, it is dark throughout — eighteen `background:
+var(--dark)` rules plus hardcoded darks on `.today-view`, `.profile-view` and
+the Backstory panel, with cream-on-dark text carried in `rgba(234,217,197,…)`
+literals that each have to be inverted by hand. That is a re-theme of a
+4,000-line file, not a token swap, and it is the one item here that cannot be
+proven correct by measurement. Bundling it would let the riskiest change gate
+twelve safe ones.
+
+It also changes what the accent fix means. On the ink ground every accent
+already passes; the contrast failures are real only where cream grounds exist
+today, which is the archive. So this ticket fixes the archive's live 1.92:1
+failure and leaves the app's accents alone, and T-0030 carries the re-theme
+and the two-step accents together, because separately either one makes the app
+worse.
 
 Not in scope, and deliberately: the `mailto:` Subscribe action needs an email
 provider decision; the site-level OG card needs artwork; the onboarding

@@ -109,7 +109,7 @@
 
   /* ---------- Stat band ---------- */
   .stat-band{background:var(--cream); border-bottom:1px solid rgba(38,31,35,.18);}
-  .stat-grid{display:grid; grid-template-columns:repeat(4,minmax(0,1fr));}
+  .stat-grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr));}
   .stat-cell{padding:36px 28px; border-right:1px solid rgba(38,31,35,.18);}
   .stat-cell:first-child{padding-left:0;}
   .stat-cell:last-child{border-right:none; padding-right:0;}
@@ -174,6 +174,9 @@
   .editor-quote{font-family:'Source Serif 4',serif; font-size:34px; line-height:1.22; letter-spacing:-.025em;
     margin:0 0 28px; text-wrap:pretty;}
   .editor-quote em{font-style:italic; color:var(--coral);}
+  .editor-attrib{display:block; font-family:'Overpass',sans-serif; font-size:13px;
+    font-style:normal; letter-spacing:.1em; text-transform:uppercase;
+    color:rgba(38,31,35,.62); margin-top:18px;}
   .editor-copy{font-family:'Source Serif 4',serif; font-size:20px; line-height:1.55; color:rgba(38,31,35,.72);
     max-width:54ch; margin:0 0 30px; text-wrap:pretty;}
   .chip-row{display:flex; gap:10px; flex-wrap:wrap;}
@@ -222,7 +225,7 @@
     .hero-grid{grid-template-columns:1fr;}
     .hero-left{padding:48px 0 32px;}
     .hero-h1{font-size:clamp(46px,9vw,104px);}
-    .hero-right{order:-1; display:block;}
+    .hero-right{display:block;}
     .hero-image-panel{aspect-ratio:16/10; flex:none; width:100%;}
     .hero-card{position:static; left:auto; bottom:auto; max-width:none; box-shadow:none; margin-top:-1px;}
     .stat-grid{grid-template-columns:1fr 1fr;}
@@ -269,7 +272,7 @@
       <a href="#story">Inside a Briefing</a>
       <a href="#editor">Who Writes It</a>
     </nav>
-    <a href="/digest/latest" class="nav-cta">Read this morning →</a>
+    <a href="/digest/latest" class="nav-cta">Read this morning</a>
     <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false">☰</button>
   </div>
   <nav class="mobile-menu" id="mobileMenu">
@@ -317,8 +320,6 @@
   <div class="wrap stat-grid">
     <div class="stat-cell"><div class="stat-num">3 min</div><div class="stat-label">Every morning. That's the ask.</div></div>
     <div class="stat-cell"><div class="stat-num">40%</div><div class="stat-label">of adults have quit the news</div></div>
-    <div class="stat-cell"><div class="stat-num">0×</div><div class="stat-label">Algorithm involvement</div></div>
-    <div class="stat-cell"><div class="stat-num">1807</div><div class="stat-label">The year the format was designed</div></div>
   </div>
 </section>
 
@@ -339,7 +340,6 @@
           <div class="fw-card-num" style="color:var(--teal);">01</div>
         </div>
         <p class="fw-card-body">What is established and verifiable. The facts as they stand, and who they land on.</p>
-        <div class="fw-card-meta">Durable · Structural</div>
       </div>
       <div class="fw-card" style="border-top-color:var(--blue);">
         <div class="fw-card-top">
@@ -347,7 +347,6 @@
           <div class="fw-card-num" style="color:var(--blue);">02</div>
         </div>
         <p class="fw-card-body">What happens next, read from historical pattern and political logic. A forecast that shows its reasoning.</p>
-        <div class="fw-card-meta">Near-term · Pattern-based</div>
       </div>
       <div class="fw-card" style="border-top-color:var(--purple);">
         <div class="fw-card-top">
@@ -355,7 +354,6 @@
           <div class="fw-card-num" style="color:var(--purple);">03</div>
         </div>
         <p class="fw-card-body">Plausible outcomes that nobody is pricing in. The edge cases that would surprise a pundit but not a historian.</p>
-        <div class="fw-card-meta">Black swans · Second-order</div>
       </div>
       <div class="fw-card" style="border-top-color:var(--coral);">
         <div class="fw-card-top">
@@ -363,7 +361,6 @@
           <div class="fw-card-num" style="color:var(--coral);">04</div>
         </div>
         <p class="fw-card-body">Deliberate distortions in circulation. NTK names the claim, names who is making it, and traces who profits.</p>
-        <div class="fw-card-meta">Named actors · Exposed</div>
       </div>
     </div>
   </div>
@@ -420,7 +417,7 @@
         </div>
         <div class="story-footer">
           <span class="story-footer-frame" id="storyCategory">Today's briefing</span>
-          <a href="/digest/latest" class="story-footer-link" id="storyReadMore">Read the full briefing →</a>
+          <a href="/digest/latest" class="story-footer-link" id="storyReadMore">Read the full briefing</a>
         </div>
       </div>
     </div>
@@ -436,7 +433,8 @@
     <div>
       <div class="eyebrow" style="color:var(--blue);">Who writes it</div>
       <blockquote class="editor-quote">"The best news formats I worked on had one thing in common: <em>a real editor making real decisions</em> about what mattered."</blockquote>
-      <p class="editor-copy">NTK has one editor, a former CNN producer and senior editor at one of the most respected mobile news formats ever built. The same person reads the wire, picks the stories and writes the sections. Every judgment on the page has a name behind it.</p>
+      <cite class="editor-attrib">Max Zimbert, editor of NTK News</cite>
+      <p class="editor-copy">A former CNN producer and senior editor at one of the most respected mobile news formats ever built. The same person reads the wire, picks the stories and writes the sections. Every judgment on the page has a name behind it.</p>
       <div class="chip-row">
         <span class="chip">Reader-funded</span>
         <span class="chip">No ads</span>
@@ -451,7 +449,7 @@
     <div class="closing-eyebrow">Tomorrow, 6:00 a.m.</div>
     <h2 class="closing-h2">Three minutes.<br><em>One shared reality.</em></h2>
     <p class="closing-copy">Every other outlet profits when you stay longer. NTK profits when you understand faster.</p>
-    <a href="/digest/latest" class="btn-dark">Start reading →</a>
+    <a href="/digest/latest" class="btn-dark">Start reading</a>
     <div class="closing-note">Free · No sign-up required</div>
   </div>
 </section>
