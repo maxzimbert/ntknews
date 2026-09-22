@@ -111,15 +111,12 @@
   .stat-band{background:var(--cream); border-bottom:1px solid rgba(38,31,35,.18);}
   /* A sentence, not a dashboard. The two real figures live inside the claim
      rather than sitting in tiles beside two ornamental ones. */
-  .statement{font-family:'Source Serif 4',serif; font-size:34px; line-height:1.34;
-    letter-spacing:-.015em; max-width:26ch; margin:0; padding:76px 0 80px;
-    color:var(--ink); text-wrap:balance;}
-  .statement em{font-style:italic; color:var(--coral);}
-  .stat-grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr));}
-  .stat-cell{padding:36px 28px; border-right:1px solid rgba(38,31,35,.18);}
-  .stat-cell:first-child{padding-left:0;}
-  .stat-cell:last-child{border-right:none; padding-right:0;}
-  .stat-num{font-size:46px; font-weight:700; letter-spacing:-.03em; line-height:1;}
+  /* A sentence, not a dashboard, and set to the full measure rather than a
+     column — at 46px the line breaks about twice across 1240px, which is why
+     it reads as a statement instead of a paragraph. */
+  .statement{font-family:'Source Serif 4',serif; font-size:clamp(26px,3.6vw,46px);
+    line-height:1.22; letter-spacing:-.02em; margin:0; padding:76px 0 80px;
+    color:var(--ink);}
 
   /* ---------- Framework ---------- */
   .framework{background:var(--cream); padding:100px 40px 96px;}
@@ -248,10 +245,6 @@
     .hero-right{display:block;}
     .hero-image-panel{aspect-ratio:16/10; flex:none; width:100%;}
     .hero-card{position:static; left:auto; bottom:auto; max-width:none; box-shadow:none; margin-top:-1px;}
-    .stat-grid{grid-template-columns:1fr 1fr;}
-    .stat-cell{border-right:1px solid rgba(38,31,35,.18) !important; border-bottom:1px solid rgba(38,31,35,.18);
-      padding:28px !important;}
-    .stat-cell:nth-child(2n){border-right:none !important;}
     .fw-header{grid-template-columns:1fr; gap:24px;}
     .fw-copy{padding-top:0;}
     .fw-h2{font-size:clamp(34px,7vw,60px);}
@@ -272,7 +265,6 @@
     .wrap,.framework,.story-section,.editor-section,.closing,.site-footer{padding-left:20px; padding-right:20px;}
     .hero-h1{font-size:clamp(34px,11vw,60px);}
     .fw-grid{grid-template-columns:1fr;}
-    .stat-grid{grid-template-columns:1fr 1fr;}
     .footer-inner{flex-direction:column; align-items:flex-start; gap:14px;}
   }
 
@@ -338,7 +330,7 @@
 
 <section class="stat-band">
   <div class="wrap">
-    <p class="statement">Forty percent of adults have quit the news. <em>This is for them.</em> Three minutes every morning, no algorithm, no ads, one editor &mdash; and a last card you actually reach.</p>
+    <p class="statement">Three minutes. No algorithm. A format Thomas Jefferson pitched to a journalism student and no one built until now.</p>
   </div>
 </section>
 
