@@ -379,7 +379,7 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
     text-decoration: none;
   }}
 
-  .story-header-logo {{ margin-left: auto; display: flex; align-items: center; }}
+  .story-header-logo {{ text-decoration: none; margin-left: auto; display: flex; align-items: center; }}
   .ntk-logo-img-sm {{ height: 20px; width: auto; display: block; }}
 
   .story-hero-wrap {{ background: var(--dark); }}
@@ -547,9 +547,9 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
   <header class="story-header">
     <div class="story-header-inner">
       <a class="back-btn" href="../">Digest</a>
-      <div class="story-header-logo">
+      <a class="story-header-logo" href="/digest" aria-label="Back to the digest">
         <img src="{logo}" alt="NTK" class="ntk-logo-img-sm">
-      </div>
+      </a>
     </div>
   </header>
 
