@@ -46,6 +46,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 TEAL = "#01B2A7"
+# The same teal, calibrated for the cream ground. #01B2A7 on #EAD9C5 measures
+# 1.92:1 — barely a colour difference. This step measures 4.51:1. Accents on
+# this site were tuned against the ink ground and reused against cream; where
+# the ground is cream, use this one.
+TEAL_DEEP = "#016D66"
 INK = "#261F23"
 CREAM = "#EAD9C5"
 GOLD = "#F2AE2E"
@@ -612,20 +617,41 @@ ARCHIVE_TEMPLATE = """<!DOCTYPE html>
 <title>Archive — NTK News</title>
 <link href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&display=swap" rel="stylesheet">
 <style>
+  * {{ box-sizing:border-box; }}
   body {{ background:{cream}; color:{ink}; font-family:'Source Serif 4',Georgia,serif;
-    max-width:640px; margin:0 auto; padding:24px 20px 60px; }}
-  h1 {{ font-family:'Overpass',sans-serif; }}
-  .ed {{ margin-bottom:28px; }}
-  .ed-date {{ font-family:'Overpass',sans-serif; font-size:13px; color:{teal};
-    text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; }}
-  .ed a.day {{ font-weight:600; }}
-  ul {{ margin:6px 0 0; padding-left:18px; }}
-  li {{ margin-bottom:3px; font-size:15px; }}
+    max-width:660px; margin:0 auto; padding:0 20px 80px; }}
+  .masthead {{ padding:46px 0 0; }}
+  h1 {{ font-family:'Source Serif 4',serif; font-weight:600; font-size:34px;
+    letter-spacing:-.01em; margin:0 0 6px; }}
+  .standfirst {{ font-size:16px; color:rgba(38,31,35,.68); margin:0 0 34px; max-width:46ch; }}
+  .ed {{ border-top:1px solid rgba(38,31,35,.22); padding:18px 0 22px; }}
+  .ed-head {{ display:flex; justify-content:space-between; align-items:baseline;
+    gap:16px; margin-bottom:12px; }}
+  .ed-date {{ font-family:'Source Serif 4',serif; font-size:16px; font-weight:600;
+    letter-spacing:.01em; color:{ink}; }}
+  .ed a.day {{ font-family:'Overpass',sans-serif; font-size:13px; letter-spacing:.1em;
+    text-transform:uppercase; color:{teal_deep}; text-decoration:none;
+    border-bottom:1px solid rgba(1,109,102,.38); padding-bottom:2px; white-space:nowrap; }}
+  .ed a.day:hover {{ border-bottom-color:{teal_deep}; }}
+  .ed-list {{ display:flex; flex-direction:column; gap:9px; }}
+  .ed-list a {{ font-size:16px; line-height:1.4; color:{ink}; text-decoration:none;
+    border-bottom:1px solid rgba(38,31,35,.18); padding-bottom:2px; }}
+  .ed-list a:hover {{ border-bottom-color:{ink}; }}
+  footer {{ border-top:1px solid rgba(38,31,35,.22); margin-top:8px; padding-top:20px;
+    font-size:13px; color:rgba(38,31,35,.72); }}
+  footer a {{ color:{teal_deep}; }}
+  @media (max-width:560px) {{
+    .ed-head {{ flex-direction:column; gap:4px; }}
+  }}
 </style>
 </head>
 <body>
-<h1>Archive</h1>
+<div class="masthead">
+  <h1>Archive</h1>
+  <p class="standfirst">Every edition NTK has published, newest first. Each one ended when you finished it, and still does.</p>
+</div>
 {editions}
+<footer><a href="/today">Today&rsquo;s edition</a></footer>
 </body>
 </html>
 """
@@ -641,15 +667,26 @@ def rebuild_archive(digest_dir, base_url):
             continue
         headlines = json.loads(meta_path.read_text())
         items = "\n".join(
-            f'    <li><a href="{base_url}/digest/{d.name}/{h["slug"]}/">{html_esc(h["headline"])}</a></li>'
+            f'    <a href="{base_url}/digest/{d.name}/{h["slug"]}/">{html_esc(h["headline"])}</a>'
             for h in headlines)
-        blocks.append(f'<div class="ed"><div class="ed-date">{d.name}</div>'
-                       f'<a class="day" href="{base_url}/digest/{d.name}/">Full edition</a>'
-                       f'<ul>\n{items}\n  </ul></div>')
+        # A dateline a person would say out loud, not a sort key. Falls back to
+        # the raw folder name if a directory is ever named something unexpected.
+        try:
+            pretty = datetime.strptime(d.name, "%Y-%m-%d").strftime("%A, %-d %B %Y")
+        except ValueError:
+            pretty = d.name
+        blocks.append(f'<div class="ed">\n'
+                       f'  <div class="ed-head">\n'
+                       f'    <div class="ed-date">{pretty}</div>\n'
+                       f'    <a class="day" href="{base_url}/digest/{d.name}/">Full edition</a>\n'
+                       f'  </div>\n'
+                       f'  <div class="ed-list">\n{items}\n  </div>\n'
+                       f'</div>')
     archive_dir = digest_dir / "archive"
     archive_dir.mkdir(parents=True, exist_ok=True)
     (archive_dir / "index.html").write_text(
-        ARCHIVE_TEMPLATE.format(cream=CREAM, ink=INK, teal=TEAL, editions="\n".join(blocks)))
+        ARCHIVE_TEMPLATE.format(cream=CREAM, ink=INK, teal_deep=TEAL_DEEP,
+                                editions="\n".join(blocks)))
     log(f"archive rebuilt: {len(date_dirs)} editions listed")
 
 
