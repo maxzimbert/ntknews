@@ -334,6 +334,11 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
   :root {{
     --blue:   #0798F2;
     --amber:  #F2AE2E;
+    /* Light-ground steps. The bright accents were tuned against the ink
+       header and fail on the white body: blue 3.10, amber 1.93. These
+       clear 4.6 on white, cream and the Lies tint. */
+    --blue-deep:  #04619A;
+    --amber-deep: #7D5408;
     --terra:  #DC6550;
     --purple: #725ABF;
     --teal:   #01B2A7;
@@ -351,7 +356,7 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
     margin: 0 auto;
   }}
 
-  a {{ color: var(--blue); }}
+  a {{ color: var(--blue-deep); }}
 
   .story-header {{
     background: var(--dark);
@@ -402,7 +407,7 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
     font-family: 'Overpass', sans-serif;
     font-size: 10px;
     font-weight: 700;
-    letter-spacing: 2px;
+    letter-spacing: .1em;
     text-transform: uppercase;
     color: var(--amber);
     margin-bottom: 10px;
@@ -442,12 +447,26 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
   .section-dot {{ width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }}
 
   .section-title {{
-    font-family: 'Overpass', sans-serif;
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 0.5px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 600;
+    font-size: 16px;
+    font-variant: small-caps;
+    letter-spacing: .05em;
     color: var(--dark);
   }}
+
+  /* A descending ladder of certainty, not four categories. Same ramp as the
+     landing page: established, then likely, then plausible, with Lies
+     reversed because it is the negation rather than the fourth rung.
+     Verified on the white section ground: faintest rung 6.36:1, Lies 6.27:1. */
+  .sec-1 .section-title {{ color: var(--dark); }}
+  .sec-2 .section-title {{ color: rgba(38,31,35,0.82); }}
+  .sec-3 .section-title {{ color: rgba(38,31,35,0.72); }}
+  .sec-4 .section-title {{ color: #A73521; font-style: italic; }}
+  .sec-1 .section-dot {{ background: var(--dark); }}
+  .sec-2 .section-dot {{ background: rgba(38,31,35,0.60); }}
+  .sec-3 .section-dot {{ background: rgba(38,31,35,0.34); }}
+  .sec-4 .section-dot {{ background: #A73521; }}
 
   .section-body {{
     padding: 0 20px 22px;
@@ -474,7 +493,7 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
   }}
   .ntk-pq-text {{
     font-family: 'Source Serif 4', serif;
-    font-size: 19px !important;
+    font-size: 20px !important;
     font-weight: 300;
     font-style: italic;
     line-height: 1.5 !important;
@@ -485,13 +504,13 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
     display: block;
     font-family: 'Overpass', sans-serif;
     font-size: 10px;
-    letter-spacing: 1.5px;
+    letter-spacing: .1em;
     text-transform: uppercase;
-    color: var(--blue);
+    color: var(--blue-deep);
     font-style: normal;
   }}
   .ntk-stat {{
-    border-left: 3px solid var(--amber);
+    border-left: 3px solid var(--amber-deep);
     margin: 18px 0;
     padding: 14px 16px;
     background: rgba(242,174,46,0.05);
@@ -500,13 +519,13 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
     font-family: 'Overpass', sans-serif;
     font-size: 34px;
     font-weight: 700;
-    color: var(--amber);
+    color: var(--amber-deep);
     line-height: 1.1;
     margin-bottom: 5px;
   }}
   .ntk-stat-ctx {{
     font-family: 'Source Serif 4', serif;
-    font-size: 14px;
+    font-size: 13px;
     color: rgba(38,31,35,0.72);
     line-height: 1.5;
   }}
@@ -518,7 +537,7 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
     font-family: 'Overpass', sans-serif;
     font-size: 13px;
     font-weight: 600;
-    color: var(--blue);
+    color: var(--blue-deep);
     text-decoration: none;
   }}
 </style>
@@ -545,33 +564,33 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
 
   <div class="story-sections">
 
-    <div class="story-section">
+    <div class="story-section sec-1">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--blue);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Truths — What Happened</span>
       </div>
       <div class="section-body">{truth}</div>
     </div>
 
-    <div class="story-section">
+    <div class="story-section sec-2">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--purple);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Probabilities — What Will Likely Happen</span>
       </div>
       <div class="section-body">{prob}</div>
     </div>
 
-    <div class="story-section">
+    <div class="story-section sec-3">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--teal);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Possibilities — What Could Happen</span>
       </div>
       <div class="section-body">{poss}</div>
     </div>
 
-    <div class="story-section lies-section">
+    <div class="story-section lies-section sec-4">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--terra);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Lies / Narrative Distortions</span>
       </div>
       <div class="section-body">{lies}</div>

@@ -21,6 +21,11 @@
   :root {
     --blue:   #0798F2;
     --amber:  #F2AE2E;
+    /* Light-ground steps. The bright accents were tuned against the ink
+       header and fail on the white body: blue 3.10, amber 1.93. These
+       clear 4.6 on white, cream and the Lies tint. */
+    --blue-deep:  #04619A;
+    --amber-deep: #7D5408;
     --terra:  #DC6550;
     --purple: #725ABF;
     --teal:   #01B2A7;
@@ -38,7 +43,7 @@
     margin: 0 auto;
   }
 
-  a { color: var(--blue); }
+  a { color: var(--blue-deep); }
 
   .story-header {
     background: var(--dark);
@@ -89,7 +94,7 @@
     font-family: 'Overpass', sans-serif;
     font-size: 10px;
     font-weight: 700;
-    letter-spacing: 2px;
+    letter-spacing: .1em;
     text-transform: uppercase;
     color: var(--amber);
     margin-bottom: 10px;
@@ -129,12 +134,25 @@
   .section-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
   .section-title {
-    font-family: 'Overpass', sans-serif;
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 0.5px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 600;
+    font-size: 16px;
+    font-variant: small-caps;
+    letter-spacing: .05em;
     color: var(--dark);
   }
+
+  /* A descending ladder of certainty, not four categories. Same ramp as the
+     landing page: established, then likely, then plausible, with Lies
+     reversed because it is the negation rather than the fourth rung. */
+  .sec-1 .section-title { color: var(--dark); }
+  .sec-2 .section-title { color: rgba(38,31,35,0.82); }
+  .sec-3 .section-title { color: rgba(38,31,35,0.72); }
+  .sec-4 .section-title { color: #A73521; font-style: italic; }
+  .sec-1 .section-dot { background: var(--dark); }
+  .sec-2 .section-dot { background: rgba(38,31,35,0.60); }
+  .sec-3 .section-dot { background: rgba(38,31,35,0.34); }
+  .sec-4 .section-dot { background: #A73521; }
 
   .section-body {
     padding: 0 20px 22px;
@@ -161,7 +179,7 @@
   }
   .ntk-pq-text {
     font-family: 'Source Serif 4', serif;
-    font-size: 19px !important;
+    font-size: 20px !important;
     font-weight: 300;
     font-style: italic;
     line-height: 1.5 !important;
@@ -172,13 +190,13 @@
     display: block;
     font-family: 'Overpass', sans-serif;
     font-size: 10px;
-    letter-spacing: 1.5px;
+    letter-spacing: .1em;
     text-transform: uppercase;
-    color: var(--blue);
+    color: var(--blue-deep);
     font-style: normal;
   }
   .ntk-stat {
-    border-left: 3px solid var(--amber);
+    border-left: 3px solid var(--amber-deep);
     margin: 18px 0;
     padding: 14px 16px;
     background: rgba(242,174,46,0.05);
@@ -187,13 +205,13 @@
     font-family: 'Overpass', sans-serif;
     font-size: 34px;
     font-weight: 700;
-    color: var(--amber);
+    color: var(--amber-deep);
     line-height: 1.1;
     margin-bottom: 5px;
   }
   .ntk-stat-ctx {
     font-family: 'Source Serif 4', serif;
-    font-size: 14px;
+    font-size: 13px;
     color: rgba(38,31,35,0.72);
     line-height: 1.5;
   }
@@ -205,7 +223,7 @@
     font-family: 'Overpass', sans-serif;
     font-size: 13px;
     font-weight: 600;
-    color: var(--blue);
+    color: var(--blue-deep);
     text-decoration: none;
   }
 </style>
@@ -232,33 +250,33 @@
 
   <div class="story-sections">
 
-    <div class="story-section">
+    <div class="story-section sec-1">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--blue);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Truths — What Happened</span>
       </div>
       <div class="section-body"><p><strong>Annie Dillard Died at 81, and the Book She Wrote at 27 Is Still the One People Mean When They Say "Nature Writing."</strong> Dillard was born in Pittsburgh and living outside Roanoke, Virginia, in her mid-20s when she started keeping notebooks on Tinker Creek, a small waterway near her house that most people would drive past without noticing (<a href="https://www.theguardian.com/books/2026/sep/16/annie-dillard-author-pulitzer-prize-dies" target="_blank" rel="noopener">The Guardian</a>). The book that came out of those notebooks won the Pulitzer Prize for General Nonfiction in 1975, when Dillard was 29, making her one of the youngest writers ever to receive it (<a href="https://www.washingtonpost.com/obituaries/2026/09/16/annie-dillard-pulitzer-winning-author-pilgrim-tinker-creek-dies-81/" target="_blank" rel="noopener">Washington Post</a>). She died Tuesday at 81 (<a href="https://www.nytimes.com/2026/09/16/books/annie-dillard-dead.html" target="_blank" rel="noopener">New York Times</a>).</p><p>That a first-time author working alone in rural Virginia produced a book that reshaped how American writers approach the natural world was not a fluke anyone could easily repeat, including Dillard herself.</p><p><strong>Every Obituary This Week Is Reaching for the Same Word: Attention.</strong> Dillard's method was not travel or expedition writing. It was sitting still long enough that a creek stopped being scenery and started being an argument about violence, beauty and the difficulty of believing in a benevolent God while watching a frog get eaten alive from the inside by a giant water bug (<a href="https://www.theguardian.com/books/2026/sep/16/annie-dillard-author-pulitzer-prize-dies" target="_blank" rel="noopener">The Guardian</a>). That scene became one of the most quoted passages in modern American essay writing, cited by teachers and writers for decades as the moment nature writing stopped being polite (<a href="https://www.washingtonpost.com/obituaries/2026/09/16/annie-dillard-pulitzer-winning-author-pilgrim-tinker-creek-dies-81/" target="_blank" rel="noopener">Washington Post</a>). She went on to write more than a dozen books across five decades, moving between memoir, theology and fiction, but "Pilgrim at Tinker Creek" remained the one that defined her, the book generations of MFA students were assigned first and imitated worst (<a href="https://www.nytimes.com/2026/09/16/books/annie-dillard-dead.html" target="_blank" rel="noopener">New York Times</a>).</p><div class="ntk-stat"><div class="ntk-stat-num">1 year</div><div class="ntk-stat-ctx">Dillard spent roughly a year observing Tinker Creek before turning her notebooks into the book that won the Pulitzer.</div></div><p>The writers she trained without ever teaching a formal class are the ones left carrying the method forward now that she is gone.</p></div>
     </div>
 
-    <div class="story-section">
+    <div class="story-section sec-2">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--purple);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Probabilities — What Will Likely Happen</span>
       </div>
       <div class="section-body"><p><em>The obituaries this week are the easy part. The next few weeks decide what gets said about her once the news hook is gone.</em></p><p><strong>College Syllabi Built Around "Pilgrim at Tinker Creek" Will Face a Quiet Test This Fall.</strong> English departments that have assigned the book for decades will now teach it as the work of a writer whose full shelf is closed, not one still adding to it. The most likely outcome is a wave of syllabus notes and course descriptions rewritten in the next two weeks to frame Dillard as a completed body of work rather than a living influence, the same shift that happened to Joan Didion's course listings after her death. That reframing matters for which of her other books get assigned alongside the famous one. Professors who only ever taught the Tinker Creek chapter on the water bug now have cover to expand into her later theological writing, the harder, less anthologized material that never had the same classroom foothold while she was alive to overshadow it with the one book everyone already knew.</p><p>That shift in the classroom will show up in bookstores within days.</p><p><strong>Independent Bookstores Will Restock "Pilgrim at Tinker Creek" Faster Than Publishers Can Confirm New Print Runs.</strong> Death-driven demand spikes for backlist titles typically clear existing inventory within a week, and Dillard's publisher will almost certainly announce a reprint run before the end of the month to meet it. The stakes here are small but real for independent booksellers, who tend to see a bigger share of the bump than chain retailers because staff picks and in-store obituary displays drive backlist sales more than algorithmic recommendation does. Watch whether her publisher times the reprint with a reissued introduction or afterword, the standard move for extending a bump past the first two weeks of attention. If that introduction comes from a writer she directly influenced rather than a critic, it will be a signal the publisher is positioning her as a lineage to be claimed, not just a name to be mourned.</p><div class="ntk-stat"><div class="ntk-stat-num">2 weeks</div><div class="ntk-stat-ctx">The typical window in which a backlist demand spike either turns into a sustained reprint or fades back to baseline sales.</div></div><p>The bigger question is not what happens to the book. It's what happens to the method now that the person who modeled it is gone. Dillard proved that a year of sitting still by a creek could out-write a lifetime of reporting from further away, and the writers who learned that from her, mostly without ever meeting her, will spend the next two weeks being asked by editors and interviewers to say so publicly. Some of them will. The ones who don't are probably the ones who understood her best.</p></div>
     </div>
 
-    <div class="story-section">
+    <div class="story-section sec-3">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--teal);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Possibilities — What Could Happen</span>
       </div>
       <div class="section-body"><p><em>The question underneath the obituaries is what a solitary method does once it stops belonging to one solitary woman.</em></p><p><strong>A Theological Dillard Revival Becomes Newly Reachable Now That the Classroom Reframe Is Already Underway.</strong> Probabilities laid out the mechanism: professors who never had room to teach anything past the water bug scene now have cover to assign her later work, the harder theological material that spent decades in the shadow of one book. That door, once opened, leads to a second one. Dillard's late writing wrestled openly with the same question the creek scene only implied, whether a universe built on predation and waste can still be called the work of a benevolent God. A writer's death does not usually revive an argument. But a syllabus reshuffle that puts "Holy the Firm" or "For the Time Being" next to "Pilgrim at Tinker Creek" for the first time creates a version of Dillard that undergraduates in 2026, most of them reading her for the first time either way, will meet as a theologian first and a nature writer second. That combination, new syllabus plus a publisher already moving on reprints, did not exist two weeks ago. It exists now because both institutions are reacting to the same death on the same timeline.</p><p><strong>If the Reissued Introduction Goes to a Writer, Not a Critic, a Living Claimant to the Method Gets Named in Public.</strong> This follows directly from the syllabus and reprint doors above. Probabilities flagged the introduction choice as a signal worth watching. Walk through that door and a specific new possibility opens: whoever gets chosen becomes, by that single editorial decision, the person publishers and critics point to when they need someone to speak for what Dillard did. That is not a title anyone currently holds. Nature and memoir writing has plenty of admirers of "Pilgrim at Tinker Creek" but no single acknowledged heir, mostly because Dillard's method, a year of sitting still, resists the kind of career-building visibility that produces heirs. A publisher naming someone in an introduction would be the first institutional act of succession the genre has had in decades. It would also invite the obvious backlash, other writers who spent just as long staring at just as small a piece of water, publicly declining to be second.</p><p><strong>A Reader-Facing Return to Slowness Is the Door This Opens That Doesn't Require Anyone Losing.</strong> Every possibility above has a winner and an implied someone left out. This one doesn't need that shape. Dillard's death, landing the same week attention itself is the thing every industry claims to be fighting for, gives outlets, teachers and publishers a live, specific example to point to instead of an abstract argument about slowing down. A year on one creek produced a Pulitzer at 29. That fact, already sitting in every obituary this week, is available right now as an argument for a kind of attention that has no metrics attached to it and no algorithm behind it. Whether anyone acts on it is a different question. But the argument didn't have this good an example to stand on before Tuesday.</p></div>
     </div>
 
-    <div class="story-section lies-section">
+    <div class="story-section lies-section sec-4">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--terra);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Lies / Narrative Distortions</span>
       </div>
       <div class="section-body"><p>[INSUFFICIENT SOURCE MATERIAL]</p><p>The source articles establish only the facts of Dillard's death, career and the reception of her work. None of the three obituaries document a false or manipulative claim in active circulation by a named actor about Dillard, her legacy or her death. Manufacturing a lie to fill this section would violate the standing rule against inventing claims not supported by the source material.</p></div>

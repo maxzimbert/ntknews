@@ -21,6 +21,11 @@
   :root {
     --blue:   #0798F2;
     --amber:  #F2AE2E;
+    /* Light-ground steps. The bright accents were tuned against the ink
+       header and fail on the white body: blue 3.10, amber 1.93. These
+       clear 4.6 on white, cream and the Lies tint. */
+    --blue-deep:  #04619A;
+    --amber-deep: #7D5408;
     --terra:  #DC6550;
     --purple: #725ABF;
     --teal:   #01B2A7;
@@ -38,7 +43,7 @@
     margin: 0 auto;
   }
 
-  a { color: var(--blue); }
+  a { color: var(--blue-deep); }
 
   .story-header {
     background: var(--dark);
@@ -89,7 +94,7 @@
     font-family: 'Overpass', sans-serif;
     font-size: 10px;
     font-weight: 700;
-    letter-spacing: 2px;
+    letter-spacing: .1em;
     text-transform: uppercase;
     color: var(--amber);
     margin-bottom: 10px;
@@ -129,12 +134,25 @@
   .section-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
   .section-title {
-    font-family: 'Overpass', sans-serif;
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 0.5px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 600;
+    font-size: 16px;
+    font-variant: small-caps;
+    letter-spacing: .05em;
     color: var(--dark);
   }
+
+  /* A descending ladder of certainty, not four categories. Same ramp as the
+     landing page: established, then likely, then plausible, with Lies
+     reversed because it is the negation rather than the fourth rung. */
+  .sec-1 .section-title { color: var(--dark); }
+  .sec-2 .section-title { color: rgba(38,31,35,0.82); }
+  .sec-3 .section-title { color: rgba(38,31,35,0.72); }
+  .sec-4 .section-title { color: #A73521; font-style: italic; }
+  .sec-1 .section-dot { background: var(--dark); }
+  .sec-2 .section-dot { background: rgba(38,31,35,0.60); }
+  .sec-3 .section-dot { background: rgba(38,31,35,0.34); }
+  .sec-4 .section-dot { background: #A73521; }
 
   .section-body {
     padding: 0 20px 22px;
@@ -161,7 +179,7 @@
   }
   .ntk-pq-text {
     font-family: 'Source Serif 4', serif;
-    font-size: 19px !important;
+    font-size: 20px !important;
     font-weight: 300;
     font-style: italic;
     line-height: 1.5 !important;
@@ -172,13 +190,13 @@
     display: block;
     font-family: 'Overpass', sans-serif;
     font-size: 10px;
-    letter-spacing: 1.5px;
+    letter-spacing: .1em;
     text-transform: uppercase;
-    color: var(--blue);
+    color: var(--blue-deep);
     font-style: normal;
   }
   .ntk-stat {
-    border-left: 3px solid var(--amber);
+    border-left: 3px solid var(--amber-deep);
     margin: 18px 0;
     padding: 14px 16px;
     background: rgba(242,174,46,0.05);
@@ -187,13 +205,13 @@
     font-family: 'Overpass', sans-serif;
     font-size: 34px;
     font-weight: 700;
-    color: var(--amber);
+    color: var(--amber-deep);
     line-height: 1.1;
     margin-bottom: 5px;
   }
   .ntk-stat-ctx {
     font-family: 'Source Serif 4', serif;
-    font-size: 14px;
+    font-size: 13px;
     color: rgba(38,31,35,0.72);
     line-height: 1.5;
   }
@@ -205,7 +223,7 @@
     font-family: 'Overpass', sans-serif;
     font-size: 13px;
     font-weight: 600;
-    color: var(--blue);
+    color: var(--blue-deep);
     text-decoration: none;
   }
 </style>
@@ -232,33 +250,33 @@
 
   <div class="story-sections">
 
-    <div class="story-section">
+    <div class="story-section sec-1">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--blue);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Truths — What Happened</span>
       </div>
       <div class="section-body"><p><strong>Mike Johnson Sent 435 Lawmakers Home a Day Early to Dodge One Vote.</strong> Rep. Thomas Massie filed articles of impeachment against Defense Secretary Pete Hegseth on Tuesday, timed as a privileged resolution that gave Johnson two legislative days to act (<a href="https://www.cbsnews.com/news/house-cancels-votes-adjourning-midterms/" target="_blank" rel="noopener">CBS News</a>). Johnson found a third option: cancel Thursday's session entirely, sending the House home for seven weeks and pushing the vote past the Nov. 3 midterms (<a href="https://www.nbcnews.com/politics/congress/house-leave-early-punting-hegseth-impeachment-vote-november-elections-rcna598147" target="_blank" rel="noopener">NBC News</a>). He called it routine business, not evasion — "The House has done its work," he told reporters (<a href="https://www.washingtonpost.com/politics/2026/09/16/house-is-heading-home-ahead-midterms-even-earlier-than-planned/" target="_blank" rel="noopener">Washington Post</a>). Massie, who lost his own primary to a Trump-backed challenger, had told no one in leadership his plans, precisely so they couldn't head him off before he got his hour and 20 minutes on the floor (<a href="https://www.usatoday.com/story/news/politics/2026/09/16/house-republicans-leave-congress-hegseth-impeachment/91790913007/" target="_blank" rel="noopener">USA Today</a>). He was right to worry. Now the resolution waits until Nov. 9, when Johnson has already told reporters it will be "immediately tabled" (<a href="https://www.cnbc.com/2026/09/16/hegseth-impeachment-house-election-recess.html" target="_blank" rel="noopener">CNBC</a>).</p><p>That evasion only makes sense next to what members were being asked to go on record about. The House voted 220-204 on Tuesday to end the Iran war for the third time, and this time seven Republicans crossed over, up from four in earlier votes (<a href="https://www.cbsnews.com/minnesota/news/iowa-republicans-battleground-house-vote-halt-iran-war/" target="_blank" rel="noopener">CBS News</a>). Two of them were Iowa's Zach Nunn and Mariannette Miller-Meeks, both in battleground districts, both reversing votes they'd cast in support of Trump's war policy months earlier. Nunn had campaigned with Hegseth at the Iowa State Fair last month, where Hegseth called him "not a 3 a.m. congressman" for never needing a late-night call to fall in line (<a href="https://www.pbs.org/newshour/politics/iowa-republicans-in-battleground-house-races-join-vote-to-halt-the-iran-war" target="_blank" rel="noopener">PBS.org</a>). Nunn fell out of line anyway: "I will not support another open-ended war," he posted, citing the closed negotiating window. Miller-Meeks pointed to Iowans "paying too much at the pump." Eighteen U.S. service members have died in the war so far, two of them Iowans.</p><div class="ntk-stat"><div class="ntk-stat-num">$38 billion</div><div class="ntk-stat-ctx">what the Iran war has cost the Pentagon through Aug. 1, according to the Congressional Budget Office.</div></div><p>The money explains why the votes kept shifting. CBO put the war's cost at $38 billion and climbing, up to $3 billion more a month, a figure that roughly matches Hegseth's own $37.5 billion estimate to the Senate (<a href="https://www.pbs.org/newshour/world/iran-war-has-cost-the-u-s-more-than-38-billion-so-far-budget-office-says" target="_blank" rel="noopener">PBS.org</a>). CBO said the war will keep pushing inflation higher into 2027, driven by disrupted oil shipping through the Strait of Hormuz. The Pentagon, breaking with normal practice, declined to answer CBO's request for information altogether. Rep. Brendan Boyle, the request's author, drew the plain conclusion: "Donald Trump and Republicans have spent years telling Americans that we cannot afford to help families here at home, but apparently they can find tens of billions of dollars ... for a reckless war that is leaving Americans to pay the price." Only about 3 in 10 Americans approve of how Trump has handled Iran, and roughly 6 in 10 likely voters call the decision to go to war wrong (<a href="https://www.cbsnews.com/minnesota/news/iowa-republicans-battleground-house-vote-halt-iran-war/" target="_blank" rel="noopener">CBS News</a>). Johnson sent everyone home before any more of his members had to say which side of that they were on.</p></div>
     </div>
 
-    <div class="story-section">
+    <div class="story-section sec-2">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--purple);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Probabilities — What Will Likely Happen</span>
       </div>
       <div class="section-body"><p><em>Nine days of votes canceled this month, seven weeks of silence to follow — and the two things Republicans most needed to avoid are exactly the two things that will be waiting for them when they get back.</em></p><p><strong>The Impeachment Vote Doesn't Disappear. It Just Gets a New Date and the Same Math.</strong> Johnson has already told reporters what happens Nov. 9: the Hegseth resolution gets "immediately tabled." That's the most likely outcome, and it's not close — Massie's own party controls the floor and has shown no appetite to actually remove a sitting Defense secretary. But tabling a resolution and making the underlying problem vanish are different things. The seven Republicans who crossed over on the war powers vote — Nunn and Miller-Meeks foremost among them, both defending seats Trump won — will have spent seven weeks campaigning in districts where gas and diesel prices are the story, not Hegseth's chain of command. A tabling vote forces them to choose again, this time with Election Day closer and their primary defense — "I already broke with the administration on the war" — sitting right there in the record. Watch whether Johnson schedules the tabling vote before or after Nov. 3. If he waits until the lame-duck window, he's protecting incumbents who haven't voted yet. If he moves it up, he's decided the exposure is smaller than the appearance of stalling.</p><p>That calculation runs into a second one Johnson can't table away.</p><p><strong>The LinkedIn Subpoena Fight Will Produce a Ruling Before the House Comes Back.</strong> The Fourth Circuit panel is weighing LinkedIn's challenge now, and appellate courts in cases already argued typically rule in weeks, not months — which means a decision is plausible before Nov. 9, not after. Judge Wilkinson's own words in the hearing — that he was "looking for a balance" and wanted the government to avoid "the absolutist position" — read like a judge telegraphing a narrowed order, not a win for Attorney General Todd Blanche. If the panel forces DOJ to identify its target or narrow the request from 1,900 interactions down to something defensible, that ruling becomes public exactly as Hegseth's leak investigations are already the subject of a Pentagon inspector general's "strategic inventory shortfalls" finding and a wave of leaked battle-damage photos DOJ has been unable to trace. A narrowed order doesn't just embarrass Blanche's office. It tells the service members who leaked the E-3 Sentry photos that the legal net reaching for them has holes in it, which will almost certainly encourage more disclosures, not fewer, in the seven weeks Congress is gone and no one in Washington is required to answer questions about either war.</p></div>
     </div>
 
-    <div class="story-section">
+    <div class="story-section sec-3">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--teal);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Possibilities — What Could Happen</span>
       </div>
       <div class="section-body"><p><em>The empty chamber does not empty the incentives that filled it — those find new rooms to work in, and this week opened two of them.</em></p><p><strong>Massie's Epstein Petition Just Got a New Reason to Succeed.</strong> Massie was at 190-plus signatures on his Epstein discharge petition when Johnson sent everyone home, 28 short of the 218 he needs (<a href="https://www.thedailybeast.com/mike-johnson-finds-crazed-way-to-avoid-thomas-massies-hegseth-impeachment-vote/" target="_blank" rel="noopener">The Daily Beast</a>). Before this week, the petition and the Hegseth impeachment were two separate fights, run by the same man but pulling different coalitions. That's no longer true. Massie's read of the recess — that Johnson canceled the vote specifically to protect vulnerable members from an on-the-record choice — is now something Nunn, Miller-Meeks, and the five other Republicans who flipped on the war powers vote have watched happen to a colleague in real time. A member who already crossed party lines once this month, on a vote that mattered less to leadership than impeachment, has a smaller hill to climb crossing again on Epstein, especially with seven weeks in the district to test whether primary voters punish that or reward it. The combination that's newly available isn't "Massie wants signatures," which was always true. It's that Johnson's own maneuver just handed Massie a fresh, concrete example — timed within the same news cycle — of leadership sidestepping accountability, which is the exact argument Massie needs to peel off members who'd otherwise worry about crossing Trump twice in one term.</p><p>That petition fight doesn't stay contained to Epstein once it's moving.</p><p><strong>A Successful Discharge Petition Becomes the Template for Forcing the Hegseth Vote Early.</strong> This is the room that only opens if the first door does. A discharge petition is a mechanism, not a cause — it works the same way whether the subject is Epstein files or a tabled impeachment resolution. If Massie reaches 218 signatures on Epstein while Congress is out, he will have proven, in public, that a bipartisan bloc of members can be assembled to force leadership's hand without Johnson's cooperation. Nothing stops that same mechanism from being pointed at Hegseth's Nov. 9 tabling vote once members are back — except that until this week, nobody had shown it could actually reach 218. A successful Epstein petition is the proof of concept; the Hegseth resolution is the next available target for the same 28 or so votes, drawn from a pool that already includes seven Republicans on record wanting out of the war. Johnson's plan to table the impeachment "immediately" assumes he still controls the floor. A working discharge petition is the one tool that says he doesn't have to.</p><p>Not every door this week opened leads somewhere worse for the institution.</p><p><strong>The Fourth Circuit Ruling Becomes the Occasion for a Bipartisan Leak-Protection Bill.</strong></p><div class="ntk-pullquote"><p class="ntk-pq-text">I would submit that the path to strike that balance is to reject the absolutist position that the government has advocated in this court.</p><cite class="ntk-pq-cite">Ari Holtzblatt, attorney for LinkedIn</cite></div><p>A narrowed order against DOJ, landing in the same seven-week window as a proven discharge-petition mechanism and a caucus of Republicans already comfortable breaking with Blanche's Justice Department over Iran, gives Massie or Fitzpatrick a concrete court record to legislate from rather than a hypothetical. Congress has passed reporter-shield language before in bipartisan pushes; what's new is that a Reagan-appointed judge, a war going badly enough to produce leaked battle-damage photos, and a discharge petition that already works would all exist in the same room at the same time. That's not a possibility available last month. It is one now.</p></div>
     </div>
 
-    <div class="story-section lies-section">
+    <div class="story-section lies-section sec-4">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--terra);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Lies / Narrative Distortions</span>
       </div>
       <div class="section-body"><p><em>The line Republicans are using to explain the recess doesn't survive contact with the calendar they wrote it around, and Hegseth's own spokeswoman has one that doesn't survive contact with the inspector general.</em></p><p><strong>Mike Johnson Says Sending Congress Home Has "Nothing to Do With" the Impeachment Vote.</strong> Johnson told reporters the schedule change was routine, that "the House has done its work," and that Massie's resolution was simply a "publicity stunt" that happened to fall on the same week as a pre-planned recess. It's a comfortable story for a Speaker managing a razor-thin majority: nobody dodged anything, the calendar just worked out this way. It's also not true on its own terms. Massie's resolution was filed Tuesday as a privileged measure specifically so Johnson would have only two legislative days to act on it — Thursday was that deadline — and Johnson's spokesperson initially described the cancellation not as a recess adjustment but as votes being "moved up," a distinction that collapsed within a day once Johnson himself told reporters the Hegseth vote would wait until Republicans returned in November. A Speaker who was genuinely indifferent to the timing had no reason to promise, unprompted, that the resolution would be "immediately tabled" once it finally came up. The believers here aren't gullible — nobody wants to think their own Speaker used a floor calendar to hide a colleague's vote from their constituents, so the simpler story, that this was housekeeping, is the one people reach for first. The people it benefits are specific: Zach Nunn and Mariannette Miller-Meeks, both defending Trump-won seats, both already forced to explain one reversal on the war this month, neither of whom now has to explain a second vote on Hegseth before Election Day. A Speaker protecting his majority by controlling what his members are asked to say on the record is not a new idea in Washington; it is, historically, one of the oldest jobs in the building.</p><p>That's the lie about timing. The Pentagon is running a parallel one about substance.</p><p><strong>Pentagon Press Secretary Kingsley Wilson Says the Department Is Performing Better Under Hegseth "By Every Measurable Metric."</strong> Wilson's defense, offered when reporters asked about the impeachment push, was total and specific in its confidence — not "improving," not "meeting challenges," but better by <em>every</em> measure. It's the kind of claim that answers a fear directly: that the country's military leadership is not, in fact, in over its head during a live war. But a Pentagon inspector general report released the same week found "strategic inventory shortfalls," CBO says the war is still costing up to $3 billion a month with no ceiling in sight, and leaked photographs — which the Pentagon has been unable to trace or stop — show a destroyed E-3 Sentry command plane and battle damage the department "hasn't been communicated to the American public," in the words of one deployed service member. Eighteen dead service members and a war three House votes have now tried to end are not what "every measurable metric" looks like when it's going well. Wilson's statement isn't for the public that's already stopped watching — it's for the Republican members still deciding whether defending Hegseth costs them their seat, and for Trump himself, who has stuck with embattled aides before and needs a talking point to keep doing it now.</p></div>

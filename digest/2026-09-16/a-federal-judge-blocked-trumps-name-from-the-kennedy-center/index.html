@@ -21,6 +21,11 @@
   :root {
     --blue:   #0798F2;
     --amber:  #F2AE2E;
+    /* Light-ground steps. The bright accents were tuned against the ink
+       header and fail on the white body: blue 3.10, amber 1.93. These
+       clear 4.6 on white, cream and the Lies tint. */
+    --blue-deep:  #04619A;
+    --amber-deep: #7D5408;
     --terra:  #DC6550;
     --purple: #725ABF;
     --teal:   #01B2A7;
@@ -38,7 +43,7 @@
     margin: 0 auto;
   }
 
-  a { color: var(--blue); }
+  a { color: var(--blue-deep); }
 
   .story-header {
     background: var(--dark);
@@ -89,7 +94,7 @@
     font-family: 'Overpass', sans-serif;
     font-size: 10px;
     font-weight: 700;
-    letter-spacing: 2px;
+    letter-spacing: .1em;
     text-transform: uppercase;
     color: var(--amber);
     margin-bottom: 10px;
@@ -129,12 +134,25 @@
   .section-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
   .section-title {
-    font-family: 'Overpass', sans-serif;
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 0.5px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 600;
+    font-size: 16px;
+    font-variant: small-caps;
+    letter-spacing: .05em;
     color: var(--dark);
   }
+
+  /* A descending ladder of certainty, not four categories. Same ramp as the
+     landing page: established, then likely, then plausible, with Lies
+     reversed because it is the negation rather than the fourth rung. */
+  .sec-1 .section-title { color: var(--dark); }
+  .sec-2 .section-title { color: rgba(38,31,35,0.82); }
+  .sec-3 .section-title { color: rgba(38,31,35,0.72); }
+  .sec-4 .section-title { color: #A73521; font-style: italic; }
+  .sec-1 .section-dot { background: var(--dark); }
+  .sec-2 .section-dot { background: rgba(38,31,35,0.60); }
+  .sec-3 .section-dot { background: rgba(38,31,35,0.34); }
+  .sec-4 .section-dot { background: #A73521; }
 
   .section-body {
     padding: 0 20px 22px;
@@ -161,7 +179,7 @@
   }
   .ntk-pq-text {
     font-family: 'Source Serif 4', serif;
-    font-size: 19px !important;
+    font-size: 20px !important;
     font-weight: 300;
     font-style: italic;
     line-height: 1.5 !important;
@@ -172,13 +190,13 @@
     display: block;
     font-family: 'Overpass', sans-serif;
     font-size: 10px;
-    letter-spacing: 1.5px;
+    letter-spacing: .1em;
     text-transform: uppercase;
-    color: var(--blue);
+    color: var(--blue-deep);
     font-style: normal;
   }
   .ntk-stat {
-    border-left: 3px solid var(--amber);
+    border-left: 3px solid var(--amber-deep);
     margin: 18px 0;
     padding: 14px 16px;
     background: rgba(242,174,46,0.05);
@@ -187,13 +205,13 @@
     font-family: 'Overpass', sans-serif;
     font-size: 34px;
     font-weight: 700;
-    color: var(--amber);
+    color: var(--amber-deep);
     line-height: 1.1;
     margin-bottom: 5px;
   }
   .ntk-stat-ctx {
     font-family: 'Source Serif 4', serif;
-    font-size: 14px;
+    font-size: 13px;
     color: rgba(38,31,35,0.72);
     line-height: 1.5;
   }
@@ -205,7 +223,7 @@
     font-family: 'Overpass', sans-serif;
     font-size: 13px;
     font-weight: 600;
-    color: var(--blue);
+    color: var(--blue-deep);
     text-decoration: none;
   }
 </style>
@@ -232,33 +250,33 @@
 
   <div class="story-sections">
 
-    <div class="story-section">
+    <div class="story-section sec-1">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--blue);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Truths — What Happened</span>
       </div>
       <div class="section-body"><p>The Kennedy Center's board voted Sept. 16 to close the building for renovations, hours after a federal judge blocked an effort to add President Trump's name to the structure (<a href="https://www.npr.org/2026/09/16/g-s1-143569/up-first-newsletter-fed-reserve-interest-rates-iran-war-kennedy-center-contraception" target="_blank" rel="noopener">NPR</a>). The judge's ruling was described as scathing, a word judges do not reach for when they think a case is close (<a href="https://abcnews.com/Politics/kennedy-center-boards-meeting-exclusively-focus-closure-court/story?id=136454609" target="_blank" rel="noopener">ABC News</a>). Trump responded by threatening to block the renovation entirely unless his name goes back on the building (<a href="https://www.cbsnews.com/video/trump-threatens-to-block-kennedy-center-renovation-over-name-dispute/" target="_blank" rel="noopener">CBS News</a>).</p><p>That threat is the whole story in miniature. A performing arts center named for a assassinated president, funded in part by taxpayers, now sits closed because the man who reshaped its board this year cannot get his name onto the marble. The board's own meeting was consumed almost entirely by the closure and the court fight, according to reporting on the session, leaving little room for anything resembling the center's actual mission of staging opera, ballet and theater (<a href="https://abcnews.com/Politics/kennedy-center-boards-meeting-exclusively-focus-closure-court/story?id=136454609" target="_blank" rel="noopener">ABC News</a>).</p><p><strong>The closure is already producing casualties that have nothing to do with naming rights.</strong> Once the building goes dark for construction, local coverage in Washington raised a separate worry: that parts of the Kennedy Center could face demolition rather than renovation, a possibility that alarms preservationists who note the building's Edward Durell Stone architecture is itself a historical artifact (<a href="https://www.fox5dc.com/news/kennedy-center-closing-after-judge-blocks-trump-name-restoration-demolition-concerns-grow" target="_blank" rel="noopener">Fox 5 DC</a>). That concern traveled from Washington to Atlanta without changing a word, run nearly identically in both markets, a sign of how thin local reporting capacity has gotten even on a story this visible (<a href="https://www.fox5atlanta.com/news/kennedy-center-closing-after-judge-blocks-trump-name-restoration-demolition-concerns-grow" target="_blank" rel="noopener">Fox 5 Atlanta</a>).</p><p>The naming fight did not start with the court ruling. It started when Trump took over the Kennedy Center's board earlier this year and pushed to have his name attached to the building, a move one analysis called evidence of how much of his second term has been spent on questions of his own glorification rather than governance (<a href="https://www.yahoo.com/news/politics/articles/kennedy-center-saga-shows-consumed-125355824.html" target="_blank" rel="noopener">Yahoo News</a>). The renovation itself, the ostensible reason for the closure, is now hostage to that fight. Visitors and performers lose a working arts institution. The judge lost nothing but Trump's patience.</p></div>
     </div>
 
-    <div class="story-section">
+    <div class="story-section sec-2">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--purple);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Probabilities — What Will Likely Happen</span>
       </div>
       <div class="section-body"><p><em>The renovation now depends less on architects than on lawyers, and the next two weeks decide who blinks first.</em></p><p><strong>Trump's team will almost certainly appeal the ruling within days, not weeks.</strong> The judge's language left little room for a quiet settlement, and a White House that treats naming rights as a governance priority does not sit on a scathing loss (<a href="https://abcnews.com/Politics/kennedy-center-boards-meeting-exclusively-focus-closure-court/story?id=136454609" target="_blank" rel="noopener">ABC News</a>). Expect an emergency motion or a notice of appeal filed before the end of September, with Trump continuing to hold the renovation itself hostage in public statements until the naming question is resolved in his favor (<a href="https://www.cbsnews.com/video/trump-threatens-to-block-kennedy-center-renovation-over-name-dispute/" target="_blank" rel="noopener">CBS News</a>). The board he reshaped earlier this year is positioned to lose the most in this scenario. Members who voted for closure now have to explain to donors and performers why a functioning arts institution sits dark over a dispute that has nothing to do with acoustics or plumbing.</p><p>That appeal timeline is what makes the demolition question urgent rather than theoretical. Once a building closes for construction, the gap between "renovation" and "demolition" is not architectural, it is legal exposure, and lawyers on both sides know that an empty building is easier to justify tearing into than an operating one. The most likely outcome over the next two weeks is that preservation advocates in Washington escalate from raising concerns to filing something, whether that is a formal request for landmark review or an intervention in the existing litigation, because the Edward Durell Stone structure has no protection against a board that already answers to Trump (<a href="https://www.fox5dc.com/news/kennedy-center-closing-after-judge-blocks-trump-name-restoration-demolition-concerns-grow" target="_blank" rel="noopener">Fox 5 DC</a>). If that filing comes, it will almost certainly name the board directly rather than the White House, since the board holds the legal authority over the building and its renovation contracts.</p><div class="ntk-stat"><div class="ntk-stat-num">2 legal fronts</div><div class="ntk-stat-ctx">the naming appeal and a possible preservation challenge could now run on separate tracks, each capable of delaying construction independently.</div></div><p>The deeper mechanism here is timing as leverage. Trump does not need to win the appeal to get what he wants. He only needs the building to stay closed long enough that reopening with his name attached becomes the path of least resistance for a board he already controls. The most likely near-term losers are the performers and staff who depend on the Kennedy Center's operating calendar, since every week of closure without resolution pushes canceled seasons further into 2027, and no filing schedule in this fight currently protects them.</p></div>
     </div>
 
-    <div class="story-section">
+    <div class="story-section sec-3">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--teal);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Possibilities — What Could Happen</span>
       </div>
       <div class="section-body"><p><em>The board Trump reshaped now has to decide whether it works for him or for the institution, and that choice opens rooms nobody on either side has priced in yet.</em></p><p><strong>A board member could break ranks and sue their own board.</strong> The Kennedy Center's trustees are not a monolith just because Trump remade the roster. Some were appointed for arts credentials, not political loyalty, and a closure that cancels seasons and alienates donors gives at least one of them a reason to peel off. The combination that just became newly available is this: a sitting trustee, sympathetic to preservationists already circling the Edward Durell Stone building, could file or support a legal challenge against the very board they sit on, arguing the closure vote itself was driven by the naming dispute rather than any genuine renovation need. That argument didn't exist as a legal theory until the judge's ruling made the naming motive explicit and public. A defector trustee would not need to win. They would only need to put board deliberations into discovery, which is the one thing a board that answers to Trump cannot afford.</p><p>That kind of internal fracture is what makes the next door visible. <strong>If a trustee defects, the preservation fight and the naming fight merge into one case instead of two parallel tracks.</strong> Right now those are separate legal fronts moving at separate speeds. A defecting board member with standing and inside knowledge of the closure vote could hand preservationists exactly what they lack on their own: proof that "renovation" was the board's cover story for a fight over marble lettering. Merge those tracks and the demolition question stops being a local news worry and becomes Exhibit A in a case about board governance itself, which is a much harder thing for Trump's team to spin as a fight over "his" name.</p><p>There is a door here that opens somewhere better, and it runs through Congress rather than the courthouse. The Kennedy Center was created by federal statute as a living memorial, which means lawmakers who have stayed quiet through the naming fight have standing they haven't used. A single member of Congress, from either party, could introduce legislation clarifying that the center's federal charter bars name changes tied to sitting presidents, converting a court fight that depends on one judge's patience into a durable statutory rule. That bill wouldn't have been reachable last month, before a federal judge put the word "scathing" on the record and before Fox affiliates in two cities ran matching demolition warnings that made preservation a bipartisan-flavored local story instead of a partisan one. A member looking for a low-risk, high-visibility fight against executive overreach just got handed one that doesn't require attacking Trump directly at all. It only requires defending a dead president's name.</p></div>
     </div>
 
-    <div class="story-section lies-section">
+    <div class="story-section lies-section sec-4">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--terra);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Lies / Narrative Distortions</span>
       </div>
       <div class="section-body"><p><em>The people defending the closure aren't defending the closure. They're defending a story about who owns the building's memory.</em></p><p><strong>Trump says the renovation delay is the judge's fault, not his.</strong> In his public statements threatening to block the renovation, Trump has framed the standoff as the court obstructing progress on a building that badly needs work, rather than what the ruling itself describes: a judge stopping him from attaching his name to a structure Congress designated as a memorial to a different president (<a href="https://www.cbsnews.com/video/trump-threatens-to-block-kennedy-center-renovation-over-name-dispute/" target="_blank" rel="noopener">CBS News</a>). The claim works because it flips the sequence. The renovation was never blocked by the court. The court blocked the name. Trump is the one holding the renovation hostage, by his own stated terms, until the naming question resolves in his favor. Believing his version costs a reader almost nothing in the moment. It requires accepting a simpler story, that a judge is playing politics with a building's future, instead of a more uncomfortable one, that a sitting president is willing to leave a national arts institution dark rather than lose a fight over lettering.</p><p>The people who benefit from that flipped sequence are not hard to find. A board Trump reshaped this year gets political cover for a closure vote that a judge's own language ties directly to the naming fight, not to plumbing or acoustics (<a href="https://abcnews.com/Politics/kennedy-center-boards-meeting-exclusively-focus-closure-court/story?id=136454609" target="_blank" rel="noopener">ABC News</a>). If the public believes the delay is judicial obstruction, the board never has to answer for a vote made almost entirely about a lawsuit, according to the reporting on that meeting, rather than about the building's actual condition. Trump gets something too. Every day the closure drags on, framed as the court's fault, is a day his name stays the more sympathetic answer to "why is this closed," instead of the cause of it.</p><div class="ntk-pullquote"><p class="ntk-pq-text">scathing</p><cite class="ntk-pq-cite">the word the judge's ruling earned, and the word Trump's version of events has no room for</cite></div><p>The historical parallel is not subtle. Presidents have tried to attach their names to public works before, but rarely has one argued that a court's refusal to grant a naming request is itself an act of obstruction against the public. That inversion, harm reframed as the fault of whoever stopped it, is the tell. It is not a disagreement about renovation timelines. It is a claim built to survive contact with a ruling that already said otherwise.</p></div>

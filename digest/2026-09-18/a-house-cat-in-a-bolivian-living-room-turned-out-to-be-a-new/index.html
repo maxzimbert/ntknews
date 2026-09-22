@@ -21,6 +21,11 @@
   :root {
     --blue:   #0798F2;
     --amber:  #F2AE2E;
+    /* Light-ground steps. The bright accents were tuned against the ink
+       header and fail on the white body: blue 3.10, amber 1.93. These
+       clear 4.6 on white, cream and the Lies tint. */
+    --blue-deep:  #04619A;
+    --amber-deep: #7D5408;
     --terra:  #DC6550;
     --purple: #725ABF;
     --teal:   #01B2A7;
@@ -38,7 +43,7 @@
     margin: 0 auto;
   }
 
-  a { color: var(--blue); }
+  a { color: var(--blue-deep); }
 
   .story-header {
     background: var(--dark);
@@ -89,7 +94,7 @@
     font-family: 'Overpass', sans-serif;
     font-size: 10px;
     font-weight: 700;
-    letter-spacing: 2px;
+    letter-spacing: .1em;
     text-transform: uppercase;
     color: var(--amber);
     margin-bottom: 10px;
@@ -129,12 +134,25 @@
   .section-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
   .section-title {
-    font-family: 'Overpass', sans-serif;
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 0.5px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 600;
+    font-size: 16px;
+    font-variant: small-caps;
+    letter-spacing: .05em;
     color: var(--dark);
   }
+
+  /* A descending ladder of certainty, not four categories. Same ramp as the
+     landing page: established, then likely, then plausible, with Lies
+     reversed because it is the negation rather than the fourth rung. */
+  .sec-1 .section-title { color: var(--dark); }
+  .sec-2 .section-title { color: rgba(38,31,35,0.82); }
+  .sec-3 .section-title { color: rgba(38,31,35,0.72); }
+  .sec-4 .section-title { color: #A73521; font-style: italic; }
+  .sec-1 .section-dot { background: var(--dark); }
+  .sec-2 .section-dot { background: rgba(38,31,35,0.60); }
+  .sec-3 .section-dot { background: rgba(38,31,35,0.34); }
+  .sec-4 .section-dot { background: #A73521; }
 
   .section-body {
     padding: 0 20px 22px;
@@ -161,7 +179,7 @@
   }
   .ntk-pq-text {
     font-family: 'Source Serif 4', serif;
-    font-size: 19px !important;
+    font-size: 20px !important;
     font-weight: 300;
     font-style: italic;
     line-height: 1.5 !important;
@@ -172,13 +190,13 @@
     display: block;
     font-family: 'Overpass', sans-serif;
     font-size: 10px;
-    letter-spacing: 1.5px;
+    letter-spacing: .1em;
     text-transform: uppercase;
-    color: var(--blue);
+    color: var(--blue-deep);
     font-style: normal;
   }
   .ntk-stat {
-    border-left: 3px solid var(--amber);
+    border-left: 3px solid var(--amber-deep);
     margin: 18px 0;
     padding: 14px 16px;
     background: rgba(242,174,46,0.05);
@@ -187,13 +205,13 @@
     font-family: 'Overpass', sans-serif;
     font-size: 34px;
     font-weight: 700;
-    color: var(--amber);
+    color: var(--amber-deep);
     line-height: 1.1;
     margin-bottom: 5px;
   }
   .ntk-stat-ctx {
     font-family: 'Source Serif 4', serif;
-    font-size: 14px;
+    font-size: 13px;
     color: rgba(38,31,35,0.72);
     line-height: 1.5;
   }
@@ -205,7 +223,7 @@
     font-family: 'Overpass', sans-serif;
     font-size: 13px;
     font-weight: 600;
-    color: var(--blue);
+    color: var(--blue-deep);
     text-decoration: none;
   }
 </style>
@@ -232,33 +250,33 @@
 
   <div class="story-sections">
 
-    <div class="story-section">
+    <div class="story-section sec-1">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--blue);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Truths — What Happened</span>
       </div>
       <div class="section-body"><p><strong>A family fed it noodles and eggs for a year before anyone suspected it wasn't a house cat.</strong> In 2016, a man living near La Paz found a small spotted kitten by the road and brought it home, certain it was an ordinary stray (<a href="https://www.nbcnews.com/science/environment/new-wild-cat-species-identified-rcna598113" target="_blank" rel="noopener">NBC News</a>). Within a year, it was hunting the neighbors' chickens, and he surrendered it to the Senda Verde Wildlife Sanctuary (<a href="https://www.aljazeera.com/news/2026/9/18/new-bolivian-cat-claws-its-way-into-species-list-what-we-meow" target="_blank" rel="noopener">Al Jazeera</a>). Sanctuary staff assumed it was an oncilla, a tiger cat species already known from Brazil, and nicknamed it Tigrino. Bolivian biologist Paola Nogales-Ascarrunz, who volunteered there, could not get past its size. "I couldn't believe how small it was," she said. "I thought that this must be a young cat, or maybe a kitten" (<a href="https://www.nytimes.com/2026/09/18/science/tilcayo-new-cat-species-bolivia.html" target="_blank" rel="noopener">The New York Times</a>). It was fully grown, at barely 3 pounds against an oncilla's 7.</p><p>That hunch sat unresolved for three more years, because a photograph, not a lab result, is what finally moved it. While compiling a guidebook on Bolivian wildcats in 2019, Nogales-Ascarrunz set her photos of Tigrino next to reference images of oncillas and saw the rosettes didn't match; his were bigger, his face rounder (<a href="https://www.nytimes.com/2026/09/18/science/tilcayo-new-cat-species-bolivia.html" target="_blank" rel="noopener">The New York Times</a>). That observation sent her looking for a geneticist, and she found two: Eduardo Eizirik and Jonas Lescroart, who were separately compiling tiger cat DNA from museum specimens across South America. The three teams pooled data on 38 cats from multiple countries, including eight century-old museum skulls, and the analysis split what scientists had long treated as one sprawling species into five (<a href="https://www.reuters.com/business/environment/new-cat-species-identified-bolivia-first-over-century-2026-09-17/" target="_blank" rel="noopener">Reuters</a>). Tigrino's lineage, now named Leopardus tilcayo for the local name Tilcayo, broke off roughly 1.4 million years ago, a genetic gap Lescroart said is enough to mark a new species on its own. "We never expected this Bolivian tiger cat to be a separate species, and no one had ever proposed it as a different animal, subspecies or otherwise," he said (<a href="https://www.reuters.com/business/environment/new-cat-species-identified-bolivia-first-over-century-2026-09-17/" target="_blank" rel="noopener">Reuters</a>).</p><p>The paperwork now has to catch up to the taxonomy. The IUCN currently lists tiger cats as two vulnerable species, a classification built on the assumption of one wide-ranging animal rather than five narrow ones (<a href="https://www.reuters.com/business/environment/new-cat-species-identified-bolivia-first-over-century-2026-09-17/" target="_blank" rel="noopener">Reuters</a>). Eizirik put the stakes plainly: treat the group as a single cat spread from Costa Rica to southern Brazil and it looks safe; treat it as five, and each one has to be judged on its own ground, against deforestation, fire and mining closing in on the Yungas (<a href="https://www.jpost.com/omg/article-909025" target="_blank" rel="noopener">The Jerusalem Post</a>). The researchers have already sent their findings to the IUCN for a lineage-by-lineage review, and Lescroart said the Tilcayo could land on the endangered list once it's assessed alone rather than folded into a species that no longer exists on paper (<a href="https://www.reuters.com/business/environment/new-cat-species-identified-bolivia-first-over-century-2026-09-17/" target="_blank" rel="noopener">Reuters</a>). Tigrino, the cat who started it, still lives at the sanctuary that once thought he was ordinary.</p></div>
     </div>
 
-    <div class="story-section">
+    <div class="story-section sec-2">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--purple);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Probabilities — What Will Likely Happen</span>
       </div>
       <div class="section-body"><p><em>The taxonomy has to catch up, and the paperwork will move faster than the forest can be protected.</em></p><p><strong>The IUCN's lineage-by-lineage review will almost certainly produce five separate risk assessments within the next year, and at least one will likely land on endangered.</strong> Eizirik and Lescroart have already submitted their findings for review. The IUCN doesn't typically re-litigate a genus overnight, but the researchers built the case for urgency directly into the paper: a species confined to one slice of the Yungas carries a different risk profile than a species that supposedly ranges from Costa Rica to southern Brazil (<a href="https://www.jpost.com/omg/article-909025" target="_blank" rel="noopener">The Jerusalem Post</a>). Nogales-Ascarrunz's own conservation program will likely push for expedited status on the Tilcayo specifically, since her decade of fieldwork gave the IUCN most of what little population data exists. The reader should expect a formal proposal, not a final ruling, in this window. Species reclassifications move through committee, not headline. But the direction is set, and Lescroart has already told two outlets what the outcome will probably be.</p><p>That review will collide with a forest that isn't waiting for paperwork. The Yungas faces deforestation, agricultural expansion, fire and mining on a timeline measured in logging permits and mining concessions, not scientific review cycles (<a href="https://www.reuters.com/business/environment/new-cat-species-identified-bolivia-first-over-century-2026-09-17/" target="_blank" rel="noopener">Reuters</a>). Bolivian conservation groups will likely use the new-species designation as leverage in the next round of land-use fights, the same way a rare bird sighting can stall a highway project. Expect Nogales-Ascarrunz's program, Programa de Investigación de Félidos Bolivia, to publicize the Tilcayo's precarious status specifically to slow permitting in the Yungas, because a named, photogenic, newly discovered species is a far better shield than an unnamed population of tiger cats ever was. Whether that pressure holds depends on how fast Bolivian regulators feel compelled to act before the IUCN's review is even finished.</p><p>The second cat, still unnamed in the record beyond "a second animal that also turned up at Senda Verde," is the more immediate story. Researchers have publicly said their entire dataset on the species rests on two live individuals and a handful of camera-trap images. That is not a stable foundation for a conservation designation, and field teams will almost certainly move fast to find more Tilcayos in the wild before the IUCN finalizes anything. The most likely next 1-14 days brings renewed camera-trap deployment in the Yungas, coordinated between Nogales-Ascarrunz's program and the university researchers in Antwerp and Brazil, aimed at answering the population question the IUCN needs before it can rule.</p><div class="ntk-stat"><div class="ntk-stat-num">2</div><div class="ntk-stat-ctx">The number of confirmed living Leopardus tilcayo individuals on record, the entire evidentiary base a conservation status will be built on.</div></div></div>
     </div>
 
-    <div class="story-section">
+    <div class="story-section sec-3">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--teal);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Possibilities — What Could Happen</span>
       </div>
       <div class="section-body"><p><em>The genetic split that turned one cat into five is the same tool that could turn a family of house pets into an unexpected map of the Yungas.</em></p><p><strong>Nogales-Ascarrunz's decade of guidebook photography just became a search method other researchers can copy across the whole Andes.</strong> She found the tilcayo by noticing that reference photos didn't match her own, then confirmed it with DNA. That combination, cheap photo comparison paired with museum-grade genetic testing, is now a published, repeatable method, and Eizirik and Lescroart's team already has the pipeline built for the five-way tiger cat split. The adjacent possible here isn't discovery of a new species; it's discovery by a new method, applied by researchers who don't yet have Nogales-Ascarrunz's decade of patience. Any biologist with a camera-trap archive and a university DNA lab can now ask the same question she asked about her supposedly ordinary Bolivian tiger cats: does this local population actually match the textbook description, or has it just never been checked. Museums across South America hold century-old specimens nobody has re-sequenced since the original species assumptions were made. The paper's real product isn't the tilcayo. It's a template for finding the next one faster than nine years.</p><p>That faster template is what makes the second door visible, because speed changes who gets to the IUCN first. If other tiger cat populations get flagged the way the tilcayo was, Bolivia's Programa de Investigación de Félidos Bolivia is no longer the only conservation group with a newly named, photogenic species to leverage against permitting. Peru's Yungas already produced one result from this exact study, the antisuyo subspecies, and Peruvian conservation groups now have the same paper, the same DNA comparison method and the same argument Nogales-Ascarrunz is making in Bolivia. Argentina's stretch of tiger cat habitat, mentioned in the research as unconfirmed territory, becomes a live question rather than an afterthought. The competition that opens isn't hostile. It's the ordinary scramble among conservation programs in three countries to be the next group with a named species and an IUCN filing in hand, because the tilcayo's case just proved that filing works as leverage before the review is even finished.</p><p>There's a third door, and it's the one that doesn't require more fieldwork, only bureaucratic follow-through. Eizirik's own framing, that a species assessed as one thing looks safe and the same population assessed as five things does not, is a formula the IUCN can now apply anywhere a genus has been treated as a single sprawling catch-all for decades. Tiger cats aren't the only cryptic species group in South America; several rodents and small carnivores carry the same kind of assumed range that turned out, on closer DNA work, to be several animals sharing a name. If the IUCN's tilcayo review goes the way Lescroart expects, it hands conservation biologists elsewhere a citable precedent: a single splitting study that moved a real species onto a real endangered list within a year, not a decade. That's the generative door. A slow, underfunded field of cryptic-species conservation gets a working example of how fast the math can move once someone actually runs the DNA.</p></div>
     </div>
 
-    <div class="story-section lies-section">
+    <div class="story-section lies-section sec-4">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--terra);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Lies / Narrative Distortions</span>
       </div>
       <div class="section-body"><p><em>The cat itself is not the argument. The argument is what people do with the word "new."</em></p><p><strong>Someone will soon claim the tilcayo discovery proves scientists can just invent species to block development, and the people who say it will not be biologists.</strong> No one in the source record has made this claim yet. But the shape of the coming fight is already visible in Eizirik's own framing: a population assessed as one widespread animal looks safe, and the same population assessed as five narrow lineages does not. That's an honest scientific point about taxonomy and risk. It is also, word for word, the argument a mining or logging interest facing a permitting fight in the Yungas will twist into something else: that conservationists split one cat into five on paper specifically to manufacture endangered species where none existed, timed to block a mine or a road. The mechanism is old. Splitting a species based on genetic distance is standard practice, and it happened with the southern tiger cat in 2013 and the clouded tiger cat two years ago without controversy (<a href="https://www.aljazeera.com/news/2026/9/18/new-bolivian-cat-claws-its-way-into-species-list-what-we-meow" target="_blank" rel="noopener">Al Jazeera</a>). Nothing about this case is unusual except that it produced a wholly new species instead of a reclassified one, and unusual is exactly what a bad-faith actor needs to make a pattern sound like a conspiracy.</p><p>The believer isn't foolish for reaching for this story. Someone watching a logging permit stall in the Yungas has genuine reason to be frustrated, and "the science was rushed to fit an agenda" is a simpler, more satisfying explanation than "a biologist spent nine years comparing rosette photographs before anyone ran DNA." The real timeline runs against that read. Nogales-Ascarrunz first doubted the cat's identity in 2016 and didn't get a genetic answer until this year's paper, a decade of unpaid suspicion with no permitting fight anywhere near it (<a href="https://www.nbcnews.com/science/environment/new-wild-cat-species-identified-rcna598113" target="_blank" rel="noopener">NBC News</a>). The IUCN hasn't ruled on anything yet; Lescroart has only said he expects the Tilcayo could land on the endangered list once reviewed alone. A claim that the science was engineered for leverage has to explain away a decade that predates any leverage to be had.</p><p>Who benefits from that distortion spreading is straightforward: whoever holds a mining concession or an agricultural lease in the Yungas gets a ready-made talking point the moment Nogales-Ascarrunz's program uses the tilcayo's new status to argue for slower permitting, which the probabilities record already expects her to do. Cast the species itself as a fabrication, and you don't have to argue about deforestation at all. You just have to make the cat sound fake.</p></div>

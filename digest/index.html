@@ -900,8 +900,6 @@
     white-space: nowrap;
   }
 
-  .card-read-cta .arr { transition: transform 0.15s; }
-  .story-card:active .arr { transform: translateX(3px); }
 
   .story-num-badge {
     position: absolute;
@@ -2119,7 +2117,7 @@
     <div class="story-suggest-cta">
       <div class="ssc-head">Anything missing?</div>
       <div class="ssc-body">Pitch topics, ideas, musings, contemplations, and stories that merit sustained attention.</div>
-      <a href="#" id="storySuggestBtnToday" class="ssc-btn">Pitch it →</a>
+      <a href="#" id="storySuggestBtnToday" class="ssc-btn">Pitch it</a>
     </div>
   </div>
 </div>
@@ -2158,7 +2156,7 @@
   <div class="story-suggest-cta">
     <div class="ssc-head">Anything missing?</div>
     <div class="ssc-body">Pitch topics, ideas, musings, contemplations, and stories that merit sustained attention.</div>
-    <a href="#" id="storySuggestBtnDigest" class="ssc-btn">Pitch it →</a>
+    <a href="#" id="storySuggestBtnDigest" class="ssc-btn">Pitch it</a>
   </div>
 </div>
 
@@ -2487,7 +2485,7 @@ function buildDigest() {
   if (visitCopy) {
     html += `
       <div class="orientation-moment show" id="visitMoment">
-        <div class="orient-label">NTK · Orientation</div>
+        <div class="orient-label">Orientation</div>
         <div class="orient-text">${visitCopy}</div>
       </div>`;
   }
@@ -2495,7 +2493,7 @@ function buildDigest() {
   stories.forEach((s, i) => {
     const isFeatured = i === 0;
     const num = String(i + 1).padStart(2, '0');
-    const numLabel = isFeatured ? num + ' · Lead Story' : num;
+    const numLabel = isFeatured ? num + ' Lead Story' : num;
     const catDim = beatsData[storySubject(s)] ? '' : ' cat-dim';
 
     if (i === 0 && s.featuredImage) {
@@ -2515,7 +2513,7 @@ function buildDigest() {
               <div class="featured-hero-category${catDim}" data-subject="${escAttr(storySubject(s))}">${s.category}</div>
               <div class="featured-hero-headline">${s.headline}</div>
               <div class="featured-hero-lede">${s.lede}</div>
-              <div class="featured-hero-cta">Read full story →</div>
+              <div class="featured-hero-cta">Read full story</div>
             </div>
             <div class="featured-hero-read-badge">1</div>
           </div>
@@ -2534,7 +2532,7 @@ function buildDigest() {
     if (i === 3) {
       html += `
         <div class="orientation-moment" id="orientMoment">
-          <div class="orient-label">NTK · Orientation</div>
+          <div class="orient-label">Orientation</div>
           <div class="orient-text">Three stories in. You're paying attention. <strong>That's the first move.</strong></div>
         </div>`;
     }
@@ -2551,7 +2549,7 @@ function buildDigest() {
             <div class="story-headline">${s.headline}</div>
             <div class="story-lede">${s.lede}</div>
             <div class="card-footer">
-              <span class="card-read-cta">Read <span class="arr">→</span></span>
+              <span class="card-read-cta">Read</span>
             </div>
           </div>
         </div>
@@ -4344,7 +4342,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <!-- SUBSCRIBE MODAL -->
 <div class="modal-overlay" id="subscribeModal" onclick="closeSubscribeModal(event)">
   <div class="modal-box">
-    <div class="modal-label">NTK · Subscriptions</div>
+    <div class="modal-label">Subscriptions</div>
     <div class="modal-title">Coming <em>soon.</em></div>
     <div class="modal-body">NTK is in its first week of testing. Paid subscriptions are on the way — check back shortly.</div>
     <button class="modal-close" onclick="document.getElementById('subscribeModal').classList.remove('show')">Got it</button>
@@ -4359,7 +4357,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <!-- BACKSTORY MODAL -->
 <div class="modal-overlay" id="backstoryModal" onclick="closeBackstoryModal(event)">
   <div class="modal-box">
-    <div class="modal-label">NTK · Backstory</div>
+    <div class="modal-label">Backstory</div>
     <div class="modal-title">Coming <em>soon.</em></div>
     <div class="modal-body">Every NTK story has a deeper history behind it — the context, the through-line, the moment this became inevitable. Backstory subscriptions are on the way. Check back shortly.</div>
     <button class="modal-close" onclick="document.getElementById('backstoryModal').classList.remove('show')">Got it</button>
@@ -4613,7 +4611,7 @@ document.addEventListener('DOMContentLoaded', function() {
      story opened from Today returns there, the most common path in the app
      fired it into a hidden container. See T-0024. -->
 <div id="beatToast" class="beat-toast">
-  <div class="beat-toast-label">NTK · Orientation</div>
+  <div class="beat-toast-label">Orientation</div>
   <div class="beat-toast-text" id="beatToastText"></div>
 </div>
 

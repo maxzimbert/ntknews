@@ -21,6 +21,11 @@
   :root {
     --blue:   #0798F2;
     --amber:  #F2AE2E;
+    /* Light-ground steps. The bright accents were tuned against the ink
+       header and fail on the white body: blue 3.10, amber 1.93. These
+       clear 4.6 on white, cream and the Lies tint. */
+    --blue-deep:  #04619A;
+    --amber-deep: #7D5408;
     --terra:  #DC6550;
     --purple: #725ABF;
     --teal:   #01B2A7;
@@ -38,7 +43,7 @@
     margin: 0 auto;
   }
 
-  a { color: var(--blue); }
+  a { color: var(--blue-deep); }
 
   .story-header {
     background: var(--dark);
@@ -89,7 +94,7 @@
     font-family: 'Overpass', sans-serif;
     font-size: 10px;
     font-weight: 700;
-    letter-spacing: 2px;
+    letter-spacing: .1em;
     text-transform: uppercase;
     color: var(--amber);
     margin-bottom: 10px;
@@ -129,12 +134,25 @@
   .section-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
   .section-title {
-    font-family: 'Overpass', sans-serif;
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 0.5px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 600;
+    font-size: 16px;
+    font-variant: small-caps;
+    letter-spacing: .05em;
     color: var(--dark);
   }
+
+  /* A descending ladder of certainty, not four categories. Same ramp as the
+     landing page: established, then likely, then plausible, with Lies
+     reversed because it is the negation rather than the fourth rung. */
+  .sec-1 .section-title { color: var(--dark); }
+  .sec-2 .section-title { color: rgba(38,31,35,0.82); }
+  .sec-3 .section-title { color: rgba(38,31,35,0.72); }
+  .sec-4 .section-title { color: #A73521; font-style: italic; }
+  .sec-1 .section-dot { background: var(--dark); }
+  .sec-2 .section-dot { background: rgba(38,31,35,0.60); }
+  .sec-3 .section-dot { background: rgba(38,31,35,0.34); }
+  .sec-4 .section-dot { background: #A73521; }
 
   .section-body {
     padding: 0 20px 22px;
@@ -161,7 +179,7 @@
   }
   .ntk-pq-text {
     font-family: 'Source Serif 4', serif;
-    font-size: 19px !important;
+    font-size: 20px !important;
     font-weight: 300;
     font-style: italic;
     line-height: 1.5 !important;
@@ -172,13 +190,13 @@
     display: block;
     font-family: 'Overpass', sans-serif;
     font-size: 10px;
-    letter-spacing: 1.5px;
+    letter-spacing: .1em;
     text-transform: uppercase;
-    color: var(--blue);
+    color: var(--blue-deep);
     font-style: normal;
   }
   .ntk-stat {
-    border-left: 3px solid var(--amber);
+    border-left: 3px solid var(--amber-deep);
     margin: 18px 0;
     padding: 14px 16px;
     background: rgba(242,174,46,0.05);
@@ -187,13 +205,13 @@
     font-family: 'Overpass', sans-serif;
     font-size: 34px;
     font-weight: 700;
-    color: var(--amber);
+    color: var(--amber-deep);
     line-height: 1.1;
     margin-bottom: 5px;
   }
   .ntk-stat-ctx {
     font-family: 'Source Serif 4', serif;
-    font-size: 14px;
+    font-size: 13px;
     color: rgba(38,31,35,0.72);
     line-height: 1.5;
   }
@@ -205,7 +223,7 @@
     font-family: 'Overpass', sans-serif;
     font-size: 13px;
     font-weight: 600;
-    color: var(--blue);
+    color: var(--blue-deep);
     text-decoration: none;
   }
 </style>
@@ -232,33 +250,33 @@
 
   <div class="story-sections">
 
-    <div class="story-section">
+    <div class="story-section sec-1">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--blue);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Truths — What Happened</span>
       </div>
       <div class="section-body"><p><strong>Von der Leyen delivered her State of the Union speech with Mark Carney sitting in the room, then proposed a status that doesn't yet exist.</strong> She called for a new "associate member" tier built for Canada, a category with no legal precedent in EU treaty law (<a href="https://www.theguardian.com/world/2026/sep/16/von-der-leyen-mark-carney-canada-eu-first-associate-member" target="_blank" rel="noopener">Guardian</a>). Carney's presence turned the announcement into a staged moment rather than a policy trial balloon, and outlets from CNBC to Al Jazeera to the BBC all framed it the same way within hours: an invitation, not a proposal up for debate (<a href="https://www.cnbc.com/2026/09/16/canada-eu-associate-member-von-der-leyen.html" target="_blank" rel="noopener">CNBC</a>). The timing did the rest of the talking. Von der Leyen tied the pitch to the strain in both Ottawa's and Brussels' relationships with Washington, framing Canada's drift from Trump's trade war as Europe's opportunity (<a href="https://www.nytimes.com/2026/09/16/world/europe/eu-canada-associate-member.html" target="_blank" rel="noopener">New York Times</a>).</p><p>That timing is also what turned a diplomatic gesture into a diplomatic problem. Von der Leyen made the offer without first consulting EU member states, and Brussels diplomats reportedly called her "bombastic" within hours of the speech ending (<a href="https://www.dailymail.com/news/article-16135871/Brussels-hit-furious-backlash-Eurocrat-Canada.html?ns_mchannel=rss&ito=1490&ns_campaign=1490" target="_blank" rel="noopener">Daily Mail</a>). This is not von der Leyen's first run at outrunning her own institution. The complaint from capitals wasn't about Canada. It was about the Commission president once again announcing a major structural change before the 27 governments who'd have to ratify it got a vote, a habit that has drawn the same "bombastic" label from EU diplomats before.</p><div class="ntk-pullquote"><p class="ntk-pq-text">an unprecedented offer to Canada</p><cite class="ntk-pq-cite">France 24, on the proposal's break from EU precedent | France 24</cite></div><p>The speech also carried a jab aimed past Carney, at the man in Washington neither leader named. Von der Leyen's remarks included what several outlets read as a veiled shot at Donald Trump's trade policy, without using his name (<a href="https://www.thedailybeast.com/european-commissions-ursula-von-der-leyen-humiliates-donald-trump-with-thinly-veiled-swipe/" target="_blank" rel="noopener">Daily Beast</a>). The subtext was arithmetic, not sentiment. Trump's tariffs on Canadian goods have already made five U.S. states, exporters with heavy trade exposure to Canada, the likely biggest domestic losers of his trade war, according to one economist's state-by-state breakdown (<a href="https://www.foxnews.com/politics/5-states-biggest-losers-trumps-trade-war-canada-expert-warns" target="_blank" rel="noopener">Fox News</a>). Von der Leyen didn't need to name Trump. She needed Ottawa to notice who was still extending a hand while Washington closed a door — and by staging it in front of the cameras with Carney beside her, she made sure Ottawa did.</p></div>
     </div>
 
-    <div class="story-section">
+    <div class="story-section sec-2">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--purple);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Probabilities — What Will Likely Happen</span>
       </div>
       <div class="section-body"><p><em>The next fight isn't in Ottawa. It's in the 27 capitals von der Leyen skipped.</em></p><p><strong>EU foreign ministers will almost certainly force a formal review of the "associate member" proposal before it advances, and the most contentious voices will come from the smaller states.</strong> Countries like Poland and Hungary have blocked or slow-walked Commission initiatives before when they felt bypassed, and von der Leyen just gave every capital the same grievance at once. Expect France and Germany to publicly withhold judgment while privately deciding whether a Canada carve-out sets a precedent they'd rather not have written by press release. The mechanism to watch over the next two weeks is procedural, not diplomatic: whether this goes through the European Council's ordinary treaty-change channels, which require unanimity, or whether von der Leyen tries to fast-track it as an executive arrangement. If she tries the latter, the same diplomats already calling her "bombastic" will treat it as confirmation rather than overreach.</p><p>That procedural fight will shape how Carney plays this in Ottawa, where the politics cut differently than in Brussels.</p><p><strong>Carney will most likely keep the offer alive without committing to it, using the ambiguity as leverage against Washington rather than a real membership track.</strong> Canada has no legal or economic reason to rush toward a status the EU hasn't defined and can't yet ratify, but Carney has every reason to let Trump's trade team believe he might. The likely next step is a Canadian statement, within days, that reads as warm and noncommittal at once, thanking von der Leyen while stopping short of a formal application. That posture serves a specific purpose: the five U.S. states already absorbing the cost of Trump's tariffs give Carney a domestic audience for the message that Ottawa has options Washington doesn't want it to have.</p><div class="ntk-stat"><div class="ntk-stat-num">27</div><div class="ntk-stat-ctx">the number of EU member states whose governments will have to sign off on any real Canada arrangement, none of whom did before Wednesday's speech</div></div><p>The structural piece is where this gets expensive for von der Leyen personally. Her pattern of announcing before consulting has already cost her capital with member states on prior initiatives, and this is the most visible test yet of whether that habit catches up with her. The most likely outcome inside Brussels over the next two weeks is not that the Canada idea dies, but that it gets stripped from her hands and handed to a council working group, a quiet demotion that lets the policy survive while making clear whose name won't be on it when it's finished.</p></div>
     </div>
 
-    <div class="story-section">
+    <div class="story-section sec-3">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--teal);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Possibilities — What Could Happen</span>
       </div>
       <div class="section-body"><p><em>Once the working group takes the file off von der Leyen's desk, three doors open that weren't visible Wednesday morning.</em></p><p><strong>The council working group Probabilities described as a quiet demotion could just as easily become the mechanism that makes a real Canada-EU trade upgrade possible, without the "associate member" label ever surviving.</strong> A working group's job is to strip a proposal down to what member states will actually approve, and what's left after that process is usually narrower and duller than the original pitch. That's the room this opens: not membership, not even a defined tier, but an expanded version of the Comprehensive Economic and Trade Agreement already governing EU-Canada trade, dressed up enough for Carney to call it a win and thin enough for Poland and Hungary to wave it through. The combination that makes this reachable now and not six months ago is specific. Von der Leyen already put Canada in the room with the cameras running, and the five exposed U.S. states already gave Carney a domestic argument for taking whatever Brussels is willing to formalize. A working group doesn't need to invent momentum. It just needs to not kill it.</p><p>That version, thin as it is, is the one that survives contact with the capitals Probabilities said would push back hardest.</p><p><strong>If the working group route holds, the next door is Carney using the surviving framework as a template offer to other Trump-tariffed trading partners, not just Canada.</strong> This is the second-order possibility, and it only exists because of the first: a formalized EU-Canada upgrade, once it exists on paper, is a document other finance ministries can read. Mexico's government has watched the same tariff exposure hit its own exporters, and a Canadian model for partial EU integration, built without full membership, gives Ottawa something to export politically even before it's finished exporting anything economically. Carney doesn't need Brussels' permission to make that pitch. He needs the paperwork Probabilities already flagged is coming.</p><p>The generative door sits underneath both of these, and it's easy to miss because it doesn't announce itself.</p><p><strong>Von der Leyen's overreach, if the working group process holds, becomes the precedent for a formal pre-consultation rule that member states have wanted for years and never had the occasion to force through.</strong> Diplomats calling her "bombastic" is a complaint. A working group that survives and produces something usable is the first time that complaint gets translated into a structural fix, because it gives France and Germany a finished example to point to when they argue the Commission needs a mandatory heads-up mechanism before major announcements. That's not a punishment for von der Leyen. It's an institution learning, in public, from the one habit of hers that keeps costing it capital, using the Canada file as the evidence rather than the casualty.</p></div>
     </div>
 
-    <div class="story-section lies-section">
+    <div class="story-section lies-section sec-4">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--terra);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Lies / Narrative Distortions</span>
       </div>
       <div class="section-body"><p><em>The claim spreading fastest isn't about trade policy. It's about what actually happened Sept. 16, and it splits cleanly along which side of the Atlantic is telling it.</em></p><p><strong>Canada has been invited to join the European Union, some U.S. commentary claims, proof that Trump's trade war finally drove an ally into Brussels' arms.</strong> This is the version that traveled hardest online, and the headline that fed it wasn't subtle about it. The New Republic's framing, that Canada was "invited to join the European Union after all of Trump's nonsense," collapses a proposed, undefined, unratified associate status into full EU membership, a legal process that takes years, requires treaty change, and has never once included a country outside Europe (<a href="https://newrepublic.com/post/215478/canada-invited-join-european-union-trump-nonsense" target="_blank" rel="noopener">New Republic</a>). The distortion is doing real work for two different audiences at once. For Trump's domestic critics, it turns Wednesday's speech into a tidy morality play, proof that his tariffs are costing America allies, not just export dollars, and that story is more satisfying than the actual one, which is a Commission president who skipped her own member states. For Carney, the confusion is simply useful. Every outlet that ran the "joining the EU" framing did free work for a negotiating position Ottawa hasn't had to state out loud: that Canada has somewhere else to go.</p><p>The mechanism is the gap between "associate member," a category that doesn't exist in EU treaty law, and "member," a status with a defined accession process every current EU state went through. Collapsing that gap costs nothing to whoever repeats it and pays out in clout for outlets chasing the biggest possible headline and in leverage for a Canadian government that benefits from Washington believing the bigger version is true. It also quietly serves von der Leyen, who gets credit in the retelling for an offer bolder than the one she actually made, at the exact moment 27 governments are deciding whether "bombastic" is a fair description of how she works.</p><div class="ntk-stat"><div class="ntk-stat-num">0</div><div class="ntk-stat-ctx">the number of countries in EU history that have gone from outside Europe to full membership, the process the "Canada joins the EU" framing implies is already underway</div></div><p>None of this requires bad faith from most people repeating it. A reader who has watched trade wars squeeze grocery prices for two years wants a story where someone finally pays a price for it, and "Canada leaves for Europe" is a clean one. The actual story, a Commission president who invented a category and got called reckless by her own diplomats for doing it without a vote, is less satisfying and more revealing, which is usually the tell for which version is true.</p></div>

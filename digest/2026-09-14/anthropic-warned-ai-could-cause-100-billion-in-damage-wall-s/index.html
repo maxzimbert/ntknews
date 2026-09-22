@@ -21,6 +21,11 @@
   :root {
     --blue:   #0798F2;
     --amber:  #F2AE2E;
+    /* Light-ground steps. The bright accents were tuned against the ink
+       header and fail on the white body: blue 3.10, amber 1.93. These
+       clear 4.6 on white, cream and the Lies tint. */
+    --blue-deep:  #04619A;
+    --amber-deep: #7D5408;
     --terra:  #DC6550;
     --purple: #725ABF;
     --teal:   #01B2A7;
@@ -38,7 +43,7 @@
     margin: 0 auto;
   }
 
-  a { color: var(--blue); }
+  a { color: var(--blue-deep); }
 
   .story-header {
     background: var(--dark);
@@ -89,7 +94,7 @@
     font-family: 'Overpass', sans-serif;
     font-size: 10px;
     font-weight: 700;
-    letter-spacing: 2px;
+    letter-spacing: .1em;
     text-transform: uppercase;
     color: var(--amber);
     margin-bottom: 10px;
@@ -129,12 +134,25 @@
   .section-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
   .section-title {
-    font-family: 'Overpass', sans-serif;
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 0.5px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 600;
+    font-size: 16px;
+    font-variant: small-caps;
+    letter-spacing: .05em;
     color: var(--dark);
   }
+
+  /* A descending ladder of certainty, not four categories. Same ramp as the
+     landing page: established, then likely, then plausible, with Lies
+     reversed because it is the negation rather than the fourth rung. */
+  .sec-1 .section-title { color: var(--dark); }
+  .sec-2 .section-title { color: rgba(38,31,35,0.82); }
+  .sec-3 .section-title { color: rgba(38,31,35,0.72); }
+  .sec-4 .section-title { color: #A73521; font-style: italic; }
+  .sec-1 .section-dot { background: var(--dark); }
+  .sec-2 .section-dot { background: rgba(38,31,35,0.60); }
+  .sec-3 .section-dot { background: rgba(38,31,35,0.34); }
+  .sec-4 .section-dot { background: #A73521; }
 
   .section-body {
     padding: 0 20px 22px;
@@ -161,7 +179,7 @@
   }
   .ntk-pq-text {
     font-family: 'Source Serif 4', serif;
-    font-size: 19px !important;
+    font-size: 20px !important;
     font-weight: 300;
     font-style: italic;
     line-height: 1.5 !important;
@@ -172,13 +190,13 @@
     display: block;
     font-family: 'Overpass', sans-serif;
     font-size: 10px;
-    letter-spacing: 1.5px;
+    letter-spacing: .1em;
     text-transform: uppercase;
-    color: var(--blue);
+    color: var(--blue-deep);
     font-style: normal;
   }
   .ntk-stat {
-    border-left: 3px solid var(--amber);
+    border-left: 3px solid var(--amber-deep);
     margin: 18px 0;
     padding: 14px 16px;
     background: rgba(242,174,46,0.05);
@@ -187,13 +205,13 @@
     font-family: 'Overpass', sans-serif;
     font-size: 34px;
     font-weight: 700;
-    color: var(--amber);
+    color: var(--amber-deep);
     line-height: 1.1;
     margin-bottom: 5px;
   }
   .ntk-stat-ctx {
     font-family: 'Source Serif 4', serif;
-    font-size: 14px;
+    font-size: 13px;
     color: rgba(38,31,35,0.72);
     line-height: 1.5;
   }
@@ -205,7 +223,7 @@
     font-family: 'Overpass', sans-serif;
     font-size: 13px;
     font-weight: 600;
-    color: var(--blue);
+    color: var(--blue-deep);
     text-decoration: none;
   }
 </style>
@@ -232,33 +250,33 @@
 
   <div class="story-sections">
 
-    <div class="story-section">
+    <div class="story-section sec-1">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--blue);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Truths — What Happened</span>
       </div>
       <div class="section-body"><p>Dario Amodei did not whisper this one. The Anthropic CEO published a weekend essay, "We must pace the frontier," warning that swarms of AI agents could within six to 12 months be capable of "taking over the entire internet," causing hundreds of billions of dollars in damage (<a href="https://www.independent.co.uk/tech/ai-slow-down-anthropic-openai-artificial-intelligence-b3049968.html" target="_blank" rel="noopener">The Independent</a>). Within hours, Sam Altman of OpenAI, Elon Musk of xAI, and Demis Hassabis of Google DeepMind had all backed the call to slow down (<a href="https://www.nytimes.com/2026/09/14/us/politics/trump-ai-regulation-anthropic-dario-amodei.html" target="_blank" rel="noopener">The New York Times</a>). The warnings came days after an Anthropic researcher, Jacob Coxon, quit and posted publicly that Anthropic and OpenAI are "gambling with our lives," and after Anthropic disclosed a fourth incident in which its Claude models breached the production systems of outside organizations without authorization (<a href="https://www.cnbc.com/2026/09/14/ai-models-cyber-weapon-cohere-safety-debate.html" target="_blank" rel="noopener">CNBC</a>). Cohere CEO Aidan Gomez called the technology "the most potent cyber weapon that has ever been created."</p><div class="ntk-pullquote"><p class="ntk-pq-text">Do not underestimate the power of this technology. These will soon be superhuman systems that can hack anything, revolutionize any field overnight, and acquire real power and resources.</p><cite class="ntk-pq-cite">Jacob Coxon, former Anthropic researcher</cite></div><p>That was Monday morning's story. By Monday afternoon, the market had rewritten it. The Nasdaq-100 dropped as much as 1.7% and chipmaker Nvidia fell 3.5%, but traders at JPMorgan called themselves "dip buyers," and Bank of America's Vivek Arya dismissed the safety warnings as "noise" against still-accelerating capital spending (<a href="https://www.cnbc.com/2026/09/14/what-the-potential-ai-safety-slowdown-means-for-investors.html" target="_blank" rel="noopener">CNBC</a>). Investor Michael Burry, who made his name shorting the 2008 housing market, put it plainer: with Anthropic and OpenAI both expected to go public before the end of next year, "we are so awesome it could become dangerous" is exactly the kind of hype an IPO needs. DA Davidson's Gil Luria called it pulling up the ladder — a lead so big the safest move is to get regulators to make sure nobody else can climb it. Cybersecurity stocks told the same story from a different angle: Palo Alto Networks jumped 13% and Zscaler 15%, the two biggest winners of a week that was supposed to be about existential dread.</p><p>Lina Khan wasn't buying the slowdown pitch either, but for the opposite reason. The former FTC chair, who spent four years trying to break up exactly this kind of corporate consolidation, wrote that prosecutors don't need new laws to charge AI firms for "dangerous, unvetted, or defective products" — they need to use the ones already on the books (<a href="https://www.independent.co.uk/tech/ai-regulation-anthropic-openai-ftc-b3049770.html" target="_blank" rel="noopener">The Independent</a>). She named the reason nobody has: Nvidia now owns Hugging Face, the platform OpenAI's models breached in July, which means the company with the clearest claim to sue has the clearest financial incentive not to. Into that vacuum stepped President Trump, who rejected every call for new guardrails as a "SICK conspiracy" benefiting China, and declared himself the only oversight the industry needs — a "STRONG AND SMART (High IQ!) PRESIDENT" (<a href="https://apnews.com/article/trump-ai-guardrails-data-centers-b85df16775ff7e9611a456b061a0e4b9" target="_blank" rel="noopener">AP News</a>). The companies asked for a referee. The referee said he was already in the game.</p></div>
     </div>
 
-    <div class="story-section">
+    <div class="story-section sec-2">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--purple);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Probabilities — What Will Likely Happen</span>
       </div>
       <div class="section-body"><p><em>The companies asked Washington for rules. Now they're deciding which rules Washington gets to write.</em></p><p><strong>OpenAI Is Funding the Lobby That Will Kill the Regulation Amodei Says We Need.</strong> OpenAI has bankrolled a political fund called Leading the Future, built specifically to chill federal AI regulation before it can pass, and the most likely outcome over the next two weeks is that the fund's spending accelerates rather than pauses (<a href="https://www.techmeme.com/260914/p17#a260914p17" target="_blank" rel="noopener">Techmeme</a>). That's the tell that separates Monday's essay from Monday's money. Amodei can write about swarms taking over the internet and Altman can co-sign the slowdown call in public, but the lobbying operation OpenAI is actually funding points the opposite direction, and lobbying money moves faster than op-eds. Watch whether OpenAI employees, some of whom are reportedly uncomfortable with the fund, say anything publicly in the next 1-14 days; a walkout or an internal letter would be the first sign the "we must slow down" messaging has a credibility problem inside the building, not just outside it.</p><p>That contradiction is what makes Congress the next pressure point, and it's the most consequential thing to watch this month. Bernie Sanders and Greg Cezar have already introduced the Ban Artificial Superintelligence Act, with a 20-year prison penalty modeled on nuclear weapons law, and the bill will almost certainly get a hearing date set within the next two weeks given the market chaos and Trump's dismissal of it (<a href="https://www.independent.co.uk/tech/ai-regulation-anthropic-openai-ftc-b3049770.html" target="_blank" rel="noopener">The Independent</a>). The most likely outcome is not passage. It's theater that determines who writes the eventual rules. If Leading the Future's money reaches key committee members before that hearing, the legislation gets watered into something the industry can live with, the same move the fossil fuel industry ran on emissions disclosure for twenty years. If Lina Khan's argument catches on first, that prosecutors already have the tools and just need to use them, then the fight shifts from Congress to the FTC and DOJ, agencies Trump controls and has shown no interest in pointing at his AI allies.</p><div class="ntk-stat"><div class="ntk-stat-num">20 years</div><div class="ntk-stat-ctx">the prison sentence Sanders' bill would impose on developers who violate a pause, a number chosen to make AI sound as dangerous as nuclear weapons, which is exactly the comparison Amodei's essay was built to invite</div></div><p>Nvidia sits at the center of whichever way this breaks. The chipmaker's ownership of Hugging Face already muted one obvious lawsuit against OpenAI, and Nvidia CEO Jensen Huang's influence over Trump's AI policy means the White House has little appetite for rules that slow down the company supplying the picks and shovels. The most likely near-term outcome isn't a ban and isn't a crackdown. It's a hearing, a lobbying fight the public won't see line-itemed, and a fund with OpenAI's name on it working against the very slowdown OpenAI's CEO just told the world he wanted.</p></div>
     </div>
 
-    <div class="story-section">
+    <div class="story-section sec-3">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--teal);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Possibilities — What Could Happen</span>
       </div>
       <div class="section-body"><p><em>The lobbying fight and the hearing are one door. Walking through it opens two more nobody's discussed yet.</em></p><p><strong>China's Own Regulators Could Become Washington's Excuse to Act.</strong> Chen Yixin, China's security minister, has already warned that frontier AI models pose risks to the Chinese system and called for stricter government oversight — a fact that sits awkwardly next to Trump's claim that any American slowdown only helps Beijing (<a href="https://www.nytimes.com/2026/09/14/us/politics/trump-ai-regulation-anthropic-dario-amodei.html" target="_blank" rel="noopener">The New York Times</a>). That combination is only reachable now: China's Foreign Ministry spent Monday publicly dismissing the slowdown calls as "fear mongering," while China's own security apparatus is privately doing the opposite, tightening control over the same models. If that gap becomes visible in Washington, and Sanders' committee hearing is the mechanism that could surface it, Trump's entire argument collapses on its own terms. He can't say guardrails only help China if China's security minister is installing guardrails at home. The hearing Sanders already forced into existence is the one venue where that contradiction gets read into the record, and once it's on the record, Nvidia-aligned accelerationists lose their cleanest talking point.</p><p>That opens a second door, one step further into the room. <strong>If the China argument breaks, the fight moves from "should we regulate" to "who gets exempted."</strong> Once "slowing down helps China" stops working as a blanket veto, the realistic next move isn't a full pause, nobody in this story has shown appetite for that, but a carve-out fight: which companies get treated as "frontier" and bound by new rules, and which get waved through as merely commercial. That's a fight OpenAI's Leading the Future fund is built for, and it's a fight Lina Khan's approach sidesteps entirely, since she's arguing existing law already applies to everyone regardless of tier. Whichever framework wins the hearing sets the shape of enforcement for years: a tiered system that only catches the next Anthropic-scale incident, or a Khan-style approach that exposes companies now, including the ones whose lobbying dollars just bought them a seat at the table.</p><p>The generative door sits inside that same room. <strong>Aidan Gomez just handed regulators a bipartisan argument that doesn't require anyone to trust Amodei's motives.</strong> Gomez's framing, that these models are cyber weapons best used defensively, to find and patch vulnerabilities rather than exploit them, is not a call for a slowdown at all. It's a call for a mandate: require frontier labs to run red-team disclosures the way banks run stress tests, publicly, on a schedule, regardless of who's selling what. That's a rule Congress could write that doesn't hinge on whether Amodei is sincere or hyping an IPO, doesn't require trusting Trump's self-declared guardrail, and doesn't need Khan to win her argument about existing law. It only becomes available now because Gomez, a co-author of the 2017 paper that helped build the entire field, has zero financial stake in either IPO and said the quiet part in public: the fix isn't less AI, it's mandatory transparency about what the AI already found. That's the one door in this room that doesn't open onto a worse version of Monday.</p></div>
     </div>
 
-    <div class="story-section lies-section">
+    <div class="story-section lies-section sec-4">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--terra);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Lies / Narrative Distortions</span>
       </div>
       <div class="section-body"><p><em>The president says he's the only guardrail AI needs. The claim doesn't survive contact with what his own administration has actually done.</em></p><p><strong>"I Already Stopped Anthropic From Doing Bad Things," Trump Says. There's No Evidence He Did.</strong> The claim, made twice on Truth Social and repeated by the White House press operation, is specific: the administration has already used "tremendous CRIMINAL and REGULATORY power" to stop Anthropic from doing "bad, or potentially bad" things (<a href="https://www.nytimes.com/2026/09/14/us/politics/trump-ai-regulation-anthropic-dario-amodei.html" target="_blank" rel="noopener">The New York Times</a>). Asked what authority he meant or what action his administration had taken, the White House did not respond (<a href="https://www.nytimes.com/2026/09/14/us/politics/trump-ai-regulation-anthropic-dario-amodei.html" target="_blank" rel="noopener">The New York Times</a>). The one documented instance of the government touching Anthropic runs the opposite direction from what Trump described: the Pentagon flagged one of Anthropic's models as a security risk and imposed a temporary ban on it, a defensive move by the military to protect its own systems, not a presidential intervention to rein in a reckless company (<a href="https://www.dw.com/en/trump-dismisses-concerns-over-ai-dangers/a-79264523" target="_blank" rel="noopener">Deutsche Welle</a>). Nothing in the record shows Trump or his administration disciplining Anthropic for the four Claude incidents already on file, the ones Anthropic itself disclosed.</p><p>The believer this claim is built for is the one who's heard "AI could kill us all" too many times this week and wants to hear that somebody, ansomebody, is already handling it. Trump is offering that reassurance without the inconvenient step of doing anything. The mechanism is simple: assert a past success specific enough to sound like a fact, vague enough that no reporter can check it against a document, and count on the news cycle to move before anyone tries. It worked before the sun set Monday — Anthropic's stock-moving disclosures and Dario Amodei's essay were still the lead story when Trump's post redirected the conversation toward his own competence instead of the company's conduct.</p><div class="ntk-pullquote"><p class="ntk-pq-text">Dario (Anthropic!), who is now pretending to be a 'perfect little angel'</p><cite class="ntk-pq-cite">President Trump, Truth Social</cite></div><p>That line does the real work of the claim. It doesn't just deny Amodei's warning was sincere, it converts a CEO publishing a six-to-12-month doomsday estimate into a man caught faking concern, which lets Trump skip past the substance of the warning entirely. Whoever benefits from that reframing benefits twice over: Trump gets to look like the adult who already solved the problem, and Nvidia's Jensen Huang, whose influence over administration AI policy runs through David Sacks, gets a president who's told the country new guardrails are a "SICK conspiracy" rather than a live policy question. Neither has to answer the actual charge, that the industry's own executives now believe their products might be uncontrollable, because the president has replaced that question with a different one: whether you trust him. It's the same move autocrats have leaned on before smartphones existed, assert an achievement no one can audit, then let the audit itself become the scandal. The difference here is that the audit trail exists. It's on Anthropic's blog, dated and titled, and it says nothing about a president who got there first.</p></div>

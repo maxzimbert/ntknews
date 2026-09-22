@@ -21,6 +21,11 @@
   :root {
     --blue:   #0798F2;
     --amber:  #F2AE2E;
+    /* Light-ground steps. The bright accents were tuned against the ink
+       header and fail on the white body: blue 3.10, amber 1.93. These
+       clear 4.6 on white, cream and the Lies tint. */
+    --blue-deep:  #04619A;
+    --amber-deep: #7D5408;
     --terra:  #DC6550;
     --purple: #725ABF;
     --teal:   #01B2A7;
@@ -38,7 +43,7 @@
     margin: 0 auto;
   }
 
-  a { color: var(--blue); }
+  a { color: var(--blue-deep); }
 
   .story-header {
     background: var(--dark);
@@ -89,7 +94,7 @@
     font-family: 'Overpass', sans-serif;
     font-size: 10px;
     font-weight: 700;
-    letter-spacing: 2px;
+    letter-spacing: .1em;
     text-transform: uppercase;
     color: var(--amber);
     margin-bottom: 10px;
@@ -129,12 +134,25 @@
   .section-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
   .section-title {
-    font-family: 'Overpass', sans-serif;
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 0.5px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 600;
+    font-size: 16px;
+    font-variant: small-caps;
+    letter-spacing: .05em;
     color: var(--dark);
   }
+
+  /* A descending ladder of certainty, not four categories. Same ramp as the
+     landing page: established, then likely, then plausible, with Lies
+     reversed because it is the negation rather than the fourth rung. */
+  .sec-1 .section-title { color: var(--dark); }
+  .sec-2 .section-title { color: rgba(38,31,35,0.82); }
+  .sec-3 .section-title { color: rgba(38,31,35,0.72); }
+  .sec-4 .section-title { color: #A73521; font-style: italic; }
+  .sec-1 .section-dot { background: var(--dark); }
+  .sec-2 .section-dot { background: rgba(38,31,35,0.60); }
+  .sec-3 .section-dot { background: rgba(38,31,35,0.34); }
+  .sec-4 .section-dot { background: #A73521; }
 
   .section-body {
     padding: 0 20px 22px;
@@ -161,7 +179,7 @@
   }
   .ntk-pq-text {
     font-family: 'Source Serif 4', serif;
-    font-size: 19px !important;
+    font-size: 20px !important;
     font-weight: 300;
     font-style: italic;
     line-height: 1.5 !important;
@@ -172,13 +190,13 @@
     display: block;
     font-family: 'Overpass', sans-serif;
     font-size: 10px;
-    letter-spacing: 1.5px;
+    letter-spacing: .1em;
     text-transform: uppercase;
-    color: var(--blue);
+    color: var(--blue-deep);
     font-style: normal;
   }
   .ntk-stat {
-    border-left: 3px solid var(--amber);
+    border-left: 3px solid var(--amber-deep);
     margin: 18px 0;
     padding: 14px 16px;
     background: rgba(242,174,46,0.05);
@@ -187,13 +205,13 @@
     font-family: 'Overpass', sans-serif;
     font-size: 34px;
     font-weight: 700;
-    color: var(--amber);
+    color: var(--amber-deep);
     line-height: 1.1;
     margin-bottom: 5px;
   }
   .ntk-stat-ctx {
     font-family: 'Source Serif 4', serif;
-    font-size: 14px;
+    font-size: 13px;
     color: rgba(38,31,35,0.72);
     line-height: 1.5;
   }
@@ -205,7 +223,7 @@
     font-family: 'Overpass', sans-serif;
     font-size: 13px;
     font-weight: 600;
-    color: var(--blue);
+    color: var(--blue-deep);
     text-decoration: none;
   }
 </style>
@@ -232,33 +250,33 @@
 
   <div class="story-sections">
 
-    <div class="story-section">
+    <div class="story-section sec-1">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--blue);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Truths — What Happened</span>
       </div>
       <div class="section-body"><p><strong>Macron Told France's Own Political Rivals the Threat Was Real, Then Ordered the Government to Defend Power Plants and Tech Sites.</strong> On Friday, Macron gathered France's presidential hopefuls inside the Elysee Palace's crisis room, a room normally reserved for briefings too sensitive for a press conference (<a href="https://www.dw.com/en/france-macron-orders-defense-against-russian-hybrid-attacks/a-79329757?maca=en-rss-en-all-1573-xml-mrss" target="_blank" rel="noopener">DW</a>). The heads of France's foreign and domestic intelligence services, Nicolas Lerner and Celine Berthon, briefed the room directly (<a href="https://www.abc.net.au/news/2026-09-19/france-threatened-by-russian-attacks/107171406" target="_blank" rel="noopener">ABC Australia</a>). Macron told reporters afterward that "the Russian hybrid threat against Europeans and against France has intensified," and ordered a plan to protect critical infrastructure, along with the "most sensitive" defense and technology sites, from drone and cyberattacks (<a href="https://www.dw.com/en/france-macron-orders-defense-against-russian-hybrid-attacks/a-79329757?maca=en-rss-en-all-1573-xml-mrss" target="_blank" rel="noopener">DW</a>). He added that any Russian attack on French soil "will not go unanswered," without saying what that answer would be (<a href="https://www.abc.net.au/news/2026-09-19/france-threatened-by-russian-attacks/107171406" target="_blank" rel="noopener">ABC Australia</a>). Jordan Bardella, head of the far-right National Rally, sat in that room; Marine Le Pen, the party's presidential frontrunner, did not show up (<a href="https://www.abc.net.au/news/2026-09-19/france-threatened-by-russian-attacks/107171406" target="_blank" rel="noopener">ABC Australia</a>).</p><div class="ntk-pullquote"><p class="ntk-pq-text">The intention behind it is to intimidate us and to derail the effort to support the Ukrainians. The consequence will be the opposite.</p><cite class="ntk-pq-cite">Emmanuel Macron, president of France</cite></div><p>France was not describing an isolated incident. The drone strike that Germany blamed on Moscow last month at Leipzig Airport, the European Union said, bore "all the hallmarks of state-sponsored terrorism" (<a href="https://www.abc.net.au/news/2026-09-19/france-threatened-by-russian-attacks/107171406" target="_blank" rel="noopener">ABC Australia</a>). That same week, a Russian drone hit a passenger train near the Ukraine-Poland border just after European diplomats, including former British and Swedish prime ministers, had used the same rail line leaving a Kyiv security conference (<a href="https://www.abc.net.au/news/2026-09-19/france-threatened-by-russian-attacks/107171406" target="_blank" rel="noopener">ABC Australia</a>). Poland closed two airports and sounded air raid sirens in eastern schools this week after a Russian strike near its border with Ukraine (<a href="https://www.independent.co.uk/news/world/europe/russia-elections-ukraine-nato-b3052618.html" target="_blank" rel="noopener">The Independent</a>). Polish Prime Minister Donald Tusk told parliament the coming strikes would be framed as "accidental," built to weaken NATO's resolve to invoke its own collective defense clause (<a href="https://www.independent.co.uk/news/world/europe/russia-elections-ukraine-nato-b3052618.html" target="_blank" rel="noopener">The Independent</a>). Moscow answered Western support for Ukraine with its own instrument: it summoned Britain's charge d'affaires, Danae Dholakia, over UK arms shipments, and seized the Russian assets of Nestle, Auchan, Lemana Pro and FM Logistics, folding them into a new entity run by a Ministry of Interior general (<a href="https://www.aljazeera.com/news/2026/9/18/russia-seizes-assets-of-french-firms-summons-uk-envoy-over-ukraine-support" target="_blank" rel="noopener">Al Jazeera</a>).</p><p>The sabotage campaign landed in France the same week its heating bills did. Macron is set to call an emergency G7 meeting as energy prices spike, with finance ministers in Dublin already alarmed at how the Middle East war is compounding pressure on European households before winter (<a href="https://www.bloomberg.com/news/newsletters/2026-09-18/european-economies-eye-another-energy-crisis-heading-into-winter" target="_blank" rel="noopener">Bloomberg</a>).</p><div class="ntk-stat"><div class="ntk-stat-num">111 million</div><div class="ntk-stat-ctx">the number of Russians voting this week in a Duma election Ukraine's foreign ministry called a farce staged at gunpoint in occupied territory.</div></div><p>Putin cast his own ballot from his office as that vote proceeded, framing a guaranteed result as proof of national unity behind the war (<a href="https://www.independent.co.uk/news/world/europe/russia-elections-ukraine-nato-b3052618.html" target="_blank" rel="noopener">The Independent</a>). For French voters watching gas prices climb and drones fall near their own infrastructure, Macron is betting they draw a straight line between the two before the first cold snap arrives.</p></div>
     </div>
 
-    <div class="story-section">
+    <div class="story-section sec-2">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--purple);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Probabilities — What Will Likely Happen</span>
       </div>
       <div class="section-body"><p><em>Macron's emergency G7 meeting is the easy part; what happens after it is where the winter actually gets decided.</em></p><p><strong>The G7 Meeting Will Produce a Statement on Energy Solidarity Within Days, Not a Price Cap.</strong> France's finance ministry will almost certainly get a joint communiqure out of the emergency session promising coordination on gas supply and possibly a review of the Russian sanctions regime, because that's what G7 statements do when a crisis is moving faster than policy. It will not produce a price cap or a subsidy mechanism that reaches French households before the first cold snap, since that requires legislation Macron doesn't have time or a majority to pass. The most likely outcome is that Bruno Le Maire's successors at the finance ministry buy themselves a headline and a few weeks, while the actual exposure, households facing higher bills going into an election year, sits untouched. Jordan Bardella and National Rally will use exactly that gap, pointing out that Macron convened intelligence chiefs and G7 leaders but couldn't lower a gas bill, in the next two weeks of French political coverage.</p><p>That argument only works if the sabotage campaign keeps supplying evidence for it, and Russia has given no sign of easing off.</p><p><strong>Russia Will Escalate Hybrid Activity in at Least One More NATO Country Before Ukraine's Duma Election Results Are Finalized.</strong> Poland's fighter jets and Germany's Leipzig accusation were not a peak; they were a baseline. Tusk's own warning, that the next strikes will be framed as "accidental" specifically to avoid triggering NATO's Article 5 threshold, describes a mechanism still in motion, and Western intelligence officials already believe Putin is preparing to widen it (<a href="https://www.telegraph.co.uk/world-news/2026/09/18/putin-preparing-to-escalate-war/" target="_blank" rel="noopener">The Telegraph</a>). The most likely target in the next two weeks is a Baltic or Polish site, chosen because both governments have already shown they'll close airspace and sound sirens rather than call Moscow's bluff, which is precisely the muted, deniable response Russia is testing for. If it lands in France instead, Macron's promise that an attack "will not go unanswered" gets tested for real, and he'll have to decide whether "answered" means a diplomatic protest or something with teeth.</p><div class="ntk-stat"><div class="ntk-stat-num">20%</div><div class="ntk-stat-ctx">roughly the share of Ukraine's sovereign territory Russia now occupies, the baseline Witkoff and Kushner are negotiating from, not toward.</div></div><p>That negotiating position is the third lever, and it moves on a slower clock than the sabotage does.</p><p><strong>Kushner and Witkoff Will Return to Moscow Before Ukraine's Duma Results Are Certified, Pushing the Same Territorial Framework Zelensky Has Already Rejected.</strong> The Kremlin has already ruled out a Putin-Zelensky meeting at Trump's Doral resort in December, which means the near-term venue for pressure is Washington, not diplomacy on the ground. The most likely outcome is Trump using his own meeting with Xi Jinping next week to extract cover, not concessions, positioning China as a co-guarantor of any eventual deal while leaving Ukraine to make the actual territorial trade. Zelensky loses leverage every week the war economy squeezes harder and Europe's energy panic deepens, since a weary G7 is a G7 more likely to pressure Kyiv than Moscow.</p></div>
     </div>
 
-    <div class="story-section">
+    <div class="story-section sec-3">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--teal);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Possibilities — What Could Happen</span>
       </div>
       <div class="section-body"><p><em>Every door here opens off the same room: a French president who just told his own political rivals, on camera, that the sabotage is real and the answer is coming. That admission is the new fact on the table, and it changes what everyone else in Europe can now do.</em></p><p><strong>Von der Leyen's NATO-Style Hybrid Mechanism Just Got a Test Case It Didn't Have Last Week.</strong> Ursula von der Leyen said the EU needed a system like NATO's collective defense clause, but built for attacks that fall below the threshold of war, and until Friday that was an argument without a client (<a href="https://www.dw.com/en/france-macron-orders-defense-against-russian-hybrid-attacks/a-79329757?maca=en-rss-en-all-1573-xml-mrss" target="_blank" rel="noopener">DW</a>). Now she has France, Germany and Poland all naming Russia in the same week, each with its own incident, Leipzig, the Ukraine-Poland rail line, the border jets, and a French president on record calling it one intensifying campaign rather than three unlucky accidents. That combination, three governments with fresh incidents plus a Commission president who already has the proposal drafted, is what makes a formal EU hybrid-response mechanism reachable in the next European Council session in a way it wasn't a month ago. The open question is whether Hungary and Slovakia, the two Carpathian Eight members who've refused Kyiv direct military aid, treat a hybrid-defense pact as solidarity or as another Brussels lever aimed at their own energy deals with Moscow.</p><p>That fight over who signs on is the second door, and it only exists because the first one opened.</p><p><strong>A Hybrid Mechanism With Holdouts Hands Bardella a Talking Point Macron Just Built for Him.</strong> If von der Leyen's proposal moves and Budapest or Bratislava balks, the National Rally, sitting in Macron's own crisis room this week while Le Pen stayed away, gets to argue that the president who convened an emergency briefing on Russian sabotage can't even get fellow EU governments to agree on a joint defense against it. That argument lands harder than the gas-price critique already available to him, because it turns Macron's own evidence, the intelligence briefing, the Leipzig case, the seized French firms, into proof of European disunity rather than European resolve. Bardella doesn't need a new fact to make that case; he needs exactly the holdout Hungary and Slovakia are positioned to supply. This is the version of the adjacent possible that expands the wrong way: Macron's transparency this week becomes the evidence his rivals use against the EU project itself, if the mechanism stalls the way EU sanctions votes usually do.</p><p>There's a narrower, better door in the same room, one that doesn't require Budapest to change its mind at all.</p><p><strong>France and Poland Can Build a Bilateral Response Faster Than Brussels Can Build a Consensus.</strong> Tusk has already deployed fighter jets and named the mechanism, accidental-looking strikes designed to avoid Article 5; Macron has already named the campaign and ordered infrastructure hardened. Neither needs Hungary's sign-off to share drone-detection assets, intelligence feeds or a joint public statement defining what counts as an attack requiring a response, since that's a bilateral or coalition-of-the-willing move, not a treaty amendment. This is the version of the adjacent possible that doesn't wait on the EU's slowest members: two governments that already agree on the diagnosis, moving on the strength of what they've each independently confirmed this week, before winter forces the argument anyway.</p></div>
     </div>
 
-    <div class="story-section lies-section">
+    <div class="story-section lies-section sec-4">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--terra);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Lies / Narrative Distortions</span>
       </div>
       <div class="section-body"><p><em>Putin needs the war to look like something other than what it is, and this week he had two different audiences to sell it to.</em></p><p><strong>Putin Told Russians the Duma Vote Proves a United Country. It Proves Nothing of the Sort.</strong> Putin told the nation before the election that the results would "demonstrate that millions of people stand behind our fighters," casting a guaranteed outcome as evidence of organic support (<a href="https://www.independent.co.uk/news/world/europe/russia-elections-ukraine-nato-b3052618.html" target="_blank" rel="noopener">The Independent</a>). United Russia has held its majority for 23 years without ever facing a real opposition, which is not a description of a popularity contest. It is a description of a rigged one. The vote's inclusion of Donetsk, Luhansk, Zaporizhzhia, Kherson and Crimea does the same double duty: Moscow gets to point to ballots cast in occupied Ukrainian territory as proof those regions chose Russia, when Ukraine's foreign ministry says residents there are voting "at gunpoint" under an occupying army (<a href="https://www.independent.co.uk/news/world/europe/russia-elections-ukraine-nato-b3052618.html" target="_blank" rel="noopener">The Independent</a>). The people who benefit from this story are not the voters. They're the Kremlin officials who need a mandate to justify a war economy that Bloomberg's own reporting shows is hitting its limits, and a president who needs cover for a mobilization fear that's already circulating before the polls even close (<a href="https://www.independent.co.uk/news/world/europe/russia-elections-ukraine-nato-b3052618.html" target="_blank" rel="noopener">The Independent</a>). A state TV ad ran military commanders across the centuries into footage of troops holding a flag over a won battle, with the tagline that a vote for United Russia is "the strength of Russia." That's not an election ad. That's a recruitment poster wearing an election ad's clothes.</p><p>The second lie runs in the opposite direction, aimed at Europe instead of Russia, but it serves the identical purpose.</p><p><strong>Putin Says the West Invented the "Mythical Russian Threat." The Rail Strike Landed Before the Sentence Did.</strong> Putin told the BRICS summit in New Delhi that Europe's governments "seek to frighten their populations with a mythical Russian threat," and insisted Russia poses no danger to its neighbors (<a href="https://www.washingtonpost.com/world/2026/09/14/putin-warns-europe-war-if-peacekeeping-troops-are-deployed-ukraine/" target="_blank" rel="noopener">Washington Post</a>). A Russian drone hit passenger rail infrastructure in western Ukraine as Western officials, including David Petraeus, Boris Johnson and Carl Bildt, were using that same line to leave a security conference in Kyiv (<a href="https://www.washingtonpost.com/world/2026/09/14/putin-warns-europe-war-if-peacekeeping-troops-are-deployed-ukraine/" target="_blank" rel="noopener">Washington Post</a>). German Defense Minister Boris Pistorius called it a calculated attempt to fuel fear, not a coincidence, and noted that Putin "knows that, and that is why he is doing it" (<a href="https://www.washingtonpost.com/world/2026/09/14/putin-warns-europe-war-if-peacekeeping-troops-are-deployed-ukraine/" target="_blank" rel="noopener">Washington Post</a>).</p><div class="ntk-pullquote"><p class="ntk-pq-text">What Vladimir Putin is doing is dangerous. He knows that, and that is why he is doing it.</p><cite class="ntk-pq-cite">Boris Pistorius, German defense minister</cite></div><p>The believers in Putin's version are not fools. They are Europeans exhausted by three years of war, watching energy bills climb, who would rather hear that the danger is exaggerated than confront a plan to hit their own power grid. That fear is exactly the market Marine Le Pen and AfD are courting, arguing for negotiations and sanctions relief in language that echoes Putin's own complaint about Europe's "globalist circles." The people who benefit from the denial are not the frightened voters. They are the man denying it, buying time to seize French firms, summon British diplomats and threaten "war" over peacekeepers, all while insisting he started none of it.</p></div>

@@ -19,6 +19,11 @@
   :root {
     --blue:   #0798F2;
     --amber:  #F2AE2E;
+    /* Light-ground steps. The bright accents were tuned against the ink
+       header and fail on the white body: blue 3.10, amber 1.93. These
+       clear 4.6 on white, cream and the Lies tint. */
+    --blue-deep:  #04619A;
+    --amber-deep: #7D5408;
     --terra:  #DC6550;
     --purple: #725ABF;
     --teal:   #01B2A7;
@@ -36,7 +41,7 @@
     margin: 0 auto;
   }
 
-  a { color: var(--blue); }
+  a { color: var(--blue-deep); }
 
   .story-header {
     background: var(--dark);
@@ -87,7 +92,7 @@
     font-family: 'Overpass', sans-serif;
     font-size: 10px;
     font-weight: 700;
-    letter-spacing: 2px;
+    letter-spacing: .1em;
     text-transform: uppercase;
     color: var(--amber);
     margin-bottom: 10px;
@@ -127,12 +132,25 @@
   .section-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
   .section-title {
-    font-family: 'Overpass', sans-serif;
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 0.5px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 600;
+    font-size: 16px;
+    font-variant: small-caps;
+    letter-spacing: .05em;
     color: var(--dark);
   }
+
+  /* A descending ladder of certainty, not four categories. Same ramp as the
+     landing page: established, then likely, then plausible, with Lies
+     reversed because it is the negation rather than the fourth rung. */
+  .sec-1 .section-title { color: var(--dark); }
+  .sec-2 .section-title { color: rgba(38,31,35,0.82); }
+  .sec-3 .section-title { color: rgba(38,31,35,0.72); }
+  .sec-4 .section-title { color: #A73521; font-style: italic; }
+  .sec-1 .section-dot { background: var(--dark); }
+  .sec-2 .section-dot { background: rgba(38,31,35,0.60); }
+  .sec-3 .section-dot { background: rgba(38,31,35,0.34); }
+  .sec-4 .section-dot { background: #A73521; }
 
   .section-body {
     padding: 0 20px 22px;
@@ -159,7 +177,7 @@
   }
   .ntk-pq-text {
     font-family: 'Source Serif 4', serif;
-    font-size: 19px !important;
+    font-size: 20px !important;
     font-weight: 300;
     font-style: italic;
     line-height: 1.5 !important;
@@ -170,13 +188,13 @@
     display: block;
     font-family: 'Overpass', sans-serif;
     font-size: 10px;
-    letter-spacing: 1.5px;
+    letter-spacing: .1em;
     text-transform: uppercase;
-    color: var(--blue);
+    color: var(--blue-deep);
     font-style: normal;
   }
   .ntk-stat {
-    border-left: 3px solid var(--amber);
+    border-left: 3px solid var(--amber-deep);
     margin: 18px 0;
     padding: 14px 16px;
     background: rgba(242,174,46,0.05);
@@ -185,13 +203,13 @@
     font-family: 'Overpass', sans-serif;
     font-size: 34px;
     font-weight: 700;
-    color: var(--amber);
+    color: var(--amber-deep);
     line-height: 1.1;
     margin-bottom: 5px;
   }
   .ntk-stat-ctx {
     font-family: 'Source Serif 4', serif;
-    font-size: 14px;
+    font-size: 13px;
     color: rgba(38,31,35,0.72);
     line-height: 1.5;
   }
@@ -203,7 +221,7 @@
     font-family: 'Overpass', sans-serif;
     font-size: 13px;
     font-weight: 600;
-    color: var(--blue);
+    color: var(--blue-deep);
     text-decoration: none;
   }
 </style>
@@ -230,33 +248,33 @@
 
   <div class="story-sections">
 
-    <div class="story-section">
+    <div class="story-section sec-1">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--blue);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Truths — What Happened</span>
       </div>
       <div class="section-body"><p><strong>Warren Buffett gave up his last formal title at Berkshire Hathaway on Friday, becoming chairman emeritus and handing the board gavel to his son Howard.</strong> He is 96. He took control of Berkshire in 1965, when it was a failing Massachusetts textile mill, and built it into a $1.1 trillion conglomerate that owns Geico, BNSF Railway, Dairy Queen and large stakes in Apple, Coca-Cola and American Express (<a href="https://www.bbc.com/news/articles/cvj64dl1w6yno" target="_blank" rel="noopener">BBC</a>). Shares gained more than 5,500,000% under his watch, against roughly 39,000% for the S&P 500 over the same stretch (<a href="https://www.cbsnews.com/colorado/news/warren-buffett-stepping-aside-berkshire-hathaway-chairman/" target="_blank" rel="noopener">CBS News</a>). "Father Time always wins," Buffett wrote to shareholders. "He has, however, been generous with me" (<a href="https://www.aljazeera.com/economy/2026/9/18/warren-buffett-steps-down-as-berkshire-hathaway-chairman" target="_blank" rel="noopener">Al Jazeera</a>).</p><p>The exit wasn't sudden. Buffett handed the CEO job to Greg Abel nine months ago, in January, and the board seat now goes to a man who has been preparing for it since Bill Clinton's first term.</p><p><strong>Howard Buffett, 71, has sat on Berkshire's board since 1993, three decades of watching how the company runs before being asked to guard it.</strong> He has never run a public company. He has been a farmer, a sheriff in Macon County, Illinois, and the head of a foundation that has sent hundreds of millions of dollars to Ukraine for mine clearing and infrastructure since Russia's invasion (<a href="https://www.nytimes.com/2026/09/18/business/warren-buffett-son-howard-berkshire-hathaway.html" target="_blank" rel="noopener">The New York Times</a>). His job now is not to run anything. Abel runs the company; Howard's mandate, in his father's words, is to be "a policy the shareholders own and hope never to claim against," meaning he exists to prevent a crisis, not to manage a business (<a href="https://www.reuters.com/legal/transactional/berkshire-hathaway-looks-keep-culture-intact-howard-buffett-ascends-2026-09-18/" target="_blank" rel="noopener">Reuters</a>). Howard described the culture he's meant to protect in blunter terms last year: "keep things simple," "respect your shareholders," "tell them the bad news upfront" (<a href="https://www.reuters.com/legal/transactional/who-is-howard-buffett-berkshire-hathaways-new-chairman-2026-09-18/" target="_blank" rel="noopener">Reuters</a>).</p><p>That framing, culture over control, only makes sense against what Abel is actually sitting on.</p><p><strong>Berkshire is holding $364.7 billion in cash as of June 30, more than the entire market value of Coca-Cola.</strong> Abel now has the freedom to spend it: on acquisitions, on stock buybacks, or on a dividend Berkshire has never paid (<a href="https://www.reuters.com/legal/transactional/berkshire-hathaway-looks-keep-culture-intact-howard-buffett-ascends-2026-09-18/" target="_blank" rel="noopener">Reuters</a>). Buffett's own verdict on the man who'll decide: Abel "has exceeded" his "sky high" expectations and has "been making the decisions that matter for some time now" (<a href="https://www.cbsnews.com/colorado/news/warren-buffett-stepping-aside-berkshire-hathaway-chairman/" target="_blank" rel="noopener">CBS News</a>). Berkshire's Class B shares slipped 0.3% in premarket trading, a shrug that says the market had already priced this in (<a href="https://www.aljazeera.com/economy/2026/9/18/warren-buffett-steps-down-as-berkshire-hathaway-chairman" target="_blank" rel="noopener">Al Jazeera</a>). The stock, in fact, has not returned to the all-time high it hit on May 2 last year, the day before Buffett first announced he'd step down as CEO (<a href="https://www.wsj.com/livecoverage/stock-market-today-dow-sp-500-nasdaq-09-18-2026/card/berkshire-stock-peaked-the-day-before-warren-buffett-said-he-d-step-down-as-ceo-P7dfpIHZRWK28JvtWk5j" target="_blank" rel="noopener">The Wall Street Journal</a>).</p></div>
     </div>
 
-    <div class="story-section">
+    <div class="story-section sec-2">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--purple);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Probabilities — What Will Likely Happen</span>
       </div>
       <div class="section-body"><p><em>The next test of this succession isn't a headline. It's what Greg Abel does with $364.7 billion and no one left above him to say no.</em></p><p><strong>Abel will almost certainly move on at least one large acquisition or a share buyback increase within the next two quarters.</strong> He has never had this much unsupervised authority, and Berkshire's cash pile keeps growing faster than he's spending it, a problem in a company built on the idea that idle capital is wasted capital. Buffett spent the last decade struggling to find deals big enough to matter at Berkshire's size; Abel inherits that same drought, plus the pressure of no longer being the guy the Oracle might quietly override. The most likely near-term move is a buyback expansion rather than a mega-deal, since acquisitions at this scale take months to surface and Berkshire's board, with Howard now chairing it, will want an early signal that capital discipline hasn't loosened just because Buffett's name left the letterhead.</p><p>That question of discipline is exactly where Howard Buffett's actual job starts, and it will get tested faster than his father's letter implied.</p><p><strong>Howard Buffett will face his first real culture test the moment one of Berkshire's roughly 60 subsidiaries has a bad quarter or a scandal, not on some future date but whenever it happens next.</strong> Reuters reported Abel is seen internally as more willing than Warren Buffett to intervene on underperforming units (<a href="https://www.reuters.com/legal/transactional/berkshire-hathaway-looks-keep-culture-intact-howard-buffett-ascends-2026-09-18/" target="_blank" rel="noopener">Reuters</a>). That's a change in temperament sitting one layer below a chairman whose entire mandate is to prevent exactly that kind of intervention from curdling into the self-dealing or bureaucracy that Berkshire investor James Armstrong warned against.</p><div class="ntk-pullquote"><p class="ntk-pq-text">Minimize bureaucracy, stay focused on long-term goals, put the shareholders first, no self-dealing, no corruption, and widen the moat that protects Berkshire's businesses.</p><cite class="ntk-pq-cite">James Armstrong, president, Henry H. Armstrong Associates</cite></div><p>Howard has no vote on operations, but he has standing to raise his hand in the boardroom, and the first time Abel moves aggressively against a division manager, shareholders will watch whether Howard says anything at all.</p><p>The more durable risk sits with Ajit Jain, the insurance chief Reuters named as a succession watch point of his own. Jain has run Berkshire's reinsurance business since 1986 and turned down the CEO job when Buffett offered it; his eventual retirement, whenever it lands, will strip out the last executive who worked alongside Buffett for decades, leaving Abel without a peer who remembers how the old man actually made decisions. Gen Re's Charlie Shamieh is the name already circulating as his replacement. If Jain announces a retirement timeline in the next year, expect it to move Berkshire's stock more than Friday's chairmanship shuffle did, because Jain, not Howard, is the one holding institutional memory that can't be written into a shareholder letter.</p></div>
     </div>
 
-    <div class="story-section">
+    <div class="story-section sec-3">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--teal);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Possibilities — What Could Happen</span>
       </div>
       <div class="section-body"><p><em>The room Abel and Howard just walked into has two doors nobody could open a week ago, and one that only exists because of what's sitting in Omaha's bank account.</em></p><p><strong>Abel could use the cash pile to buy a company Buffett was never willing to buy.</strong> Buffett's whole career ran on a filter: simple businesses, understandable economics, no technology he couldn't explain to a shareholder in plain English. That filter kept Berkshire out of the AI buildout entirely while Big Tech spent the last three years turning data centers into the largest capital expenditure category in corporate America. Abel has no such reputation to protect. He built his career inside Berkshire Hathaway Energy, a business that already knows how to finance power-hungry infrastructure at scale, which means he's one of the only people in Berkshire's history who could plausibly point $364.7 billion at a data center or grid deal and have the board see it as an extension of what he already runs, not a departure from what Buffett taught. Howard's mandate covers culture, not strategy, so nothing stops Abel from making that move in the next year. The door wasn't open under Buffett. It is now, because the person deciding changed and the cash pile didn't shrink waiting for him.</p><p>That door leads somewhere Howard's father spent six decades avoiding.</p><p><strong>If Abel makes that kind of move and it works, Howard's "guardian of culture" job gets redefined in real time, by precedent rather than by vote.</strong> Howard has no operating authority, but he has 33 years of watching Berkshire's board decide what counts as consistent with Buffett's values, which means he's the only person in the room with standing to say a data center bet either fits the culture or breaks it. If Abel's first big swing under Howard's chairmanship succeeds, Howard doesn't need to change a single word of his job description to change what the job means. He just needs to stay quiet and let the deal stand as the new definition of "simple businesses, fair prices." That's a door that only opened because the first one did. Nobody could have written this rule into Berkshire's culture before Abel had a deal to test it against.</p><p>There's a generative version of this same mechanism, and it runs through Ajit Jain rather than Abel.</p><p><strong>Jain's eventual exit, flagged in Probabilities as the real succession risk still ahead, is also the moment Howard's board could formalize something Buffett never bothered to build: a written, public transition protocol for Berkshire's other aging division heads.</strong> Buffett ran Berkshire for 61 years on personal judgment and a handshake culture; he never needed a succession template because he was the template. Howard's entire function is to protect that culture without Buffett's judgment behind it, and a Jain retirement would be the first case study where the board has to prove the culture survives a departure Buffett didn't personally orchestrate. If Howard's board uses that moment to write down, formally, how Berkshire vets and elevates the next generation of unit leaders, insurance succession stops being a rumor cycle that moves the stock every time Charlie Shamieh's name resurfaces. That's not a door available a year ago, because a year ago Buffett was still the backstop. It's only reachable now that the backstop's title is gone and the board actually has to answer for what replaces it.</p></div>
     </div>
 
-    <div class="story-section lies-section">
+    <div class="story-section lies-section sec-4">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--terra);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Lies / Narrative Distortions</span>
       </div>
       <div class="section-body"><p><em>The chairmanship changed hands without a single fact in dispute, which hasn't stopped a handful of commentators from filling that vacuum with a story more dramatic than the one Berkshire actually told.</em></p><p><strong>Buffett's exit is a health scare Berkshire isn't disclosing.</strong> The claim, circulating among some financial commentators and amplified across social media in the hours after Friday's announcement, holds that a 96-year-old man doesn't relinquish his last title at a $1.1 trillion company unless something is wrong that the press release doesn't say. Berkshire's own statement gave no indication of any health issue, and Buffett's letter read like a man closing a book he'd been writing for months, not one reacting to a diagnosis (<a href="https://www.cbsnews.com/colorado/news/warren-buffett-stepping-aside-berkshire-hathaway-chairman/" target="_blank" rel="noopener">CBS News</a>). The fear behind the claim is a real one: institutions this large aren't supposed to be this dependent on one person's judgment, and when that person finally steps back, it's natural to look for the emergency that must have forced it. But the timeline doesn't cooperate. Buffett announced he'd step down as CEO in May of last year. He handed Abel the job in January. Friday's move was the third and final step of a sequence he laid out himself, in public, over roughly 17 months, which is not how a health scare unfolds (<a href="https://www.wsj.com/livecoverage/stock-market-today-dow-sp-500-nasdaq-09-18-2026/card/berkshire-stock-peaked-the-day-before-warren-buffett-said-he-d-step-down-as-ceo-P7dfpIHZRWK28JvtWk5j" target="_blank" rel="noopener">The Wall Street Journal</a>). Investor Adam Mead offered the more mundane read: Buffett is simply cushioning the shock of his eventual death for a shareholder base that has never known Berkshire without him, and doing it early enough that no single event has to carry the whole transition.</p><p>The people who benefit from the health-scare version aren't hard to find. It's a better story: a titan felled rather than a titan retiring on schedule, and stories about decline travel further than stories about planning. For financial commentators building an audience, "something's wrong at Berkshire" earns more clicks than "succession plan reaches milestone number three." There's a smaller, quieter version of the same instinct in the market's own behavior. Berkshire's Class B shares dipped a fraction of a percent on the news, a move some traders framed online as the market "pricing in" bad news about Buffett's condition. It's simpler than that. Shares have been flat since Buffett first signaled he was leaving the CEO chair, which means the market finished pricing in Buffett's departure a year and a half ago and barely noticed this week's paperwork (<a href="https://www.wsj.com/livecoverage/stock-market-today-dow-sp-500-nasdaq-09-18-2026/card/berkshire-stock-peaked-the-day-before-warren-buffett-said-he-d-step-down-as-ceo-P7dfpIHZRWK28JvtWk5j" target="_blank" rel="noopener">The Wall Street Journal</a>). A market that already knows the ending doesn't flinch when the book closes. It's the same instinct that turns every aging leader's calendar change into a deathwatch, and it says more about how uncomfortable Americans are with orderly transitions than it does about Warren Buffett's health.</p></div>
