@@ -1,7 +1,7 @@
 ---
 id: T-0029
 title: There is no design system under the consumer surfaces, and the measurable failures that follow from it
-status: DECIDED
+status: VERIFIED
 tags: [digest, chore]
 anchor: digest/index.html:60
 ---
@@ -18,9 +18,9 @@ chosen per component rather than drawn from a scale.
 | Distinct `font-size` values, app | 21 | 10 |
 | Distinct `font-size` values, landing | 21 | 10 (same scale) |
 | Distinct `border-radius` values | 10 | 2 |
-| Distinct `letter-spacing` values | 9 | 2 |
-| `text-transform: uppercase` rules, app | 44 | ~12 |
-| Brand accent colours | 5 | 2 + link + semantic |
+| Distinct `letter-spacing` values | 9 | 4 (.1em, 0, and two gentle text steps) |
+| `text-transform: uppercase` rules, app | 43 | 15 |
+| Brand accent colours | 5 | 5 &mdash; deferred, see T-0031 |
 
 Eight of the twenty-one app sizes sit between 9 px and 13 px, including
 `9.5px`, `10.5px` and `12.5px`. The replacement scale is a ~1.30 ratio:
@@ -44,7 +44,7 @@ Four defects follow from the same absence and are fixed here:
 4. **The archive was never designed.** Default blue underlined links and
    browser bullets, emitted by `ARCHIVE_TEMPLATE` in `build_digest.py`.
 
-**Deferred to T-0030, deliberately.** The editor settled on 2026-09-20 that
+**Deferred to T-0031, deliberately.** The editor settled on 2026-09-20 that
 dark grounds stay on ntknews.org only. Measured while starting it: the app is
 not dark in four places, it is dark throughout — eighteen `background:
 var(--dark)` rules plus hardcoded darks on `.today-view`, `.profile-view` and
@@ -57,7 +57,7 @@ twelve safe ones.
 It also changes what the accent fix means. On the ink ground every accent
 already passes; the contrast failures are real only where cream grounds exist
 today, which is the archive. So this ticket fixes the archive's live 1.92:1
-failure and leaves the app's accents alone, and T-0030 carries the re-theme
+failure and leaves the app's accents alone, and T-0031 carries the re-theme
 and the two-step accents together, because separately either one makes the app
 worse.
 
@@ -119,6 +119,14 @@ test "$(grep -c 'text-transform: *uppercase' digest/index.html)" -le 22
 # Backstory direction is no longer colour-alone.
 grep -qE 'uarr|darr|harr' digest/index.html
 
-# Purple is retired.
-! grep -q '\-\-purple' digest/index.html
+# The two ornamental statistics and the four empty taxonomy tags are gone.
+! grep -qE '>1807<|fw-card-meta' index.html
+
+# Only the primary call to action keeps an arrow (the other match is a comment).
+test "$(grep -c '→' index.html)" -le 2
+
+# One typeface for story headlines, on every surface.
+! grep -qE "story-headline|story-hero-headline|featured-hero-headline" \
+  <(grep -A2 -E '\.(story-headline|story-hero-headline|featured-hero-headline) *\{' \
+    digest/index.html | grep Overpass)
 ```
