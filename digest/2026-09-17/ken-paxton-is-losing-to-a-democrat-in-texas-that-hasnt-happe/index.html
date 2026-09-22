@@ -21,6 +21,11 @@
   :root {
     --blue:   #0798F2;
     --amber:  #F2AE2E;
+    /* Light-ground steps. The bright accents were tuned against the ink
+       header and fail on the white body: blue 3.10, amber 1.93. These
+       clear 4.6 on white, cream and the Lies tint. */
+    --blue-deep:  #045E96;
+    --amber-deep: #7A5308;
     --terra:  #DC6550;
     --purple: #725ABF;
     --teal:   #01B2A7;
@@ -38,7 +43,7 @@
     margin: 0 auto;
   }
 
-  a { color: var(--blue); }
+  a { color: var(--blue-deep); }
 
   .story-header {
     background: var(--dark);
@@ -53,15 +58,8 @@
     gap: 12px;
   }
 
-  .back-btn {
-    font-family: 'Overpass', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--blue);
-    text-decoration: none;
-  }
 
-  .story-header-logo { margin-left: auto; display: flex; align-items: center; }
+  .story-header-logo { text-decoration: none; margin-left: auto; display: flex; align-items: center; }
   .ntk-logo-img-sm { height: 20px; width: auto; display: block; }
 
   .story-hero-wrap { background: var(--dark); }
@@ -89,7 +87,7 @@
     font-family: 'Overpass', sans-serif;
     font-size: 10px;
     font-weight: 700;
-    letter-spacing: 2px;
+    letter-spacing: .1em;
     text-transform: uppercase;
     color: var(--amber);
     margin-bottom: 10px;
@@ -129,12 +127,25 @@
   .section-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
   .section-title {
-    font-family: 'Overpass', sans-serif;
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 0.5px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 600;
+    font-size: 16px;
+    font-variant: small-caps;
+    letter-spacing: .05em;
     color: var(--dark);
   }
+
+  /* A descending ladder of certainty, not four categories. Same ramp as the
+     landing page: established, then likely, then plausible, with Lies
+     reversed because it is the negation rather than the fourth rung. */
+  .sec-1 .section-title { color: var(--dark); }
+  .sec-2 .section-title { color: rgba(38,31,35,0.82); }
+  .sec-3 .section-title { color: rgba(38,31,35,0.72); }
+  .sec-4 .section-title { color: #A33421; font-style: italic; }
+  .sec-1 .section-dot { background: var(--dark); }
+  .sec-2 .section-dot { background: rgba(38,31,35,0.60); }
+  .sec-3 .section-dot { background: rgba(38,31,35,0.34); }
+  .sec-4 .section-dot { background: #A33421; }
 
   .section-body {
     padding: 0 20px 22px;
@@ -161,7 +172,7 @@
   }
   .ntk-pq-text {
     font-family: 'Source Serif 4', serif;
-    font-size: 19px !important;
+    font-size: 20px !important;
     font-weight: 300;
     font-style: italic;
     line-height: 1.5 !important;
@@ -172,13 +183,13 @@
     display: block;
     font-family: 'Overpass', sans-serif;
     font-size: 10px;
-    letter-spacing: 1.5px;
+    letter-spacing: .1em;
     text-transform: uppercase;
-    color: var(--blue);
+    color: var(--blue-deep);
     font-style: normal;
   }
   .ntk-stat {
-    border-left: 3px solid var(--amber);
+    border-left: 3px solid var(--amber-deep);
     margin: 18px 0;
     padding: 14px 16px;
     background: rgba(242,174,46,0.05);
@@ -187,13 +198,13 @@
     font-family: 'Overpass', sans-serif;
     font-size: 34px;
     font-weight: 700;
-    color: var(--amber);
+    color: var(--amber-deep);
     line-height: 1.1;
     margin-bottom: 5px;
   }
   .ntk-stat-ctx {
     font-family: 'Source Serif 4', serif;
-    font-size: 14px;
+    font-size: 13px;
     color: rgba(38,31,35,0.72);
     line-height: 1.5;
   }
@@ -205,7 +216,7 @@
     font-family: 'Overpass', sans-serif;
     font-size: 13px;
     font-weight: 600;
-    color: var(--blue);
+    color: var(--blue-deep);
     text-decoration: none;
   }
 </style>
@@ -214,10 +225,9 @@
 
   <header class="story-header">
     <div class="story-header-inner">
-      <a class="back-btn" href="../">← Digest</a>
-      <div class="story-header-logo">
+      <a class="story-header-logo" href="/digest" aria-label="Back to the digest">
         <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjY5IiB6b29tQW5kUGFuPSJtYWduaWZ5IiB2aWV3Qm94PSIwIDAgMjAxLjc1IDEwMC40OTk5OTciIGhlaWdodD0iMTM0IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWlkWU1pZCBtZWV0IiB2ZXJzaW9uPSIxLjAiPjxkZWZzPjxnLz48Y2xpcFBhdGggaWQ9ImVlZmZkM2ZlNGQiPjxwYXRoIGQ9Ik0gNDIuNjEzMjgxIDAgTCAxNTguMjU3ODEyIDAgTCAxNTguMjU3ODEyIDEzLjc2MTcxOSBMIDQyLjYxMzI4MSAxMy43NjE3MTkgWiBNIDQyLjYxMzI4MSAwICIgY2xpcC1ydWxlPSJub256ZXJvIi8+PC9jbGlwUGF0aD48Y2xpcFBhdGggaWQ9IjY0YjZjNWI4MjEiPjxwYXRoIGQ9Ik0gNDUuNjAxNTYyIDAgTCAxNTUuMjQyMTg4IDAgQyAxNTYuODkwNjI1IDAgMTU4LjIyNjU2MiAxLjMzNTkzOCAxNTguMjI2NTYyIDIuOTg0Mzc1IEwgMTU4LjIyNjU2MiAxMC43NzczNDQgQyAxNTguMjI2NTYyIDEyLjQyNTc4MSAxNTYuODkwNjI1IDEzLjc2MTcxOSAxNTUuMjQyMTg4IDEzLjc2MTcxOSBMIDQ1LjYwMTU2MiAxMy43NjE3MTkgQyA0My45NTMxMjUgMTMuNzYxNzE5IDQyLjYxMzI4MSAxMi40MjU3ODEgNDIuNjEzMjgxIDEwLjc3NzM0NCBMIDQyLjYxMzI4MSAyLjk4NDM3NSBDIDQyLjYxMzI4MSAxLjMzNTkzOCA0My45NTMxMjUgMCA0NS42MDE1NjIgMCBaIE0gNDUuNjAxNTYyIDAgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iMTNjNzNjMDllMiI+PHBhdGggZD0iTSAwLjYxMzI4MSAwIEwgMTE2LjIzMDQ2OSAwIEwgMTE2LjIzMDQ2OSAxMy43NjE3MTkgTCAwLjYxMzI4MSAxMy43NjE3MTkgWiBNIDAuNjEzMjgxIDAgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iOTAxYzRhN2I1NyI+PHBhdGggZD0iTSAzLjYwMTU2MiAwIEwgMTEzLjI0MjE4OCAwIEMgMTE0Ljg5MDYyNSAwIDExNi4yMjY1NjIgMS4zMzU5MzggMTE2LjIyNjU2MiAyLjk4NDM3NSBMIDExNi4yMjY1NjIgMTAuNzc3MzQ0IEMgMTE2LjIyNjU2MiAxMi40MjU3ODEgMTE0Ljg5MDYyNSAxMy43NjE3MTkgMTEzLjI0MjE4OCAxMy43NjE3MTkgTCAzLjYwMTU2MiAxMy43NjE3MTkgQyAxLjk1MzEyNSAxMy43NjE3MTkgMC42MTMyODEgMTIuNDI1NzgxIDAuNjEzMjgxIDEwLjc3NzM0NCBMIDAuNjEzMjgxIDIuOTg0Mzc1IEMgMC42MTMyODEgMS4zMzU5MzggMS45NTMxMjUgMCAzLjYwMTU2MiAwIFogTSAzLjYwMTU2MiAwICIgY2xpcC1ydWxlPSJub256ZXJvIi8+PC9jbGlwUGF0aD48Y2xpcFBhdGggaWQ9IjAyM2Y2ODE5NTkiPjxyZWN0IHg9IjAiIHdpZHRoPSIxMTciIHk9IjAiIGhlaWdodD0iMTQiLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iY2FhN2JmNjI4OSI+PHBhdGggZD0iTSA0Mi42MTMyODEgMjEuNzg5MDYyIEwgMTU4LjIyNjU2MiAyMS43ODkwNjIgTCAxNTguMjI2NTYyIDI4LjA1ODU5NCBMIDQyLjYxMzI4MSAyOC4wNTg1OTQgWiBNIDQyLjYxMzI4MSAyMS43ODkwNjIgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iNmY5M2QzNmJlMiI+PHBhdGggZD0iTSA0NC4xMDkzNzUgMjEuNzg5MDYyIEwgMTU2LjczNDM3NSAyMS43ODkwNjIgQyAxNTcuNTU4NTk0IDIxLjc4OTA2MiAxNTguMjI2NTYyIDIyLjQ1NzAzMSAxNTguMjI2NTYyIDIzLjI4MTI1IEwgMTU4LjIyNjU2MiAyNi41NjY0MDYgQyAxNTguMjI2NTYyIDI3LjM5MDYyNSAxNTcuNTU4NTk0IDI4LjA1ODU5NCAxNTYuNzM0Mzc1IDI4LjA1ODU5NCBMIDQ0LjEwOTM3NSAyOC4wNTg1OTQgQyA0My4yODUxNTYgMjguMDU4NTk0IDQyLjYxMzI4MSAyNy4zOTA2MjUgNDIuNjEzMjgxIDI2LjU2NjQwNiBMIDQyLjYxMzI4MSAyMy4yODEyNSBDIDQyLjYxMzI4MSAyMi40NTcwMzEgNDMuMjg1MTU2IDIxLjc4OTA2MiA0NC4xMDkzNzUgMjEuNzg5MDYyIFogTSA0NC4xMDkzNzUgMjEuNzg5MDYyICIgY2xpcC1ydWxlPSJub256ZXJvIi8+PC9jbGlwUGF0aD48Y2xpcFBhdGggaWQ9ImUwN2ZmZDk1NzciPjxwYXRoIGQ9Ik0gMC42MTMyODEgMC43ODkwNjIgTCAxMTYuMjI2NTYyIDAuNzg5MDYyIEwgMTE2LjIyNjU2MiA3LjA1ODU5NCBMIDAuNjEzMjgxIDcuMDU4NTk0IFogTSAwLjYxMzI4MSAwLjc4OTA2MiAiIGNsaXAtcnVsZT0ibm9uemVybyIvPjwvY2xpcFBhdGg+PGNsaXBQYXRoIGlkPSI1MzczMjAzMTlhIj48cGF0aCBkPSJNIDIuMTA5Mzc1IDAuNzg5MDYyIEwgMTE0LjczNDM3NSAwLjc4OTA2MiBDIDExNS41NTg1OTQgMC43ODkwNjIgMTE2LjIyNjU2MiAxLjQ1NzAzMSAxMTYuMjI2NTYyIDIuMjgxMjUgTCAxMTYuMjI2NTYyIDUuNTY2NDA2IEMgMTE2LjIyNjU2MiA2LjM5MDYyNSAxMTUuNTU4NTk0IDcuMDU4NTk0IDExNC43MzQzNzUgNy4wNTg1OTQgTCAyLjEwOTM3NSA3LjA1ODU5NCBDIDEuMjg1MTU2IDcuMDU4NTk0IDAuNjEzMjgxIDYuMzkwNjI1IDAuNjEzMjgxIDUuNTY2NDA2IEwgMC42MTMyODEgMi4yODEyNSBDIDAuNjEzMjgxIDEuNDU3MDMxIDEuMjg1MTU2IDAuNzg5MDYyIDIuMTA5Mzc1IDAuNzg5MDYyIFogTSAyLjEwOTM3NSAwLjc4OTA2MiAiIGNsaXAtcnVsZT0ibm9uemVybyIvPjwvY2xpcFBhdGg+PGNsaXBQYXRoIGlkPSI0NzY1NGU3M2MyIj48cmVjdCB4PSIwIiB3aWR0aD0iMTE3IiB5PSIwIiBoZWlnaHQ9IjgiLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iMzcwYWU3ODRhMCI+PHBhdGggZD0iTSA0Mi42MTMyODEgNzIuNjA1NDY5IEwgMTU4LjIyNjU2MiA3Mi42MDU0NjkgTCAxNTguMjI2NTYyIDc4Ljg3NSBMIDQyLjYxMzI4MSA3OC44NzUgWiBNIDQyLjYxMzI4MSA3Mi42MDU0NjkgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iNTIzYWRiMGI1NiI+PHBhdGggZD0iTSA0NC4xMDkzNzUgNzIuNjA1NDY5IEwgMTU2LjczNDM3NSA3Mi42MDU0NjkgQyAxNTcuNTU4NTk0IDcyLjYwNTQ2OSAxNTguMjI2NTYyIDczLjI3MzQzOCAxNTguMjI2NTYyIDc0LjA5NzY1NiBMIDE1OC4yMjY1NjIgNzcuMzgyODEyIEMgMTU4LjIyNjU2MiA3OC4yMDcwMzEgMTU3LjU1ODU5NCA3OC44NzUgMTU2LjczNDM3NSA3OC44NzUgTCA0NC4xMDkzNzUgNzguODc1IEMgNDMuMjg1MTU2IDc4Ljg3NSA0Mi42MTMyODEgNzguMjA3MDMxIDQyLjYxMzI4MSA3Ny4zODI4MTIgTCA0Mi42MTMyODEgNzQuMDk3NjU2IEMgNDIuNjEzMjgxIDczLjI3MzQzOCA0My4yODUxNTYgNzIuNjA1NDY5IDQ0LjEwOTM3NSA3Mi42MDU0NjkgWiBNIDQ0LjEwOTM3NSA3Mi42MDU0NjkgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iN2FkNDU3ZGI1NCI+PHBhdGggZD0iTSAwLjYxMzI4MSAwLjYwNTQ2OSBMIDExNi4yMjY1NjIgMC42MDU0NjkgTCAxMTYuMjI2NTYyIDYuODc1IEwgMC42MTMyODEgNi44NzUgWiBNIDAuNjEzMjgxIDAuNjA1NDY5ICIgY2xpcC1ydWxlPSJub256ZXJvIi8+PC9jbGlwUGF0aD48Y2xpcFBhdGggaWQ9IjczNThiNWQ1YWUiPjxwYXRoIGQ9Ik0gMi4xMDkzNzUgMC42MDU0NjkgTCAxMTQuNzM0Mzc1IDAuNjA1NDY5IEMgMTE1LjU1ODU5NCAwLjYwNTQ2OSAxMTYuMjI2NTYyIDEuMjczNDM4IDExNi4yMjY1NjIgMi4wOTc2NTYgTCAxMTYuMjI2NTYyIDUuMzgyODEyIEMgMTE2LjIyNjU2MiA2LjIwNzAzMSAxMTUuNTU4NTk0IDYuODc1IDExNC43MzQzNzUgNi44NzUgTCAyLjEwOTM3NSA2Ljg3NSBDIDEuMjg1MTU2IDYuODc1IDAuNjEzMjgxIDYuMjA3MDMxIDAuNjEzMjgxIDUuMzgyODEyIEwgMC42MTMyODEgMi4wOTc2NTYgQyAwLjYxMzI4MSAxLjI3MzQzOCAxLjI4NTE1NiAwLjYwNTQ2OSAyLjEwOTM3NSAwLjYwNTQ2OSBaIE0gMi4xMDkzNzUgMC42MDU0NjkgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iODBhOGRhNDEwYSI+PHJlY3QgeD0iMCIgd2lkdGg9IjExNyIgeT0iMCIgaGVpZ2h0PSI3Ii8+PC9jbGlwUGF0aD48Y2xpcFBhdGggaWQ9ImY5ZDA3ZDA0YzgiPjxwYXRoIGQ9Ik0gNDIuNjEzMjgxIDg2LjE2NDA2MiBMIDE1OC4yNTc4MTIgODYuMTY0MDYyIEwgMTU4LjI1NzgxMiA5OS45MjU3ODEgTCA0Mi42MTMyODEgOTkuOTI1NzgxIFogTSA0Mi42MTMyODEgODYuMTY0MDYyICIgY2xpcC1ydWxlPSJub256ZXJvIi8+PC9jbGlwUGF0aD48Y2xpcFBhdGggaWQ9IjdjMjM4NWY2ZWQiPjxwYXRoIGQ9Ik0gNDUuNjAxNTYyIDg2LjE2NDA2MiBMIDE1NS4yNDIxODggODYuMTY0MDYyIEMgMTU2Ljg5MDYyNSA4Ni4xNjQwNjIgMTU4LjIyNjU2MiA4Ny41IDE1OC4yMjY1NjIgODkuMTQ4NDM4IEwgMTU4LjIyNjU2MiA5Ni45NDE0MDYgQyAxNTguMjI2NTYyIDk4LjU4OTg0NCAxNTYuODkwNjI1IDk5LjkyNTc4MSAxNTUuMjQyMTg4IDk5LjkyNTc4MSBMIDQ1LjYwMTU2MiA5OS45MjU3ODEgQyA0My45NTMxMjUgOTkuOTI1NzgxIDQyLjYxMzI4MSA5OC41ODk4NDQgNDIuNjEzMjgxIDk2Ljk0MTQwNiBMIDQyLjYxMzI4MSA4OS4xNDg0MzggQyA0Mi42MTMyODEgODcuNSA0My45NTMxMjUgODYuMTY0MDYyIDQ1LjYwMTU2MiA4Ni4xNjQwNjIgWiBNIDQ1LjYwMTU2MiA4Ni4xNjQwNjIgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iYWZhM2JmOTIxYiI+PHBhdGggZD0iTSAwLjYxMzI4MSAwLjE2NDA2MiBMIDExNi4yMzA0NjkgMC4xNjQwNjIgTCAxMTYuMjMwNDY5IDEzLjkyNTc4MSBMIDAuNjEzMjgxIDEzLjkyNTc4MSBaIE0gMC42MTMyODEgMC4xNjQwNjIgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iNDYzMjQ4NTcyMCI+PHBhdGggZD0iTSAzLjYwMTU2MiAwLjE2NDA2MiBMIDExMy4yNDIxODggMC4xNjQwNjIgQyAxMTQuODkwNjI1IDAuMTY0MDYyIDExNi4yMjY1NjIgMS41IDExNi4yMjY1NjIgMy4xNDg0MzggTCAxMTYuMjI2NTYyIDEwLjk0MTQwNiBDIDExNi4yMjY1NjIgMTIuNTg5ODQ0IDExNC44OTA2MjUgMTMuOTI1NzgxIDExMy4yNDIxODggMTMuOTI1NzgxIEwgMy42MDE1NjIgMTMuOTI1NzgxIEMgMS45NTMxMjUgMTMuOTI1NzgxIDAuNjEzMjgxIDEyLjU4OTg0NCAwLjYxMzI4MSAxMC45NDE0MDYgTCAwLjYxMzI4MSAzLjE0ODQzOCBDIDAuNjEzMjgxIDEuNSAxLjk1MzEyNSAwLjE2NDA2MiAzLjYwMTU2MiAwLjE2NDA2MiBaIE0gMy42MDE1NjIgMC4xNjQwNjIgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iZjY1OWMyZTM5YyI+PHJlY3QgeD0iMCIgd2lkdGg9IjExNyIgeT0iMCIgaGVpZ2h0PSIxNCIvPjwvY2xpcFBhdGg+PGNsaXBQYXRoIGlkPSIxODY5ZWRhZjJjIj48cmVjdCB4PSIwIiB3aWR0aD0iMTI2IiB5PSIwIiBoZWlnaHQ9IjQ2Ii8+PC9jbGlwUGF0aD48L2RlZnM+PGcgY2xpcC1wYXRoPSJ1cmwoI2VlZmZkM2ZlNGQpIj48ZyBjbGlwLXBhdGg9InVybCgjNjRiNmM1YjgyMSkiPjxnIHRyYW5zZm9ybT0ibWF0cml4KDEsIDAsIDAsIDEsIDQyLCAwKSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzAyM2Y2ODE5NTkpIj48ZyBjbGlwLXBhdGg9InVybCgjMTNjNzNjMDllMikiPjxnIGNsaXAtcGF0aD0idXJsKCM5MDFjNGE3YjU3KSI+PHBhdGggZmlsbD0iI2YyZjJmMiIgZD0iTSAwLjYxMzI4MSAwIEwgMTE2LjIwMzEyNSAwIEwgMTE2LjIwMzEyNSAxMy43NjE3MTkgTCAwLjYxMzI4MSAxMy43NjE3MTkgWiBNIDAuNjEzMjgxIDAgIiBmaWxsLW9wYWNpdHk9IjEiIGZpbGwtcnVsZT0ibm9uemVybyIvPjwvZz48L2c+PC9nPjwvZz48L2c+PC9nPjxnIGNsaXAtcGF0aD0idXJsKCNjYWE3YmY2Mjg5KSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzZmOTNkMzZiZTIpIj48ZyB0cmFuc2Zvcm09Im1hdHJpeCgxLCAwLCAwLCAxLCA0MiwgMjEpIj48ZyBjbGlwLXBhdGg9InVybCgjNDc2NTRlNzNjMikiPjxnIGNsaXAtcGF0aD0idXJsKCNlMDdmZmQ5NTc3KSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzUzNzMyMDMxOWEpIj48cGF0aCBmaWxsPSIjZjJmMmYyIiBkPSJNIDAuNjEzMjgxIDAuNzg5MDYyIEwgMTE2LjIyNjU2MiAwLjc4OTA2MiBMIDExNi4yMjY1NjIgNy4wNTg1OTQgTCAwLjYxMzI4MSA3LjA1ODU5NCBaIE0gMC42MTMyODEgMC43ODkwNjIgIiBmaWxsLW9wYWNpdHk9IjEiIGZpbGwtcnVsZT0ibm9uemVybyIvPjwvZz48L2c+PC9nPjwvZz48L2c+PC9nPjxnIGNsaXAtcGF0aD0idXJsKCMzNzBhZTc4NGEwKSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzUyM2FkYjBiNTYpIj48ZyB0cmFuc2Zvcm09Im1hdHJpeCgxLCAwLCAwLCAxLCA0MiwgNzIpIj48ZyBjbGlwLXBhdGg9InVybCgjODBhOGRhNDEwYSkiPjxnIGNsaXAtcGF0aD0idXJsKCM3YWQ0NTdkYjU0KSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzczNThiNWQ1YWUpIj48cGF0aCBmaWxsPSIjZjJmMmYyIiBkPSJNIDAuNjEzMjgxIDAuNjA1NDY5IEwgMTE2LjIyNjU2MiAwLjYwNTQ2OSBMIDExNi4yMjY1NjIgNi44NzUgTCAwLjYxMzI4MSA2Ljg3NSBaIE0gMC42MTMyODEgMC42MDU0NjkgIiBmaWxsLW9wYWNpdHk9IjEiIGZpbGwtcnVsZT0ibm9uemVybyIvPjwvZz48L2c+PC9nPjwvZz48L2c+PC9nPjxnIGNsaXAtcGF0aD0idXJsKCNmOWQwN2QwNGM4KSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzdjMjM4NWY2ZWQpIj48ZyB0cmFuc2Zvcm09Im1hdHJpeCgxLCAwLCAwLCAxLCA0MiwgODYpIj48ZyBjbGlwLXBhdGg9InVybCgjZjY1OWMyZTM5YykiPjxnIGNsaXAtcGF0aD0idXJsKCNhZmEzYmY5MjFiKSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzQ2MzI0ODU3MjApIj48cGF0aCBmaWxsPSIjZjJmMmYyIiBkPSJNIDAuNjEzMjgxIDAuMTY0MDYyIEwgMTE2LjIwMzEyNSAwLjE2NDA2MiBMIDExNi4yMDMxMjUgMTMuOTI1NzgxIEwgMC42MTMyODEgMTMuOTI1NzgxIFogTSAwLjYxMzI4MSAwLjE2NDA2MiAiIGZpbGwtb3BhY2l0eT0iMSIgZmlsbC1ydWxlPSJub256ZXJvIi8+PC9nPjwvZz48L2c+PC9nPjwvZz48L2c+PGcgdHJhbnNmb3JtPSJtYXRyaXgoMSwgMCwgMCwgMSwgNDIsIDI3KSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzE4NjllZGFmMmMpIj48ZyBmaWxsPSIjZjJmMmYyIiBmaWxsLW9wYWNpdHk9IjEiPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEuMjAzMTk4LCAzNy40Nzc5NTMpIj48Zz48cGF0aCBkPSJNIDI0LjI2NTYyNSAtMTIgTCAyNC4yNjU2MjUgLTI3LjczNDM3NSBMIDMxLjY3MTg3NSAtMjcuNzM0Mzc1IEwgMzEuNjcxODc1IDAgTCAyNS4wMzEyNSAwIEwgOS44NDM3NSAtMTcuMjUgTCA5Ljg0Mzc1IDAgTCAyLjQzNzUgMCBMIDIuNDM3NSAtMjcuNzM0Mzc1IEwgMTAuNzE4NzUgLTI3LjczNDM3NSBaIE0gMjQuMjY1NjI1IC0xMiAiLz48L2c+PC9nPjwvZz48ZyBmaWxsPSIjZjJmMmYyIiBmaWxsLW9wYWNpdHk9IjEiPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDQ0LjI0NDI2NiwgMzcuNDc3OTUzKSI+PGc+PHBhdGggZD0iTSAxMS4xMjUgLTIwLjgxMjUgTCAwLjY0MDYyNSAtMjAuODEyNSBMIDAuNjQwNjI1IC0yNy43MzQzNzUgTCAyOS40Njg3NSAtMjcuNzM0Mzc1IEwgMjkuNDY4NzUgLTIwLjgxMjUgTCAxOS4wMzEyNSAtMjAuODEyNSBMIDE5LjAzMTI1IDAgTCAxMS4xMjUgMCBaIE0gMTEuMTI1IC0yMC44MTI1ICIvPjwvZz48L2c+PC9nPjxnIGZpbGw9IiNmMmYyZjIiIGZpbGwtb3BhY2l0eT0iMSI+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoODMuMjU4NjEsIDM3LjQ3Nzk1MykiPjxnPjxwYXRoIGQ9Ik0gMzIuNTQ2ODc1IDAgTCAyMi45ODQzNzUgMCBMIDE1LjEyNSAtMTIuMTU2MjUgTCAxMC4yMTg3NSAtNi44NDM3NSBMIDEwLjIxODc1IDAgTCAyLjQzNzUgMCBMIDIuNDM3NSAtMjcuNzM0Mzc1IEwgMTAuMjE4NzUgLTI3LjczNDM3NSBMIDEwLjIxODc1IC0xNS43OTY4NzUgTCAyMS4yNjU2MjUgLTI3LjczNDM3NSBMIDMxLjg3NSAtMjcuNzM0Mzc1IEwgMjEuMzEyNSAtMTYuNjQwNjI1IFogTSAzMi41NDY4NzUgMCAiLz48L2c+PC9nPjwvZz48L2c+PC9nPjwvc3ZnPg==" alt="NTK" class="ntk-logo-img-sm">
-      </div>
+      </a>
     </div>
   </header>
 
@@ -232,33 +242,33 @@
 
   <div class="story-sections">
 
-    <div class="story-section">
+    <div class="story-section sec-1">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--blue);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Truths — What Happened</span>
       </div>
       <div class="section-body"><p><strong>Ken Paxton built a career on scandal and survived every one of them.</strong> He beat an impeachment trial, a securities fraud indictment and years of accusations from his own staff that he traded state favors for personal help, and he still won the Republican nomination. Now Emerson Polling has him trailing Democrat James Talarico by several points in the race to succeed John Cornyn (<a href="https://www.memeorandum.com/260917/p59#a260917p59" target="_blank" rel="noopener">Emerson Polling</a>). VoteHub, a national forecaster, has moved further still, shifting its model to say Talarico is the narrow favorite in a state no Democrat has won statewide since 1994 (<a href="https://www.houstonpublicmedia.org/articles/news/politics/election-2026/2026/09/17/562057/democrats-texas-james-talarico-november-midterms/" target="_blank" rel="noopener">Houston Public Media</a>).</p><p><em>That kind of number doesn't happen by accident in a state Republicans have run for two decades.</em> Matt Mackowiak, the GOP consultant who ran Cornyn's failed primary campaign against Paxton, called it "uncharted territory" and said the feeling inside Republican circles is that this could be the most competitive statewide election in a long time.</p><div class="ntk-pullquote"><p class="ntk-pq-text">We're in a little bit of uncharted territory here.</p><cite class="ntk-pq-cite">Matt Mackowiak, Republican consultant</cite></div><p>Texas Republicans spent the last two years redrawing congressional maps and pushing Democrats out of legislative leadership, the kind of consolidation that usually buys a party a decade of comfort (<a href="https://www.houstonpublicmedia.org/articles/news/politics/election-2026/2026/09/17/562057/democrats-texas-james-talarico-november-midterms/" target="_blank" rel="noopener">Houston Public Media</a>). Instead they're watching voters revolt over data centers, transmission lines and an economy tied to Trump, and watching once-untouchable incumbents start attacking challengers who are gaining on them in the polls.</p><p><strong>Michigan tells a version of the same story, with a twist.</strong> Emerson has Democrat Abdul El-Sayed and Republican Mike Rogers locked in a close race for Senate (<a href="https://www.memeorandum.com/260917/p18#a260917p18" target="_blank" rel="noopener">Emerson Polling</a>). But the Washington Post's read on the same numbers is less flattering to El-Sayed specifically: he's running behind where a generic Democrat would be expected to run in Michigan this cycle, a gap that suggests the state's competitiveness has less to do with El-Sayed's strength and more to do with the ceiling other Democrats are hitting nationally (<a href="https://www.memeorandum.com/260917/p16#a260917p16" target="_blank" rel="noopener">Washington Post</a>). That hasn't stopped national Democratic money from treating both races as winnable. Chuck Schumer's allied super PAC is doubling down on its Michigan spending, a bet that the seat is close enough to be worth the investment even with El-Sayed underperforming the top of the ticket (<a href="https://www.memeorandum.com/260917/p66#a260917p66" target="_blank" rel="noopener">Axios</a>).</p><div class="ntk-stat"><div class="ntk-stat-num">1994</div><div class="ntk-stat-ctx">The last year a Democrat won statewide office in Texas, the drought Talarico's polling is now testing.</div></div><p>Two states, two different problems for the party trying to hold them. Texas Republicans are bleeding from self-inflicted wounds. Michigan Democrats are winning despite their own candidate, not because of him.</p></div>
     </div>
 
-    <div class="story-section">
+    <div class="story-section sec-2">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--purple);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Probabilities — What Will Likely Happen</span>
       </div>
       <div class="section-body"><p><em>Both parties now have to decide how much they believe their own polling, and the money that moves in the next two weeks will say more than the polls do.</em></p><p><strong>Schumer's super PAC will keep spending in Michigan even if El-Sayed's numbers don't move.</strong> The doubling down reported this week isn't a response to a swing in El-Sayed's favor; it's a bet placed despite him running behind the generic Democrat in his own state. That kind of investment usually means the committee has decided the ceiling is a turnout problem, not a candidate problem, and the fix is money for ads and field operations rather than a change in message. Watch for whether Senate Majority PAC or its Michigan-specific vehicles file new independent expenditure reports with the FEC in the next two weeks; a second wave of spending, on top of what's already been confirmed, will mean Democrats are treating Rogers as beatable regardless of what happens to El-Sayed's favorability numbers between now and Election Day.</p><p>That same math cuts differently in Texas, where the problem isn't the candidate but the incumbent's baggage. Paxton's campaign will almost certainly escalate attacks on Talarico's legislative record over the next two weeks, the same shift Houston Public Media flagged when it noted once-untouchable incumbents have started slinging mud at challengers gaining on them. The mechanism is simple: when a scandal-tested candidate starts trailing in his own turf, the campaign pivots from defending the incumbent's record to disqualifying the challenger, because there's no version of "look at my record" that helps Paxton right now. Expect opposition research drops timed to Texas' early voting calendar, aimed less at persuading undecided moderates than at giving nervous Republican donors a reason to believe the race is still winnable.</p><p><strong>National Republicans will start treating Texas as a defensive seat rather than a formality.</strong> That's the more structural shift. When the National Republican Senatorial Committee redirects money into a state it hasn't had to defend since before Talarico was born, it tells you the internal polling matches what Emerson and VoteHub are showing publicly, not just a favorable outlier. The tell to watch is ad spending data from AdImpact or similar trackers over the next 10 to 14 days: if NRSC or allied groups like the Senate Leadership Fund book new airtime in Texas media markets, that's the national party conceding what Mackowiak already said out loud. The stakes are asymmetric. If Texas Republicans have to spend real money defending Cornyn's old seat, that's money not going to competitive races in Ohio or North Carolina, and a single state's collapse starts reshaping the whole map two months out.</p></div>
     </div>
 
-    <div class="story-section">
+    <div class="story-section sec-3">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--teal);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Possibilities — What Could Happen</span>
       </div>
       <div class="section-body"><p><em>If national Republicans start treating Texas like North Carolina, the fight stops being about two Senate seats and starts being about where the map gets redrawn next.</em></p><p><strong>A Texas retreat could pull the Senate Leadership Fund into a bidding war it didn't budget for.</strong> The Probabilities section already flagged the tell: NRSC or Senate Leadership Fund ad bookings in Texas media markets over the next two weeks. If that spending shows up, it opens a door that wasn't reachable a month ago, when Texas was a formality and every dollar of outside Republican money could go where races were already close. Ohio and North Carolina Republicans have built their campaigns assuming a certain level of national air cover. A forced defense of Cornyn's old seat means that cover thins somewhere else, and it thins fastest in the race where the incumbent has the least room to make up the difference on his own. That's not a hypothetical trade-off. It's the same pool of money being asked to do two jobs at once for the first time this cycle.</p><p>That reallocation is only visible because Paxton's baggage made Texas newly expensive to defend, and it's the second-order door: once Republican money is stretched, Democratic challengers in the states losing that air cover get a fundraising argument they didn't have in August. A Senate candidate in Ohio can now tell donors, credibly, that the national party is distracted, and distraction is the kind of opening down-ballot campaigns spend all cycle hoping for. Whether that argument raises real money depends on whether reporters and trackers like AdImpact actually document the Texas pullback in the next two weeks, the same window Probabilities already marked as decisive.</p><p><strong>The same crowded fundraising environment could push Michigan Democrats toward a message correction instead of just a spending correction.</strong> Schumer's super PAC has so far answered El-Sayed's underperformance with money, not messaging, betting the gap is turnout rather than candidate quality. If Texas draws away Republican attention and dollars the way the first possibility describes, Michigan becomes, by comparison, a cheaper and more visible battleground for both parties' remaining resources. That's the kind of vacuum that invites a strategy adjustment; a super PAC with more room to spend has room to test the messaging fix it hasn't tried yet, rather than just running more of the same ads at a bigger volume. It's a door that only opens if the first one does. Nobody adjusts a strategy that's already working, and nobody adjusts one they think is failing for reasons outside their control, until the terrain around it actually shifts.</p><div class="ntk-stat"><div class="ntk-stat-num">10 to 14 days</div><div class="ntk-stat-ctx">The window Probabilities already marked for Texas ad-spending data, the same window that determines whether either door above opens at all.</div></div><p>None of this requires either party to do anything it hasn't already shown a willingness to do. It requires Texas to keep costing what it's starting to cost.</p></div>
     </div>
 
-    <div class="story-section lies-section">
+    <div class="story-section lies-section sec-4">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--terra);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Lies / Narrative Distortions</span>
       </div>
       <div class="section-body"><p><em>Both parties are already telling donors and reporters a story about these races that the polling doesn't quite support, and the gap between the story and the number is the point.</em></p><p><strong>Ken Paxton's campaign is framing his slide against Talarico as a name-recognition problem that ad spending will fix.</strong> That is the pitch Republican strategists are giving nervous donors: Talarico is a state legislator most Texans haven't heard of yet, and once the campaign defines him for voters through opposition research, the race snaps back to normal. It is a comfortable story because it doesn't require Republicans to reckon with the parts of Emerson's polling that have nothing to do with Talarico at all, the anger over data centers, transmission lines and an economy tied to Trump that Houston Public Media documented independent of who the Democratic nominee happens to be (<a href="https://www.houstonpublicmedia.org/articles/news/politics/election-2026/2026/09/17/562057/democrats-texas-james-talarico-november-midterms/" target="_blank" rel="noopener">Houston Public Media</a>). A name-recognition problem is fixable with money and time, which is exactly why it's the version of events a scandal-plagued incumbent's campaign wants donors to believe over the alternative: that Paxton himself, after an impeachment trial and years of accusations from his own staff, is the reason the floor is falling out from under him.</p><p>That same instinct for a flattering frame shows up on the other side, in reverse. National Democratic operatives are selling Michigan as proof that the party's turnout machine, not its candidates, decides these races, pointing to Schumer's super PAC doubling down on El-Sayed as evidence the seat is winnable on infrastructure alone. That story serves the people telling it: a super PAC that keeps spending on a candidate who's underperforming the generic Democrat has every incentive to say the gap is a mobilization problem, because admitting it's a candidate problem means admitting the money might not fix it. The Washington Post's own read on the numbers cuts against that comfort, pointing to El-Sayed specifically as the drag, not the state's electorate.</p><p>Neither distortion is a lie built from nothing. Paxton's team has a real incumbency advantage to lean on, and Democratic operatives have a real history of turnout unlocking close Michigan races. But both stories exist to let the people telling them avoid the more uncomfortable diagnosis, that a scandal-tested Republican and an underperforming Democrat are each the actual variable dragging on their own party's numbers, not a fixable footnote around the edges of them. Money can paper over a lot in a campaign's final two months. It can't make a candidate someone he isn't.</p></div>
@@ -266,7 +276,7 @@
 
   </div>
 
-  <a class="back-footer" href="../">← Back to today's digest</a>
+  <a class="back-footer" href="../">Back to today's digest</a>
 
 </body>
 </html>

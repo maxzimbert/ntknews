@@ -46,6 +46,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 TEAL = "#01B2A7"
+# The same teal, calibrated for the cream ground. #01B2A7 on #EAD9C5 measures
+# 1.92:1 — barely a colour difference. This step measures 4.51:1. Accents on
+# this site were tuned against the ink ground and reused against cream; where
+# the ground is cream, use this one.
+TEAL_DEEP = "#016D66"
 INK = "#261F23"
 CREAM = "#EAD9C5"
 GOLD = "#F2AE2E"
@@ -175,7 +180,7 @@ def regenerate_hero_story(html, stories, date_str):
     if not stories:
         return html
     lead = stories[0]
-    date_label = datetime.now(timezone.utc).strftime("%A, %B %-d") + " · today's edition"
+    date_label = datetime.now(timezone.utc).strftime("%A, %B %-d") + " — today's edition"
     hero = {
         "date": date_label,
         "storyCount": f"{1:02d} / {len(stories):02d}",
@@ -329,6 +334,11 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
   :root {{
     --blue:   #0798F2;
     --amber:  #F2AE2E;
+    /* Light-ground steps. The bright accents were tuned against the ink
+       header and fail on the white body: blue 3.10, amber 1.93. These
+       clear 4.6 on white, cream and the Lies tint. */
+    --blue-deep:  #045E96;
+    --amber-deep: #7A5308;
     --terra:  #DC6550;
     --purple: #725ABF;
     --teal:   #01B2A7;
@@ -346,7 +356,7 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
     margin: 0 auto;
   }}
 
-  a {{ color: var(--blue); }}
+  a {{ color: var(--blue-deep); }}
 
   .story-header {{
     background: var(--dark);
@@ -361,15 +371,8 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
     gap: 12px;
   }}
 
-  .back-btn {{
-    font-family: 'Overpass', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--blue);
-    text-decoration: none;
-  }}
 
-  .story-header-logo {{ margin-left: auto; display: flex; align-items: center; }}
+  .story-header-logo {{ text-decoration: none; margin-left: auto; display: flex; align-items: center; }}
   .ntk-logo-img-sm {{ height: 20px; width: auto; display: block; }}
 
   .story-hero-wrap {{ background: var(--dark); }}
@@ -397,7 +400,7 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
     font-family: 'Overpass', sans-serif;
     font-size: 10px;
     font-weight: 700;
-    letter-spacing: 2px;
+    letter-spacing: .1em;
     text-transform: uppercase;
     color: var(--amber);
     margin-bottom: 10px;
@@ -437,12 +440,26 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
   .section-dot {{ width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }}
 
   .section-title {{
-    font-family: 'Overpass', sans-serif;
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 0.5px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 600;
+    font-size: 16px;
+    font-variant: small-caps;
+    letter-spacing: .05em;
     color: var(--dark);
   }}
+
+  /* A descending ladder of certainty, not four categories. Same ramp as the
+     landing page: established, then likely, then plausible, with Lies
+     reversed because it is the negation rather than the fourth rung.
+     Verified on the white section ground: faintest rung 6.36:1, Lies 6.27:1. */
+  .sec-1 .section-title {{ color: var(--dark); }}
+  .sec-2 .section-title {{ color: rgba(38,31,35,0.82); }}
+  .sec-3 .section-title {{ color: rgba(38,31,35,0.72); }}
+  .sec-4 .section-title {{ color: #A33421; font-style: italic; }}
+  .sec-1 .section-dot {{ background: var(--dark); }}
+  .sec-2 .section-dot {{ background: rgba(38,31,35,0.60); }}
+  .sec-3 .section-dot {{ background: rgba(38,31,35,0.34); }}
+  .sec-4 .section-dot {{ background: #A33421; }}
 
   .section-body {{
     padding: 0 20px 22px;
@@ -469,7 +486,7 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
   }}
   .ntk-pq-text {{
     font-family: 'Source Serif 4', serif;
-    font-size: 19px !important;
+    font-size: 20px !important;
     font-weight: 300;
     font-style: italic;
     line-height: 1.5 !important;
@@ -480,13 +497,13 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
     display: block;
     font-family: 'Overpass', sans-serif;
     font-size: 10px;
-    letter-spacing: 1.5px;
+    letter-spacing: .1em;
     text-transform: uppercase;
-    color: var(--blue);
+    color: var(--blue-deep);
     font-style: normal;
   }}
   .ntk-stat {{
-    border-left: 3px solid var(--amber);
+    border-left: 3px solid var(--amber-deep);
     margin: 18px 0;
     padding: 14px 16px;
     background: rgba(242,174,46,0.05);
@@ -495,13 +512,13 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
     font-family: 'Overpass', sans-serif;
     font-size: 34px;
     font-weight: 700;
-    color: var(--amber);
+    color: var(--amber-deep);
     line-height: 1.1;
     margin-bottom: 5px;
   }}
   .ntk-stat-ctx {{
     font-family: 'Source Serif 4', serif;
-    font-size: 14px;
+    font-size: 13px;
     color: rgba(38,31,35,0.72);
     line-height: 1.5;
   }}
@@ -513,7 +530,7 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
     font-family: 'Overpass', sans-serif;
     font-size: 13px;
     font-weight: 600;
-    color: var(--blue);
+    color: var(--blue-deep);
     text-decoration: none;
   }}
 </style>
@@ -522,10 +539,9 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
 
   <header class="story-header">
     <div class="story-header-inner">
-      <a class="back-btn" href="../">← Digest</a>
-      <div class="story-header-logo">
+      <a class="story-header-logo" href="/digest" aria-label="Back to the digest">
         <img src="{logo}" alt="NTK" class="ntk-logo-img-sm">
-      </div>
+      </a>
     </div>
   </header>
 
@@ -540,33 +556,33 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
 
   <div class="story-sections">
 
-    <div class="story-section">
+    <div class="story-section sec-1">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--blue);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Truths — What Happened</span>
       </div>
       <div class="section-body">{truth}</div>
     </div>
 
-    <div class="story-section">
+    <div class="story-section sec-2">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--purple);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Probabilities — What Will Likely Happen</span>
       </div>
       <div class="section-body">{prob}</div>
     </div>
 
-    <div class="story-section">
+    <div class="story-section sec-3">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--teal);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Possibilities — What Could Happen</span>
       </div>
       <div class="section-body">{poss}</div>
     </div>
 
-    <div class="story-section lies-section">
+    <div class="story-section lies-section sec-4">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--terra);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Lies / Narrative Distortions</span>
       </div>
       <div class="section-body">{lies}</div>
@@ -574,7 +590,7 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
 
   </div>
 
-  <a class="back-footer" href="../">← Back to today's digest</a>
+  <a class="back-footer" href="../">Back to today's digest</a>
 
 </body>
 </html>
@@ -612,20 +628,41 @@ ARCHIVE_TEMPLATE = """<!DOCTYPE html>
 <title>Archive — NTK News</title>
 <link href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&display=swap" rel="stylesheet">
 <style>
+  * {{ box-sizing:border-box; }}
   body {{ background:{cream}; color:{ink}; font-family:'Source Serif 4',Georgia,serif;
-    max-width:640px; margin:0 auto; padding:24px 20px 60px; }}
-  h1 {{ font-family:'Overpass',sans-serif; }}
-  .ed {{ margin-bottom:28px; }}
-  .ed-date {{ font-family:'Overpass',sans-serif; font-size:13px; color:{teal};
-    text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; }}
-  .ed a.day {{ font-weight:600; }}
-  ul {{ margin:6px 0 0; padding-left:18px; }}
-  li {{ margin-bottom:3px; font-size:15px; }}
+    max-width:660px; margin:0 auto; padding:0 20px 80px; }}
+  .masthead {{ padding:46px 0 0; }}
+  h1 {{ font-family:'Source Serif 4',serif; font-weight:600; font-size:34px;
+    letter-spacing:-.01em; margin:0 0 6px; }}
+  .standfirst {{ font-size:16px; color:rgba(38,31,35,.68); margin:0 0 34px; max-width:46ch; }}
+  .ed {{ border-top:1px solid rgba(38,31,35,.22); padding:18px 0 22px; }}
+  .ed-head {{ display:flex; justify-content:space-between; align-items:baseline;
+    gap:16px; margin-bottom:12px; }}
+  .ed-date {{ font-family:'Source Serif 4',serif; font-size:16px; font-weight:600;
+    letter-spacing:.01em; color:{ink}; }}
+  .ed a.day {{ font-family:'Overpass',sans-serif; font-size:13px; letter-spacing:.1em;
+    text-transform:uppercase; color:{teal_deep}; text-decoration:none;
+    border-bottom:1px solid rgba(1,109,102,.38); padding-bottom:2px; white-space:nowrap; }}
+  .ed a.day:hover {{ border-bottom-color:{teal_deep}; }}
+  .ed-list {{ display:flex; flex-direction:column; gap:9px; }}
+  .ed-list a {{ font-size:16px; line-height:1.4; color:{ink}; text-decoration:none;
+    border-bottom:1px solid rgba(38,31,35,.18); padding-bottom:2px; }}
+  .ed-list a:hover {{ border-bottom-color:{ink}; }}
+  footer {{ border-top:1px solid rgba(38,31,35,.22); margin-top:8px; padding-top:20px;
+    font-size:13px; color:rgba(38,31,35,.72); }}
+  footer a {{ color:{teal_deep}; }}
+  @media (max-width:560px) {{
+    .ed-head {{ flex-direction:column; gap:4px; }}
+  }}
 </style>
 </head>
 <body>
-<h1>Archive</h1>
+<div class="masthead">
+  <h1>Archive</h1>
+  <p class="standfirst">Every edition NTK has published, newest first. Each one ended when you finished it, and still does.</p>
+</div>
 {editions}
+<footer><a href="/today">Today&rsquo;s edition</a></footer>
 </body>
 </html>
 """
@@ -641,15 +678,26 @@ def rebuild_archive(digest_dir, base_url):
             continue
         headlines = json.loads(meta_path.read_text())
         items = "\n".join(
-            f'    <li><a href="{base_url}/digest/{d.name}/{h["slug"]}/">{html_esc(h["headline"])}</a></li>'
+            f'    <a href="{base_url}/digest/{d.name}/{h["slug"]}/">{html_esc(h["headline"])}</a>'
             for h in headlines)
-        blocks.append(f'<div class="ed"><div class="ed-date">{d.name}</div>'
-                       f'<a class="day" href="{base_url}/digest/{d.name}/">Full edition</a>'
-                       f'<ul>\n{items}\n  </ul></div>')
+        # A dateline a person would say out loud, not a sort key. Falls back to
+        # the raw folder name if a directory is ever named something unexpected.
+        try:
+            pretty = datetime.strptime(d.name, "%Y-%m-%d").strftime("%A, %-d %B %Y")
+        except ValueError:
+            pretty = d.name
+        blocks.append(f'<div class="ed">\n'
+                       f'  <div class="ed-head">\n'
+                       f'    <div class="ed-date">{pretty}</div>\n'
+                       f'    <a class="day" href="{base_url}/digest/{d.name}/">Full edition</a>\n'
+                       f'  </div>\n'
+                       f'  <div class="ed-list">\n{items}\n  </div>\n'
+                       f'</div>')
     archive_dir = digest_dir / "archive"
     archive_dir.mkdir(parents=True, exist_ok=True)
     (archive_dir / "index.html").write_text(
-        ARCHIVE_TEMPLATE.format(cream=CREAM, ink=INK, teal=TEAL, editions="\n".join(blocks)))
+        ARCHIVE_TEMPLATE.format(cream=CREAM, ink=INK, teal_deep=TEAL_DEEP,
+                                editions="\n".join(blocks)))
     log(f"archive rebuilt: {len(date_dirs)} editions listed")
 
 

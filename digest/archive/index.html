@@ -5,45 +5,90 @@
 <title>Archive — NTK News</title>
 <link href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&display=swap" rel="stylesheet">
 <style>
+  * { box-sizing:border-box; }
   body { background:#EAD9C5; color:#261F23; font-family:'Source Serif 4',Georgia,serif;
-    max-width:640px; margin:0 auto; padding:24px 20px 60px; }
-  h1 { font-family:'Overpass',sans-serif; }
-  .ed { margin-bottom:28px; }
-  .ed-date { font-family:'Overpass',sans-serif; font-size:13px; color:#01B2A7;
-    text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; }
-  .ed a.day { font-weight:600; }
-  ul { margin:6px 0 0; padding-left:18px; }
-  li { margin-bottom:3px; font-size:15px; }
+    max-width:660px; margin:0 auto; padding:0 20px 80px; }
+  .masthead { padding:46px 0 0; }
+  h1 { font-family:'Source Serif 4',serif; font-weight:600; font-size:34px;
+    letter-spacing:-.01em; margin:0 0 6px; }
+  .standfirst { font-size:16px; color:rgba(38,31,35,.68); margin:0 0 34px; max-width:46ch; }
+  .ed { border-top:1px solid rgba(38,31,35,.22); padding:18px 0 22px; }
+  .ed-head { display:flex; justify-content:space-between; align-items:baseline;
+    gap:16px; margin-bottom:12px; }
+  .ed-date { font-family:'Source Serif 4',serif; font-size:16px; font-weight:600;
+    letter-spacing:.01em; color:#261F23; }
+  .ed a.day { font-family:'Overpass',sans-serif; font-size:13px; letter-spacing:.1em;
+    text-transform:uppercase; color:#016D66; text-decoration:none;
+    border-bottom:1px solid rgba(1,109,102,.38); padding-bottom:2px; white-space:nowrap; }
+  .ed a.day:hover { border-bottom-color:#016D66; }
+  .ed-list { display:flex; flex-direction:column; gap:9px; }
+  .ed-list a { font-size:16px; line-height:1.4; color:#261F23; text-decoration:none;
+    border-bottom:1px solid rgba(38,31,35,.18); padding-bottom:2px; }
+  .ed-list a:hover { border-bottom-color:#261F23; }
+  footer { border-top:1px solid rgba(38,31,35,.22); margin-top:8px; padding-top:20px;
+    font-size:13px; color:rgba(38,31,35,.72); }
+  footer a { color:#016D66; }
+  @media (max-width:560px) {
+    .ed-head { flex-direction:column; gap:4px; }
+  }
 </style>
 </head>
 <body>
-<h1>Archive</h1>
-<div class="ed"><div class="ed-date">2026-09-18</div><a class="day" href="https://ntknews.org/digest/2026-09-18/">Full edition</a><ul>
-    <li><a href="https://ntknews.org/digest/2026-09-18/france-ordered-its-power-plants-guarded-this-week-the-order/">France Ordered Its Power Plants Guarded This Week. The Order Came the Same Day Gas Prices Spiked.</a></li>
-    <li><a href="https://ntknews.org/digest/2026-09-18/three-guys-and-a-200-subscription-broke-into-openai-it-took/">Three Guys and a $200 Subscription Broke Into OpenAI. It Took Them Less Than 72 Hours.</a></li>
-    <li><a href="https://ntknews.org/digest/2026-09-18/warren-buffett-handed-berkshire-hathaways-board-gavel-to-his/">Warren Buffett Handed Berkshire Hathaway's Board Gavel to His Son. The Company He Built Is Worth $1.1 Trillion, and It Took Him 61 Years to Let Go.</a></li>
-    <li><a href="https://ntknews.org/digest/2026-09-18/a-house-cat-in-a-bolivian-living-room-turned-out-to-be-a-new/">A House Cat in a Bolivian Living Room Turned Out to Be a New Species. It Took Science Nine Years to Notice.</a></li>
-  </ul></div>
-<div class="ed"><div class="ed-date">2026-09-17</div><a class="day" href="https://ntknews.org/digest/2026-09-17/">Full edition</a><ul>
-    <li><a href="https://ntknews.org/digest/2026-09-17/ken-paxton-is-losing-to-a-democrat-in-texas-that-hasnt-happe/">Ken Paxton Is Losing to a Democrat in Texas. That Hasn't Happened Statewide Since 1994.</a></li>
-    <li><a href="https://ntknews.org/digest/2026-09-17/the-man-who-built-the-texas-gop-for-29-statewide-seats-is-vo/">The Man Who Built the Texas GOP for 29 Statewide Seats Is Voting Against It. Karl Rove Says the Party He Made Now Has a Bigot Problem He Won't Ignore.</a></li>
-    <li><a href="https://ntknews.org/digest/2026-09-17/congress-leaves-town-for-seven-weeks-rather-than-vote-on-pet/">Congress Leaves Town for Seven Weeks Rather Than Vote on Pete Hegseth. The War Cost $38 Billion — the Vote Would Have Cost Republicans Their Seats.</a></li>
-    <li><a href="https://ntknews.org/digest/2026-09-17/the-eu-offered-canada-a-seat-at-the-table-von-der-leyen-forg/">The EU Offered Canada a Seat at the Table. Von der Leyen Forgot to Ask the Other 26 Countries First.</a></li>
-    <li><a href="https://ntknews.org/digest/2026-09-17/anthropic-wants-to-grade-its-own-ai-homework-its-also-sellin/">Anthropic Wants to Grade Its Own AI Homework. It's Also Selling the Paper.</a></li>
-    <li><a href="https://ntknews.org/digest/2026-09-17/a-nobel-track-ai-scientist-just-got-300-million-to-build-the/">A Nobel-Track AI Scientist Just Got $300 Million to Build the Version Big Tech Won't. Two Governments Are Betting Safety Can Still Be a Business Model.</a></li>
-    <li><a href="https://ntknews.org/digest/2026-09-17/annie-dillard-wrote-a-book-about-a-creek-in-virginia-it-won/">Annie Dillard Wrote a Book About a Creek in Virginia. It Won the Pulitzer Prize and Outlasted Every News Cycle Since.</a></li>
-    <li><a href="https://ntknews.org/digest/2026-09-17/new-photos-show-us-bases-took-real-damage-from-irans-strikes/">New Photos Show U.S. Bases Took Real Damage From Iran's Strikes. The Pentagon Had Mostly Let Americans Assume Otherwise.</a></li>
-  </ul></div>
-<div class="ed"><div class="ed-date">2026-09-16</div><a class="day" href="https://ntknews.org/digest/2026-09-16/">Full edition</a><ul>
-    <li><a href="https://ntknews.org/digest/2026-09-16/congress-leaves-town-for-seven-weeks-rather-than-vote-on-pet/">Congress Leaves Town for Seven Weeks Rather Than Vote on Pete Hegseth. The War Cost $38 Billion — the Vote Would Have Cost Republicans Their Seats.</a></li>
-    <li><a href="https://ntknews.org/digest/2026-09-16/the-eu-offered-canada-a-seat-at-the-table-von-der-leyen-forg/">The EU Offered Canada a Seat at the Table. Von der Leyen Forgot to Ask the Other 26 Countries First.</a></li>
-    <li><a href="https://ntknews.org/digest/2026-09-16/anthropic-wants-to-grade-its-own-ai-homework-its-also-sellin/">Anthropic Wants to Grade Its Own AI Homework. It's Also Selling the Paper.</a></li>
-    <li><a href="https://ntknews.org/digest/2026-09-16/a-nobel-track-ai-scientist-just-got-300-million-to-build-the/">A Nobel-Track AI Scientist Just Got $300 Million to Build the Version Big Tech Won't. Two Governments Are Betting Safety Can Still Be a Business Model.</a></li>
-    <li><a href="https://ntknews.org/digest/2026-09-16/annie-dillard-wrote-a-book-about-a-creek-in-virginia-it-won/">Annie Dillard Wrote a Book About a Creek in Virginia. It Won the Pulitzer Prize and Outlasted Every News Cycle Since.</a></li>
-    <li><a href="https://ntknews.org/digest/2026-09-16/new-photos-show-us-bases-took-real-damage-from-irans-strikes/">New Photos Show U.S. Bases Took Real Damage From Iran's Strikes. The Pentagon Had Mostly Let Americans Assume Otherwise.</a></li>
-  </ul></div>
-<div class="ed"><div class="ed-date">2026-09-14</div><a class="day" href="https://ntknews.org/digest/2026-09-14/">Full edition</a><ul>
-    <li><a href="https://ntknews.org/digest/2026-09-14/anthropic-warned-ai-could-cause-100-billion-in-damage-wall-s/">Anthropic Warned AI Could Cause $100 Billion in Damage. Wall Street Bought the Dip Anyway.</a></li>
-  </ul></div>
+<div class="masthead">
+  <h1>Archive</h1>
+  <p class="standfirst">Every edition NTK has published, newest first. Each one ended when you finished it, and still does.</p>
+</div>
+<div class="ed">
+  <div class="ed-head">
+    <div class="ed-date">Friday, 18 September 2026</div>
+    <a class="day" href="https://ntknews.org/digest/2026-09-18/">Full edition</a>
+  </div>
+  <div class="ed-list">
+    <a href="https://ntknews.org/digest/2026-09-18/france-ordered-its-power-plants-guarded-this-week-the-order/">France Ordered Its Power Plants Guarded This Week. The Order Came the Same Day Gas Prices Spiked.</a>
+    <a href="https://ntknews.org/digest/2026-09-18/three-guys-and-a-200-subscription-broke-into-openai-it-took/">Three Guys and a $200 Subscription Broke Into OpenAI. It Took Them Less Than 72 Hours.</a>
+    <a href="https://ntknews.org/digest/2026-09-18/warren-buffett-handed-berkshire-hathaways-board-gavel-to-his/">Warren Buffett Handed Berkshire Hathaway's Board Gavel to His Son. The Company He Built Is Worth $1.1 Trillion, and It Took Him 61 Years to Let Go.</a>
+    <a href="https://ntknews.org/digest/2026-09-18/a-house-cat-in-a-bolivian-living-room-turned-out-to-be-a-new/">A House Cat in a Bolivian Living Room Turned Out to Be a New Species. It Took Science Nine Years to Notice.</a>
+  </div>
+</div>
+<div class="ed">
+  <div class="ed-head">
+    <div class="ed-date">Thursday, 17 September 2026</div>
+    <a class="day" href="https://ntknews.org/digest/2026-09-17/">Full edition</a>
+  </div>
+  <div class="ed-list">
+    <a href="https://ntknews.org/digest/2026-09-17/ken-paxton-is-losing-to-a-democrat-in-texas-that-hasnt-happe/">Ken Paxton Is Losing to a Democrat in Texas. That Hasn't Happened Statewide Since 1994.</a>
+    <a href="https://ntknews.org/digest/2026-09-17/the-man-who-built-the-texas-gop-for-29-statewide-seats-is-vo/">The Man Who Built the Texas GOP for 29 Statewide Seats Is Voting Against It. Karl Rove Says the Party He Made Now Has a Bigot Problem He Won't Ignore.</a>
+    <a href="https://ntknews.org/digest/2026-09-17/congress-leaves-town-for-seven-weeks-rather-than-vote-on-pet/">Congress Leaves Town for Seven Weeks Rather Than Vote on Pete Hegseth. The War Cost $38 Billion — the Vote Would Have Cost Republicans Their Seats.</a>
+    <a href="https://ntknews.org/digest/2026-09-17/the-eu-offered-canada-a-seat-at-the-table-von-der-leyen-forg/">The EU Offered Canada a Seat at the Table. Von der Leyen Forgot to Ask the Other 26 Countries First.</a>
+    <a href="https://ntknews.org/digest/2026-09-17/anthropic-wants-to-grade-its-own-ai-homework-its-also-sellin/">Anthropic Wants to Grade Its Own AI Homework. It's Also Selling the Paper.</a>
+    <a href="https://ntknews.org/digest/2026-09-17/a-nobel-track-ai-scientist-just-got-300-million-to-build-the/">A Nobel-Track AI Scientist Just Got $300 Million to Build the Version Big Tech Won't. Two Governments Are Betting Safety Can Still Be a Business Model.</a>
+    <a href="https://ntknews.org/digest/2026-09-17/annie-dillard-wrote-a-book-about-a-creek-in-virginia-it-won/">Annie Dillard Wrote a Book About a Creek in Virginia. It Won the Pulitzer Prize and Outlasted Every News Cycle Since.</a>
+    <a href="https://ntknews.org/digest/2026-09-17/new-photos-show-us-bases-took-real-damage-from-irans-strikes/">New Photos Show U.S. Bases Took Real Damage From Iran's Strikes. The Pentagon Had Mostly Let Americans Assume Otherwise.</a>
+  </div>
+</div>
+<div class="ed">
+  <div class="ed-head">
+    <div class="ed-date">Wednesday, 16 September 2026</div>
+    <a class="day" href="https://ntknews.org/digest/2026-09-16/">Full edition</a>
+  </div>
+  <div class="ed-list">
+    <a href="https://ntknews.org/digest/2026-09-16/congress-leaves-town-for-seven-weeks-rather-than-vote-on-pet/">Congress Leaves Town for Seven Weeks Rather Than Vote on Pete Hegseth. The War Cost $38 Billion — the Vote Would Have Cost Republicans Their Seats.</a>
+    <a href="https://ntknews.org/digest/2026-09-16/the-eu-offered-canada-a-seat-at-the-table-von-der-leyen-forg/">The EU Offered Canada a Seat at the Table. Von der Leyen Forgot to Ask the Other 26 Countries First.</a>
+    <a href="https://ntknews.org/digest/2026-09-16/anthropic-wants-to-grade-its-own-ai-homework-its-also-sellin/">Anthropic Wants to Grade Its Own AI Homework. It's Also Selling the Paper.</a>
+    <a href="https://ntknews.org/digest/2026-09-16/a-nobel-track-ai-scientist-just-got-300-million-to-build-the/">A Nobel-Track AI Scientist Just Got $300 Million to Build the Version Big Tech Won't. Two Governments Are Betting Safety Can Still Be a Business Model.</a>
+    <a href="https://ntknews.org/digest/2026-09-16/annie-dillard-wrote-a-book-about-a-creek-in-virginia-it-won/">Annie Dillard Wrote a Book About a Creek in Virginia. It Won the Pulitzer Prize and Outlasted Every News Cycle Since.</a>
+    <a href="https://ntknews.org/digest/2026-09-16/new-photos-show-us-bases-took-real-damage-from-irans-strikes/">New Photos Show U.S. Bases Took Real Damage From Iran's Strikes. The Pentagon Had Mostly Let Americans Assume Otherwise.</a>
+  </div>
+</div>
+<div class="ed">
+  <div class="ed-head">
+    <div class="ed-date">Monday, 14 September 2026</div>
+    <a class="day" href="https://ntknews.org/digest/2026-09-14/">Full edition</a>
+  </div>
+  <div class="ed-list">
+    <a href="https://ntknews.org/digest/2026-09-14/anthropic-warned-ai-could-cause-100-billion-in-damage-wall-s/">Anthropic Warned AI Could Cause $100 Billion in Damage. Wall Street Bought the Dip Anyway.</a>
+  </div>
+</div>
+<footer><a href="/today">Today&rsquo;s edition</a></footer>
 </body>
 </html>

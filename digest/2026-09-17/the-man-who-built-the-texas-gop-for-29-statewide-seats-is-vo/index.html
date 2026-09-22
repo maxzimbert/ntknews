@@ -19,6 +19,11 @@
   :root {
     --blue:   #0798F2;
     --amber:  #F2AE2E;
+    /* Light-ground steps. The bright accents were tuned against the ink
+       header and fail on the white body: blue 3.10, amber 1.93. These
+       clear 4.6 on white, cream and the Lies tint. */
+    --blue-deep:  #045E96;
+    --amber-deep: #7A5308;
     --terra:  #DC6550;
     --purple: #725ABF;
     --teal:   #01B2A7;
@@ -36,7 +41,7 @@
     margin: 0 auto;
   }
 
-  a { color: var(--blue); }
+  a { color: var(--blue-deep); }
 
   .story-header {
     background: var(--dark);
@@ -51,15 +56,8 @@
     gap: 12px;
   }
 
-  .back-btn {
-    font-family: 'Overpass', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--blue);
-    text-decoration: none;
-  }
 
-  .story-header-logo { margin-left: auto; display: flex; align-items: center; }
+  .story-header-logo { text-decoration: none; margin-left: auto; display: flex; align-items: center; }
   .ntk-logo-img-sm { height: 20px; width: auto; display: block; }
 
   .story-hero-wrap { background: var(--dark); }
@@ -87,7 +85,7 @@
     font-family: 'Overpass', sans-serif;
     font-size: 10px;
     font-weight: 700;
-    letter-spacing: 2px;
+    letter-spacing: .1em;
     text-transform: uppercase;
     color: var(--amber);
     margin-bottom: 10px;
@@ -127,12 +125,25 @@
   .section-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
   .section-title {
-    font-family: 'Overpass', sans-serif;
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 0.5px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 600;
+    font-size: 16px;
+    font-variant: small-caps;
+    letter-spacing: .05em;
     color: var(--dark);
   }
+
+  /* A descending ladder of certainty, not four categories. Same ramp as the
+     landing page: established, then likely, then plausible, with Lies
+     reversed because it is the negation rather than the fourth rung. */
+  .sec-1 .section-title { color: var(--dark); }
+  .sec-2 .section-title { color: rgba(38,31,35,0.82); }
+  .sec-3 .section-title { color: rgba(38,31,35,0.72); }
+  .sec-4 .section-title { color: #A33421; font-style: italic; }
+  .sec-1 .section-dot { background: var(--dark); }
+  .sec-2 .section-dot { background: rgba(38,31,35,0.60); }
+  .sec-3 .section-dot { background: rgba(38,31,35,0.34); }
+  .sec-4 .section-dot { background: #A33421; }
 
   .section-body {
     padding: 0 20px 22px;
@@ -159,7 +170,7 @@
   }
   .ntk-pq-text {
     font-family: 'Source Serif 4', serif;
-    font-size: 19px !important;
+    font-size: 20px !important;
     font-weight: 300;
     font-style: italic;
     line-height: 1.5 !important;
@@ -170,13 +181,13 @@
     display: block;
     font-family: 'Overpass', sans-serif;
     font-size: 10px;
-    letter-spacing: 1.5px;
+    letter-spacing: .1em;
     text-transform: uppercase;
-    color: var(--blue);
+    color: var(--blue-deep);
     font-style: normal;
   }
   .ntk-stat {
-    border-left: 3px solid var(--amber);
+    border-left: 3px solid var(--amber-deep);
     margin: 18px 0;
     padding: 14px 16px;
     background: rgba(242,174,46,0.05);
@@ -185,13 +196,13 @@
     font-family: 'Overpass', sans-serif;
     font-size: 34px;
     font-weight: 700;
-    color: var(--amber);
+    color: var(--amber-deep);
     line-height: 1.1;
     margin-bottom: 5px;
   }
   .ntk-stat-ctx {
     font-family: 'Source Serif 4', serif;
-    font-size: 14px;
+    font-size: 13px;
     color: rgba(38,31,35,0.72);
     line-height: 1.5;
   }
@@ -203,7 +214,7 @@
     font-family: 'Overpass', sans-serif;
     font-size: 13px;
     font-weight: 600;
-    color: var(--blue);
+    color: var(--blue-deep);
     text-decoration: none;
   }
 </style>
@@ -212,10 +223,9 @@
 
   <header class="story-header">
     <div class="story-header-inner">
-      <a class="back-btn" href="../">← Digest</a>
-      <div class="story-header-logo">
+      <a class="story-header-logo" href="/digest" aria-label="Back to the digest">
         <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjY5IiB6b29tQW5kUGFuPSJtYWduaWZ5IiB2aWV3Qm94PSIwIDAgMjAxLjc1IDEwMC40OTk5OTciIGhlaWdodD0iMTM0IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWlkWU1pZCBtZWV0IiB2ZXJzaW9uPSIxLjAiPjxkZWZzPjxnLz48Y2xpcFBhdGggaWQ9ImVlZmZkM2ZlNGQiPjxwYXRoIGQ9Ik0gNDIuNjEzMjgxIDAgTCAxNTguMjU3ODEyIDAgTCAxNTguMjU3ODEyIDEzLjc2MTcxOSBMIDQyLjYxMzI4MSAxMy43NjE3MTkgWiBNIDQyLjYxMzI4MSAwICIgY2xpcC1ydWxlPSJub256ZXJvIi8+PC9jbGlwUGF0aD48Y2xpcFBhdGggaWQ9IjY0YjZjNWI4MjEiPjxwYXRoIGQ9Ik0gNDUuNjAxNTYyIDAgTCAxNTUuMjQyMTg4IDAgQyAxNTYuODkwNjI1IDAgMTU4LjIyNjU2MiAxLjMzNTkzOCAxNTguMjI2NTYyIDIuOTg0Mzc1IEwgMTU4LjIyNjU2MiAxMC43NzczNDQgQyAxNTguMjI2NTYyIDEyLjQyNTc4MSAxNTYuODkwNjI1IDEzLjc2MTcxOSAxNTUuMjQyMTg4IDEzLjc2MTcxOSBMIDQ1LjYwMTU2MiAxMy43NjE3MTkgQyA0My45NTMxMjUgMTMuNzYxNzE5IDQyLjYxMzI4MSAxMi40MjU3ODEgNDIuNjEzMjgxIDEwLjc3NzM0NCBMIDQyLjYxMzI4MSAyLjk4NDM3NSBDIDQyLjYxMzI4MSAxLjMzNTkzOCA0My45NTMxMjUgMCA0NS42MDE1NjIgMCBaIE0gNDUuNjAxNTYyIDAgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iMTNjNzNjMDllMiI+PHBhdGggZD0iTSAwLjYxMzI4MSAwIEwgMTE2LjIzMDQ2OSAwIEwgMTE2LjIzMDQ2OSAxMy43NjE3MTkgTCAwLjYxMzI4MSAxMy43NjE3MTkgWiBNIDAuNjEzMjgxIDAgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iOTAxYzRhN2I1NyI+PHBhdGggZD0iTSAzLjYwMTU2MiAwIEwgMTEzLjI0MjE4OCAwIEMgMTE0Ljg5MDYyNSAwIDExNi4yMjY1NjIgMS4zMzU5MzggMTE2LjIyNjU2MiAyLjk4NDM3NSBMIDExNi4yMjY1NjIgMTAuNzc3MzQ0IEMgMTE2LjIyNjU2MiAxMi40MjU3ODEgMTE0Ljg5MDYyNSAxMy43NjE3MTkgMTEzLjI0MjE4OCAxMy43NjE3MTkgTCAzLjYwMTU2MiAxMy43NjE3MTkgQyAxLjk1MzEyNSAxMy43NjE3MTkgMC42MTMyODEgMTIuNDI1NzgxIDAuNjEzMjgxIDEwLjc3NzM0NCBMIDAuNjEzMjgxIDIuOTg0Mzc1IEMgMC42MTMyODEgMS4zMzU5MzggMS45NTMxMjUgMCAzLjYwMTU2MiAwIFogTSAzLjYwMTU2MiAwICIgY2xpcC1ydWxlPSJub256ZXJvIi8+PC9jbGlwUGF0aD48Y2xpcFBhdGggaWQ9IjAyM2Y2ODE5NTkiPjxyZWN0IHg9IjAiIHdpZHRoPSIxMTciIHk9IjAiIGhlaWdodD0iMTQiLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iY2FhN2JmNjI4OSI+PHBhdGggZD0iTSA0Mi42MTMyODEgMjEuNzg5MDYyIEwgMTU4LjIyNjU2MiAyMS43ODkwNjIgTCAxNTguMjI2NTYyIDI4LjA1ODU5NCBMIDQyLjYxMzI4MSAyOC4wNTg1OTQgWiBNIDQyLjYxMzI4MSAyMS43ODkwNjIgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iNmY5M2QzNmJlMiI+PHBhdGggZD0iTSA0NC4xMDkzNzUgMjEuNzg5MDYyIEwgMTU2LjczNDM3NSAyMS43ODkwNjIgQyAxNTcuNTU4NTk0IDIxLjc4OTA2MiAxNTguMjI2NTYyIDIyLjQ1NzAzMSAxNTguMjI2NTYyIDIzLjI4MTI1IEwgMTU4LjIyNjU2MiAyNi41NjY0MDYgQyAxNTguMjI2NTYyIDI3LjM5MDYyNSAxNTcuNTU4NTk0IDI4LjA1ODU5NCAxNTYuNzM0Mzc1IDI4LjA1ODU5NCBMIDQ0LjEwOTM3NSAyOC4wNTg1OTQgQyA0My4yODUxNTYgMjguMDU4NTk0IDQyLjYxMzI4MSAyNy4zOTA2MjUgNDIuNjEzMjgxIDI2LjU2NjQwNiBMIDQyLjYxMzI4MSAyMy4yODEyNSBDIDQyLjYxMzI4MSAyMi40NTcwMzEgNDMuMjg1MTU2IDIxLjc4OTA2MiA0NC4xMDkzNzUgMjEuNzg5MDYyIFogTSA0NC4xMDkzNzUgMjEuNzg5MDYyICIgY2xpcC1ydWxlPSJub256ZXJvIi8+PC9jbGlwUGF0aD48Y2xpcFBhdGggaWQ9ImUwN2ZmZDk1NzciPjxwYXRoIGQ9Ik0gMC42MTMyODEgMC43ODkwNjIgTCAxMTYuMjI2NTYyIDAuNzg5MDYyIEwgMTE2LjIyNjU2MiA3LjA1ODU5NCBMIDAuNjEzMjgxIDcuMDU4NTk0IFogTSAwLjYxMzI4MSAwLjc4OTA2MiAiIGNsaXAtcnVsZT0ibm9uemVybyIvPjwvY2xpcFBhdGg+PGNsaXBQYXRoIGlkPSI1MzczMjAzMTlhIj48cGF0aCBkPSJNIDIuMTA5Mzc1IDAuNzg5MDYyIEwgMTE0LjczNDM3NSAwLjc4OTA2MiBDIDExNS41NTg1OTQgMC43ODkwNjIgMTE2LjIyNjU2MiAxLjQ1NzAzMSAxMTYuMjI2NTYyIDIuMjgxMjUgTCAxMTYuMjI2NTYyIDUuNTY2NDA2IEMgMTE2LjIyNjU2MiA2LjM5MDYyNSAxMTUuNTU4NTk0IDcuMDU4NTk0IDExNC43MzQzNzUgNy4wNTg1OTQgTCAyLjEwOTM3NSA3LjA1ODU5NCBDIDEuMjg1MTU2IDcuMDU4NTk0IDAuNjEzMjgxIDYuMzkwNjI1IDAuNjEzMjgxIDUuNTY2NDA2IEwgMC42MTMyODEgMi4yODEyNSBDIDAuNjEzMjgxIDEuNDU3MDMxIDEuMjg1MTU2IDAuNzg5MDYyIDIuMTA5Mzc1IDAuNzg5MDYyIFogTSAyLjEwOTM3NSAwLjc4OTA2MiAiIGNsaXAtcnVsZT0ibm9uemVybyIvPjwvY2xpcFBhdGg+PGNsaXBQYXRoIGlkPSI0NzY1NGU3M2MyIj48cmVjdCB4PSIwIiB3aWR0aD0iMTE3IiB5PSIwIiBoZWlnaHQ9IjgiLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iMzcwYWU3ODRhMCI+PHBhdGggZD0iTSA0Mi42MTMyODEgNzIuNjA1NDY5IEwgMTU4LjIyNjU2MiA3Mi42MDU0NjkgTCAxNTguMjI2NTYyIDc4Ljg3NSBMIDQyLjYxMzI4MSA3OC44NzUgWiBNIDQyLjYxMzI4MSA3Mi42MDU0NjkgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iNTIzYWRiMGI1NiI+PHBhdGggZD0iTSA0NC4xMDkzNzUgNzIuNjA1NDY5IEwgMTU2LjczNDM3NSA3Mi42MDU0NjkgQyAxNTcuNTU4NTk0IDcyLjYwNTQ2OSAxNTguMjI2NTYyIDczLjI3MzQzOCAxNTguMjI2NTYyIDc0LjA5NzY1NiBMIDE1OC4yMjY1NjIgNzcuMzgyODEyIEMgMTU4LjIyNjU2MiA3OC4yMDcwMzEgMTU3LjU1ODU5NCA3OC44NzUgMTU2LjczNDM3NSA3OC44NzUgTCA0NC4xMDkzNzUgNzguODc1IEMgNDMuMjg1MTU2IDc4Ljg3NSA0Mi42MTMyODEgNzguMjA3MDMxIDQyLjYxMzI4MSA3Ny4zODI4MTIgTCA0Mi42MTMyODEgNzQuMDk3NjU2IEMgNDIuNjEzMjgxIDczLjI3MzQzOCA0My4yODUxNTYgNzIuNjA1NDY5IDQ0LjEwOTM3NSA3Mi42MDU0NjkgWiBNIDQ0LjEwOTM3NSA3Mi42MDU0NjkgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iN2FkNDU3ZGI1NCI+PHBhdGggZD0iTSAwLjYxMzI4MSAwLjYwNTQ2OSBMIDExNi4yMjY1NjIgMC42MDU0NjkgTCAxMTYuMjI2NTYyIDYuODc1IEwgMC42MTMyODEgNi44NzUgWiBNIDAuNjEzMjgxIDAuNjA1NDY5ICIgY2xpcC1ydWxlPSJub256ZXJvIi8+PC9jbGlwUGF0aD48Y2xpcFBhdGggaWQ9IjczNThiNWQ1YWUiPjxwYXRoIGQ9Ik0gMi4xMDkzNzUgMC42MDU0NjkgTCAxMTQuNzM0Mzc1IDAuNjA1NDY5IEMgMTE1LjU1ODU5NCAwLjYwNTQ2OSAxMTYuMjI2NTYyIDEuMjczNDM4IDExNi4yMjY1NjIgMi4wOTc2NTYgTCAxMTYuMjI2NTYyIDUuMzgyODEyIEMgMTE2LjIyNjU2MiA2LjIwNzAzMSAxMTUuNTU4NTk0IDYuODc1IDExNC43MzQzNzUgNi44NzUgTCAyLjEwOTM3NSA2Ljg3NSBDIDEuMjg1MTU2IDYuODc1IDAuNjEzMjgxIDYuMjA3MDMxIDAuNjEzMjgxIDUuMzgyODEyIEwgMC42MTMyODEgMi4wOTc2NTYgQyAwLjYxMzI4MSAxLjI3MzQzOCAxLjI4NTE1NiAwLjYwNTQ2OSAyLjEwOTM3NSAwLjYwNTQ2OSBaIE0gMi4xMDkzNzUgMC42MDU0NjkgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iODBhOGRhNDEwYSI+PHJlY3QgeD0iMCIgd2lkdGg9IjExNyIgeT0iMCIgaGVpZ2h0PSI3Ii8+PC9jbGlwUGF0aD48Y2xpcFBhdGggaWQ9ImY5ZDA3ZDA0YzgiPjxwYXRoIGQ9Ik0gNDIuNjEzMjgxIDg2LjE2NDA2MiBMIDE1OC4yNTc4MTIgODYuMTY0MDYyIEwgMTU4LjI1NzgxMiA5OS45MjU3ODEgTCA0Mi42MTMyODEgOTkuOTI1NzgxIFogTSA0Mi42MTMyODEgODYuMTY0MDYyICIgY2xpcC1ydWxlPSJub256ZXJvIi8+PC9jbGlwUGF0aD48Y2xpcFBhdGggaWQ9IjdjMjM4NWY2ZWQiPjxwYXRoIGQ9Ik0gNDUuNjAxNTYyIDg2LjE2NDA2MiBMIDE1NS4yNDIxODggODYuMTY0MDYyIEMgMTU2Ljg5MDYyNSA4Ni4xNjQwNjIgMTU4LjIyNjU2MiA4Ny41IDE1OC4yMjY1NjIgODkuMTQ4NDM4IEwgMTU4LjIyNjU2MiA5Ni45NDE0MDYgQyAxNTguMjI2NTYyIDk4LjU4OTg0NCAxNTYuODkwNjI1IDk5LjkyNTc4MSAxNTUuMjQyMTg4IDk5LjkyNTc4MSBMIDQ1LjYwMTU2MiA5OS45MjU3ODEgQyA0My45NTMxMjUgOTkuOTI1NzgxIDQyLjYxMzI4MSA5OC41ODk4NDQgNDIuNjEzMjgxIDk2Ljk0MTQwNiBMIDQyLjYxMzI4MSA4OS4xNDg0MzggQyA0Mi42MTMyODEgODcuNSA0My45NTMxMjUgODYuMTY0MDYyIDQ1LjYwMTU2MiA4Ni4xNjQwNjIgWiBNIDQ1LjYwMTU2MiA4Ni4xNjQwNjIgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iYWZhM2JmOTIxYiI+PHBhdGggZD0iTSAwLjYxMzI4MSAwLjE2NDA2MiBMIDExNi4yMzA0NjkgMC4xNjQwNjIgTCAxMTYuMjMwNDY5IDEzLjkyNTc4MSBMIDAuNjEzMjgxIDEzLjkyNTc4MSBaIE0gMC42MTMyODEgMC4xNjQwNjIgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iNDYzMjQ4NTcyMCI+PHBhdGggZD0iTSAzLjYwMTU2MiAwLjE2NDA2MiBMIDExMy4yNDIxODggMC4xNjQwNjIgQyAxMTQuODkwNjI1IDAuMTY0MDYyIDExNi4yMjY1NjIgMS41IDExNi4yMjY1NjIgMy4xNDg0MzggTCAxMTYuMjI2NTYyIDEwLjk0MTQwNiBDIDExNi4yMjY1NjIgMTIuNTg5ODQ0IDExNC44OTA2MjUgMTMuOTI1NzgxIDExMy4yNDIxODggMTMuOTI1NzgxIEwgMy42MDE1NjIgMTMuOTI1NzgxIEMgMS45NTMxMjUgMTMuOTI1NzgxIDAuNjEzMjgxIDEyLjU4OTg0NCAwLjYxMzI4MSAxMC45NDE0MDYgTCAwLjYxMzI4MSAzLjE0ODQzOCBDIDAuNjEzMjgxIDEuNSAxLjk1MzEyNSAwLjE2NDA2MiAzLjYwMTU2MiAwLjE2NDA2MiBaIE0gMy42MDE1NjIgMC4xNjQwNjIgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iZjY1OWMyZTM5YyI+PHJlY3QgeD0iMCIgd2lkdGg9IjExNyIgeT0iMCIgaGVpZ2h0PSIxNCIvPjwvY2xpcFBhdGg+PGNsaXBQYXRoIGlkPSIxODY5ZWRhZjJjIj48cmVjdCB4PSIwIiB3aWR0aD0iMTI2IiB5PSIwIiBoZWlnaHQ9IjQ2Ii8+PC9jbGlwUGF0aD48L2RlZnM+PGcgY2xpcC1wYXRoPSJ1cmwoI2VlZmZkM2ZlNGQpIj48ZyBjbGlwLXBhdGg9InVybCgjNjRiNmM1YjgyMSkiPjxnIHRyYW5zZm9ybT0ibWF0cml4KDEsIDAsIDAsIDEsIDQyLCAwKSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzAyM2Y2ODE5NTkpIj48ZyBjbGlwLXBhdGg9InVybCgjMTNjNzNjMDllMikiPjxnIGNsaXAtcGF0aD0idXJsKCM5MDFjNGE3YjU3KSI+PHBhdGggZmlsbD0iI2YyZjJmMiIgZD0iTSAwLjYxMzI4MSAwIEwgMTE2LjIwMzEyNSAwIEwgMTE2LjIwMzEyNSAxMy43NjE3MTkgTCAwLjYxMzI4MSAxMy43NjE3MTkgWiBNIDAuNjEzMjgxIDAgIiBmaWxsLW9wYWNpdHk9IjEiIGZpbGwtcnVsZT0ibm9uemVybyIvPjwvZz48L2c+PC9nPjwvZz48L2c+PC9nPjxnIGNsaXAtcGF0aD0idXJsKCNjYWE3YmY2Mjg5KSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzZmOTNkMzZiZTIpIj48ZyB0cmFuc2Zvcm09Im1hdHJpeCgxLCAwLCAwLCAxLCA0MiwgMjEpIj48ZyBjbGlwLXBhdGg9InVybCgjNDc2NTRlNzNjMikiPjxnIGNsaXAtcGF0aD0idXJsKCNlMDdmZmQ5NTc3KSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzUzNzMyMDMxOWEpIj48cGF0aCBmaWxsPSIjZjJmMmYyIiBkPSJNIDAuNjEzMjgxIDAuNzg5MDYyIEwgMTE2LjIyNjU2MiAwLjc4OTA2MiBMIDExNi4yMjY1NjIgNy4wNTg1OTQgTCAwLjYxMzI4MSA3LjA1ODU5NCBaIE0gMC42MTMyODEgMC43ODkwNjIgIiBmaWxsLW9wYWNpdHk9IjEiIGZpbGwtcnVsZT0ibm9uemVybyIvPjwvZz48L2c+PC9nPjwvZz48L2c+PC9nPjxnIGNsaXAtcGF0aD0idXJsKCMzNzBhZTc4NGEwKSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzUyM2FkYjBiNTYpIj48ZyB0cmFuc2Zvcm09Im1hdHJpeCgxLCAwLCAwLCAxLCA0MiwgNzIpIj48ZyBjbGlwLXBhdGg9InVybCgjODBhOGRhNDEwYSkiPjxnIGNsaXAtcGF0aD0idXJsKCM3YWQ0NTdkYjU0KSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzczNThiNWQ1YWUpIj48cGF0aCBmaWxsPSIjZjJmMmYyIiBkPSJNIDAuNjEzMjgxIDAuNjA1NDY5IEwgMTE2LjIyNjU2MiAwLjYwNTQ2OSBMIDExNi4yMjY1NjIgNi44NzUgTCAwLjYxMzI4MSA2Ljg3NSBaIE0gMC42MTMyODEgMC42MDU0NjkgIiBmaWxsLW9wYWNpdHk9IjEiIGZpbGwtcnVsZT0ibm9uemVybyIvPjwvZz48L2c+PC9nPjwvZz48L2c+PC9nPjxnIGNsaXAtcGF0aD0idXJsKCNmOWQwN2QwNGM4KSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzdjMjM4NWY2ZWQpIj48ZyB0cmFuc2Zvcm09Im1hdHJpeCgxLCAwLCAwLCAxLCA0MiwgODYpIj48ZyBjbGlwLXBhdGg9InVybCgjZjY1OWMyZTM5YykiPjxnIGNsaXAtcGF0aD0idXJsKCNhZmEzYmY5MjFiKSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzQ2MzI0ODU3MjApIj48cGF0aCBmaWxsPSIjZjJmMmYyIiBkPSJNIDAuNjEzMjgxIDAuMTY0MDYyIEwgMTE2LjIwMzEyNSAwLjE2NDA2MiBMIDExNi4yMDMxMjUgMTMuOTI1NzgxIEwgMC42MTMyODEgMTMuOTI1NzgxIFogTSAwLjYxMzI4MSAwLjE2NDA2MiAiIGZpbGwtb3BhY2l0eT0iMSIgZmlsbC1ydWxlPSJub256ZXJvIi8+PC9nPjwvZz48L2c+PC9nPjwvZz48L2c+PGcgdHJhbnNmb3JtPSJtYXRyaXgoMSwgMCwgMCwgMSwgNDIsIDI3KSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzE4NjllZGFmMmMpIj48ZyBmaWxsPSIjZjJmMmYyIiBmaWxsLW9wYWNpdHk9IjEiPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEuMjAzMTk4LCAzNy40Nzc5NTMpIj48Zz48cGF0aCBkPSJNIDI0LjI2NTYyNSAtMTIgTCAyNC4yNjU2MjUgLTI3LjczNDM3NSBMIDMxLjY3MTg3NSAtMjcuNzM0Mzc1IEwgMzEuNjcxODc1IDAgTCAyNS4wMzEyNSAwIEwgOS44NDM3NSAtMTcuMjUgTCA5Ljg0Mzc1IDAgTCAyLjQzNzUgMCBMIDIuNDM3NSAtMjcuNzM0Mzc1IEwgMTAuNzE4NzUgLTI3LjczNDM3NSBaIE0gMjQuMjY1NjI1IC0xMiAiLz48L2c+PC9nPjwvZz48ZyBmaWxsPSIjZjJmMmYyIiBmaWxsLW9wYWNpdHk9IjEiPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDQ0LjI0NDI2NiwgMzcuNDc3OTUzKSI+PGc+PHBhdGggZD0iTSAxMS4xMjUgLTIwLjgxMjUgTCAwLjY0MDYyNSAtMjAuODEyNSBMIDAuNjQwNjI1IC0yNy43MzQzNzUgTCAyOS40Njg3NSAtMjcuNzM0Mzc1IEwgMjkuNDY4NzUgLTIwLjgxMjUgTCAxOS4wMzEyNSAtMjAuODEyNSBMIDE5LjAzMTI1IDAgTCAxMS4xMjUgMCBaIE0gMTEuMTI1IC0yMC44MTI1ICIvPjwvZz48L2c+PC9nPjxnIGZpbGw9IiNmMmYyZjIiIGZpbGwtb3BhY2l0eT0iMSI+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoODMuMjU4NjEsIDM3LjQ3Nzk1MykiPjxnPjxwYXRoIGQ9Ik0gMzIuNTQ2ODc1IDAgTCAyMi45ODQzNzUgMCBMIDE1LjEyNSAtMTIuMTU2MjUgTCAxMC4yMTg3NSAtNi44NDM3NSBMIDEwLjIxODc1IDAgTCAyLjQzNzUgMCBMIDIuNDM3NSAtMjcuNzM0Mzc1IEwgMTAuMjE4NzUgLTI3LjczNDM3NSBMIDEwLjIxODc1IC0xNS43OTY4NzUgTCAyMS4yNjU2MjUgLTI3LjczNDM3NSBMIDMxLjg3NSAtMjcuNzM0Mzc1IEwgMjEuMzEyNSAtMTYuNjQwNjI1IFogTSAzMi41NDY4NzUgMCAiLz48L2c+PC9nPjwvZz48L2c+PC9nPjwvc3ZnPg==" alt="NTK" class="ntk-logo-img-sm">
-      </div>
+      </a>
     </div>
   </header>
 
@@ -230,33 +240,33 @@
 
   <div class="story-sections">
 
-    <div class="story-section">
+    <div class="story-section sec-1">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--blue);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Truths — What Happened</span>
       </div>
       <div class="section-body"><p><strong>Karl Rove spent decades building the Texas GOP from one statewide office to all 29.</strong> He is voting against it now (<a href="https://www.washingtonpost.com/politics/2026/09/17/why-karl-rove-father-modern-texas-gop-is-voting-democrat/" target="_blank" rel="noopener">Washington Post</a>). The trigger was Bo French, the Republican nominee for the Texas Railroad Commission, who looked at photos of University of Texas students celebrating a football win, mostly students of color, and wrote that it looked like "UT graduation," adding, "The problem is now obviously far worse than anyone imagined" (<a href="https://www.mediaite.com/politics/karl-rove-says-hes-voting-for-a-democrat-warns-gop-has-increasing-number-of-bigots/" target="_blank" rel="noopener">Mediaite</a>). Texas outlets found the students in the photo were U.S. citizens, a detail French did not correct or acknowledge (<a href="https://www.mediaite.com/politics/karl-rove-says-hes-voting-for-a-democrat-warns-gop-has-increasing-number-of-bigots/" target="_blank" rel="noopener">Mediaite</a>). Rove called French a "bigot" at a private Austin lunch, then confirmed it in a Wall Street Journal column, laying out a pattern: French had once written "families deported together stay together" to a lawmaker's wife, and had run an X poll asking whether Jews or Muslims were a "bigger threat to America" (<a href="https://www.mediaite.com/politics/karl-rove-says-hes-voting-for-a-democrat-warns-gop-has-increasing-number-of-bigots/" target="_blank" rel="noopener">Mediaite</a>). "These people are diminishing the Republican Party, not building it. I'll have no part of it," Rove wrote, naming Democrat Jon Rosenthal as his choice (<a href="https://www.washingtonpost.com/politics/2026/09/17/why-karl-rove-father-modern-texas-gop-is-voting-democrat/" target="_blank" rel="noopener">Washington Post</a>).</p><p>That column didn't stay contained to one race. Gov. Greg Abbott called French's comment "not my message" without naming French, then pivoted to boasting about freezing H1B visas at Texas universities (<a href="https://www.washingtonpost.com/politics/2026/09/17/why-karl-rove-father-modern-texas-gop-is-voting-democrat/" target="_blank" rel="noopener">Washington Post</a>). Attorney General Ken Paxton, who beat Sen. John Cornyn in the May primary by more than 27 points, skipped French entirely and accused his own Democratic opponent, state Rep. James Talarico, of racism instead (<a href="https://www.thedailybeast.com/john-cornyn-twists-the-knife-after-gop-guru-karl-rove-switches-sides/" target="_blank" rel="noopener">Daily Beast</a>). Cornyn took the opposite bet. He retweeted Rove's column, amplified the line "the GOP's stables need a cleaning," and drew immediate fire from MAGA figures Benny Johnson and Jack Posobiec, who called it sour grapes from a primary loser (<a href="https://www.thedailybeast.com/john-cornyn-twists-the-knife-after-gop-guru-karl-rove-switches-sides/" target="_blank" rel="noopener">Daily Beast</a>).</p><div class="ntk-pullquote"><p class="ntk-pq-text">This is how great political parties self-destruct. Sad.</p><cite class="ntk-pq-cite">Sen. John Cornyn, R-Texas</cite></div><p>Trump's response arrived before the ink dried. He called Rove a "stone cold loser" on Truth Social and accused him of "Trump Derangement Syndrome" (<a href="https://www.mediaite.com/media/news/loser-trump-rages-at-karl-roves-refusal-to-support-bigot-texas-republican/" target="_blank" rel="noopener">Mediaite</a>). Rove had already spent the month warning that Trump's approval rating, stuck in the low 30s, made the president's rally-heavy strategy a liability for other Republicans on the ballot (<a href="https://www.thedailybeast.com/top-republican-guru-sounds-alarm-after-switching-sides/" target="_blank" rel="noopener">Daily Beast</a>). Two Texas officials up for election this fall, Abbott and Paxton, both declined to say French's name out loud. Rove said it in print, twice.</p></div>
     </div>
 
-    <div class="story-section">
+    <div class="story-section sec-2">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--purple);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Probabilities — What Will Likely Happen</span>
       </div>
       <div class="section-body"><p><em>Rosenthal's chances on the Railroad Commission ballot barely move, but three other things almost certainly do in the next two weeks.</em></p><p><strong>Abbott and Paxton will keep refusing to say French's name, and it will cost them nothing in November.</strong> Both men are counting on a simple fact: statewide Texas races aren't decided by Karl Rove's approval, they're decided by turnout in a midterm map that already favors Republicans. Abbott's H1B-visa boast and Paxton's counterattack on James Talarico weren't slips, they were tests, and neither man will walk them back even as more reporters ask them directly about French this week. The most likely outcome is silence holding, because the two Republicans with the most to lose from a bigotry story have calculated that naming French costs them more with their own primary base than dodging costs them with anyone else.</p><p>That calculation only works if French stays a one-man problem, and he almost certainly won't. Rove's column named a pattern, not a person: the deported-families comment, the Jews-or-Muslims poll, the growing list of Republicans who defended French rather than the students. The most likely next 14 days bring at least one more Texas Republican, probably a state legislator or county chair facing a primary challenge from the party's right flank, doing some version of what French did, because the incentive structure Rove described, reward for provocation, cost for restraint, hasn't gone anywhere. When it happens, watch whether Cornyn is still in office to retweet it. He's a lame duck with nothing left to lose, which is exactly why he could afford to do what Abbott and Paxton couldn't.</p><div class="ntk-stat"><div class="ntk-stat-num">33 percent</div><div class="ntk-stat-ctx">Trump's approval rating in the low-30s range Rove has cited as the reason rally-heavy, Trump-centered ads are dragging down other Republicans on the ballot this fall.</div></div><p>That number is the mechanism behind the third probability. Trump will almost certainly escalate past "stone cold loser" if Rove keeps writing columns, because Rove's actual argument, that Trump's face on every screen in a toss-up race ties vulnerable candidates to an unpopular president, is a direct threat to the only campaign strategy Trump controls personally. The most likely next step isn't a truce. It's Trump naming a specific candidate or race where he blames Rove's advice, or lack of it, if Republicans lose a seat they were expected to hold. Cornyn, Abbott and Paxton are all being forced to choose a side in a fight that used to be about immigration policy and is now about whether Trump's own strategy is the thing sinking his party in November. Rove built the machine that made that fight possible to have out loud. He's the only one of the four with nothing left to protect by having it.</p></div>
     </div>
 
-    <div class="story-section">
+    <div class="story-section sec-3">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--teal);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Possibilities — What Could Happen</span>
       </div>
       <div class="section-body"><p><em>The room Rove just stepped into has three more doors in it, and they open on the primary voters who put French and Paxton there in the first place.</em></p><p><strong>A retiring senator with no primary left to lose becomes the test case for what happens when Republicans stop needing MAGA's permission.</strong> Cornyn is the first Texas Republican in office who has nothing left to trade. He already lost the primary, he isn't running again, and he retweeted Rove anyway. That combination, a lame-duck officeholder plus a defection loud enough to draw presidential fire, didn't exist in Texas before this week. It opens a door for other retiring or term-limited Republicans, in Texas and beyond, to say what Cornyn said once they've banked their last election. Cornyn's retweet is the proof of concept: defection doesn't require winning the next primary, it only requires not needing to.</p><p>That door only matters if someone walks through it who still has something to lose, which is the second-order question Cornyn's move actually raises. <strong>If a sitting Texas Republican with a primary still ahead makes the same bet Cornyn made, the price of silence changes for Abbott and Paxton.</strong> Right now both men are betting that dodging French costs less than naming him. That bet holds as long as every other Republican with skin in the game stays quiet too. But Rove named a pattern, not a person, and the Probabilities section already flagged that French likely won't stay a one-man problem. The moment a second officeholder, someone still facing voters, condemns a Bo-French-style comment by name rather than gesture, Abbott's "not my message" and Paxton's counterattack on Talarico stop looking like discipline and start looking like cowardice next to a colleague who didn't flinch. That contrast is only visible now, with Cornyn's retweet sitting there as the comparison point.</p><p>The generative door sits underneath both of those. <strong>Rove's column gives Talarico and Rosenthal a script Texas Democrats haven't had in decades: a conservative case against the GOP's own nominees, delivered by the man who built the party's machine.</strong> Talarico is running against Paxton, who just accused him of racism rather than address French. Rosenthal is running against French directly. Neither campaign has to invent an argument that Republicans have drifted from their own tradition, Rove wrote it for them, on the record, in the Wall Street Journal, citing Rick Perry's 2001 tuition law and his own three decades of straight-ticket voting as the baseline. That's not opposition research. That's a Republican elder handing Democratic campaigns a permission structure for the voters Cornyn represents: not converts to the left, just Republicans who'll cross one line once. Whether Talarico or Rosenthal actually use it, quote it in an ad, put it in a mailer to the suburban Houston and Austin precincts that decide these races, is the door Rove opened without meaning to. Nobody built that ad yet. The material for it just became available.</p></div>
     </div>
 
-    <div class="story-section lies-section">
+    <div class="story-section lies-section sec-4">
       <div class="section-header">
-        <div class="section-dot" style="background:var(--terra);"></div>
+        <div class="section-dot"></div>
         <span class="section-title">Lies / Narrative Distortions</span>
       </div>
       <div class="section-body"><p><em>Two Texas Republicans found a way to talk about French without saying his name, and both versions are worth checking against the record.</em></p><p><strong>Ken Paxton's team says the real racism in this race is coming from James Talarico, not from Bo French.</strong> Paxton made that accusation instead of answering questions about French's post, and the substitution is the whole trick. Talarico has said nothing resembling French's comments about UT students or his "families deported together stay together" line to a lawmaker's wife. Paxton needs the accusation to work because he cannot afford to alienate the primary electorate that gave him a lopsided win over Cornyn in May, the same voters who have shown no appetite for punishing French. Naming French costs Paxton with his base. Naming Talarico instead costs him nothing, because it never has to be proven, only repeated. The person who benefits is Paxton himself, buying distance from a story that implicates his own party's nominee without ever having to take a position on it.</p><p>Greg Abbott is running a quieter version of the same play. <strong>Abbott's line that French's comment was "not my message" is meant to sound like distance, but it functions as cover.</strong> The claim is technically true. It is also beside the point. Rove's column was never about whether Abbott personally agrees with French, it was about whether Texas Republican leadership will name and isolate a pattern of bigotry when a member of their own ticket produces it. Abbott's statement does neither. It disowns a phrase while leaving French on the ballot as the party's nominee, then pivots to boasting about freezing H1B visas at Texas universities, an answer to a question nobody asked him. That pivot is the tell. It lets Abbott sound tough on immigration to the same voters French was courting, without ever being pinned to French's words. The beneficiary is Abbott's own reelection math: Texas midterm turnout rewards a governor who stays right on immigration and silent on bigotry, and punishes one who picks a fight with his own nominee's supporters.</p><p>Both men are betting on the same asymmetry Rove diagnosed and then left the party over. A charge against a Democrat is free and unfalsifiable. A named rebuke of a Republican carries a real cost, measured in primary voters. Rick Perry paid that cost willingly in 2011, defending in-state tuition for undocumented students against Mitt Romney and losing the nomination for it. Abbott and Paxton have looked at that history and chosen the opposite bet, that in 2026 Texas, silence is the safer vote.</p></div>
@@ -264,7 +274,7 @@
 
   </div>
 
-  <a class="back-footer" href="../">← Back to today's digest</a>
+  <a class="back-footer" href="../">Back to today's digest</a>
 
 </body>
 </html>
