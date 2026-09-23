@@ -114,8 +114,14 @@ def have(binary):
 
 def to_wav(mp3_path, wav_path):
     if have("ffmpeg"):
+        # -f wav is load-bearing, not decoration: ffmpeg infers the output
+        # muxer from the destination filename's extension by default, and
+        # the temp file is named *.wav.tmp — ".tmp" isn't a format ffmpeg
+        # recognizes, so every conversion failed on the first real Actions
+        # run with "Unable to choose an output format." Forcing it removes
+        # the dependency on the filename entirely.
         cmd = ["ffmpeg", "-y", "-loglevel", "error", "-i", str(mp3_path),
-               "-ar", "16000", "-ac", "1", str(wav_path)]
+               "-ar", "16000", "-ac", "1", "-f", "wav", str(wav_path)]
     elif have("afconvert"):
         # macOS only. Fine for local runs; the workflow installs ffmpeg.
         cmd = ["afconvert", "-f", "WAVE", "-d", "LEI16@16000", "-c", "1",
