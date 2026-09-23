@@ -60,7 +60,6 @@
     --blue:   #0798F2;
     --amber:  #F2AE2E;
     --terra:  #DC6550;
-    --purple: #725ABF;
     --teal:   #01B2A7;
     /* Cream-safe steps of the same hues, for the panels that now sit on
        cream instead of ink. Same values used site-wide (archive, story
@@ -658,6 +657,7 @@
   .bsr-detail-narrative a { color: var(--blue); }
 
   .story-card {
+    display: block;
     position: relative;
     background: var(--white);
     border-radius: 3px;
@@ -668,6 +668,8 @@
     will-change: transform;
     cursor: pointer;
     user-select: none;
+    text-decoration: none;
+    color: inherit;
   }
 
   .story-card.swiped-away {
@@ -695,7 +697,7 @@
     font-weight: 700;
     letter-spacing: .1em;
     text-transform: uppercase;
-    color: var(--terra);
+    color: var(--coral-deep);
     margin-bottom: 6px;
     transition: color 0.3s;
   }
@@ -805,40 +807,6 @@
   }
   .beat-pill:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
 
-  .beat-toast {
-    display: none;
-    position: fixed;
-    left: 16px;
-    right: 16px;
-    bottom: calc(var(--nav-h, 64px) + 14px);
-    z-index: 60;
-    max-width: 560px;
-    margin: 0 auto;
-    background: var(--cream);
-    border-left: 4px solid var(--teal);
-    border-radius: 3px;
-    padding: 14px 20px;
-    box-shadow: 0 8px 28px rgba(0,0,0,0.34);
-    animation: fadeUp 0.35s ease forwards;
-  }
-  .beat-toast.show { display: block; }
-  .beat-toast-label {
-    font-family: 'Overpass', sans-serif;
-    font-size: 10px;
-    letter-spacing: 0;
-    color: var(--teal);
-    margin-bottom: 7px;
-  }
-  .beat-toast-text {
-    font-family: 'Newsreader', serif;
-    font-size: 16px;
-    font-style: italic;
-    font-weight: 300;
-    color: var(--ink);
-    line-height: 1.5;
-  }
-  .beat-toast-text strong { font-style: normal; font-weight: 600; color: var(--amber); }
-
   /* ── MOT BEAT LINE ──────────────────────────────────────────────── */
   .mot-beat-line {
     font-family: 'Overpass', sans-serif;
@@ -929,7 +897,7 @@
 
   .card-wrapper.featured-wrapper .story-card { background: var(--cream); }
   .card-wrapper.featured-wrapper .story-number { color: rgba(38,31,35,0.67); }
-  .card-wrapper.featured-wrapper .story-category { color: var(--amber); }
+  .card-wrapper.featured-wrapper .story-category { color: var(--amber-deep); }
   .card-wrapper.featured-wrapper .story-headline { color: var(--ink); }
   .card-wrapper.featured-wrapper .story-lede { color: rgba(38,31,35,0.67); }
   .card-wrapper.featured-wrapper .card-footer { border-top-color: rgba(38,31,35,0.67); }
@@ -1034,324 +1002,6 @@
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  /* ── STORY VIEW ──────────────────────────── */
-
-  .story-view { min-height: 100vh; background: var(--cream); }
-
-  .story-header {
-    background: var(--dark);
-    padding: 0;
-    border-bottom: 3px solid var(--blue);
-    position: sticky;
-    top: 0;
-    z-index: 50;
-  }
-
-  .story-header-inner {
-    padding: 0 20px;
-    height: 56px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .back-btn {
-    font-family: 'Overpass', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--blue);
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 8px 0;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-
-  .story-header-logo {
-    text-decoration: none;
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-  }
-  .ntk-logo-img-sm {
-    height: 20px;
-    width: auto;
-    display: block;
-  }
-
-  .story-hero-wrap {
-    background: var(--dark);
-  }
-
-  .story-hero-image-wrap {
-    width: 100%;
-    height: 220px;
-    overflow: hidden;
-    clip-path: polygon(0 0, 100% 0, 100% 88%, 0 100%);
-  }
-
-  .story-hero-image-wrap img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-
-  .story-hero {
-    background: var(--dark);
-    padding: 24px 20px 28px;
-  }
-
-  .story-hero-category {
-    font-family: 'Overpass', sans-serif;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: .1em;
-    text-transform: uppercase;
-    color: var(--amber);
-    margin-bottom: 10px;
-  }
-
-  .story-hero-headline {
-    font-family: 'Newsreader', Georgia, serif;
-    font-weight: 600;
-    font-size:clamp(20px, 5vw, 26px);
-    color: var(--white);
-    line-height: 1.2;
-    margin-bottom: 12px;
-  }
-
-  .story-hero-lede {
-    font-family: 'Newsreader', serif;
-    font-size: 16px;
-    font-weight: 300;
-    line-height: 1.65;
-    color: rgba(234,217,197,0.75);
-  }
-
-  .story-sections { padding: 0 0 80px; }
-
-  .story-section { border-bottom: 1px solid rgba(38,31,35,0.1); }
-
-  .section-header {
-    padding: 18px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
-    background: var(--white);
-    transition: background 0.15s;
-  }
-
-  .section-header:active { background: rgba(38,31,35,0.03); }
-
-  .section-header-left { display: flex; align-items: center; gap: 10px; }
-
-  .section-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-
-  .section-title {
-    font-family: 'Overpass', sans-serif;
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 0;
-    color: var(--dark);
-  }
-
-  .section-chevron {
-    font-size: 13px;
-    color: rgba(38,31,35,0.67);
-    transition: transform 0.2s;
-  }
-
-  .story-section.open .section-chevron { transform: rotate(180deg); }
-
-  .section-body {
-    display: none;
-    padding: 0 20px 22px;
-    background: var(--white);
-  }
-
-  .story-section.open .section-body { display: block; }
-
-  .section-body p {
-    font-family: 'Newsreader', serif;
-    font-size: 16px;
-    line-height: 1.7;
-    color: rgba(38,31,35,0.8);
-    margin-bottom: 14px;
-  }
-
-  .section-body p:last-child { margin-bottom: 0; }
-
-  /* ── VISUAL COMPONENTS ──────────────────────────────────────── */
-  .ntk-pullquote {
-    border-left: 3px solid var(--blue);
-    margin: 18px 0;
-    padding: 12px 16px;
-    background: rgba(7,152,242,0.04);
-  }
-  .ntk-pq-text {
-    font-family: 'Newsreader', serif;
-    font-size: 20px !important;
-    font-weight: 300;
-    font-style: italic;
-    line-height: 1.5 !important;
-    color: var(--dark);
-    margin-bottom: 7px !important;
-  }
-  .ntk-pq-cite {
-    display: block;
-    font-family: 'Overpass', sans-serif;
-    font-size: 10px;
-    letter-spacing: 0;
-    color: var(--blue);
-    font-style: normal;
-  }
-  .ntk-stat {
-    border-left: 3px solid var(--amber);
-    margin: 18px 0;
-    padding: 14px 16px;
-    background: rgba(242,174,46,0.05);
-  }
-  .ntk-stat-num {
-    font-family: 'Overpass', sans-serif;
-    font-size: 34px;
-    font-weight: 700;
-    color: var(--amber);
-    line-height: 1.1;
-    margin-bottom: 5px;
-  }
-  .ntk-stat-ctx {
-    font-family: 'Newsreader', serif;
-    font-size: 13px;
-    color: rgba(38,31,35,0.72);
-    line-height: 1.5;
-  }
-
-  .lies-section .section-header { background: rgba(220,101,80,0.04); }
-
-  .lies-locked {
-    padding: 18px 20px 22px;
-    background: rgba(220,101,80,0.04);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    text-align: center;
-  }
-
-  .lies-locked-icon { font-size: 26px; margin-bottom: 4px; }
-
-  .lies-locked-label {
-    font-family: 'Overpass', sans-serif;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0;
-    color: var(--terra);
-  }
-
-  .lies-locked-hint {
-    font-family: 'Newsreader', serif;
-    font-size: 13px;
-    font-style: italic;
-    color: rgba(38,31,35,0.67);
-    line-height: 1.5;
-  }
-
-  .lies-hold-btn {
-    margin-top: 8px;
-    padding: 10px 20px;
-    background: var(--terra);
-    color: var(--white);
-    border: none;
-    border-radius: 3px;
-    font-family: 'Overpass', sans-serif;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: .1em;
-    text-transform: uppercase;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    -webkit-user-select: none;
-    user-select: none;
-  }
-
-  .lies-hold-btn::after {
-    content: '';
-    position: absolute;
-    left: 0; top: 0;
-    height: 100%;
-    width: 0%;
-    background: rgba(255,255,255,0.25);
-    transition: none;
-  }
-
-  .lies-hold-btn.holding::after {
-    width: 100%;
-    transition: width 0.8s linear;
-  }
-
-  .lies-revealed {
-    display: none;
-    padding: 4px 20px 22px;
-    background: rgba(220,101,80,0.04);
-    animation: fadeUp 0.3s ease forwards;
-  }
-
-  .lies-revealed p {
-    font-family: 'Newsreader', serif;
-    font-size: 16px;
-    line-height: 1.7;
-    color: rgba(38,31,35,0.8);
-    margin-bottom: 10px;
-  }
-
-  .lies-revealed p:last-child { margin-bottom: 0; }
-
-  .share-bar {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    background: var(--dark);
-    border-top: 2px solid rgba(234,217,197,0.08);
-    padding: 12px 20px;
-    display: flex;
-    gap: 10px;
-    z-index: 50;
-  }
-
-  .share-btn {
-    flex: 1;
-    padding: 11px;
-    border-radius: 3px;
-    font-family: 'Overpass', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-  }
-
-  .share-btn.msg  { background: var(--blue);  color: var(--white); }
-  .share-btn.done { background: rgba(234,217,197,0.08); color: rgba(234,217,197,0.6); border: 1px solid rgba(234,217,197,0.1); }
-  .share-btn.listen { background: var(--teal); color: var(--white); }
-  .share-btn.listen.speaking { background: rgba(38,31,35,0.08); color: var(--teal); border: 1px solid var(--teal); }
-
-  /* #storyView stays on its dark ground (T-0034 deletes this view outright),
-     so its end mark needs the cream-on-dark inverse of the light-ground
-     .end-mark rather than the shared rule. */
-  #storyView .end-mark {
-    color: rgba(234,217,197,0.6);
-    border-top-color: rgba(234,217,197,0.14);
-    margin-top: 22px;
-  }
-
   .story-suggest-cta {
     margin: 20px 20px 32px;
     padding: 18px 20px;
@@ -1454,12 +1104,15 @@
 
   /* ── FEATURED HERO ────────────────────────── */
   .featured-hero {
+    display: block;
     position: relative;
     width: 100%;
     background: var(--cream);
     border-radius: 0;
     overflow: hidden;
     margin-bottom: 0;
+    text-decoration: none;
+    color: inherit;
   }
 
   .featured-hero-image-wrap {
@@ -1855,6 +1508,8 @@
     border-bottom: 1px solid rgba(38,31,35,0.06);
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
+    text-decoration: none;
+    color: inherit;
   }
   .today-item:active { background: rgba(38,31,35,0.04); }
   @media (prefers-color-scheme: light) {
@@ -2162,101 +1817,6 @@
   </div>
 </div>
 
-<!-- STORY VIEW -->
-<div id="storyView" class="view">
-  <div class="story-view">
-
-    <header class="story-header">
-      <div class="story-header-inner">
-        <a class="story-header-logo" href="/digest" aria-label="Back to the digest" onclick="closeStory(); return false;">
-          <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjY5IiB6b29tQW5kUGFuPSJtYWduaWZ5IiB2aWV3Qm94PSIwIDAgMjAxLjc1IDEwMC40OTk5OTciIGhlaWdodD0iMTM0IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWlkWU1pZCBtZWV0IiB2ZXJzaW9uPSIxLjAiPjxkZWZzPjxnLz48Y2xpcFBhdGggaWQ9ImVlZmZkM2ZlNGQiPjxwYXRoIGQ9Ik0gNDIuNjEzMjgxIDAgTCAxNTguMjU3ODEyIDAgTCAxNTguMjU3ODEyIDEzLjc2MTcxOSBMIDQyLjYxMzI4MSAxMy43NjE3MTkgWiBNIDQyLjYxMzI4MSAwICIgY2xpcC1ydWxlPSJub256ZXJvIi8+PC9jbGlwUGF0aD48Y2xpcFBhdGggaWQ9IjY0YjZjNWI4MjEiPjxwYXRoIGQ9Ik0gNDUuNjAxNTYyIDAgTCAxNTUuMjQyMTg4IDAgQyAxNTYuODkwNjI1IDAgMTU4LjIyNjU2MiAxLjMzNTkzOCAxNTguMjI2NTYyIDIuOTg0Mzc1IEwgMTU4LjIyNjU2MiAxMC43NzczNDQgQyAxNTguMjI2NTYyIDEyLjQyNTc4MSAxNTYuODkwNjI1IDEzLjc2MTcxOSAxNTUuMjQyMTg4IDEzLjc2MTcxOSBMIDQ1LjYwMTU2MiAxMy43NjE3MTkgQyA0My45NTMxMjUgMTMuNzYxNzE5IDQyLjYxMzI4MSAxMi40MjU3ODEgNDIuNjEzMjgxIDEwLjc3NzM0NCBMIDQyLjYxMzI4MSAyLjk4NDM3NSBDIDQyLjYxMzI4MSAxLjMzNTkzOCA0My45NTMxMjUgMCA0NS42MDE1NjIgMCBaIE0gNDUuNjAxNTYyIDAgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iMTNjNzNjMDllMiI+PHBhdGggZD0iTSAwLjYxMzI4MSAwIEwgMTE2LjIzMDQ2OSAwIEwgMTE2LjIzMDQ2OSAxMy43NjE3MTkgTCAwLjYxMzI4MSAxMy43NjE3MTkgWiBNIDAuNjEzMjgxIDAgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iOTAxYzRhN2I1NyI+PHBhdGggZD0iTSAzLjYwMTU2MiAwIEwgMTEzLjI0MjE4OCAwIEMgMTE0Ljg5MDYyNSAwIDExNi4yMjY1NjIgMS4zMzU5MzggMTE2LjIyNjU2MiAyLjk4NDM3NSBMIDExNi4yMjY1NjIgMTAuNzc3MzQ0IEMgMTE2LjIyNjU2MiAxMi40MjU3ODEgMTE0Ljg5MDYyNSAxMy43NjE3MTkgMTEzLjI0MjE4OCAxMy43NjE3MTkgTCAzLjYwMTU2MiAxMy43NjE3MTkgQyAxLjk1MzEyNSAxMy43NjE3MTkgMC42MTMyODEgMTIuNDI1NzgxIDAuNjEzMjgxIDEwLjc3NzM0NCBMIDAuNjEzMjgxIDIuOTg0Mzc1IEMgMC42MTMyODEgMS4zMzU5MzggMS45NTMxMjUgMCAzLjYwMTU2MiAwIFogTSAzLjYwMTU2MiAwICIgY2xpcC1ydWxlPSJub256ZXJvIi8+PC9jbGlwUGF0aD48Y2xpcFBhdGggaWQ9IjAyM2Y2ODE5NTkiPjxyZWN0IHg9IjAiIHdpZHRoPSIxMTciIHk9IjAiIGhlaWdodD0iMTQiLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iY2FhN2JmNjI4OSI+PHBhdGggZD0iTSA0Mi42MTMyODEgMjEuNzg5MDYyIEwgMTU4LjIyNjU2MiAyMS43ODkwNjIgTCAxNTguMjI2NTYyIDI4LjA1ODU5NCBMIDQyLjYxMzI4MSAyOC4wNTg1OTQgWiBNIDQyLjYxMzI4MSAyMS43ODkwNjIgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iNmY5M2QzNmJlMiI+PHBhdGggZD0iTSA0NC4xMDkzNzUgMjEuNzg5MDYyIEwgMTU2LjczNDM3NSAyMS43ODkwNjIgQyAxNTcuNTU4NTk0IDIxLjc4OTA2MiAxNTguMjI2NTYyIDIyLjQ1NzAzMSAxNTguMjI2NTYyIDIzLjI4MTI1IEwgMTU4LjIyNjU2MiAyNi41NjY0MDYgQyAxNTguMjI2NTYyIDI3LjM5MDYyNSAxNTcuNTU4NTk0IDI4LjA1ODU5NCAxNTYuNzM0Mzc1IDI4LjA1ODU5NCBMIDQ0LjEwOTM3NSAyOC4wNTg1OTQgQyA0My4yODUxNTYgMjguMDU4NTk0IDQyLjYxMzI4MSAyNy4zOTA2MjUgNDIuNjEzMjgxIDI2LjU2NjQwNiBMIDQyLjYxMzI4MSAyMy4yODEyNSBDIDQyLjYxMzI4MSAyMi40NTcwMzEgNDMuMjg1MTU2IDIxLjc4OTA2MiA0NC4xMDkzNzUgMjEuNzg5MDYyIFogTSA0NC4xMDkzNzUgMjEuNzg5MDYyICIgY2xpcC1ydWxlPSJub256ZXJvIi8+PC9jbGlwUGF0aD48Y2xpcFBhdGggaWQ9ImUwN2ZmZDk1NzciPjxwYXRoIGQ9Ik0gMC42MTMyODEgMC43ODkwNjIgTCAxMTYuMjI2NTYyIDAuNzg5MDYyIEwgMTE2LjIyNjU2MiA3LjA1ODU5NCBMIDAuNjEzMjgxIDcuMDU4NTk0IFogTSAwLjYxMzI4MSAwLjc4OTA2MiAiIGNsaXAtcnVsZT0ibm9uemVybyIvPjwvY2xpcFBhdGg+PGNsaXBQYXRoIGlkPSI1MzczMjAzMTlhIj48cGF0aCBkPSJNIDIuMTA5Mzc1IDAuNzg5MDYyIEwgMTE0LjczNDM3NSAwLjc4OTA2MiBDIDExNS41NTg1OTQgMC43ODkwNjIgMTE2LjIyNjU2MiAxLjQ1NzAzMSAxMTYuMjI2NTYyIDIuMjgxMjUgTCAxMTYuMjI2NTYyIDUuNTY2NDA2IEMgMTE2LjIyNjU2MiA2LjM5MDYyNSAxMTUuNTU4NTk0IDcuMDU4NTk0IDExNC43MzQzNzUgNy4wNTg1OTQgTCAyLjEwOTM3NSA3LjA1ODU5NCBDIDEuMjg1MTU2IDcuMDU4NTk0IDAuNjEzMjgxIDYuMzkwNjI1IDAuNjEzMjgxIDUuNTY2NDA2IEwgMC42MTMyODEgMi4yODEyNSBDIDAuNjEzMjgxIDEuNDU3MDMxIDEuMjg1MTU2IDAuNzg5MDYyIDIuMTA5Mzc1IDAuNzg5MDYyIFogTSAyLjEwOTM3NSAwLjc4OTA2MiAiIGNsaXAtcnVsZT0ibm9uemVybyIvPjwvY2xpcFBhdGg+PGNsaXBQYXRoIGlkPSI0NzY1NGU3M2MyIj48cmVjdCB4PSIwIiB3aWR0aD0iMTE3IiB5PSIwIiBoZWlnaHQ9IjgiLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iMzcwYWU3ODRhMCI+PHBhdGggZD0iTSA0Mi42MTMyODEgNzIuNjA1NDY5IEwgMTU4LjIyNjU2MiA3Mi42MDU0NjkgTCAxNTguMjI2NTYyIDc4Ljg3NSBMIDQyLjYxMzI4MSA3OC44NzUgWiBNIDQyLjYxMzI4MSA3Mi42MDU0NjkgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iNTIzYWRiMGI1NiI+PHBhdGggZD0iTSA0NC4xMDkzNzUgNzIuNjA1NDY5IEwgMTU2LjczNDM3NSA3Mi42MDU0NjkgQyAxNTcuNTU4NTk0IDcyLjYwNTQ2OSAxNTguMjI2NTYyIDczLjI3MzQzOCAxNTguMjI2NTYyIDc0LjA5NzY1NiBMIDE1OC4yMjY1NjIgNzcuMzgyODEyIEMgMTU4LjIyNjU2MiA3OC4yMDcwMzEgMTU3LjU1ODU5NCA3OC44NzUgMTU2LjczNDM3NSA3OC44NzUgTCA0NC4xMDkzNzUgNzguODc1IEMgNDMuMjg1MTU2IDc4Ljg3NSA0Mi42MTMyODEgNzguMjA3MDMxIDQyLjYxMzI4MSA3Ny4zODI4MTIgTCA0Mi42MTMyODEgNzQuMDk3NjU2IEMgNDIuNjEzMjgxIDczLjI3MzQzOCA0My4yODUxNTYgNzIuNjA1NDY5IDQ0LjEwOTM3NSA3Mi42MDU0NjkgWiBNIDQ0LjEwOTM3NSA3Mi42MDU0NjkgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iN2FkNDU3ZGI1NCI+PHBhdGggZD0iTSAwLjYxMzI4MSAwLjYwNTQ2OSBMIDExNi4yMjY1NjIgMC42MDU0NjkgTCAxMTYuMjI2NTYyIDYuODc1IEwgMC42MTMyODEgNi44NzUgWiBNIDAuNjEzMjgxIDAuNjA1NDY5ICIgY2xpcC1ydWxlPSJub256ZXJvIi8+PC9jbGlwUGF0aD48Y2xpcFBhdGggaWQ9IjczNThiNWQ1YWUiPjxwYXRoIGQ9Ik0gMi4xMDkzNzUgMC42MDU0NjkgTCAxMTQuNzM0Mzc1IDAuNjA1NDY5IEMgMTE1LjU1ODU5NCAwLjYwNTQ2OSAxMTYuMjI2NTYyIDEuMjczNDM4IDExNi4yMjY1NjIgMi4wOTc2NTYgTCAxMTYuMjI2NTYyIDUuMzgyODEyIEMgMTE2LjIyNjU2MiA2LjIwNzAzMSAxMTUuNTU4NTk0IDYuODc1IDExNC43MzQzNzUgNi44NzUgTCAyLjEwOTM3NSA2Ljg3NSBDIDEuMjg1MTU2IDYuODc1IDAuNjEzMjgxIDYuMjA3MDMxIDAuNjEzMjgxIDUuMzgyODEyIEwgMC42MTMyODEgMi4wOTc2NTYgQyAwLjYxMzI4MSAxLjI3MzQzOCAxLjI4NTE1NiAwLjYwNTQ2OSAyLjEwOTM3NSAwLjYwNTQ2OSBaIE0gMi4xMDkzNzUgMC42MDU0NjkgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iODBhOGRhNDEwYSI+PHJlY3QgeD0iMCIgd2lkdGg9IjExNyIgeT0iMCIgaGVpZ2h0PSI3Ii8+PC9jbGlwUGF0aD48Y2xpcFBhdGggaWQ9ImY5ZDA3ZDA0YzgiPjxwYXRoIGQ9Ik0gNDIuNjEzMjgxIDg2LjE2NDA2MiBMIDE1OC4yNTc4MTIgODYuMTY0MDYyIEwgMTU4LjI1NzgxMiA5OS45MjU3ODEgTCA0Mi42MTMyODEgOTkuOTI1NzgxIFogTSA0Mi42MTMyODEgODYuMTY0MDYyICIgY2xpcC1ydWxlPSJub256ZXJvIi8+PC9jbGlwUGF0aD48Y2xpcFBhdGggaWQ9IjdjMjM4NWY2ZWQiPjxwYXRoIGQ9Ik0gNDUuNjAxNTYyIDg2LjE2NDA2MiBMIDE1NS4yNDIxODggODYuMTY0MDYyIEMgMTU2Ljg5MDYyNSA4Ni4xNjQwNjIgMTU4LjIyNjU2MiA4Ny41IDE1OC4yMjY1NjIgODkuMTQ4NDM4IEwgMTU4LjIyNjU2MiA5Ni45NDE0MDYgQyAxNTguMjI2NTYyIDk4LjU4OTg0NCAxNTYuODkwNjI1IDk5LjkyNTc4MSAxNTUuMjQyMTg4IDk5LjkyNTc4MSBMIDQ1LjYwMTU2MiA5OS45MjU3ODEgQyA0My45NTMxMjUgOTkuOTI1NzgxIDQyLjYxMzI4MSA5OC41ODk4NDQgNDIuNjEzMjgxIDk2Ljk0MTQwNiBMIDQyLjYxMzI4MSA4OS4xNDg0MzggQyA0Mi42MTMyODEgODcuNSA0My45NTMxMjUgODYuMTY0MDYyIDQ1LjYwMTU2MiA4Ni4xNjQwNjIgWiBNIDQ1LjYwMTU2MiA4Ni4xNjQwNjIgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iYWZhM2JmOTIxYiI+PHBhdGggZD0iTSAwLjYxMzI4MSAwLjE2NDA2MiBMIDExNi4yMzA0NjkgMC4xNjQwNjIgTCAxMTYuMjMwNDY5IDEzLjkyNTc4MSBMIDAuNjEzMjgxIDEzLjkyNTc4MSBaIE0gMC42MTMyODEgMC4xNjQwNjIgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iNDYzMjQ4NTcyMCI+PHBhdGggZD0iTSAzLjYwMTU2MiAwLjE2NDA2MiBMIDExMy4yNDIxODggMC4xNjQwNjIgQyAxMTQuODkwNjI1IDAuMTY0MDYyIDExNi4yMjY1NjIgMS41IDExNi4yMjY1NjIgMy4xNDg0MzggTCAxMTYuMjI2NTYyIDEwLjk0MTQwNiBDIDExNi4yMjY1NjIgMTIuNTg5ODQ0IDExNC44OTA2MjUgMTMuOTI1NzgxIDExMy4yNDIxODggMTMuOTI1NzgxIEwgMy42MDE1NjIgMTMuOTI1NzgxIEMgMS45NTMxMjUgMTMuOTI1NzgxIDAuNjEzMjgxIDEyLjU4OTg0NCAwLjYxMzI4MSAxMC45NDE0MDYgTCAwLjYxMzI4MSAzLjE0ODQzOCBDIDAuNjEzMjgxIDEuNSAxLjk1MzEyNSAwLjE2NDA2MiAzLjYwMTU2MiAwLjE2NDA2MiBaIE0gMy42MDE1NjIgMC4xNjQwNjIgIiBjbGlwLXJ1bGU9Im5vbnplcm8iLz48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iZjY1OWMyZTM5YyI+PHJlY3QgeD0iMCIgd2lkdGg9IjExNyIgeT0iMCIgaGVpZ2h0PSIxNCIvPjwvY2xpcFBhdGg+PGNsaXBQYXRoIGlkPSIxODY5ZWRhZjJjIj48cmVjdCB4PSIwIiB3aWR0aD0iMTI2IiB5PSIwIiBoZWlnaHQ9IjQ2Ii8+PC9jbGlwUGF0aD48L2RlZnM+PGcgY2xpcC1wYXRoPSJ1cmwoI2VlZmZkM2ZlNGQpIj48ZyBjbGlwLXBhdGg9InVybCgjNjRiNmM1YjgyMSkiPjxnIHRyYW5zZm9ybT0ibWF0cml4KDEsIDAsIDAsIDEsIDQyLCAwKSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzAyM2Y2ODE5NTkpIj48ZyBjbGlwLXBhdGg9InVybCgjMTNjNzNjMDllMikiPjxnIGNsaXAtcGF0aD0idXJsKCM5MDFjNGE3YjU3KSI+PHBhdGggZmlsbD0iI2YyZjJmMiIgZD0iTSAwLjYxMzI4MSAwIEwgMTE2LjIwMzEyNSAwIEwgMTE2LjIwMzEyNSAxMy43NjE3MTkgTCAwLjYxMzI4MSAxMy43NjE3MTkgWiBNIDAuNjEzMjgxIDAgIiBmaWxsLW9wYWNpdHk9IjEiIGZpbGwtcnVsZT0ibm9uemVybyIvPjwvZz48L2c+PC9nPjwvZz48L2c+PC9nPjxnIGNsaXAtcGF0aD0idXJsKCNjYWE3YmY2Mjg5KSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzZmOTNkMzZiZTIpIj48ZyB0cmFuc2Zvcm09Im1hdHJpeCgxLCAwLCAwLCAxLCA0MiwgMjEpIj48ZyBjbGlwLXBhdGg9InVybCgjNDc2NTRlNzNjMikiPjxnIGNsaXAtcGF0aD0idXJsKCNlMDdmZmQ5NTc3KSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzUzNzMyMDMxOWEpIj48cGF0aCBmaWxsPSIjZjJmMmYyIiBkPSJNIDAuNjEzMjgxIDAuNzg5MDYyIEwgMTE2LjIyNjU2MiAwLjc4OTA2MiBMIDExNi4yMjY1NjIgNy4wNTg1OTQgTCAwLjYxMzI4MSA3LjA1ODU5NCBaIE0gMC42MTMyODEgMC43ODkwNjIgIiBmaWxsLW9wYWNpdHk9IjEiIGZpbGwtcnVsZT0ibm9uemVybyIvPjwvZz48L2c+PC9nPjwvZz48L2c+PC9nPjxnIGNsaXAtcGF0aD0idXJsKCMzNzBhZTc4NGEwKSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzUyM2FkYjBiNTYpIj48ZyB0cmFuc2Zvcm09Im1hdHJpeCgxLCAwLCAwLCAxLCA0MiwgNzIpIj48ZyBjbGlwLXBhdGg9InVybCgjODBhOGRhNDEwYSkiPjxnIGNsaXAtcGF0aD0idXJsKCM3YWQ0NTdkYjU0KSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzczNThiNWQ1YWUpIj48cGF0aCBmaWxsPSIjZjJmMmYyIiBkPSJNIDAuNjEzMjgxIDAuNjA1NDY5IEwgMTE2LjIyNjU2MiAwLjYwNTQ2OSBMIDExNi4yMjY1NjIgNi44NzUgTCAwLjYxMzI4MSA2Ljg3NSBaIE0gMC42MTMyODEgMC42MDU0NjkgIiBmaWxsLW9wYWNpdHk9IjEiIGZpbGwtcnVsZT0ibm9uemVybyIvPjwvZz48L2c+PC9nPjwvZz48L2c+PC9nPjxnIGNsaXAtcGF0aD0idXJsKCNmOWQwN2QwNGM4KSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzdjMjM4NWY2ZWQpIj48ZyB0cmFuc2Zvcm09Im1hdHJpeCgxLCAwLCAwLCAxLCA0MiwgODYpIj48ZyBjbGlwLXBhdGg9InVybCgjZjY1OWMyZTM5YykiPjxnIGNsaXAtcGF0aD0idXJsKCNhZmEzYmY5MjFiKSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzQ2MzI0ODU3MjApIj48cGF0aCBmaWxsPSIjZjJmMmYyIiBkPSJNIDAuNjEzMjgxIDAuMTY0MDYyIEwgMTE2LjIwMzEyNSAwLjE2NDA2MiBMIDExNi4yMDMxMjUgMTMuOTI1NzgxIEwgMC42MTMyODEgMTMuOTI1NzgxIFogTSAwLjYxMzI4MSAwLjE2NDA2MiAiIGZpbGwtb3BhY2l0eT0iMSIgZmlsbC1ydWxlPSJub256ZXJvIi8+PC9nPjwvZz48L2c+PC9nPjwvZz48L2c+PGcgdHJhbnNmb3JtPSJtYXRyaXgoMSwgMCwgMCwgMSwgNDIsIDI3KSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzE4NjllZGFmMmMpIj48ZyBmaWxsPSIjZjJmMmYyIiBmaWxsLW9wYWNpdHk9IjEiPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEuMjAzMTk4LCAzNy40Nzc5NTMpIj48Zz48cGF0aCBkPSJNIDI0LjI2NTYyNSAtMTIgTCAyNC4yNjU2MjUgLTI3LjczNDM3NSBMIDMxLjY3MTg3NSAtMjcuNzM0Mzc1IEwgMzEuNjcxODc1IDAgTCAyNS4wMzEyNSAwIEwgOS44NDM3NSAtMTcuMjUgTCA5Ljg0Mzc1IDAgTCAyLjQzNzUgMCBMIDIuNDM3NSAtMjcuNzM0Mzc1IEwgMTAuNzE4NzUgLTI3LjczNDM3NSBaIE0gMjQuMjY1NjI1IC0xMiAiLz48L2c+PC9nPjwvZz48ZyBmaWxsPSIjZjJmMmYyIiBmaWxsLW9wYWNpdHk9IjEiPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDQ0LjI0NDI2NiwgMzcuNDc3OTUzKSI+PGc+PHBhdGggZD0iTSAxMS4xMjUgLTIwLjgxMjUgTCAwLjY0MDYyNSAtMjAuODEyNSBMIDAuNjQwNjI1IC0yNy43MzQzNzUgTCAyOS40Njg3NSAtMjcuNzM0Mzc1IEwgMjkuNDY4NzUgLTIwLjgxMjUgTCAxOS4wMzEyNSAtMjAuODEyNSBMIDE5LjAzMTI1IDAgTCAxMS4xMjUgMCBaIE0gMTEuMTI1IC0yMC44MTI1ICIvPjwvZz48L2c+PC9nPjxnIGZpbGw9IiNmMmYyZjIiIGZpbGwtb3BhY2l0eT0iMSI+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoODMuMjU4NjEsIDM3LjQ3Nzk1MykiPjxnPjxwYXRoIGQ9Ik0gMzIuNTQ2ODc1IDAgTCAyMi45ODQzNzUgMCBMIDE1LjEyNSAtMTIuMTU2MjUgTCAxMC4yMTg3NSAtNi44NDM3NSBMIDEwLjIxODc1IDAgTCAyLjQzNzUgMCBMIDIuNDM3NSAtMjcuNzM0Mzc1IEwgMTAuMjE4NzUgLTI3LjczNDM3NSBMIDEwLjIxODc1IC0xNS43OTY4NzUgTCAyMS4yNjU2MjUgLTI3LjczNDM3NSBMIDMxLjg3NSAtMjcuNzM0Mzc1IEwgMjEuMzEyNSAtMTYuNjQwNjI1IFogTSAzMi41NDY4NzUgMCAiLz48L2c+PC9nPjwvZz48L2c+PC9nPjwvc3ZnPg==" alt="NTK" class="ntk-logo-img-sm">
-        </a>
-      </div>
-    </header>
-
-    <div class="story-hero-wrap">
-      <div class="story-hero-image-wrap" id="storyHeroImageWrap" style="display:none;">
-        <img id="storyHeroImage" src="" alt="">
-      </div>
-
-      <div class="story-hero">
-        <div class="story-hero-category" id="storyCategory"></div>
-        <div class="story-hero-headline" id="storyHeadline"></div>
-        <div class="story-hero-lede" id="storyLede"></div>
-      </div>
-    </div>
-
-    <div class="story-sections" id="storySections">
-
-      <div class="story-section open" id="sec-truth">
-        <div class="section-header" onclick="toggleSection('sec-truth', 'Truths')">
-          <div class="section-header-left">
-            <div class="section-dot" style="background:var(--blue);"></div>
-            <span class="section-title">Truths — What Happened</span>
-          </div>
-          <span class="section-chevron">▾</span>
-        </div>
-        <div class="section-body" id="truth-body"></div>
-      </div>
-
-      <div class="story-section" id="sec-prob">
-        <div class="section-header" onclick="toggleSection('sec-prob', 'Probabilities')">
-          <div class="section-header-left">
-            <div class="section-dot" style="background:var(--purple);"></div>
-            <span class="section-title">Probabilities — What Will Likely Happen</span>
-          </div>
-          <span class="section-chevron">▾</span>
-        </div>
-        <div class="section-body" id="prob-body"></div>
-      </div>
-
-      <div class="story-section" id="sec-poss">
-        <div class="section-header" onclick="toggleSection('sec-poss', 'Possibilities')">
-          <div class="section-header-left">
-            <div class="section-dot" style="background:var(--teal);"></div>
-            <span class="section-title">Possibilities — What Could Happen</span>
-          </div>
-          <span class="section-chevron">▾</span>
-        </div>
-        <div class="section-body" id="poss-body"></div>
-      </div>
-
-      <div class="story-section lies-section" id="sec-lies">
-        <div class="section-header" onclick="toggleSection('sec-lies', 'Lies')">
-          <div class="section-header-left">
-            <div class="section-dot" style="background:var(--terra);"></div>
-            <span class="section-title">Lies / Narrative Distortions</span>
-          </div>
-          <span class="section-chevron">▾</span>
-        </div>
-        <div class="section-body" id="lies-body">
-          <div class="lies-locked" id="liesLocked">
-            <div class="lies-locked-icon">🔴</div>
-            <div class="lies-locked-label">Hold to Reveal</div>
-            <div class="lies-locked-hint">What's being misrepresented about this story</div>
-            <button class="lies-hold-btn" id="liesBtn"
-              onmousedown="startHold()" onmouseup="cancelHold()" onmouseleave="cancelHold()"
-              ontouchstart="startHold(event)" ontouchend="cancelHold()" ontouchcancel="cancelHold()">
-              Hold to Reveal
-            </button>
-          </div>
-          <div class="lies-revealed" id="liesRevealed"></div>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="end-mark">&mdash; 30 &mdash;</div>
-
-    <div class="share-bar">
-      <button class="share-btn listen" id="listenBtn" onclick="toggleListen()">🔊 Listen</button>
-      <button class="share-btn msg" onclick="shareStory()">Share this story</button>
-      <button class="share-btn done" onclick="closeStory()">Back</button>
-    </div>
-
-  </div>
-</div>
-
 <script>
 // ================================================================
 //  HOW TO UPDATE THIS FILE EACH MORNING
@@ -2358,21 +1918,31 @@ function stripOuterQuotes(str) {
 }
 
 // ── State ────────────────────────────────────────────────────────
-let readStories = new Set();
+// T-0034: reading now happens on the story's own permalink page, a real
+// navigation away from here, so read state has to survive that — an
+// in-memory Set reset on every reload. Keyed per edition (today's date)
+// so it resets when the day's stories do, same as the rest of the app's
+// per-day caches.
+var READ_KEY_PREFIX = 'ntk_read_';
+function readStoriesKey() { return READ_KEY_PREFIX + todayDateStamp(); }
+function loadReadStories() {
+  try {
+    var arr = JSON.parse(localStorage.getItem(readStoriesKey()));
+    return new Set(Array.isArray(arr) ? arr : []);
+  } catch (e) { return new Set(); }
+}
+function saveReadStories() {
+  try { localStorage.setItem(readStoriesKey(), JSON.stringify(Array.from(readStories))); }
+  catch (e) {}
+}
+let readStories = loadReadStories();
 var ORIENT_KEY = 'ntk_orient_v1';
-var storyEntryIdx = -1;
 // Persisted: "Three stories in. You're paying attention." is true once. Read
 // by a two-month reader it is the Kindergarten Teacher failure mode the
 // register rules name. The toast ladder covers returning readers instead.
 let orientShown = (function() {
   try { return localStorage.getItem(ORIENT_KEY) === '1'; } catch(e) { return false; }
 })();
-let holdTimer = null;
-let currentStoryIndex = 0;
-let scrollTracked25 = false;
-let scrollTracked50 = false;
-let scrollTracked90 = false;
-let currentUtterance = null;   // Listen — Web Speech API, browser-native voice (v1; neural voice upgrade later)
 
 // ── GA4 event helper ─────────────────────────────────────────────
 function track(eventName, params = {}) {
@@ -2380,87 +1950,6 @@ function track(eventName, params = {}) {
     gtag('event', eventName, params);
   }
 }
-
-// ── Listen (Web Speech API — browser-native voice, v1) ────────────
-// No server call, no cost, no new infra. Reads the story that's already
-// on the page in the reader's own browser voice. A neural-voice upgrade
-// is a swap of this function's internals later, once there's real usage
-// data — nothing else about the UI needs to change for that.
-function htmlToText(html) {
-  if (!html) return '';
-  const tmp = document.createElement('div');
-  tmp.innerHTML = html;
-  return tmp.textContent.replace(/\s+/g, ' ').trim();
-}
-
-function buildListenText(s) {
-  const parts = [s.headline, s.lede,
-    htmlToText(stripOuterQuotes(s.truth)),
-    htmlToText(stripOuterQuotes(s.prob)),
-    htmlToText(stripOuterQuotes(s.poss))];
-  // Lies stays under its hold-to-reveal gesture — only read aloud once
-  // the reader has actually revealed it, same rule as the visual version.
-  const liesShown = document.getElementById('liesRevealed') &&
-    document.getElementById('liesRevealed').style.display === 'block';
-  if (liesShown) parts.push(htmlToText(stripOuterQuotes(s.lies)));
-  return parts.filter(Boolean).join('. ');
-}
-
-function resetListenBtn() {
-  const btn = document.getElementById('listenBtn');
-  if (!btn) return;
-  btn.textContent = '🔊 Listen';
-  btn.classList.remove('speaking');
-}
-
-function stopListening() {
-  if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-  currentUtterance = null;
-  resetListenBtn();
-}
-
-function toggleListen() {
-  if (!('speechSynthesis' in window)) return;
-  const synth = window.speechSynthesis;
-  const btn = document.getElementById('listenBtn');
-
-  if (synth.speaking && !synth.paused) {
-    synth.pause();
-    btn.textContent = '▶ Resume';
-    return;
-  }
-  if (synth.paused) {
-    synth.resume();
-    btn.textContent = '⏸ Pause';
-    return;
-  }
-
-  const s = stories[currentStoryIndex];
-  const text = buildListenText(s);
-  if (!text) return;
-
-  synth.cancel(); // clear anything stray before starting fresh
-  currentUtterance = new SpeechSynthesisUtterance(text);
-  currentUtterance.rate = 1.0;
-  currentUtterance.onend = resetListenBtn;
-  currentUtterance.onerror = resetListenBtn;
-  synth.speak(currentUtterance);
-  btn.textContent = '⏸ Pause';
-  btn.classList.add('speaking');
-  track('story_listen', {
-    story_index: currentStoryIndex + 1,
-    story_headline: s.headline
-  });
-}
-
-// Hide the control entirely on browsers without Web Speech support,
-// rather than showing a button that would silently do nothing.
-document.addEventListener('DOMContentLoaded', () => {
-  if (!('speechSynthesis' in window)) {
-    const btn = document.getElementById('listenBtn');
-    if (btn) btn.style.display = 'none';
-  }
-});
 
 // ── Date ─────────────────────────────────────────────────────────
 const d = new Date();
@@ -2498,6 +1987,8 @@ function buildDigest() {
     const numLabel = isFeatured ? num + ' Lead Story' : num;
     const catDim = beatsData[storySubject(s)] ? '' : ' cat-dim';
 
+    const readDim = readStories.has(i) ? ' read-dimmed' : '';
+
     if (i === 0 && s.featuredImage) {
       const r = parseInt(s.overlayColor.slice(1,3),16);
       const g = parseInt(s.overlayColor.slice(3,5),16);
@@ -2506,7 +1997,7 @@ function buildDigest() {
       html += `
         <div class="card-wrapper" id="wrap-${i}" style="margin-bottom:12px; border-radius:3px; overflow:hidden;">
           <div class="swipe-bg"><span class="swipe-bg-label">✓ Read</span></div>
-          <div class="featured-hero" id="card-${i}" onclick="openStory(${i})" style="cursor:pointer; margin-bottom:0;">
+          <a class="featured-hero${readDim}" id="card-${i}" href="${escAttr(s.permalink || '#')}" onclick="markStoryRead(${i})" style="cursor:pointer; margin-bottom:0;">
             <div class="featured-hero-image-wrap">
               <img src="${s.featuredImage}" alt="">
               <div class="featured-hero-overlay" style="background:rgba(${r},${g},${b},${op});"></div>
@@ -2518,7 +2009,7 @@ function buildDigest() {
               <div class="featured-hero-cta">Read full story</div>
             </div>
             <div class="featured-hero-read-badge">1</div>
-          </div>
+          </a>
         </div>`;
       return;
     }
@@ -2542,8 +2033,8 @@ function buildDigest() {
     html += `
       <div class="card-wrapper ${isFeatured ? 'featured-wrapper' : ''}" id="wrap-${i}">
         <div class="swipe-bg"><span class="swipe-bg-label">✓ Read</span></div>
-        <div class="story-card ${isFeatured ? 'featured-card' : ''}" id="card-${i}"
-             onclick="openStory(${i})" data-swipe="true">
+        <a class="story-card ${isFeatured ? 'featured-card' : ''}${readDim}" id="card-${i}"
+           href="${escAttr(s.permalink || '#')}" onclick="markStoryRead(${i})" data-swipe="true">
           <div class="story-num-badge" id="badge-${i}">${i + 1}</div>
           <div class="story-card-inner">
             <div class="story-number">${numLabel}</div>
@@ -2554,7 +2045,7 @@ function buildDigest() {
               <span class="card-read-cta">Read</span>
             </div>
           </div>
-        </div>
+        </a>
       </div>`;
   });
 
@@ -2565,7 +2056,8 @@ function buildDigest() {
   let topRow = '';
   let bottomRow = '';
   for (let ci = 0; ci < total; ci++) {
-    const circle = `<button type="button" class="mot-circle" id="mot-c-${ci}" onclick="openStory(${ci})" aria-label="Story ${ci + 1}: ${escAttr(stories[ci].headline)}">${ci + 1}</button>`;
+    const filled = readStories.has(ci) ? ' filled' : '';
+    const circle = `<button type="button" class="mot-circle${filled}" id="mot-c-${ci}" onclick="markStoryRead(${ci}); location.href='${escAttr(stories[ci].permalink || '#')}';" aria-label="Story ${ci + 1}: ${escAttr(stories[ci].headline)}">${ci + 1}</button>`;
     if (ci < topCount) topRow += circle;
     else bottomRow += circle;
   }
@@ -2597,12 +2089,18 @@ function buildDigest() {
   // Subscribe section removed for Mom Test
 
   list.innerHTML = html;
-  document.getElementById('progressLabel').textContent = '0 of ' + stories.length + ' read';
 
   // Init swipe on all cards
   stories.forEach((_, i) => {
     initSwipe(document.getElementById('card-' + i), i);
   });
+
+  // T-0034: readStories can already be non-empty here, restored from
+  // localStorage rather than built up in this session — sync the progress
+  // bar, Moment of Then count, and orientation moment to match instead of
+  // leaving them at the "0 of N" the old in-memory-only Set always started
+  // at.
+  updateProgress();
 }
 
 // ── RETURNING READER ────────────────────────────────────────────────────
@@ -2733,13 +2231,6 @@ function beatsEnsure(data, cat) {
   data[cat].lastActive = Date.now();
 }
 
-function beatsRecordOpen(cat) {
-  if (!cat) return;
-  var data = beatsLoad();
-  beatsEnsure(data, cat);
-  beatsSave(data);
-}
-
 function beatsRecordRead(cat) {
   if (!cat) return;
   var data = beatsLoad();
@@ -2758,93 +2249,6 @@ function updateCategoryLabel(subject) {
   document.querySelectorAll('.cat-dim[data-subject]').forEach(function(el) {
     if (el.getAttribute('data-subject') === subject) el.classList.remove('cat-dim');
   });
-}
-
-var beatToastTimer = null;
-
-function showBeatToast(html) {
-  var toast = document.getElementById('beatToast');
-  var textEl = document.getElementById('beatToastText');
-  if (!toast || !textEl) return;
-  if (beatToastTimer) clearTimeout(beatToastTimer);
-  textEl.innerHTML = html;
-  toast.classList.remove('show');
-  void toast.offsetWidth;
-  toast.classList.add('show');
-  beatToastTimer = setTimeout(function() { toast.classList.remove('show'); }, 3500);
-}
-
-function beatsToastCopy(cat, idx, st) {
-  var n = (st && st.stories) || 0;
-  var shared = (st && st.shares || 0) > 0;
-  if (idx === 0) return 'You saw the surface on ' + cat + '. That is where everyone starts.';
-  if (idx === 1) return 'You read past the summary on ' + cat + '. <strong>You know what happened and why.</strong>';
-  if (idx === 2) return 'You opened the Lies layer on ' + cat + '. <strong>You did not take the surface at face value.</strong>';
-  if (idx === 3) return 'You came back to ' + cat + '. <strong>That is attention, not habit.</strong>';
-  if (idx === 4) return n + ' stories on ' + cat + ', and you keep going deeper. <strong>You are on the beat.</strong>';
-  if (idx === 5) return shared
-    ? 'You sent a ' + cat + ' story to someone. <strong>You are carrying it now.</strong>'
-    : 'Three times now you have gone after the lies on ' + cat + '. <strong>You are carrying it.</strong>';
-  if (idx === 6) return shared
-    ? n + ' stories on ' + cat + '. You went into the history, you read the lies, you passed it on. <strong>You are a witness to this one.</strong>'
-    : n + ' stories on ' + cat + ', and you kept checking what was being claimed. <strong>You are a witness to this one.</strong>';
-  return null;
-}
-
-// How often the ladder is allowed to speak. The briefing is explicit that
-// status visible on every story turns reading into performance, and a reader
-// crossing three rungs in one sitting would otherwise get three toasts.
-// Skimmed is a state rather than a moment, so it never interrupts. Carrying It
-// and Witness are rare enough to always speak. Everything between gets one
-// appearance per session, matching the 4-hour window beatsEnsure uses.
-var BEATS_TOAST_KEY = 'ntk_beats_toast_v1';
-function beatsToastState() {
-  try { return JSON.parse(localStorage.getItem(BEATS_TOAST_KEY)) || { at: 0, idx: -1 }; }
-  catch(e) { return { at: 0, idx: -1 }; }
-}
-function beatsShouldToast(idx) {
-  if (idx < 1) return false;
-  if (idx >= 5) return true;
-  var t = beatsToastState();
-  if ((Date.now() - t.at) > 4 * 3600000) return true;
-  // Same session. Crossings arrive lowest-first, so a plain once-per-session
-  // cap would always keep Briefed and throw away On the Beat. Interrupt again
-  // only for a jump big enough to be worth it.
-  return idx >= t.idx + 2;
-}
-function beatsMarkToast(idx) {
-  try { localStorage.setItem(BEATS_TOAST_KEY, JSON.stringify({ at: Date.now(), idx: idx })); }
-  catch(e) {}
-}
-
-function beatsRecordDepth(cat) {
-  if (!cat) return;
-  var data = beatsLoad();
-  beatsEnsure(data, cat);
-  data[cat].depth = (data[cat].depth||0) + 1;
-  beatsSave(data);
-}
-
-function beatsRecordShare(cat) {
-  if (!cat) return;
-  var data = beatsLoad();
-  beatsEnsure(data, cat);
-  data[cat].shares = (data[cat].shares||0) + 1;
-  beatsSave(data);
-  updateBeatChip();
-}
-
-function beatsRecordLies(cat, key) {
-  if (!cat) return;
-  var data = beatsLoad();
-  beatsEnsure(data, cat);
-  data[cat].liesRead = true;
-  if (key) {
-    var seen = data[cat].liesStories || (data[cat].liesStories = []);
-    if (seen.indexOf(key) < 0 && seen.length < 8) seen.push(key);
-  }
-  beatsSave(data);
-  updateBeatChip();
 }
 
 // One to three sentences per rung. Descriptive, never instructive: the
@@ -2971,7 +2375,6 @@ updateBeatChip();
 
 // ── TAB NAVIGATION ───────────────────────────────────────────────
 var activeTab = 'today';
-var tabBeforeStory = 'today';
 
 // ── URL ROUTING ──────────────────────────────────────────────────
 // Each tab has its own path (see ROUTE BOOT in <head>). Netlify rewrites
@@ -3005,31 +2408,18 @@ function navTab(tab) {
   else history.pushState(state, '', path);
 }
 
-// The story's own permalink path, or null if it can't be resolved.
-// build_digest.py writes an ABSOLUTE permalink on production's domain, so
-// only the pathname is usable — pushing the absolute URL would throw on a
-// deploy preview or localhost, where the origin differs.
-//
-// That path is also a real static page (build_digest.py renders one per
-// story with its own OG tags), so a reload or a cold visit is served by
-// Netlify rather than the app. Nothing needs to route it back into the SPA.
-function storyPath(idx) {
-  var s = stories[idx];
-  if (!s || !s.permalink) return null;
-  try { return new URL(s.permalink, location.origin).pathname; }
-  catch (e) { return null; }
-}
-
+// T-0034: story cards navigate straight to the permalink now (a real page,
+// with its own OG tags, that Netlify serves directly) instead of opening
+// an in-app overlay — so pushing a fake in-app URL for a story is gone.
+// Only Backstory still needs this: a pairing has no permalink of its own,
+// so its overlay pushes state without touching the address bar.
 function navOverlay(kind, idx) {
   if (!ROUTING_ON) return;
   var state = { ntk: 'overlay', kind: kind, idx: idx, tab: activeTab };
-  // Only stories have a shareable URL. A Backstory pairing has no permalink
-  // yet, so its overlay pushes state without touching the address bar.
-  var url = kind === 'story' ? storyPath(idx) : null;
   if (history.state && history.state.ntk === 'overlay') {
-    if (url) history.replaceState(state, '', url); else history.replaceState(state, '');
+    history.replaceState(state, '');
   } else {
-    if (url) history.pushState(state, '', url); else history.pushState(state, '');
+    history.pushState(state, '');
   }
 }
 
@@ -3073,20 +2463,16 @@ window.addEventListener('popstate', function (e) {
   navBackPending = false;
   if (!ROUTING_ON) return;
   var st = e.state || {};
-  var storyOpen = document.getElementById('storyView').classList.contains('active');
   var bsrModal = document.getElementById('bsrDetailModal');
   var bsrOpen = !!(bsrModal && bsrModal.classList.contains('show'));
-  var wantStory = st.ntk === 'overlay' && st.kind === 'story';
   var wantBsr = st.ntk === 'overlay' && st.kind === 'bsr';
 
-  if (storyOpen && !wantStory) closeStory({ fromHistory: true });
   if (bsrOpen && !wantBsr) closeBsrDetail({ fromHistory: true });
 
   var tab = st.tab || ntkRoute(location.pathname).tab;
-  if (tab !== activeTab && !(wantStory && storyOpen)) switchTab(tab, { fromHistory: true });
+  if (tab !== activeTab) switchTab(tab, { fromHistory: true });
 
   // Forward button into an overlay that was closed: reopen it.
-  if (wantStory && !storyOpen && stories[st.idx]) openStory(st.idx, { fromHistory: true });
   if (wantBsr && !bsrOpen && BSR_DATA && BSR_DATA[st.idx]) openBsrDetail(st.idx, { fromHistory: true });
 });
 
@@ -3311,7 +2697,7 @@ function renderTodayOverviewHtml(text) {
     // key) — degrade to plain text rather than a dead link OR vanishing
     // and leaving the sentence around it cut off mid-clause.
     if (idx === -1) return label.trim();
-    return '<a href="#" class="today-onramp" onclick="openStoryFromToday(' + idx + ');return false;">' + label.trim() + '</a>';
+    return '<a href="' + escAttr(stories[idx].permalink || '#') + '" class="today-onramp" onclick="markStoryRead(' + idx + ')">' + label.trim() + '</a>';
   });
 
   safe = safe.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
@@ -3351,23 +2737,17 @@ function buildToday() {
   stories.forEach(function(s, i) {
     var num = String(i + 1).padStart(2, '0');
     var catDim = beatsData[storySubject(s)] ? '' : ' cat-dim';
-    html += '<div class="today-item" onclick="openStoryFromToday(' + i + ')">' +
+    html += '<a class="today-item" href="' + escAttr(s.permalink || '#') + '" onclick="markStoryRead(' + i + ')">' +
       '<span class="today-num">' + num + '</span>' +
       '<div class="today-item-content">' +
         '<div class="today-cat' + catDim + '" data-subject="' + escAttr(storySubject(s)) + '">' + s.category + '</div>' +
         '<div class="today-lede">' + s.lede + '</div>' +
       '</div>' +
-    '</div>';
+    '</a>';
   });
   document.getElementById('todayList').innerHTML = html;
   initLocalAndWeather();
 }
-
-function openStoryFromToday(index) {
-  tabBeforeStory = 'today';
-  openStory(index);
-}
-window.openStoryFromToday = openStoryFromToday;
 
 // ── Local + Weather (Today tab, Layer 2) ───────────────────────────────
 // Fully automated, no editorial pass — bare local headlines + today's
@@ -3659,7 +3039,7 @@ function updateProgress() {
   const motCount = document.getElementById('motCount');
   if (motCount) motCount.textContent = n;
 
-  if (n === total) {
+  if (n === total && !motRevealed) {
     track('digest_complete', { stories_count: total });
     startMotAnimation();
   }
@@ -3668,6 +3048,7 @@ function updateProgress() {
 function markStoryRead(index) {
   if (readStories.has(index)) return;
   readStories.add(index);
+  saveReadStories();
   beatsRecordRead(storySubject(stories[index]));
   if (stories[index]) beatsRecordEntity(storySubject(stories[index]), (stories[index].entity || '').trim());
   const card = document.getElementById('card-' + index);
@@ -3681,172 +3062,21 @@ function markStoryRead(index) {
   updateProgress();
 }
 
-// ── Open / close story ────────────────────────────────────────────
-function openStory(index, opts) {
-  currentStoryIndex = index;
-  const s = stories[index];
-  stopListening();
-
-  document.getElementById('storyCategory').textContent = s.category;
-  document.getElementById('storyHeadline').textContent = s.headline;
-  document.getElementById('storyLede').textContent = s.lede;
-  if (s.featuredImage) {
-    document.getElementById('storyHeroImage').src = s.featuredImage;
-    document.getElementById('storyHeroImageWrap').style.display = 'block';
-  } else {
-    document.getElementById('storyHeroImage').src = '';
-    document.getElementById('storyHeroImageWrap').style.display = 'none';
-  }
-  document.getElementById('truth-body').innerHTML = stripOuterQuotes(s.truth);
-  document.getElementById('prob-body').innerHTML = stripOuterQuotes(s.prob);
-  document.getElementById('poss-body').innerHTML = stripOuterQuotes(s.poss);
-  document.getElementById('liesRevealed').innerHTML = stripOuterQuotes(s.lies);
-
-  // Reset sections
-  ['sec-truth','sec-prob','sec-poss','sec-lies'].forEach(id => {
-    document.getElementById(id).classList.remove('open');
-  });
-  document.getElementById('sec-truth').classList.add('open');
-
-  // Reset lies
-  document.getElementById('liesLocked').style.display = 'flex';
-  document.getElementById('liesRevealed').style.display = 'none';
-
-  // Switch views
-  tabBeforeStory = activeTab;
-  ['todayView','digestView','backstoryView','profileView'].forEach(function(v) {
-    document.getElementById(v).classList.remove('active');
-  });
-  document.getElementById('storyView').classList.add('active');
-  document.getElementById('bottomNav').classList.add('hidden');
-  window.scrollTo(0, 0);
-  updateFeedbackBtn();
-
-  // Track
-  track('story_open', {
-    story_index: index + 1,
-    story_category: s.category,
-    story_headline: s.headline
-  });
-  storyEntryIdx = storySubject(s) ? beatIdx((beatsLoad())[storySubject(s)]) : -1;
-  beatsRecordOpen(storySubject(s));
-
-  // Reset scroll tracking for this story
-  scrollTracked25 = false;
-  scrollTracked50 = false;
-  scrollTracked90 = false;
-
-  if (!(opts && opts.fromHistory)) navOverlay('story', index);
-}
-
-function closeStory(opts) {
-  // Back buttons: step back through our own history entry; the popstate
-  // handler then calls back in here with fromHistory.
-  if (!(opts && opts.fromHistory) && onOverlayEntry('story')) { navBack(); return; }
-  if (!document.getElementById('storyView').classList.contains('active')) return;
-
-  const cat = storySubject(stories[currentStoryIndex]);
-  const prevIdx = storyEntryIdx;
-
-  stopListening();
-  markStoryRead(currentStoryIndex);
-
-  document.getElementById('storyView').classList.remove('active');
-  document.getElementById('bottomNav').classList.remove('hidden');
-  switchTab(tabBeforeStory || 'digest', { fromHistory: true });
-  // Closing via navBack() restores the URL through popstate. This is the
-  // other path — closing without a history entry to consume — where the
-  // address bar would otherwise keep pointing at the story we just left.
-  if (ROUTING_ON && !(opts && opts.fromHistory)) {
-    var back = tabPath(tabBeforeStory || 'digest');
-    if (location.pathname !== back) {
-      history.replaceState({ ntk: 'tab', tab: tabBeforeStory || 'digest' }, '', back);
-    }
-  }
-  updateFeedbackBtn();
-
-  if (cat) {
-    const newIdx = beatIdx((beatsLoad())[cat]);
-    if (newIdx > prevIdx && beatsShouldToast(newIdx)) {
-      const copy = beatsToastCopy(cat, newIdx, beatsLoad()[cat] || {});
-      if (copy) { showBeatToast(copy); beatsMarkToast(newIdx); }
-    }
-  }
-}
-
-// ── Section toggle ────────────────────────────────────────────────
-function toggleSection(id, sectionName) {
-  const sec = document.getElementById(id);
-  const wasOpen = sec.classList.contains('open');
-  sec.classList.toggle('open');
-
-  if (!wasOpen) {
-    beatsRecordDepth(storySubject(stories[currentStoryIndex]));
-    track('section_open', {
-      section: sectionName,
-      story_index: currentStoryIndex + 1,
-      story_headline: stories[currentStoryIndex].headline
-    });
-  }
-}
-
-// ── Lies hold-to-reveal ───────────────────────────────────────────
-function startHold(e) {
-  if (e) e.preventDefault();
-  const btn = document.getElementById('liesBtn');
-  btn.classList.add('holding');
-  holdTimer = setTimeout(revealLies, 800);
-}
-
-function cancelHold() {
-  const btn = document.getElementById('liesBtn');
-  if (btn) btn.classList.remove('holding');
-  clearTimeout(holdTimer);
-}
-
-function revealLies() {
-  document.getElementById('liesLocked').style.display = 'none';
-  document.getElementById('liesRevealed').style.display = 'block';
-  var ls = stories[currentStoryIndex];
-  beatsRecordLies(storySubject(ls), ls ? (ls.permalink || ls.headline) : null);
-  track('lies_revealed', {
-    story_index: currentStoryIndex + 1,
-    story_headline: stories[currentStoryIndex].headline
-  });
-}
-
-// ── Scroll depth tracking (story view) ───────────────────────────
-window.addEventListener('scroll', () => {
-  if (!document.getElementById('storyView').classList.contains('active')) return;
-
-  const scrollTop = window.scrollY || document.documentElement.scrollTop;
-  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-  if (docHeight <= 0) return;
-  const pct = (scrollTop / docHeight) * 100;
-
-  if (!scrollTracked25 && pct >= 25) {
-    scrollTracked25 = true;
-    track('scroll_depth', { depth: '25', story_index: currentStoryIndex + 1 });
-  }
-  if (!scrollTracked50 && pct >= 50) {
-    scrollTracked50 = true;
-    track('scroll_depth', { depth: '50', story_index: currentStoryIndex + 1 });
-  }
-  if (!scrollTracked90 && pct >= 90) {
-    scrollTracked90 = true;
-    track('scroll_depth', { depth: '90', story_index: currentStoryIndex + 1 });
-    markStoryRead(currentStoryIndex);
-  }
-}, { passive: true });
-
 // ── Swipe right to mark read ──────────────────────────────────────
 function initSwipe(cardEl, index) {
   let startX = 0;
   let currentX = 0;
   let dragging = false;
+  // T-0034: the card is now a real <a href>, so a drag that ends on top of
+  // it can fire a synthetic click same as a tap would — which would
+  // navigate away in the middle of what was meant to be "swipe to mark
+  // read, stay on the list." Set once a swipe moves far enough to count,
+  // read and cleared by the card's own click handler below.
+  let justSwiped = false;
   const wrap = document.getElementById('wrap-' + index);
   const swipeBg = wrap ? wrap.querySelector('.swipe-bg') : null;
   const THRESHOLD = 80;
+  const SWIPE_MIN = 10;
 
   if (!cardEl || !swipeBg) return;
 
@@ -3869,6 +3099,7 @@ function initSwipe(cardEl, index) {
     if (!dragging) return;
     dragging = false;
     cardEl.style.transition = '';
+    justSwiped = currentX >= SWIPE_MIN;
 
     if (currentX >= THRESHOLD) {
       cardEl.classList.add('swiped-away');
@@ -3889,25 +3120,16 @@ function initSwipe(cardEl, index) {
     currentX = 0;
   }
 
+  cardEl.addEventListener('click', function(e) {
+    if (justSwiped) { e.preventDefault(); justSwiped = false; }
+  });
+
   cardEl.addEventListener('touchstart', onStart, { passive: true });
   cardEl.addEventListener('touchmove', onMove, { passive: true });
   cardEl.addEventListener('touchend', onEnd);
   cardEl.addEventListener('mousedown', onStart);
   document.addEventListener('mousemove', onMove);
   document.addEventListener('mouseup', onEnd);
-}
-
-// ── Share ─────────────────────────────────────────────────────────
-function shareStory() {
-  const s = stories[currentStoryIndex];
-  track('story_share', { story_index: currentStoryIndex + 1 });
-  beatsRecordShare(storySubject(s));
-  const shareUrl = s.permalink || window.location.href;
-  if (navigator.share) {
-    navigator.share({ title: s.headline, text: s.lede, url: shareUrl });
-  } else {
-    alert('Share: ' + s.headline + '\n\n' + shareUrl);
-  }
 }
 
 // ── Subscribe modal ──────────────────────────────────────────────
@@ -3925,14 +3147,6 @@ function closeSubscribeModal(e) {
 
 
 // ── Backstory modal ───────────────────────────────────────────────
-function openBackstoryModal() {
-  document.getElementById('backstoryModal').classList.add('show');
-  track('backstory_click', {
-    story_index: currentStoryIndex + 1,
-    story_headline: stories[currentStoryIndex] ? stories[currentStoryIndex].headline : ''
-  });
-}
-
 function closeBackstoryModal(e) {
   if (e.target === document.getElementById('backstoryModal')) {
     document.getElementById('backstoryModal').classList.remove('show');
@@ -4024,18 +3238,8 @@ function buildFeedbackMailto() {
   const now = new Date();
   const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
   const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-  const inStory = document.getElementById('storyView').classList.contains('active');
-
-  let subject, body;
-  if (inStory && typeof currentStoryIndex !== 'undefined' && stories[currentStoryIndex]) {
-    const headline = stories[currentStoryIndex].headline;
-    subject = `NTK Feedback — ${dateStr} ${timeStr} — ${headline.substring(0, 50)}`;
-    body = `Date: ${dateStr}\nTime: ${timeStr}\nView: Story\nStory: ${headline}\n\nMy feedback:\n`;
-  } else {
-    subject = `NTK Feedback — ${dateStr} ${timeStr} — Digest`;
-    body = `Date: ${dateStr}\nTime: ${timeStr}\nView: Digest\n\nMy feedback:\n`;
-  }
-
+  const subject = `NTK Feedback — ${dateStr} ${timeStr} — Digest`;
+  const body = `Date: ${dateStr}\nTime: ${timeStr}\nView: Digest\n\nMy feedback:\n`;
   return `mailto:max.zimbert@icloud.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
@@ -4060,10 +3264,8 @@ function updateStorySuggestCtas() {
 function updateFeedbackBtn() {
   const btn = document.getElementById('feedbackBtn');
   if (!btn) return;
-  const storyView = document.getElementById('storyView');
-  const inStory = storyView ? storyView.classList.contains('active') : false;
   btn.href = buildFeedbackMailto();
-  btn.style.bottom = inStory ? '80px' : '88px';
+  btn.style.bottom = '88px';
 }
 
 // ── Init ──────────────────────────────────────────────────────────
@@ -4610,15 +3812,6 @@ document.addEventListener('DOMContentLoaded', function() {
   <div class="beat-info-title" id="beatInfoTitle"></div>
   <div class="beat-info-body" id="beatInfoBody"></div>
   <button type="button" class="beat-info-close" onclick="closeBeatInfo()">Got it</button>
-</div>
-
-<!-- Orientation toast. Deliberately OUTSIDE the view stack: it used to sit
-     inside #digestView, and since Today is the landing tab and closing a
-     story opened from Today returns there, the most common path in the app
-     fired it into a hidden container. See T-0024. -->
-<div id="beatToast" class="beat-toast">
-  <div class="beat-toast-label">Orientation</div>
-  <div class="beat-toast-text" id="beatToastText"></div>
 </div>
 
 <script>

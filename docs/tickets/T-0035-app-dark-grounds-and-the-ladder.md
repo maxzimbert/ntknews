@@ -184,14 +184,13 @@ about where else these colours live.
 ## Check
 
 ```sh
-# The app has no dark backgrounds left, except where #storyView is
-# explicitly excluded above (T-0034 deletes it).
-test "$(grep -c 'background: *var(--dark)' digest/index.html)" -eq 4
+# The app has no dark backgrounds left. (T-0034, same branch, deleted
+# #storyView outright — see the note at the end of this block.)
+test "$(grep -c 'background: *var(--dark)' digest/index.html)" -eq 0
 
-# Purple's decorative placeholder use is gone. The one remaining
-# `var(--purple)` is #storyView's own section dot — excluded per item 1,
-# same as its four background selectors, since T-0034 deletes the view.
-test "$(grep -c -- 'var(--purple)' digest/index.html)" -eq 1
+# Purple's decorative placeholder use is gone, and with #storyView's own
+# section dot deleted too, var(--purple) has no uses left at all.
+test "$(grep -c -- 'var(--purple)' digest/index.html)" -eq 0
 
 # Terracotta still exists — it kept its real job — but now has a
 # cream-safe step available.
@@ -205,14 +204,21 @@ test "$(grep -oE \"hex:'#[0-9A-Fa-f]{6}'\" ntk-pulse/pulse.html | sort -u | wc -
 ! grep -q "terracotta\|purple" ntk-pulse/pulse.html
 
 # No literal purple hex left either — the CSS variable check above only
-# catches var(--purple); the onboarding card used the hex directly. The
-# one remaining hit is the --purple token's own definition, still needed
-# because #storyView's section dot references it.
-test "$(grep -c '725ABF' digest/index.html)" -eq 1
+# catches var(--purple); the onboarding card used the hex directly.
+test "$(grep -c '725ABF' digest/index.html)" -eq 0
 
-# The end mark replaced "Carry on regardless." and exists on both the
-# Digest tab's list-completion footer and #storyView's own close, matching
-# the static permalink template.
+# The end mark replaced "Carry on regardless." on the Digest tab's
+# list-completion footer, matching the static permalink template.
 ! grep -q "Carry on regardless" digest/index.html
-test "$(grep -c 'class=\"end-mark\"' digest/index.html)" -eq 2
+test "$(grep -c 'class=\"end-mark\"' digest/index.html)" -eq 1
 ```
+
+**Updated by T-0034, same branch.** The three checks above originally
+carried an exception for `#storyView` — 4 dark backgrounds, one
+`var(--purple)` section dot, a second end mark — all "excluded, since
+T-0034 deletes the view." T-0034 shipped in this same branch and did
+exactly that, so the exceptions are gone along with what they were
+excepting: dark backgrounds are 0 now, not 4; `var(--purple)` is 0, not
+1 (and the now-fully-unused `--purple` token itself was deleted); the end
+mark exists in exactly the one place T-0035 put it. Numbers changed here
+to match, not because either ticket's own check was wrong when written.
