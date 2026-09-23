@@ -86,6 +86,30 @@ partly wrong, caught before writing any code rather than after.
    this, every photo published after this ticket keeps getting tinted and
    AI-generated toward colours the app just retired.
 
+## Found on review, after the first PR pass
+
+The editor caught two more purple instances a plain "no `var(--purple)`
+outside `#storyView`" check couldn't see, because neither used the CSS
+variable: a literal `#725ABF` fill behind an onboarding card's placeholder
+emoji (swapped to blue, the one surviving accent not already used across
+the five onboarding cards) and `.beat-domain-card`'s tint/border, which
+reads its color from `BEATS_SCALE`'s "Carrying It" rung — already
+recalibrated to `#664CBA` earlier in this ticket, so no change needed
+there, just confirmation it wasn't a second miss.
+
+Also requested on review: the `— 30 —` end mark shipped on the static
+story permalink (`build_digest.py`) but never made it into the SPA. Added
+in two places — replacing "Carry on regardless." at the bottom of the
+Digest tab's story list (light-ground `.end-mark`, ink-on-cream, matching
+`.mot-footer-text`'s existing colour so it reads as the same element, not
+a new one) and after `#storyView`'s four sections, in the same relative
+position as the permalink template (dark-ground `#storyView .end-mark`
+override, since the shared light-ground rule would be invisible there).
+While matching the permalink's own CSS, caught a leftover `'Source Serif
+4'` in `build_digest.py`'s `.end-mark` rule — missed by the T-0036 font
+backfill — and fixed it to `'Newsreader'` to match every other live
+selector.
+
 ## Found while verifying
 
 None of this was in the original inventory. Found by sweeping actual
@@ -179,4 +203,16 @@ grep -q -- '--coral-deep' digest/index.html
 # pulse.html's palette matches the app: three accents, not five.
 test "$(grep -oE \"hex:'#[0-9A-Fa-f]{6}'\" ntk-pulse/pulse.html | sort -u | wc -l | tr -d ' ')" -eq 3
 ! grep -q "terracotta\|purple" ntk-pulse/pulse.html
+
+# No literal purple hex left either — the CSS variable check above only
+# catches var(--purple); the onboarding card used the hex directly. The
+# one remaining hit is the --purple token's own definition, still needed
+# because #storyView's section dot references it.
+test "$(grep -c '725ABF' digest/index.html)" -eq 1
+
+# The end mark replaced "Carry on regardless." and exists on both the
+# Digest tab's list-completion footer and #storyView's own close, matching
+# the static permalink template.
+! grep -q "Carry on regardless" digest/index.html
+test "$(grep -c 'class=\"end-mark\"' digest/index.html)" -eq 2
 ```

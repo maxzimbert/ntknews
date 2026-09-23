@@ -525,7 +525,7 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
 
   .end-mark {{
     text-align: center;
-    font-family: 'Source Serif 4', serif;
+    font-family: 'Newsreader', serif;
     font-size: 14px;
     letter-spacing: .24em;
     color: rgba(38,31,35,0.67);
