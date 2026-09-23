@@ -39,6 +39,7 @@ import os
 import re
 import subprocess
 import sys
+import urllib.error
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
@@ -267,6 +268,16 @@ def label():
         log(f"labeling {record['id']}")
         try:
             topic_strs = call_claude_topics(api_key, record["transcript"])
+        except urllib.error.HTTPError as e:
+            # Same lesson as capture()'s CalledProcessError fix: str(e) on
+            # an HTTPError is just the generic reason phrase ("Bad
+            # Request"), not the response body — and the body is exactly
+            # where Anthropic explains what's actually wrong with the
+            # request. Caught this masking a real 400 on every one of the
+            # first live run's 10 episodes.
+            body = e.read().decode("utf-8", "replace")[:600]
+            log(f"  FAILED {record['id']}: HTTP {e.code}\n    body: {body}")
+            continue
         except Exception as e:
             log(f"  FAILED {record['id']}: {e}")
             continue
