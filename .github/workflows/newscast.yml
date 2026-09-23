@@ -15,11 +15,15 @@ name: NTK Pulse — NPR Newscast Monitor
 # (a check landing just before NPR posts can lag up to an hour before the
 # next one catches it; every 20 minutes bounds that to ~20 minutes).
 #
-# UNVERIFIED: the whisper.cpp Linux build below (cmake, ubuntu-latest) has
-# only been checked by reading whisper.cpp's own build docs, not by
-# running it — this was built from a macOS sandbox with no Linux runner
-# access. Watch the first few scheduled runs before trusting this cadence
-# unattended. If the build step fails, that is the first thing to check.
+# Verified live, not just read from docs — this took 4 rounds of watching
+# real runs fail and fixing forward: ffmpeg's output muxer needs -f wav
+# explicit (it infers format from the filename otherwise), the dynamically-
+# linked whisper-cli needs its .so files' directory on LD_LIBRARY_PATH
+# (not just the binary cached), and the cmake build needs GGML_NATIVE=OFF
+# or a binary built on one runner in GitHub's fleet can SIGILL on a
+# different one later. All three are commented at the step that fixes
+# them. Label failures separately hinge on Anthropic account credit, not
+# code — see T-0037.
 
 on:
   workflow_dispatch: {}
@@ -65,13 +69,22 @@ jobs:
           path: |
             ${{ runner.temp }}/whisper.cpp/build
             ${{ runner.temp }}/whisper.cpp/models/ggml-small.en.bin
-          key: whisper-cpp-small-en-v2
+          key: whisper-cpp-small-en-v3
 
       - name: Build whisper.cpp
         if: steps.whisper-cache.outputs.cache-hit != 'true'
         run: |
           git clone --depth 1 https://github.com/ggml-org/whisper.cpp "${{ runner.temp }}/whisper.cpp"
-          cmake -S "${{ runner.temp }}/whisper.cpp" -B "${{ runner.temp }}/whisper.cpp/build" -DCMAKE_BUILD_TYPE=Release
+          # GGML_NATIVE=OFF is load-bearing, not a speed tweak. Default is
+          # ON, which builds with -march=native — tuned to whichever exact
+          # CPU the build happened to run on. The binary is cached and
+          # reused by later runs, which can land on a different physical
+          # runner in GitHub's fleet with an older CPU. That mismatch is
+          # exactly what a real scheduled run hit: whisper-cli died with
+          # SIGILL (illegal instruction) hours after an identical cached
+          # binary worked fine on a different run. OFF builds a portable
+          # baseline instead, at some transcription-speed cost.
+          cmake -S "${{ runner.temp }}/whisper.cpp" -B "${{ runner.temp }}/whisper.cpp/build" -DCMAKE_BUILD_TYPE=Release -DGGML_NATIVE=OFF
           cmake --build "${{ runner.temp }}/whisper.cpp/build" -j "$(nproc)" --config Release
           mkdir -p "${{ runner.temp }}/whisper.cpp/models"
           curl -sL -o "${{ runner.temp }}/whisper.cpp/models/ggml-small.en.bin" \
