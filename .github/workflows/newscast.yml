@@ -1,0 +1,108 @@
+name: NTK Pulse — NPR Newscast Monitor
+
+# T-0037. Captures NPR News Now's hourly newscast, transcribes it locally
+# (whisper.cpp, no hosted ASR vendor), and extracts what it covered so
+# Pulse can show an hour-over-hour view above the Lineup recommendations
+# zone. Monitoring only — this does not feed clusters.json, triage, or
+# assembly. See ntk-pulse/newscast.py's module docstring and
+# docs/decisions.md before wiring it into anything editorial.
+#
+# Same 20-minute cadence as pulse-scan.yml, for the same reason: a check
+# that finds nothing new is just a page fetch, a few KB, under a second.
+# The expensive part (download + transcribe) only runs when there's
+# actually a new episode id, so checking often costs almost nothing — see
+# the chat log this ticket came out of for why once-an-hour isn't enough
+# (a check landing just before NPR posts can lag up to an hour before the
+# next one catches it; every 20 minutes bounds that to ~20 minutes).
+#
+# UNVERIFIED: the whisper.cpp Linux build below (cmake, ubuntu-latest) has
+# only been checked by reading whisper.cpp's own build docs, not by
+# running it — this was built from a macOS sandbox with no Linux runner
+# access. Watch the first few scheduled runs before trusting this cadence
+# unattended. If the build step fails, that is the first thing to check.
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "*/20 * * * *"
+
+permissions:
+  contents: write
+
+# Shared with pulse-scan.yml and pulse.yml on purpose — same group name
+# means these never race to git-push data/ at once. cancel-in-progress:
+# false so a run already in progress finishes before the next one starts.
+concurrency:
+  group: ntk-pulse
+  cancel-in-progress: false
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install ffmpeg
+        run: sudo apt-get update -y && sudo apt-get install -y ffmpeg
+
+      # Cached across runs — this job fires every 20 minutes, and
+      # rebuilding whisper.cpp from source each time would be most of the
+      # job's wall clock for no reason. Bump the cache key if the pinned
+      # commit or model ever changes.
+      - name: Cache whisper.cpp build + model
+        id: whisper-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ runner.temp }}/whisper.cpp/build/bin/whisper-cli
+            ${{ runner.temp }}/whisper.cpp/models/ggml-small.en.bin
+          key: whisper-cpp-small-en-v1
+
+      - name: Build whisper.cpp
+        if: steps.whisper-cache.outputs.cache-hit != 'true'
+        run: |
+          git clone --depth 1 https://github.com/ggml-org/whisper.cpp "${{ runner.temp }}/whisper.cpp"
+          cmake -S "${{ runner.temp }}/whisper.cpp" -B "${{ runner.temp }}/whisper.cpp/build" -DCMAKE_BUILD_TYPE=Release
+          cmake --build "${{ runner.temp }}/whisper.cpp/build" -j "$(nproc)" --config Release
+          mkdir -p "${{ runner.temp }}/whisper.cpp/models"
+          curl -sL -o "${{ runner.temp }}/whisper.cpp/models/ggml-small.en.bin" \
+            https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-small.en.bin
+
+      - name: Capture new episodes
+        working-directory: ntk-pulse
+        env:
+          NEWSCAST_WHISPER_BIN: ${{ runner.temp }}/whisper.cpp/build/bin/whisper-cli
+          NEWSCAST_WHISPER_MODEL: ${{ runner.temp }}/whisper.cpp/models/ggml-small.en.bin
+        run: python newscast.py capture
+
+      # Haiku, capped by episode count naturally (at most a handful of new
+      # episodes per 20-minute run — usually zero or one) rather than a
+      # PULSE_MAX_CALLS-style cap like triage.py's. Revisit if that ever
+      # stops being true.
+      - name: Label new episodes
+        working-directory: ntk-pulse
+        continue-on-error: true
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python newscast.py label
+
+      # No API calls — pure entity-overlap grouping over what's already on
+      # disk. continue-on-error so a labeling failure above doesn't also
+      # cost the freshly captured, unlabeled transcripts; thread() just
+      # works with whatever topics exist.
+      - name: Build hour-over-hour view
+        working-directory: ntk-pulse
+        continue-on-error: true
+        run: python newscast.py thread
+
+      - name: Commit data
+        if: always()
+        run: |
+          git config user.name "ntk-pulse-bot"
+          git config user.email "pulse@ntknews.org"
+          git add ntk-pulse/data/newscasts/
+          git diff --cached --quiet || git commit -m "newscast: refresh $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push
