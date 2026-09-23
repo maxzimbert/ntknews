@@ -340,8 +340,8 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
     --blue-deep:  #045E96;
     --amber-deep: #7A5308;
     --terra:  #DC6550;
-    --purple: #725ABF;
     --teal:   #01B2A7;
+    --teal-deep: #016D66;
     --cream:  {cream};
     --dark:   {ink};
     --white:  #FFFFFF;
@@ -525,8 +525,8 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
 
   .end-mark {{
     text-align: center;
-    font-family: 'Source Serif 4', serif;
-    font-size: 14px;
+    font-family: 'Newsreader', serif;
+    font-size: 13px;
     letter-spacing: .24em;
     color: rgba(38,31,35,0.67);
     border-top: 1px solid rgba(38,31,35,0.14);
@@ -544,6 +544,31 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
     color: var(--blue-deep);
     text-decoration: none;
   }}
+
+  .story-actions {{
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 22px;
+    padding: 0 20px;
+  }}
+  .action-btn {{
+    font-family: 'Overpass', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--white);
+    border: none;
+    border-radius: 2px;
+    padding: 10px 20px;
+    cursor: pointer;
+  }}
+  .listen-btn {{ background: var(--teal); }}
+  .listen-btn.speaking {{
+    background: rgba(38,31,35,0.08);
+    color: var(--teal-deep);
+    border: 1px solid var(--teal-deep);
+  }}
+  .share-btn {{ background: var(--blue); }}
 </style>
 </head>
 <body>
@@ -603,7 +628,91 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
 
   <div class="end-mark">&mdash; 30 &mdash;</div>
 
+  <div class="story-actions">
+    <button type="button" class="action-btn listen-btn" id="listenBtn" onclick="toggleListen()">&#128266; Listen</button>
+    <button type="button" class="action-btn share-btn" id="shareBtn" onclick="shareStory()">Share this story</button>
+  </div>
+
   <a class="back-footer" href="../">Back to today's digest</a>
+
+<script>
+  // Browser-native text-to-speech — same Web Speech API approach as the
+  // app's own Listen button (digest/index.html). T-0039: a reader who
+  // arrives from a shared link lands here, not in the app, and should not
+  // lose the features the app's story view has.
+  var STORY_TEXT = {{
+    headline: "{headline_js}",
+    lede: "{lede_js}",
+    truth: "{truth_js}",
+    prob: "{prob_js}",
+    poss: "{poss_js}",
+    lies: "{lies_js}"
+  }};
+
+  function htmlToText(html) {{
+    if (!html) return '';
+    var tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    return tmp.textContent.replace(/\\s+/g, ' ').trim();
+  }}
+
+  var currentUtterance = null;
+
+  function resetListenBtn() {{
+    var btn = document.getElementById('listenBtn');
+    if (!btn) return;
+    btn.textContent = '\\u{{1F50A}} Listen';
+    btn.classList.remove('speaking');
+  }}
+
+  function toggleListen() {{
+    if (!('speechSynthesis' in window)) return;
+    var synth = window.speechSynthesis;
+    var btn = document.getElementById('listenBtn');
+
+    if (synth.speaking && !synth.paused) {{
+      synth.pause();
+      btn.textContent = '▶ Resume';
+      return;
+    }}
+    if (synth.paused) {{
+      synth.resume();
+      btn.textContent = '⏸ Pause';
+      return;
+    }}
+
+    var parts = [STORY_TEXT.headline, STORY_TEXT.lede,
+      htmlToText(STORY_TEXT.truth), htmlToText(STORY_TEXT.prob),
+      htmlToText(STORY_TEXT.poss), htmlToText(STORY_TEXT.lies)];
+    var text = parts.filter(Boolean).join('. ');
+    if (!text) return;
+
+    synth.cancel();
+    currentUtterance = new SpeechSynthesisUtterance(text);
+    currentUtterance.rate = 1.0;
+    currentUtterance.onend = resetListenBtn;
+    currentUtterance.onerror = resetListenBtn;
+    synth.speak(currentUtterance);
+    btn.textContent = '⏸ Pause';
+    btn.classList.add('speaking');
+  }}
+
+  window.addEventListener('pagehide', function() {{
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+  }});
+
+  // Same share pattern as the app's share bar (shareStory() in
+  // digest/index.html): the native share sheet where it's available, an
+  // alert with the URL as a fallback.
+  function shareStory() {{
+    var shareUrl = location.href;
+    if (navigator.share) {{
+      navigator.share({{ title: STORY_TEXT.headline, text: STORY_TEXT.lede, url: shareUrl }});
+    }} else {{
+      alert('Share: ' + STORY_TEXT.headline + '\\n\\n' + shareUrl);
+    }}
+  }}
+</script>
 
 </body>
 </html>
@@ -631,7 +740,10 @@ def build_story_page(story, image_rel_url, image_abs_url, canonical_url):
         category=html_esc(story.get("category", "")), lede_esc=html_esc(description),
         hero_img=hero_img,
         truth=story.get("truth", ""), prob=story.get("prob", ""),
-        poss=story.get("poss", ""), lies=story.get("lies", ""))
+        poss=story.get("poss", ""), lies=story.get("lies", ""),
+        headline_js=jsEsc(headline), lede_js=jsEsc(story.get("lede", "")),
+        truth_js=jsEsc(story.get("truth", "")), prob_js=jsEsc(story.get("prob", "")),
+        poss_js=jsEsc(story.get("poss", "")), lies_js=jsEsc(story.get("lies", "")))
 
 
 ARCHIVE_TEMPLATE = """<!DOCTYPE html>
