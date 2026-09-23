@@ -329,7 +329,7 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
 <meta name="twitter:title" content="{headline_esc}">
 <meta name="twitter:description" content="{description_esc}">
 {twitter_image_tag}
-<link href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,600;1,6..72,300;1,6..72,400;1,6..72,600&display=swap" rel="stylesheet">
 <style>
   :root {{
     --blue:   #0798F2;
@@ -350,7 +350,7 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
   * {{ margin:0; padding:0; box-sizing:border-box; }}
 
   body {{
-    font-family: 'Source Serif 4', Georgia, serif;
+    font-family: 'Newsreader', Georgia, serif;
     background: var(--cream);
     max-width: 640px;
     margin: 0 auto;
@@ -407,7 +407,7 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
   }}
 
   .story-hero-headline {{
-    font-family: 'Source Serif 4', serif;
+    font-family: 'Newsreader', serif;
     font-weight: 600;
     font-size: clamp(20px, 5vw, 26px);
     color: var(--white);
@@ -416,7 +416,7 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
   }}
 
   .story-hero-lede {{
-    font-family: 'Source Serif 4', serif;
+    font-family: 'Newsreader', serif;
     font-size: 16px;
     font-weight: 300;
     line-height: 1.65;
@@ -440,7 +440,7 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
   .section-dot {{ width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }}
 
   .section-title {{
-    font-family: 'Source Serif 4', Georgia, serif;
+    font-family: 'Newsreader', Georgia, serif;
     font-weight: 600;
     font-size: 16px;
     font-variant: small-caps;
@@ -469,7 +469,7 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
   .lies-section .section-body {{ background: rgba(220,101,80,0.04); }}
 
   .section-body p {{
-    font-family: 'Source Serif 4', serif;
+    font-family: 'Newsreader', serif;
     font-size: 16px;
     line-height: 1.7;
     color: rgba(38,31,35,0.8);
@@ -485,7 +485,7 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
     background: rgba(7,152,242,0.04);
   }}
   .ntk-pq-text {{
-    font-family: 'Source Serif 4', serif;
+    font-family: 'Newsreader', serif;
     font-size: 20px !important;
     font-weight: 300;
     font-style: italic;
@@ -517,7 +517,7 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
     margin-bottom: 5px;
   }}
   .ntk-stat-ctx {{
-    font-family: 'Source Serif 4', serif;
+    font-family: 'Newsreader', serif;
     font-size: 13px;
     color: rgba(38,31,35,0.72);
     line-height: 1.5;
@@ -626,19 +626,19 @@ ARCHIVE_TEMPLATE = """<!DOCTYPE html>
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Archive — NTK News</title>
-<link href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,600;1,6..72,300;1,6..72,400;1,6..72,600&display=swap" rel="stylesheet">
 <style>
   * {{ box-sizing:border-box; }}
-  body {{ background:{cream}; color:{ink}; font-family:'Source Serif 4',Georgia,serif;
+  body {{ background:{cream}; color:{ink}; font-family:'Newsreader',Georgia,serif;
     max-width:660px; margin:0 auto; padding:0 20px 80px; }}
   .masthead {{ padding:46px 0 0; }}
-  h1 {{ font-family:'Source Serif 4',serif; font-weight:600; font-size:34px;
+  h1 {{ font-family:'Newsreader',serif; font-weight:600; font-size:34px;
     letter-spacing:-.01em; margin:0 0 6px; }}
   .standfirst {{ font-size:16px; color:rgba(38,31,35,.68); margin:0 0 34px; max-width:46ch; }}
   .ed {{ border-top:1px solid rgba(38,31,35,.22); padding:18px 0 22px; }}
   .ed-head {{ display:flex; justify-content:space-between; align-items:baseline;
     gap:16px; margin-bottom:12px; }}
-  .ed-date {{ font-family:'Source Serif 4',serif; font-size:16px; font-weight:600;
+  .ed-date {{ font-family:'Newsreader',serif; font-size:16px; font-weight:600;
     letter-spacing:.01em; color:{ink}; }}
   .ed a.day {{ font-family:'Overpass',sans-serif; font-size:13px; letter-spacing:.1em;
     text-transform:uppercase; color:{teal_deep}; text-decoration:none;
