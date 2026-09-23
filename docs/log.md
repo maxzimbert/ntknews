@@ -131,3 +131,12 @@ The diagnosis was delayed by a plausible explanation. "You're probably adding
 and removing stories" fit the story and fit nothing in the evidence: the data
 was identical every time. The measurement said formatting-only from the first
 look. Reproducing it took one command once anyone stopped explaining it.
+
+## 2026-09-23 — a direction recorded in the abstract did not survive being seen
+
+"Nothing but ntknews.org should be dark" was answered yes in a question,
+written into the audit and T-0029 as settled, and then took two days and a
+full re-theme to get to a preview — where the editor rejected it on sight.
+For visual changes that are hard to reverse, put a screenshot or mock in
+front of the editor before building, not after.
+

@@ -1,12 +1,21 @@
 ---
 id: T-0034
 title: Delete the app's own story-reading view; the permalink is the only one
-status: DECIDED
+status: DISCARDED
 tags: [digest, chore]
 anchor: digest/index.html:2165
 ---
 
 ## What
+
+**Discarded 2026-09-23.** Built in PR #16 and closed unmerged after the
+editor saw the deploy preview. Deleting `#storyView` removed the source of
+the beats ladder's signals (section opens, Lies hold-to-reveal) and every
+recognition toast, and it wasn't needed for one-URL-per-story: `navOverlay()`
+already pushes the permalink into the address bar while the reader stays in
+the app. The in-app view stays as the reading surface; the static permalink
+stays as what shared links and reloads land on. Drift between the two is
+guarded by T-0039's check instead. The reasoning below is kept as written.
 
 Measured 2026-09-22, prompted by the editor asking why the share button
 can't just send the URL it already sends.

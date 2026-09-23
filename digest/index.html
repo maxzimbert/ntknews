@@ -60,7 +60,6 @@
     --blue:   #0798F2;
     --amber:  #F2AE2E;
     --terra:  #DC6550;
-    --purple: #725ABF;
     --teal:   #01B2A7;
     --cream:  #EAD9C5;
     --dark:   #261F23;
@@ -631,7 +630,7 @@
 
   .bsr-detail-box { max-width: 480px; padding: 0; overflow: hidden; max-height: 88vh; display: flex; flex-direction: column; }
   .bsr-detail-photo {
-    height: 220px; flex-shrink: 0; background: var(--purple); position: relative;
+    height: 220px; flex-shrink: 0; background: var(--dark); position: relative;
     display: flex; align-items: flex-end;
   }
   .bsr-detail-clock { padding: 18px 20px 16px; color: var(--white); }
@@ -871,23 +870,6 @@
     margin-top: 12px;
     border-top: 1px solid rgba(38,31,35,0.06);
   }
-
-  .section-pills { display: flex; gap: 5px; flex-wrap: wrap; }
-
-  .pill {
-    font-family: 'Overpass', sans-serif;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0;
-    padding: 3px 7px;
-    border-radius: 999px;
-    text-transform: uppercase;
-  }
-
-  .pill.truth  { background: rgba(7,152,242,0.1);  color: var(--blue); }
-  .pill.prob   { background: rgba(114,90,191,0.1); color: var(--purple); }
-  .pill.poss   { background: rgba(1,178,167,0.1);  color: var(--teal); }
-  .pill.lies   { background: rgba(220,101,80,0.1); color: var(--terra); }
 
   .card-read-cta {
     font-family: 'Overpass', sans-serif;
@@ -1162,12 +1144,26 @@
   .section-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
   .section-title {
-    font-family: 'Overpass', sans-serif;
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 0;
+    font-family: 'Newsreader', Georgia, serif;
+    font-weight: 600;
+    font-size: 16px;
+    font-variant: small-caps;
+    letter-spacing: .05em;
     color: var(--dark);
   }
+
+  /* A descending ladder of certainty, not four categories. Same ramp as the
+     story permalink (build_digest.py) and the landing page: established,
+     then likely, then plausible, with Lies reversed because it is the
+     negation rather than the fourth rung. */
+  .sec-1 .section-title { color: var(--dark); }
+  .sec-2 .section-title { color: rgba(38,31,35,0.82); }
+  .sec-3 .section-title { color: rgba(38,31,35,0.72); }
+  .sec-4 .section-title { color: #A33421; font-style: italic; }
+  .sec-1 .section-dot { background: var(--dark); }
+  .sec-2 .section-dot { background: rgba(38,31,35,0.60); }
+  .sec-3 .section-dot { background: rgba(38,31,35,0.34); }
+  .sec-4 .section-dot { background: #A33421; }
 
   .section-chevron {
     font-size: 13px;
@@ -1726,7 +1722,8 @@
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  /* Footer easter egg */
+  /* The end mark. "— 30 —" is the newsroom sign for end of copy; the
+     digest ends, and this says so. Same mark as the story permalink. */
   .mot-footer {
     text-align: center;
     padding: 24px 0 60px;
@@ -1735,10 +1732,8 @@
   .mot-footer-text {
     font-family: 'Newsreader', serif;
     font-size: 13px;
-    font-style: italic;
-    font-weight: 300;
-    color: rgba(38,31,35,0.28);
-    letter-spacing: 0;
+    letter-spacing: .24em;
+    color: rgba(38,31,35,0.67);
   }
 
   .hide { display: none !important; }
@@ -2187,10 +2182,10 @@
 
     <div class="story-sections" id="storySections">
 
-      <div class="story-section open" id="sec-truth">
+      <div class="story-section sec-1 open" id="sec-truth">
         <div class="section-header" onclick="toggleSection('sec-truth', 'Truths')">
           <div class="section-header-left">
-            <div class="section-dot" style="background:var(--blue);"></div>
+            <div class="section-dot"></div>
             <span class="section-title">Truths — What Happened</span>
           </div>
           <span class="section-chevron">▾</span>
@@ -2198,10 +2193,10 @@
         <div class="section-body" id="truth-body"></div>
       </div>
 
-      <div class="story-section" id="sec-prob">
+      <div class="story-section sec-2" id="sec-prob">
         <div class="section-header" onclick="toggleSection('sec-prob', 'Probabilities')">
           <div class="section-header-left">
-            <div class="section-dot" style="background:var(--purple);"></div>
+            <div class="section-dot"></div>
             <span class="section-title">Probabilities — What Will Likely Happen</span>
           </div>
           <span class="section-chevron">▾</span>
@@ -2209,10 +2204,10 @@
         <div class="section-body" id="prob-body"></div>
       </div>
 
-      <div class="story-section" id="sec-poss">
+      <div class="story-section sec-3" id="sec-poss">
         <div class="section-header" onclick="toggleSection('sec-poss', 'Possibilities')">
           <div class="section-header-left">
-            <div class="section-dot" style="background:var(--teal);"></div>
+            <div class="section-dot"></div>
             <span class="section-title">Possibilities — What Could Happen</span>
           </div>
           <span class="section-chevron">▾</span>
@@ -2220,10 +2215,10 @@
         <div class="section-body" id="poss-body"></div>
       </div>
 
-      <div class="story-section lies-section" id="sec-lies">
+      <div class="story-section lies-section sec-4" id="sec-lies">
         <div class="section-header" onclick="toggleSection('sec-lies', 'Lies')">
           <div class="section-header-left">
-            <div class="section-dot" style="background:var(--terra);"></div>
+            <div class="section-dot"></div>
             <span class="section-title">Lies / Narrative Distortions</span>
           </div>
           <span class="section-chevron">▾</span>
@@ -2587,7 +2582,7 @@ function buildDigest() {
         </div>
       </div>
       <div class="mot-footer">
-        <div class="mot-footer-text">Carry on regardless.</div>
+        <div class="mot-footer-text">&mdash; 30 &mdash;</div>
       </div>
     </div>`;
 
@@ -2667,7 +2662,7 @@ var BEATS_SCALE = [
   { label: 'Read It',      color: '#0798F2' },
   { label: 'Following It', color: '#3AABF5' },
   { label: 'On the Beat',  color: '#F2AE2E' },
-  { label: 'Carrying It',  color: '#725ABF' },
+  { label: 'Carrying It',  color: '#4DC9C1' },
   { label: 'Witness',      color: '#01B2A7' },
 ];
 
@@ -3269,7 +3264,7 @@ function openBsrDetail(idx, opts){
   const photo = document.getElementById('bsrDetailPhoto');
   photo.style.background = r.photo && r.photo.url
     ? 'linear-gradient(0deg, rgba(38,31,35,0.55), rgba(38,31,35,0.55)), url(' + r.photo.url + ') center/cover'
-    : 'var(--purple)';
+    : 'var(--dark)';
   document.getElementById('bsrDetailModal').classList.add('show');
   if (!(opts && opts.fromHistory)) navOverlay('bsr', idx);
 }

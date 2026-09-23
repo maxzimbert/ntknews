@@ -1,12 +1,20 @@
 ---
 id: T-0035
 title: Move the app off dark grounds, retire three accents, finish the ladder
-status: DECIDED
+status: DISCARDED
 tags: [digest, chore]
 anchor: digest/index.html:887
 ---
 
 ## What
+
+**Discarded 2026-09-23.** Built in PR #16 and closed unmerged after the
+editor saw the cream app live on the deploy preview. The black grounds stay —
+the /digest hero and the story hero included. The "dark only on ntknews.org"
+direction this ticket was built on was superseded, not misread; see
+`docs/decisions.md`. The parts that still applied (purple retired, the
+ladder in the app's story view, the end mark, Listen/Share on the permalink,
+dead `.pill` CSS) moved to T-0039. The reasoning below is kept as written.
 
 This ticket existed only as a dangling reference. T-0029's own text cited
 "T-0031" three times as the tracked home for this work — in commit messages

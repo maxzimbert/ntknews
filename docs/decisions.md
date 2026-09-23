@@ -262,6 +262,18 @@ was lost. `pulse.html` is now the only copy.
 
 ---
 
+**The app stays dark, and the in-app story view stays.** Decided
+2026-09-23, reversing the 2026-09-20 direction the Type Bench audit and
+T-0029 recorded. Seen live on PR #16's deploy preview, the cream re-theme
+was rejected: the black around the /digest hero and the story hero is the
+product's look, and accessibility contrast is not currently a priority large
+enough to override it. Deleting `#storyView` (T-0034) was rejected with it —
+that view feeds the beats ladder and fires its toasts, and `navOverlay()`
+already gives each story its permalink URL without leaving the app. Don't
+re-propose either as cleanup; reopen only with a new reason.
+
+---
+
 ## Open questions, not defaults
 
 These are genuinely unresolved. Don't assume either way.
