@@ -52,14 +52,20 @@ jobs:
       # rebuilding whisper.cpp from source each time would be most of the
       # job's wall clock for no reason. Bump the cache key if the pinned
       # commit or model ever changes.
+      # Caches the whole build tree, not just the whisper-cli binary — the
+      # cmake build links it against libwhisper.so.1 (and ggml's own
+      # shared libs) rather than producing a static binary, and those
+      # .so files live elsewhere under build/. Caching only the binary
+      # left it unable to find them at runtime; see the "Locate" step
+      # below for why the exact path isn't hardcoded.
       - name: Cache whisper.cpp build + model
         id: whisper-cache
         uses: actions/cache@v4
         with:
           path: |
-            ${{ runner.temp }}/whisper.cpp/build/bin/whisper-cli
+            ${{ runner.temp }}/whisper.cpp/build
             ${{ runner.temp }}/whisper.cpp/models/ggml-small.en.bin
-          key: whisper-cpp-small-en-v1
+          key: whisper-cpp-small-en-v2
 
       - name: Build whisper.cpp
         if: steps.whisper-cache.outputs.cache-hit != 'true'
@@ -70,6 +76,19 @@ jobs:
           mkdir -p "${{ runner.temp }}/whisper.cpp/models"
           curl -sL -o "${{ runner.temp }}/whisper.cpp/models/ggml-small.en.bin" \
             https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-small.en.bin
+
+      # Always runs, cache hit or fresh build — whisper-cli is dynamically
+      # linked (confirmed by a real failure: "cannot open shared object
+      # file: libwhisper.so.1") and nothing here hardcodes where cmake put
+      # the .so files, because that layout was never observed directly
+      # (no Linux machine to build this on ahead of time). Discovering it
+      # from the actual build output is more certain than guessing a path
+      # from memory of similar projects.
+      - name: Locate whisper.cpp shared libraries
+        run: |
+          libdirs=$(find "${{ runner.temp }}/whisper.cpp/build" -name '*.so*' -exec dirname {} \; | sort -u | paste -sd: -)
+          echo "found: $libdirs"
+          echo "LD_LIBRARY_PATH=$libdirs:$LD_LIBRARY_PATH" >> "$GITHUB_ENV"
 
       - name: Capture new episodes
         working-directory: ntk-pulse
