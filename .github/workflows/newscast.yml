@@ -130,6 +130,14 @@ jobs:
         continue-on-error: true
         run: python newscast.py thread
 
+      # Retry-with-rebase is load-bearing, not caution theater: a real run
+      # lost a full 22 minutes of capture work to a bare `git push` getting
+      # `[rejected] (fetch first)` when a PR merged to main mid-run. The
+      # ntk-pulse concurrency group stops this workflow from racing
+      # pulse-scan.yml/pulse.yml, but a manual merge to main isn't a
+      # workflow run and isn't covered by that group at all. Safe to
+      # rebase blindly here — this step only ever touches
+      # ntk-pulse/data/newscasts/, nothing else can conflict with it.
       - name: Commit data
         if: always()
         run: |
@@ -137,4 +145,8 @@ jobs:
           git config user.email "pulse@ntknews.org"
           git add ntk-pulse/data/newscasts/
           git diff --cached --quiet || git commit -m "newscast: refresh $(date -u +%Y-%m-%dT%H:%MZ)"
-          git push
+          for i in 1 2 3; do
+            git push && break
+            echo "push rejected, rebasing onto origin/main and retrying ($i/3)"
+            git pull --rebase origin main
+          done
