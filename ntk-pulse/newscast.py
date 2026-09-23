@@ -153,7 +153,9 @@ def capture():
         tmp_mp3 = DATA / f"{eid}.mp3.tmp"
         tmp_wav = DATA / f"{eid}.wav.tmp"
         try:
-            tmp_mp3.write_bytes(fetch(url))
+            mp3_bytes = fetch(url)
+            tmp_mp3.write_bytes(mp3_bytes)
+            log(f"  downloaded {len(mp3_bytes)} bytes")
             to_wav(tmp_mp3, tmp_wav)
             # Explicit prefix, independent of tmp_wav's own name — whisper-cli
             # appends .txt to whatever -of is given, and tmp_wav carries a
@@ -161,6 +163,14 @@ def capture():
             # in one call (it only removes the last suffix). Caught by
             # running this against a live episode before it reached a cron.
             text = transcribe(tmp_wav, DATA / eid)
+        except subprocess.CalledProcessError as e:
+            # stderr is the whole point of capturing it — a bare str(e) is
+            # just "exit status N", which is exactly what made the first
+            # real Actions run of this unreadable: ffmpeg failed on every
+            # episode and the log said nothing about why.
+            stderr = (e.stderr or b"").decode("utf-8", "replace").strip()
+            log(f"  FAILED {eid}: {e}\n    stderr: {stderr[:600]}")
+            continue
         except Exception as e:
             log(f"  FAILED {eid}: {e}")
             continue
