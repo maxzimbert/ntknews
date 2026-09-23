@@ -1,10 +1,22 @@
 ---
 id: T-0033
 title: The story header has no job now, and nobody has decided what it is for
-status: PROPOSED
+status: DISCARDED
 tags: [digest, decision]
 anchor: digest/index.html:2167
 ---
+
+## Superseded by T-0034
+
+The editor's next question — why can't the share button just send the URL it
+already sends — surfaced that `shareStory()` was already pointing at the
+permalink, and the only reason two story surfaces existed was the app's own
+`#storyView` duplicating a page that already worked. T-0034 deletes
+`#storyView` outright. With one reading surface instead of two, there is no
+separate in-app header left to design; this ticket's question dissolves
+rather than gets answered. Kept below for the reasoning — the constraints it
+recorded (closure as the product promise, no unread counts) are still true
+and still apply to whatever the permalink's own header does.
 
 ## What
 
