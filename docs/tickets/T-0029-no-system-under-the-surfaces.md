@@ -61,10 +61,19 @@ failure and leaves the app's accents alone, and T-0035 carries the re-theme
 and the two-step accents together, because separately either one makes the app
 worse.
 
-Not in scope, and deliberately: the `mailto:` Subscribe action needs an email
-provider decision; the site-level OG card needs artwork; the onboarding
-overlay's emoji are a knowing placeholder ("there's no art department") and
-were left alone.
+Not in scope, and deliberately: the site-level OG card needs artwork; the
+onboarding overlay's emoji are a knowing placeholder ("there's no art
+department") and were left alone.
+
+**Resolved, 2026-09-23.** The `mailto:` Subscribe action was flagged above
+as needing an email-provider decision. The editor decided: no migration —
+`mailto:max.zimbert@icloud.com` is the intended, permanent design, not a
+placeholder waiting on infrastructure. Checked before recording this: the
+code already sends there (`digest/index.html:4032,4043`), so nothing
+changed except the record. Left as its own note rather than folded into
+the paragraph above, since the original question and its answer are both
+worth keeping — the next reader shouldn't have to guess whether "needs a
+decision" is still true.
 
 ## Why
 
