@@ -1,10 +1,33 @@
 ---
 id: T-0015
 title: The Expertise ladder has seven rungs and speaks on three of them
-status: VERIFIED
+status: OPEN
 tags: [digest, defect]
 anchor: digest/index.html:2572
 ---
+
+## Regressed by T-0034 — not re-verified, not discarded
+
+T-0034 (2026-09-23, same branch) deleted `closeStory()` to make the story
+permalink the app's only reading surface. Every function this ticket's
+check depends on — `beatsToastCopy`, `showBeatToast`, `beatsShouldToast`,
+`beatsMarkToast` — was called exclusively from `closeStory()`, so deleting
+it deleted the whole recognition-toast system this ticket built: the
+"You read past the summary...", "You are on the beat..." messages, for
+*every* rung, not just the ones already unreachable once `depth`/`lies`
+signals lost their only source (see T-0034's own writeup for that half).
+
+Caught by running this ticket's check, not assumed — `beatsToastCopy not
+found`. First surfaced to the editor with an inaccurate summary ("upper
+rungs go dormant"); corrected once the actual check output made clear
+this was the entire toast mechanism, not a subset of it. Editor's call,
+2026-09-23: pause on deciding whether/how to rebuild this (most likely
+shape: fire the toast when a reader returns to the Digest list, comparing
+rung to a persisted last-seen value, since there's no more "close" event
+to trigger it) and ship the rest of T-0034 without it. `status: OPEN`
+rather than `VERIFIED` because the claim this ticket makes is no longer
+true, and rather than `DISCARDED` because whether to rebuild it hasn't
+been decided — the feature is paused, not judged unwanted.
 
 ## What
 

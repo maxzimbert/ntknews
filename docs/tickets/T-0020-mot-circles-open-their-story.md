@@ -35,6 +35,14 @@ which is a visual decision rather than a defect fix, and `docs/decisions.md`
 is clear that the design is considered rather than provisional. Raise it with
 the card's layout, not inside this change.
 
+**Updated by T-0034.** `openStory()` no longer exists — T-0034 deleted the
+app's in-app story view, so every story-opening control, including this
+one, navigates to the story's real permalink instead. The claim this
+ticket makes ("the circle opens the story it stands for") is still true;
+only the mechanism the check looked for changed, from a function call to
+a real link with `markStoryRead()` run first. Check updated to match,
+status untouched since nothing about the feature regressed.
+
 ## Check
 
 ```sh
@@ -46,7 +54,8 @@ if not m: sys.exit('the Moment of Then circle template was not found')
 tpl = m.group(1)
 for needle, msg in [
     ('<button',          'the circle is not a button'),
-    ('openStory(${ci})', 'the circle does not open the story it stands for'),
+    ('stories[ci].permalink', 'the circle does not navigate to the story it stands for'),
+    ('markStoryRead(${ci})', 'the circle does not mark its story read before navigating'),
     ('aria-label',       'the circle has no accessible name'),
     ('escAttr(',         'a headline is interpolated into an attribute unescaped'),
 ]:

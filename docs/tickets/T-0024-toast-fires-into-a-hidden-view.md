@@ -1,10 +1,24 @@
 ---
 id: T-0024
 title: The orientation toast is only visible if the reader happens to end on the Digest tab
-status: VERIFIED
+status: OPEN
 tags: [digest, defect]
 anchor: digest/index.html:2065
 ---
+
+## Regressed by T-0034 — not re-verified, not discarded
+
+Same cause as [[T-0015]]: T-0034 deleted `closeStory()`, and with it
+`#beatToast` and the whole toast mechanism this ticket fixed the
+visibility of. There is no longer a toast to be visible from any tab —
+the fix this ticket made (lifting `#beatToast` out of the view stack) is
+moot because the element it was fixing the placement of no longer exists.
+`status: OPEN`, not `DISCARDED` — see T-0015 for the full account and the
+editor's 2026-09-23 call to pause the rebuild decision rather than ship
+one hastily. If the toast comes back on a new trigger (most likely:
+firing on return to the Digest list, per T-0015), this ticket's own fix —
+"the container must not live inside a single tab's view" — still applies
+and should be re-verified against wherever the toast ends up.
 
 ## What
 
