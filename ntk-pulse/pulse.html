@@ -2362,6 +2362,34 @@ async function addUrlToManual(mc, url){
     publisher:'Editor import', published:new Date().toISOString() });
   saveManual(); render();
 }
+// T-0040: start a brand-new candidate straight from one pasted URL — the
+// scoop path. A one-outlet story (an NPR investigation, a single-source
+// financial scoop) never clears lineup_promote.py's 2-publisher bar and
+// usually isn't in the RSS window at all, so extractSelected() (needs an
+// existing cluster) and mergeSelected() (needs 2+ selections) both require
+// something this story doesn't have: prior existence in the stream.
+// certify() doesn't check publisher count, triage verdict, or provenance —
+// once this candidate is certified it reaches Jefferson generation exactly
+// like any organic story.
+async function newManualFromUrl(url){
+  if (!url.trim()) return;
+  const r = await fetchUrlBody(url.trim());
+  const mc = { key:'manual-'+Date.now(),
+    title: r.title || url.trim(),
+    items: [{ id:'manual-add-'+Date.now(), title:r.title||url.trim(), url:url.trim(),
+               publisher:'Editor import', published:new Date().toISOString() }],
+    manual:true, createdAt:new Date().toISOString(), beat_hint:'other', triage:null,
+    rescanResults:null, rescanAt:null, search:{open:false,kw:'',src:'',results:[],busy:false,note:''} };
+  MANUAL.push(mc);
+  saveManual(); render();
+  // Same scroll-and-flash as extractSelected() — a card sorted by score can
+  // land anywhere in the list, far from where the editor is looking.
+  requestAnimationFrame(()=>{
+    const card = document.querySelector(`.cluster[data-mc-key="${mc.key}"]`);
+    if (card){ card.scrollIntoView({behavior:'smooth', block:'center'});
+      card.style.outline='2px solid #5a2d82'; setTimeout(()=>{ card.style.outline=''; }, 2000); }
+  });
+}
 async function mcWindowSearch(mc){
   const kws = mc.search.kw.toLowerCase().split(/\s+/).filter(Boolean);
   if (!kws.length || !STREAM){ mc.search.note='Enter a keyword first.'; render(); return; }
@@ -2483,9 +2511,16 @@ function renderStream(root){
     `<span>${SELECTED.size} selected</span>`+
     `<button class="mini go" id="merge-btn">merge into one cluster</button>`+
     `<button class="mini" id="clear-sel">clear</button></div>`+
+    `<div class="addurl" style="margin-bottom:10px" title="For a single-outlet scoop that isn't corroborated or wasn't in the window at all — it becomes a candidate you can certify like any other.">`+
+    `<input class="scoop-add-in" placeholder="https:// add a one-source scoop as a candidate">`+
+    `<button class="mini go scoop-add-go">add</button></div>`+
     `<div id="stream-list"></div>`;
   document.getElementById('merge-btn')?.addEventListener('click', mergeSelected);
   document.getElementById('clear-sel')?.addEventListener('click', ()=>{ SELECTED.clear(); render(); });
+  document.querySelector('.scoop-add-go')?.addEventListener('click', ()=>{
+    const inp = document.querySelector('.scoop-add-in');
+    newManualFromUrl(inp.value); inp.value='';
+  });
   const list = document.getElementById('stream-list');
 
   for (const {kind, c} of combined){
