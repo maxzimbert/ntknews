@@ -18,6 +18,7 @@ Stdlib only. Reads/writes data/clusters.json; cache in data/triage-cache.json.
 """
 import json
 import os
+import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
@@ -27,6 +28,18 @@ DATA = ROOT / "data"
 MODEL = "claude-haiku-4-5-20251001"
 MAX_CALLS_PER_RUN = int(os.environ.get("PULSE_MAX_CALLS", "25"))
 API_URL = "https://api.anthropic.com/v1/messages"
+
+# T-0042: real article text for the headline rubric, at zero API cost.
+# news.js's `fetch-url` mode is a plain page scrape (no EventRegistry
+# credit spent) — the same one addUrlToManual()/addUrl() already use for
+# editor-triggered imports. Reused here so the ~25 clusters triage.py is
+# about to pay a real Haiku call for get more than an RSS summary to
+# write a headline from. Best-effort: paywalled/bot-blocked sites return
+# little or nothing (same limitation the function's own comment notes),
+# and triage falls back to summary-only exactly as before.
+SITE_BASE = os.environ.get("NTK_SITE_BASE", "https://ntknews.org").rstrip("/")
+FETCH_BODY_TIMEOUT = 8
+FETCH_BODY_MAX_CHARS = 2000
 
 BEATS = ["national", "international", "tech", "health", "education",
          "science", "business", "culture", "longevity", "parenting", "other"]
@@ -98,6 +111,24 @@ def fingerprint(cluster):
     return f"{cluster['key']}:{bucket}:v5"   # :v5 — cached pre-progress_coded verdicts must re-run
 
 
+def fetch_body(url):
+    """Best-effort real article text via the site's free page-scrape proxy.
+    Returns None on anything short of a real, non-trivial body — paywalls,
+    bot-blocks, and timeouts are the expected common case, not an error to
+    surface."""
+    if not url:
+        return None
+    endpoint = (f"{SITE_BASE}/.netlify/functions/news?mode=fetch-url&"
+                + urllib.parse.urlencode({"url": url}))
+    try:
+        with urllib.request.urlopen(endpoint, timeout=FETCH_BODY_TIMEOUT) as resp:
+            data = json.loads(resp.read())
+        body = (data.get("body") or "").strip()
+        return body[:FETCH_BODY_MAX_CHARS] if len(body) > 200 else None
+    except Exception:
+        return None
+
+
 def _parse_json_lenient(text):
     """Repair Haiku's occasional smart-quote / trailing-comma JSON."""
     text = text.replace("```json", "").replace("```", "").strip()
@@ -123,8 +154,14 @@ def call_claude(api_key, cluster):
         + (f"\n  {it['summary']}" if it.get("summary") else "")
         for it in cluster["items"][:8]
     )
-    prompt = (f"{RUBRIC}\n\nSTORY ({cluster['publisher_count']} publishers, "
-              f"latest item {cluster['latest_age_hours']}h ago):\n{headlines}")
+    # T-0042: real article text for the most recent item, when the free
+    # scrape succeeds — see fetch_body(). Paywalls/bot-blocks are the
+    # expected common case, not a failure worth logging per-cluster.
+    story_block = f"STORY ({cluster['publisher_count']} publishers, latest item {cluster['latest_age_hours']}h ago):\n{headlines}"
+    top_body = fetch_body(cluster["items"][0].get("url")) if cluster.get("items") else None
+    if top_body:
+        story_block += f"\n\nFULL ARTICLE TEXT (most recent item, [{cluster['items'][0]['publisher']}]):\n{top_body}"
+    prompt = f"{RUBRIC}\n\n{story_block}"
     body = {
         "model": MODEL,
         "max_tokens": 300,
