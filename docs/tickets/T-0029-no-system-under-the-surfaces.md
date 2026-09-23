@@ -20,7 +20,7 @@ chosen per component rather than drawn from a scale.
 | Distinct `border-radius` values | 10 | 2 |
 | Distinct `letter-spacing` values | 9 | 4 (.1em, 0, and two gentle text steps) |
 | `text-transform: uppercase` rules, app | 43 | 15 |
-| Brand accent colours | 5 | 5 &mdash; deferred, see T-0031 |
+| Brand accent colours | 5 | 5 &mdash; deferred, see T-0035 |
 
 Eight of the twenty-one app sizes sit between 9 px and 13 px, including
 `9.5px`, `10.5px` and `12.5px`. The replacement scale is a ~1.30 ratio:
@@ -44,7 +44,7 @@ Four defects follow from the same absence and are fixed here:
 4. **The archive was never designed.** Default blue underlined links and
    browser bullets, emitted by `ARCHIVE_TEMPLATE` in `build_digest.py`.
 
-**Deferred to T-0031, deliberately.** The editor settled on 2026-09-20 that
+**Deferred to T-0035, deliberately.** The editor settled on 2026-09-20 that
 dark grounds stay on ntknews.org only. Measured while starting it: the app is
 not dark in four places, it is dark throughout — eighteen `background:
 var(--dark)` rules plus hardcoded darks on `.today-view`, `.profile-view` and
@@ -57,7 +57,7 @@ twelve safe ones.
 It also changes what the accent fix means. On the ink ground every accent
 already passes; the contrast failures are real only where cream grounds exist
 today, which is the archive. So this ticket fixes the archive's live 1.92:1
-failure and leaves the app's accents alone, and T-0031 carries the re-theme
+failure and leaves the app's accents alone, and T-0035 carries the re-theme
 and the two-step accents together, because separately either one makes the app
 worse.
 
