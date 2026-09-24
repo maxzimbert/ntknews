@@ -570,6 +570,18 @@ async function ai(prompt, maxTok=1500){
   });
   const d = await r.json();
   if (d.error) throw new Error(d.error.message);
+  // T-0044: a safety-classifier refusal comes back as HTTP 200 with
+  // content: [] and no error field — d.error above never catches it, so
+  // every refusal fell through to the generic "content blocks: empty"
+  // message with no indication that's what happened. Confirmed 2026-09-24
+  // against a real captured response: stop_reason "refusal",
+  // stop_details.category "bio". Checked ahead of the generic empty-text
+  // throw below so the editor sees the actual cause instead of a message
+  // that looks like a network or parsing failure.
+  if (d.stop_reason === 'refusal') {
+    const cat = d.stop_details?.category;
+    throw new Error('Refused by the model' + (cat ? ` (category: ${cat})` : ''));
+  }
   // Defense in depth, kept even with thinking disabled above: still filter
   // by block type rather than trusting position, matching the pattern
   // triage.py already uses server-side for Haiku. Throws a clear,
