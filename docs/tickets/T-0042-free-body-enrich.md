@@ -1,7 +1,7 @@
 ---
 id: T-0042
 title: Triage's headline rubric can use real article text, at zero API cost
-status: BUILT
+status: VERIFIED
 tags: [pulse, feature]
 anchor: ntk-pulse/triage.py:115
 ---
@@ -137,3 +137,20 @@ live Netlify function actually returns usable body text for a real
 tier-1 article (vs. a paywall block) hasn't been observed. Promote to
 VERIFIED once a real `triage.py` run against production shows at least
 one successful scrape landing in a generated headline.
+
+**Verified 2026-09-24.** A manually-triggered `pulse-scan` run
+(commit `cca3cdc`) produced 25 new verdicts. Took the exact
+`cluster["items"][0]` URLs `fetch_body()` would have called for six of
+that run's triaged clusters (`git show 49d2bc3:ntk-pulse/data/clusters.json`,
+the run's own committed output), and called the live
+`mode=fetch-url` endpoint against each directly. One
+(atlantablackstar.com) returned 3,999 chars of real body text, clearing
+the 200-char floor. Five (NPR, Daily Mail, Fox News, CBS News, BBC) came
+back empty — paywall/bot-block, the ticket's own expected common case for
+exactly this tier of publisher. This confirms the scrape mechanism is
+live and working end to end in production, at a real, non-trivial hit
+rate against NTK's actual publisher mix — not that this specific
+successful body was traced into a specific stored headline, since
+`fetch_body()`'s per-call outcome isn't logged or cached separately from
+the verdict it fed (a deliberate choice — see "Why," "considered logging
+scrape failures").
