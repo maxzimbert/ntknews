@@ -1,7 +1,7 @@
 ---
 id: T-0044
 title: A Jefferson section generation call can fail with "content blocks: empty" and no other diagnosis
-status: BUILT
+status: VERIFIED
 tags: [pulse, defect]
 anchor: ntk-pulse/pulse.html:582
 ---
