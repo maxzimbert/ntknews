@@ -113,8 +113,15 @@ def _parse_json_lenient(text):
 
 
 def call_claude(api_key, cluster):
+    # T-0038: include the RSS summary alongside each title, when present.
+    # Without it the model is compressing other outlets' headlines into a
+    # headline instead of compressing facts into one — it has no source for
+    # a sharper verb or a real stake beyond what those headlines already
+    # spelled out.
     headlines = "\n".join(
-        f"- [{it['publisher']}] {it['title']}" for it in cluster["items"][:8]
+        f"- [{it['publisher']}] {it['title']}"
+        + (f"\n  {it['summary']}" if it.get("summary") else "")
+        for it in cluster["items"][:8]
     )
     prompt = (f"{RUBRIC}\n\nSTORY ({cluster['publisher_count']} publishers, "
               f"latest item {cluster['latest_age_hours']}h ago):\n{headlines}")

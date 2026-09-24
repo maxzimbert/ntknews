@@ -1488,8 +1488,15 @@ function renderBackstory(root){
 async function punchUpHeadline(story){
   story.busy = true; story.headlineCandidates = null; setStatus(story, 'Punching up the headline…');
   try {
+    // T-0038: pull in the enriched body when it's already been fetched —
+    // by punch-up time it usually has. Without it this was reasoning over
+    // the exact same headline-only input triage.py already tried and
+    // failed to sharpen, just asked a second time.
     const arts = activeArts(story).slice(0, 8);
-    const context = arts.map(a=>`- [${a.source}] ${a.title}`).join('\n');
+    const context = arts.map(a=>{
+      const snippet = (a.body||'').trim().slice(0, 600);
+      return `- [${a.source}] ${a.title}` + (snippet ? `\n  ${snippet}` : '');
+    }).join('\n');
     const prompt = `${VOICE_REF}\n\n`+
       `Current headline: "${story.title}"\n\nWhat the sources actually say:\n${context}\n\n`+
       `Write 3 alternative headlines for this story. Most true headlines are written at the flattest level — the administrative fact, not the stakes. Find the sharpest TRUE sentence available, not the first true sentence available.\n\n`+
