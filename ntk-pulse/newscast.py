@@ -149,7 +149,20 @@ def capture():
     if not Path(WHISPER_MODEL).exists():
         log(f"model not found at {WHISPER_MODEL} — set NEWSCAST_WHISPER_MODEL. Nothing captured.")
         return []
-    episodes = list_episodes()
+    try:
+        episodes = list_episodes()
+    except Exception as e:
+        # A real run crashed the whole script here on HTTP 402 from NPR's
+        # own site (unrelated to anything in this codebase — some upstream
+        # CDN/hosting hiccup, not a bot block, since 403/429 would be the
+        # normal shape of that). Whatever the cause, a transient failure
+        # fetching the show page shouldn't be fatal: it just means nothing
+        # new gets captured this run, same as finding no new episode ids.
+        # Previously this exception was uncaught, which — because this step
+        # has no continue-on-error — also skipped label() and thread()
+        # entirely, even though neither depends on this fetch at all.
+        log(f"list_episodes() failed: {e} — nothing captured this run.")
+        return []
     log(f"{len(episodes)} episodes on the show page")
     new = []
     for eid, url in sorted(episodes.items()):

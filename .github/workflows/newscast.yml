@@ -103,8 +103,18 @@ jobs:
           echo "found: $libdirs"
           echo "LD_LIBRARY_PATH=$libdirs:$LD_LIBRARY_PATH" >> "$GITHUB_ENV"
 
+      # continue-on-error, same reasoning as Label and Build below: a real
+      # run crashed this step outright on an uncaught exception (HTTP 402
+      # from NPR's own site, unrelated to this codebase), and because this
+      # step had no continue-on-error, that also skipped Label and Build
+      # entirely — even though neither depends on this step succeeding.
+      # The Python-level fix (catch the exception, return no new episodes)
+      # covers the specific crash found; this is the second, independent
+      # layer so a *different* uncaught failure here can't do the same
+      # thing again.
       - name: Capture new episodes
         working-directory: ntk-pulse
+        continue-on-error: true
         env:
           NEWSCAST_WHISPER_BIN: ${{ runner.temp }}/whisper.cpp/build/bin/whisper-cli
           NEWSCAST_WHISPER_MODEL: ${{ runner.temp }}/whisper.cpp/models/ggml-small.en.bin
