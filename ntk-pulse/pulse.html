@@ -3031,7 +3031,7 @@ function renderLineup(root){
       `<input class="story-title" value="${esc(s.title)}">`+
       `<button class="mini punch-up" ${s.busy?'disabled':''} title="3 sharper true headlines">punch up</button>`+
       `<button class="mini rm" title="remove">remove</button></div>`+
-      (s.syncFailed ? `<div style="background:var(--stale);color:#fff;font-size:11px;padding:5px 8px;margin-top:4px">`+
+      (s.syncFailed && !activeArts(s).length ? `<div style="background:var(--stale);color:#fff;font-size:11px;padding:5px 8px;margin-top:4px">`+
         `⚠ no source material — this story's original articles couldn't be found in the current stream, `+
         `and no confident match was found either (clusters age out of the 6h window). Draft/Enrich/Generate `+
         `won't work until real sources are attached. Use search or add-URL below.</div>` : '')+
