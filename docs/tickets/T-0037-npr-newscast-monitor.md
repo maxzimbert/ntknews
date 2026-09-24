@@ -14,40 +14,81 @@ News Now hourly newscast covered and how it changes hour over hour.
 Monitoring only — confirmed with the editor 2026-09-23 that this does not
 need to feed clusters.json, triage, or assembly.
 
-Built and measured today against a live NPR day (2026-09-22/23, 10 episodes,
-15:00–00:00):
+Built 2026-09-23, hardened and fully verified end-to-end 2026-09-24
+against two consecutive live NPR days (34 real episodes total across
+2026-09-22 through 2026-09-24) on real GitHub Actions runs, not just
+locally:
 
-- `ntk-pulse/newscast.py capture` — scrapes the show page (not the RSS feed,
-  which keeps only ~3 episodes; the page keeps ~10 hours), downloads new
-  episodes, transcribes with whisper.cpp. **Ran for real, twice, against
-  live audio** — 10/10 episodes transcribed successfully both times, second
-  run correctly skipped all 10 as already-captured (idempotency confirmed,
-  not assumed).
-- `newscast.py label` — Haiku topic extraction per episode, same call
-  pattern as `triage.py` (stdlib urllib, `x-api-key` header). **Not run
-  against the real API** — no `ANTHROPIC_API_KEY` in the environment this
-  was built in. Confirmed it degrades gracefully with no key (logs and
-  returns, same posture as `triage.py`), not confirmed against a real
-  response.
-- `newscast.py thread` — groups today's topics into hour-over-hour rows by
+- `ntk-pulse/newscast.py capture` — scrapes the show page (not the RSS
+  feed, which keeps only ~3 episodes; the page keeps ~10 hours), downloads
+  new episodes, transcribes with whisper.cpp. **Fully verified**: idempotent
+  (a second run against the same page correctly captures zero), and
+  resilient to a show-page fetch failure (a real run crashed outright on an
+  uncaught `HTTP 402` from NPR's own site before this was caught and fixed
+  — see the incident list below).
+- `newscast.py label` — Haiku topic extraction per episode. **Fully
+  verified against the real API**: 31 backlogged episodes labeled in one
+  run once account credit was in place, 5–19 topics each, zero failures.
+- `newscast.py thread` — groups a day's topics into hour-over-hour rows by
   entity overlap, entities from `cluster.entities()` so the whole pipeline
-  shares one vocabulary. **Verified against a hand-built known-answer set**
-  (9 real topics reconstructed from the actual transcripts, with known true
-  hour patterns) — output matched expected grouping and counts exactly
-  (Vance/ACA 5/10, Wells 4/10, Garces 3/10, Guterres 3/10, Curtis 3/10, Polo
-  3/10, Zelensky 2/10, Greenland 2/10, Fat Bear 2/10, three correct
-  singletons unmerged).
+  shares one vocabulary. **Verified twice**: against a hand-built
+  known-answer set before any live run existed, and again against the real
+  labeled output above (37 threads across 10 real hours, real story
+  persistence matching the pattern found by hand on 2026-09-18 — e.g. a
+  thread dropping out for hours and reappearing rather than decaying
+  smoothly).
 - `.github/workflows/newscast.yml` — 20-minute cron, same `ntk-pulse`
-  concurrency group as `pulse-scan.yml`/`pulse.yml` so it never races their
-  git push. **Never run on a GitHub Actions runner** — written from
-  whisper.cpp's own build docs, not verified, because this was built from a
-  macOS sandbox with no Linux runner access.
-- `pulse.html` itself: **not touched.** The Lineup-tab module was validated
-  as a static mockup in chat (full pulse.html chrome replica: header tabs,
-  `.lineup-bar`, an `npr-mod` card, the real `candidatesPanel()` header text
-  truncated below it for placement context) and approved by the editor, but
-  no code was written against the real file. That is the largest remaining
-  piece of this ticket.
+  concurrency group as `pulse-scan.yml`/`pulse.yml`. **Fully verified on
+  real Actions runners** — see the incident list; every class of failure
+  below was found by dispatching real runs and reading real logs, not
+  written from docs and trusted.
+- `pulse.html` itself: **still not touched.** The Lineup-tab module was
+  validated as a static mockup in chat (full pulse.html chrome replica:
+  header tabs, `.lineup-bar`, an `npr-mod` card, the real
+  `candidatesPanel()` header text truncated below it for placement context)
+  and approved by the editor, but no code has been written against the
+  real file. This is the entire remaining scope of this ticket — everything
+  else is done and proven.
+
+**Six real failures found and fixed by watching live runs, not by
+reasoning from docs** (each is its own commit on `main`, git log has the
+full detail):
+
+1. ffmpeg's output muxer needs `-f wav` explicit — it infers format from
+   the destination filename otherwise, and the temp file's `.tmp` suffix
+   broke that inference on every single episode.
+2. The dynamically-linked `whisper-cli` binary needs its `.so` files'
+   directory on `LD_LIBRARY_PATH` — caching only the binary left it unable
+   to find `libwhisper.so.1` at runtime.
+3. The default cmake build uses `-march=native`, tuned to whichever exact
+   CPU did the build. The binary is cached and reused across the 20-minute
+   schedule, and a later run landing on a *different* physical runner in
+   GitHub's fleet SIGILL'd on every episode. Fixed with `-DGGML_NATIVE=OFF`.
+4. `git push` in the Commit step had no retry — a PR merged to `main`
+   mid-run (by the person testing this, not a bot) caused `[rejected]
+   (fetch first)` and silently discarded 22 minutes of real capture work.
+   Fixed with fetch-rebase-retry, safe here specifically because this step
+   only ever touches `ntk-pulse/data/newscasts/`.
+5. `list_episodes()`'s show-page fetch had no error handling and crashed
+   the whole script on an uncaught `HTTP 402` from NPR's own site
+   (unrelated to this codebase). Because the Capture step had no
+   `continue-on-error`, that also skipped Label and Build entirely — so the
+   first real attempt to test labeling with newly-added API credit never
+   even ran. Fixed with both a try/except and step-level
+   `continue-on-error`.
+6. `thread()` could list the same hour twice for one story (a single
+   episode's transcript can produce two topic lines that both match the
+   same thread), inflating `count` past the real number of hours captured
+   — one thread showed 11 on a 10-hour day. Fixed by deduping.
+
+Two more issues surfaced that are **not code bugs**: the Anthropic account
+had insufficient credit (fixed by the editor adding credit directly, not by
+any change here), and the `*/20 * * * *` schedule was observed firing only
+once in a 3.5-hour window rather than the expected ~10 times — a documented
+GitHub Actions behavior (scheduled workflows are best-effort and can be
+throttled under load), not a misconfiguration. `capture()`'s own
+idempotent, ~10-hour-backlog-tolerant design absorbed this without losing
+any episodes; worth knowing about, not worth chasing.
 
 ## Why
 
