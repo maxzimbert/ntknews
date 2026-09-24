@@ -1,7 +1,7 @@
 ---
 id: T-0037
-title: NPR News Now hourly monitor — capture and threading built, not yet rendered in Pulse
-status: BUILT
+title: NPR News Now hourly monitor, live in Pulse's Lineup tab
+status: VERIFIED
 tags: [pulse, feature]
 anchor: ntk-pulse/newscast.py
 ---
@@ -42,13 +42,20 @@ locally:
   real Actions runners** — see the incident list; every class of failure
   below was found by dispatching real runs and reading real logs, not
   written from docs and trusted.
-- `pulse.html` itself: **still not touched.** The Lineup-tab module was
-  validated as a static mockup in chat (full pulse.html chrome replica:
-  header tabs, `.lineup-bar`, an `npr-mod` card, the real
-  `candidatesPanel()` header text truncated below it for placement context)
-  and approved by the editor, but no code has been written against the
-  real file. This is the entire remaining scope of this ticket — everything
-  else is done and proven.
+- `pulse.html` itself: **live.** `nprModule()` renders directly above
+  `candidatesPanel()` in the Lineup tab (inside `editionStrip()`, ahead of
+  the `EDITION`-gated block, so it shows even before an edition has been
+  assembled — NPR's coverage has nothing to do with Pulse's own assembly
+  state). Reads `data/newscasts/today.json` the same way the rest of Pulse
+  reads its other data files: fetched at startup, 404 treated as normal
+  (workflow hasn't run yet), never written back into `STREAM`/`EDITION`/
+  `LINEUP`. All colors are the page's existing `--ink`/`--dim`/`--rule`/
+  `--card`/`--stale` variables, so dark mode needed no separate CSS.
+  Verified against real committed data (34 episodes, 37 threads) in an
+  actual browser — a local static server rooted at the worktree, both
+  light and dark `prefers-color-scheme`, zero console errors — not by
+  reading the diff. `node --check` on the extracted inline script also
+  passed.
 
 **Six real failures found and fixed by watching live runs, not by
 reasoning from docs** (each is its own commit on `main`, git log has the

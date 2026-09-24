@@ -233,6 +233,24 @@
   .flag-box select { font-size: 11.5px; }
   .flag-box input[type=text] { flex: 1; font-size: 11.5px; }
 
+  /* T-0037 — NPR News Now monitor, above the candidates panel in the
+     Lineup tab. All colors are var(--ink)/--dim/--rule/--card, same as
+     the rest of the page, so dark mode needs no separate override here. */
+  .npr-mod { border: 1px solid var(--rule); background: var(--card); padding: 10px; margin-bottom: 8px; }
+  .npr-mod .npr-row1 { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+  .npr-mod .npr-row1 .npr-right { font-size: 10.5px; color: var(--dim); }
+  .npr-now-list { list-style: none; margin: 0 0 10px; padding: 0; }
+  .npr-now-list li { padding: 2px 0; font-size: 12px; }
+  .npr-now-list .npr-tick { color: var(--stale); font-size: 9.5px; text-transform: uppercase; letter-spacing: .3px; margin-right: 5px; }
+  .npr-grid-wrap { overflow-x: auto; }
+  .npr-grid { display: grid; align-items: center; font-size: 10px; row-gap: 3px; column-gap: 2px; }
+  .npr-grid .npr-colhead { text-align: center; color: var(--faint); padding-bottom: 4px; }
+  .npr-grid .npr-rowlabel { font-size: 11.5px; color: var(--ink); padding: 3px 8px 3px 0; line-height: 1.35; }
+  .npr-grid .npr-cell { display: flex; align-items: center; justify-content: center; align-self: stretch; }
+  .npr-dot { width: 11px; height: 11px; background: var(--stale); }
+  .npr-legend { font-size: 10.5px; color: var(--dim); margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--rule); }
+  .npr-empty { font-size: 11.5px; color: var(--dim); }
+
   @media (prefers-color-scheme: dark) {
     body { background: #141414; }
     :root { --ink: #ddd; --dim: #909090; --faint: #6a6a6a; --link: #8ab4f8; --rule: #333; --card: #1b1b1b; }
@@ -2812,10 +2830,58 @@ function candidatesPanel(){
   return `<div class="ed-head" style="margin-top:8px">${header}${rows}</div>`;
 }
 
+// T-0037. Formats a "HH:MM" hour string (already in the editor's own
+// broadcast-hour terms — NPR's own episode ids use the same digits as
+// their displayed EDT hour, confirmed against a live capture) as a
+// compact "3p"/"6a"/"12a" label for the grid's column headers.
+function nprHourLabel(hhmm){
+  const h = parseInt(hhmm.slice(0,2), 10);
+  const ap = h < 12 ? 'a' : 'p';
+  const h12 = h % 12 === 0 ? 12 : h % 12;
+  return h12 + ap;
+}
+
+// T-0037 — NPR News Now monitor. Reads data/newscasts/today.json only;
+// never touches STREAM/EDITION/LINEUP. Confirmed with the editor
+// 2026-09-23: monitoring only, no action taken off this data. Returns ''
+// whenever there's nothing to show, same posture as candidatesPanel().
+function nprModule(){
+  if (!NEWSCAST || !(NEWSCAST.threads||[]).length) return '';
+  const hours = (NEWSCAST.episodes||[]).map(e=>e.hour);
+  // Only threads that showed up more than once — a story NPR covered
+  // exactly one hour isn't an "hour-over-hour" signal, just inventory.
+  const persisting = NEWSCAST.threads.filter(t=>t.count>=2);
+  const nowList = (NEWSCAST.latest_topics||[]).slice(0,6).map(t=>
+    `<li><span class="npr-tick">most recent</span>${esc(t)}</li>`).join('');
+  const gridCols = hours.length;
+  const rows = persisting.map(th=>{
+    const cells = hours.map(h=>
+      `<div class="npr-cell">${th.hours.includes(h)?'<div class="npr-dot"></div>':''}</div>`).join('');
+    return `<div class="npr-rowlabel">${esc(th.text)}</div>${cells}`;
+  }).join('');
+  const grid = gridCols && persisting.length ? `<div class="npr-grid-wrap">
+      <div class="npr-grid" style="grid-template-columns:minmax(160px,260px) repeat(${gridCols},22px)">
+        <div></div>${hours.map(h=>`<div class="npr-colhead">${esc(nprHourLabel(h))}</div>`).join('')}
+        ${rows}
+      </div>
+    </div>
+    <div class="npr-legend">● covered that hour · monitoring only, not wired into any story or score below</div>`
+    : `<div class="npr-empty">Nothing has repeated across hours yet today.</div>`;
+  return `<div class="npr-mod">
+    <div class="npr-row1">
+      <span><span class="k">npr news now</span></span>
+      <span class="npr-right">${esc(nprHourLabel(NEWSCAST.latest_hour))} hour · ${hours.length} hours tracked · updated ${rel(NEWSCAST.generated_at)} ago</span>
+    </div>
+    <ul class="npr-now-list">${nowList}</ul>
+    ${grid}
+  </div>`;
+}
+
 function editionStrip(){
-  if (!EDITION) return '';
+  const npr = nprModule();
+  if (!EDITION) return npr;
   const fails = EDITION.lint_failures||[], unfilled = EDITION.slots_unfilled||[];
-  return `<div class="ed-head">
+  return npr + `<div class="ed-head">
     <div class="row">
       <span><span class="k">plan</span> <b>${esc(EDITION.slot_plan)}</b></span>
       <span><span class="k">day</span> ${esc(EDITION.daytype)}</span>
@@ -3558,6 +3624,8 @@ function syncEditionToLineup(){
 
 /* ─── edition view: what assembly.py decided, and why ─── */
 let EDITION = null;
+let NEWSCAST = null;   // T-0037 — data/newscasts/today.json. Monitoring only,
+                        // never written back into LINEUP/EDITION/STREAM.
 
 function renderToday(root){
   const n = LINEUP.filter(s => s.packages && s.packages.truths).length;
@@ -3712,6 +3780,13 @@ fetch('data/lineup.json?t='+Date.now())
   .then(r=>{ if(!r.ok) throw 0; return r.json(); })
   .then(d=>{ EDITION=d; syncEditionToLineup(); render(); renderStaleBanner(); })
   .catch(()=>{ EDITION=null; });
+
+// T-0037. Absent until the newscast workflow's first commit — a 404 here
+// is normal, not an error worth surfacing, same posture as lineup.json.
+fetch('data/newscasts/today.json?t='+Date.now())
+  .then(r=>{ if(!r.ok) throw 0; return r.json(); })
+  .then(d=>{ NEWSCAST=d; render(); })
+  .catch(()=>{ NEWSCAST=null; });
 
 fetchLastPublished();
 
