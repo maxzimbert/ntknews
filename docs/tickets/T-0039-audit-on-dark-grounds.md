@@ -1,7 +1,7 @@
 ---
 id: T-0039
 title: Finish the Type Bench audit on the app as it is — black grounds, in-app story view, four accents
-status: BUILT
+status: VERIFIED
 tags: [digest, chore]
 anchor: digest/index.html:2185
 ---
