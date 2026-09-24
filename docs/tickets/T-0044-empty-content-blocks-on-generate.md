@@ -1,7 +1,7 @@
 ---
 id: T-0044
 title: A Jefferson section generation call can fail with "content blocks: empty" and no other diagnosis
-status: PROPOSED
+status: BUILT
 tags: [pulse, defect]
 anchor: ntk-pulse/pulse.html:582
 ---
@@ -13,59 +13,90 @@ with 5+ real sources still failed to generate, with the section showing
 `[Generation failed: No text content in response (content blocks: empty)]`.
 The same story had generated successfully on an earlier attempt.
 
-`ai()` (`ntk-pulse/pulse.html:550`) throws this exact message when the
-Anthropic response has `d.content` as an empty array and no `d.error` —
-see the `types.join(', ') || 'empty'` fallback at line 581. The comment
-directly above it (line 560) documents one known cause of a similar
-message — thinking silently consuming the whole token budget — but that
-comment specifically describes `content blocks: thinking`, a non-empty
-array containing a thinking block. An *empty* array is a different shape:
-the API returned 200 with no error and genuinely nothing back.
+**Diagnosed same day, by the editor, from a captured raw response:** this
+is `stop_reason: "refusal"`, `stop_details.category: "bio"` — Anthropic's
+safety classifier refusing the request. A refusal comes back as HTTP 200
+with `content: []` and no `error` field, so `ai()`'s only existing check
+(`if (d.error)`, line 572) never caught it, and every refusal fell
+through to the generic empty-content message with nothing to say what
+actually happened.
 
-**Checked and ruled out:** status.claude.com showed no incident covering
-today at the time this was written — the most recent listed incident
-(elevated errors on specific models, 2026-09-22) had already resolved.
-So this isn't a known, ongoing outage.
+**Fixed:** `ai()` now checks `d.stop_reason === 'refusal'` immediately
+after the `d.error` check and throws `Refused by the model (category:
+${d.stop_details.category})` — falling back to the plain message if a
+future refusal ever arrives without a category. Checked directly against
+a mock of the editor's exact captured response (`stop_reason: 'refusal',
+stop_details: {category: 'bio'}, content: []`) and it throws the new
+message; checked separately against a refusal with no `stop_details` at
+all, and against a normal successful response, so the added check can't
+mask or break either of those.
 
-**Not yet diagnosed**, because nothing in this repo captures the raw
-Anthropic response on failure — `ai()` throws a message string, not the
-response body, and the call happens client-side in the editor's browser,
-which no log here can see. Genuinely candidate causes, none confirmed:
-a moderation-style refusal on hard-news content (war, sabotage,
-disinformation) that returns empty rather than an `error` object; a
-transient issue specific to the hours right after adding fresh API
-credits; or something else this ticket doesn't have enough information
-to name.
+**Not addressed here, and worth a separate conversation:** *why* the
+classifier fires on stories written in a "worst version of events" Lies
+section about hard news. That's an editorial/prompting question, not a
+bug — this ticket only makes the failure legible instead of opaque.
 
 ## Why
 
-Two things are true at once: the failure is real and reproducible enough
-to have hit twice in one session, and there is currently no way to learn
-more about it from this repo — every existing safeguard in `ai()` (the
-thinking-disabled fix, the block-type filter) was built by reading a
-raw response that led to a specific fix; this one doesn't have that yet.
-Guessing at a fix without the response body risks exactly the failure
-mode `docs/decisions.md` and this project's history both warn about:
-a patch that looks sufficient and isn't.
+The prior version of this ticket documented the symptom without a cause,
+specifically because nothing in the repo captured the raw response and
+the call happens client-side in the editor's browser. The editor supplied
+that response directly, which is what made a real fix possible instead of
+another guess — see the ruled-out causes (moderation vs. a
+credit-propagation glitch vs. something unnamed) the earlier draft of
+this ticket had to leave open.
 
-**Not a total loss in the meantime.** `reviseSection()`
-(`ntk-pulse/pulse.html:1975`) already exists as a per-section retry —
-called with no note, it regenerates just the failed section without
-touching the other three or losing the story's sources. The editor does
-not need to lose real work to one failed section.
-
-**What would unblock this:** the raw response body from the browser's
-network tab the next time it happens — right-click the failed
-`/v1/messages` request in DevTools → Copy Response. With that in hand,
-`ai()` can either surface the real cause (if the API sent one under a key
-this code doesn't check) or this ticket can record confirmation that it's
-a genuine, unexplained empty response worth an Anthropic support ticket.
+`reviseSection()` (`ntk-pulse/pulse.html:1975`) was already a working
+per-section retry before this fix and still is — this ticket doesn't
+change whether a refused section can be retried, only whether the editor
+can tell what happened when it does.
 
 ## Check
 
 ```sh
-manual: the editor captures a raw API response the next time this recurs,
-or confirms it hasn't recurred after N more Pulse sessions; promote to
-DECIDED once a cause is confirmed, or DISCARDED if it turns out to be
-non-reproducible.
+set -e
+grep -q "d.stop_reason === 'refusal'" ntk-pulse/pulse.html
+
+awk '/<script>/{f=1;next}/<\/script>/{f=0}f' ntk-pulse/pulse.html > /tmp/t0044-pulse-script.js
+node --check /tmp/t0044-pulse-script.js
+
+# Fixture: extract ai() as shipped and run it against three mocked
+# responses — the editor's exact captured refusal shape, a refusal with
+# no category, and a normal success — asserting each behaves correctly.
+# No live key, no network.
+node - <<'NODEEOF'
+const fs = require('fs');
+const src = fs.readFileSync('ntk-pulse/pulse.html', 'utf8');
+const start = src.indexOf('async function ai(prompt');
+if (start < 0) throw new Error('ai() not found');
+const end = src.indexOf('\n}\n', start) + 3;
+const aiSrc = src.slice(start, end);
+
+async function run(mockResponse, expect) {
+  global.fetch = async () => ({ json: async () => mockResponse });
+  global.SETTINGS = { antKey: 'fake' };
+  const fn = new Function(aiSrc + '\nreturn ai;')();
+  try {
+    const text = await fn('prompt');
+    if (expect.throws) throw new Error('expected a throw, got: ' + text);
+    if (text !== expect.text) throw new Error('expected "' + expect.text + '", got "' + text + '"');
+  } catch (e) {
+    if (!expect.throws) throw e;
+    if (!e.message.includes(expect.message)) {
+      throw new Error('expected message to include "' + expect.message + '", got "' + e.message + '"');
+    }
+  }
+}
+
+(async () => {
+  await run({ stop_reason: 'refusal', stop_details: { category: 'bio' }, content: [] },
+    { throws: true, message: 'Refused by the model (category: bio)' });
+  await run({ stop_reason: 'refusal', content: [] },
+    { throws: true, message: 'Refused by the model' });
+  await run({ stop_reason: 'end_turn', content: [{ type: 'text', text: 'a real headline' }] },
+    { throws: false, text: 'a real headline' });
+  console.log('T-0044 fixture check passed');
+})();
+NODEEOF
+rm -f /tmp/t0044-pulse-script.js
 ```
