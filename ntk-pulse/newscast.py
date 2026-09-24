@@ -359,14 +359,22 @@ def thread():
         else:
             threads.append({"text": text, "hours": [hour], "entities": set(ents)})
 
-    threads.sort(key=lambda th: -len(th["hours"]))
+    threads.sort(key=lambda th: -len(set(th["hours"])))
     out = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "date": todays[-1]["date"],
         "episodes": [{"id": e["id"], "hour": e["hour"]} for e in todays],
         "latest_hour": todays[-1]["hour"],
         "latest_topics": [t["text"] for t in todays[-1]["topics"]],
-        "threads": [{"text": th["text"], "hours": th["hours"], "count": len(th["hours"])}
+        # dict.fromkeys dedupes while keeping first-seen order — a single
+        # episode can produce two topic lines that both match the same
+        # thread (an anchor mention early, a fuller report later in the
+        # same hour), which appended that hour twice and inflated "count"
+        # past the number of hours actually captured. Caught on the first
+        # real end-to-end run, not a hypothetical: 20260924's real output
+        # had '10:00' listed twice for one thread.
+        "threads": [{"text": th["text"], "hours": list(dict.fromkeys(th["hours"])),
+                     "count": len(set(th["hours"]))}
                     for th in threads],
     }
     (DATA / "today.json").write_text(json.dumps(out, indent=2))
