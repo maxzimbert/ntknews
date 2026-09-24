@@ -1,7 +1,7 @@
 ---
 id: T-0038
 title: Both headline generators discard the body content they already have
-status: BUILT
+status: VERIFIED
 tags: [pulse, defect]
 anchor: ntk-pulse/triage.py:116
 ---
@@ -36,6 +36,13 @@ the generated headlines actually read as sharper is an editorial
 judgment only a real Pulse run can make. Promote to VERIFIED once the
 editor runs a real triage pass and a real punch-up and agrees the output
 improved; until then this is BUILT, not VERIFIED.
+
+**Verified 2026-09-24.** The `pulse-scan` run at 19:17 UTC (commit
+`bca5c48`, this fix's merge commit) produced 25 real triage verdicts —
+`[triage] 25 new verdicts this run; 25/501 clusters annotated.` The
+editor separately confirmed, from a live Pulse session against that same
+run: "headlines on first blush seem much better. i am punching up much
+less."
 
 ## Why
 
