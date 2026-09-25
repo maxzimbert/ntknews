@@ -30,6 +30,19 @@ else it argued for shipped.
 
 ## 2. Ground truth: dark stays
 
+**Known gap, unresolved — flagged 2026-09-25, not yet fixed.** Handed this
+file to a design-generation tool and it read this section as "the product
+is dark," full stop, and produced something close to a night-mode reader
+with no cream anywhere. That's this section's fault, not the tool's: it
+leads with "the app is dark" and only mentions the cream surfaces in a
+trailing clause. The real balance is closer to a dark app shell around a
+cream reading surface (the permalink body, the archive) — that's a
+meaningfully different instruction to hand a design tool than "make it
+dark." Needs a rewrite that gives the cream surfaces equal billing instead
+of an afterthought, plus probably a quick visual reference (a screenshot or
+two of the actual site) alongside the prose. Not urgent — revisit before
+the next time this file goes to a design tool, not before.
+
 **The app is dark. This is not up for casual re-litigation.** `/digest`,
 the in-app story view (`#storyView`), and their hero sections all sit on
 `var(--dark)` (`#261F23`). `ntknews.org`'s landing page has always been
