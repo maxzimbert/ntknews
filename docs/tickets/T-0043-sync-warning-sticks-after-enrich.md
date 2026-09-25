@@ -1,7 +1,7 @@
 ---
 id: T-0043
 title: The "no source material" warning stays up after a story is successfully re-sourced
-status: BUILT
+status: VERIFIED
 tags: [pulse, defect]
 anchor: ntk-pulse/pulse.html:3034
 ---
