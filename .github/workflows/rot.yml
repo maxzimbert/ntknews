@@ -22,9 +22,23 @@ on:
 permissions:
   contents: read
 
+# Per-PR/ref group so a rapid string of pushes to the same PR cancels the
+# stale run instead of queueing a new one alongside it. Not shared with any
+# other workflow — a scheduled daily run and a PR run should never contend.
+concurrency:
+  group: ntk-rot-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   rot:
+    # Stays on ubuntu-latest, unlike the fleet's other repos: no self-hosted
+    # worker1 runner has ever been registered for this repo (no reference to
+    # one anywhere in its workflows or docs) — switching runs-on without
+    # confirming a runner is online would leave every PR and the daily
+    # schedule queued forever with nothing to pick up the job. Flagged for a
+    # human decision rather than guessed at; see the before/after report.
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
 
