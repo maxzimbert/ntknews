@@ -144,6 +144,10 @@ def build_stories_block(stories):
         permalink_field = ""
         if s.get("permalink"):
             permalink_field = f',\n    permalink: "{jsEsc(s["permalink"])}"'
+        backstory_field = ""
+        if s.get("backstoryRow"):
+            backstory_field = (f',\n    backstoryRow: "{jsEsc(s["backstoryRow"])}"'
+                                f',\n    backstoryTitle: "{jsEsc(s["backstoryTitle"])}"')
         lines.append(f'  {{\n'
                       f'    key: "{jsEsc(s.get("key",""))}",\n'
                       f'    category: "{jsEsc(s.get("category",""))}",\n'
@@ -160,7 +164,7 @@ def build_stories_block(stories):
                       f'    truth: "{jsEsc(s.get("truth",""))}",\n'
                       f'    prob: "{jsEsc(s.get("prob",""))}",\n'
                       f'    poss: "{jsEsc(s.get("poss",""))}",\n'
-                      f'    lies: "{jsEsc(s.get("lies",""))}"{img_fields}{permalink_field}\n'
+                      f'    lies: "{jsEsc(s.get("lies",""))}"{img_fields}{permalink_field}{backstory_field}\n'
                       f'  }},')
     lines.append("]; // ← END OF DAILY CONTENT. Do not edit below this line.")
     return "\n".join(lines)
@@ -545,6 +549,33 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
     text-decoration: none;
   }}
 
+  /* T-0046: the one place this page points somewhere other than back to
+     /digest — same terra used for "worse"/unverified across the app,
+     reserved for exactly this kind of "there's more, elsewhere" signal. */
+  .backstory-link {{
+    display: block;
+    margin: 26px 20px 0;
+    padding: 16px 18px;
+    background: rgba(220,101,80,0.06);
+    border: 1px solid rgba(220,101,80,0.3);
+    text-decoration: none;
+  }}
+  .backstory-link-kicker {{
+    font-family: 'Overpass', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--terra);
+    margin-bottom: 6px;
+  }}
+  .backstory-link-title {{
+    font-family: 'Newsreader', serif;
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--dark);
+  }}
+
   .story-actions {{
     display: flex;
     justify-content: center;
@@ -632,6 +663,8 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
     <button type="button" class="action-btn listen-btn" id="listenBtn" onclick="toggleListen()">&#128266; Listen</button>
     <button type="button" class="action-btn share-btn" id="shareBtn" onclick="shareStory()">Share this story</button>
   </div>
+
+  {backstory_link}
 
   <a class="back-footer" href="../">Back to today's digest</a>
 
@@ -730,6 +763,12 @@ def build_story_page(story, image_rel_url, image_abs_url, canonical_url):
     twitter_image_tag = (f'<meta name="twitter:image" content="{image_abs_url}">' if has_image else "")
     hero_img = (f'<div class="story-hero-image-wrap"><img src="{image_rel_url}" alt=""></div>'
                 if has_image else "")
+    backstory_link = ""
+    if story.get("backstoryRow"):
+        backstory_link = (
+            f'<a class="backstory-link" href="/backstory/{html_esc(story["backstoryRow"])}/">'
+            f'<div class="backstory-link-kicker">The Backstory</div>'
+            f'<div class="backstory-link-title">{html_esc(story["backstoryTitle"])}</div></a>')
     return STORY_PAGE_TEMPLATE.format(
         headline=headline.replace("<", "").replace(">", ""),
         headline_esc=html_esc(headline), description_esc=html_esc(description),
@@ -743,7 +782,8 @@ def build_story_page(story, image_rel_url, image_abs_url, canonical_url):
         poss=story.get("poss", ""), lies=story.get("lies", ""),
         headline_js=jsEsc(headline), lede_js=jsEsc(story.get("lede", "")),
         truth_js=jsEsc(story.get("truth", "")), prob_js=jsEsc(story.get("prob", "")),
-        poss_js=jsEsc(story.get("poss", "")), lies_js=jsEsc(story.get("lies", "")))
+        poss_js=jsEsc(story.get("poss", "")), lies_js=jsEsc(story.get("lies", "")),
+        backstory_link=backstory_link)
 
 
 ARCHIVE_TEMPLATE = """<!DOCTYPE html>
@@ -875,6 +915,37 @@ def main():
     for story, slug in zip(stories, slugs):
         story["permalink"] = f"{base_url}/digest/{date_str}/{slug}/"
 
+    # 2b. T-0046: cross-link with Backstory, both directions. Each story
+    # that paired to a row today gets a backstoryRow/backstoryTitle field
+    # (read by build_stories_block() and build_story_page() below). The
+    # reverse direction — a Backstory permalink page's "In the digest"
+    # list linking straight to the actual paired story, not just to
+    # /digest generally — needs the real permalink just computed above,
+    # which only exists here; so this writes it back into
+    # digest/data/backstory.json's todays_pairings for
+    # build_backstory_pages.py (run right after this script in
+    # pulse-publish.yml) to pick up. Best-effort throughout: a missing or
+    # stale backstory.json must never fail the digest build.
+    backstory_path = repo_root / BACKSTORY_JSON_DEFAULT
+    backstory = load_backstory(backstory_path)
+    if backstory:
+        permalink_by_id = {s.get("key"): s["permalink"] for s in stories if s.get("key")}
+        touched = 0
+        for p in backstory.get("todays_pairings", []):
+            link = permalink_by_id.get(p.get("story_id"))
+            if link:
+                p["story_permalink"] = link
+                touched += 1
+        if touched:
+            backstory_path.write_text(json.dumps(backstory, indent=2, ensure_ascii=False) + "\n")
+            log(f"  backstory.json enriched with {touched} story permalink(s)")
+        for story in stories:
+            link = backstory_link_for(story.get("key"), backstory)
+            if link:
+                story["backstoryRow"] = link["row_id"]
+                story["backstoryTitle"] = link["row_title"]
+        log(f"  {sum(1 for s in stories if s.get('backstoryRow'))} of {len(stories)} stories cross-link to Backstory today")
+
     # 3. Regenerate the LIVE homepage in place. This is the piece that
     # makes the whole chain zero-click: no more paste, ever.
     current_html = live_index_path.read_text()
@@ -937,6 +1008,34 @@ def main():
 
 
 DATA_DEFAULT = Path("ntk-pulse/data/lineup-publish.json")
+BACKSTORY_JSON_DEFAULT = Path("digest/data/backstory.json")
+
+
+def load_backstory(path):
+    """T-0046: cross-link data, read best-effort. pulse-publish.yml runs
+    build_pairings.py before this script specifically so today's pairings
+    are fresh here — but that step is continue-on-error (a classifier
+    hiccup must never block a publish), so this must degrade to "no
+    cross-links today" rather than crash the whole digest build if the
+    file is missing, stale, or malformed."""
+    try:
+        return json.loads(path.read_text())
+    except Exception as e:
+        log(f"  no backstory cross-link data ({type(e).__name__}: {e}) — publishing without it")
+        return None
+
+
+def backstory_link_for(story_id, backstory):
+    """{row_id, row_title} for this story's pairing today, or None."""
+    if not backstory:
+        return None
+    rows_by_id = {r["id"]: r for r in backstory.get("rows", [])}
+    for p in backstory.get("todays_pairings", []):
+        if p.get("story_id") == story_id:
+            row = rows_by_id.get(p.get("row"))
+            if row:
+                return {"row_id": row["id"], "row_title": row["title"]}
+    return None
 
 if __name__ == "__main__":
     main()
