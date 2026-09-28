@@ -1,13 +1,13 @@
 {
- "assembled_at": "2026-09-27T22:52:54.678455+00:00",
+ "assembled_at": "2026-09-28T04:06:40.688655+00:00",
  "slot_plan": "A",
  "displacement": "MANUAL",
- "daytype": "weekend",
+ "daytype": "weekday",
  "target_size": [
-  4,
-  6
+  8,
+  10
  ],
- "actual_size": 6,
+ "actual_size": 10,
  "lint_failures": [
   "no item answers 'what do I do with this'"
  ],
@@ -16,21 +16,14 @@
   {
    "slot": "unavoidable",
    "slot_label": "Unavoidable",
-   "key": "79251a181c3caca0",
-   "title": "Five arrested near UK air base on suspicion of planning terrorist attack",
+   "key": "ee5d33baf2141f4f",
+   "title": "Trump offered to sell U.S. weapons to China, ambassador says",
    "beat": "national",
-   "publisher_count": 11,
+   "publisher_count": 4,
    "publishers": [
-    "BBC",
-    "Financial Times",
     "New York Times",
     "The Guardian",
-    "ABC News",
-    "Al Jazeera",
-    "CBS News",
-    "NBC News",
-    "ABC Australia",
-    "Daily Mail",
+    "CNBC",
     "Memeorandum"
    ],
    "scores": {
@@ -39,33 +32,34 @@
     "actionability": 1,
     "conversational_currency": 4
    },
-   "politician_led": false,
+   "politician_led": true,
    "ledger_class": null,
    "new_facts": [],
-   "line": "Five men arrested near RAF Fairford, a UK base used by US aircraft in Iran operations, on suspicion of planning a terrorist attack.",
-   "assembly_score": 8.61
+   "line": "Trump offered to sell U.S. weapons to China during talks with Xi, according to the American ambassador.",
+   "assembly_score": 5.52
   },
   {
    "slot": "money_me",
    "slot_label": "Money & me",
-   "key": "a1687af3abf70723",
-   "title": "Foreign capital floods US stock market on AI boom",
+   "key": "dbb5c97a0b7200d7",
+   "title": "Northern Star rejects $27 billion takeover bid",
    "beat": "business",
-   "publisher_count": 1,
+   "publisher_count": 2,
    "publishers": [
-    "Semafor"
+    "Financial Times",
+    "CNBC"
    ],
    "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
+    "emotional_load": 1,
+    "explainability": 5,
     "actionability": 1,
     "conversational_currency": 2
    },
    "politician_led": false,
    "ledger_class": null,
    "new_facts": [],
-   "line": "Foreign investors are buying US stocks at record levels, driven largely by AI sector enthusiasm and confidence in American markets.",
-   "assembly_score": 3.42
+   "line": "Northern Star Resources rejected a $27 billion takeover offer, keeping itself independent.",
+   "assembly_score": 4.46
   },
   {
    "slot": "body_mind",
@@ -87,69 +81,20 @@
    "ledger_class": null,
    "new_facts": [],
    "line": "Researchers identified two previously unknown sea spider species in the Salish Sea between Washington and British Columbia.",
-   "assembly_score": 3.75
+   "assembly_score": -2.23
   },
   {
    "slot": "work_machines",
    "slot_label": "Work & machines",
-   "key": "7b22fb2454c60b16",
-   "title": "Gates warns unregulated AI could kill billions without global oversight",
-   "beat": "tech",
-   "publisher_count": 4,
-   "publishers": [
-    "Al Jazeera",
-    "Fox News",
-    "Daily Mail",
-    "Memeorandum"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Bill Gates warns that unregulated AI poses catastrophic risks and calls for international cooperation on governance.",
-   "assembly_score": 5.45
-  },
-  {
-   "slot": "group_chat",
-   "slot_label": "The group chat",
-   "key": "3e81d810555138dd",
-   "title": "MLB pursues Grand Teton game amid federal permitting delays",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox News",
-    "The Verge"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "MLB exploring a regular-season game at Grand Teton National Park; federal approval process is delaying the plan.",
-   "assembly_score": 4.23
-  },
-  {
-   "slot": "close",
-   "slot_label": "The close",
    "key": "e56643e1651ade11",
    "title": "Anthropic CEO dines with Trump at White House",
    "beat": "tech",
-   "publisher_count": 5,
+   "publisher_count": 4,
    "publishers": [
+    "Financial Times",
     "New York Times",
-    "CNBC",
-    "TechCrunch",
-    "ANSA",
-    "Memeorandum"
+    "Yahoo News",
+    "Al Jazeera"
    ],
    "scores": {
     "emotional_load": 2,
@@ -161,12 +106,169 @@
    "ledger_class": null,
    "new_facts": [],
    "line": "Anthropic's CEO meets Trump at the White House as the AI company seeks political access.",
-   "assembly_score": 5.29
+   "assembly_score": 5.52
+  },
+  {
+   "slot": "group_chat",
+   "slot_label": "The group chat",
+   "key": "c62f0accfe8838bd",
+   "title": "BLACKPINK's Lisa wins MTV VMA Best Pop as first Asian solo artist",
+   "beat": "culture",
+   "publisher_count": 1,
+   "publishers": [
+    "Yonhap News"
+   ],
+   "scores": {
+    "emotional_load": 1,
+    "explainability": 5,
+    "actionability": 1,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "BLACKPINK's Lisa won Best Pop at MTV VMAs, first Asian solo artist to claim the award.",
+   "assembly_score": 3.47
+  },
+  {
+   "slot": "elsewhere",
+   "slot_label": "Elsewhere, but here",
+   "key": "ff3383054c54f362",
+   "title": "Trump rejects Iran truce proposal as Hormuz tensions escalate",
+   "beat": "international",
+   "publisher_count": 5,
+   "publishers": [
+    "Al Jazeera",
+    "CNBC",
+    "France 24",
+    "Semafor",
+    "Memeorandum"
+   ],
+   "scores": {
+    "emotional_load": 4,
+    "explainability": 3,
+    "actionability": 1,
+    "conversational_currency": 4
+   },
+   "politician_led": true,
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "Trump rejected Iran's proposal to temporarily reopen the Hormuz Strait; oil prices rose and both sides signal military readiness.",
+   "assembly_score": 5.08
+  },
+  {
+   "slot": "close",
+   "slot_label": "The close",
+   "key": "fdf05c698b252c3f",
+   "title": "SpaceX readies Starship for first orbital test flight",
+   "beat": "tech",
+   "publisher_count": 1,
+   "publishers": [
+    "CNBC"
+   ],
+   "scores": {
+    "emotional_load": 1,
+    "explainability": 4,
+    "actionability": 1,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "SpaceX is attempting its first orbital flight of Starship, a fully reusable rocket system designed for deep space missions.",
+   "assembly_score": 4.13
+  },
+  {
+   "slot": "unavoidable",
+   "slot_label": "Unavoidable",
+   "key": "5734901024a357cf",
+   "title": "Tech giants establish own AI safety standards as breaches multiply",
+   "beat": "tech",
+   "publisher_count": 1,
+   "publishers": [
+    "Semafor"
+   ],
+   "scores": {
+    "emotional_load": 2,
+    "explainability": 4,
+    "actionability": 1,
+    "conversational_currency": 4
+   },
+   "politician_led": false,
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "Major AI companies are creating their own safety standards as governments lag in regulation and security breaches mount.",
+   "assembly_score": -1.26
+  },
+  {
+   "slot": "flex",
+   "slot_label": "Flex",
+   "key": "ff0395768cc00357",
+   "title": "White House airs taxpayer-funded ad mirroring Trump campaign spot",
+   "beat": "national",
+   "publisher_count": 2,
+   "publishers": [
+    "NBC News",
+    "Memeorandum"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 5,
+    "actionability": 1,
+    "conversational_currency": 3
+   },
+   "politician_led": true,
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "White House airs taxpayer-funded political ad nearly identical to Trump's 2024 campaign spot, expanding use of government funds for campaign-style messaging.",
+   "assembly_score": 4.62
+  },
+  {
+   "slot": "flex",
+   "slot_label": "Flex",
+   "key": "a4309eab22b81a94",
+   "title": "Citrix patches critical NetScaler flaws under active attack",
+   "beat": "tech",
+   "publisher_count": 1,
+   "publishers": [
+    "Techmeme"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 4,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "Citrix released patches for two critical NetScaler vulnerabilities that attackers are actively exploiting in the wild.",
+   "assembly_score": 4.33
   }
  ],
  "excluded_sample": [
   {
-   "title": "The Best Dressed Stars of the Week Weren\u2019t Afraid to Get Theatrical",
+   "title": "MTV VMAs 2026 red carpet: Taylor Swift, Charli xcx, Troye Sivan and more \u2013 in pictures",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Angels reach historic 100-loss low with season-closing defeat against Mariners as new era looms",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "(EDITORIAL from Korea Herald on Sept. 28)",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Dear Abby for September 28, 2026",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Weekly Meetings",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "traci list roller derby game_016.JPG",
    "why": "triage verdict NO"
   },
   {
@@ -174,15 +276,15 @@
    "why": "triage verdict NO"
   },
   {
-   "title": "For Restless Sleepers Spring 2027 Ready-to-Wear",
+   "title": "The Mean Girls Presidency (Molly Jong-Fast/New York Times)",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Madonna returns to VMAs stage after 23 years with star-studded performance",
    "why": "triage verdict NO"
   },
   {
    "title": "Why Are Democratic Donors Putting Money Into a Long-Shot Mississippi Senate Race? (Maggie Severns/Wall Street Journal)",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Dozens killed in two mass shootings in South Africa",
    "why": "triage verdict NO"
   },
   {
@@ -195,50 +297,6 @@
   },
   {
    "title": "Top NFL Draft prospect receives indefinite suspension after outburst in loss to Alabama",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Israel v Republic of Ireland, Norway v Portugal, Germany v Greece: Nations League \u2013 live",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Bidets save you money and reduce waste \u2014 we tested the best options out there",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "50+ products to make your life easier and our planet cleaner",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Mother's Day is around the corner. Here are 50+ thoughtful gifts she'll love",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "A head-to-toe guide of how men should dress this spring, and where they should shop",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "42 of the most useful travel products you can buy on Amazon",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "The 7 best high-yield savings accounts of April 2023",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Composting is an easy way to reduce food waste. Here's how to do it",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "We stopped using aluminum foil for cooking and you should too. Here's what to use instead",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "The beloved Dyson Supersonic hair dryer is at its lowest price ever",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Everything you need to know about Way Day 2023, Wayfair's biggest sale of the year",
    "why": "triage verdict NO"
   }
  ]
