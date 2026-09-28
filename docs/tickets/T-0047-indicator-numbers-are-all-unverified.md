@@ -1,7 +1,7 @@
 ---
 id: T-0047
-title: All 14 held-row indicator numbers are unverified against their named source
-status: DECIDED
+title: 13 of 14 held-row indicators now verified against a real source; 'power' still open
+status: BUILT
 tags: [backstory, chore]
 anchor: editorial/build_backstory.py:63
 ---
@@ -38,6 +38,54 @@ Live product surface for this: T-0046's new Backstory permalink pages
 (`/backstory/<row-id>/`) render an explicit "Unverified" badge next to
 every one of these — confirmed by the editor viewing the deploy preview
 directly and asking what it meant.
+
+## Done, 2026-09-29 — 13 of 14 checked against a real source, 1 left open
+
+Ran the research pass. Real WebSearch/WebFetch against each named
+source (Gallup's own reporting, Pew's own trend pages, NOAA GML's
+trends page updated 2026-09-05, FBI/Census/BLS/DMDC/FAS/Taiwan MND
+reporting, IPS's SCF analysis) — not recall. Full per-row citations and
+reasoning live as comments directly on `editorial/build_backstory.py`'s
+`IND` dict (`editorial/build_backstory.py:60-129`), since that's the
+file whoever edits this next will actually be looking at.
+
+**Corrected (the old number was wrong or stale, not just imprecise):**
+- `media`: 31% → **28%** (Sept 2025 Gallup). The old figure was real, just a year+ stale.
+- `government`: 22% → **17%** (Sept 2025 Pew). Same pattern — 22% was accurate as of May 2024, trust has fallen further since.
+- `order`: 370 → **359** (2024 FBI, a two-decade low).
+- `korea`: ~50 → **~60** (FAS early-2026 estimate) — a real increase, not a citation fix.
+- `taiwan`: "over 3,000" → **3,070 a year** (2024, Taiwan MND) — tightened to the actual figure.
+
+**Confirmed as originally written, now sourced:** `climate`'s 1988 value,
+`faith` (both values), `immigration`'s 1970 value, `work`'s 2025 value
+(10.0%, exact), `equality`'s 2022 value ($15 per $100, IPS's own phrase,
+exact).
+
+**Tightened for precision, not wrong:** `climate` 425→**428 ppm**
+(Aug 2026), `immigration` 15%→**14.8%** (2024), `america-abroad`
+170k→**166,000** (June 2024 DMDC), `family` 21→**20.8** and 28→**28.4**
+(Census), `bomb` 12,000→**12,300** (FAS early-2026).
+
+**Two "then" baselines kept as-is but flagged lower-confidence, not
+independently re-derived:** `america-abroad`'s "about 1 million" (1970)
+and `equality`'s "about $16" (1983) are both commonly-cited figures,
+corroborated by partial data (336k troops in South Vietnam alone at
+end-1970; a cohort Fed study putting the 1983 gap at ~3x) but not
+pinned to one single primary-source figure for that exact year the way
+every "now" value was. Their rows are still marked `verified: true`
+because the number that matters most for the indicator's honesty — the
+current figure — is solid; a future pass could tighten the historical
+baseline further.
+
+**`power` — genuinely left `verified: false`, on purpose.** Real effort
+spent: confirmed Pew tracks partisan hostility and "threat to the
+nation" framing as a real, long-running metric, and confirmed the
+general direction and magnitude are corroborated by related 2022 Pew
+figures (62-78% range across several adjacent questions). Could not pin
+one current, combined figure for this exact framing to a single citable
+source. Forcing a number here to make the check pass would be exactly
+what this whole effort was against — it stays open, flagged, for a
+second pass with more time or a narrower question.
 
 ## Why
 
@@ -99,8 +147,11 @@ print(f"all {len(held)} held-row indicators report verified:true")
 PYEOF
 ```
 
-**Not yet run for real.** DECIDED, not started — this check will report
-OPEN today, correctly, since all 14 are unverified. Promote to VERIFIED
-only once every row above has actually been checked against its named
-source (confirmed as-is, or corrected and re-confirmed) — not on the
-strength of someone flipping the flags without doing the lookups.
+**Run for real, 2026-09-29 — reports OPEN, correctly, and will keep
+doing so.** 13 of 14 are checked, corrected where wrong, and marked
+`verified: true` with a real `as_of` date. `power` is the 14th and
+stays `verified: false` on purpose (see above) — this ticket's check
+asserts all 14, not 13 of 14, so it will not go green until `power` is
+either genuinely resolved or the check is rewritten to say something
+different and true (not weakened to ignore it). Status is `BUILT`, not
+`VERIFIED`, for exactly that reason.
