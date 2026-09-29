@@ -13,7 +13,7 @@ piece is done.
 
 ## The decisions
 
-**Part 2 — per-story pairings — is the plan.** Confirmed 2026-09-15.
+**Part 2 — per-story pairings — is the design, and it is live.** Confirmed 2026-09-15.
 
 **The six live Part 1 rows are replaced, not migrated.** Confirmed 2026-09-16.
 Their ids don't match Part 2's (`bs-gaza` vs `gaza`, `bs-iran` vs
