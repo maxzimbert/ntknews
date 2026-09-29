@@ -143,6 +143,17 @@ to stop and scope it properly.
 **Permalink pages must be static.** No discoverability tradeoff is acceptable.
 A crawler never executes JS, so content has to sit in raw HTML.
 
+**Static permalinks are shells, not a second product.** Decided 2026-09-29.
+A static page carries the full text and its meta tags so crawlers, link
+previews and agents can read it, and hands the reader off to the app. Reader
+behaviour (navigation, tabs, the beats ladder, Backstory pairing, anything
+that feeds expertise) lives in `digest/index.html` only. Static pages are
+warranted per surface, not by default: dated digest stories are permanent
+public record and get them; Backstory is a relationship between tab and
+stories, so a crawlable page per row is a later question, not a first
+build. If a static page grows its own features, that is the v2 duplication
+again.
+
 **Images are decoded to real files at build time.** `og:image` cannot be a
 base64 data URI — virtually no crawler resolves one, and meta tag attributes
 aren't built to hold hundreds of KB. Everything *else* on the landing page

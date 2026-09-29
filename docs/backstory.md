@@ -1,10 +1,13 @@
 # Backstory
 
-**Two incompatible designs currently share this name.** One is live and empty.
-The other is the plan and is not wired to anything. Untangling that is the
-first job here.
+Backstory is the tab that pairs each digest story with the long argument it
+belongs to. The design is Part 2 (per-story pairings against a fixed 21-row
+library) and it is **live**. The Part 1 design (six hand-kept conflict rows)
+was replaced 2026-09-16.
 
-Verified 2026-09-15.
+Status verified against the repo 2026-09-29. Open work lives in
+`docs/tickets/`; the tickets named below are the source of truth for whether a
+piece is done.
 
 ---
 
@@ -125,66 +128,46 @@ sub-genre under Order.
 | `editorial/prompts/pairing-lines.md` | Register 5B. Sonnet, not Haiku — highest-frequency generated text in the product, ~3,000 lines/year. One line per *story*, not per row. |
 | `editorial/prompts/register4-lifetimes.md` | Register 4. Opus for first drafts. 600–900 words per row, structured on the containment thesis. Editor-triggered, never scheduled. |
 
-### Built but misrouted
+### Built and live
 
-**`editorial/build_backstory.py:27`**
+- **The library.** `digest/data/backstory.json` holds the 21-row library
+  (`rows[]`, each with `indicator`, `objects`, `instances`, `narrative`) and
+  `todays_pairings[]`, one entry per digest story. `build_backstory.py` and
+  `build_pairings.py` both write this path (T-0007).
+- **The renderer.** `digest/index.html` (`fetchBackstory`, from line ~3125)
+  renders `todays_pairings` merged onto the row, with a detail view that has
+  the indicator, object case and episode list.
+- **Publish integration.** `pulse-publish.yml` runs `build_pairings.py` after
+  `build_digest.py`, `continue-on-error` by design (Slice 4 below, T-0013).
+- **The Pulse tagging control.** A per-story row select in the Lineup tab that
+  overrides the classifier before publish, with a same-row collision chip
+  (T-0010, `ntk-pulse/pulse.html`, `bsrTagControl`).
+- **Pulse's old Backstory tab is a dead end on purpose.**
+  `BACKSTORY_PUBLISH_DISABLED = true` (`pulse.html`). Its localStorage array
+  would overwrite the library; do not re-enable it.
 
-```python
-OUT = os.path.join(ROOT, 'digest', 'v2', 'data', 'backstory.json')
-```
+### Not done
 
-It writes into the **inert** `digest/v2/` tree. The app fetches
-`/digest/data/backstory.json` (`digest/index.html:2684`). The generator and the
-reader point at different files.
-
-**`digest/v2/js/backstory.js`** — the Part 2 render module. Its header comment
-carries wiring instructions that were never followed. No HTML file loads it.
-
-### Not built at all
-
-- The **Pulse-side tagging control** — assigns 0–1 rows per story, pre-filled
-  by the classifier, editable. This is what would populate `instances[]` and
-  give `todays_pairings` a human-reviewed source instead of raw classifier
-  output. **Without it, `todays_pairings` has no path to exist in production.**
-- A UI for reviewing or swapping the daily classifier + pairing output before
-  publish.
-- Folding the Backstory publish into the digest's publish action. They were
-  agreed to publish together, on one action. The digest publish code has not
-  been touched to call `build_backstory.py` or trigger the prompts.
+- **Narratives.** 0 of 21 rows have one (T-0003, DECIDED). The detail view
+  works without them; Slice 6 is the work.
+- **`instances[]` is empty on every row**, so "Earlier episodes" never
+  renders. Nothing writes it yet.
+- **Classifier pre-fill in Pulse.** The editor sees only explicit tags, not
+  what the classifier will choose (T-0014, PROPOSED). Card collisions between
+  two classifier picks are still invisible before publish (T-0011).
+- **Seven Still Counting rows have no sub-genres**, so the classifier can never
+  reach them (T-0012).
+- **`digest/v2/js/backstory.js`** is the superseded Part 2 render module. No
+  HTML loads it; the logic was ported inline. Inert, do not delete.
 
 ---
 
-## What's actually deployed (Part 1)
+## Part 1 (retired)
 
-`digest/data/backstory.json` holds **six rows** in the Part 1 schema:
-
-```
-id, title, start_date, created_at, close_condition, close_condition_met,
-black_swan_override, milestone, narrative, updated, last_rewritten_at,
-photo, source_material
-```
-
-No `objects`, no `instances`, no `indicator`, no `todays_pairings`.
-
-| Row | Start | Narrative |
-|---|---|---|
-| US–Israel–Iran | 2026-02-28 | empty |
-| Venezuela, post-Maduro | 2026-01-03 | empty |
-| Israel–Hezbollah, Lebanon | 2023-10-08 | empty |
-| Israel–Gaza | 2023-10-07 | empty |
-| Sudan civil war | 2023-04-15 | empty |
-| Ukraine–Russia | 2022-02-24 | empty |
-
-**All six narratives are empty strings.** The tab renders six rows with day
-counters; tapping any of them opens a modal that says "No narrative yet."
-
-`openBsrDetail()` at `digest/index.html:2727` populates kicker, number, title,
-milestone, narrative, and photo. There is no code path for the indicator, the
-object case, or the episode list.
-
-### Part 1 decisions worth keeping
-
-Some of Part 1 survives into Part 2 and shouldn't be lost:
+The six-row Part 1 file (US–Israel–Iran, Venezuela, Israel–Hezbollah,
+Israel–Gaza, Sudan, Ukraine–Russia; all narratives empty) was replaced by the
+21-row library on 2026-09-16 and nothing was migrated. Some of its decisions
+survived:
 
 - **The ceasefire principle.** A ceasefire, truce, or "de-escalation" is a
   milestone, never a close condition, unless a row's close condition says
@@ -206,16 +189,13 @@ Six slices, each sized to one pull request, each with a condition for being
 done. Ordered so the tab never regresses in front of readers — the standing-row
 list stays until there is something better to replace it with.
 
-**The ordering constraint worth understanding:** fixing
-`build_backstory.py`'s output path *on its own* makes the product worse. It
-swaps six blank rows for twenty-one blank rows, with Lifetimes durations
-("72 yrs") sitting next to conflict durations ("Day 1,071") and no narrative
-behind either. That's why it is bundled into Slice 1 with a real empty state
-rather than shipped as a standalone one-line fix.
+*The ordering constraint that shaped Slice 1 (fixing the output path alone would have swapped six blank rows for twenty-one) is history; Slice 1 is done.*
 
 ---
 
 ### Slice 1 — Library and schema
+
+**Done.** Library landed, Pulse publish disabled (T-0007).
 
 Point `build_backstory.py` at `digest/data/backstory.json`, run it, and land a
 correct 21-row library: `todays_pairings: []`, four auto-picked objects per row
@@ -247,6 +227,8 @@ tab shows the empty state; deep-linking to `/backstory` and the back gesture
 still work; and no path in Pulse can overwrite the library.
 
 ### Slice 2 — Renderer
+
+**Done.** Ported inline into `digest/index.html`, not loaded from `v2/js/`.
 
 Bring in the Part 2 render module. `digest/v2/js/backstory.js` already exists
 with wiring instructions in its header, but it lives in the inert tree and
@@ -309,6 +291,8 @@ that step's log first;** it fails quietly by design.
 
 ### Slice 5 — Pulse tagging control
 
+**Done (T-0010).** Pre-fill from the classifier is still open (T-0014).
+
 A control in Pulse's certification flow that pre-fills the classifier's row
 assignment and lets the editor override it before publish. This is what turns
 `todays_pairings` from raw model output into reviewed editorial, and what
@@ -317,6 +301,8 @@ populates `instances[]`.
 **Done when:** a row assignment can be swapped in Pulse and survives a publish.
 
 ### Slice 6 — Register 4 narratives
+
+**Not started (T-0003).**
 
 Editor-triggered rewrite for an individual row using `register4-lifetimes.md`
 (Opus for first drafts). Not part of the daily publish — a few times a year per
