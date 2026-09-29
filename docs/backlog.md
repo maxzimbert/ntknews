@@ -53,6 +53,36 @@ Note the naming collision flagged in `docs/backstory.md`: an older per-story
 
 ## Bigger pieces
 
+**A staging/dev environment for Pulse, since Netlify previews don't cover
+it.** Raised directly by the editor 2026-09-29: no way to test a Pulse
+change (T-0040's scoop import, T-0041's voice clause) without merging to
+`main`. Confirmed correct, and worse than it looks:
+
+For the reading app (`digest/index.html`, the Backstory permalink pages),
+Netlify's per-PR deploy preview already works fine — used it directly this
+session to show the editor real, unmerged work. Pulse is a different animal.
+It's a pure client-side tool that keeps everything — lineup, API keys, the
+subject vocabulary, Backstory drafts — in `localStorage`, which is
+**origin-scoped**. The editor's real working Pulse is
+`https://maxzimbert.github.io/ntknews/ntk-pulse/pulse.html` (GitHub Pages,
+confirmed with him 2026-09-18 — the `ntknews.org` copy is dormant, do not
+develop against it). A Netlify PR-preview URL is a different origin
+entirely, so even a working preview of `pulse.html` there would open with
+empty `localStorage` — no lineup, no key, nothing real to test against.
+That's why Pulse PRs have been shipping on code review plus post-merge
+verification on Pages, which is exactly the gap the editor is naming.
+
+**The path worth checking first, not yet verified:** `localStorage` is
+scoped by origin, not by full path. A PR preview published under the *same*
+`maxzimbert.github.io` origin — at a different sub-path, e.g. via a GitHub
+Pages PR-preview action (no such workflow exists in this repo today,
+confirmed) — would actually share the editor's real `localStorage` with his
+main Pulse, unlike a Netlify preview. Worth confirming this holds in
+practice (some browsers/extensions partition storage further than plain
+origin) before treating it as the answer. If it does hold, that's a much
+cheaper fix than standing up a parallel data store or environment flag
+inside Pulse itself.
+
 **Expertise / beats.** A working no-account localStorage implementation is live
 (`BEATS_KEY`, progression toasts). What's missing is legibility — a reader
 can't tell what it is or how it works. It surfaces throughout the experience,
