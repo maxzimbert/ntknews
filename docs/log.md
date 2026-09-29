@@ -12,6 +12,16 @@ stranger.
 
 ---
 
+## 2026-09-29 — the same rot, in the doc that was supposed to be fixed
+
+`docs/backstory.md` still described the `build_backstory.py` output-path bug as
+open, twelve days after the 2026-09-17 entry below recorded it fixed. A session
+read the doc, repeated the claim to the editor, and proposed a ticket for a
+defect that no longer existed. Reading `build_backstory.py:31` first caught it.
+**Grep the line before you cite a doc that says a line is wrong.**
+
+---
+
 ## 2026-09-17 — the state doc rotted in two days
 
 `docs/state.md` was written 2026-09-15 and explicitly verified by reading the
