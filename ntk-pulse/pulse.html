@@ -2137,7 +2137,21 @@ const GH_PUBLISH_PATH = 'ntk-pulse/data/lineup-publish.json';
 // trigger for pulse-publish.yml (a path-scoped push trigger), so this one
 // call is the entire "zero clicks after this" chain: no separate
 // workflow-start call needed.
+// Publish is only allowed from the real Pulse. localStorage (including the
+// GitHub token) is shared by every page under maxzimbert.github.io, so a
+// staging copy on that origin holds the real token and would otherwise ship
+// unmerged work to production. Allow-list, not deny-list: an unknown host
+// cannot publish. ntknews.org is the dormant copy of the same code and stays
+// allowed so this guard changes nothing about it.
+function pulseMayPublish(loc){
+  if (loc.hostname === 'ntknews.org' || loc.hostname === 'www.ntknews.org') return true;
+  return loc.hostname === 'maxzimbert.github.io' && loc.pathname.indexOf('/ntknews/') === 0;
+}
 async function publishToDigest(){
+  if (!pulseMayPublish(location)){
+    publishStatus = 'Publish is disabled on this copy of Pulse (not the live Pulse).';
+    renderPublishStatus(); alert(publishStatus); return;
+  }
   if (!SETTINGS.ghToken){ alert('Add a GitHub token in ⚙ first — scoped to contents:write on this repo only.'); return; }
   const all = buildStoryPayload();
   if (!all.length){ alert('Nothing generated yet — nothing to publish.'); return; }
