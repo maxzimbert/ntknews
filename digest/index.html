@@ -565,9 +565,15 @@
 
   /* ── Backstory pages inside the app (designs 4C and 4D) ──
      Same markup classes as the static pages, prefixed bp- here. */
-  #bsrPage { position: fixed; inset: 0; z-index: 160; overflow-y: auto; -webkit-overflow-scrolling: touch; background: var(--cream); color: var(--dark); display: none; }
+  #bsrPage { position: fixed; inset: 0; z-index: 160; display: none; background: rgba(38,31,35,.6); }
   #bsrPage.active { display: block; }
-  .bp-wrap { max-width: 640px; margin: 0 auto; }
+  /* The page is a sheet laid over the app, not a replacement for it: the
+     Backstory list and tab bar stay put underneath, dimmed. */
+  .bp-wrap { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); width: 100%; max-width: 640px;
+    max-height: calc(100% - 44px); overflow-y: auto; -webkit-overflow-scrolling: touch;
+    background: var(--cream); color: var(--dark); border-top: 1px solid var(--dark); animation: bpUp .22s ease-out; }
+  @keyframes bpUp { from { transform: translate(-50%, 28px); opacity: .5; } to { transform: translate(-50%, 0); opacity: 1; } }
+  @media (min-width: 700px) { .bp-wrap { bottom: auto; top: 40px; max-height: calc(100% - 80px); border: 1px solid var(--dark); } }
   .bp-bar { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 14px 20px; border-bottom: 1px solid var(--dark); font-family: 'Overpass', sans-serif; }
   .bp-bar button { background: none; border: 0; padding: 0; cursor: pointer; font: 600 16px 'Overpass', sans-serif; color: var(--dark); white-space: nowrap; }
   .bp-bar span { font-size: 10px; font-weight: 600; letter-spacing: .06em; color: rgba(38,31,35,.6); }
@@ -3277,8 +3283,8 @@ function showBsrPage(rid, oi, opts){
   if (oi != null && !(r.objects && r.objects[oi])) oi = null;
   el.innerHTML = '<div class="bp-wrap">' + (oi != null ? bpObjectHtml(r, oi) : bpRowHtml(r)) + '</div>';
   el.classList.add('active');
-  el.scrollTop = 0;
-  document.getElementById('bottomNav').classList.add('hidden');
+  var wrap = el.firstChild; if (wrap) wrap.scrollTop = 0;
+  document.body.style.overflow = 'hidden';
   BSR_PAGE_OPEN = true;
   BSR_PAGE_ROW = rid;
   if (!(opts && opts.fromHistory) && window.history && history.pushState && /^https?:$/.test(location.protocol)) {
@@ -3286,9 +3292,11 @@ function showBsrPage(rid, oi, opts){
   }
   track('backstory_page', { row: rid, object: oi == null ? null : oi + 1 });
 }
+document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && BSR_PAGE_OPEN) bsrPageBack(); });
+
 function hideBsrPage(){
   document.getElementById('bsrPage').classList.remove('active');
-  if (!document.getElementById('storyView').classList.contains('active')) document.getElementById('bottomNav').classList.remove('hidden');
+  document.body.style.overflow = '';
   BSR_PAGE_OPEN = false;
 }
 function bsrPageBack(){
@@ -3296,6 +3304,7 @@ function bsrPageBack(){
   if (st && st.ntk === 'bsrpage') history.back(); else hideBsrPage();
 }
 document.addEventListener('click', function(e){
+  if (e.target && e.target.id === 'bsrPage') return bsrPageBack();
   var t = e.target.closest && e.target.closest('#bsrPage [data-bp]');
   if (!t) return;
   e.preventDefault();
