@@ -46,6 +46,7 @@ CREAM = "#EAD9C5"
 BLUE_DEEP = "#045E96"
 TERRA = "#DC6550"
 AMBER_DEEP = "#7A5308"
+AMBER = "#F2AE2E"
 
 # Same asset as ntk-pulse/build_digest.py's LOGO_DATA_URI (and the live
 # app's own dark header, digest/index.html:2100) — already coloured
@@ -105,14 +106,25 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
   header {{ background:{ink}; padding:13px 20px; }}
   header a {{ display:block; }}
   header img {{ height:18px; width:auto; display:block; }}
+  .bar {{ display:flex; justify-content:space-between; align-items:baseline; gap:12px;
+    padding:14px 20px; border-bottom:1px solid {ink}; font-family:'Overpass',sans-serif; }}
+  .bar a {{ white-space:nowrap; font-size:16px; font-weight:600; color:{ink}; text-decoration:none; }}
+  .bar span {{ font-size:10px; font-weight:600; letter-spacing:.06em; color:rgba(38,31,35,.6); }}
   .hd {{ padding:28px 20px 22px; border-bottom:1px solid {ink}; }}
   .hd h1 {{ font-family:'Newsreader',serif; font-weight:600; font-size:clamp(26px,7vw,34px);
     line-height:1.08; letter-spacing:-.01em; margin:0 0 14px; }}
   .hd .milestone {{ font-family:'Newsreader',serif; font-style:italic; font-size:20px;
     line-height:1.35; color:rgba(38,31,35,.85); }}
   section {{ padding:22px 20px; border-bottom:1px solid rgba(38,31,35,.22); }}
+  .lab {{ font-family:'Overpass',sans-serif; font-size:13px; font-weight:600; margin-bottom:12px; }}
   .kicker {{ font-family:'Overpass',sans-serif; font-size:10px; font-weight:600;
     letter-spacing:.1em; text-transform:uppercase; color:{terra}; margin-bottom:10px; }}
+  .ind-head {{ display:flex; justify-content:space-between; align-items:baseline; gap:12px; }}
+  .dir {{ font-family:'Overpass',sans-serif; font-size:10px; font-weight:700; letter-spacing:.1em;
+    text-transform:uppercase; color:{terra}; white-space:nowrap; }}
+  .ind svg {{ display:block; width:100%; height:auto; margin:10px 0 4px; }}
+  .src {{ font-family:'Overpass',sans-serif; font-size:10px; font-weight:600; letter-spacing:.06em;
+    color:rgba(38,31,35,.6); }}
   .elapsed {{ text-align:center; padding:16px 0 6px; }}
   .elapsed .num {{ font-family:'Overpass',sans-serif; font-size:42px; font-weight:700; }}
   .elapsed .unit {{ font-size:18px; font-weight:600; }}
@@ -121,13 +133,18 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
   .unverified {{ display:inline-block; border:1px solid {terra}; color:{terra};
     font-family:'Overpass',sans-serif; font-size:10px; font-weight:700; letter-spacing:.08em;
     text-transform:uppercase; padding:3px 6px; border-radius:3px; margin-top:12px; }}
+  .spine {{ display:flex; gap:12px; align-items:flex-start; }}
+  .spine .dot {{ width:8px; height:8px; border-radius:999px; background:{ink}; margin-top:7px; flex:none; }}
+  .spine .t {{ font-size:16px; line-height:1.4; }}
   .obj {{ border-top:1px solid rgba(38,31,35,.2); padding:13px 0; }}
-  .obj:first-child {{ border-top:none; }}
-  .obj .t {{ font-family:'Newsreader',serif; font-style:italic; font-size:15px; margin-bottom:4px; }}
+  .obj.first {{ border-top:none; padding-top:0; }}
+  .obj .t {{ font-family:'Newsreader',serif; font-style:italic; font-size:16px; margin-bottom:4px; }}
   .obj .by {{ font-family:'Overpass',sans-serif; font-size:13px; color:rgba(38,31,35,.65); }}
-  .ep {{ display:block; border-top:1px solid rgba(38,31,35,.18); padding:13px 0; text-decoration:none; color:{ink}; }}
-  .ep:first-child {{ border-top:none; }}
-  .ep .d {{ font-family:'Overpass',sans-serif; font-size:13px; color:rgba(38,31,35,.6); }}
+  .digest {{ background:{ink}; color:{cream}; border-bottom:none; }}
+  .digest .kicker {{ color:{amber}; }}
+  .ep {{ display:block; border-top:1px solid rgba(234,217,197,.25); padding:13px 0; text-decoration:none; color:{cream}; }}
+  .ep.first {{ border-top:none; padding-top:0; }}
+  .ep .d {{ font-family:'Overpass',sans-serif; font-size:13px; color:rgba(234,217,197,.65); }}
   .ep .h {{ font-family:'Newsreader',serif; font-size:16px; margin-top:5px; }}
   .back {{ display:block; text-align:center; padding:26px 20px 40px; font-family:'Overpass',sans-serif;
     font-size:13px; font-weight:600; text-decoration:none; }}
@@ -137,6 +154,7 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
 </head>
 <body>
 <header><a href="/backstory"><img src="{logo}" alt="NTK"></a></header>
+<div class="bar"><a href="/backstory">&larr; Backstory</a><span>ntknews.org/backstory/{row_id}</span></div>
 <div class="hd">
   <h1>{title_esc}</h1>
   <div class="milestone">{milestone_esc}</div>
@@ -148,18 +166,49 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
 """
 
 
+def _pct(v):
+    """'72%' -> 72.0; None if the value is not a plain number."""
+    try:
+        return float(str(v).strip().rstrip("%").replace(",", ""))
+    except ValueError:
+        return None
+
+
+def indicator_svg(ind):
+    """Two-point line, then -> now, as the 4C design draws it. Falls back to
+    text when a value is not a percentage (a count, a dollar figure): a
+    chart with an invented scale would mislead."""
+    a, b = _pct(ind["then_value"]), _pct(ind["now_value"])
+    if a is None or b is None or "%" not in str(ind["then_value"]) or "%" not in str(ind["now_value"]):
+        return (f'<div style="font-family:Overpass,sans-serif;font-size:15px;margin:8px 0">'
+                f'{html_esc(ind["then_value"])} ({html_esc(ind["then_year"])}) &rarr; '
+                f'<b>{html_esc(ind["now_value"])}</b> (now)</div>')
+    W, H, L, R, T, B = 340, 150, 8, 332, 18, 118
+    y = lambda v: B - (B - T) * max(0.0, min(100.0, v)) / 100.0
+    end_col = TERRA if ind.get("direction") == "worse" else INK
+    return f"""<svg viewBox="0 0 {W} {H}" role="img" aria-label="{html_esc(ind['label'])}: {html_esc(ind['then_value'])} in {html_esc(ind['then_year'])}, {html_esc(ind['now_value'])} now">
+  <line x1="{L}" y1="{y(50):.0f}" x2="{R}" y2="{y(50):.0f}" stroke="rgba(38,31,35,.2)"/>
+  <line x1="{L}" y1="{B}" x2="{R}" y2="{B}" stroke="{INK}"/>
+  <line x1="{L}" y1="{y(a):.1f}" x2="{R}" y2="{y(b):.1f}" stroke="{INK}" stroke-width="2"/>
+  <circle cx="{L}" cy="{y(a):.1f}" r="4" fill="{INK}"/>
+  <circle cx="{R}" cy="{y(b):.1f}" r="5" fill="{end_col}"/>
+  <text x="{L+10}" y="{y(a)-8:.0f}" font-family="Overpass,sans-serif" font-size="16" font-weight="700" fill="{INK}">{html_esc(ind['then_value'])}</text>
+  <text x="{R}" y="{y(b)+22:.0f}" text-anchor="end" font-family="Overpass,sans-serif" font-size="16" font-weight="700" fill="{end_col}">{html_esc(ind['now_value'])}</text>
+  <text x="{L}" y="{B+18}" font-family="Overpass,sans-serif" font-size="10" fill="rgba(38,31,35,.65)">{html_esc(ind['then_year'])}</text>
+  <text x="{R}" y="{B+18}" text-anchor="end" font-family="Overpass,sans-serif" font-size="10" fill="rgba(38,31,35,.65)">now</text>
+</svg>"""
+
+
 def render_held(row):
     parts = []
 
     ind = row.get("indicator")
     if ind:
         verified_badge = "" if ind.get("verified") else '<div class="unverified">Unverified</div>'
-        parts.append(f"""<section>
-  <div class="kicker">{html_esc(ind['label'])} · {html_esc(ind['direction']).title()}</div>
-  <div style="font-family:'Overpass',sans-serif;font-size:15px">
-    {html_esc(ind['then_value'])} ({html_esc(ind['then_year'])}) &rarr; <b>{html_esc(ind['now_value'])}</b> (now)
-  </div>
-  <div style="font-family:'Overpass',sans-serif;font-size:11px;color:rgba(38,31,35,.6);margin-top:8px">{html_esc(ind['source'])}</div>
+        parts.append(f"""<section class="ind">
+  <div class="ind-head"><div class="lab">{html_esc(ind['label'])}</div><div class="dir">{html_esc(ind['direction'])}</div></div>
+  {indicator_svg(ind)}
+  <div class="src">{html_esc(ind['source'])} &middot; {html_esc(ind.get('as_of') or 'most recent data')}</div>
   {verified_badge}
 </section>""")
 
@@ -170,14 +219,15 @@ def render_held(row):
         line = row["start_line"]
         line = line[:1].upper() + line[1:]
         parts.append(f"""<section>
-  <div class="kicker">Begins</div>
-  <div style="font-family:'Newsreader',serif;font-size:15px;line-height:1.5">{html_esc(line)}.</div>
+  <div class="lab">Beginnings</div>
+  <div class="spine"><span class="dot"></span><div class="t">{html_esc(line)}.</div></div>
 </section>""")
 
     objs = row.get("objects") or []
     if objs:
         rows = []
-        for o in objs:
+        for i, o in enumerate(objs):
+            cls = "obj first" if i == 0 else "obj"
             # Picks up a real `quote` field automatically once T-0045
             # ships a generation step — falls back to a plain citation
             # today since that field doesn't exist in the schema yet.
@@ -186,12 +236,12 @@ def render_held(row):
             # render a dangling " · 1919" with nothing before it.
             by = o.get("author") or row["title"]
             if o.get("quote"):
-                rows.append(f'<div class="obj"><div class="t">{html_esc(o["quote"])}</div>'
+                rows.append(f'<div class="{cls}"><div class="t">{html_esc(o["quote"])}</div>'
                             f'<div class="by">{html_esc(by)} · {html_esc(o["year"])}</div></div>')
             else:
-                rows.append(f'<div class="obj"><div class="t">{html_esc(o["title"])}</div>'
+                rows.append(f'<div class="{cls}"><div class="t">{html_esc(o["title"])}</div>'
                             f'<div class="by">{html_esc(by)} · {html_esc(o["year"])}</div></div>')
-        parts.append(f'<section><div class="kicker">The case</div>{"".join(rows)}</section>')
+        parts.append(f'<section><div class="lab">The case</div>{"".join(rows)}</section>')
 
     return "\n".join(parts)
 
@@ -209,12 +259,12 @@ def render_episodes(row_id, pairings):
     if not today_pairs:
         return ""
     items = []
-    for p in today_pairs:
+    for i, p in enumerate(today_pairs):
         link = p.get("story_permalink")
         href = link if link else "/today"
-        items.append(f'<a class="ep" href="{html_esc(href)}"><div class="d">Today</div>'
+        items.append(f'<a class="ep{" first" if i == 0 else ""}" href="{html_esc(href)}"><div class="d">Today</div>'
                       f'<div class="h">&ldquo;{html_esc(p.get("line") or p.get("headline",""))}&rdquo;</div></a>')
-    return f'<section><div class="kicker">In the digest</div>{"".join(items)}</section>'
+    return f'<section class="digest"><div class="kicker">In the digest</div>{"".join(items)}</section>'
 
 
 def build_page(row, pairings, today):
@@ -222,10 +272,11 @@ def build_page(row, pairings, today):
     episodes = render_episodes(row["id"], pairings)
     body = body_sections + episodes + '<div class="end">— 30 —</div>'
     return PAGE_TEMPLATE.format(
+        row_id=html_esc(row["id"]),
         title_esc=html_esc(row["title"]),
         milestone_esc=html_esc(row["milestone"]),
         canonical_url=f"{BASE_URL}/backstory/{row['id']}/",
-        cream=CREAM, ink=INK, blue_deep=BLUE_DEEP, terra=TERRA, amber_deep=AMBER_DEEP, logo=LOGO_DATA_URI,
+        cream=CREAM, ink=INK, blue_deep=BLUE_DEEP, terra=TERRA, amber_deep=AMBER_DEEP, amber=AMBER, logo=LOGO_DATA_URI,
         body=body,
     )
 
