@@ -14,6 +14,7 @@
 # Removing one: rebuild staging from main and merge the ones you still want.
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
+ROOT=$(pwd)
 
 STAGING_REPO=maxzimbert/ntknews-staging
 
@@ -22,14 +23,15 @@ git show-ref --verify -q refs/remotes/origin/staging \
   || { echo "no origin/staging branch - create it from main first"; exit 1; }
 
 WT=$(mktemp -d); OUT=$(mktemp -d)
-cleanup(){ git worktree remove --force "$WT" 2>/dev/null || true
+cleanup(){ cd "$ROOT"
+           git worktree remove --force "$WT" 2>/dev/null || true
            rm -rf "$WT" "$OUT"
            git worktree prune
            git branch -D stage-tmp -q 2>/dev/null || true; }
 trap cleanup EXIT
 
 git worktree add -q -B stage-tmp "$WT" origin/staging
-if ! git -C "$WT" merge --no-edit -q origin/main; then
+if ! git -C "$WT" merge -q -m "Merge origin/main into staging" origin/main; then
   echo "merging main into staging conflicts. Resolve on the staging branch, push it, rerun."
   exit 1
 fi
