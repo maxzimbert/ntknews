@@ -33,28 +33,42 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Build digest
-        working-directory: ntk-pulse
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: python build_digest.py data/lineup-publish.json
-
-      # Backstory publishes with the digest, on one action, as always intended.
-      # continue-on-error deliberately: the digest is the product and Backstory
-      # is additive, so a classifier hiccup or a spent API budget must never
-      # block a publish. A failure here leaves the previous pairings in place
-      # and the digest ships regardless — check the step's log when the
-      # Backstory tab looks like yesterday.
+      # T-0046: must run BEFORE "Build digest" now, not after. build_digest.py
+      # cross-links each story to its paired Backstory row and writes the
+      # real per-story permalink back into digest/data/backstory.json's
+      # todays_pairings — it can only do either if today's pairings already
+      # exist when it runs. continue-on-error deliberately: the digest is
+      # the product and Backstory is additive, so a classifier hiccup or a
+      # spent API budget must never block a publish. A failure here leaves
+      # the previous pairings in place — build_digest.py's cross-link then
+      # finds no match for any of today's stories (yesterday's story keys
+      # never collide with today's) and just publishes without Backstory
+      # links, rather than attaching a wrong one.
       - name: Build Backstory pairings
         continue-on-error: true
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python editorial/build_pairings.py
 
+      - name: Build digest
+        working-directory: ntk-pulse
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python build_digest.py data/lineup-publish.json
+
+      # Depends on the digest step above having just enriched
+      # digest/data/backstory.json with real story permalinks — must run
+      # after it, not before. continue-on-error for the same reason as the
+      # pairings step: Backstory's permalink pages are additive, never a
+      # reason to block the actual digest from shipping.
+      - name: Build Backstory permalink pages
+        continue-on-error: true
+        run: python editorial/build_backstory_pages.py
+
       - name: Commit
         run: |
           git config user.name "ntk-publish-bot"
           git config user.email "publish@ntknews.org"
-          git add digest/ index.html ntk-pulse/data/last-published.json
+          git add digest/ index.html backstory/ ntk-pulse/data/last-published.json
           git diff --cached --quiet || git commit -m "publish: $(date -u +%Y-%m-%dT%H:%MZ)"
           git push
