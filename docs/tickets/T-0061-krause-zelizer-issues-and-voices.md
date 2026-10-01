@@ -14,11 +14,13 @@ This ticket is the identification step: name the issues each scholar raises
 and the voices they and their critics bring in, and map each to an NTK row,
 before anything is added to the matrix.
 
-**Unverified, and the first thing to settle:** I have not confirmed who
-"Krause" is. Barbie Zelizer is a well-known journalism scholar, but I will not
-guess which Krause is meant, which works are in scope, or who the critics are.
-The editor names the works; the first task is a short list of (author, work,
-year, row) for the editor to approve.
+**Corrected 2026-10-01:** the editor says the scholars are Kevin Krause and
+Julian Zelizer (not Barbie Zelizer, as this ticket first guessed). The
+editor attached `american_politics_fault_lines.md` to explain what is wanted
+and why; the file could not be read from this session (macOS blocked it), so
+this ticket does not yet record its contents. The first task is to read it
+and turn it into a short list of (author, work, year, row) for the editor to
+approve, with their critics named as critics.
 
 State of the matrix today (measured 2026-10-01): 90 objects are already
 tagged "Extension 1981-2026", mostly government documents (Public Papers of

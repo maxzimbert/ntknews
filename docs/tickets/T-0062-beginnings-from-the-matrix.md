@@ -33,9 +33,16 @@ but the field's meaning must be changed deliberately, not by accident.
 The editor's view: past stories do not need their own "episodes" concept, and
 the lineage is what answers "where does this start." Ruled out: building
 T-0050 as written, which tags stories by hand in Pulse into `instances[]`.
-Open for the editor: does the Pulse tagging control (T-0010) still matter, or
-is the classifier's pairing enough to build the prior-stories list? Depends
-on T-0060 and T-0061 for content; the object-page route is
+Pulse tagging (T-0010) was last tested months ago by the editor's account
+(2026-10-01, "I haven't tested pulse tagging in 10 or 62"), so treat it as
+unverified until someone runs it.
+
+**Past stories are test cases, by the editor's decision.** Anything stored for
+"In the digest" before launch is throwaway. So every persisted past pairing
+carries a `test: true` tag (set while the product is pre-launch), and a
+purge step removes every tagged entry before a real launch. Both are part of
+this ticket, not later work, so test data cannot ship as history. Depends on
+T-0060 and T-0061 for content; the object-page route is
 `/backstory/<row>/objects/<n>/` (T-0059).
 
 ## Check

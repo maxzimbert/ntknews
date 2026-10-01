@@ -25,10 +25,19 @@ Luther King, plus the figures of the 1940s civil rights movement. Each added
 object needs the matrix's existing columns (year, title, author, source, NTK
 Row, sub-genre) and a citation that resolves to a primary text.
 
-**To confirm with the editor before anyone searches:** the editor wrote "Julia
-Dent Grant's litigation". I could not match that to a case I can name with
-confidence, and it may be a different person or a different Grant. Not
-searched, not in the check below.
+**Julia Dent Grant (resolved 2026-10-01).** The editor supplied the National
+Park Service article "Julia Dent Grant and the Fight for Women's Property
+Rights in Missouri" (nps.gov, fetched the same day). Per that page: a dispute
+over the Hardscrabble cabin and land in Missouri after tenant Joseph W. White
+stayed past his lease and argued Julia could not sign it because she was a
+woman. Suit filed June 1865, St. Louis Circuit Court trial January 1867,
+Missouri Supreme Court decision 30 March 1868, unanimously for Julia Grant,
+holding that Missouri women, married or single, could sign contracts in their
+own name or as agents of their husbands, and could own property. The case
+name is not on the page I read; get it from the court record before adding the
+object. Candidate row: Equality or Family (editor's call). Not in the check
+below, because the matrix already holds Ulysses Grant material and a name
+match would pass for the wrong reason.
 
 Rows most likely to take additions (unverified, from reading the row
 contests, not from the data): Equality, Work, Family, Order, The Media,
