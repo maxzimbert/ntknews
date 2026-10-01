@@ -226,6 +226,7 @@ def main():
             'start_date': r['start_date'], 'start_line': r['start_line'],
             'milestone': r['contest'], 'close_condition': None,
             'roots': r['roots'], 'subgenres': r['subgenres'],
+            'stakes': r.get('stakes'),
             'updated': False, 'narrative': [],
             'indicator': ({'label': ind[0], 'then_value': ind[1], 'then_year': ind[2],
                            'now_value': ind[3], 'direction': ind[4], 'source': ind[5],
