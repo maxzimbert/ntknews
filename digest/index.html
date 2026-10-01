@@ -3156,9 +3156,13 @@ function renderBackstoryTab(){
     const href = escAttr(bsrHref(r));
     const sIdx = findStoryIndexByKey(r.story_id);
     // 4A: the TODAY sentence is the pairing line, tappable into the story.
-    const today = r.pairline
+    // build_pairings.py tolerates a story with no pairing line (the log says
+    // "N with no line"), so fall back to the story's own headline rather than
+    // dropping the row's TODAY block.
+    const todayText = r.pairline || r.headline;
+    const today = todayText
       ? '<div class="bt-label bt-today">Today</div>'
-        + '<a class="bt-line bt-story" data-story="' + sIdx + '" href="#">“' + escBsr(r.pairline) + '”</a>'
+        + '<a class="bt-line bt-story" data-story="' + sIdx + '" href="#">“' + escBsr(todayText) + '”</a>'
       : '';
     // Held rows lead with the earned beginning; fire rows have none by
     // design (T-0049), so the elapsed time is the whole statement.
