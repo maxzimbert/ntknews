@@ -3060,12 +3060,19 @@ function storyPath(idx) {
   catch (e) { return null; }
 }
 
+// A Backstory row's static permalink path, or null without an id.
+function bsrPath(idx) {
+  var r = BSR_DATA && BSR_DATA[idx];
+  return r && r.id ? '/backstory/' + r.id + '/' : null;
+}
+
 function navOverlay(kind, idx) {
   if (!ROUTING_ON) return;
   var state = { ntk: 'overlay', kind: kind, idx: idx, tab: activeTab };
-  // Only stories have a shareable URL. A Backstory pairing has no permalink
-  // yet, so its overlay pushes state without touching the address bar.
-  var url = kind === 'story' ? storyPath(idx) : null;
+  // Stories and Backstory rows both have a shareable URL, and both are real
+  // static pages (build_digest.py / build_backstory_pages.py), so a reload
+  // or a cold visit is served by Netlify, not the app.
+  var url = kind === 'story' ? storyPath(idx) : kind === 'bsr' ? bsrPath(idx) : null;
   if (history.state && history.state.ntk === 'overlay') {
     if (url) history.replaceState(state, '', url); else history.replaceState(state, '');
   } else {
