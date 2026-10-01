@@ -33,6 +33,14 @@
 ============================================================ -->
 <script>
   function ntkRoute(pathname) {
+    // Staged copy (GitHub Pages subpath, no Netlify rewrites): the app is one
+    // file, so tabs are carried in the hash, e.g. .../digest/index.html#backstory
+    if (pathname.indexOf('/ntknews-staging/') === 0) {
+      var h = (location.hash || '').slice(1);
+      var okTab = { today: 1, digest: 1, backstory: 1, profile: 1 };
+      return /\/digest\/(index\.html)?$/.test(pathname)
+        ? { tab: okTab[h] ? h : 'today', known: true } : { tab: 'today', known: false };
+    }
     var p = pathname.replace(/\/index\.html$/, '').replace(/\/+$/, '') || '/';
     if (/^\/digest\/\d{4}-\d{2}-\d{2}$/.test(p)) return { tab: 'digest', known: true, edition: p + '/' };
     if (p === '/today')     return { tab: 'today',     known: true };
@@ -2971,6 +2979,7 @@ var TAB_PATHS = { today: '/today', digest: '/digest', backstory: '/backstory', p
 var navBackPending = false;
 
 function tabPath(tab) {
+  if (location.pathname.indexOf('/ntknews-staging/') === 0) return '/ntknews-staging/digest/index.html#' + tab;
   // A dated edition (/digest/YYYY-MM-DD/) is a fixed Digest snapshot —
   // Today is always the live, current-day tab, never edition-scoped.
   if (ROUTE.edition && tab === 'digest') return ROUTE.edition;
@@ -3294,7 +3303,13 @@ document.addEventListener('click', function(e){
   var kind = t.dataset.bp;
   if (kind === 'back') return bsrPageBack();
   if (kind === 'obj') return showBsrPage(cur.rid, parseInt(t.dataset.oi, 10));
-  if (kind === 'row') return showBsrPage(cur.rid, null);
+  // Up from an object is Back, not a new entry. Pushing here is what made
+  // "← Backstory" on the row land on the object we had just left.
+  if (kind === 'row') {
+    var hs = history.state;
+    if (hs && hs.ntk === 'bsrpage' && hs.oi != null) return history.back();
+    return showBsrPage(cur.rid, null);
+  }
   if (kind === 'story') {
     var idx = findStoryIndexByKey(t.dataset.key);
     if (idx < 0) return;
