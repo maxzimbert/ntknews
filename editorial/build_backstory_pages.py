@@ -116,6 +116,13 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
   .hd .milestone {{ font-family:'Newsreader',serif; font-style:italic; font-size:20px;
     line-height:1.35; color:rgba(38,31,35,.85); }}
   section {{ padding:22px 20px; border-bottom:1px solid rgba(38,31,35,.22); }}
+  .hd .by {{ font-family:'Overpass',sans-serif; font-size:13px; color:rgba(38,31,35,.65); }}
+  .hd.objhd h1 {{ font-size:26px; }}
+  .stakes {{ font-size:16px; line-height:1.55; }}
+  .obj a {{ display:block; text-decoration:none; color:inherit; }}
+  .more {{ font-family:'Overpass',sans-serif; font-size:13px; font-weight:600; color:{blue_deep}; margin-top:6px; }}
+  .ctx {{ font-size:16px; line-height:1.55; margin-bottom:14px; }}
+  .pull {{ font-style:italic; font-size:20px; line-height:1.4; border-top:1px solid {ink}; border-bottom:1px solid {ink}; padding:16px 0; margin:6px 0 18px; }}
   .lab {{ font-family:'Overpass',sans-serif; font-size:13px; font-weight:600; margin-bottom:12px; }}
   .kicker {{ font-family:'Overpass',sans-serif; font-size:10px; font-weight:600;
     letter-spacing:.1em; text-transform:uppercase; color:{terra}; margin-bottom:10px; }}
@@ -166,6 +173,11 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
 """
 
 
+def object_href(row, i):
+    """4D route, per T-0048: /backstory/<row-id>/objects/<n>/ (n is 1-based)."""
+    return f"/backstory/{row['id']}/objects/{i + 1}/"
+
+
 def _pct(v):
     """'72%' -> 72.0; None if the value is not a plain number."""
     try:
@@ -202,6 +214,9 @@ def indicator_svg(ind):
 def render_held(row):
     parts = []
 
+    if row.get("stakes"):
+        parts.append(f'<section><p class="stakes">{html_esc(row["stakes"])}</p></section>')
+
     ind = row.get("indicator")
     if ind:
         verified_badge = "" if ind.get("verified") else '<div class="unverified">Unverified</div>'
@@ -228,19 +243,15 @@ def render_held(row):
         rows = []
         for i, o in enumerate(objs):
             cls = "obj first" if i == 0 else "obj"
-            # Picks up a real `quote` field automatically once T-0045
-            # ships a generation step — falls back to a plain citation
-            # today since that field doesn't exist in the schema yet.
             # Author is blank on some real objects (e.g. Abrams v U.S. has
             # no author field) — fall back to the row title rather than
             # render a dangling " · 1919" with nothing before it.
             by = o.get("author") or row["title"]
-            if o.get("quote"):
-                rows.append(f'<div class="{cls}"><div class="t">{html_esc(o["quote"])}</div>'
-                            f'<div class="by">{html_esc(by)} · {html_esc(o["year"])}</div></div>')
-            else:
-                rows.append(f'<div class="{cls}"><div class="t">{html_esc(o["title"])}</div>'
-                            f'<div class="by">{html_esc(by)} · {html_esc(o["year"])}</div></div>')
+            head = o["quote"] if o.get("quote") else o["title"]
+            rows.append(f'<div class="{cls}"><a href="{object_href(row, i)}">'
+                        f'<div class="t">{html_esc(head)}</div>'
+                        f'<div class="by">{html_esc(by)} · {html_esc(o["year"])}</div>'
+                        f'<div class="more">About this</div></a></div>')
         parts.append(f'<section><div class="lab">The case</div>{"".join(rows)}</section>')
 
     return "\n".join(parts)
@@ -265,6 +276,49 @@ def render_episodes(row_id, pairings):
         items.append(f'<a class="ep{" first" if i == 0 else ""}" href="{html_esc(href)}"><div class="d">Today</div>'
                       f'<div class="h">&ldquo;{html_esc(p.get("line") or p.get("headline",""))}&rdquo;</div></a>')
     return f'<section class="digest"><div class="kicker">In the digest</div>{"".join(items)}</section>'
+
+
+def build_object_page(row, i):
+    """4D. Renders only the fields that exist: today an object carries
+    {title, author, year, source}; context, quote, where_now and source_url
+    appear automatically once T-0045 / T-0048 add them."""
+    o = row["objects"][i]
+    by = o.get("author") or row["title"]
+    parts = [f'<div class="kicker">{html_esc(o["year"])}</div>',
+             f'<h1>{html_esc(o["title"])}</h1>',
+             f'<div class="by" style="margin-top:8px">{html_esc(by)}</div>']
+    head = f'<div class="hd objhd">{"".join(parts)}</div>'
+    body = []
+    ctx = o.get("context") or []
+    if ctx:
+        body.append("".join(f'<p class="ctx">{html_esc(c)}</p>' for c in ctx))
+    if o.get("quote"):
+        body.append(f'<p class="pull">{html_esc(o["quote"])}</p>')
+    if o.get("where_now"):
+        body.append(f'<div class="lab">Where it stands now</div><p class="ctx">{html_esc(o["where_now"])}</p>')
+    body.append(f'<div class="src">Source &middot; {html_esc(o["source"])}</div>')
+    if o.get("source_url"):
+        body.append(f'<p style="margin-top:14px"><a href="{html_esc(o["source_url"])}">Read the original</a></p>')
+    sect = f'<section>{"".join(body)}</section>'
+    panel = (f'<section class="digest"><a class="ep first" href="/backstory/{row["id"]}/">'
+             f'<div class="kicker">In the case for {html_esc(row["title"])}</div>'
+             f'<div class="h">{html_esc(row["milestone"])}</div></a></section>')
+    page = PAGE_TEMPLATE.format(
+        row_id=f'{html_esc(row["id"])}/objects/{i + 1}',
+        title_esc=html_esc(o["title"]),
+        milestone_esc=html_esc(row["title"]),
+        canonical_url=f"{BASE_URL}/backstory/{row['id']}/objects/{i + 1}/",
+        cream=CREAM, ink=INK, blue_deep=BLUE_DEEP, terra=TERRA, amber_deep=AMBER_DEEP, amber=AMBER, logo=LOGO_DATA_URI,
+        body=sect + panel + '<div class="end">— 30 —</div>',
+    )
+    # The shared template's header block is the row's (title + milestone);
+    # swap it for the object's own, and point the top bar back at the row.
+    start = page.index('<div class="hd">')
+    end = page.index("</div>\n</div>", start) + len("</div>\n</div>")
+    page = page[:start] + head + page[end:]
+    page = page.replace('<a href="/backstory">&larr; Backstory</a>',
+                        f'<a href="/backstory/{row["id"]}/">&larr; {html_esc(row["title"])}</a>', 1)
+    return page
 
 
 def build_page(row, pairings, today):
@@ -297,6 +351,11 @@ def main():
         row_dir.mkdir(parents=True, exist_ok=True)
         (row_dir / "index.html").write_text(page)
         written += 1
+        for i in range(len(row.get("objects") or [])):
+            od = row_dir / "objects" / str(i + 1)
+            od.mkdir(parents=True, exist_ok=True)
+            (od / "index.html").write_text(build_object_page(row, i))
+            written += 1
 
     log(f"{written} permalink pages written to {OUT_DIR}/")
 
