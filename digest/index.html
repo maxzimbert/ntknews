@@ -534,47 +534,24 @@
     color: var(--white);
   }
 
-  /* ── Backstory tab ── */
-  .bsr-list { padding: 4px 16px 24px; display: grid; gap: 10px; }
-  .bsr-header { padding: 20px 16px 4px; }
-  .bsr-row {
-    background: var(--white); border: 1.5px solid var(--dark); border-radius: 3px;
-    padding: 20px 22px 16px; text-align: center; position: relative; cursor: pointer;
-  }
-  .bsr-row .bsr-updated {
-    position: absolute; top: 14px; right: 16px; display: flex; align-items: center; gap: 5px;
-    font-family: 'Overpass', sans-serif; font-size: 10px; letter-spacing: 0; color: var(--teal);
-  }
-  .bsr-row .bsr-updated .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); }
-  .bsr-row .bsr-num {
-    font-family: 'Overpass', sans-serif; font-weight: 700; font-size: 34px;
-    line-height: 1; color: var(--dark); margin-bottom: 14px;
-  }
-  /* T-0049: held rows' leading element — the earned anchor, not a bare
-     duration. .bsr-num above still carries fire rows' elapsed time. */
-  .bsr-row .bsr-begins {
-    font-family: 'Overpass', sans-serif; font-weight: 600; font-size: 10px;
-    letter-spacing: .1em; text-transform: uppercase; color: var(--terra);
-    margin-bottom: 6px;
-  }
-  .bsr-row .bsr-begins-line {
-    font-family: 'Newsreader', serif; font-style: italic; font-size: 13px;
-    line-height: 1.4; color: var(--dark); opacity: 0.85; max-width: 420px;
-    margin: 0 auto 14px;
-  }
-  .bsr-row h3 { font-family: 'Overpass', sans-serif; font-weight: 600; font-size: 16px; margin-bottom: 5px; color: var(--dark); }
-  .bsr-row .bsr-milestone {
-    font-family: 'Newsreader', serif; font-style: italic; font-size: 13px;
-    color: var(--dark); opacity: 0.65; max-width: 420px; margin: 0 auto;
-  }
+  /* ── Backstory tab — the thread (design 4A) ──
+     Cream ground, hairline-ruled rows, no card chrome. Type stays on the
+     locked scale (10 13 16 20 26 34). Terra is for the "It starts in"
+     label only; blue is the one CTA. */
+  .bsr-header { padding: 22px 16px 18px; border-bottom: 1px solid var(--dark); }
+  .bsr-header h2 { font-family: 'Newsreader', serif; font-weight: 400; font-size: 20px; line-height: 1.3; color: var(--dark); }
+  .bsr-list { padding: 0 0 24px; }
+  .bt-row { padding: 22px 16px 16px; border-bottom: 1px solid rgba(38,31,35,.2); }
+  .bt-label { font-family: 'Overpass', sans-serif; font-weight: 600; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 6px; }
+  .bt-today { color: rgba(38,31,35,.6); }
+  .bt-starts { color: var(--terra); margin-top: 10px; }
+  .bt-line { display: block; font-family: 'Newsreader', serif; font-size: 16px; line-height: 1.4; color: var(--dark); text-decoration: none; cursor: pointer; }
+  .bt-origin { font-style: italic; }
+  .bt-foot { display: flex; justify-content: space-between; align-items: baseline; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(38,31,35,.2); font-family: 'Overpass', sans-serif; font-size: 13px; }
+  .bt-theme { font-weight: 600; color: var(--dark); }
+  .bt-cta { font-weight: 600; color: var(--blue); text-decoration: none; }
+  .bt-elapsed { font-family: 'Overpass', sans-serif; font-weight: 700; font-size: 20px; color: var(--dark); margin-top: 10px; }
   .bsr-empty { padding: 40px 20px; text-align: center; font-family: 'Newsreader', serif; color: var(--dark); opacity: 0.5; line-height: 1.5; max-width: 340px; margin: 0 auto; }
-  /* The daily pairing line — why today's story belongs to this row. Set
-     slightly heavier than the milestone beneath it: this is the sentence
-     that does the work, the milestone is standing context. */
-  .bsr-pairline {
-    font-family: 'Newsreader', serif; font-size: 13px; line-height: 1.5;
-    color: var(--dark); opacity: 0.9; max-width: 420px; margin: 8px auto 0;
-  }
 
   /* ── Detail view: pairing line, indicator, object case, episodes ──
      The modal box is always dark by app-wide design, so everything here
@@ -3145,7 +3122,7 @@ function fetchBackstory(){
   // library (inventory, edited a few times a year) and todays_pairings[] is
   // what actually renders — one entry per digest story, pairing it to a row.
   // A conflict untouched by today's news does not appear, by design.
-  fetch('/digest/data/backstory.json?t=' + Date.now())
+  fetch(NTK_BASE + '/digest/data/backstory.json?t=' + Date.now())
     .then(function(r){ if (!r.ok) throw 0; return r.json(); })
     .then(function(d){
       var rows = (d && d.rows) || [];
@@ -3185,6 +3162,12 @@ function bsrYear(dateStr){ return (dateStr || '').slice(0, 4); }
 // "washington"). Same fix already made in build_backstory_pages.py (T-0053).
 function bsrCapitalize(s){ return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
 
+// Staged copies live under /ntknews-staging/ (GitHub Pages subpath); every
+// other host serves from the root. Row links must be real hrefs.
+var NTK_BASE = location.pathname.indexOf('/ntknews-staging/') === 0 ? '/ntknews-staging' : '';
+
+function bsrHref(r){ return NTK_BASE + '/backstory/' + encodeURIComponent(r.id) + '/'; }
+
 function renderBackstoryTab(){
   const list = document.getElementById('bsrList');
   if (!list) return;
@@ -3194,29 +3177,31 @@ function renderBackstoryTab(){
     return;
   }
   list.innerHTML = BSR_DATA.map(function(r, i){
-    // T-0049: a bare day count read the same for a row with a real, earned
-    // start_line and a row with none at all — the exact confusion this
-    // thread started with. held rows lead with the anchor and why it's
-    // the anchor; fire rows (start_line is null by design — the elapsed
-    // time IS the whole statement) lead with the elapsed time, years and
-    // months, never a bare day count, per the editor's own framing.
-    const leading = (r.stratum !== 'fire' && r.start_line)
-      ? '<div class="bsr-begins">It starts in ' + escBsr(bsrYear(r.start_date)) + '</div>'
-        + '<div class="bsr-begins-line">' + escBsr(bsrCapitalize(r.start_line)) + '.</div>'
-      : '<div class="bsr-num">' + bsrFormatDuration(bsrDaysSince(r.start_date)) + '</div>';
-    return '<div class="bsr-row" data-idx="' + i + '">' +
-      (r.updated ? '<div class="bsr-updated"><span class="dot"></span>Updated</div>' : '') +
-      leading +
-      '<h3>' + escBsr(r.title) + '</h3>' +
-      // The daily line: why today's story is an instance of this row's
-      // argument. Carries the feature — the row title alone says nothing
-      // about what happened today.
-      (r.pairline ? '<div class="bsr-pairline">' + escBsr(r.pairline) + '</div>' : '') +
-      (r.milestone ? '<div class="bsr-milestone">' + escBsr(r.milestone) + '</div>' : '') +
-      '</div>';
+    const href = escAttr(bsrHref(r));
+    const sIdx = findStoryIndexByKey(r.story_id);
+    // 4A: the TODAY sentence is the pairing line, tappable into the story.
+    const today = r.pairline
+      ? '<div class="bt-label bt-today">Today</div>'
+        + '<a class="bt-line bt-story" data-story="' + sIdx + '" href="#">“' + escBsr(r.pairline) + '”</a>'
+      : '';
+    // Held rows lead with the earned beginning; fire rows have none by
+    // design (T-0049), so the elapsed time is the whole statement.
+    const origin = (r.stratum !== 'fire' && r.start_line)
+      ? '<div class="bt-label bt-starts">It starts in ' + escBsr(bsrYear(r.start_date)) + '</div>'
+        + '<a class="bt-line bt-origin" href="' + href + '">' + escBsr(bsrCapitalize(r.start_line)) + '.</a>'
+      : '<div class="bt-label bt-starts">Running for</div>'
+        + '<a class="bt-elapsed bt-line" href="' + href + '">' + bsrFormatDuration(bsrDaysSince(r.start_date)) + '</a>';
+    return '<div class="bt-row">' + today + origin
+      + '<div class="bt-foot"><span class="bt-theme">' + escBsr(r.title) + '</span>'
+      + '<a class="bt-cta" href="' + href + '">Backstory</a></div></div>';
   }).join('');
-  Array.prototype.forEach.call(list.querySelectorAll('.bsr-row'), function(el){
-    el.addEventListener('click', function(){ openBsrDetail(parseInt(el.dataset.idx, 10)); });
+  Array.prototype.forEach.call(list.querySelectorAll('.bt-story'), function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault();
+      var idx = parseInt(el.dataset.story, 10);
+      if (idx < 0) return;
+      openStory(idx);
+    });
   });
 }
 
@@ -4598,8 +4583,7 @@ document.addEventListener('DOMContentLoaded', function() {
       </div>
     </header>
     <div class="bsr-header">
-      <div class="today-kicker">BACKSTORY</div>
-      <div class="today-date">Today's stories — <em>and how far back they run.</em></div>
+      <h2>Today's stories, and where they start.</h2>
     </div>
     <div id="bsrList" class="bsr-list"></div>
   </div>
