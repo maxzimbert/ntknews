@@ -28,6 +28,14 @@ Editor feedback 2026-10-01 on staging, in four parts:
    year, source}`, so the page shows those. `context`, `quote`, `where_now`
    and `source_url` render automatically when T-0045 / T-0048 supply them.
 
+5. Fixed 2026-10-01 after the editor's staging report: "up" from an object
+   (the top-left link and the dark "In the case for" panel) pushed a new
+   history entry, so "← Backstory" on the row stepped back to the object it
+   had just left. Up from an object now consumes history (`history.back()`).
+   Also: staging has no Netlify rewrites, so its tab URLs never changed;
+   `ntkRoute()`/`tabPath()` now carry the tab in the hash on `/ntknews-staging/`
+   (`.../digest/index.html#backstory`).
+
 ## Why
 
 The handoff specifies in-app push navigation and object pages. A page that
@@ -45,6 +53,8 @@ list with the URL following (`/backstory/media/`, then `/objects/2/`, then
 ```sh
 set -e
 grep -q "function showBsrPage" digest/index.html
+grep -q "Up from an object is Back" digest/index.html
+grep -q "digest/index.html#' + tab" digest/index.html
 grep -q 'class="bt-mark"' digest/index.html
 python3 - <<'PY'
 import json
