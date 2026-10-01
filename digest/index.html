@@ -547,10 +547,50 @@
   .bt-starts { color: var(--terra); margin-top: 10px; }
   .bt-line { display: block; font-family: 'Newsreader', serif; font-size: 16px; line-height: 1.4; color: var(--dark); text-decoration: none; cursor: pointer; }
   .bt-origin { font-style: italic; }
-  .bt-foot { display: flex; justify-content: space-between; align-items: baseline; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(38,31,35,.2); font-family: 'Overpass', sans-serif; font-size: 13px; }
+  .bt-mark { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 14px; }
+  .bt-mark i { display: block; width: 12px; height: 1px; background: rgba(38,31,35,.45); }
+  .bt-mark b { display: block; width: 3px; height: 3px; border-radius: 50%; background: rgba(38,31,35,.45); }
+  .bt-foot { display: flex; justify-content: space-between; align-items: baseline; margin-top: 10px; font-family: 'Overpass', sans-serif; font-size: 13px; }
   .bt-theme { font-weight: 600; color: var(--dark); }
   .bt-cta { font-weight: 600; color: var(--blue); text-decoration: none; }
   .bt-elapsed { font-family: 'Overpass', sans-serif; font-weight: 700; font-size: 20px; color: var(--dark); margin-top: 10px; }
+
+  /* ── Backstory pages inside the app (designs 4C and 4D) ──
+     Same markup classes as the static pages, prefixed bp- here. */
+  #bsrPage { position: fixed; inset: 0; z-index: 160; overflow-y: auto; -webkit-overflow-scrolling: touch; background: var(--cream); color: var(--dark); display: none; }
+  #bsrPage.active { display: block; }
+  .bp-wrap { max-width: 640px; margin: 0 auto; }
+  .bp-bar { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 14px 20px; border-bottom: 1px solid var(--dark); font-family: 'Overpass', sans-serif; }
+  .bp-bar button { background: none; border: 0; padding: 0; cursor: pointer; font: 600 16px 'Overpass', sans-serif; color: var(--dark); white-space: nowrap; }
+  .bp-bar span { font-size: 10px; font-weight: 600; letter-spacing: .06em; color: rgba(38,31,35,.6); }
+  .bp-hd { padding: 28px 20px 22px; border-bottom: 1px solid var(--dark); }
+  .bp-hd h1 { font-family: 'Newsreader', serif; font-weight: 600; font-size: 34px; line-height: 1.08; letter-spacing: -.01em; margin: 0 0 14px; }
+  .bp-hd.obj h1 { font-size: 26px; margin-bottom: 8px; }
+  .bp-hd .bp-ms { font-style: italic; font-size: 20px; line-height: 1.35; color: rgba(38,31,35,.85); }
+  .bp-hd .bp-by { font: 400 13px 'Overpass', sans-serif; color: rgba(38,31,35,.65); }
+  .bp-sec { padding: 22px 20px; border-bottom: 1px solid rgba(38,31,35,.22); font-family: 'Newsreader', serif; }
+  .bp-stakes, .bp-ctx { font-size: 16px; line-height: 1.55; }
+  .bp-lab { font: 600 13px 'Overpass', sans-serif; margin-bottom: 12px; }
+  .bp-kick { font: 600 10px 'Overpass', sans-serif; letter-spacing: .1em; text-transform: uppercase; color: var(--terra); margin-bottom: 10px; }
+  .bp-ind-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  .bp-dir { font: 700 10px 'Overpass', sans-serif; letter-spacing: .1em; text-transform: uppercase; color: var(--terra); white-space: nowrap; }
+  .bp-sec svg { display: block; width: 100%; height: auto; margin: 10px 0 4px; }
+  .bp-src { font: 600 10px 'Overpass', sans-serif; letter-spacing: .06em; color: rgba(38,31,35,.6); }
+  .bp-spine { display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.4; }
+  .bp-spine i { width: 8px; height: 8px; border-radius: 50%; background: var(--dark); margin-top: 7px; flex: none; }
+  .bp-obj { display: block; padding: 13px 0; border-top: 1px solid rgba(38,31,35,.2); color: inherit; text-decoration: none; cursor: pointer; }
+  .bp-obj.first { border-top: 0; padding-top: 0; }
+  .bp-obj .t { font-style: italic; font-size: 16px; margin-bottom: 4px; }
+  .bp-obj .by { font: 400 13px 'Overpass', sans-serif; color: rgba(38,31,35,.65); }
+  .bp-obj .more { font: 600 13px 'Overpass', sans-serif; color: var(--blue); margin-top: 6px; }
+  .bp-pull { font-style: italic; font-size: 20px; line-height: 1.4; border-top: 1px solid var(--dark); border-bottom: 1px solid var(--dark); padding: 16px 0; margin: 6px 0 18px; }
+  .bp-dark { background: var(--dark); color: var(--cream); border-bottom: 0; }
+  .bp-dark .bp-kick { color: var(--amber); }
+  .bp-ep { display: block; padding: 13px 0; border-top: 1px solid rgba(234,217,197,.25); color: var(--cream); text-decoration: none; cursor: pointer; }
+  .bp-ep.first { border-top: 0; padding-top: 0; }
+  .bp-ep .d { font: 400 13px 'Overpass', sans-serif; color: rgba(234,217,197,.65); }
+  .bp-ep .h { font-size: 16px; margin-top: 5px; }
+  .bp-end { font-style: italic; font-size: 16px; text-align: center; color: rgba(38,31,35,.45); padding: 26px 0 60px; }
   .bsr-empty { padding: 40px 20px; text-align: center; font-family: 'Newsreader', serif; color: var(--dark); opacity: 0.5; line-height: 1.5; max-width: 340px; margin: 0 auto; }
 
   /* ── Detail view: pairing line, indicator, object case, episodes ──
@@ -3088,8 +3128,12 @@ window.switchTab = switchTab;
 
 window.addEventListener('popstate', function (e) {
   navBackPending = false;
-  if (!ROUTING_ON) return;
   var st = e.state || {};
+  // A Backstory page (4C/4D) is its own history entry: show it for its own
+  // state, hide it for any other. Runs even when tab routing is off (staging).
+  if (st.ntk === 'bsrpage') showBsrPage(st.rid, st.oi, { fromHistory: true });
+  else if (BSR_PAGE_OPEN) hideBsrPage();
+  if (!ROUTING_ON) return;
   var storyOpen = document.getElementById('storyView').classList.contains('active');
   var bsrModal = document.getElementById('bsrDetailModal');
   var bsrOpen = !!(bsrModal && bsrModal.classList.contains('show'));
@@ -3188,13 +3232,17 @@ function renderBackstoryTab(){
     // design (T-0049), so the elapsed time is the whole statement.
     const origin = (r.stratum !== 'fire' && r.start_line)
       ? '<div class="bt-label bt-starts">It starts in ' + escBsr(bsrYear(r.start_date)) + '</div>'
-        + '<a class="bt-line bt-origin" href="' + href + '">' + escBsr(bsrCapitalize(r.start_line)) + '.</a>'
+        + '<a class="bt-line bt-origin" data-rid="' + escAttr(r.id) + '" href="' + href + '">' + escBsr(bsrCapitalize(r.start_line)) + '.</a>'
       : '<div class="bt-label bt-starts">Running for</div>'
-        + '<a class="bt-elapsed bt-line" href="' + href + '">' + bsrFormatDuration(bsrDaysSince(r.start_date)) + '</a>';
+        + '<a class="bt-elapsed bt-line" data-rid="' + escAttr(r.id) + '" href="' + href + '">' + bsrFormatDuration(bsrDaysSince(r.start_date)) + '</a>';
     return '<div class="bt-row">' + today + origin
+      + '<div class="bt-mark" aria-hidden="true"><i></i><b></b><i></i></div>'
       + '<div class="bt-foot"><span class="bt-theme">' + escBsr(r.title) + '</span>'
-      + '<a class="bt-cta" href="' + href + '">Backstory</a></div></div>';
+      + '<a class="bt-cta" data-rid="' + escAttr(r.id) + '" href="' + href + '">Backstory</a></div></div>';
   }).join('');
+  Array.prototype.forEach.call(list.querySelectorAll('a[data-rid]'), function(el){
+    el.addEventListener('click', function(e){ e.preventDefault(); showBsrPage(el.dataset.rid, null); });
+  });
   Array.prototype.forEach.call(list.querySelectorAll('.bt-story'), function(el){
     el.addEventListener('click', function(e){
       e.preventDefault();
@@ -3204,6 +3252,133 @@ function renderBackstoryTab(){
     });
   });
 }
+
+
+// ── Backstory pages inside the app: 4C (a row) and 4D (an object) ──────
+// Same content and routes as the static pages in /backstory/ (built by
+// editorial/build_backstory_pages.py), rendered here so a tap stays in the
+// app. Each view pushes its static URL, so the address bar is a permalink
+// and a reload or cold visit lands on the static twin.
+var BSR_PAGE_OPEN = false;
+var BSR_PAGE_ROW = null;
+
+function bpRow(rid){
+  for (var i = 0; i < (BSR_DATA || []).length; i++) if (BSR_DATA[i].id === rid) return BSR_DATA[i];
+  return null;
+}
+function bpPath(rid, oi){ return NTK_BASE + '/backstory/' + encodeURIComponent(rid) + '/' + (oi != null ? 'objects/' + (oi + 1) + '/' : ''); }
+
+function bpIndicator(ind){
+  var a = parseFloat(ind.then_value), b = parseFloat(ind.now_value);
+  var pct = /%/.test(ind.then_value) && /%/.test(ind.now_value) && !isNaN(a) && !isNaN(b);
+  var chart;
+  if (!pct) {
+    chart = '<div style="font:400 16px Overpass,sans-serif;margin:8px 0">' + escBsr(ind.then_value) + ' (' + escBsr(ind.then_year) + ') → <b>' + escBsr(ind.now_value) + '</b> (now)</div>';
+  } else {
+    var L = 8, R = 332, T = 18, B = 118;
+    var y = function(v){ return B - (B - T) * Math.max(0, Math.min(100, v)) / 100; };
+    var col = ind.direction === 'worse' ? '#DC6550' : '#261F23';
+    chart = '<svg viewBox="0 0 340 150" role="img" aria-label="' + escAttr(ind.label) + '">'
+      + '<line x1="' + L + '" y1="' + y(50) + '" x2="' + R + '" y2="' + y(50) + '" stroke="rgba(38,31,35,.2)"/>'
+      + '<line x1="' + L + '" y1="' + B + '" x2="' + R + '" y2="' + B + '" stroke="#261F23"/>'
+      + '<line x1="' + L + '" y1="' + y(a).toFixed(1) + '" x2="' + R + '" y2="' + y(b).toFixed(1) + '" stroke="#261F23" stroke-width="2"/>'
+      + '<circle cx="' + L + '" cy="' + y(a).toFixed(1) + '" r="4" fill="#261F23"/>'
+      + '<circle cx="' + R + '" cy="' + y(b).toFixed(1) + '" r="5" fill="' + col + '"/>'
+      + '<text x="' + (L + 10) + '" y="' + (y(a) - 8).toFixed(0) + '" font-family="Overpass,sans-serif" font-size="16" font-weight="700" fill="#261F23">' + escBsr(ind.then_value) + '</text>'
+      + '<text x="' + R + '" y="' + (y(b) + 22).toFixed(0) + '" text-anchor="end" font-family="Overpass,sans-serif" font-size="16" font-weight="700" fill="' + col + '">' + escBsr(ind.now_value) + '</text>'
+      + '<text x="' + L + '" y="' + (B + 18) + '" font-family="Overpass,sans-serif" font-size="10" fill="rgba(38,31,35,.65)">' + escBsr(ind.then_year) + '</text>'
+      + '<text x="' + R + '" y="' + (B + 18) + '" text-anchor="end" font-family="Overpass,sans-serif" font-size="10" fill="rgba(38,31,35,.65)">now</text></svg>';
+  }
+  return '<section class="bp-sec"><div class="bp-ind-head"><div class="bp-lab">' + escBsr(ind.label) + '</div><div class="bp-dir">' + escBsr(ind.direction) + '</div></div>'
+    + chart + '<div class="bp-src">' + escBsr(ind.source) + ' · ' + escBsr(ind.as_of || 'most recent data') + '</div>'
+    + (ind.verified ? '' : '<div class="bp-src" style="color:#DC6550;margin-top:8px">UNVERIFIED</div>') + '</section>';
+}
+
+function bpRowHtml(r){
+  var h = '<div class="bp-bar"><button type="button" data-bp="back">← Backstory</button><span>ntknews.org/backstory/' + escBsr(r.id) + '</span></div>'
+    + '<div class="bp-hd"><h1>' + escBsr(r.title) + '</h1><div class="bp-ms">' + escBsr(r.milestone || '') + '</div></div>';
+  if (r.stratum === 'fire') {
+    h += '<section class="bp-sec" style="text-align:center"><div style="font:700 34px Overpass,sans-serif">' + bsrFormatDuration(bsrDaysSince(r.start_date)) + '</div>'
+      + '<div class="bp-src" style="margin-top:8px">SINCE ' + escBsr(r.start_date) + '</div></section>';
+  } else {
+    if (r.stakes) h += '<section class="bp-sec"><p class="bp-stakes">' + escBsr(r.stakes) + '</p></section>';
+    if (r.indicator) h += bpIndicator(r.indicator);
+    if (r.start_line) h += '<section class="bp-sec"><div class="bp-lab">Beginnings</div><div class="bp-spine"><i></i><div>' + escBsr(bsrCapitalize(r.start_line)) + '.</div></div></section>';
+    var objs = r.objects || [];
+    if (objs.length) {
+      h += '<section class="bp-sec"><div class="bp-lab">The case</div>' + objs.map(function(o, i){
+        return '<a class="bp-obj' + (i ? '' : ' first') + '" href="' + escAttr(bpPath(r.id, i)) + '" data-bp="obj" data-oi="' + i + '">'
+          + '<div class="t">' + escBsr(o.quote || o.title) + '</div>'
+          + '<div class="by">' + escBsr(o.author || r.title) + ' · ' + escBsr(o.year) + '</div><div class="more">About this</div></a>';
+      }).join('') + '</section>';
+    }
+  }
+  var eps = (BSR_DATA || []).filter(function(x){ return x.id === r.id; });
+  if (eps.length) {
+    h += '<section class="bp-sec bp-dark"><div class="bp-kick">In the digest</div>' + eps.map(function(x, i){
+      return '<a class="bp-ep' + (i ? '' : ' first') + '" href="#" data-bp="story" data-key="' + escAttr(x.story_id || '') + '"><div class="d">Today</div><div class="h">“' + escBsr(x.pairline || x.headline || '') + '”</div></a>';
+    }).join('') + '</section>';
+  }
+  return h + '<div class="bp-end">— 30 —</div>';
+}
+
+function bpObjectHtml(r, oi){
+  var o = r.objects[oi];
+  var h = '<div class="bp-bar"><button type="button" data-bp="row">← ' + escBsr(r.title) + '</button><span>ntknews.org/backstory/' + escBsr(r.id) + '/objects/' + (oi + 1) + '</span></div>'
+    + '<div class="bp-hd obj"><div class="bp-kick">' + escBsr(o.year) + '</div><h1>' + escBsr(o.title) + '</h1><div class="bp-by">' + escBsr(o.author || r.title) + '</div></div>';
+  var b = '';
+  (o.context || []).forEach(function(c){ b += '<p class="bp-ctx" style="margin-bottom:14px">' + escBsr(c) + '</p>'; });
+  if (o.quote) b += '<p class="bp-pull">' + escBsr(o.quote) + '</p>';
+  if (o.where_now) b += '<div class="bp-lab">Where it stands now</div><p class="bp-ctx">' + escBsr(o.where_now) + '</p>';
+  b += '<div class="bp-src">SOURCE · ' + escBsr(o.source) + '</div>';
+  if (o.source_url) b += '<p style="margin-top:14px"><a href="' + escAttr(o.source_url) + '" style="color:var(--blue)" target="_blank" rel="noopener">Read the original</a></p>';
+  h += '<section class="bp-sec">' + b + '</section>'
+    + '<section class="bp-sec bp-dark"><a class="bp-ep first" href="#" data-bp="row"><div class="bp-kick">In the case for ' + escBsr(r.title) + '</div><div class="h">' + escBsr(r.milestone || '') + '</div></a></section>';
+  return h + '<div class="bp-end">— 30 —</div>';
+}
+
+// opts.fromHistory: called by popstate — don't push a new entry.
+function showBsrPage(rid, oi, opts){
+  var r = bpRow(rid);
+  if (!r) return;
+  var el = document.getElementById('bsrPage');
+  if (oi != null && !(r.objects && r.objects[oi])) oi = null;
+  el.innerHTML = '<div class="bp-wrap">' + (oi != null ? bpObjectHtml(r, oi) : bpRowHtml(r)) + '</div>';
+  el.classList.add('active');
+  el.scrollTop = 0;
+  document.getElementById('bottomNav').classList.add('hidden');
+  BSR_PAGE_OPEN = true;
+  BSR_PAGE_ROW = rid;
+  if (!(opts && opts.fromHistory) && window.history && history.pushState && /^https?:$/.test(location.protocol)) {
+    history.pushState({ ntk: 'bsrpage', rid: rid, oi: oi, tab: 'backstory' }, '', bpPath(rid, oi));
+  }
+  track('backstory_page', { row: rid, object: oi == null ? null : oi + 1 });
+}
+function hideBsrPage(){
+  document.getElementById('bsrPage').classList.remove('active');
+  if (!document.getElementById('storyView').classList.contains('active')) document.getElementById('bottomNav').classList.remove('hidden');
+  BSR_PAGE_OPEN = false;
+}
+function bsrPageBack(){
+  var st = history.state;
+  if (st && st.ntk === 'bsrpage') history.back(); else hideBsrPage();
+}
+document.addEventListener('click', function(e){
+  var t = e.target.closest && e.target.closest('#bsrPage [data-bp]');
+  if (!t) return;
+  e.preventDefault();
+  var cur = { rid: BSR_PAGE_ROW };
+  var kind = t.dataset.bp;
+  if (kind === 'back') return bsrPageBack();
+  if (kind === 'obj') return showBsrPage(cur.rid, parseInt(t.dataset.oi, 10));
+  if (kind === 'row') return showBsrPage(cur.rid, null);
+  if (kind === 'story') {
+    var idx = findStoryIndexByKey(t.dataset.key);
+    if (idx < 0) return;
+    hideBsrPage();
+    openStory(idx);
+  }
+});
 
 function escBsr(s){ const d = document.createElement('span'); d.textContent = s == null ? '' : s; return d.innerHTML; }
 // escBsr is for text nodes; innerHTML leaves a double quote alone, which is
@@ -4627,6 +4802,8 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <!-- BOTTOM NAV -->
+<div id="bsrPage" role="document"></div>
+
 <nav class="bottom-nav" id="bottomNav">
   <button class="nav-item active" id="nav-today" onclick="switchTab('today')">
     <svg width="22" height="22" viewBox="0 0 28 28">
