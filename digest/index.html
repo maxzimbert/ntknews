@@ -548,11 +548,19 @@
   .bsr-row .bsr-updated .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); }
   .bsr-row .bsr-num {
     font-family: 'Overpass', sans-serif; font-weight: 700; font-size: 34px;
-    line-height: 1; color: var(--dark);
+    line-height: 1; color: var(--dark); margin-bottom: 14px;
   }
-  .bsr-row .bsr-caption {
-    font-family: 'Overpass', sans-serif; font-size: 10px; letter-spacing: .1em;
-    color: var(--dark); opacity: 0.4; margin: 4px 0 14px;
+  /* T-0049: held rows' leading element — the earned anchor, not a bare
+     duration. .bsr-num above still carries fire rows' elapsed time. */
+  .bsr-row .bsr-begins {
+    font-family: 'Overpass', sans-serif; font-weight: 600; font-size: 10px;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--terra);
+    margin-bottom: 6px;
+  }
+  .bsr-row .bsr-begins-line {
+    font-family: 'Newsreader', serif; font-style: italic; font-size: 13px;
+    line-height: 1.4; color: var(--dark); opacity: 0.85; max-width: 420px;
+    margin: 0 auto 14px;
   }
   .bsr-row h3 { font-family: 'Overpass', sans-serif; font-weight: 600; font-size: 16px; margin-bottom: 5px; color: var(--dark); }
   .bsr-row .bsr-milestone {
@@ -602,11 +610,12 @@
     color: rgba(234,217,197,0.4);
   }
 
-  .bsr-case, .bsr-eps { margin-top: 18px; }
+  .bsr-case, .bsr-eps, .bsr-begins-section { margin-top: 18px; }
   .bsr-case-head {
     font-family: 'Overpass', sans-serif; font-size: 10px; letter-spacing: 0; color: rgba(234,217,197,0.5);
     padding-bottom: 6px; border-bottom: 1px solid rgba(234,217,197,0.15); margin-bottom: 10px;
   }
+  .bsr-begins-detail { font-size: 13px; line-height: 1.5; color: var(--cream); opacity: 0.9; }
   .bsr-obj { padding: 7px 0; border-bottom: 1px solid rgba(234,217,197,0.07); }
   .bsr-obj:last-child { border-bottom: none; }
   .bsr-obj-title { font-size: 13px; line-height: 1.4; color: var(--cream); }
@@ -3169,6 +3178,12 @@ function bsrFormatDuration(days){
   if (years >= 1) return years + (years === 1 ? ' yr, ' : ' yrs, ') + months + ' mo';
   return months + (months === 1 ? ' month' : ' months');
 }
+function bsrYear(dateStr){ return (dateStr || '').slice(0, 4); }
+// First-letter-only — str.charAt/slice, not .toUpperCase() on the whole
+// string, which would also lowercase every other letter and mangle a
+// proper noun the moment it isn't the first word ("Washington" ->
+// "washington"). Same fix already made in build_backstory_pages.py (T-0053).
+function bsrCapitalize(s){ return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
 
 function renderBackstoryTab(){
   const list = document.getElementById('bsrList');
@@ -3179,11 +3194,19 @@ function renderBackstoryTab(){
     return;
   }
   list.innerHTML = BSR_DATA.map(function(r, i){
-    const days = bsrDaysSince(r.start_date);
+    // T-0049: a bare day count read the same for a row with a real, earned
+    // start_line and a row with none at all — the exact confusion this
+    // thread started with. held rows lead with the anchor and why it's
+    // the anchor; fire rows (start_line is null by design — the elapsed
+    // time IS the whole statement) lead with the elapsed time, years and
+    // months, never a bare day count, per the editor's own framing.
+    const leading = (r.stratum !== 'fire' && r.start_line)
+      ? '<div class="bsr-begins">It starts in ' + escBsr(bsrYear(r.start_date)) + '</div>'
+        + '<div class="bsr-begins-line">' + escBsr(bsrCapitalize(r.start_line)) + '.</div>'
+      : '<div class="bsr-num">' + bsrFormatDuration(bsrDaysSince(r.start_date)) + '</div>';
     return '<div class="bsr-row" data-idx="' + i + '">' +
       (r.updated ? '<div class="bsr-updated"><span class="dot"></span>Updated</div>' : '') +
-      '<div class="bsr-num">' + bsrFormatDuration(days) + '</div>' +
-      '<div class="bsr-caption">' + days.toLocaleString() + ' days</div>' +
+      leading +
       '<h3>' + escBsr(r.title) + '</h3>' +
       // The daily line: why today's story is an instance of this row's
       // argument. Carries the feature — the row title alone says nothing
@@ -3276,6 +3299,17 @@ function bsrEpisodesHtml(instances){
     + '</div>';
 }
 
+// T-0049: a real "Begins" section, separate from the no-narrative
+// fallback paragraph — a held row's start_line is an earned, reasoned
+// anchor (per the register ladder work this whole thread is about), not
+// filler to pad a paragraph that admits nothing's been written yet.
+// Fire rows never call this — start_line is null for them by design.
+function bsrBeginsHtml(r){
+  if (r.stratum === 'fire' || !r.start_line) return '';
+  return '<div class="bsr-begins-section"><div class="bsr-case-head">Begins</div>'
+    + '<p class="bsr-begins-detail">' + escBsr(bsrCapitalize(r.start_line)) + '.</p></div>';
+}
+
 function bsrDetailHtml(r){
   // narrative is an ARRAY of paragraphs from register4-lifetimes.md. An empty
   // array is truthy in JS, so a plain `||` fallback silently renders nothing —
@@ -3284,13 +3318,14 @@ function bsrDetailHtml(r){
               : (r.narrative ? [r.narrative] : []);
   const body = paras.length
     ? paras.map(function(p){ return '<p>' + p + '</p>'; }).join('')
-    : '<p class="bsr-nonarr">' + (r.start_line
-        ? 'Running ' + escBsr(r.start_line) + '.' : '')
-      + ' The full account of this one hasn’t been written yet.</p>';
+    // start_line used to be folded in here too, duplicating the Begins
+    // section below — this fallback is now just the honest admission.
+    : '<p class="bsr-nonarr">The full account of this one hasn’t been written yet.</p>';
 
   return (r.pairline ? '<p class="bsr-detail-pairline">' + escBsr(r.pairline) + '</p>' : '')
     + body
     + bsrIndicatorHtml(r.indicator)
+    + bsrBeginsHtml(r)
     + bsrObjectsHtml(r.objects)
     + bsrEpisodesHtml(r.instances);
 }
@@ -3298,9 +3333,22 @@ function bsrDetailHtml(r){
 function openBsrDetail(idx, opts){
   const r = BSR_DATA[idx];
   if (!r) return;
-  const days = bsrDaysSince(r.start_date);
+  // T-0049: a raw day count ("14,297 days") was unconditional here, held
+  // or fire — the same bare-number problem as the list card, just bigger.
+  // Years/months for everyone is a real improvement on its own; held rows
+  // get the start year alongside it too, since that's the number that
+  // actually explains the first one.
+  const dur = bsrFormatDuration(bsrDaysSince(r.start_date));
+  // A block, not an inline span tacked onto the huge number — at this
+  // font size an inline "· since 1987" wraps unpredictably mid-line (it
+  // did, in testing: the separator dot orphaned onto the number's own
+  // line, "since" wrapping below it). A block always lands on its own
+  // line, cleanly, regardless of width.
+  const since = (r.stratum !== 'fire' && r.start_date)
+    ? '<div style="font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;opacity:0.75;margin-top:4px">since ' + escBsr(bsrYear(r.start_date)) + '</div>'
+    : '';
   document.getElementById('bsrDetailKicker').textContent = r.title;
-  document.getElementById('bsrDetailNum').innerHTML = days.toLocaleString() + ' <span style="font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;opacity:0.75">days</span>';
+  document.getElementById('bsrDetailNum').innerHTML = dur + since;
   document.getElementById('bsrDetailTitle').textContent = r.title;
   document.getElementById('bsrDetailMilestone').textContent = r.milestone || '';
   document.getElementById('bsrDetailNarrative').innerHTML = bsrDetailHtml(r);

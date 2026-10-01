@@ -1,7 +1,7 @@
 ---
 id: T-0049
 title: The live Backstory tab never learned the fire/held distinction
-status: DECIDED
+status: VERIFIED
 tags: [backstory, defect]
 anchor: digest/index.html:3173
 ---
@@ -71,6 +71,37 @@ and `</script>`" extraction (tried while writing this ticket's check)
 silently grabs the wrong one. Verify a real change here by loading the
 page and exercising it, per `CLAUDE.md` rule 4, not by trying to
 `node --check` an extracted fragment.
+
+## Done, 2026-10-01
+
+Both fixed. `renderBackstoryTab()`'s list cards now branch on
+`r.stratum`: held rows with a `start_line` lead with a terra "It starts
+in {year}" kicker and the (first-letter-capitalized, not
+`.toUpperCase()`-mangled) origin sentence; fire rows and any held row
+without a `start_line` fall back to the single, non-duplicated
+`bsrFormatDuration()` reading. `openBsrDetail()`'s hero number uses the
+same years/months formatting for every row now (no more bare
+`days.toLocaleString()`), with held rows additionally showing a "since
+{year}" line — built as its own block-level element after testing the
+inline-span version in a real browser and finding it wrapped
+unpredictably at this width. Added a real "Begins" section to
+`bsrDetailHtml()` (held rows only), separate from the no-narrative
+fallback paragraph, which no longer duplicates `start_line` into itself.
+
+**Verified by actually running the app**, not just the grep check below
+— `scripts/preview.js` on localhost, real lineup data, clicked into a
+real held row (Media) and confirmed the list card, the hero number, and
+the new Begins section all render correctly; confirmed `verified: true`
+indicators (post-T-0047) no longer show the "unverified" badge, as
+expected. No fire row happened to be paired in today's real lineup to
+click through, so that path was verified by calling
+`renderBackstoryTab()`/`openBsrDetail()` directly in the browser console
+against a synthetic fire-row object — the actual shipped functions, not
+a mockup — and confirming the single duration, no kicker, no Begins, no
+indicator/objects, exactly as designed. Syntax-checked the real inline
+script block (`digest/index.html:2262-4424`, found by locating the
+actual matching `</script>`, not a naive first-match grab) with
+`node --check`.
 
 ## Check
 
