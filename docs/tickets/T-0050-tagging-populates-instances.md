@@ -1,12 +1,14 @@
 ---
 id: T-0050
 title: Tagging a story to a Backstory row in Pulse never reaches the row's Earlier episodes
-status: DECIDED
+status: DISCARDED
 tags: [backstory, feature]
 anchor: editorial/build_pairings.py:283
 ---
 
 ## What
+
+**Discarded 2026-10-01, replaced by T-0062.** The editor decided `instances[]` should carry a row's Beginnings, and that "earlier episodes" is simply "In the digest" extended to prior stories from recent digests. The reasoning below is kept as it was written.
 
 A row's `instances[]` is its "Earlier episodes" list: past digest stories
 tagged to that row, each with headline, date and permalink. The detail view
