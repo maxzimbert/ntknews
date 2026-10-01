@@ -58,24 +58,89 @@ FIRE = [
 ]
 
 # ── Indicators ────────────────────────────────────────────────────────
-# EVERY VALUE HERE IS UNVERIFIED. Check against the named source before
-# publishing, then set "verified": true in backstory.json (the build
-# preserves that flag).
+# T-0047, 2026-09-28/29: checked all 14 against their named source
+# (WebSearch/WebFetch, not recall — see the ticket for exact citations
+# per row). 13 of 14 confirmed or corrected below; 'power' is left as it
+# was and UNVERIFIED — real effort was spent trying to pin a single
+# current combined figure for "the other party threatens the nation"
+# and it did not resolve to one citable number, so it is not marked
+# verified. Two of the 13 (america-abroad's 1970 figure, equality's
+# 1983 figure) have a solidly confirmed NOW value but a "then" baseline
+# that traces to a commonly-cited figure rather than one pinned primary
+# source — noted per-row below, and digest/data/backstory.json's
+# verified:true on those two reflects "now value checked," not "every
+# number on the row independently re-derived."
 IND = {
- 'climate':       ('Atmospheric carbon dioxide', '351 ppm', '1988', '425 ppm', 'worse', 'NOAA Global Monitoring Laboratory'),
- 'media':         ('Trust the press a great deal or fair amount', '72%', '1976', '31%', 'worse', 'Gallup'),
- 'immigration':   ('Foreign-born share of the population', '4.7%', '1970', '15%', 'contested', 'U.S. Census Bureau'),
+ # 1988: 351 ppm (NOAA GML Mauna Loa record) — matches as claimed.
+ # Now: 427.55 ppm, August 2026, NOAA GML trends page, updated 2026-09-05.
+ 'climate':       ('Atmospheric carbon dioxide', '351 ppm', '1988', '428 ppm', 'worse', 'NOAA Global Monitoring Laboratory'),
+ # 1976: 72% — Gallup's own account: 68% (1972), 69% (1974), 72% (1976,
+ # the historical high, post-Watergate/Vietnam reporting). Now: 28%,
+ # September 2025 Gallup poll (news.gallup.com/poll/695762) — the 31%
+ # this replaces was accurate as of May 2024 and has since fallen further.
+ 'media':         ('Trust the press a great deal or fair amount', '72%', '1976', '28%', 'worse', 'Gallup'),
+ # 1970: 4.7% — matches Census exactly. Now: 14.8%, 2024 (Census's own
+ # July 2026 250-year retrospective; 2024 is the record high, 50.2M people).
+ 'immigration':   ('Foreign-born share of the population', '4.7%', '1970', '14.8%', 'contested', 'U.S. Census Bureau'),
+ # 1980: Pew's own account puts the 1980s at "5 to 7%" — 7% sits at the
+ # top of that range, kept as-is. Now: 28%, confirmed against Pew's
+ # 2023-24 Religious Landscape Study (largest, most recent).
  'faith':         ('Adults with no religious affiliation', '7%', '1980', '28%', 'contested', 'Pew Research Center'),
- 'taiwan':        ('PLA aircraft crossing the median line', 'about 0', '2019', 'over 3,000 a year', 'worse', 'Taiwan Ministry of National Defense'),
- 'government':    ("Trust Washington to do what's right", '73%', '1958', '22%', 'worse', 'Pew Research Center'),
- 'order':         ('Violent crime per 100,000 people', '758', '1991', '370', 'better', 'FBI Uniform Crime Reports'),
- 'america-abroad':('U.S. troops stationed abroad', 'about 1 million', '1970', 'about 170,000', 'contested', 'Defense Manpower Data Center'),
+ # 2019: "about 0" holds — the median line was crossed only twice (1999,
+ # 2011) before a March 2019 incident, against decades of tacit
+ # adherence; the real pattern-break starts 2020. Now: 3,070 crossings
+ # in 2024 (Taiwan MND, via Focus Taiwan/Jamestown reporting) — tightened
+ # from "over 3,000" to the actual annual figure.
+ 'taiwan':        ('PLA aircraft crossing the median line', 'about 0', '2019', '3,070 a year', 'worse', 'Taiwan Ministry of National Defense'),
+ # 1958: 73% — matches Pew's own account exactly (first year the
+ # question was asked). Now: 17%, per Pew's "Public Trust in Government:
+ # 1958-2025" (Dec 2025) — a September 2025 survey. The 22% this
+ # replaces was real but stale (May 2024); trust fell further since.
+ 'government':    ("Trust Washington to do what's right", '73%', '1958', '17%', 'worse', 'Pew Research Center'),
+ # 1991: 758.2 (FBI's own cited peak) — matches as claimed. Now: 359.1
+ # per 100,000 in 2024 (FBI UCR data, via Axios/OpenCrime reporting;
+ # 2024 is a two-decade low) — corrected from 370.
+ 'order':         ('Violent crime per 100,000 people', '758', '1991', '359', 'better', 'FBI Uniform Crime Reports'),
+ # 1970: "about 1 million" is the commonly-cited Vietnam-era figure —
+ # corroborated (336k in South Vietnam alone at year-end 1970, plus
+ # substantial Cold War Europe deployment) but not pinned to one single
+ # DMDC total for that exact year; treat with more caution than the
+ # other rows. Now: about 166,000 active-duty overseas as of June 2024
+ # (DMDC, via USAFacts/Voronoi reporting) — tightened from 170,000.
+ 'america-abroad':('U.S. troops stationed abroad', 'about 1 million', '1970', 'about 166,000', 'contested', 'Defense Manpower Data Center'),
+ # UNVERIFIED — left exactly as it was. Real research attempted (Pew's
+ # partisan-hostility tracking is real and the general magnitude/
+ # direction checks out against related Pew metrics from 2022), but no
+ # single current figure for this exact "threat to the nation" framing,
+ # combined across parties, could be pinned to one citable source. Needs
+ # a second pass with more time, not a forced number.
  'power':         ('Say the other party threatens the nation', 'about 20%', '1994', 'about 70%', 'worse', 'Pew Research Center'),
+ # 1973: 24% is the commonly-cited figure for that era (BLS's own
+ # "comparable" series only starts 1983 at 20.1%; the 1973 figure traces
+ # to compiled historical CPS data, not a direct BLS 1973 release) —
+ # kept, same caveat as america-abroad's 1970 figure. Now: 10.0% in 2025
+ # (BLS, published 2026, "Union membership rate 10.0 percent in 2025")
+ # — matches as claimed exactly.
  'work':          ('Share of workers in a union', '24%', '1973', '10%', 'worse', 'Bureau of Labor Statistics'),
- 'family':        ('Median age at first marriage, women', '21', '1970', '28', 'contested', 'U.S. Census Bureau'),
+ # 1970: Census's own CPS-cited figure is 20.8 (sources range 20.6-21);
+ # tightened from 21. Now: 28.4 in 2025 (Census) — tightened from 28.
+ 'family':        ('Median age at first marriage, women', '20.8', '1970', '28.4', 'contested', 'U.S. Census Bureau'),
+ # Now: "$15 for every $100" in 2022 is Institute for Policy Studies'
+ # own phrase, applied to SCF data — matches as claimed exactly. 1983:
+ # "about $16" is a commonly-cited approximation; different studies
+ # compute the 1983 ratio differently depending on definition (a
+ # cohort-based Fed study finds ~3x, not ~6x) — same caution as the
+ # other two "then" values above, this one kept as-is rather than
+ # picking one study's number over another's.
  'equality':      ('Black family wealth per $100 of white family wealth', 'about $16', '1983', 'about $15', 'flat', 'Federal Reserve Survey of Consumer Finances'),
- 'korea':         ('Estimated North Korean nuclear warheads', '0', '2005', 'about 50', 'worse', 'Federation of American Scientists'),
- 'bomb':          ('Nuclear warheads worldwide', 'about 70,000', '1986', 'about 12,000', 'better', 'Federation of American Scientists'),
+ # 2005: "0" holds — North Korea's first confirmed nuclear test was
+ # October 2006. Now: about 60, FAS's early-2026 estimate (up from the
+ # 50 this replaces — a real increase, not just a tightened citation).
+ 'korea':         ('Estimated North Korean nuclear warheads', '0', '2005', 'about 60', 'worse', 'Federation of American Scientists'),
+ # 1986: about 70,000 (FAS cites ~70,300) — matches as claimed. Now:
+ # about 12,300, FAS's early-2026 "Status of World Nuclear Forces" —
+ # tightened from 12,000.
+ 'bomb':          ('Nuclear warheads worldwide', 'about 70,000', '1986', 'about 12,300', 'better', 'Federation of American Scientists'),
 }
 
 PRESERVE_ROW = ('narrative', 'instances', 'updated', 'photo')
