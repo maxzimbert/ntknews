@@ -28,6 +28,29 @@ Naming hazard: the in-app code (`bsrEpisodesHtml`, `bsrDetailHtml` in
 Beginnings, that reader is wrong. The old modal is unreachable since T-0057,
 but the field's meaning must be changed deliberately, not by accident.
 
+## Revised 2026-10-02
+
+Decided with the editor, replacing the hand-built parts above:
+
+- **Selection is rules, not hand-picking.** The editor curates the digest in
+  Pulse and can do a light edit on Backstory, but will not choose beginnings or
+  objects. Code picks them from the matrix by the story's sub-genre, era and
+  spread (no repeated author, spread across time), and an `Exclude` flag in the
+  matrix is the only override. The matrix has no importance signal, so expect
+  adequate picks, not curated ones.
+- **An object is eligible only with a verified, live link** (T-0065).
+- **Beginnings are year, title, author and link.** No generated sentence unless
+  a grounded pilot proves out: ~10 objects generated from the matrix alone and
+  again from the fetched source text, compared by hand against the source. The
+  model-from-memory failure is documented (T-0045, T-0047).
+- `instances[]` is generated from the matrix by `build_backstory.py` and is no
+  longer hand-written or preserved across rebuilds, which also removes the
+  naming hazard above and ends hand-tagging in Pulse (T-0050).
+- `pick()` (two earliest pre-1981, two latest) is superseded. Until the rules
+  land, merging more matrix rows into a rebuild silently changes the objects
+  shown: the 2026-10-02 simulation moves Equality to Wheatley and Abigail Adams
+  and Faith to Red Jacket.
+
 ## Why
 
 The editor's view: past stories do not need their own "episodes" concept, and
