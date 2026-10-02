@@ -1,7 +1,7 @@
 ---
 id: T-0045
 title: The placard's pull-quote needs a real, sourced generation step
-status: DECIDED
+status: DISCARDED
 tags: [backstory, feature]
 anchor: editorial/build_backstory.py:82
 ---
@@ -137,3 +137,13 @@ the actual bar the editor gave. Once the mechanical check passes,
 promote to VERIFIED only after the editor reads a real sample of
 generated quotes against that bar directly — not on the strength of
 the fields being populated.
+
+## Discarded 2026-10-02
+
+The editor decided Backstory is automated and rules-based, with no hand-picked
+objects and no hand-written text, and that nothing is hosted on NTK. A
+single, memorable, on-mission quote chosen per object is a curation task, and
+a quote taken from memory is the failure this ticket was written to prevent.
+Not built. The short object page (T-0048) carries a grounded 'About this' in
+its place. If the placard's quote slot comes back, start from the risk named
+above: real fetch at generation time, `verified: false` until a human confirms.
