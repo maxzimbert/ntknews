@@ -77,8 +77,9 @@ if dead:
 s = open('digest/index.html', encoding='utf-8').read()
 m = re.search(r'const todayOverview = "(.*?)";\n', s, re.S)
 if m:
-    live = set(re.findall(r'"key"\s*:\s*"([0-9a-f]{16})"', s)) | \
-           set(re.findall(r'key:\s*"([0-9a-f]{16})"', s))
+    # Pulse keys are 16 hex chars, or manual-<timestamp> for manual clusters and scoop imports.
+    live = set(re.findall(r'"key"\s*:\s*"([0-9a-f]{16}|manual-\d+)"', s)) | \
+           set(re.findall(r'key:\s*"([0-9a-f]{16}|manual-\d+)"', s))
     dead = [r for r in markers(m.group(1)) if r not in live]
     if dead:
         bad.append('digest/index.html: %d dead onramp(s) %s' % (len(dead), dead))
@@ -87,3 +88,11 @@ if bad:
     sys.exit('\n'.join(bad))
 PY
 ```
+
+## Check corrected 2026-10-05
+
+The digest/index.html half of the check recognised only 16-hex story keys, so a published overview that
+pointed at a manual cluster or scoop-imported story (`manual-<timestamp>`) was reported as a dead
+onramp when it resolved. Widened to accept that key form. It still fails on a genuinely missing key:
+run against the 2026-10-05 edition published at 21:25Z (the stale overview, six keys with no story)
+it reports all six, and against the 22:14Z edition (every marker resolves) it passes.
