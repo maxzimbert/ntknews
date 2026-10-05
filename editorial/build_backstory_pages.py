@@ -31,6 +31,7 @@ of digest/, not nested under it.
 
 Stdlib only.
 """
+from urllib.parse import urlparse
 import json
 import sys
 from datetime import date
@@ -140,9 +141,22 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
   .unverified {{ display:inline-block; border:1px solid {terra}; color:{terra};
     font-family:'Overpass',sans-serif; font-size:10px; font-weight:700; letter-spacing:.08em;
     text-transform:uppercase; padding:3px 6px; border-radius:3px; margin-top:12px; }}
-  .spine {{ display:flex; gap:12px; align-items:flex-start; }}
-  .spine .dot {{ width:8px; height:8px; border-radius:999px; background:{ink}; margin-top:7px; flex:none; }}
-  .spine .t {{ font-size:16px; line-height:1.4; }}
+  .tr {{ display:grid; grid-template-columns:52px 20px 1fr; align-items:start; font-size:16px; line-height:1.4; }}
+  .tr .ty {{ font-family:'Overpass',sans-serif; font-size:14px; font-weight:700; padding-top:3px; color:{ink}; }}
+  .tr .td {{ position:relative; align-self:stretch; }}
+  .tr .td::before {{ content:''; position:absolute; left:50%; top:0; bottom:0; border-left:1px solid rgba(38,31,35,.3); }}
+  .tr:first-child .td::before {{ top:11px; }}
+  .tr:last-child .td::before {{ bottom:auto; height:11px; }}
+  .tr:only-child .td::before {{ display:none; }}
+  .tr .td i {{ position:absolute; left:50%; top:7px; width:9px; height:9px; margin-left:-4.5px; border-radius:50%; background:{ink}; }}
+  .tr .tt {{ padding:0 0 20px 8px; }}
+  .tr:last-child .tt {{ padding-bottom:0; }}
+  .tr.here .ty {{ color:{terra}; }}
+  .tr.here .td i {{ background:{terra}; box-shadow:0 0 0 2px {cream}, 0 0 0 3px {terra}; }}
+  .here-lab {{ display:block; font-family:'Overpass',sans-serif; font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:{terra}; margin:3px 0 2px; }}
+  .dot {{ display:inline-block; width:3px; height:3px; border-radius:50%; background:currentColor; margin:0 .6em; vertical-align:middle; }}
+  .cta {{ display:inline-block; font-family:'Overpass',sans-serif; font-size:13px; font-weight:600; color:{ink}; text-decoration:none; border:1px solid {ink}; padding:11px 16px; margin-top:4px; }}
+  .cta + .src {{ margin-left:10px; }}
   .obj {{ border-top:1px solid rgba(38,31,35,.2); padding:13px 0; }}
   .obj.first {{ border-top:none; padding-top:0; }}
   .obj .t {{ font-family:'Newsreader',serif; font-style:italic; font-size:16px; margin-bottom:4px; }}
@@ -161,7 +175,7 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
 </head>
 <body>
 <header><a href="/backstory"><img src="{logo}" alt="NTK"></a></header>
-<div class="bar"><a href="/backstory">&larr; Backstory</a><span>ntknews.org/backstory/{row_id}</span></div>
+<div class="bar"><a href="/backstory">&larr; Backstory</a></div>
 <div class="hd">
   <h1>{title_esc}</h1>
   <div class="milestone">{milestone_esc}</div>
@@ -223,20 +237,23 @@ def render_held(row):
         parts.append(f"""<section class="ind">
   <div class="ind-head"><div class="lab">{html_esc(ind['label'])}</div><div class="dir">{html_esc(ind['direction'])}</div></div>
   {indicator_svg(ind)}
-  <div class="src">{html_esc(ind['source'])} &middot; {html_esc(ind.get('as_of') or 'most recent data')}</div>
+  <div class="src">{html_esc(ind['source'])}<span class="dot"></span>{html_esc(ind.get('as_of') or 'most recent data')}</div>
   {verified_badge}
 </section>""")
 
+    begs = [f'<div class="tr"><span class="ty">{html_esc(b["year"])}</span><span class="td"><i></i></span><div class="tt">{html_esc(b["line"])}</div></div>'
+            for b in (row.get("beginnings") or [])]
     if row.get("start_line"):
-        # First-letter capitalize only — str.capitalize() also lowercases
-        # every other letter in the string, which mangles a proper noun
-        # like "Washington" the moment it's not the first word.
+        # First-letter capitalize only: str.capitalize() also lowercases every
+        # other letter, which mangles a proper noun like "Washington".
         line = row["start_line"]
         line = line[:1].upper() + line[1:]
-        parts.append(f"""<section>
-  <div class="lab">Beginnings</div>
-  <div class="spine"><span class="dot"></span><div class="t">{html_esc(line)}.</div></div>
-</section>""")
+        yr = html_esc(str(row.get("start_date", ""))[:4])
+        # the row's own "since ..." line closes the timeline: where the clock starts, so it is marked
+        begs.append(f'<div class="tr here"><span class="ty">{yr}</span><span class="td"><i></i></span>'
+                    f'<div class="tt"><span class="here-lab">We are here</span>{html_esc(line)}.</div></div>')
+    if begs:
+        parts.append(f'<section><div class="lab">Beginnings</div>{"".join(begs)}</section>')
 
     objs = row.get("objects") or []
     if objs:
@@ -250,7 +267,7 @@ def render_held(row):
             head = o["quote"] if o.get("quote") else o["title"]
             rows.append(f'<div class="{cls}"><a href="{object_href(row, i)}">'
                         f'<div class="t">{html_esc(head)}</div>'
-                        f'<div class="by">{html_esc(by)} · {html_esc(o["year"])}</div>'
+                        f'<div class="by">{html_esc(by)}<span class="dot"></span>{html_esc(o["year"])}</div>'
                         f'<div class="more">About this</div></a></div>')
         parts.append(f'<section><div class="lab">The case</div>{"".join(rows)}</section>')
 
@@ -289,6 +306,8 @@ def build_object_page(row, i):
              f'<div class="by" style="margin-top:8px">{html_esc(by)}</div>']
     head = f'<div class="hd objhd">{"".join(parts)}</div>'
     body = []
+    if o.get("about"):
+        body.append(f'<p class="ctx">{html_esc(o["about"])}</p>')
     ctx = o.get("context") or []
     if ctx:
         body.append("".join(f'<p class="ctx">{html_esc(c)}</p>' for c in ctx))
@@ -298,7 +317,10 @@ def build_object_page(row, i):
         body.append(f'<div class="lab">Where it stands now</div><p class="ctx">{html_esc(o["where_now"])}</p>')
     body.append(f'<div class="src">Source &middot; {html_esc(o["source"])}</div>')
     if o.get("source_url"):
-        body.append(f'<p style="margin-top:14px"><a href="{html_esc(o["source_url"])}">Read the original</a></p>')
+        host = urlparse(o["source_url"]).hostname or ""
+        host = host[4:] if host.startswith("www.") else host
+        body.append(f'<p style="margin-top:14px"><a class="cta" href="{html_esc(o["source_url"])}" target="_blank" rel="noopener noreferrer">View the primary document</a>'
+                    + (f'<span class="src">opens {html_esc(host)}</span>' if host else "") + '</p>')
     sect = f'<section>{"".join(body)}</section>'
     panel = (f'<section class="digest"><a class="ep first" href="/backstory/{row["id"]}/">'
              f'<div class="kicker">In the case for {html_esc(row["title"])}</div>'
