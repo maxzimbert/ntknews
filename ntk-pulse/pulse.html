@@ -367,6 +367,8 @@ let SUP = load(LS.sup, {});                 // canonical url -> true  (editor su
 let DISMISSED = load(LS.dismissed, {});      // candidate key -> true  (recommended-zone dismissals, persistent, reversible)
 function saveDismissed(){ localStorage.setItem(LS.dismissed, JSON.stringify(DISMISSED)); }
 let TODAY_OV = load(LS.today, {text:'', generatedAt:null, busy:false});
+// A reload kills any generation in flight, so a saved busy:true is always stale.
+TODAY_OV.busy = false;
 function saveToday(){ localStorage.setItem(LS.today, JSON.stringify(TODAY_OV)); }
 let BACKSTORY = load(LS.backstory, null) || seedBackstory();
 
@@ -2118,6 +2120,31 @@ function publishPreflight(stories){
   return { drop, warn, shipping };
 }
 
+// ─── Today-overview guard (T-0072) ───
+// The digest's Today tab publishes whatever overview text Pulse is holding.
+// Nothing used to check that it was finished, or that it was from today, so a
+// publish while Generate Today was still running (or with last week's essay)
+// shipped a stale overview with fresh stories. BLOCK is a hard stop: publishing
+// would silently ship the wrong thing. WARN is the editor's call.
+function todayPreflight(now){
+  const block = [], warn = [];
+  const t = (TODAY_OV.text || '').trim();
+  if (TODAY_OV.busy)
+    block.push('Generate Today is still running. Wait until it finishes, then publish.');
+  else if (t.indexOf('[Generation failed') === 0)
+    block.push('Generate Today failed: ' + t + '\nRun it again before publishing.');
+  else if (!t)
+    warn.push('No Today overview has been generated; the Today tab will keep the previous one.');
+  else {
+    const at = TODAY_OV.generatedAt ? new Date(TODAY_OV.generatedAt) : null;
+    const today = (now || new Date()).toDateString();
+    if (!at) warn.push('The Today overview has no generation time, so it may not be from today.');
+    else if (at.toDateString() !== today)
+      warn.push('The Today overview was generated on ' + at.toDateString() + ', not today.');
+  }
+  return { block, warn };
+}
+
 function preflightDialogText(pf){
   let m = 'Publish check\n';
   if (pf.drop.length)
@@ -2153,10 +2180,13 @@ async function publishToDigest(){
     renderPublishStatus(); alert(publishStatus); return;
   }
   if (!SETTINGS.ghToken){ alert('Add a GitHub token in ⚙ first — scoped to contents:write on this repo only.'); return; }
+  const tp = todayPreflight();
+  if (tp.block.length){ alert('Not published.\n\n' + tp.block.join('\n')); return; }
   const all = buildStoryPayload();
   if (!all.length){ alert('Nothing generated yet — nothing to publish.'); return; }
 
   const pf = publishPreflight(all);
+  pf.warn.push(...tp.warn);
   if ((pf.drop.length || pf.warn.length) && !confirm(preflightDialogText(pf))) return;
   if (!pf.shipping){ alert('Every story in the lineup is missing a headline — nothing to publish.'); return; }
   const stories = all.filter(s => (s.headline || '').trim());
