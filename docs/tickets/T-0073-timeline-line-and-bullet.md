@@ -1,7 +1,7 @@
 ---
 id: T-0073
 title: The Beginnings timeline's line starts above the first bullet and runs half a pixel off the bullets' centre
-status: DECIDED
+status: BUILT
 tags: [backstory, defect]
 anchor: digest/index.html:593
 ---
@@ -53,3 +53,12 @@ PY
 
 After the fix the editor should also look at a row page and the in-app overlay. The check only
 proves the broken selector is gone; whether the line looks centred is a judgement.
+
+## Built 2026-10-05
+
+Both copies fixed. The first row's line now starts at the bullet (`label + row` selector); the
+bullet (9px at left 6) and line (1px at left 10) share a centre on whole pixels, in a 21px column.
+Measured after the change on the static page and in the in-app overlay: bullet centre 10.5px, line
+centre 10.5px, first row's line top 11px (bullet centre 11.5px), last row's line ends at 11px. Before:
+10.0 and 10.5, and 0px (7px above the bullet). A single-row timeline draws no line. BUILT, not
+VERIFIED, until the editor has looked at it.

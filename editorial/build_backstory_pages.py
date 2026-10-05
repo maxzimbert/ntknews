@@ -141,14 +141,16 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
   .unverified {{ display:inline-block; border:1px solid {terra}; color:{terra};
     font-family:'Overpass',sans-serif; font-size:10px; font-weight:700; letter-spacing:.08em;
     text-transform:uppercase; padding:3px 6px; border-radius:3px; margin-top:12px; }}
-  .tr {{ display:grid; grid-template-columns:52px 20px 1fr; align-items:start; font-size:16px; line-height:1.4; }}
+  .tr {{ display:grid; grid-template-columns:52px 21px 1fr; align-items:start; font-size:16px; line-height:1.4; }}
   .tr .ty {{ font-family:'Overpass',sans-serif; font-size:14px; font-weight:700; padding-top:3px; color:{ink}; }}
   .tr .td {{ position:relative; align-self:stretch; }}
-  .tr .td::before {{ content:''; position:absolute; left:50%; top:0; bottom:0; border-left:1px solid rgba(38,31,35,.3); }}
-  .tr:first-child .td::before {{ top:11px; }}
+  /* Bullet 9px at left 6 and line 1px at left 10 share a centre (10.5px) on whole pixels. */
+  .tr .td::before {{ content:''; position:absolute; left:10px; top:0; bottom:0; border-left:1px solid rgba(38,31,35,.3); }}
+  /* The first row follows the section's label, so it is not :first-child. The line starts at the bullet's centre and ends there on the last row. */
+  .lab + .tr .td::before {{ top:11px; }}
   .tr:last-child .td::before {{ bottom:auto; height:11px; }}
-  .tr:only-child .td::before {{ display:none; }}
-  .tr .td i {{ position:absolute; left:50%; top:7px; width:9px; height:9px; margin-left:-4.5px; border-radius:50%; background:{ink}; }}
+  .lab + .tr:last-child .td::before {{ display:none; }}
+  .tr .td i {{ position:absolute; left:6px; top:7px; width:9px; height:9px; border-radius:50%; background:{ink}; }}
   .tr .tt {{ padding:0 0 20px 8px; }}
   .tr:last-child .tt {{ padding-bottom:0; }}
   .tr.here .ty {{ color:{terra}; }}

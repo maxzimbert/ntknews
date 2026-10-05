@@ -590,14 +590,16 @@
   .bp-dir { font: 700 10px 'Overpass', sans-serif; letter-spacing: .1em; text-transform: uppercase; color: var(--terra); white-space: nowrap; }
   .bp-sec svg { display: block; width: 100%; height: auto; margin: 10px 0 4px; }
   .bp-src { font: 600 10px 'Overpass', sans-serif; letter-spacing: .06em; color: rgba(38,31,35,.6); }
-  .bp-tr { display: grid; grid-template-columns: 52px 20px 1fr; align-items: start; font-size: 16px; line-height: 1.4; }
+  .bp-tr { display: grid; grid-template-columns: 52px 21px 1fr; align-items: start; font-size: 16px; line-height: 1.4; }
   .bp-ty { font: 700 14px 'Overpass', sans-serif; padding-top: 3px; color: var(--dark); }
   .bp-td { position: relative; align-self: stretch; }
-  .bp-td::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; border-left: 1px solid rgba(38,31,35,.3); }
-  .bp-tr:first-child .bp-td::before { top: 11px; }
+  /* Bullet 9px at left 6 and line 1px at left 10 share a centre (10.5px) on whole pixels. */
+  .bp-td::before { content: ''; position: absolute; left: 10px; top: 0; bottom: 0; border-left: 1px solid rgba(38,31,35,.3); }
+  /* The first row follows the section's label, so it is not :first-child. The line starts at the bullet's centre and ends there on the last row. */
+  .bp-lab + .bp-tr .bp-td::before { top: 11px; }
   .bp-tr:last-child .bp-td::before { bottom: auto; height: 11px; }
-  .bp-tr:only-child .bp-td::before { display: none; }
-  .bp-td i { position: absolute; left: 50%; top: 7px; width: 9px; height: 9px; margin-left: -4.5px; border-radius: 50%; background: var(--dark); }
+  .bp-lab + .bp-tr:last-child .bp-td::before { display: none; }
+  .bp-td i { position: absolute; left: 6px; top: 7px; width: 9px; height: 9px; border-radius: 50%; background: var(--dark); }
   .bp-tt { padding: 0 0 20px 8px; }
   .bp-tr:last-child .bp-tt { padding-bottom: 0; }
   .bp-tr.here .bp-ty { color: var(--terra); }
