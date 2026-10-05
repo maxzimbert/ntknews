@@ -23,6 +23,10 @@ const NTK_SOURCES = [
   'mediaite.com','hollywoodreporter.com','deadline.com'
 ];
 
+// Wire services only. pool=wire on scan-by-concept: Pulse asks for these when
+// the main pool search turned up no wire copy, because Truths prefers it.
+const WIRE_SOURCES = ['apnews.com', 'reuters.com', 'afp.com'];
+
 const RECENT_WINDOW_DAYS = 7;
 
 // ── Generic HTTPS GET, JSON response ──────────────────────────────────────────
@@ -457,6 +461,7 @@ exports.handler = async (event) => {
     // keyword "UFC") instead of pulling that person's entire news firehose.
     if (q.keyword) body.keyword = q.keyword;
     if (q.pool === 'ntk') body.sourceUri = NTK_SOURCES;
+    else if (q.pool === 'wire') body.sourceUri = WIRE_SOURCES;
   } else if (mode === 'fetch-by-uri') {
     // Fetch full bodies for specific article URIs selected during the scan
     const uris = (q.uris || '').split(',').filter(Boolean);

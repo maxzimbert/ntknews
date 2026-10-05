@@ -517,6 +517,35 @@ function canon(u){
   } catch { return (u||'').trim(); }
 }
 function isSup(u){ return !!SUP[canon(u)]; }
+
+// Wire services. Truths is "what people said and did", and the wires are the
+// least spun account of that, so Truths reads them first (artsBlock below) and
+// the source log marks them. Same three outlets as news.js WIRE_SOURCES.
+const WIRE_RE = /(^|\.)(apnews\.com|reuters\.com|afp\.com)$/;
+function domainOf(u){
+  try { return new URL(u).hostname.toLowerCase().replace(/^(www|m|amp)\./,''); } catch { return ''; }
+}
+function isWire(a){
+  return WIRE_RE.test(domainOf(a.url)) || /^(associated press|reuters|agence france)/i.test(a.source||'');
+}
+// The article text handed to a section. Identical for every section except
+// Truths, which gets wire copy first and in full, and everyone else trimmed
+// to NONWIRE_CAP characters once a usable wire body exists. That trim is the
+// cost control: input tokens are the bulk of a generation call.
+const NONWIRE_CAP = 1500, WIRE_MIN_BODY = 400;
+function artsBlock(arts, sec){
+  const one = (a, cap, tag) =>
+    `TITLE: ${tag||''}${a.title}\nSOURCE: ${a.source}\nURL: ${a.url}\nDATE: ${a.date}\n\n${(a.body||'[body unavailable — headline only]').slice(0,cap)}`;
+  if (sec !== 'truths') return arts.map(a=>one(a, SETTINGS.bodyLen)).join('\n\n---\n\n');
+  const wire = arts.filter(a=>isWire(a)), rest = arts.filter(a=>!isWire(a));
+  const haveWire = wire.some(a=>(a.body||'').length >= WIRE_MIN_BODY);
+  if (!wire.length) return arts.map(a=>one(a, SETTINGS.bodyLen)).join('\n\n---\n\n');
+  const note = 'SOURCE NOTE: articles tagged [WIRE] are wire-service copy. For Truths, take who said and did what, numbers and dates from the [WIRE] articles first. Use the other outlets only for detail the wire leaves out, and where they conflict, go with the wire.\n\n';
+  return note + [
+    ...wire.map(a=>one(a, SETTINGS.bodyLen, '[WIRE] ')),
+    ...rest.map(a=>one(a, haveWire ? Math.min(NONWIRE_CAP, SETTINGS.bodyLen) : SETTINGS.bodyLen)),
+  ].join('\n\n---\n\n');
+}
 function toggleSup(u){ const c=canon(u); if(SUP[c]) delete SUP[c]; else SUP[c]=true; saveSup(); }
 
 // Syndication detection (layer 3): 8-word shingle Jaccard over body text.
@@ -1624,6 +1653,18 @@ async function enrich(story){
       hadError=true; errMsg='No concept entity set — type one and hit check, or Draft first';
       setStatus(story,errMsg,true);
     }
+    // 1b. Wire top-up. Truths prefers wire copy (artsBlock), so if the pool
+    //     search found none, ask for it directly: at most 3 articles, and only
+    //     with the narrowing keyword, because a wire search on the concept alone
+    //     returns that entity's whole week and some of it is another story.
+    if (story.conceptUri && story.narrowKeyword && !er.some(a=>isWire({url:a.url||'', source:a.source?.title}))){
+      try {
+        setStatus(story,'EventRegistry: wire copy…');
+        const w = await netlifyFetch({mode:'scan-by-concept', conceptUri:story.conceptUri, pool:'wire',
+          keyword:story.narrowKeyword, articlesCount:'3', bodyLen:String(SETTINGS.bodyLen)});
+        if (Array.isArray(w)) er = er.concat(w);
+      } catch {}
+    }
     const erArts = er.map(a=>({
       url:a.url||'', title:a.title||'Untitled', source:a.source?.title||'Unknown',
       date:a.date||'', body:(a.body||''), bodyFrom: a.body?'er':'', included:true, dupOf:null, origin:'er'
@@ -1982,9 +2023,6 @@ async function generateStory(story){
   const arts = activeArts(story);
   if (!arts.length){ setStatus(story,'No active sources — enrich or add URLs first',true); return; }
   story.busy=true;
-  const artsText = arts.map(a=>
-    `TITLE: ${a.title}\nSOURCE: ${a.source}\nURL: ${a.url}\nDATE: ${a.date}\n\n${(a.body||'[body unavailable — headline only]').slice(0,SETTINGS.bodyLen)}`
-  ).join('\n\n---\n\n');
   const angleBlock = story.angle ? `\n\nEDITOR'S ANGLE (the editorial frame for this story — honor it): ${story.angle}` : '';
   // Chained generation: sections run in reading order and each call receives
   // the sections already written, verbatim, plus the spent-numbers ledger.
@@ -1995,7 +2033,7 @@ async function generateStory(story){
   const pkg = {};
   for (const sec of SECS){
     setStatus(story, story.title.slice(0,40)+' · '+sec+'…');
-    try { pkg[sec] = cleanSectionText(sec, await ai(makePrompt(sec, artsText+angleBlock+contextBlock(story)+priorSectionsBlock(pkg)+notesBlock(), []), 2500)); }
+    try { pkg[sec] = cleanSectionText(sec, await ai(makePrompt(sec, artsBlock(arts, sec)+angleBlock+contextBlock(story)+priorSectionsBlock(pkg)+notesBlock(), []), 2500)); }
     catch(e){ pkg[sec] = '[Generation failed: '+e.message+']'; }
   }
   story.packages = pkg; story.generatedAt = new Date().toISOString(); story.outOpen = true;
@@ -2006,9 +2044,6 @@ async function reviseSection(story, sectionName, note){
   const arts = activeArts(story);
   if (!arts.length){ setStatus(story,'No active sources — enrich first',true); return; }
   story.busy=true; setStatus(story,'Revising '+sectionName+'…'); render();
-  const artsText = arts.map(a=>
-    `TITLE: ${a.title}\nSOURCE: ${a.source}\nURL: ${a.url}\nDATE: ${a.date}\n\n${(a.body||'[body unavailable — headline only]').slice(0,SETTINGS.bodyLen)}`
-  ).join('\n\n---\n\n');
   const angleBlock = story.angle ? `\n\nEDITOR'S ANGLE (the editorial frame for this story — honor it): ${story.angle}` : '';
   // Siblings, not "prior": revise keeps the OTHER three sections fixed
   // regardless of reading order, so a mid-package rewrite stays consistent
@@ -2020,7 +2055,7 @@ async function reviseSection(story, sectionName, note){
     : '\n\nThis section is being regenerated at the editor\'s request with no specific note — reconsider it freshly against the source material and the standing editorial notes above.';
   try {
     story.packages[sectionName] = cleanSectionText(sectionName, await ai(makePrompt(sectionName,
-      artsText+angleBlock+contextBlock(story)+siblings+revisionNote+notesBlock(), []), 2500));
+      artsBlock(arts, sectionName)+angleBlock+contextBlock(story)+siblings+revisionNote+notesBlock(), []), 2500));
     setStatus(story,'Revised '+sectionName+'.');
   } catch(e){ setStatus(story,'Revise failed: '+e.message,true); }
   story.busy=false; saveLineup(); render();
@@ -2064,6 +2099,12 @@ function buildStoryPayload(){
       prob: toSiteHtml(s.packages.probabilities||''),
       poss: toSiteHtml(s.packages.possibilities||''),
       lies: toSiteHtml(s.packages.lies||''),
+      // Which outlets fed this story. Not rendered anywhere: build_digest.py
+      // appends it to ntk-pulse/data/source-log.jsonl and drops it.
+      sources: activeArts(s).map(a=>({
+        domain: domainOf(a.url), outlet: a.source || '', wire: isWire(a),
+        origin: a.origin || '', body_from: a.bodyFrom || '', body_chars: (a.body||'').length,
+      })),
       featuredImage: s.featuredImage || null,
       overlayColor: s.overlayColor || '#0798F2',
       overlayOpacity: s.overlayOpacity || 45,
