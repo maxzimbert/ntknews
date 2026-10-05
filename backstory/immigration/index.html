@@ -55,7 +55,12 @@
   .unverified { display:inline-block; border:1px solid #DC6550; color:#DC6550;
     font-family:'Overpass',sans-serif; font-size:10px; font-weight:700; letter-spacing:.08em;
     text-transform:uppercase; padding:3px 6px; border-radius:3px; margin-top:12px; }
-  .spine { display:flex; gap:12px; align-items:flex-start; }
+  .spine { display:flex; gap:12px; align-items:flex-start; position:relative; padding-bottom:16px; }
+  .spine:last-child { padding-bottom:0; }
+  .spine:not(:last-child)::before { content:''; position:absolute; left:3.5px; top:19px; bottom:-3px; border-left:1px dotted rgba(38,31,35,.5); }
+  .spine .yr { display:block; font-family:'Overpass',sans-serif; font-size:13px; font-weight:600; letter-spacing:.04em; color:rgba(38,31,35,.65); margin-bottom:2px; }
+  .cta { display:inline-block; font-family:'Overpass',sans-serif; font-size:13px; font-weight:600; color:#261F23; text-decoration:none; border:1px solid #261F23; padding:11px 16px; margin-top:4px; }
+  .cta + .src { margin-left:10px; }
   .spine .dot { width:8px; height:8px; border-radius:999px; background:#261F23; margin-top:7px; flex:none; }
   .spine .t { font-size:16px; line-height:1.4; }
   .obj { border-top:1px solid rgba(38,31,35,.2); padding:13px 0; }
@@ -98,11 +103,8 @@
   <div class="src">U.S. Census Bureau &middot; 2024</div>
   
 </section>
-<section>
-  <div class="lab">Beginnings</div>
-  <div class="spine"><span class="dot"></span><div class="t">Since the last time Congress passed a big immigration law, November 1986.</div></div>
-</section>
-<section><div class="lab">The case</div><div class="obj first"><a href="/backstory/immigration/objects/1/"><div class="t">Chinese Exclusion Act</div><div class="by">U.S. Congress · 1882</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/immigration/objects/2/"><div class="t">Immigration Act of 1924</div><div class="by">U.S. Congress · 1924</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/immigration/objects/3/"><div class="t">Memorandum on Deferred Action for Childhood Arrivals</div><div class="by">Janet Napolitano · 2012</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/immigration/objects/4/"><div class="t">Arizona v. United States</div><div class="by">SCOTUS · 2012</div><div class="more">About this</div></a></div></section><div class="end">— 30 —</div>
+<section><div class="lab">Beginnings</div><div class="spine"><span class="dot"></span><div class="t"><span class="yr">1882</span>Congress passed an act suspending the coming of Chinese laborers to the United States for ten years and fining ship masters who brought them.</div></div><div class="spine"><span class="dot"></span><div class="t"><span class="yr">1942</span>The United States and Mexico agreed to recruit Mexican farm workers in Mexico for temporary work in the United States.</div></div><div class="spine"><span class="dot"></span><div class="t"><span class="yr">1982</span>The Supreme Court struck down a Texas law that let the state withhold school funds for educating children who were in the country illegally.</div></div><div class="spine"><span class="dot"></span><div class="t"><span class="yr">1986</span>Since the last time Congress passed a big immigration law, November 1986.</div></div></section>
+<section><div class="lab">The case</div><div class="obj first"><a href="/backstory/immigration/objects/1/"><div class="t">Immigration Act of 1924</div><div class="by">U.S. Congress · 1924</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/immigration/objects/2/"><div class="t">Immigration Reform and Control Act, signing statement</div><div class="by">Ronald Reagan · 1986</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/immigration/objects/3/"><div class="t">Arizona v. United States</div><div class="by">SCOTUS · 2012</div><div class="more">About this</div></a></div></section><div class="end">— 30 —</div>
 <a class="back" href="/backstory">← All of Backstory</a>
 </body>
 </html>

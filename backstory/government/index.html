@@ -55,7 +55,12 @@
   .unverified { display:inline-block; border:1px solid #DC6550; color:#DC6550;
     font-family:'Overpass',sans-serif; font-size:10px; font-weight:700; letter-spacing:.08em;
     text-transform:uppercase; padding:3px 6px; border-radius:3px; margin-top:12px; }
-  .spine { display:flex; gap:12px; align-items:flex-start; }
+  .spine { display:flex; gap:12px; align-items:flex-start; position:relative; padding-bottom:16px; }
+  .spine:last-child { padding-bottom:0; }
+  .spine:not(:last-child)::before { content:''; position:absolute; left:3.5px; top:19px; bottom:-3px; border-left:1px dotted rgba(38,31,35,.5); }
+  .spine .yr { display:block; font-family:'Overpass',sans-serif; font-size:13px; font-weight:600; letter-spacing:.04em; color:rgba(38,31,35,.65); margin-bottom:2px; }
+  .cta { display:inline-block; font-family:'Overpass',sans-serif; font-size:13px; font-weight:600; color:#261F23; text-decoration:none; border:1px solid #261F23; padding:11px 16px; margin-top:4px; }
+  .cta + .src { margin-left:10px; }
   .spine .dot { width:8px; height:8px; border-radius:999px; background:#261F23; margin-top:7px; flex:none; }
   .spine .t { font-size:16px; line-height:1.4; }
   .obj { border-top:1px solid rgba(38,31,35,.2); padding:13px 0; }
@@ -98,11 +103,8 @@
   <div class="src">Pew Research Center &middot; September 2025</div>
   
 </section>
-<section>
-  <div class="lab">Beginnings</div>
-  <div class="spine"><span class="dot"></span><div class="t">Since California voters capped their own property taxes, June 1978.</div></div>
-</section>
-<section><div class="lab">The case</div><div class="obj first"><a href="/backstory/government/objects/1/"><div class="t">Report on the Public Credit</div><div class="by">Alexander Hamilton · 1790</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/government/objects/2/"><div class="t">On the Assumption Of State Debts</div><div class="by">Virginia Resolutions · 1790</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/government/objects/3/"><div class="t">Mandate for Leadership: The Conservative Promise</div><div class="by">The Heritage Foundation · 2023</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/government/objects/4/"><div class="t">Loper Bright Enterprises v. Raimondo</div><div class="by">SCOTUS · 2024</div><div class="more">About this</div></a></div></section><div class="end">— 30 —</div>
+<section><div class="lab">Beginnings</div><div class="spine"><span class="dot"></span><div class="t"><span class="yr">1790</span>Treasury Secretary Alexander Hamilton urged Congress to pay the national war debt in full and to have the federal government take over the states' debts.</div></div><div class="spine"><span class="dot"></span><div class="t"><span class="yr">1825</span>President John Quincy Adams sent his first annual message to Congress on 6 December 1825.</div></div><div class="spine"><span class="dot"></span><div class="t"><span class="yr">1877</span>The Supreme Court ruled that Illinois could cap rates charged by grain warehouses and elevators, since states may regulate property serving the public good.</div></div><div class="spine"><span class="dot"></span><div class="t"><span class="yr">1910</span>William Allen White published The Old Order Changeth, a book about American democracy, issued by Macmillan in New York.</div></div><div class="spine"><span class="dot"></span><div class="t"><span class="yr">1932</span>Franklin Roosevelt gave a campaign speech on progressive government to the Commonwealth Club in San Francisco.</div></div><div class="spine"><span class="dot"></span><div class="t"><span class="yr">1971</span>Lewis Powell Jr. wrote a confidential memorandum to the U.S. Chamber of Commerce Education Committee titled Attack on American Free Enterprise System.</div></div><div class="spine"><span class="dot"></span><div class="t"><span class="yr">1978</span>Since California voters capped their own property taxes, June 1978.</div></div></section>
+<section><div class="lab">The case</div><div class="obj first"><a href="/backstory/government/objects/1/"><div class="t">On the Assumption Of State Debts</div><div class="by">Virginia Resolutions · 1790</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/government/objects/2/"><div class="t">Charles River Bridge v Warren Bridge</div><div class="by">SCOTUS · 1837</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/government/objects/3/"><div class="t">Experiments in Government</div><div class="by">Elihu Root · 1913</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/government/objects/4/"><div class="t">Debate between Carter and Reagan</div><div class="by">Carter and Reagan · 1980</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/government/objects/5/"><div class="t">Mandate for Leadership: The Conservative Promise</div><div class="by">The Heritage Foundation · 2023</div><div class="more">About this</div></a></div></section><div class="end">— 30 —</div>
 <a class="back" href="/backstory">← All of Backstory</a>
 </body>
 </html>

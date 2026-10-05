@@ -55,7 +55,12 @@
   .unverified { display:inline-block; border:1px solid #DC6550; color:#DC6550;
     font-family:'Overpass',sans-serif; font-size:10px; font-weight:700; letter-spacing:.08em;
     text-transform:uppercase; padding:3px 6px; border-radius:3px; margin-top:12px; }
-  .spine { display:flex; gap:12px; align-items:flex-start; }
+  .spine { display:flex; gap:12px; align-items:flex-start; position:relative; padding-bottom:16px; }
+  .spine:last-child { padding-bottom:0; }
+  .spine:not(:last-child)::before { content:''; position:absolute; left:3.5px; top:19px; bottom:-3px; border-left:1px dotted rgba(38,31,35,.5); }
+  .spine .yr { display:block; font-family:'Overpass',sans-serif; font-size:13px; font-weight:600; letter-spacing:.04em; color:rgba(38,31,35,.65); margin-bottom:2px; }
+  .cta { display:inline-block; font-family:'Overpass',sans-serif; font-size:13px; font-weight:600; color:#261F23; text-decoration:none; border:1px solid #261F23; padding:11px 16px; margin-top:4px; }
+  .cta + .src { margin-left:10px; }
   .spine .dot { width:8px; height:8px; border-radius:999px; background:#261F23; margin-top:7px; flex:none; }
   .spine .t { font-size:16px; line-height:1.4; }
   .obj { border-top:1px solid rgba(38,31,35,.2); padding:13px 0; }
@@ -88,11 +93,8 @@
   <div class="src">FBI Uniform Crime Reports &middot; 2024</div>
   
 </section>
-<section>
-  <div class="lab">Beginnings</div>
-  <div class="spine"><span class="dot"></span><div class="t">Since gun owners took over their own lobby, May 1977.</div></div>
-</section>
-<section><div class="lab">The case</div><div class="obj first"><a href="/backstory/order/objects/1/"><div class="t">National Prohibition Act</div><div class="by">U.S. Congress · 1919</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/order/objects/2/"><div class="t">Mapp v. Ohio</div><div class="by">SCOTUS · 1961</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/order/objects/3/"><div class="t">McDonald v. City of Chicago</div><div class="by">SCOTUS · 2010</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/order/objects/4/"><div class="t">New York State Rifle &amp; Pistol Association v. Bruen</div><div class="by">SCOTUS · 2022</div><div class="more">About this</div></a></div></section><div class="end">— 30 —</div>
+<section><div class="lab">Beginnings</div><div class="spine"><span class="dot"></span><div class="t"><span class="yr">1919</span>Congress passed the National Prohibition Act over President Wilson's veto, setting out how the ban on alcoholic drinks would be enforced.</div></div><div class="spine"><span class="dot"></span><div class="t"><span class="yr">1966</span>The Supreme Court ruled 5-4 that police must warn suspects in custody of their right to remain silent and to have a lawyer before questioning.</div></div><div class="spine"><span class="dot"></span><div class="t"><span class="yr">1968</span>The National Advisory Commission on Civil Disorders issued a report on the 1967 civil disorders, with recommendations on police-community relations and social conditions.</div></div><div class="spine"><span class="dot"></span><div class="t"><span class="yr">1977</span>Since gun owners took over their own lobby, May 1977.</div></div></section>
+<section><div class="lab">The case</div><div class="obj first"><a href="/backstory/order/objects/1/"><div class="t">Mapp v. Ohio</div><div class="by">SCOTUS · 1961</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/order/objects/2/"><div class="t">Gideon v. Wainwright</div><div class="by">SCOTUS · 1963</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/order/objects/3/"><div class="t">Violent Crime Control and Law Enforcement Act</div><div class="by">U.S. Congress · 1994</div><div class="more">About this</div></a></div></section><div class="end">— 30 —</div>
 <a class="back" href="/backstory">← All of Backstory</a>
 </body>
 </html>

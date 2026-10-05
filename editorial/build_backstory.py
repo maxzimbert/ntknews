@@ -17,6 +17,7 @@ Preserved from the existing backstory.json on every run:
 
 Run from the repo root:  python3 editorial/build_backstory.py
 """
+import re
 import json, os, sys, collections
 from datetime import datetime, timezone
 
@@ -143,39 +144,108 @@ IND = {
  'bomb':          ('Nuclear warheads worldwide', 'about 70,000', '1986', 'about 12,300', 'better', 'Federation of American Scientists'),
 }
 
-PRESERVE_ROW = ('narrative', 'instances', 'updated', 'photo')
+PRESERVE_ROW = ('narrative', 'instances', 'updated', 'photo')  # beginnings is rebuilt each run, from the matrix and the notes file
+
+
+NOTES = os.path.join(ROOT, 'editorial', 'object-notes.json')
+
+
+def day_month(v):
+    """Column C is text ('8 February') on most rows but a real date on a few."""
+    if hasattr(v, 'strftime'):
+        return '%d %s' % (v.day, v.strftime('%B'))
+    return str(v or '')
+
+
+def slug(text):
+    return re.sub(r'[^a-z0-9]+', '-', str(text).lower()).strip('-')[:90]
 
 
 def load_objects():
+    """Every matrix object that has a primary-source link (column O). An object
+    with no link is not eligible: a reader leaves NTK for that link (T-0065)."""
     sh = openpyxl.load_workbook(MATRIX)['Objects']
     by_row = collections.defaultdict(list)
+    seen = collections.Counter()
     for i in range(2, sh.max_row + 1):
         g = lambda c: sh.cell(row=i, column=c).value
         if not g(11):
             continue
+        sort = str(g(4) or '9999')
+        oid = slug(sort + '-' + str(g(6)))
+        seen[oid] += 1
+        if seen[oid] > 1:
+            oid += '-%d' % seen[oid]
         by_row[g(11)].append({'title': g(6), 'author': g(7) or '',
-                              'year': str(g(4))[:4] if g(4) else '',
-                              'source': g(10), '_sort': str(g(4) or '9999')})
+                              'year': sort[:4] if g(4) else '',
+                              'source': g(10), 'source_url': g(15) or '', 'day_month': day_month(g(3)),
+                              'object_id': oid, '_sort': sort})
     return by_row
 
 
-def pick(pool):
-    """Two deepest pre-1981, two most recent. Falls back if the row is thin."""
-    all_o = sorted(pool, key=lambda o: o['_sort'])
-    if not all_o:
+def spread(items, k):
+    """k items spread evenly across a date-sorted list, avoiding a repeated
+    author where a neighbour will do."""
+    if k >= len(items):
+        return list(items)
+    if k <= 0:
         return []
-    old = [o for o in all_o if o['_sort'][:4] < '1981']
-    new = [o for o in all_o if o['_sort'][:4] >= '1981']
-    chosen = old[:2] + new[-2:]
-    if len(chosen) < 4:
-        chosen += [o for o in all_o if o not in chosen][:4 - len(chosen)]
-    return [{k: o[k] for k in ('title', 'author', 'year', 'source')}
-            for o in sorted(chosen, key=lambda o: o['_sort'])]
+    idx = [0] if k == 1 else [round(i * (len(items) - 1) / (k - 1)) for i in range(k)]
+    out, used = [], set()
+    for ix in idx:
+        for j in (ix, ix + 1, ix - 1, ix + 2, ix - 2):
+            if 0 <= j < len(items) and j not in used and (items[j]['author'] or items[j]['title']) not in {(o['author'] or o['title']) for o in out}:
+                out.append(items[j]); used.add(j); break
+        else:
+            for j in range(len(items)):
+                if j not in used:
+                    out.append(items[j]); used.add(j); break
+    return sorted(out, key=lambda o: o['_sort'])
+
+
+def base_title(t):
+    t = re.sub(r'\s*[-\u2013\u2014]+\s*(scotus\s*)?(dissenting|concurring)\b.*$', '', str(t), flags=re.I)
+    return re.sub(r'\s*scotus\b', '', t, flags=re.I).strip().lower()
+
+
+def one_per_document(pool):
+    """An opinion and its dissent are one document family: keep the opinion."""
+    best = {}
+    for o in pool:
+        k = (base_title(o['title']), o['year'])
+        dissent = bool(re.search(r'dissent|concurr', o['title'], re.I))
+        if k not in best or (best[k][1] and not dissent):
+            best[k] = (o, dissent)
+    return [v[0] for v in best.values()]
+
+
+def select(pool, start_date):
+    """Beginnings: 3 to 6 objects from before the row's start year, spread across
+    time. The case: 3 or 5 more, spread across the whole row. Only linked
+    objects are eligible. Returns (beginnings, case)."""
+    pool = sorted(one_per_document([o for o in pool if o['source_url']]), key=lambda o: o['_sort'])
+    sy = str(start_date)[:4]
+    before = [o for o in pool if o['year'] < sy]
+    src = before if len(before) >= 3 else pool
+    kb = 6 if len(src) >= 30 else 5 if len(src) >= 10 else 3 if len(src) >= 3 else len(src)
+    begin = spread(src, kb)
+    used = {o['object_id'] for o in begin}
+    rest = [o for o in pool if o['object_id'] not in used]
+    if len(rest) < 3:  # a small row: let The case reuse a Beginnings object rather than shrink
+        rest = pool
+    kc = 5 if len(rest) >= 12 else 3 if len(rest) >= 3 else len(rest)
+    return begin, spread(rest, kc)
+
+
+def load_notes():
+    return json.load(open(NOTES)) if os.path.exists(NOTES) else {}
 
 
 def main():
     spec = json.load(open(ROWS_IN))
     objs = load_objects()
+    notes = load_notes()
+    chosen = []
 
     prev, prev_rows = {}, {}
     if os.path.exists(OUT):
@@ -231,11 +301,31 @@ def main():
             'indicator': ({'label': ind[0], 'then_value': ind[1], 'then_year': ind[2],
                            'now_value': ind[3], 'direction': ind[4], 'source': ind[5],
                            'as_of': None, 'verified': False} if ind else None),
-            'objects': pick(objs.get(r['title'], [])),
+            'objects': [], 'beginnings': [],
             'instances': [], 'photo': None,
         }, prev_rows.get(r['id'])))
+        begin, case = select(objs.get(r['title'], []), r['start_date'])
+        row = out['rows'][-1]
+        if not row.get('objects_locked'):
+            for o in begin:
+                chosen.append({'role': 'beginning', 'row': r['id'], 'row_title': r['title'], 'contest': r['contest'], **{k: o[k] for k in ('object_id', 'title', 'author', 'year', 'day_month', 'source', 'source_url')}})
+                n = notes.get(o['object_id']) or {}
+                if n.get('line'):
+                    row['beginnings'].append({'year': o['year'], 'line': n['line'], 'object_id': o['object_id']})
+            for o in case:
+                chosen.append({'role': 'case', 'row': r['id'], 'row_title': r['title'], 'contest': r['contest'], **{k: o[k] for k in ('object_id', 'title', 'author', 'year', 'day_month', 'source', 'source_url')}})
+                n = notes.get(o['object_id']) or {}
+                d = {k: o[k] for k in ('title', 'author', 'year', 'source', 'source_url', 'object_id')}
+                if n.get('about'):
+                    d['about'] = n['about']
+                row['objects'].append(d)
 
     out['rows'].sort(key=lambda r: r['start_date'], reverse=True)
+
+    json.dump(chosen, open(os.path.join(ROOT, 'editorial', 'object-selection.json'), 'w'), indent=1, ensure_ascii=False)
+    need = [c for c in chosen if not (notes.get(c['object_id']) or {}).get('line' if c['role'] == 'beginning' else 'about')]
+    if need:
+        print('  %d of %d chosen objects have no generated text yet (see editorial/object-selection.json)' % (len(need), len(chosen)))
 
     ids = [r['id'] for r in out['rows']]
     dupes = [i for i, c in collections.Counter(ids).items() if c > 1]

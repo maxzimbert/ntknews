@@ -55,7 +55,12 @@
   .unverified { display:inline-block; border:1px solid #DC6550; color:#DC6550;
     font-family:'Overpass',sans-serif; font-size:10px; font-weight:700; letter-spacing:.08em;
     text-transform:uppercase; padding:3px 6px; border-radius:3px; margin-top:12px; }
-  .spine { display:flex; gap:12px; align-items:flex-start; }
+  .spine { display:flex; gap:12px; align-items:flex-start; position:relative; padding-bottom:16px; }
+  .spine:last-child { padding-bottom:0; }
+  .spine:not(:last-child)::before { content:''; position:absolute; left:3.5px; top:19px; bottom:-3px; border-left:1px dotted rgba(38,31,35,.5); }
+  .spine .yr { display:block; font-family:'Overpass',sans-serif; font-size:13px; font-weight:600; letter-spacing:.04em; color:rgba(38,31,35,.65); margin-bottom:2px; }
+  .cta { display:inline-block; font-family:'Overpass',sans-serif; font-size:13px; font-weight:600; color:#261F23; text-decoration:none; border:1px solid #261F23; padding:11px 16px; margin-top:4px; }
+  .cta + .src { margin-left:10px; }
   .spine .dot { width:8px; height:8px; border-radius:999px; background:#261F23; margin-top:7px; flex:none; }
   .spine .t { font-size:16px; line-height:1.4; }
   .obj { border-top:1px solid rgba(38,31,35,.2); padding:13px 0; }
@@ -88,11 +93,8 @@
   <div class="src">Federal Reserve Survey of Consumer Finances &middot; 2022</div>
   
 </section>
-<section>
-  <div class="lab">Beginnings</div>
-  <div class="spine"><span class="dot"></span><div class="t">Since the Court ruled that separate could not be equal, May 1954.</div></div>
-</section>
-<section><div class="lab">The case</div><div class="obj first"><a href="/backstory/equality/objects/1/"><div class="t">The Liberator</div><div class="by">William Lloyd Garrison · 1831</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/equality/objects/2/"><div class="t">Review of the Debate in the Virginia Legislature of 1831 and 1832</div><div class="by">Thomas R. Dew · 1831</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/equality/objects/3/"><div class="t">Dobbs v. Jackson Women’s Health Organization</div><div class="by">SCOTUS · 2022</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/equality/objects/4/"><div class="t">Students for Fair Admissions v. President and Fellows of Harvard College</div><div class="by">SCOTUS · 2023</div><div class="more">About this</div></a></div></section><div class="end">— 30 —</div>
+<section><div class="lab">Beginnings</div><div class="spine"><span class="dot"></span><div class="t"><span class="yr">1774</span>Phillis Wheatley wrote to the Rev. Samson Occom that she agreed with his reasons on the natural rights of Black people.</div></div><div class="spine"><span class="dot"></span><div class="t"><span class="yr">1832</span>Maria W. Stewart spoke at Franklin Hall in Boston, calling for civil rights for northern Black people and questioning emigration to Africa.</div></div><div class="spine"><span class="dot"></span><div class="t"><span class="yr">1854</span>Senator Stephen Douglas defended his Kansas-Nebraska bill on the Senate floor, arguing that each territory's people should decide the question of slavery themselves.</div></div><div class="spine"><span class="dot"></span><div class="t"><span class="yr">1864</span>Ben Wade and H. Winter Davis published a manifesto attacking the President's July 18 proclamation on a bill he had not signed.</div></div><div class="spine"><span class="dot"></span><div class="t"><span class="yr">1873</span>The Supreme Court upheld a Louisiana slaughterhouse monopoly, ruling that the Thirteenth and Fourteenth Amendments were passed to give former slaves full equality.</div></div><div class="spine"><span class="dot"></span><div class="t"><span class="yr">1941</span>Franklin Roosevelt signed an order banning racial discrimination in defense industry hiring and created a Committee on Fair Employment Practice to investigate complaints.</div></div><div class="spine"><span class="dot"></span><div class="t"><span class="yr">1954</span>Since the Court ruled that separate could not be equal, May 1954.</div></div></section>
+<section><div class="lab">The case</div><div class="obj first"><a href="/backstory/equality/objects/1/"><div class="t">Letter to John Adams ('Remember the Ladies')</div><div class="by">Abigail Adams · 1776</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/equality/objects/2/"><div class="t">Petition to the Massachusetts Legislature</div><div class="by">Prince Hall and eight other Black Bostonians · 1777</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/equality/objects/3/"><div class="t">Lincoln - Douglas Debates</div><div class="by">Abraham Lincoln and Stephen Douglas · 1858</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/equality/objects/4/"><div class="t">Atlanta Exposition Address</div><div class="by">Booker T. Washington · 1895</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/equality/objects/5/"><div class="t">Bowers v. Hardwick</div><div class="by">SCOTUS · 1986</div><div class="more">About this</div></a></div></section><div class="end">— 30 —</div>
 <a class="back" href="/backstory">← All of Backstory</a>
 </body>
 </html>

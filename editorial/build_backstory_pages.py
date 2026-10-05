@@ -31,6 +31,7 @@ of digest/, not nested under it.
 
 Stdlib only.
 """
+from urllib.parse import urlparse
 import json
 import sys
 from datetime import date
@@ -140,7 +141,12 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
   .unverified {{ display:inline-block; border:1px solid {terra}; color:{terra};
     font-family:'Overpass',sans-serif; font-size:10px; font-weight:700; letter-spacing:.08em;
     text-transform:uppercase; padding:3px 6px; border-radius:3px; margin-top:12px; }}
-  .spine {{ display:flex; gap:12px; align-items:flex-start; }}
+  .spine {{ display:flex; gap:12px; align-items:flex-start; position:relative; padding-bottom:16px; }}
+  .spine:last-child {{ padding-bottom:0; }}
+  .spine:not(:last-child)::before {{ content:''; position:absolute; left:3.5px; top:19px; bottom:-3px; border-left:1px dotted rgba(38,31,35,.5); }}
+  .spine .yr {{ display:block; font-family:'Overpass',sans-serif; font-size:13px; font-weight:600; letter-spacing:.04em; color:rgba(38,31,35,.65); margin-bottom:2px; }}
+  .cta {{ display:inline-block; font-family:'Overpass',sans-serif; font-size:13px; font-weight:600; color:{ink}; text-decoration:none; border:1px solid {ink}; padding:11px 16px; margin-top:4px; }}
+  .cta + .src {{ margin-left:10px; }}
   .spine .dot {{ width:8px; height:8px; border-radius:999px; background:{ink}; margin-top:7px; flex:none; }}
   .spine .t {{ font-size:16px; line-height:1.4; }}
   .obj {{ border-top:1px solid rgba(38,31,35,.2); padding:13px 0; }}
@@ -227,16 +233,18 @@ def render_held(row):
   {verified_badge}
 </section>""")
 
+    begs = [f'<div class="spine"><span class="dot"></span><div class="t"><span class="yr">{html_esc(b["year"])}</span>{html_esc(b["line"])}</div></div>'
+            for b in (row.get("beginnings") or [])]
     if row.get("start_line"):
-        # First-letter capitalize only — str.capitalize() also lowercases
-        # every other letter in the string, which mangles a proper noun
-        # like "Washington" the moment it's not the first word.
+        # First-letter capitalize only: str.capitalize() also lowercases every
+        # other letter, which mangles a proper noun like "Washington".
         line = row["start_line"]
         line = line[:1].upper() + line[1:]
-        parts.append(f"""<section>
-  <div class="lab">Beginnings</div>
-  <div class="spine"><span class="dot"></span><div class="t">{html_esc(line)}.</div></div>
-</section>""")
+        yr = f'<span class="yr">{html_esc(str(row.get("start_date", ""))[:4])}</span>' if begs else ""
+        # the row's own "since ..." line closes the timeline: the year the clock starts
+        begs.append(f'<div class="spine"><span class="dot"></span><div class="t">{yr}{html_esc(line)}.</div></div>')
+    if begs:
+        parts.append(f'<section><div class="lab">Beginnings</div>{"".join(begs)}</section>')
 
     objs = row.get("objects") or []
     if objs:
@@ -289,6 +297,8 @@ def build_object_page(row, i):
              f'<div class="by" style="margin-top:8px">{html_esc(by)}</div>']
     head = f'<div class="hd objhd">{"".join(parts)}</div>'
     body = []
+    if o.get("about"):
+        body.append(f'<p class="ctx">{html_esc(o["about"])}</p>')
     ctx = o.get("context") or []
     if ctx:
         body.append("".join(f'<p class="ctx">{html_esc(c)}</p>' for c in ctx))
@@ -298,7 +308,10 @@ def build_object_page(row, i):
         body.append(f'<div class="lab">Where it stands now</div><p class="ctx">{html_esc(o["where_now"])}</p>')
     body.append(f'<div class="src">Source &middot; {html_esc(o["source"])}</div>')
     if o.get("source_url"):
-        body.append(f'<p style="margin-top:14px"><a href="{html_esc(o["source_url"])}">Read the original</a></p>')
+        host = urlparse(o["source_url"]).hostname or ""
+        host = host[4:] if host.startswith("www.") else host
+        body.append(f'<p style="margin-top:14px"><a class="cta" href="{html_esc(o["source_url"])}" target="_blank" rel="noopener noreferrer">View the primary document</a>'
+                    + (f'<span class="src">opens {html_esc(host)}</span>' if host else "") + '</p>')
     sect = f'<section>{"".join(body)}</section>'
     panel = (f'<section class="digest"><a class="ep first" href="/backstory/{row["id"]}/">'
              f'<div class="kicker">In the case for {html_esc(row["title"])}</div>'

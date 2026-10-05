@@ -55,7 +55,12 @@
   .unverified { display:inline-block; border:1px solid #DC6550; color:#DC6550;
     font-family:'Overpass',sans-serif; font-size:10px; font-weight:700; letter-spacing:.08em;
     text-transform:uppercase; padding:3px 6px; border-radius:3px; margin-top:12px; }
-  .spine { display:flex; gap:12px; align-items:flex-start; }
+  .spine { display:flex; gap:12px; align-items:flex-start; position:relative; padding-bottom:16px; }
+  .spine:last-child { padding-bottom:0; }
+  .spine:not(:last-child)::before { content:''; position:absolute; left:3.5px; top:19px; bottom:-3px; border-left:1px dotted rgba(38,31,35,.5); }
+  .spine .yr { display:block; font-family:'Overpass',sans-serif; font-size:13px; font-weight:600; letter-spacing:.04em; color:rgba(38,31,35,.65); margin-bottom:2px; }
+  .cta { display:inline-block; font-family:'Overpass',sans-serif; font-size:13px; font-weight:600; color:#261F23; text-decoration:none; border:1px solid #261F23; padding:11px 16px; margin-top:4px; }
+  .cta + .src { margin-left:10px; }
   .spine .dot { width:8px; height:8px; border-radius:999px; background:#261F23; margin-top:7px; flex:none; }
   .spine .t { font-size:16px; line-height:1.4; }
   .obj { border-top:1px solid rgba(38,31,35,.2); padding:13px 0; }
@@ -88,11 +93,8 @@
   <div class="src">NOAA Global Monitoring Laboratory &middot; August 2026</div>
   
 </section>
-<section>
-  <div class="lab">Beginnings</div>
-  <div class="spine"><span class="dot"></span><div class="t">Since a government scientist told Congress the planet was warming, June 1988.</div></div>
-</section>
-<section><div class="lab">The case</div><div class="obj first"><a href="/backstory/climate/objects/1/"><div class="t">Silent Spring</div><div class="by">Rachel Carson · 1962</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/climate/objects/2/"><div class="t">Declaration of Environmental Rights</div><div class="by">Climate · 1970</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/climate/objects/3/"><div class="t">West Virginia v. Environmental Protection Agency</div><div class="by">SCOTUS · 2022</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/climate/objects/4/"><div class="t">Inflation Reduction Act</div><div class="by">U.S. Congress · 2022</div><div class="more">About this</div></a></div></section><div class="end">— 30 —</div>
+<section><div class="lab">Beginnings</div><div class="spine"><span class="dot"></span><div class="t"><span class="yr">1970</span>A Declaration of Environmental Rights was issued in 1970 as a public statement of rights concerning the environment.</div></div><div class="spine"><span class="dot"></span><div class="t"><span class="yr">1970</span>Richard Nixon signed the National Environmental Policy Act on January 1, 1970, and called it his first official act of the new decade.</div></div><div class="spine"><span class="dot"></span><div class="t"><span class="yr">1970</span>Congress passed the Clean Air Act Amendments of 1970, which the president signed on December 31 and which called for national air quality standards.</div></div><div class="spine"><span class="dot"></span><div class="t"><span class="yr">1988</span>Since a government scientist told Congress the planet was warming, June 1988.</div></div></section>
+<section><div class="lab">The case</div><div class="obj first"><a href="/backstory/climate/objects/1/"><div class="t">Testimony on the Greenhouse Effect and Global Climate Change</div><div class="by">James Hansen · 1988</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/climate/objects/2/"><div class="t">Paris Agreement</div><div class="by">U.N. Framework Convention on Climate Change · 2015</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/climate/objects/3/"><div class="t">Inflation Reduction Act</div><div class="by">U.S. Congress · 2022</div><div class="more">About this</div></a></div></section><div class="end">— 30 —</div>
 <a class="back" href="/backstory">← All of Backstory</a>
 </body>
 </html>

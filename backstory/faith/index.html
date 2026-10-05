@@ -55,7 +55,12 @@
   .unverified { display:inline-block; border:1px solid #DC6550; color:#DC6550;
     font-family:'Overpass',sans-serif; font-size:10px; font-weight:700; letter-spacing:.08em;
     text-transform:uppercase; padding:3px 6px; border-radius:3px; margin-top:12px; }
-  .spine { display:flex; gap:12px; align-items:flex-start; }
+  .spine { display:flex; gap:12px; align-items:flex-start; position:relative; padding-bottom:16px; }
+  .spine:last-child { padding-bottom:0; }
+  .spine:not(:last-child)::before { content:''; position:absolute; left:3.5px; top:19px; bottom:-3px; border-left:1px dotted rgba(38,31,35,.5); }
+  .spine .yr { display:block; font-family:'Overpass',sans-serif; font-size:13px; font-weight:600; letter-spacing:.04em; color:rgba(38,31,35,.65); margin-bottom:2px; }
+  .cta { display:inline-block; font-family:'Overpass',sans-serif; font-size:13px; font-weight:600; color:#261F23; text-decoration:none; border:1px solid #261F23; padding:11px 16px; margin-top:4px; }
+  .cta + .src { margin-left:10px; }
   .spine .dot { width:8px; height:8px; border-radius:999px; background:#261F23; margin-top:7px; flex:none; }
   .spine .t { font-size:16px; line-height:1.4; }
   .obj { border-top:1px solid rgba(38,31,35,.2); padding:13px 0; }
@@ -98,11 +103,8 @@
   <div class="src">Pew Research Center &middot; 2023-2024</div>
   
 </section>
-<section>
-  <div class="lab">Beginnings</div>
-  <div class="spine"><span class="dot"></span><div class="t">Since a preacher told Christians to organize as a voting bloc, June 1979.</div></div>
-</section>
-<section><div class="lab">The case</div><div class="obj first"><a href="/backstory/faith/objects/1/"><div class="t">Virginia Statute for Religious Freedom</div><div class="by">Thomas Jefferson · 1786</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/faith/objects/2/"><div class="t">Engel v. Vitale</div><div class="by">SCOTUS · 1962</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/faith/objects/3/"><div class="t">Burwell v. Hobby Lobby Stores</div><div class="by">SCOTUS · 2014</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/faith/objects/4/"><div class="t">Masterpiece Cakeshop v. Colorado Civil Rights Commission</div><div class="by">SCOTUS · 2018</div><div class="more">About this</div></a></div></section><div class="end">— 30 —</div>
+<section><div class="lab">Beginnings</div><div class="spine"><span class="dot"></span><div class="t"><span class="yr">1786</span>Virginia's General Assembly passed a law, drafted by Thomas Jefferson, saying no one could be forced to support or attend any religious worship.</div></div><div class="spine"><span class="dot"></span><div class="t"><span class="yr">1805</span>Red Jacket, a Seneca leader, answered a missionary from the Boston Missionary Society who had asked the Six Nations to accept his religion.</div></div><div class="spine"><span class="dot"></span><div class="t"><span class="yr">1962</span>The Supreme Court ruled that public schools could not hold a prayer authorized by New York's Board of Regents, even though taking part was voluntary.</div></div><div class="spine"><span class="dot"></span><div class="t"><span class="yr">1979</span>Since a preacher told Christians to organize as a voting bloc, June 1979.</div></div></section>
+<section><div class="lab">The case</div><div class="obj first"><a href="/backstory/faith/objects/1/"><div class="t">Abington School District v. Schempp</div><div class="by">SCOTUS · 1963</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/faith/objects/2/"><div class="t">Wisconsin v. Yoder</div><div class="by">SCOTUS · 1972</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/faith/objects/3/"><div class="t">Religious Freedom Restoration Act</div><div class="by">U.S. Congress · 1993</div><div class="more">About this</div></a></div></section><div class="end">— 30 —</div>
 <a class="back" href="/backstory">← All of Backstory</a>
 </body>
 </html>

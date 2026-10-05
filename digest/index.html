@@ -592,6 +592,12 @@
   .bp-src { font: 600 10px 'Overpass', sans-serif; letter-spacing: .06em; color: rgba(38,31,35,.6); }
   .bp-spine { display: flex; gap: 12px; align-items: flex-start; font-size: 16px; line-height: 1.4; }
   .bp-spine i { width: 8px; height: 8px; border-radius: 50%; background: var(--dark); margin-top: 7px; flex: none; }
+  .bp-spine { position: relative; padding-bottom: 16px; }
+  .bp-spine:last-child { padding-bottom: 0; }
+  .bp-spine:not(:last-child)::before { content: ''; position: absolute; left: 3.5px; top: 19px; bottom: -3px; border-left: 1px dotted rgba(38,31,35,.5); }
+  .bp-yr { display: block; font: 600 13px 'Overpass', sans-serif; letter-spacing: .04em; color: rgba(38,31,35,.65); margin-bottom: 2px; }
+  .bp-cta { display: inline-block; font: 600 13px 'Overpass', sans-serif; color: var(--dark); text-decoration: none; border: 1px solid var(--dark); padding: 11px 16px; margin-top: 4px; }
+  .bp-cta + .bp-src { margin-left: 10px; }
   .bp-obj { display: block; padding: 13px 0; border-top: 1px solid rgba(38,31,35,.2); color: inherit; text-decoration: none; cursor: pointer; }
   .bp-obj.first { border-top: 0; padding-top: 0; }
   .bp-obj .t { font-style: italic; font-size: 16px; margin-bottom: 4px; }
@@ -3245,7 +3251,12 @@ function bpRowHtml(r){
   } else {
     if (r.stakes) h += '<section class="bp-sec"><p class="bp-stakes">' + escBsr(r.stakes) + '</p></section>';
     if (r.indicator) h += bpIndicator(r.indicator);
-    if (r.start_line) h += '<section class="bp-sec"><div class="bp-lab">Beginnings</div><div class="bp-spine"><i></i><div>' + escBsr(bsrCapitalize(r.start_line)) + '.</div></div></section>';
+    var begs = (r.beginnings || []).map(function(b){
+      return '<div class="bp-spine"><i></i><div><span class="bp-yr">' + escBsr(b.year) + '</span>' + escBsr(b.line) + '</div></div>';
+    });
+    // The row's own "since ..." line closes the timeline: it is the year the clock starts.
+    if (r.start_line) begs.push('<div class="bp-spine"><i></i><div>' + (begs.length ? '<span class="bp-yr">' + escBsr(String(r.start_date || '').slice(0, 4)) + '</span>' : '') + escBsr(bsrCapitalize(r.start_line)) + '.</div></div>');
+    if (begs.length) h += '<section class="bp-sec"><div class="bp-lab">Beginnings</div>' + begs.join('') + '</section>';
     var objs = r.objects || [];
     if (objs.length) {
       h += '<section class="bp-sec"><div class="bp-lab">The case</div>' + objs.map(function(o, i){
@@ -3269,11 +3280,15 @@ function bpObjectHtml(r, oi){
   var h = '<div class="bp-bar"><button type="button" data-bp="row">← ' + escBsr(r.title) + '</button><span>ntknews.org/backstory/' + escBsr(r.id) + '/objects/' + (oi + 1) + '</span></div>'
     + '<div class="bp-hd obj"><div class="bp-kick">' + escBsr(o.year) + '</div><h1>' + escBsr(o.title) + '</h1><div class="bp-by">' + escBsr(o.author || r.title) + '</div></div>';
   var b = '';
+  if (o.about) b += '<p class="bp-ctx" style="margin-bottom:14px">' + escBsr(o.about) + '</p>';
   (o.context || []).forEach(function(c){ b += '<p class="bp-ctx" style="margin-bottom:14px">' + escBsr(c) + '</p>'; });
   if (o.quote) b += '<p class="bp-pull">' + escBsr(o.quote) + '</p>';
   if (o.where_now) b += '<div class="bp-lab">Where it stands now</div><p class="bp-ctx">' + escBsr(o.where_now) + '</p>';
   b += '<div class="bp-src">SOURCE · ' + escBsr(o.source) + '</div>';
-  if (o.source_url) b += '<p style="margin-top:14px"><a href="' + escAttr(o.source_url) + '" style="color:var(--blue)" target="_blank" rel="noopener">Read the original</a></p>';
+  if (o.source_url) {
+    var host = ''; try { host = new URL(o.source_url).hostname.replace(/^www\./, ''); } catch (e) {}
+    b += '<p style="margin-top:14px"><a class="bp-cta" href="' + escAttr(o.source_url) + '" target="_blank" rel="noopener noreferrer">View the primary document</a>' + (host ? '<span class="bp-src">opens ' + escBsr(host) + '</span>' : '') + '</p>';
+  }
   h += '<section class="bp-sec">' + b + '</section>'
     + '<section class="bp-sec bp-dark"><a class="bp-ep first" href="#" data-bp="row"><div class="bp-kick">In the case for ' + escBsr(r.title) + '</div><div class="h">' + escBsr(r.milestone || '') + '</div></a></section>';
   return h + '<div class="bp-end">— 30 —</div>';

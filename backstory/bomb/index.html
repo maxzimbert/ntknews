@@ -55,7 +55,12 @@
   .unverified { display:inline-block; border:1px solid #DC6550; color:#DC6550;
     font-family:'Overpass',sans-serif; font-size:10px; font-weight:700; letter-spacing:.08em;
     text-transform:uppercase; padding:3px 6px; border-radius:3px; margin-top:12px; }
-  .spine { display:flex; gap:12px; align-items:flex-start; }
+  .spine { display:flex; gap:12px; align-items:flex-start; position:relative; padding-bottom:16px; }
+  .spine:last-child { padding-bottom:0; }
+  .spine:not(:last-child)::before { content:''; position:absolute; left:3.5px; top:19px; bottom:-3px; border-left:1px dotted rgba(38,31,35,.5); }
+  .spine .yr { display:block; font-family:'Overpass',sans-serif; font-size:13px; font-weight:600; letter-spacing:.04em; color:rgba(38,31,35,.65); margin-bottom:2px; }
+  .cta { display:inline-block; font-family:'Overpass',sans-serif; font-size:13px; font-weight:600; color:#261F23; text-decoration:none; border:1px solid #261F23; padding:11px 16px; margin-top:4px; }
+  .cta + .src { margin-left:10px; }
   .spine .dot { width:8px; height:8px; border-radius:999px; background:#261F23; margin-top:7px; flex:none; }
   .spine .t { font-size:16px; line-height:1.4; }
   .obj { border-top:1px solid rgba(38,31,35,.2); padding:13px 0; }
@@ -88,11 +93,8 @@
   <div class="src">Federation of American Scientists &middot; early 2026</div>
   
 </section>
-<section>
-  <div class="lab">Beginnings</div>
-  <div class="spine"><span class="dot"></span><div class="t">Since the first use of a nuclear weapon in war, August 1945.</div></div>
-</section>
-<section><div class="lab">The case</div><div class="obj first"><a href="/backstory/bomb/objects/1/"><div class="t">Statement on the Bombing of Hiroshima</div><div class="by">Harry Truman · 1945</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/bomb/objects/2/"><div class="t">Address to the U.N. Atomic Energy Commission</div><div class="by">Bernard Baruch · 1946</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/bomb/objects/3/"><div class="t">Nuclear Posture Review</div><div class="by">U.S. Dept. of Defense · 2018</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/bomb/objects/4/"><div class="t">Expiration of the New START Treaty</div><div class="by">United States and Russian Federation · 2026</div><div class="more">About this</div></a></div></section><div class="end">— 30 —</div>
+<section><div class="lab">Beginnings</div><div class="spine"><span class="dot"></span><div class="t"><span class="yr">1945</span>President Truman announced that an American plane had dropped an atomic bomb on Hiroshima, a Japanese Army base.</div></div><div class="spine"><span class="dot"></span><div class="t"><span class="yr">1963</span>The United States, Soviet Union and Britain signed a treaty banning nuclear tests in the air, in space and underwater.</div></div><div class="spine"><span class="dot"></span><div class="t"><span class="yr">1981</span>Reagan offered to cancel new U.S. missiles in Europe if the Soviets dismantled their SS-20, SS-4 and SS-5 missiles.</div></div><div class="spine"><span class="dot"></span><div class="t"><span class="yr">2010</span>The United States and Russia signed a treaty in Prague limiting each side's long-range nuclear weapons.</div></div><div class="spine"><span class="dot"></span><div class="t"><span class="yr">2018</span>The Defense Department issued a Nuclear Posture Review, ordered by the President in January 2017, on keeping a safe and effective nuclear deterrent.</div></div><div class="spine"><span class="dot"></span><div class="t"><span class="yr">1945</span>Since the first use of a nuclear weapon in war, August 1945.</div></div></section>
+<section><div class="lab">The case</div><div class="obj first"><a href="/backstory/bomb/objects/1/"><div class="t">Report on Soviet Missiles in Cuba</div><div class="by">John F. Kennedy · 1962</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/bomb/objects/2/"><div class="t">Report on the Moscow Summit</div><div class="by">Richard Nixon · 1972</div><div class="more">About this</div></a></div><div class="obj"><a href="/backstory/bomb/objects/3/"><div class="t">Expiration of the New START Treaty</div><div class="by">United States and Russian Federation · 2026</div><div class="more">About this</div></a></div></section><div class="end">— 30 —</div>
 <a class="back" href="/backstory">← All of Backstory</a>
 </body>
 </html>
