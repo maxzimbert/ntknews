@@ -1,6 +1,6 @@
 ---
 id: T-0069
-title: A Backstory row page shows 3 to 6 dated Beginnings and 3 to 5 chosen objects, and each object has a short page that sends the reader to the original
+title: A Backstory row page shows 3 to 6 dated Beginnings and the chosen objects behind them, and each object has a short page that sends the reader to the original
 status: BUILT
 tags: [backstory, feature]
 anchor: editorial/build_backstory.py:162
@@ -16,8 +16,11 @@ page (4C) and the object page (4D):
 1. **Beginnings (4C)**: a short vertical timeline of 3 to 6 entries per row, each a
    year and one sentence of what happened, written from the Object Matrix. No link.
    The row's existing "since ..." line closes the timeline as the year the clock starts.
-2. **The case (4C)**: 3 or 5 objects per row, chosen by rule from the matrix (only
-   objects with a verified link, spread across time). Each keeps its "About this" link.
+2. **The case (4C)**: every Beginning's object, plus one or two later ones, chosen by
+   rule from the matrix (only objects with a verified link, spread across time), so
+   5 to 7 per row (3 or 4 on a small row). Each keeps its "About this" link. Editor's
+   rule, 2026-10-05: a Beginning that is a digitized primary source with a retrievable
+   link must be in The case, so a reader who meets it in the timeline can open it.
 3. **Object page (4D)**: the title, author and year, two or three plain sentences about
    the object, and a **View the primary document** button that opens the original in a
    new tab. Not built: pull-quote, "where it stands now", hosted text.
@@ -53,10 +56,14 @@ held = [r for r in d["rows"] if r["stratum"] == "held"]
 bad = []
 for r in held:
     b = r.get("beginnings") or []
-    if len(b) < 3 and len([o for o in r["objects"]]) >= 3:
+    ids = {o.get("object_id") for o in r["objects"]}
+    if len(b) < 3 and len(r["objects"]) >= 3:
         bad.append(f"{r['id']}: {len(b)} beginnings")
-    if not 3 <= len(r["objects"]) <= 5 and len(r["objects"]) != 0:
+    if r["objects"] and not 3 <= len(r["objects"]) <= 8:
         bad.append(f"{r['id']}: {len(r['objects'])} objects")
+    for x in b:
+        if x.get("object_id") not in ids:
+            bad.append(f"{r['id']}: Beginning {x.get('year')} is not in The case")
     for o in r["objects"]:
         if not (o.get("about") and o.get("source_url")):
             bad.append(f"{r['id']}: {o['title']} lacks about or source_url")

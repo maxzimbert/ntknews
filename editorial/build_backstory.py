@@ -221,7 +221,9 @@ def one_per_document(pool):
 
 def select(pool, start_date):
     """Beginnings: 3 to 6 objects from before the row's start year, spread across
-    time. The case: 3 or 5 more, spread across the whole row. Only linked
+    time. The case: every Beginning (each is a linked primary document, and a
+    reader who meets it in the timeline must be able to open it) plus one or two
+    later objects, so The case reads as a path from the origin to now. Only linked
     objects are eligible. Returns (beginnings, case)."""
     pool = sorted(one_per_document([o for o in pool if o['source_url']]), key=lambda o: o['_sort'])
     sy = str(start_date)[:4]
@@ -231,10 +233,10 @@ def select(pool, start_date):
     begin = spread(src, kb)
     used = {o['object_id'] for o in begin}
     rest = [o for o in pool if o['object_id'] not in used]
-    if len(rest) < 3:  # a small row: let The case reuse a Beginnings object rather than shrink
-        rest = pool
-    kc = 5 if len(rest) >= 12 else 3 if len(rest) >= 3 else len(rest)
-    return begin, spread(rest, kc)
+    later = [o for o in rest if o['year'] >= sy] or rest
+    extra = spread(later, 2 if len(begin) <= 4 else 1)
+    case = sorted(begin + [o for o in extra if o['object_id'] not in used], key=lambda o: o['_sort'])
+    return begin, case
 
 
 def load_notes():
