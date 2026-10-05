@@ -1,5 +1,5 @@
 {
- "assembled_at": "2026-10-02T20:25:07.707781+00:00",
+ "assembled_at": "2026-10-05T17:05:28.276330+00:00",
  "slot_plan": "A",
  "displacement": "MANUAL",
  "daytype": "weekday",
@@ -7,2100 +7,336 @@
   8,
   10
  ],
- "actual_size": 68,
+ "actual_size": 10,
  "lint_failures": [
+  "under 3 fully self-contained items",
   "no item answers 'what do I do with this'"
  ],
- "slots_unfilled": [],
+ "slots_unfilled": [
+  "Money & me"
+ ],
  "stories": [
   {
    "slot": "unavoidable",
    "slot_label": "Unavoidable",
-   "key": "4c5a5b061860a924",
-   "title": "NY launches investigation into Cornell's handling of fraternity rape case",
-   "beat": "national",
+   "key": "07e3f362981587ee",
+   "title": "Suspected plague death at Russian lab prompts U.S. and EU monitoring",
+   "beat": "health",
    "publisher_count": 10,
    "publishers": [
-    "BBC",
-    "Politico",
+    "Financial Times",
+    "New York Times",
     "The Guardian",
-    "Washington Post",
-    "Al Jazeera",
     "CBS News",
+    "CNBC",
+    "Daily Beast",
     "Deutsche Welle",
     "Fox News",
-    "ANSA",
-    "Daily Mail"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 4,
-    "actionability": 3,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "New York's governor and attorney general launched investigations into how Cornell University handled a reported gang rape involving fraternity members and alleged ketamine use.",
-   "assembly_score": 7.02
-  },
-  {
-   "slot": "money_me",
-   "slot_label": "Money & me",
-   "key": "384d0df8fbbb30f3",
-   "title": "G7 agrees to release 100 million barrels of oil after Trump pressure on fuel costs",
-   "beat": "business",
-   "publisher_count": 8,
-   "publishers": [
-    "New York Times",
-    "Al Jazeera",
-    "CBS News",
-    "Deutsche Welle",
-    "The New Republic",
-    "ABC Australia",
     "Daily Mail",
     "Memeorandum"
    ],
    "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
+    "emotional_load": 4,
+    "explainability": 4,
     "actionability": 1,
-    "conversational_currency": 3
+    "conversational_currency": 4
    },
    "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "G7 nations agree to release 100 million barrels of oil and diesel to lower global fuel prices after U.S. pressure.",
-   "assembly_score": 5.14
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Russia says lab worker died of 'pneumonia of unknown origin,' denying plague exposure link.",
+    "Rubio says US is monitoring a possible plague outbreak in Russia.",
+    "189 people placed under medical observation in Irkutsk.",
+    "Consumer watchdog confirms only pneumonia at 'anti-plague institute'; rumors suggest worse.",
+    "Names victim Darya Shipilova, 28, reportedly after dropping a vial of live plague bacterium.",
+    "European Commission spokesperson says EU is closely monitoring the suspected plague case.",
+    "Shelekhovsky district mayor Maxim Modin announces 'comprehensive' anti-epidemic measures; names institute."
+   ],
+   "line": "A lab worker in Russia possibly died of plague; U.S. and EU are monitoring while Russia downplays the case.",
+   "assembly_score": 21.91
   },
   {
    "slot": "body_mind",
    "slot_label": "Body & mind",
-   "key": "b7597f7e38044d53",
-   "title": "The 2008 economic crisis changed the US's relationship to energy",
-   "beat": "science",
-   "publisher_count": 1,
+   "key": "31b249b6c8ea7c86",
+   "title": "Utah launches AI-only acne diagnosis and prescription pilot",
+   "beat": "health",
+   "publisher_count": 2,
    "publishers": [
-    "Ars Technica Science"
+    "STAT News",
+    "Techmeme"
    ],
    "scores": {
     "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
+    "explainability": 4,
+    "actionability": 1,
+    "conversational_currency": 4
    },
    "politician_led": false,
    "ledger_class": null,
    "new_facts": [],
-   "line": "",
-   "assembly_score": 2.68
+   "line": "Utah is piloting AI systems to diagnose acne and prescribe medications without a doctor's direct involvement, a first in the U.S.",
+   "assembly_score": 4.9
   },
   {
    "slot": "work_machines",
    "slot_label": "Work & machines",
-   "key": "8931b830d8ddf5c9",
-   "title": "Apple tightens Mac file access controls over AI agent security risks",
+   "key": "5a3de1d2854305d7",
+   "title": "Altman says world must accept AI harms for its gains",
    "beat": "tech",
-   "publisher_count": 3,
+   "publisher_count": 5,
    "publishers": [
-    "TechCrunch",
+    "The Guardian",
+    "Yahoo News",
+    "CNBC",
     "Techmeme",
-    "The Verge"
+    "Daily Mail"
    ],
    "scores": {
     "emotional_load": 2,
     "explainability": 4,
-    "actionability": 3,
+    "actionability": 1,
     "conversational_currency": 3
    },
    "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Apple will require explicit user approval for Mac apps to access all files, citing security risks from AI agents.",
-   "assembly_score": 4.69
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "OpenAI publicist filmed trying to deflect Vanity Fair question to Altman about a ChatGPT-linked suicide",
+    "Cerebras stock rose 9% after Altman called it a 'close partner'",
+    "Altman says world should 'accept bad things' from AI; mentions a safety expert's resignation",
+    "Vanity Fair Q&A covers Altman on Trump, midterms, AI extinction risk, Xi Jinping visit, Brockman's donations",
+    "Vanity Fair Q&A covers Altman's kids, rivalries, pronatalism, prepping, IPO delay, and Guadagnino's 'Artificial'",
+    "Altman tells POLITICO's Bordelon 'something's clearly not working' on AI money in midterms; repeats 'accept bad things' line"
+   ],
+   "line": "Sam Altman tells Vanity Fair that societies must accept harms from AI to get its benefits; a ChatGPT PR person tried to stop the interview.",
+   "assembly_score": 14.01
   },
   {
    "slot": "group_chat",
    "slot_label": "The group chat",
-   "key": "a47b2b8d67d0ca4b",
-   "title": "Kennedy Center Honors moves to new venue over Trump dispute",
+   "key": "3a92ae89c32ebc33",
+   "title": "NHL's all-time leading goalscorer Ovechkin to retire after this season",
    "beat": "culture",
-   "publisher_count": 9,
+   "publisher_count": 3,
    "publishers": [
     "The Guardian",
-    "Yahoo News",
-    "CBS News",
-    "Daily Beast",
-    "NBC News",
-    "The Atlantic",
-    "Fox 5 Atlanta",
-    "Fox 5 DC",
-    "Memeorandum"
+    "NBC Washington",
+    "Washingtonian"
    ],
    "scores": {
     "emotional_load": 2,
-    "explainability": 4,
+    "explainability": 5,
     "actionability": 1,
-    "conversational_currency": 3
+    "conversational_currency": 4
    },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Kennedy Center Honors moves to a different venue for the first time in 46 years due to a legal dispute over Trump's name.",
-   "assembly_score": 4.62
+   "politician_led": false,
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Ovechkin announces retirement at season's end; led Capitals to first Stanley Cup; turned 41 in September",
+    "Specifies 2026-2027 season as his final year; 22 seasons all with Capitals",
+    "Direct quote from Ovechkin on X; one-year contract; broke Gretzky's record in April 2025"
+   ],
+   "line": "Alex Ovechkin, NHL's all-time leading goalscorer, announces he will retire after this season.",
+   "assembly_score": 10.42
   },
   {
    "slot": "elsewhere",
    "slot_label": "Elsewhere, but here",
-   "key": "26cd2b2c28f823d2",
-   "title": "From prison to billionaire data centre operator, the incredible story of Oliver Curtis",
+   "key": "d18ac370ae1ec7b3",
+   "title": "Saudi-backed forces launch major offensive against Houthis in Yemen",
    "beat": "international",
-   "publisher_count": 2,
+   "publisher_count": 8,
    "publishers": [
+    "Financial Times",
+    "New York Times",
+    "Yahoo News",
+    "Al Jazeera",
+    "CBS News",
+    "France 24",
     "ABC Australia",
-    "Memeorandum"
+    "Daily Mail"
    ],
    "scores": {
-    "emotional_load": 3,
+    "emotional_load": 4,
     "explainability": 3,
-    "actionability": 3,
+    "actionability": 1,
     "conversational_currency": 3
    },
    "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 3.83
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Reveals internal Pentagon hawk/dove debates before Iran war, naming Gen. Michael 'Erik' Kurilla as key hawkish voice.",
+    "New number: Brent crude hovering around $100/barrel amid Houthi battle for Red Sea shipping lanes.",
+    "Saudi and Yemeni government forces launch offensive to retake Red Sea coast and Bab al-Mandab Strait from Houthis.",
+    "Saudi-backed Yemeni forces claim recapture of Bab el-Mandeb Strait, which handles ~12% of global trade, seized by Houthis last month.",
+    "New number: 100 Saudi warplanes conducted dawn strikes supporting Yemeni government offensive against Houthis.",
+    "Yemeni government forces reportedly aim to push toward Sanaa as part of the offensive, though full Houthi defeat seen as challenging.",
+    "Yemeni President Rashad al-Alimi announces offensive, vowing to fight 'until the country is liberated' from Houthi rule."
+   ],
+   "line": "Saudi-backed Yemeni forces launched a major offensive against Iran-backed Houthis controlling the Red Sea strait, risking a new escalation in Yemen's long conflict.",
+   "assembly_score": 19.86
   },
   {
    "slot": "close",
    "slot_label": "The close",
-   "key": "70f122a27d668839",
-   "title": "GOP shifts Senate campaign spending away from North Carolina",
+   "key": "2d0e672e0b748def",
+   "title": "Leaked audio: Paxton says Trump's team controls his Senate campaign",
    "beat": "national",
-   "publisher_count": 8,
+   "publisher_count": 6,
    "publishers": [
     "New York Times",
-    "Politico",
     "The Guardian",
     "Daily Beast",
-    "NBC News",
-    "Fox 5 Atlanta",
-    "Fox 5 DC",
+    "The Bulwark",
+    "The New Republic",
     "Memeorandum"
    ],
    "scores": {
     "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Republican groups are redirecting campaign spending away from a North Carolina Senate race they once considered competitive.",
-   "assembly_score": 4.77
-  },
-  {
-   "slot": "unavoidable",
-   "slot_label": "Unavoidable",
-   "key": "99d4683e9d9a2732",
-   "title": "Tennessee execution fails; Pike unconscious on ventilator after botched IV placements",
-   "beat": "national",
-   "publisher_count": 9,
-   "publishers": [
-    "BBC",
-    "New York Times",
-    "The Guardian",
-    "Yahoo News",
-    "ABC News",
-    "CBS News",
-    "NBC News",
-    "ANSA",
-    "Daily Mail"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 5,
+    "explainability": 4,
     "actionability": 1,
     "conversational_currency": 4
    },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Tennessee execution of convicted murderer Christa Pike failed; she remains unconscious on life support with severe burns after multiple IV placement attempts.",
-   "assembly_score": 6.33
+   "politician_led": true,
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Paxton privately admitted Washington, not him, is driving his Senate campaign's messaging.",
+    "The Bulwark published the actual leaked audio/video recording of Paxton's remarks.",
+    "Names Democratic rival James Talarico and quotes Paxton: 'I don't control message or what we're doing.'",
+    "Paxton's office is investigating Texas pediatricians over childhood vaccinations, alleging a profit-driven conspiracy.",
+    "Fuller quote: 'I've never been in a race where I felt less control...it's all coming from D.C.'; recording shared with Politico."
+   ],
+   "line": "Leaked audio shows Texas Attorney General Ken Paxton saying his Senate campaign is controlled by Trump's Washington team, not by him.",
+   "assembly_score": 15.95
   },
   {
    "slot": "unavoidable",
    "slot_label": "Unavoidable",
-   "key": "3a61ba8ca2b1986a",
-   "title": "NFL suspends 49ers owner over prostitution arrest",
-   "beat": "business",
-   "publisher_count": 4,
+   "key": "efd3ea1f7974d38e",
+   "title": "Bolsonaro leads Brazil's presidential race after first round",
+   "beat": "international",
+   "publisher_count": 6,
    "publishers": [
+    "New York Times",
     "The Guardian",
-    "Daily Beast",
-    "Fox News",
-    "NBC News"
+    "Al Jazeera",
+    "CNBC",
+    "France 24",
+    "The New Republic"
    ],
    "scores": {
     "emotional_load": 3,
-    "explainability": 5,
+    "explainability": 4,
     "actionability": 1,
     "conversational_currency": 4
    },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "NFL suspends 49ers owner Jed York for six games and fines him $500,000 following a prostitution-related arrest in Ohio.",
-   "assembly_score": 4.97
+   "politician_led": true,
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "New story: Fl\u00e1vio Bolsonaro's first-round lead over Lula sets up a three-week runoff battle in Brazil's election.",
+    "Gives exact first-round vote totals: Bolsonaro 56.1m (47.03%) vs Lula 53.8m (45.16%); candidates' ages 45 and 80.",
+    "Brazilian stocks jumped on the result; runoff set for October 25.",
+    "Trump administration actively backing Bolsonaro as part of a broader push for conservative allies across Latin America, including Colombia and Argentina.",
+    "Adds on-record analysis from Felipe Krause, head of Oxford's Brazilian Studies Programme, on polarization and Bolsonaro's appeal.",
+    "Adds analysis from researcher Thomas Zicman de Barros noting this is historically unprecedented for a first-round trailing candidate."
+   ],
+   "line": "Fl\u00e1vio Bolsonaro leads Brazil's presidential race after first-round voting, positioning the right-wing candidate to likely defeat incumbent Lula in a runoff.",
+   "assembly_score": 16.56
+  },
+  {
+   "slot": "unavoidable",
+   "slot_label": "Unavoidable",
+   "key": "876b2f911876f4f8",
+   "title": "Trump promises senior payments and diesel relief before midterms",
+   "beat": "national",
+   "publisher_count": 5,
+   "publishers": [
+    "New York Times",
+    "CNBC",
+    "MedPage Today",
+    "NBC News",
+    "Memeorandum"
+   ],
+   "scores": {
+    "emotional_load": 2,
+    "explainability": 4,
+    "actionability": 1,
+    "conversational_currency": 4
+   },
+   "politician_led": true,
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Trump plans executive order to lower high diesel costs ahead of midterms.",
+    "Trump pledges ~$100 direct deposits to 20 million Medicare seniors; legality questioned.",
+    "Trump reiterates $5,000 check pledge tied to GOP keeping Congress; notes $500 ACA refunds alongside $90 Medicare rebates.",
+    "New NBC poll shows GOP facing uphill battle; taxpayer-funded Trump ads airing during prime-time football broadcasts."
+   ],
+   "line": "Trump promises cash payments to seniors and pledges diesel cost relief ahead of midterm elections, raising questions about legal authority.",
+   "assembly_score": 11.53
   },
   {
    "slot": "flex",
    "slot_label": "Flex",
-   "key": "23325ee8fd79d6fc",
-   "title": "U.S. adds 29,000 jobs as unemployment ticks up before midterms",
+   "key": "16fbce4dfd324114",
+   "title": "Prince Andrew sues police over Epstein-related arrest warrants",
    "beat": "national",
-   "publisher_count": 3,
+   "publisher_count": 4,
    "publishers": [
-    "Al Jazeera",
-    "CBS News",
-    "Daily Beast"
+    "BBC",
+    "Yahoo News",
+    "Daily Beast",
+    "Daily Mail"
    ],
    "scores": {
     "emotional_load": 3,
-    "explainability": 5,
+    "explainability": 3,
     "actionability": 1,
-    "conversational_currency": 4
+    "conversational_currency": 3
    },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "U.S. employers added 29,000 jobs in September; unemployment rose ahead of midterm elections.",
-   "assembly_score": 4.52
+   "politician_led": false,
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "King Charles will not use private funds to finance Andrew's legal action against Thames Valley Police.",
+    "Andrew Mountbatten-Windsor is suing Thames Valley Police over search warrants used in his February arrest.",
+    "Police searched Andrew's homes at Sandringham estate and Royal Lodge, Windsor, on his 66th birthday."
+   ],
+   "line": "Prince Andrew is suing Thames Valley Police over arrest warrants related to Epstein files; King Charles reportedly won't pay his legal costs.",
+   "assembly_score": 10.67
   },
   {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "66968225d74ee6d1",
-   "title": "Man charged with planning terror attack on Farage, murder of fellow politician",
-   "beat": "national",
+   "slot": "flex",
+   "slot_label": "Flex",
+   "key": "d79f334a325d7756",
+   "title": "Colbert's film project stalls under Trump-aligned Skydance owner",
+   "beat": "culture",
    "publisher_count": 5,
    "publishers": [
-    "BBC",
-    "Deutsche Welle",
-    "Fox News",
-    "ABC Australia",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-10-03/nigel-farage-ann-widdecombe-murder-joshua-kerry-terrorism-charge/107224414",
-    "//bbc.co.uk/news/articles/cv1j3lgrl6gko?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/news/article-16179329/Man-28-charged-planning-acts-terrorism-against-Nigel-Farage.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dw.com/en/uk-man-charged-with-planning-to-attack-nigel-farage/a-79526078?maca=en-rss-en-all-1573-xml-mrss",
-    "//foxnews.com/world/uk-man-accused-planning-terrorism-acts-against-nigel-farage-also-charged-murder-another-politician"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "progress_coded": true,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A man charged with planning a terror attack against UK politician Nigel Farage is also accused of murdering another politician.",
-   "assembly_score": 2.12
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "afcce7c6f6849c5c",
-   "title": "Co-pilot flagged as security risk allegedly tried to crash plane to Israel",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "ABC News",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//abcnews.com/US/suspect-flydubai-incident-previously-identified-security-risk-officials/story?id=136960488",
-    "//dailymail.com/news/article-16177801/Is-doctor-need-pilot-New-footage-hijacked-plane-shows-panic-passengers-realise-flying-plane-fighting-save-hero-captain.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 5
-   },
-   "politician_led": false,
-   "progress_coded": true,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A co-pilot flagged as a security risk in 2024 allegedly attacked his captain and tried to crash a plane to Israel; he worked for multiple airlines despite prior extremist material possession.",
-   "assembly_score": 1.47
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "0162a2fb2534d954",
-   "title": "Jeremy Strong still angry about old New Yorker profile",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "Daily Beast",
-    "The New Yorker"
-   ],
-   "urls": [
-    "//newyorker.com/culture/the-new-yorker-interview/jeremy-strong-is-not-quite-over-it",
-    "//thedailybeast.com/obsessed/jeremy-strong-confronts-weird-reputation-in-tense-interview"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Actor Jeremy Strong remains upset about a 2021 profile that portrayed him as humorless and intense, discussing the wound in a new interview.",
-   "assembly_score": 1.4
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "dddfd3f75e46d844",
-   "title": "Bath defeats Exeter in rugby match",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "The Telegraph"
-   ],
-   "urls": [
-    "//bbc.co.uk/sport/rugby-union/articles/c8r4vg227kvzo?at_campaign=rss&at_medium=RSS",
-    "//telegraph.co.uk/rugby-union/2026/10/02/bath-vs-exeter-chiefs-live-score-updates-gallagher-prem"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 1
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 1.32
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "d7d417de56d29d48",
-   "title": "Trump demands more from South Korea on Alaska LNG as Seoul contests deal terms",
-   "beat": "other",
-   "publisher_count": 3,
-   "publishers": [
-    "Post and Courier",
-    "Daily Beast",
-    "Yonhap News"
-   ],
-   "urls": [
-    "//en.yna.co.kr/view/AEN20261002002300315",
-    "//en.yna.co.kr/view/AEN20261002009851315",
-    "//en.yna.co.kr/view/AEN20261003000200315",
-    "//en.yna.co.kr/view/AEN20261003000300315",
-    "//en.yna.co.kr/view/AEN20261003000400315",
-    "//en.yna.co.kr/view/AEN20261003000451315",
-    "//postandcourier.com/file-photo-u-s-president-donald-trump-meets-saudi-crown-prince-mohammed-bin-salman-at/image_e3684165-9e17-4a69-8fa9-60a195857be1.html",
-    "//thedailybeast.com/trump-humiliated-by-embarrassing-correction-on-54-billion-south-korean-deal"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 2,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "South Korea pursues fourth consecutive Asian Games gold in men's football; Trump pressures Seoul on Alaska LNG investment amid conflicting deal statements.",
-   "assembly_score": 0.5
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "dc6e5aedc5cf4ad0",
-   "title": "French student protests force closure of 400 schools amid police clashes",
-   "beat": "international",
-   "publisher_count": 3,
-   "publishers": [
-    "BBC",
-    "New York Times",
-    "Deutsche Welle"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/ck3r5dxxwqzpo?at_campaign=rss&at_medium=RSS",
-    "//dw.com/en/france-400-schools-closed-as-student-protests-continue/a-79512732?maca=en-rss-en-all-1573-xml-mrss",
-    "//nytimes.com/2026/10/02/world/europe/france-schools-protests-unrest.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "French students blockading schools and clashing with police over education policy; authorities closing hundreds of institutions.",
-   "assembly_score": 0.33
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "c6263c4a6c53419b",
-   "title": "Anthropic launches $100M program to train 10,000 AI engineers by 2028",
-   "beat": "tech",
-   "publisher_count": 2,
-   "publishers": [
+    "Financial Times",
+    "The Guardian",
     "CNBC",
-    "Techmeme"
-   ],
-   "urls": [
-    "//cnbc.com/2026/10/02/anthropic-to-invest-100-million-to-train-ai-engineer-talent.html",
-    "//techmeme.com/261002/p18"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": true,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Anthropic commits $100 million to train 10,000 AI engineers by 2028, starting with consulting firms.",
-   "assembly_score": 0.3
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "0f99cef0a2df60d1",
-   "title": "Maine voters divided on state versus national issues in Senate race",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Politico Congress",
-    "CBS News"
-   ],
-   "urls": [
-    "//cbsnews.com/news/maine-senate-poll-2026-10-02",
-    "//politico.com/live-updates/2026/10/02/congress/sanders-maine-jackson-rallies-01105437"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Maine Senate race tests whether voters prioritize state issues or national political alignment.",
-   "assembly_score": 0.25
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "758cb9d35dbe45f7",
-   "title": "White House admits messaging failures on economy and Biden's age",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//foxnews.com/media/karine-jean-pierre-admits-biden-admin-failed-economic-age-messaging-claims-trump-making-same-mistake",
-    "//memeorandum.com/261002/p56"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "White House press secretary says Biden administration failed to effectively communicate about economic conditions and the president's age, but argues Trump is repeating those errors.",
-   "assembly_score": 0.24
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "d0574f0e46c54a5e",
-   "title": "Paris Fashion Week style roundup",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "Teen Vogue",
-    "Vogue"
-   ],
-   "urls": [
-    "//teenvogue.com/story/slushy-noobzs-paris-fashion-week-style-secret-washing-your-face",
-    "//vogue.com/article/fashion-week-trends"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 0.22
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "6c3c3f988aec1e65",
-   "title": "FlyDubai pilot stabbed by co-pilot, regains control and lands safely",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "Al Jazeera"
-   ],
-   "urls": [
-    "//aljazeera.com/video/newsfeed/2026/10/2/flydubai-pilot-hailed-as-national-hero-as-he-describes-attack?traffic_source=rss",
-    "//nytimes.com/2026/10/02/world/middleeast/flydubai-attack-timeline.html",
-    "//nytimes.com/2026/10/02/world/middleeast/flydubai-flight-cockpit-stabbing-extra-pilots.html"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 5
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A FlyDubai pilot was stabbed by his co-pilot mid-flight to Israel; the captain fought to regain control and land safely with all passengers and crew.",
-   "assembly_score": 0.16
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "b06c58e3bbbea587",
-   "title": "Patel releases classified FBI report on bureau's failures",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "Yahoo News",
     "Daily Beast",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/261002/p54",
-    "//memeorandum.com/261002/p88",
-    "//thedailybeast.com/keystone-kashs-crackpot-scheme-to-prove-election-fraud-exposed",
-    "//yahoo.com/news/politics/articles/fbi-releases-classified-patel-report-171408613.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "FBI director Kash Patel released a classified internal report examining the bureau's failures, amid questions about his loyalty to Trump.",
-   "assembly_score": 0.11
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "ba340c3f3954cb5d",
-   "title": "Stevie Nicks wears pink at NYC Ballet gala",
-   "beat": "culture",
-   "publisher_count": 3,
-   "publishers": [
-    "Daily Beast",
-    "Daily Mail",
-    "Vogue"
-   ],
-   "urls": [
-    "//dailymail.com/tvshowbiz/article-16178205/Sarah-Jessica-Parker-61-husband-Matthew-Broderick-64-enjoy-date-night-New-York-City-Ballet-gala-begged-people-stop-calling-brave-having-natural-grey-hair.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//thedailybeast.com/sex-and-the-city-star-sarah-jessica-parker-61-shows-off-gray-hair-with-surprising-hairstyle",
-    "//thedailybeast.com/stevie-nicks-78-looks-totally-different-in-rare-appearance",
-    "//vogue.com/slideshow/sarah-jessica-parker-new-york-city-ballet-fall-fashion-gala-simone-rocha-01-10-2026"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 0.09
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "9c4b190c0c51fe4f",
-   "title": "Meta and OpenAI launch rival AI agent platforms",
-   "beat": "tech",
-   "publisher_count": 2,
-   "publishers": [
-    "Techmeme",
     "The Verge"
    ],
-   "urls": [
-    "//techmeme.com/261002/p24",
-    "//theverge.com/ai-artificial-intelligence/1004096/openai-chatgpt-dots-hands-on-agent",
-    "//theverge.com/podcast/1004059/openai-dots-kindle-homepad-cybercab-vergecast"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 2,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Meta and OpenAI release competing AI agent platforms with different hardware strategies and capabilities.",
-   "assembly_score": 0.08
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "d6d38495aa362c72",
-   "title": "DOJ declines to reopen criminal probe into former Fed Chair Powell",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "CNBC",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//cnbc.com/2026/10/02/doj-says-it-will-not-reopen-criminal-probe-into-former-fed-chair-powell.html",
-    "//memeorandum.com/261002/p96"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "The Justice Department will not reopen a criminal investigation into former Federal Reserve Chair Jerome Powell.",
-   "assembly_score": 0.08
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "67ab3a761434f364",
-   "title": "Two Iranian nationals charged in alleged terror plot targeting Manchester Jewish community",
-   "beat": "national",
-   "publisher_count": 4,
-   "publishers": [
-    "BBC",
-    "The Guardian",
-    "NBC News",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/cqx29nke55kno?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/news/article-16179481/Two-Iranian-nationals-charged-suspected-terror-plot.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//nbcnews.com/world/united-kingdom/two-iranian-nationals-charged-alleged-terrorism-plot-targeting-jewish-rcna601207",
-    "//theguardian.com/uk-news/2026/oct/02/charged-alleged-terror-plot-manchester-jewish-community"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "progress_coded": true,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Two Iranian nationals face terrorism charges for an alleged plot targeting Manchester's Jewish community.",
-   "assembly_score": 0.07
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "c9ab7371637f9d29",
-   "title": "Ethiopian army advances as analysts warn of regional spillover risk",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "France 24"
-   ],
-   "urls": [
-    "//aljazeera.com/video/inside-story/2026/10/2/could-conflict-in-ethiopia-expand-across-the-region?traffic_source=rss",
-    "//france24.com/en/tv-shows/eye-on-africa/20261002-ethiopian-army-pushes-back-tigrayan-rebels"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Ethiopian army gains ground against Tigrayan forces; analysts warn regional instability could draw in neighboring countries.",
-   "assembly_score": 0.01
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "837c1660c3271261",
-   "title": "Amazon commits $1 billion to data center communities as backlash grows",
-   "beat": "business",
-   "publisher_count": 3,
-   "publishers": [
-    "Ars Technica",
-    "CBS News",
-    "Semafor"
-   ],
-   "urls": [
-    "//arstechnica.com/tech-policy/2026/10/amazons-1b-plan-to-combat-data-center-backlash-draws-more-backlash",
-    "//cbsnews.com/news/amazon-1-billion-data-center-investment-ai",
-    "//semafor.com/article/10/02/2026/amazon-launches-new-data-center-commitments"
-   ],
    "scores": {
     "emotional_load": 3,
-    "explainability": 4,
+    "explainability": 3,
     "actionability": 1,
     "conversational_currency": 3
    },
    "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Amazon pledges $1 billion to communities near data centers amid growing backlash over pollution and resource use.",
-   "assembly_score": 0.0
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "a0ec224df91e4bb2",
-   "title": "Oscar Winner Claps Back at \u2018Meritless\u2019 Abuse Allegations",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "Daily Beast",
-    "Atlanta Black Star",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//atlantablackstar.com/2026/10/02/halle-berry-fights-back-after-ex-husbands-explosive-claims-over-their-son",
-    "//dailymail.com/tvshowbiz/article-16177039/halle-berry-olivier-martinez-custody-los-angeles.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//thedailybeast.com/obsessed/halle-berry-claps-back-at-meritless-abuse-allegations-from-ex-olivier-martinez"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.08
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "1d0968412abe6d9a",
-   "title": "Lyft to pay $272 million in record-breaking settlement over drivers\u2019 compensation",
-   "beat": "tech",
-   "publisher_count": 2,
-   "publishers": [
-    "LAist",
-    "Ars Technica"
-   ],
-   "urls": [
-    "//arstechnica.com/tech-policy/2026/10/lyft-settles-landmark-driver-misclassification-lawsuit-for-272-5m",
-    "//laist.com/news/politics/lyft-record-breaking-settlement-drivers-compensation"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.25
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "709196a2402fe910",
-   "title": "California Sues to Block Trump From Weakening Fuel Economy Rules",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "Al Jazeera"
-   ],
-   "urls": [
-    "//aljazeera.com/economy/2026/10/2/california-leads-lawsuit-against-trump-fuel-efficiency-standards-rollback?traffic_source=rss",
-    "//nytimes.com/2026/10/02/climate/california-trump-administration-fuel-economy.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.28
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "ac1ba37d118e153b",
-   "title": "Meta parts ways with Virtue AI",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Semafor",
-    "Techmeme"
-   ],
-   "urls": [
-    "//semafor.com/article/10/02/2026/meta-parts-ways-with-virtue-ai",
-    "//techmeme.com/261002/p23"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.33
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "4a492ad85d369525",
-   "title": "Trump Directed Use of Taxpayer Money for Ads Praising His Presidency",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/261002/p93",
-    "//nytimes.com/2026/10/02/us/politics/trump-ads.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.34
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "efd469574e045dd5",
-   "title": "Alito says he lost friends over Dobbs decision overturning Roe v. Wade",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "CBS News",
-    "Daily Beast"
-   ],
-   "urls": [
-    "//cbsnews.com/video/alito-recalls-being-more-recognized-after-his-supreme-court-confirmation-hearings",
-    "//cbsnews.com/video/alito-says-criticism-of-supreme-court-from-political-leaders-can-be-quite-damaging",
-    "//cbsnews.com/video/alito-says-he-lost-friends-over-dobbs-decision-overturning-roe-v-wade",
-    "//cbsnews.com/video/supreme-court-justice-alito-on-deciding-when-to-retire",
-    "//thedailybeast.com/trumpy-justice-samuel-alito-brags-about-overturning-roe-v-wade"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.4
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "16bf4f456ee1fb0a",
-   "title": "Hawaii\u2019s centuries-old sea arch collapses into Pacific after series of rough storms",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16178617/Hawaiis-famed-H-lei-Sea-Arch-landmark-collapses-ocean-500-years.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//theguardian.com/us-news/2026/oct/02/hawaii-holei-sea-arch-collapses"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.48
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "5f6794a58a029c1e",
-   "title": "France vs Italy Nations League match live",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "Al Jazeera"
-   ],
-   "urls": [
-    "//aljazeera.com/sports/liveblog/2026/10/2/live-france-vs-italy-uefa-nations-league?traffic_source=rss",
-    "//theguardian.com/football/live/2026/oct/02/france-v-italy-nations-league-football-live-score-updates"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.5
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "f197858a26c8af4d",
-   "title": "Tour a Frank Lloyd Wright House in Northern Virginia on This Day Trip",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox 5 DC",
-    "Washingtonian"
-   ],
-   "urls": [
-    "//fox5dc.com/news/nine-students-evaluated-dehydration-during-rotc-field-day-northern-virginia",
-    "//washingtonian.com/2026/10/02/tour-a-frank-lloyd-wright-house-in-northern-virginia-on-this-day-trip"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.55
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "7cec1028c94892e6",
-   "title": "Gypsy Rose Blanchard's partner, Ken Urker, dies at 34",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "CBS News",
-    "Fox News",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//cbsnews.com/news/gypsy-rose-blanchard-partner-ken-urker-dies-at-34",
-    "//dailymail.com/tvshowbiz/article-16178651/gypsy-rose-blanchard-ex-fiance-words-sister-death-34-birthday.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//foxnews.com/us/gypsy-rose-blanchard-partner-ken-urker-found-dead-louisiana-home-sheriff"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.72
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "fa5354d1f8c7ed16",
-   "title": "Pro-Trump Influencer Benny Johnson is being sued for defamation by ICE protesters",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "NPR",
-    "The New Republic"
-   ],
-   "urls": [
-    "//newrepublic.com/post/216178/ice-protesters-sue-benny-johnson-defamation",
-    "//npr.org/2026/10/02/nx-s1-5989413/benny-johnson-defamation-lawsuit-ice-protesters"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.85
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "caca2bd0de4e55a1",
-   "title": "Brazil: The craze for candidate merch ahead of elections",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "France 24",
-    "The New Republic"
-   ],
-   "urls": [
-    "//france24.com/en/americas/20261002-brazil-s-lula-gears-up-for-last-dance-with-run-for-fourth-presidential-term",
-    "//france24.com/en/video/20261002-brazil-the-craze-for-candidate-merch-ahead-of-elections",
-    "//newrepublic.com/post/216177/trump-meddling-brazil-elections-bolsonaro-lula"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.99
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "b9ef0d4233030271",
-   "title": "National Science Foundation Diverted $1.4 Billion in Science Funds Mandated by Congress",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/261002/p89",
-    "//nytimes.com/2026/10/02/us/politics/national-science-foundation-research-funds.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.17
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "671a73ee7bc02ec1",
-   "title": "Three reasons Middle East oil supply is nearly back to pre-Iran war levels",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "CBS News"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/cwp8gn13lmygo?at_campaign=rss&at_medium=RSS",
-    "//cbsnews.com/live-updates/trump-iran-war-us-midterm-elections-troops-deployment",
-    "//cbsnews.com/video/mcmaster-on-iran-using-proxies-out-of-desperation-says-conflict-will-persist-if-regime-remains"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.2
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "30a598ac210852e2",
-   "title": "Paramount and Warner Bros Discovery to become Skydance",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "CNBC",
-    "Daily Beast",
-    "TechCrunch"
-   ],
-   "urls": [
-    "//cnbc.com/2026/10/02/paramount-warner-bros-discovery-skydance.html",
-    "//techcrunch.com/2026/10/02/paramount-and-warner-bros-discovery-to-become-skydance",
-    "//thedailybeast.com/obsessed/david-ellison-roasted-for-vain-new-studio-name-skydance"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.21
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "6437b12e823cded6",
-   "title": "Country Music Legend, 62, Addresses \u2018Shocking\u2019 MAGA Rumors",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Daily Beast",
-    "Fox News"
-   ],
-   "urls": [
-    "//foxnews.com/entertainment/wynonna-judd-calls-out-rosie-odonnell-political-comments-leave-country-star-shock",
-    "//thedailybeast.com/obsessed/wynonna-judd-62-addresses-shocking-maga-rumors"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.26
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "e6ce18d40d74b62f",
-   "title": "Body-cam footage shows moment Luigi Mangione was arrested at a McDonald\u2019s",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "Washington Post",
-    "CBS News",
-    "NBC News"
-   ],
-   "urls": [
-    "//cbsnews.com/video/new-body-cam-footage-of-luigi-mangione-arrest-inside-pennsylvania-mcdonalds",
-    "//nbcnews.com/news/us-news/s-100-newly-released-video-shows-moment-police-arrest-luigi-mangione-rcna601118",
-    "//washingtonpost.com/nation/2026/10/02/body-cam-footage-shows-moment-luigi-mangione-was-arrested-mcdonalds"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.32
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "c7cffe4a66cdd996",
-   "title": "Former GOP Rep. David Rivera gets 10 years for secret Venezuela lobbying",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "Yahoo News",
-    "CBS News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//cbsnews.com/news/david-rivera-sentencing-venezuela-lobbying-case-miami",
-    "//memeorandum.com/261002/p87",
-    "//yahoo.com/news/politics/articles/former-gop-rep-david-rivera-182044649.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.34
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "1d8a326dede15e62",
-   "title": "Trump to Name Jay Clayton to Serve as A.I. Czar",
-   "beat": "national",
-   "publisher_count": 4,
-   "publishers": [
-    "New York Times",
-    "Al Jazeera",
-    "NBC News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/10/2/reports-trump-to-name-intel-chief-clayton-as-ai-tsar?traffic_source=rss",
-    "//memeorandum.com/261002/p83",
-    "//nbcnews.com/politics/trump-administration/trump-ai-czar-jay-clayton-white-house-rcna601140",
-    "//nytimes.com/2026/10/02/us/politics/trump-jay-clayton-ai-czar.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.42
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "59875a0c976dd977",
-   "title": "UCLA law school accused by justice department of illegally using race in admissions",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/261002/p62",
-    "//memeorandum.com/261002/p63",
-    "//theguardian.com/us-news/2026/oct/02/ucla-law-school-doj-findings"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.47
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "341388ad0a04bcf3",
-   "title": "Hegseth Orders Pentagon Voting Stand-Down Ahead of Midterm Elections",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "Daily Beast",
-    "Fox 5 DC",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//fox5dc.com/news/pentagon-office-religious-affairs",
-    "//memeorandum.com/261002/p86",
-    "//thedailybeast.com/pentagon-pete-unveils-desperate-plot-to-save-trumps-skin"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.5
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "73ef3a49e0c5cd3d",
-   "title": "\"NAZA\": Israeli military issues statement on film",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "Deutsche Welle"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/10/2/israeli-barrier-cuts-off-water-to-west-bank-palestinians-before-elections?traffic_source=rss",
-    "//aljazeera.com/video/newsfeed/2026/10/2/arab-party-leader-withdraws-from-israeli-elections?traffic_source=rss",
-    "//aljazeera.com/video/newsfeed/2026/10/2/jerusalem-daily-who-gets-to-run-in-israels-elections?traffic_source=rss",
-    "//dw.com/en/naza-israeli-military-issues-statement-on-film/a-79520483?maca=en-rss-en-all-1573-xml-mrss"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.58
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "eb848baee2ba75ea",
-   "title": "King Charles III to acknowledge \u2018darkest days\u2019 of Britain\u2019s colonial rule during Caribbean tour",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/royals/article-16179147/King-Charles-NOT-apologise-Britain-slave-trade-Caribbean.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//theguardian.com/uk-news/2026/oct/02/king-charles-darkest-days-britain-colonial-rule-caribbean-tour"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.7
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "09d5674964422a69",
-   "title": "Kimmel\u2019s Late-Night Friends Reveal Why Trump Hates Him Most",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Daily Beast",
-    "Fox News"
-   ],
-   "urls": [
-    "//foxnews.com/media/seth-meyers-john-oliver-tell-jimmy-kimmel-hes-bulletproof-vest-when-comes-trump",
-    "//thedailybeast.com/obsessed/jimmy-kimmels-late-night-friends-reveal-why-trump-hates-him-most"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.75
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "febc4fb9443bd0d3",
-   "title": "New Fox Poll\u2014a Disaster for Trump\u2014Rattles Fox Anchors: \u201cWake Up!\u201d",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "The New Republic",
-    "Fox 5 Atlanta",
-    "Fox 5 DC"
-   ],
-   "urls": [
-    "//fox5atlanta.com/election/texas-senate-race-polls-paxton-talarico",
-    "//fox5dc.com/election/texas-senate-race-polls-paxton-talarico",
-    "//newrepublic.com/article/216173/new-fox-poll-a-disaster-trump-rattles-fox-anchors-wake-up"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.04
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "6eff6a0259828fe6",
-   "title": "Missouri Man Discovers Michael McDonald of the Doobie Brothers Is His Biological Father",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "NBC News"
-   ],
-   "urls": [
-    "//nbcnews.com/pop-culture/pop-culture-news/missouri-man-adopted-baby-learns-biological-father-rock-star-michael-m-rcna601165",
-    "//nytimes.com/2026/10/02/us/michael-mcdonald-doobie-brothers-biological-son.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.04
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "e13a11a1ce87fca2",
-   "title": "Nvidia breaks through to new record highs. Plus, more good news for Boeing",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Ars Technica",
-    "CNBC"
-   ],
-   "urls": [
-    "//arstechnica.com/tech-policy/2026/10/us-arrests-tech-ceo-accused-of-smuggling-300m-in-nvidia-chips-into-china",
-    "//cnbc.com/2026/10/02/nvidia-breaks-through-to-new-record-highs-plus-more-good-news-for-boeing.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.09
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "6d68d16f989f2c6c",
-   "title": "Tony Romo will not return to CBS Sports in wake of drunk driving arrest",
-   "beat": "national",
-   "publisher_count": 4,
-   "publishers": [
-    "The Guardian",
-    "Daily Beast",
-    "Fox News",
-    "NBC News"
-   ],
-   "urls": [
-    "//foxnews.com/outkick-sports/tony-romo-cbs-part-ways-history-suggests-former-nfl-qb-add-career-comeback-mark",
-    "//nbcnews.com/business/media/tony-romo-nfl-analyst-cbs-sports-july-dui-arrest-rcna601164",
-    "//thedailybeast.com/high-profile-cbs-host-tony-romo-departs-after-embarrassing-arrest",
-    "//theguardian.com/sport/2026/oct/02/tony-romo-will-not-return-cbs-arrest"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.22
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "def781f1fae075dd",
-   "title": "After another early exit, Caitlin Clark\u2019s career is still lacking playoff success",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox News",
-    "NBC News"
-   ],
-   "urls": [
-    "//foxnews.com/outkick-sports/far-left-espn-writer-mocks-caitlin-clark-losing-wnba-playoffs-says-proves-she-isnt-top-guard",
-    "//nbcnews.com/sports/wnba/another-early-exit-caitlin-clarks-career-still-lacking-playoff-success-rcna601106"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.45
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "f29e9b31b4b0aadb",
-   "title": "'Cult' priest guilty of rape and assault of women",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/cmreydzjdrqeo?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/news/article-16151263/Disgraced-priest-led-cult-Nine-OClock-Services-rape-sexual-assault.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.78
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "ab541066ee538aaa",
-   "title": "Musk ends relationship with Zilis",
-   "beat": "culture",
-   "publisher_count": 3,
-   "publishers": [
-    "Daily Beast",
-    "The Verge",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16178949/Elon-Musk-Shivon-Zilis-break-up.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//thedailybeast.com/elon-musks-longtime-girlfriend-shivon-zilis-says-shes-been-let-go-in-dramatic-post",
-    "//theverge.com/tech/1004177/elon-musk-unfollows-shivon-zilis"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.88
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "c5c55f99adacf356",
-   "title": "Study ranks most, least affordable states for retirees",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox 5 Atlanta",
-    "Fox 5 DC"
-   ],
-   "urls": [
-    "//fox5atlanta.com/news/study-most-least-affordable-states-retirees",
-    "//fox5dc.com/news/study-most-least-affordable-states-retirees"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.98
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "952460a65be45f6c",
-   "title": "Daniel Thomas in court accused of entering migrant site",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/cqd095e5x127o?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/news/article-16179119/Danny-Tommo-wears-rosary-beads-court.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.2
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "fbf849dcb52a6d77",
-   "title": "Powerful Wildfires Require a New Approach, California Report Finds",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "NBC News"
-   ],
-   "urls": [
-    "//nbcnews.com/news/us-news/los-angeles-fires-report-communication-failures-emergency-response-rcna601022",
-    "//nytimes.com/2026/10/02/us/los-angeles-wildfires-report.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.36
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "1a73bdc9d264a309",
-   "title": "Ford fends off Hyundai to retain No. 3 U.S. sales position in third quarter",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "CNBC",
-    "Fox 5 DC"
-   ],
-   "urls": [
-    "//cnbc.com/2026/10/02/ford-q3-sales.html",
-    "//fox5dc.com/news/ford-recalls-more-than-40000-trucks-suvs-over-visibility-risk"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.41
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "6c33452b73804ce6",
-   "title": "Spanish PM S\u00e1nchez loses key housing crisis vote after eviction of woman, 87",
-   "beat": "international",
-   "publisher_count": 3,
-   "publishers": [
-    "BBC",
-    "The Guardian",
-    "Deutsche Welle"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/c623dlk4y75mo?at_campaign=rss&at_medium=RSS",
-    "//dw.com/en/spain-s-parliament-rejects-housing-bill-as-protests-continue/a-79522683?maca=en-rss-en-all-1573-xml-mrss",
-    "//theguardian.com/world/2026/oct/02/spanish-right-wing-votes-down-housing-crisis-plans-protest-movement-grows"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.85
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "591a002435ae30eb",
-   "title": "Bill Pulte dismantles inspector general office",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Talking Points Memo",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/261002/p65",
-    "//talkingpointsmemo.com/morning-memo/bill-pulte-guts-the-ig-office-that-investigated-him"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 1,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -4.17
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "f43be7939a5685ef",
-   "title": "Polanski pitches Greens as Labour pressure tactic at party conference",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/cmx239469krpo?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/news/article-16178499/Zack-Polanski-urges-Brits-vote-Green-order-drag-Labour-Left-rent-controls-wealth-taxes-banning-North-Sea-oil-Gaza.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 4,
-    "actionability": 2,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Green Party leader Polanski argues voting Green will pressure Labour leftward on rent controls, wealth taxes, and climate policy.",
-   "assembly_score": -4.21
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "322a52b592d8b0da",
-   "title": "Eurozone inflation hits three-year high of 3.8%",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Financial Times",
-    "CNBC"
-   ],
-   "urls": [
-    "//cnbc.com/2026/10/02/treasury-yields-bonds-nonfarm-payrolls.html",
-    "//ft.com/content/6394fdc7-5fa5-4ec3-8bde-52633acd2b57?syn-25a6b1a6=1"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -4.39
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "ccfbf8b3957395f6",
-   "title": "Watch: 2 off-duty officers pull man from burning truck on interstate minutes before it explodes",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox 5 Atlanta",
-    "Fox 5 DC"
-   ],
-   "urls": [
-    "//fox5atlanta.com/news/watch-2-off-duty-officers-pull-man-from-burning-truck-interstate-minutes-before-explodes",
-    "//fox5dc.com/news/watch-2-off-duty-officers-pull-man-from-burning-truck-interstate-minutes-before-explodes"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -5.22
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Skydance names leadership team: Bari Weiss, Mark Thompson, Casey Bloys under Ellison and Kreiz",
+    "$110B Paramount-WBD deal closing this week; Thompson stays CNN CEO; memo quote on independent news",
+    "Employees had feared Bari Weiss might replace Thompson; additional memo quote on CNN integration"
+   ],
+   "line": "Skydance's new owner, a Trump ally, may be slowing Colbert's Lord of the Rings film after canceling his late-night show.",
+   "assembly_score": 9.55
   }
  ],
  "excluded_sample": [
   {
-   "title": "A Deadly Obsession: The Murder Trial of Dr. Kosowski | Case by Case | \"48 Hours\" Podcast",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "France v Italy: Nations League football \u2013 live",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Lanvin Spring 2027 Ready-to-Wear",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Nations League: in campo Francia-Italia 1-1 DIRETTA",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Celebrity Traitors star Maya Jama is compared to the Honey Monster by bemused fans as she arrives to breakfast in a HUGE feathered coat - as Amol Rajan is the first to be killed",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Grammy Winner Addresses Rumor She Punched Nickelback Frontman",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "\"Face the Nation with Margaret Brennan\" guests for Oct. 4, 2026",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "6 leaf blowers that make fall yard cleanup easy and quick",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "David Beckham likes video of his estranged son Brooklyn and Nicola Peltz attending jewellery event in Paris - hours before mum Victoria's big fashion show",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Hill: Trump\u2019s \u2018lack of favorability\u2019 creating challenging politics",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Musk\u2019s Longtime Girlfriend Says She\u2019s Been \u2018Let Go\u2019 in Dramatic Post",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Bill Pulte Guts the IG Office That Investigated Him",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Andrews on St. Helena.jpg (Copy) (Copy)",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Tate McRae Is Going Tate Mcrazy in Paris",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Bidets save you money and reduce waste \u2014 we tested the best options out there",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "50+ products to make your life easier and our planet cleaner",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Mother's Day is around the corner. Here are 50+ thoughtful gifts she'll love",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "A head-to-toe guide of how men should dress this spring, and where they should shop",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "The 7 best high-yield savings accounts of April 2023",
+   "title": "It's been a terrible year for farming, Jeremy Clarkson tells Tory conference",
    "why": "triage verdict NO"
   }
  ]
