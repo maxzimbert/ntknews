@@ -42,9 +42,9 @@ to rediscover how. Measured 2026-10-02.
    graduate. Applied 2026-10-02 to five links (T-0065).
 
 **State.** 339 of 384 objects are linked (88.3%). The 45 without a link are on
-the review sheet's "No link yet" tab with what was tried. The matrix change is on
-branch `T-0060-matrix-additions` and is **not merged**; the live site and
-`digest/data/backstory.json` are unchanged. The merge and content-check scripts
+the review sheet's "No link yet" tab with what was tried. The matrix change
+was merged 2026-10-05 (#63) and the Backstory pages that use it went live the same
+day (#64, T-0069). The merge and content-check scripts
 used for the research passes lived in the session's scratch directory and were
 not kept. T-0068 replaces them with a real link checker.
 

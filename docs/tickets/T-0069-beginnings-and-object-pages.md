@@ -1,7 +1,7 @@
 ---
 id: T-0069
 title: A Backstory row page shows 3 to 6 dated Beginnings and the chosen objects behind them, and each object has a short page that sends the reader to the original
-status: BUILT
+status: VERIFIED
 tags: [backstory, feature]
 anchor: editorial/build_backstory.py:162
 ---
@@ -72,3 +72,13 @@ if bad:
 PY
 grep -q "View the primary document" backstory/media/objects/1/index.html
 ```
+
+## Shipped 2026-10-05
+
+Merged to main as #63 (matrix and links) and #64 (this work); live on ntknews.org the same
+minute. The editor looked at staging and spot-checked the generated text sheets before the
+merge. Still open, tracked elsewhere: object permalinks are positional (`/objects/<n>/`), so
+they are stable only while the selection is frozen in `backstory.json`; and there is no
+link checker yet (T-0068). Re-running `build_backstory.py` after the matrix changes will
+change which objects are chosen, and any newly chosen object needs its text written
+(`editorial/merge_object_notes.py` lists and validates them).
