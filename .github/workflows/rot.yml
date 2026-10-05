@@ -28,5 +28,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Ticket checks that read the Object Matrix (T-0060, T-0065, T-0067) open the
+      # xlsx with openpyxl. Without it they fail on the import, which reads as OPEN
+      # or STALE for the wrong reason.
+      - name: Install openpyxl
+        run: python3 -m pip install --quiet openpyxl
+
       - name: Run every ticket's check
         run: bash scripts/rot.sh
