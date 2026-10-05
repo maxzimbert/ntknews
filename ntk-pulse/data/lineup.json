@@ -1,5 +1,5 @@
 {
- "assembled_at": "2026-10-05T04:29:51.445701+00:00",
+ "assembled_at": "2026-10-05T17:05:28.276330+00:00",
  "slot_plan": "A",
  "displacement": "MANUAL",
  "daytype": "weekday",
@@ -7,76 +7,67 @@
   8,
   10
  ],
- "actual_size": 33,
+ "actual_size": 10,
  "lint_failures": [
+  "under 3 fully self-contained items",
   "no item answers 'what do I do with this'"
  ],
- "slots_unfilled": [],
+ "slots_unfilled": [
+  "Money & me"
+ ],
  "stories": [
   {
    "slot": "unavoidable",
    "slot_label": "Unavoidable",
-   "key": "af37412fba77c570",
-   "title": "FBI arrests California realtor accused of spying on Taiwan president's son for China",
-   "beat": "national",
-   "publisher_count": 6,
+   "key": "07e3f362981587ee",
+   "title": "Suspected plague death at Russian lab prompts U.S. and EU monitoring",
+   "beat": "health",
+   "publisher_count": 10,
    "publishers": [
-    "Al Jazeera",
+    "Financial Times",
+    "New York Times",
+    "The Guardian",
+    "CBS News",
+    "CNBC",
+    "Daily Beast",
     "Deutsche Welle",
     "Fox News",
     "Daily Mail",
-    "Fox 5 Atlanta",
-    "Fox 5 DC"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "FBI arrests California realtor accused of photographing Taiwan's president's son and sending surveillance data to Chinese officials.",
-   "assembly_score": 8.54
-  },
-  {
-   "slot": "money_me",
-   "slot_label": "Money & me",
-   "key": "32049c28e9f4b7ae",
-   "title": "Trump threatens South Korea with price hikes over Alaska LNG deal",
-   "beat": "business",
-   "publisher_count": 2,
-   "publishers": [
-    "CNBC",
     "Memeorandum"
    ],
    "scores": {
-    "emotional_load": 2,
+    "emotional_load": 4,
     "explainability": 4,
     "actionability": 1,
-    "conversational_currency": 3
+    "conversational_currency": 4
    },
    "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump pressures South Korea to join Alaska LNG project, threatening higher prices if they refuse.",
-   "assembly_score": 4.33
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Russia says lab worker died of 'pneumonia of unknown origin,' denying plague exposure link.",
+    "Rubio says US is monitoring a possible plague outbreak in Russia.",
+    "189 people placed under medical observation in Irkutsk.",
+    "Consumer watchdog confirms only pneumonia at 'anti-plague institute'; rumors suggest worse.",
+    "Names victim Darya Shipilova, 28, reportedly after dropping a vial of live plague bacterium.",
+    "European Commission spokesperson says EU is closely monitoring the suspected plague case.",
+    "Shelekhovsky district mayor Maxim Modin announces 'comprehensive' anti-epidemic measures; names institute."
+   ],
+   "line": "A lab worker in Russia possibly died of plague; U.S. and EU are monitoring while Russia downplays the case.",
+   "assembly_score": 21.91
   },
   {
    "slot": "body_mind",
    "slot_label": "Body & mind",
-   "key": "006ece18bca70026",
-   "title": "Russia reports plague death, hospitalizes nearly 200 as U.S. monitors outbreak",
+   "key": "31b249b6c8ea7c86",
+   "title": "Utah launches AI-only acne diagnosis and prescription pilot",
    "beat": "health",
-   "publisher_count": 3,
+   "publisher_count": 2,
    "publishers": [
-    "CNBC",
-    "Fox News",
-    "Daily Mail"
+    "STAT News",
+    "Techmeme"
    ],
    "scores": {
-    "emotional_load": 4,
+    "emotional_load": 3,
     "explainability": 4,
     "actionability": 1,
     "conversational_currency": 4
@@ -84,987 +75,268 @@
    "politician_led": false,
    "ledger_class": null,
    "new_facts": [],
-   "line": "Russia reports a death from pneumonic plague and has hospitalized nearly 200 people; U.S. officials are monitoring the outbreak.",
-   "assembly_score": 6.04
+   "line": "Utah is piloting AI systems to diagnose acne and prescribe medications without a doctor's direct involvement, a first in the U.S.",
+   "assembly_score": 4.9
   },
   {
    "slot": "work_machines",
    "slot_label": "Work & machines",
-   "key": "4122d66f71318b3b",
-   "title": "Altman says world must accept harms from AI development",
+   "key": "5a3de1d2854305d7",
+   "title": "Altman says world must accept AI harms for its gains",
    "beat": "tech",
-   "publisher_count": 2,
+   "publisher_count": 5,
    "publishers": [
-    "Daily Beast",
-    "Memeorandum"
+    "The Guardian",
+    "Yahoo News",
+    "CNBC",
+    "Techmeme",
+    "Daily Mail"
    ],
    "scores": {
-    "emotional_load": 3,
+    "emotional_load": 2,
     "explainability": 4,
     "actionability": 1,
-    "conversational_currency": 4
+    "conversational_currency": 3
    },
    "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "OpenAI's Sam Altman says society must accept harms from AI development to gain its benefits.",
-   "assembly_score": 6.26
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "OpenAI publicist filmed trying to deflect Vanity Fair question to Altman about a ChatGPT-linked suicide",
+    "Cerebras stock rose 9% after Altman called it a 'close partner'",
+    "Altman says world should 'accept bad things' from AI; mentions a safety expert's resignation",
+    "Vanity Fair Q&A covers Altman on Trump, midterms, AI extinction risk, Xi Jinping visit, Brockman's donations",
+    "Vanity Fair Q&A covers Altman's kids, rivalries, pronatalism, prepping, IPO delay, and Guadagnino's 'Artificial'",
+    "Altman tells POLITICO's Bordelon 'something's clearly not working' on AI money in midterms; repeats 'accept bad things' line"
+   ],
+   "line": "Sam Altman tells Vanity Fair that societies must accept harms from AI to get its benefits; a ChatGPT PR person tried to stop the interview.",
+   "assembly_score": 14.01
   },
   {
    "slot": "group_chat",
    "slot_label": "The group chat",
-   "key": "b333041779ac9a24",
-   "title": "Cruise's $125 million satire bombs with $8 million opening",
+   "key": "3a92ae89c32ebc33",
+   "title": "NHL's all-time leading goalscorer Ovechkin to retire after this season",
    "beat": "culture",
    "publisher_count": 3,
    "publishers": [
     "The Guardian",
-    "Daily Beast",
-    "ABC Australia"
+    "NBC Washington",
+    "Washingtonian"
    ],
    "scores": {
     "emotional_load": 2,
     "explainability": 5,
     "actionability": 1,
-    "conversational_currency": 3
+    "conversational_currency": 4
    },
    "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Tom Cruise's $125 million film Digger opened to $8 million, his worst box office debut in 18 years, and may lose $150 million.",
-   "assembly_score": 1.86
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Ovechkin announces retirement at season's end; led Capitals to first Stanley Cup; turned 41 in September",
+    "Specifies 2026-2027 season as his final year; 22 seasons all with Capitals",
+    "Direct quote from Ovechkin on X; one-year contract; broke Gretzky's record in April 2025"
+   ],
+   "line": "Alex Ovechkin, NHL's all-time leading goalscorer, announces he will retire after this season.",
+   "assembly_score": 10.42
   },
   {
    "slot": "elsewhere",
    "slot_label": "Elsewhere, but here",
-   "key": "26427f80e45d9831",
-   "title": "Brazil heads to presidential runoff with Bolsonaro ahead of Lula",
+   "key": "d18ac370ae1ec7b3",
+   "title": "Saudi-backed forces launch major offensive against Houthis in Yemen",
    "beat": "international",
-   "publisher_count": 12,
+   "publisher_count": 8,
    "publishers": [
     "Financial Times",
-    "NPR",
     "New York Times",
-    "The Guardian",
+    "Yahoo News",
     "Al Jazeera",
     "CBS News",
-    "Deutsche Welle",
-    "Fox News",
     "France 24",
     "ABC Australia",
-    "ANSA",
-    "Memeorandum"
+    "Daily Mail"
    ],
    "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
+    "emotional_load": 4,
+    "explainability": 3,
     "actionability": 1,
     "conversational_currency": 3
    },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Brazil's presidential election advances to a runoff after Fl\u00e1vio Bolsonaro narrowly leads incumbent Lula in the first round.",
-   "assembly_score": 7.63
+   "politician_led": false,
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Reveals internal Pentagon hawk/dove debates before Iran war, naming Gen. Michael 'Erik' Kurilla as key hawkish voice.",
+    "New number: Brent crude hovering around $100/barrel amid Houthi battle for Red Sea shipping lanes.",
+    "Saudi and Yemeni government forces launch offensive to retake Red Sea coast and Bab al-Mandab Strait from Houthis.",
+    "Saudi-backed Yemeni forces claim recapture of Bab el-Mandeb Strait, which handles ~12% of global trade, seized by Houthis last month.",
+    "New number: 100 Saudi warplanes conducted dawn strikes supporting Yemeni government offensive against Houthis.",
+    "Yemeni government forces reportedly aim to push toward Sanaa as part of the offensive, though full Houthi defeat seen as challenging.",
+    "Yemeni President Rashad al-Alimi announces offensive, vowing to fight 'until the country is liberated' from Houthi rule."
+   ],
+   "line": "Saudi-backed Yemeni forces launched a major offensive against Iran-backed Houthis controlling the Red Sea strait, risking a new escalation in Yemen's long conflict.",
+   "assembly_score": 19.86
   },
   {
    "slot": "close",
    "slot_label": "The close",
-   "key": "e06269fd8cfc7ade",
-   "title": "Trump creates task force to coordinate government AI policy",
-   "beat": "tech",
-   "publisher_count": 3,
-   "publishers": [
-    "BBC",
-    "NBC News",
-    "Semafor"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump creates a government task force to coordinate AI policy and ensure U.S. technological leadership.",
-   "assembly_score": 5.09
-  },
-  {
-   "slot": "unavoidable",
-   "slot_label": "Unavoidable",
-   "key": "379bdc2b6a109b43",
-   "title": "U.S. Rushes to Withdraw Bombers From U.K. Air Base After New Threats",
+   "key": "2d0e672e0b748def",
+   "title": "Leaked audio: Paxton says Trump's team controls his Senate campaign",
    "beat": "national",
-   "publisher_count": 9,
+   "publisher_count": 6,
    "publishers": [
     "New York Times",
-    "CBS News",
-    "Deutsche Welle",
-    "Fox News",
-    "France 24",
-    "NBC News",
-    "Daily Mail",
-    "Fox 5 DC",
+    "The Guardian",
+    "Daily Beast",
+    "The Bulwark",
+    "The New Republic",
     "Memeorandum"
    ],
    "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 3.63
-  },
-  {
-   "slot": "unavoidable",
-   "slot_label": "Unavoidable",
-   "key": "ce48ffd6fbf10a22",
-   "title": "Bolsonaro leads Lula in Brazil election, triggering October runoff",
-   "beat": "international",
-   "publisher_count": 1,
-   "publishers": [
-    "ANSA"
-   ],
-   "scores": {
     "emotional_load": 2,
-    "explainability": 5,
+    "explainability": 4,
     "actionability": 1,
     "conversational_currency": 4
    },
    "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Brazil's first-round presidential election shows Bolsonaro leading Lula 47% to 45%, with a runoff scheduled for October 25.",
-   "assembly_score": 2.33
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Paxton privately admitted Washington, not him, is driving his Senate campaign's messaging.",
+    "The Bulwark published the actual leaked audio/video recording of Paxton's remarks.",
+    "Names Democratic rival James Talarico and quotes Paxton: 'I don't control message or what we're doing.'",
+    "Paxton's office is investigating Texas pediatricians over childhood vaccinations, alleging a profit-driven conspiracy.",
+    "Fuller quote: 'I've never been in a race where I felt less control...it's all coming from D.C.'; recording shared with Politico."
+   ],
+   "line": "Leaked audio shows Texas Attorney General Ken Paxton saying his Senate campaign is controlled by Trump's Washington team, not by him.",
+   "assembly_score": 15.95
+  },
+  {
+   "slot": "unavoidable",
+   "slot_label": "Unavoidable",
+   "key": "efd3ea1f7974d38e",
+   "title": "Bolsonaro leads Brazil's presidential race after first round",
+   "beat": "international",
+   "publisher_count": 6,
+   "publishers": [
+    "New York Times",
+    "The Guardian",
+    "Al Jazeera",
+    "CNBC",
+    "France 24",
+    "The New Republic"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 4,
+    "actionability": 1,
+    "conversational_currency": 4
+   },
+   "politician_led": true,
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "New story: Fl\u00e1vio Bolsonaro's first-round lead over Lula sets up a three-week runoff battle in Brazil's election.",
+    "Gives exact first-round vote totals: Bolsonaro 56.1m (47.03%) vs Lula 53.8m (45.16%); candidates' ages 45 and 80.",
+    "Brazilian stocks jumped on the result; runoff set for October 25.",
+    "Trump administration actively backing Bolsonaro as part of a broader push for conservative allies across Latin America, including Colombia and Argentina.",
+    "Adds on-record analysis from Felipe Krause, head of Oxford's Brazilian Studies Programme, on polarization and Bolsonaro's appeal.",
+    "Adds analysis from researcher Thomas Zicman de Barros noting this is historically unprecedented for a first-round trailing candidate."
+   ],
+   "line": "Fl\u00e1vio Bolsonaro leads Brazil's presidential race after first-round voting, positioning the right-wing candidate to likely defeat incumbent Lula in a runoff.",
+   "assembly_score": 16.56
+  },
+  {
+   "slot": "unavoidable",
+   "slot_label": "Unavoidable",
+   "key": "876b2f911876f4f8",
+   "title": "Trump promises senior payments and diesel relief before midterms",
+   "beat": "national",
+   "publisher_count": 5,
+   "publishers": [
+    "New York Times",
+    "CNBC",
+    "MedPage Today",
+    "NBC News",
+    "Memeorandum"
+   ],
+   "scores": {
+    "emotional_load": 2,
+    "explainability": 4,
+    "actionability": 1,
+    "conversational_currency": 4
+   },
+   "politician_led": true,
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Trump plans executive order to lower high diesel costs ahead of midterms.",
+    "Trump pledges ~$100 direct deposits to 20 million Medicare seniors; legality questioned.",
+    "Trump reiterates $5,000 check pledge tied to GOP keeping Congress; notes $500 ACA refunds alongside $90 Medicare rebates.",
+    "New NBC poll shows GOP facing uphill battle; taxpayer-funded Trump ads airing during prime-time football broadcasts."
+   ],
+   "line": "Trump promises cash payments to seniors and pledges diesel cost relief ahead of midterm elections, raising questions about legal authority.",
+   "assembly_score": 11.53
   },
   {
    "slot": "flex",
    "slot_label": "Flex",
-   "key": "d9c48f16bebf9b4a",
-   "title": "My sister Nicole married OJ Simpson. This is what I wish I had known",
-   "beat": "international",
-   "publisher_count": 1,
+   "key": "16fbce4dfd324114",
+   "title": "Prince Andrew sues police over Epstein-related arrest warrants",
+   "beat": "national",
+   "publisher_count": 4,
    "publishers": [
-    "The Guardian"
+    "BBC",
+    "Yahoo News",
+    "Daily Beast",
+    "Daily Mail"
    ],
    "scores": {
     "emotional_load": 3,
     "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 4.8
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "93c2b86a72e89587",
-   "title": "Spain's PM calls snap election after housing crisis defeat",
-   "beat": "international",
-   "publisher_count": 9,
-   "publishers": [
-    "Financial Times",
-    "NPR",
-    "The Guardian",
-    "Al Jazeera",
-    "CNBC",
-    "Deutsche Welle",
-    "France 24",
-    "ABC Australia",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-10-05/spanish-prime-minister-pedro-sanchez-announces-early-election/107230816",
-    "//aljazeera.com/news/2026/10/5/spanish-prime-minister-pedro-sanchez-announces-snap-election?traffic_source=rss",
-    "//aljazeera.com/video/newsfeed/2026/10/5/spains-pm-pedro-sanchez-calls-snap-election-amid-housing-crisis?traffic_source=rss",
-    "//cnbc.com/2026/10/05/spain-sanchez-snap-election-housing-protests.html",
-    "//dailymail.com/news/article-16183345/Pedro-Sanchez-Spain-election-housing.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dw.com/en/spanish-prime-minister-pedro-sanchez-calls-snap-election/a-79542826?maca=en-rss-en-all-1573-xml-mrss",
-    "//france24.com/en/europe/20261005-spanish-pm-sanchez-calls-snap-election-for-november-29",
-    "//france24.com/en/video/20261005-spanish-pm-sanchez-calls-snap-election-amid-housing-crisis",
-    "//ft.com/content/866dea03-4cee-4009-b130-6f7a191336c4?syn-25a6b1a6=1",
-    "//npr.org/2026/10/05/nx-s1-5991404/spain-snap-elections",
-    "//theguardian.com/world/live/2026/oct/05/europe-spain-pedro-sanchez-election-housing-france-school-protests-ukraine-russia-latest-news-updates"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
     "actionability": 1,
     "conversational_currency": 3
    },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Spain's PM calls snap elections after losing a legislative vote on housing crisis measures.",
-   "assembly_score": 1.9
+   "politician_led": false,
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "King Charles will not use private funds to finance Andrew's legal action against Thames Valley Police.",
+    "Andrew Mountbatten-Windsor is suing Thames Valley Police over search warrants used in his February arrest.",
+    "Police searched Andrew's homes at Sandringham estate and Royal Lodge, Windsor, on his 66th birthday."
+   ],
+   "line": "Prince Andrew is suing Thames Valley Police over arrest warrants related to Epstein files; King Charles reportedly won't pay his legal costs.",
+   "assembly_score": 10.67
   },
   {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "3c24580339ab8357",
-   "title": "Andrew challenges legality of search warrants in Epstein-related arrest",
-   "beat": "national",
+   "slot": "flex",
+   "slot_label": "Flex",
+   "key": "d79f334a325d7756",
+   "title": "Colbert's film project stalls under Trump-aligned Skydance owner",
+   "beat": "culture",
    "publisher_count": 5,
    "publishers": [
-    "BBC",
-    "The Guardian",
-    "France 24",
-    "ABC Australia",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-10-05/andrew-mountbatten-windsor-legal-action-after-epstein-arrest/107228702",
-    "//bbc.co.uk/news/articles/c689zl5eljdzo?at_campaign=rss&at_medium=RSS",
-    "//france24.com/en/europe/20261005-ex-prince-andrew-launches-bid-to-quash-epstein-affair-search-warrants",
-    "//memeorandum.com/261005/p2",
-    "//theguardian.com/uk-news/2026/oct/05/andrew-mountbatten-windsor-court-action-police-epstein-raids"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "progress_coded": true,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Prince Andrew is challenging the police search warrants used in his February arrest on suspicion of misconduct in public office.",
-   "assembly_score": 0.89
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "6979e05aebd15445",
-   "title": "Boulder sues oil companies over climate damages as beetle outbreak kills Colorado forests",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "ABC News",
-    "France 24",
-    "NBC News"
-   ],
-   "urls": [
-    "//abcnews.com/Politics/killer-beetles-tinderbox-forests-climate-change-takes-center/story?id=136871791",
-    "//france24.com/en/tv-shows/press-review/20261005-mum-if-you-see-this-it-s-for-my-future",
-    "//nbcnews.com/politics/supreme-court/new-supreme-court-term-begins-climate-change-case-seeking-hold-energy-rcna600247"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 3,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "progress_coded": true,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Boulder is suing oil companies for climate damages as mountain pine beetles devastate Colorado forests, testing whether energy companies can be held liable for warming-driven ecological harm.",
-   "assembly_score": 0.52
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "f61cd57de0e8b2d6",
-   "title": "Supreme Court term opens with cases on climate liability, gun rights, voting access",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "NPR",
-    "Washington Post",
-    "ABC News"
-   ],
-   "urls": [
-    "//abcnews.com/Politics/election-looms-supreme-court-reconvenes-new-wave-trump/story?id=136871786",
-    "//abcnews.com/US/wireStory/new-supreme-court-term-begins-cases-climate-change-136995024",
-    "//npr.org/2026/10/05/nx-s1-5970070/supreme-court-climate-change-boulder-county",
-    "//npr.org/2026/10/05/nx-s1-5986099/morning-news-brief",
-    "//washingtonpost.com/politics/2026/10/05/what-watch-supreme-courts-new-term"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Supreme Court begins term with cases on climate liability, gun restrictions, voting access, and religious school funding\u2014decisions expected after midterm elections.",
-   "assembly_score": 0.32
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "7b37f87f723ff59c",
-   "title": "England, Australia name Rugby League World Cup squads",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "ABC Australia"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-10-05/australia-world-cup-rugby-league-squad-kevin-walters/107229918",
-    "//bbc.co.uk/sport/rugby-league/articles/cmgj94zd59ljo?at_campaign=rss&at_medium=RSS"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "England and Australia announce their Rugby League World Cup squads with personnel changes.",
-   "assembly_score": 0.26
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "06ac2f01299e92d8",
-   "title": "BT acquires TalkTalk in rescue deal over security concerns",
-   "beat": "business",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/cvze4g06526ro?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/money/markets/article-16183247/BT-swoops-TalkTalk-rescue-deal-fears-collapse-pose-national-security-risk.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": true,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "BT is acquiring TalkTalk, a struggling broadband operator, citing national security concerns about potential collapse.",
-   "assembly_score": 0.22
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "d77c3437ff6e0982",
-   "title": "Polanski banned from Israel after party's motion declaring 'Zionism is racism'",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/c6jdm5n1vy7go?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/news/article-16183381/Zack-Polanski-Holborn-election-Greens-anti-Semitism.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.07
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "67da709ad46aca88",
-   "title": "Watch: How Brazil's dramatic election unfolded",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Daily Beast"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/videos/cwp9g54v9xjlo?at_campaign=rss&at_medium=RSS",
-    "//thedailybeast.com/confused-trump-80-makes-bizarre-blunder-in-late-night-meltdown"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.08
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "95ef279bec74b1cb",
-   "title": "France closes up to 500 schools over student protests",
-   "beat": "international",
-   "publisher_count": 3,
-   "publishers": [
-    "BBC",
-    "Deutsche Welle",
-    "France 24"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/cwkg5n7lm3y5o?at_campaign=rss&at_medium=RSS",
-    "//dw.com/en/hundreds-of-french-schools-closed-amid-protests/a-79542656?maca=en-rss-en-all-1573-xml-mrss",
-    "//france24.com/en/france/20261005-live-up-to-500-schools-to-shut-in-france-as-student-protests-continue",
-    "//france24.com/en/video/20261005-up-to-500-french-schools-to-be-closed-monday-as-protests-continue"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.1
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "70c2a342161491b1",
-   "title": "All the goals from the Women's Super League - matchweek five",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "NPR"
-   ],
-   "urls": [
-    "//bbc.co.uk/sport/football/videos/cmx2d59jn021o?at_campaign=rss&at_medium=RSS",
-    "//npr.org/2026/10/05/nx-s1-5981261/super-el-nino-floods-droughts"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.11
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "7bb3ecf45969b9c1",
-   "title": "Republicans and Democrats find a unifying target: Pharmacy benefit managers",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "NPR",
-    "Fox News"
-   ],
-   "urls": [
-    "//foxnews.com/opinion/lee-carter-polls-say-democrats-could-swamp-republicans-pollster-question",
-    "//npr.org/2026/10/05/nx-s1-5943563/pharmacy-benefit-managers-pbms-tennessee-arkansas-regulation"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.11
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "cc4287db616c47f9",
-   "title": "Senior Trump administration officials met to discuss Iran war at Camp David",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "CBS News",
-    "Semafor"
-   ],
-   "urls": [
-    "//cbsnews.com/live-updates/trump-iran-war-us-midterm-elections-troops-deployment",
-    "//semafor.com/article/10/05/2026/trump-administration-eyes-iran-midterm-play"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.22
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "7312c973d5b67909",
-   "title": "Russian lab worker dies of suspected plague in Siberia; US monitoring case",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "Al Jazeera",
-    "NBC News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/10/5/russian-lab-worker-dies-of-suspected-plague-in-siberia-us-monitoring-case?traffic_source=rss",
-    "//memeorandum.com/261005/p3",
-    "//nbcnews.com/world/europe/russia-plague-suspected-lab-worker-dies-200-medical-observation-rcna601559"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.45
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "8cf13704d52da685",
-   "title": "British Jews more likely to identify as Zionist since 7 October attacks, research finds",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "Deutsche Welle"
-   ],
-   "urls": [
-    "//dw.com/en/israel-observes-october-7-anniversary-with-national-memorial-day/a-79543531?maca=en-rss-en-all-1573-xml-mrss",
-    "//theguardian.com/news/2026/oct/05/british-jews-more-likely-to-identify-as-zionist-since-7-october-attacks-research-finds"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.48
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "b8356df8ef11fdf4",
-   "title": "Opinion: Will Claude ever win a Nobel Prize for medicine?",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "STAT News",
-    "ABC News"
-   ],
-   "urls": [
-    "//abcnews.com/International/wireStory/nobel-prize-week-kicking-off-stockholm-medicine-award-136995821",
-    "//statnews.com/2026/10/05/could-ai-win-nobel-prize-medicine"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.61
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "95212baf7fd1f88c",
-   "title": "Russia\u2019s new drive to crush Ukraine",
-   "beat": "international",
-   "publisher_count": 3,
-   "publishers": [
     "Financial Times",
     "The Guardian",
-    "CNBC"
-   ],
-   "urls": [
-    "//cnbc.com/2026/10/05/ukraine-war-russia-kyiv-putin-zelenskyy-trump.html",
-    "//ft.com/content/cc96ac01-7929-4954-97a3-7b30e00ef324?syn-25a6b1a6=1",
-    "//theguardian.com/commentisfree/2026/oct/05/putin-escalating-bombing-campaign-ukrainian-resolve-russia-invasion"
+    "CNBC",
+    "Daily Beast",
+    "The Verge"
    ],
    "scores": {
     "emotional_load": 3,
     "explainability": 3,
-    "actionability": 3,
+    "actionability": 1,
     "conversational_currency": 3
    },
    "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.66
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "674a42c5e532ab5c",
-   "title": "Yemen launches major military operation against Houthis",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Deutsche Welle",
-    "France 24"
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Skydance names leadership team: Bari Weiss, Mark Thompson, Casey Bloys under Ellison and Kreiz",
+    "$110B Paramount-WBD deal closing this week; Thompson stays CNN CEO; memo quote on independent news",
+    "Employees had feared Bari Weiss might replace Thompson; additional memo quote on CNN integration"
    ],
-   "urls": [
-    "//dw.com/en/yemen-launches-major-military-operation-against-houthis/a-79542723?maca=en-rss-en-all-1573-xml-mrss",
-    "//france24.com/en/middle-east/20261005-yemen-military-announces-broad-range-of-strikes-against-houthis-in-bid-to-retake-lost-territory"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.9
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "e1ef7346e372cd3c",
-   "title": "Dramatic footage shows alleged narco boat erupt in fireball during US military strike",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "CBS News",
-    "Fox News"
-   ],
-   "urls": [
-    "//cbsnews.com/news/us-strike-alleged-drug-smuggling-boat-caribbean-4-dead-southcom",
-    "//foxnews.com/world/dramatic-footage-shows-alleged-narco-boat-erupt-fireball-during-us-military-strike"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.95
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "91f1c7968aeb3e6c",
-   "title": "Nations League: France face Belgium as they battle for top spot in group A",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "France 24"
-   ],
-   "urls": [
-    "//aljazeera.com/sports/2026/10/5/france-belgium-uefa-nations-league-olise-de-bruyne-tielemans-teams-format?traffic_source=rss",
-    "//france24.com/en/tv-shows/sports/20261005-nations-league-france-face-belgium-as-they-battle-for-top-spot-in-group-a"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.02
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "35ca650bcd4d977f",
-   "title": "Euro slides to 17-month low against dollar",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Financial Times",
-    "CNBC"
-   ],
-   "urls": [
-    "//cnbc.com/2026/10/05/euro-dollar-spain-france-risk.html",
-    "//ft.com/content/8b19b9f7-9237-47bf-bc50-d8b78aa7fe24?syn-25a6b1a6=1"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.04
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "e1e2f854a5ddf36d",
-   "title": "Middle East oil exports surpass pre-war levels despite tensions, data shows",
-   "beat": "international",
-   "publisher_count": 3,
-   "publishers": [
-    "Al Jazeera",
-    "Deutsche Welle",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/10/5/middle-east-oil-exports-surpass-pre-war-levels-despite-tensions-data-shows?traffic_source=rss",
-    "//dailymail.com/money/markets/article-16183309/Tax-rises-loom-Hormuz-crisis-threatens-blow-7bn-hole-Chancellors-plans.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dw.com/en/middle-east-oil-exports-recover-to-pre-iran-war-levels-despite-hormuz-attacks/a-79542680?maca=en-rss-en-all-1573-xml-mrss"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.36
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "9cb5ebdd74ff4cda",
-   "title": "Shadow chancellor to unveil Tory plans to cut taxes and regulations",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/cqj9kje82jm1o?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/news/article-16183301/Tories-Big-State-Britain-Badenoch-Burnham-1970s-socialist-tax.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.61
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "005b2158a8744f11",
-   "title": "Samoa PM apologises after Nazi salute video emerges",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "ABC Australia"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-10-05/samoa-prime-minister-nazi-salute-video/107226830",
-    "//aljazeera.com/news/2026/10/5/samoa-pm-apologises-after-nazi-salute-video-emerges?traffic_source=rss"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.97
+   "line": "Skydance's new owner, a Trump ally, may be slowing Colbert's Lord of the Rings film after canceling his late-night show.",
+   "assembly_score": 9.55
   }
  ],
  "excluded_sample": [
   {
-   "title": "Gillian Anderson responds to backlash after telling \u2018distracting\u2019 fans to stop sitting in front row",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Dear Abby for October 5, 2026",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "\u2018SNL\u2019 Went to Extreme Lengths to Keep Huge Cameo Under Wraps",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "A.W.A.K.E. Mode Spring 2027 Ready-to-Wear",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Richard E. Grant announces radio prize winner too early in ANOTHER gaffe as reveals he has a habit of blurting things out - after he threw Celebrity Traitors into chaos with his slip up",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Bolem house outside",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Tetairoa McMillan career day spoils Jared Goff's huge game as soft Lions defense flops on SNF",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Pastor who sparked doomsday panic claims the Rapture is just DAYS away",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Jon Ossoff Has a Blunt Message for Cynics and Whiners",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Bradley Cooper and Gigi Hadid fuel marriage rumors again as they step out wearing gold bands in Paris",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "FBI Director Kash Patel and country singer Alexis Wilkins announce they're engaged",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Hollywood Didn\u2019t Learn Its Lesson. Then Came Digger",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "The IRGC\u2019s Midterm Endorsement Creates a Problem for Democrats",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Trumpism in Trouble on the Prairie",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "\u2018Lanterns\u2019: Creator Damon Lindelof Takes Us Inside the Bombshell Finale of HBO\u2019s Superhero Hit",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Klint Kubiak predicted a Raiders win over Kansas City at halftime, then the Chiefs let the scoreboard speak",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Teresa Giudice's daughter Milania writes birthday tribute to sister Gabriella months after 911 call and arrest",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Strictly viewers beg bosses to pair Emma Willis and Johannes Radebe as they present together for the first time and claim Josh Widdicombe has 'found his natural home'",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Deonte Banks' game-sealing pick-six propels Giants into place they haven't been since 2015",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Kyle Caulkins HBC S12.jpeg",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Man\u2019s miraculous catch saves child after balcony fall in Egypt",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Andy Beshear's \"nepo baby\" hurdle (Axios)",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Jaguars Lawrence",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "I was left with a sagging tummy after losing more than 2 stone on weight loss jabs... but I transformed and toned my torso without having to do crunches, Pilates or other difficult exercises",
+   "title": "It's been a terrible year for farming, Jeremy Clarkson tells Tory conference",
    "why": "triage verdict NO"
   }
  ]
