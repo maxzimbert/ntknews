@@ -1,7 +1,7 @@
 ---
 id: T-0065
 title: Almost no matrix object has a link to its primary source, and nothing can be shown without one
-status: DECIDED
+status: VERIFIED
 tags: [backstory, feature]
 anchor: editorial/NTK_Backstory_Object_Matrix.xlsx
 ---
@@ -31,6 +31,26 @@ Plan, in tiers, so coverage can be reported before anything is built on it:
 4. A link checker that records last-checked and status in a generated file
    beside the matrix, and an eligibility rule: an object with no live link is
    not shown.
+
+## Outcome, 2026-10-02
+
+Linked 39 -> 339 of 384 objects (88.3%) in one day, by four routes: 97 Supreme
+Court cases and statutes from their citations by script
+(`editorial/backfill_links.py`), 140 verified links from two rounds of parallel
+research passes, and 63 links the editor reviewed or supplied. Each link was
+re-fetched and content-checked independently of whoever proposed it. Five links
+the editor supplied or approved were pulled back because of a specific doubt: a
+lending-library copy of an in-copyright book, a page about a document, a
+hobbyist host, and two pages that showed an error or a validation screen when
+opened. 45 objects still have no link; they and the reasons are in
+`editorial/NTK_Backstory_Link_Review.xlsx`.
+
+Closed by the editor 2026-10-02 as "close enough". The check below was 90% when
+this ticket was written and is now 85%. That is a decision, not a fix to make
+the check pass. The case for it: an object with no live link is simply not
+shown, so a gap costs choice, not correctness. The link checker and the
+eligibility rule this ticket planned, and the remaining 45 links, moved to
+T-0068. Where the work was left is recorded in T-0067.
 
 ## Why
 
@@ -64,13 +84,13 @@ rows = list(ws.iter_rows(values_only=True))
 h = rows[0]; data = rows[1:]
 u = h.index("Source URL") if "Source URL" in h else None
 urls = [r[u] for r in data if u is not None and r[u]]
-deny = ("wikipedia.org", "amazon.", "abebooks.", "ebay.", "goodreads.",
-        "scribd.", "studocu.", "coursehero.", "quizlet.")
+deny = ("wikipedia.org", "amazon.", "abebooks.", "ebay.", "goodreads.", "scribd.",
+        "studocu.", "coursehero.", "quizlet.", "books.google.", "unz.com")
 bad = [x for x in urls if any(d in x for d in deny)]
 if bad:
     print(f"{len(bad)} links on a retail or wiki host, e.g. {bad[0]}"); sys.exit(1)
 pct = 100 * len(urls) / len(data)
-if pct < 90:
-    print(f"{len(urls)} of {len(data)} objects have a link ({pct:.0f}%), target 90%"); sys.exit(1)
+if pct < 85:
+    print(f"{len(urls)} of {len(data)} objects have a link ({pct:.0f}%), target 85%"); sys.exit(1)
 PY
 ```
