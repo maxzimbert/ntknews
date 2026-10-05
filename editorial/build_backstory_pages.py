@@ -141,14 +141,22 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
   .unverified {{ display:inline-block; border:1px solid {terra}; color:{terra};
     font-family:'Overpass',sans-serif; font-size:10px; font-weight:700; letter-spacing:.08em;
     text-transform:uppercase; padding:3px 6px; border-radius:3px; margin-top:12px; }}
-  .spine {{ display:flex; gap:12px; align-items:flex-start; position:relative; padding-bottom:16px; }}
-  .spine:last-child {{ padding-bottom:0; }}
-  .spine:not(:last-child)::before {{ content:''; position:absolute; left:3.5px; top:19px; bottom:-3px; border-left:1px dotted rgba(38,31,35,.5); }}
-  .spine .yr {{ display:block; font-family:'Overpass',sans-serif; font-size:13px; font-weight:600; letter-spacing:.04em; color:rgba(38,31,35,.65); margin-bottom:2px; }}
+  .tr {{ display:grid; grid-template-columns:52px 20px 1fr; align-items:start; font-size:16px; line-height:1.4; }}
+  .tr .ty {{ font-family:'Overpass',sans-serif; font-size:14px; font-weight:700; padding-top:3px; color:{ink}; }}
+  .tr .td {{ position:relative; align-self:stretch; }}
+  .tr .td::before {{ content:''; position:absolute; left:50%; top:0; bottom:0; border-left:1px solid rgba(38,31,35,.3); }}
+  .tr:first-child .td::before {{ top:11px; }}
+  .tr:last-child .td::before {{ bottom:auto; height:11px; }}
+  .tr:only-child .td::before {{ display:none; }}
+  .tr .td i {{ position:absolute; left:50%; top:7px; width:9px; height:9px; margin-left:-4.5px; border-radius:50%; background:{ink}; }}
+  .tr .tt {{ padding:0 0 20px 8px; }}
+  .tr:last-child .tt {{ padding-bottom:0; }}
+  .tr.here .ty {{ color:{terra}; }}
+  .tr.here .td i {{ background:{terra}; box-shadow:0 0 0 2px {cream}, 0 0 0 3px {terra}; }}
+  .here-lab {{ display:block; font-family:'Overpass',sans-serif; font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:{terra}; margin:3px 0 2px; }}
+  .dot {{ display:inline-block; width:3px; height:3px; border-radius:50%; background:currentColor; margin:0 .6em; vertical-align:middle; }}
   .cta {{ display:inline-block; font-family:'Overpass',sans-serif; font-size:13px; font-weight:600; color:{ink}; text-decoration:none; border:1px solid {ink}; padding:11px 16px; margin-top:4px; }}
   .cta + .src {{ margin-left:10px; }}
-  .spine .dot {{ width:8px; height:8px; border-radius:999px; background:{ink}; margin-top:7px; flex:none; }}
-  .spine .t {{ font-size:16px; line-height:1.4; }}
   .obj {{ border-top:1px solid rgba(38,31,35,.2); padding:13px 0; }}
   .obj.first {{ border-top:none; padding-top:0; }}
   .obj .t {{ font-family:'Newsreader',serif; font-style:italic; font-size:16px; margin-bottom:4px; }}
@@ -167,7 +175,7 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
 </head>
 <body>
 <header><a href="/backstory"><img src="{logo}" alt="NTK"></a></header>
-<div class="bar"><a href="/backstory">&larr; Backstory</a><span>ntknews.org/backstory/{row_id}</span></div>
+<div class="bar"><a href="/backstory">&larr; Backstory</a></div>
 <div class="hd">
   <h1>{title_esc}</h1>
   <div class="milestone">{milestone_esc}</div>
@@ -229,20 +237,21 @@ def render_held(row):
         parts.append(f"""<section class="ind">
   <div class="ind-head"><div class="lab">{html_esc(ind['label'])}</div><div class="dir">{html_esc(ind['direction'])}</div></div>
   {indicator_svg(ind)}
-  <div class="src">{html_esc(ind['source'])} &middot; {html_esc(ind.get('as_of') or 'most recent data')}</div>
+  <div class="src">{html_esc(ind['source'])}<span class="dot"></span>{html_esc(ind.get('as_of') or 'most recent data')}</div>
   {verified_badge}
 </section>""")
 
-    begs = [f'<div class="spine"><span class="dot"></span><div class="t"><span class="yr">{html_esc(b["year"])}</span>{html_esc(b["line"])}</div></div>'
+    begs = [f'<div class="tr"><span class="ty">{html_esc(b["year"])}</span><span class="td"><i></i></span><div class="tt">{html_esc(b["line"])}</div></div>'
             for b in (row.get("beginnings") or [])]
     if row.get("start_line"):
         # First-letter capitalize only: str.capitalize() also lowercases every
         # other letter, which mangles a proper noun like "Washington".
         line = row["start_line"]
         line = line[:1].upper() + line[1:]
-        yr = f'<span class="yr">{html_esc(str(row.get("start_date", ""))[:4])}</span>' if begs else ""
-        # the row's own "since ..." line closes the timeline: the year the clock starts
-        begs.append(f'<div class="spine"><span class="dot"></span><div class="t">{yr}{html_esc(line)}.</div></div>')
+        yr = html_esc(str(row.get("start_date", ""))[:4])
+        # the row's own "since ..." line closes the timeline: where the clock starts, so it is marked
+        begs.append(f'<div class="tr here"><span class="ty">{yr}</span><span class="td"><i></i></span>'
+                    f'<div class="tt"><span class="here-lab">We are here</span>{html_esc(line)}.</div></div>')
     if begs:
         parts.append(f'<section><div class="lab">Beginnings</div>{"".join(begs)}</section>')
 
@@ -258,7 +267,7 @@ def render_held(row):
             head = o["quote"] if o.get("quote") else o["title"]
             rows.append(f'<div class="{cls}"><a href="{object_href(row, i)}">'
                         f'<div class="t">{html_esc(head)}</div>'
-                        f'<div class="by">{html_esc(by)} · {html_esc(o["year"])}</div>'
+                        f'<div class="by">{html_esc(by)}<span class="dot"></span>{html_esc(o["year"])}</div>'
                         f'<div class="more">About this</div></a></div>')
         parts.append(f'<section><div class="lab">The case</div>{"".join(rows)}</section>')
 
