@@ -148,6 +148,13 @@ PRESERVE_ROW = ('narrative', 'instances', 'updated', 'photo')  # beginnings is r
 
 
 NOTES = os.path.join(ROOT, 'editorial', 'object-notes.json')
+HEALTH = os.path.join(ROOT, 'editorial', 'object-links-health.json')
+
+
+def load_health():
+    """Written by editorial/check_links.py. Only status 'dead' makes an object ineligible:
+    a host that merely refuses scripts (blocks_scripts) or sits behind a paywall is not dead."""
+    return json.load(open(HEALTH)) if os.path.exists(HEALTH) else {}
 
 
 def day_month(v):
@@ -165,6 +172,7 @@ def load_objects():
     """Every matrix object that has a primary-source link (column O). An object
     with no link is not eligible: a reader leaves NTK for that link (T-0065)."""
     sh = openpyxl.load_workbook(MATRIX)['Objects']
+    health = load_health()
     by_row = collections.defaultdict(list)
     seen = collections.Counter()
     for i in range(2, sh.max_row + 1):
@@ -176,9 +184,12 @@ def load_objects():
         seen[oid] += 1
         if seen[oid] > 1:
             oid += '-%d' % seen[oid]
+        url = g(15) or ''
+        if health.get(url, {}).get('status') == 'dead':
+            url = ''          # eligible means: has a link the checker has not found dead
         by_row[g(11)].append({'title': g(6), 'author': g(7) or '',
                               'year': sort[:4] if g(4) else '',
-                              'source': g(10), 'source_url': g(15) or '', 'day_month': day_month(g(3)),
+                              'source': g(10), 'source_url': url, 'day_month': day_month(g(3)),
                               'object_id': oid, '_sort': sort})
     return by_row
 
