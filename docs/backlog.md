@@ -7,6 +7,26 @@ This is a working list, not a commitment. Things move.
 
 ---
 
+## Next generation: Backstory (captured 2026-10-05)
+
+In rough order. The first two are small and the third is the big one.
+
+1. **Timeline geometry (T-0073).** The line starts above the first bullet and runs half a pixel
+   off the bullets' centre. Fix in both copies of the markup.
+2. **Decide the categories (T-0076)** before building T-0074: whether technology and AI get a row,
+   and whether to split or add sub-genres.
+3. **"It starts in" should follow the story (T-0074).** One fixed year per row makes most pairings
+   leap. Several vetted origins per row, keyed by sub-genre, chosen from the story's Truths.
+4. **Page-bottom visibility bug (T-0075).** Needs a screenshot and a device first.
+5. An `Exclude` flag in the matrix, so the editor can drop an object without changing the rules.
+6. Stable object IDs in the URL, before launch.
+7. A weekly Action that runs `editorial/check_links.py` and commits the health file.
+8. The 50 objects with no link (T-0071).
+9. Text generation as a script that calls the API (it ran through agents this time), with the key
+   outside the repo.
+
+---
+
 ## Next up — small, verified, reader-facing
 
 **1. ~~Em-dashes are leaking~~ — rule written 2026-09-17, unmeasured.**

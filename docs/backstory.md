@@ -11,6 +11,32 @@ piece is done.
 
 ---
 
+## Update, 2026-10-05 — what changed since this file was last verified
+
+This file's build plan below is the 2026-09 plan; read this section first, then the decisions in
+`docs/decisions.md` ("Backstory objects ...").
+
+- **The row page (4C) is real.** Beginnings are a vertical timeline of 3 to 6 dated entries (year at
+  the left, one sentence), closing on the row's own "since ..." line marked **WE ARE HERE**. The
+  case is every Beginning's object plus one or two later ones. Data lives in the row's
+  `beginnings` field (not `instances[]`, which is left empty on purpose: its old reader treats it
+  as episodes) and in each object's `about`, `source_url` and `object_id`.
+- **The object page (4D)** is short: header, two to four sentences, source line, and a **View the
+  primary document** button that opens the original in a new tab. Both the static twin
+  (`editorial/build_backstory_pages.py`) and the in-app overlay (`digest/index.html`) render it; keep
+  them in step.
+- **The matrix grew to 384 objects and 334 carry a primary-source link** (column O, "Source URL").
+  50 do not (T-0071). `editorial/check_links.py` checks every link and writes
+  `editorial/object-links-health.json`; a dead link makes an object ineligible (T-0068).
+- **Selection and text.** `editorial/build_backstory.py` selects; text is written, validated by
+  `editorial/merge_object_notes.py` and stored in `editorial/object-notes.json`;
+  `editorial/object-selection.json` is the generated list of what is chosen. Rebuilding after a
+  matrix change can change the picks, and any newly chosen object needs text. Run the builds from a
+  copy of the repo you control, and commit the regenerated `digest/data/backstory.json` and
+  `backstory/`.
+- **Open, and the next effort:** the timeline's geometry (T-0073), choosing "It starts in" to fit the
+  story (T-0074), the page-bottom visibility bug (T-0075), the categories themselves (T-0076).
+
 ## The decisions
 
 **Part 2 — per-story pairings — is the design, and it is live.** Confirmed 2026-09-15.
@@ -151,7 +177,8 @@ sub-genre under Order.
 - **Narratives.** 0 of 21 rows have one (T-0003, DECIDED). The detail view
   works without them; Slice 6 is the work.
 - **`instances[]` is empty on every row**, so "Earlier episodes" never
-  renders. Nothing writes it yet.
+  renders. Nothing writes it yet. (2026-10-05: left empty on purpose. Beginnings are the new
+  `beginnings` field; see the update above.)
 - **Classifier pre-fill in Pulse.** The editor sees only explicit tags, not
   what the classifier will choose (T-0014, PROPOSED). Card collisions between
   two classifier picks are still invisible before publish (T-0011).

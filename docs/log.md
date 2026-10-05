@@ -150,3 +150,49 @@ full re-theme to get to a preview — where the editor rejected it on sight.
 For visual changes that are hard to reverse, put a screenshot or mock in
 front of the editor before building, not after.
 
+## 2026-10-05 — the model's recall was not the failure; the link was
+
+The generation pilot wrote 16 documents' text twice, once from the matrix row alone and once
+from the fetched source. The matrix-only writing had no factual error I could find, including
+for lesser-known documents (the earlier fear, T-0045 and T-0047, was about quotes and numbers,
+which the pilot did not test). What went wrong was upstream: a link to the wrong document
+(Taft's 26 July speech on the row for his 11 July one) had passed a research agent, a live fetch
+and a content check, and was caught only because the grounded version printed a date that
+disagreed with the matrix. Check a link against the matrix's date and title, not only that it
+loads. `editorial/check_links.py` now notes any matrix year that appears nowhere on the page.
+
+## 2026-10-05 — "verified" from an agent is a claim; re-fetch it
+
+Research agents returned links marked verified. Re-fetching every one and checking the author
+or title words on the page found problems they had not reported: a dead state.gov path, an
+error page served with a 200, a lending-library copy of an in-copyright book, a catalogue page
+standing in for the document. Agents also hit a cap of 200 web searches a session and silently
+turned later items into "not found"; slices of about 11 objects stayed inside it. The first
+pass linked 120 of 248 and the second only 20 of 87, because archives (Founders Online, loc.gov,
+state.gov) refuse scripts.
+
+## 2026-10-05 — a middle dot with zero width, and a selector that matched the label
+
+Two visual bugs came from assumptions about the page, not the CSS. Overpass's middle dot
+(U+00B7) has zero advance width, so no spaces or margins separate it from the next word; draw
+the dot with CSS. And `.row:first-child` never matched because the section's first child was the
+"Beginnings" label (T-0073). Measure the rendered page with `getBoundingClientRect` before
+changing CSS.
+
+## 2026-10-05 — Pulse published an old Today overview and the server was right
+
+Symptom: `ntknews.org/today` kept showing the previous essay through any number of hard
+refreshes. The first instinct, cache or deploy, was wrong: the live ETag carried the publish
+commit's hash and the HTML held the six published stories. The fault was in what Pulse
+published: `lineup-publish.json`'s `today.generatedAt` was weeks old. Look at the published
+payload before the CDN. The rot suite found the same fault independently (T-0001, dead onramp
+keys). I built the guard (T-0072) without first reading `docs/decisions.md`, which already held
+a 2026-09-16 decision about this exact gate; the result differs from it in one place, recorded
+there. Read decisions before building, as CLAUDE.md rule 2 says.
+
+## 2026-10-05 — a rot check can be wrong; the proof is that it still fails on the broken case
+
+T-0001's check reported dead onramp keys on a good edition because it recognised only 16-hex
+story keys, and manual and scoop-imported stories are `manual-<timestamp>`. Widening the pattern
+was honest only because the widened check was then run against the broken edition from earlier
+the same day and still failed there.

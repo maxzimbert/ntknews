@@ -5,7 +5,7 @@ If something here contradicts a README in `~/Desktop/NTK/ReadMes (post 9:10)/`,
 **this wins** — those files are per-conversation records, frozen at the moment
 each chat ended, and several are now wrong about the code.
 
-Last verified against the repo: **2026-09-17**.
+Last verified against the repo: **2026-10-05**.
 
 ---
 
@@ -57,6 +57,9 @@ the app and only two are.
 | `index.html` | Marketing landing page at `ntknews.org/`. Its hero mirrors the current lead story. |
 | `ntk-pulse/pulse.html` | **The CMS.** Where the editor certifies stories, generates the four sections, and publishes. Browser-only, ~204KB. |
 | `ntk-pulse/*.py` | The pipeline. See `docs/architecture.md`. |
+| `editorial/NTK_Backstory_Object_Matrix.xlsx` | The Backstory's source of truth for objects: 384 primary documents, each tagged to a row and sub-genre, 334 with a verified link in column O. Candidates are staged in `NTK_Backstory_Candidates.xlsx`, approved by the editor, then copied in. |
+| `editorial/build_backstory.py` | Builds `digest/data/backstory.json` from the matrix: eligible objects (linked, not dead), Beginnings, The case. Not run in CI. |
+| `editorial/check_links.py`, `merge_object_notes.py` | The link checker (writes `object-links-health.json`) and the validator for generated Backstory text (`object-notes.json`). |
 | `netlify.toml` | Routing. Five rules, all load-bearing. |
 | `netlify/functions/news.js` | The only server-side code in the stack. |
 
@@ -146,6 +149,14 @@ change someone's behaviour.
 7. **Say when something is unverified.** Several READMEs in this project
    asserted things with more confidence than the evidence supported, and the
    cost was real debugging time. "I haven't checked this" is a useful sentence.
+
+8. **A matrix link is a primary source, and a link you doubt does not go in.** No Wikipedia,
+   retail pages or lending copies. Run `python3 editorial/check_links.py` after changing links;
+   an agent's "verified" is a claim until the page has been fetched and read.
+9. **Generated Backstory text is unverified until the editor has checked it.** It lives in
+   `editorial/object-notes.json` with `verified: false`.
+10. **Do not assume you have the checkout to yourself.** Another session may be on a different
+    branch. Use `git worktree add /tmp/<name> origin/main` for your own work.
 
 ---
 

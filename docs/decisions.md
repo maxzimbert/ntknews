@@ -285,6 +285,55 @@ re-propose either as cleanup; reopen only with a new reason.
 
 ---
 
+**Backstory objects are links to their primary source; nothing is hosted on NTK.** Decided
+2026-10-02. The matrix mixes public-domain texts with in-copyright ones, and one rule is simpler and
+safer than a split. A tap on an object leaves NTK, in a new tab. Each object keeps a short NTK page
+(title, author, year, two to four sentences, and a "View the primary document" button), because a
+reader landing cold on a dense primary text needs some framing. Ruled out: hosting the text, a
+pull-quote per object (T-0045, discarded), and the long 4D page with context paragraphs and "where
+it stands now" (T-0048, cut to the short page). The editor reversed the earlier plan to host.
+
+**Beginnings and objects are chosen by rule, not by hand.** Decided 2026-10-02 and 2026-10-05.
+The editor curates the digest in Pulse and will not choose Backstory objects or write their text.
+`editorial/build_backstory.py`: an object is eligible only with a link the checker has not found
+dead. Beginnings are 3 to 6 objects from before the row's start year, spread across time with no
+repeated author, and an opinion and its dissent count as one document. The case is every
+Beginning plus one or two later objects (the editor's rule: a Beginning that is a digitised
+primary source with a retrievable link must be in The case). The matrix has no importance signal,
+so picks are adequate, not curated; an `Exclude` flag is the intended override and is not built.
+Object permalinks stay positional (`/objects/<n>/`) until launch because the selection is frozen
+in `backstory.json`; stable IDs are the pre-launch task. `pick()` is gone.
+
+**A matrix link must be a primary source, and where there is doubt it does not graduate.**
+Decided 2026-10-02. Accepted: the document itself, or a library, archive, court or government
+record of it, or a publication's own copy. Rejected: Wikipedia, retail and book-listing pages,
+flashcard and homework sites, unz.com, Internet Archive lending copies, lookalike domains (a
+search returned a copycat of Oyez), and a page about a document rather than the document.
+Project Gutenberg links use the read-online form. Oyez is preferred over Justia and Wikipedia where
+both carry a case. Hofstadter's page and volume numbers cannot be used to link: they match a
+three-volume edition, while the Internet Archive holds the 1958, 1969 and 1973 two-volume editions
+as restricted lending copies.
+
+**Backstory text is written from the fetched source where it fits, from the matrix row alone
+otherwise, and is unverified until the editor spot-checks it.** Decided 2026-10-05, after a
+16-document pilot (`editorial/NTK_Pilot_Generation.xlsx`). One sentence of what happened per
+Beginning, with the year shown beside it; two to four sentences per object page. Grounded writing is
+used only when the page loads and is the document (not a catalogue page, not truncated); anything
+else falls back to the matrix row, with the instruction to say less. `editorial/merge_object_notes.py`
+holds back text with a number or year it cannot trace to the matrix row or the source, a dash, a
+banned phrase, or a writer who said it was unsure. Names it cannot trace are a note, not a block.
+Everything in `editorial/object-notes.json` carries `verified: false` until promoted.
+
+**The Object Matrix stays an xlsx; candidates graduate into it.** Decided 2026-10-02. Research goes
+in `editorial/NTK_Backstory_Candidates.xlsx` (or the link review sheet), the editor approves, and
+approved rows are copied in. A database was raised and parked (T-0066).
+
+**Publish-time Today gate, amended 2026-10-05 (T-0072).** The 2026-09-16 decision above says warn
+with a choice, never a hard block. Pulse now warns, with the choice, when the Today overview is
+missing, has no generation time, or was generated on an earlier day. It does block, with no choice,
+in two cases where publishing would ship the wrong thing by construction: Generate Today is still
+running, and Generate Today failed (a failure is stored as the text and would ship as the essay).
+
 ## Open questions, not defaults
 
 These are genuinely unresolved. Don't assume either way.

@@ -1,6 +1,6 @@
 # Current state
 
-**Re-verified 2026-10-01**, after a long session of Backstory redesign work.
+**Re-verified 2026-10-05**, after the Backstory matrix, row-page and link-checker work.
 Open defects live in `docs/tickets/`, where a check runs against them daily.
 What remains here is narrative state. This is the fastest-rotting document in
 `docs/`. If the date above is old, re-verify before relying on it — run
@@ -16,6 +16,55 @@ from: tickets, PRs, and even a local checkout branch switch happened from
 outside this session while it was running. `git pull --rebase` before
 touching anything, and don't assume a ticket's status is what the last
 session's summary said — check `rot.sh`.
+
+---
+
+## Session memo, 2026-10-01 to 2026-10-05 — for whoever picks this up next
+
+### What shipped (all on main, all live)
+
+- **PR #63** the Object Matrix: 345 to 384 objects (women and minority voices before 1981, texts
+  the Fault Lines study guide pointed at, and the camps' own essays), a "Source URL" column, 334
+  linked. **#64** the row page: Beginnings timeline, The case, short object pages (T-0069).
+  **#66** the link checker and a dead-link eligibility rule, plus the one dead link it found
+  (New START, now govinfo's record of Treaty Doc 111-5). **#67** Pulse's Today guard (T-0072).
+- The 2026-10-05 digest was published twice. The first shipped an old Today essay (see the log);
+  the second, at 22:14Z, was correct.
+
+### How the work was done, so it can be redone
+
+- **Worktrees, not the shared checkout.** Another session was working in `ntknews/` on a different
+  branch, so every branch of this work was built in `git worktree add /tmp/<name> origin/main` and
+  the shared folder was left alone.
+- **Staging is the `staging` branch, which is main plus unmerged branches.** To put a branch on
+  staging: merge it into `staging` in a worktree, push, then `bash scripts/stage.sh`, then open
+  `maxzimbert.github.io/ntknews-staging/` (GitHub Pages caches ten minutes; add `?fresh=1`).
+  Merging to main is the production deploy: Netlify for ntknews.org, Pages for Pulse.
+- **Text and links were produced by research and writing agents, then re-checked by the lead.**
+  See `docs/log.md` for why the re-check matters and `docs/tickets/T-0067` for the full workflow.
+
+### Loose ends
+
+- **`verified: false` is still on every note** in `editorial/object-notes.json`. The editor read
+  the text review sheets and said they looked good, but the per-row verdicts were not recorded
+  back, so the flags were not promoted.
+- **Matrix flaws the editor will fix** (so do not treat these as defects in the pages): Abrams v. U.S.
+  has no author (the row page shows the row title); the Mexican Farm Labor Agreement link is the
+  April 1943 revision, not the 1942 original; a few objects link to pages that carry only
+  metadata (Lippmann's "Themes of Muckraking", NSC-68, the MacArthur and Acheson testimony), so
+  their text is thin.
+- **T-0071** 50 objects have no link. **T-0070** (another session) source log and wire truths.
+- **The link checker is run by hand**; its ticket check goes stale after 60 days. A weekly Action
+  was proposed, not built.
+- The review sheets were copied to `~/Desktop/NTK/Backstory review/`; the repo copies are in
+  `editorial/`.
+
+### Next effort (the editor's list, 2026-10-05)
+
+Improve the Backstory categories (T-0076); fix the timeline's look (T-0073); make "It starts in"
+follow the paired story's truths instead of one fixed year per row (T-0074, the substantial one:
+five of six of today's pairings leap further than the story justifies); the page-bottom visibility
+bug needs a reproduction (T-0075).
 
 ---
 
