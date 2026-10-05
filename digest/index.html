@@ -548,7 +548,9 @@
      label only; blue is the one CTA. */
   .bsr-header { padding: 22px 16px 18px; border-bottom: 1px solid var(--dark); }
   .bsr-header h2 { font-family: 'Newsreader', serif; font-weight: 400; font-size: 20px; line-height: 1.3; color: var(--dark); }
-  .bsr-list { padding: 0 0 24px; }
+  /* The bottom nav is fixed and 64px tall, so the last row's category and Backstory link need at
+     least that much room under them to be reachable. The other tabs use 80px (T-0075). */
+  .bsr-list { padding: 0 0 88px; }
   .bt-row { padding: 22px 16px 16px; border-bottom: 1px solid rgba(38,31,35,.2); }
   .bt-label { font-family: 'Overpass', sans-serif; font-weight: 600; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 6px; }
   .bt-today { color: rgba(38,31,35,.6); }
