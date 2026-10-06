@@ -946,6 +946,24 @@ def main():
                 story["backstoryTitle"] = link["row_title"]
         log(f"  {sum(1 for s in stories if s.get('backstoryRow'))} of {len(stories)} stories cross-link to Backstory today")
 
+    # 2c. Source log: which outlets fed each story. The payload carries
+    # `sources` per story; nothing downstream renders it, so it is written
+    # here, appended, and never read by the reader-facing build. Best-effort:
+    # a logging failure must not cost an edition.
+    try:
+        log_path = repo_root / "ntk-pulse" / "data" / "source-log.jsonl"
+        with log_path.open("a") as fh:
+            for story in stories:
+                if "sources" not in story:
+                    continue
+                fh.write(json.dumps({
+                    "date": date_str, "key": story.get("key", ""),
+                    "headline": story.get("headline", ""), "sources": story["sources"],
+                }, ensure_ascii=False) + "\n")
+        log(f"  source log: {sum(1 for s in stories if 'sources' in s)} of {len(stories)} stories logged")
+    except Exception as e:
+        log(f"  source log skipped: {e}")
+
     # 3. Regenerate the LIVE homepage in place. This is the piece that
     # makes the whole chain zero-click: no more paste, ever.
     current_html = live_index_path.read_text()
