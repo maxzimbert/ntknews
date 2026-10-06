@@ -112,8 +112,10 @@ def build_vocabulary(rows):
 
 
 def classify(api_key, stories, vocab_block, mock):
+    # T-0076: the classifier reads the full Truths (300 to 460 words), not just the
+    # headline and a 14 to 35 word summary. A story's argument is rarely in its lede.
     user = ("ROW VOCABULARY\n" + vocab_block + "\n\nTODAY'S LINEUP\n"
-            + "\n".join(f"{s['story_id']}: {s['headline']}\n  {s['summary']}"
+            + "\n".join(f"{s['story_id']}: {s['headline']}\n  {s.get('truths') or s['summary']}"
                         for s in stories))
     if mock:
         # Round-robin over the vocabulary: exercises the roll-up, the review
@@ -178,6 +180,7 @@ def main():
     pub = json.loads(LINEUP.read_text())
     stories = [{"story_id": s["key"], "headline": s["headline"],
                 "summary": strip_html(s.get("lede")) or strip_html(s.get("truth"))[:220],
+                "truths": strip_html(s.get("truth")),
                 "editor_row": s.get("backstory_row") or None}
                for s in pub.get("stories", [])]
     if not stories:
