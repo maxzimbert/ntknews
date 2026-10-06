@@ -1,7 +1,7 @@
 ---
 id: T-0076
 title: Backstory's categories (rows) need another editorial pass, starting with where technology and AI stories land
-status: PROPOSED
+status: BUILT
 tags: [backstory, decision]
 anchor: editorial/backstory-rows.json
 ---
@@ -41,8 +41,34 @@ add sub-genres; and who owns the matrix content a new row needs.
 
 ## Check
 
-manual: the editor decides the category changes. Once decided, a check can assert the new row ids
-in `editorial/backstory-rows.json` and that each has at least 3 linked matrix objects.
+The editor decides the category changes; what is checkable is that the provisional-row machinery
+holds its rules. A provisional row never has an indicator, never has sub-genres, is never in
+`backstory-rows.json`, and a provisional pairing points at a row that exists.
+
+```sh
+python3 - <<'PY'
+import json, sys
+bs = json.load(open("digest/data/backstory.json"))
+rows = {r["id"]: r for r in bs["rows"]}
+fixed = {r["id"] for r in json.load(open("editorial/backstory-rows.json"))["rows"]}
+store = json.load(open("ntk-pulse/data/provisional-rows.json"))["rows"]
+bad = []
+for r in bs["rows"]:
+    if r.get("stratum") == "provisional":
+        if r.get("indicator"): bad.append(r["id"] + ": has an indicator")
+        if r.get("subgenres"): bad.append(r["id"] + ": has sub-genres")
+        if r["id"] in fixed: bad.append(r["id"] + ": is in backstory-rows.json")
+for r in store:
+    if r.get("promotion", {}).get("ready") and r["status"] == "provisional":
+        bad.append(r["id"] + ": marked promotion-ready without an editor decision")
+for p in bs.get("todays_pairings", []):
+    if p["row"] not in rows: bad.append(p["story_id"] + ": row " + p["row"] + " does not exist")
+    if p.get("provisional") and rows[p["row"]].get("stratum") != "provisional":
+        bad.append(p["story_id"] + ": provisional pairing on a non-provisional row")
+if bad:
+    sys.exit("OPEN: %d problems, e.g. %s" % (len(bad), bad[0]))
+PY
+```
 
 ## Parked idea, raised by the editor 2026-10-06 (not for action)
 
@@ -50,3 +76,10 @@ Rows are what a reader can build expertise in, but on the front end a story coul
 three broad kinds: Foreign Policy, Civil Rights, or The Government and the Economy. A radical
 simplification of what the reader sees, keeping the rows underneath. Recorded so it is not lost; no
 decision, and it would touch how rows are named and grouped on the Thread and the Backstory tab.
+
+## Built 2026-10-06 (on PR #72)
+
+Pulse's "no row fits" now asks for a category name. The story is filed under a provisional row built
+from it, not under the nearest misfit. Rules are in `docs/decisions.md` ("Backstory is built from
+the story's own subject"). Hand-drafted contest and stakes were used in the test, because there is
+no API key locally; the drafting call, its validator and the whole publish path have not run live.

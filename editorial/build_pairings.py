@@ -30,10 +30,15 @@ import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from merge_object_notes import BANNED  # noqa: E402
+
 ROOT = Path(__file__).resolve().parent.parent
 LINEUP = ROOT / "ntk-pulse" / "data" / "lineup-publish.json"
 BACKSTORY = ROOT / "digest" / "data" / "backstory.json"
-GAPS = ROOT / "ntk-pulse" / "data" / "backstory-gaps.json"
+PROVISIONAL = ROOT / "ntk-pulse" / "data" / "provisional-rows.json"
+PROVISIONAL_MODEL = "claude-sonnet-5"
+EXPIRE_DAYS = 30
 PROMPTS = ROOT / "editorial" / "prompts"
 
 API_URL = "https://api.anthropic.com/v1/messages"
@@ -150,31 +155,103 @@ def write_lines(api_key, entries, rows_by_id, mock):
     return user, call_claude(api_key, PAIRING_MODEL, system, user, 3000)
 
 
-def queue_gaps(path, pairings):
-    """Append each story the editor flagged "no row fits" to the gaps queue.
+def slug(name):
+    return "p-" + re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")[:40]
 
-    The queue is what lets a category be added on evidence rather than on a hunch:
-    each entry is a real story, the row it was shown under meanwhile, and the
-    editor's sentence on what it needed. A story already queued keeps its status
-    and is only updated if the note changed. Nothing here edits rows.
+
+def draft_row(api_key, name, truths_list, contest_file):
+    """One model call: a contest line and stakes for a new category, then checked.
+    Returns ({"contest", "stakes"} or {}, problems). A failed draft leaves the page
+    with the editor's name only: no stakes is better than an unchecked paragraph."""
+    sys_ = read_system_prompt("provisional-row.md")
+    user = f"CATEGORY: {name}\n\nTRUTHS OF THE STORIES FILED UNDER IT\n" + "\n\n".join(truths_list)
+    if contest_file:
+        d = json.loads(Path(contest_file).read_text()).get(name) or {}
+    elif api_key:
+        d = call_claude(api_key, PROVISIONAL_MODEL, sys_, user, 600)
+    else:
+        return {}, ["no API key; page carries the name only"]
+    problems = []
+    contest, stakes = (d.get("contest") or "").strip(), (d.get("stakes") or "").strip()
+    pool = " ".join(truths_list) + " " + name
+    for label, text, lo, hi in (("contest", contest, 12, 30), ("stakes", stakes, 25, 55)):
+        if not text:
+            problems.append(f"{label} is empty"); continue
+        n = len(text.split())
+        if not lo <= n <= hi:
+            problems.append(f"{label} is {n} words, wants {lo} to {hi}")
+        if re.search(r"[\u2014\u2013]| -- ", text):
+            problems.append(f"{label} has a dash")
+        if any(b in text.lower() for b in BANNED):
+            problems.append(f"{label} has a banned phrase")
+        for num in re.findall(r"\d[\d,.]*", text):
+            if num.strip(",.") not in pool:
+                problems.append(f"{label}: number {num} is not in the Truths")
+    if contest and not contest.startswith("Whether"):
+        problems.append('contest does not start with "Whether"')
+    if len(re.findall(r"[.!?](?:\s|$)", stakes)) != 2 and stakes:
+        problems.append("stakes is not two sentences")
+    if problems:
+        return {}, problems
+    return {"contest": contest, "stakes": stakes}, []
+
+
+def sync_provisional(path, stories, bs, api_key, contest_file, today):
+    """Create, reuse, expire and inject provisional rows (T-0076).
+
+    A story the editor files under a new category name gets a provisional row
+    instead of the closest misfit. Rules, all in code, none by the model:
+      reuse    a name that slugs to an existing provisional row joins it
+      create   otherwise a new row; the model drafts the contest line and stakes,
+               and the draft is validated or dropped
+      expire   no story in EXPIRE_DAYS days: archived, no longer shown
+      promote  never automatic. `promotion` records what is still missing
+    Provisional rows never enter backstory-rows.json and have no sub-genres, so
+    the classifier cannot reach them; only an editor tag can.
     """
-    flagged = [p for p in pairings if p.get("gap")]
-    if not flagged:
-        return
-    q = json.loads(path.read_text()) if path.exists() else {"gaps": []}
-    by_id = {g["story_id"]: g for g in q["gaps"]}
-    today = datetime.now(timezone.utc).date().isoformat()
-    for p in flagged:
-        g = by_id.get(p["story_id"])
-        if g:
-            g["note"] = p["gap"]
-            g["row_used"] = p["row"]
-        else:
-            q["gaps"].append({"story_id": p["story_id"], "date": today,
-                              "headline": p["headline"], "row_used": p["row"],
-                              "note": p["gap"], "status": "open"})
-    path.write_text(json.dumps(q, indent=2, ensure_ascii=False) + "\n")
-    log(f"  gaps queue: {len(flagged)} flagged, {len(q['gaps'])} total")
+    store = json.loads(path.read_text()) if path.exists() else {"rows": []}
+    by_id = {r["id"]: r for r in store["rows"]}
+    for s in stories:
+        name = s.get("category")
+        if not name:
+            continue
+        rid = slug(name)
+        r = by_id.get(rid)
+        if not r:
+            draft, probs = draft_row(api_key, name, [s["truths"]], contest_file)
+            r = {"id": rid, "title": name, "status": "provisional", "created": today,
+                 "contest": draft.get("contest"), "stakes": draft.get("stakes"),
+                 "draft_problems": probs, "stories": []}
+            store["rows"].append(r); by_id[rid] = r
+            log(f"  provisional row created: {name!r}" + (f" ({'; '.join(probs)})" if probs else ""))
+        if not any(x["story_id"] == s["story_id"] for x in r["stories"]):
+            r["stories"].append({"story_id": s["story_id"], "date": today, "headline": s["headline"]})
+        r["last_story"] = today
+        s["editor_row"] = rid
+    cutoff = (datetime.fromisoformat(today) - __import__("datetime").timedelta(days=EXPIRE_DAYS)).date().isoformat()
+    for r in store["rows"]:
+        if r["status"] == "provisional" and r.get("last_story", r["created"]) < cutoff:
+            r["status"] = "archived"
+            log(f"  provisional row archived (no story since {r.get('last_story')}): {r['title']!r}")
+        days = {x["date"] for x in r["stories"]}
+        missing = []
+        if len(r["stories"]) < 3 or len(days) < 2:
+            missing.append(f"needs 3 stories on 2 days (has {len(r['stories'])} on {len(days)})")
+        missing.append("needs 3 linked matrix objects and a sourced indicator")
+        r["promotion"] = {"ready": False, "missing": missing}
+    path.write_text(json.dumps(store, indent=2, ensure_ascii=False) + "\n")
+    # inject into the published rows: rebuilt each run from the store
+    bs["rows"] = [r for r in bs["rows"] if r.get("stratum") != "provisional"]
+    for r in store["rows"]:
+        if r["status"] != "provisional":
+            continue
+        bs["rows"].append({
+            "id": r["id"], "stratum": "provisional", "title": r["title"],
+            "start_date": r.get("start_date") or r["created"], "start_line": r.get("start_line"),
+            "milestone": r.get("contest") or "", "stakes": r.get("stakes"),
+            "indicator": None, "objects": [], "beginnings": [], "subgenres": [], "roots": [],
+            "updated": False, "narrative": None, "instances": [], "photo": None})
+    return store
 
 
 def elapsed_words(start_date):
@@ -194,7 +271,8 @@ def main():
     ap.add_argument("--mock", action="store_true", help="no API calls")
     ap.add_argument("--lineup", default=str(LINEUP), help="test hook")
     ap.add_argument("--backstory", default=str(BACKSTORY), help="test hook")
-    ap.add_argument("--gaps", default=str(GAPS), help="test hook")
+    ap.add_argument("--provisional", default=str(PROVISIONAL), help="test hook")
+    ap.add_argument("--contest-file", help="test hook: JSON {name: {contest, stakes}} instead of the model")
     ap.add_argument("--dry-run", action="store_true",
                     help="print assembled prompts, write nothing")
     args = ap.parse_args()
@@ -213,12 +291,21 @@ def main():
                 "summary": strip_html(s.get("lede")) or strip_html(s.get("truth"))[:220],
                 "truths": strip_html(s.get("truth")),
                 "editor_row": s.get("backstory_row") or None,
-                # T-0076: the editor's note that no row fits (Pulse "no row fits").
-                "gap": (s.get("backstory_gap") or "").strip() or None}
+                # T-0076: a category the editor named because no row fits (Pulse
+                # "no row fits"). It becomes a provisional row.
+                "category": (s.get("backstory_category") or "").strip() or None}
                for s in pub.get("stories", [])]
     if not stories:
         sys.exit("no stories in lineup-publish.json")
     log(f"lineup: {len(stories)} stories")
+
+    # -- Provisional rows (T-0076): a story filed under a new category gets its own
+    # row now, not the nearest misfit.
+    api_key = os.environ.get("ANTHROPIC_API_KEY")
+    sync_provisional(Path(args.provisional), stories, bs, api_key, args.contest_file,
+                     datetime.now(timezone.utc).date().isoformat())
+    rows = bs["rows"]
+    rows_by_id = {r["id"]: r for r in rows}
 
     # -- Editor assignments (T-0010) win over the classifier.
     # Pulse writes backstory_row per story at certification time. An assignment
@@ -309,7 +396,7 @@ def main():
             "source": "editor" if e.get("editor_row") else "classifier",
             # Surfaced in Pulse for review; never used to hide a card.
             "needs_review": (e["confidence"] or 0) < REVIEW_THRESHOLD,
-            **({"gap": e["gap"]} if e.get("gap") else {}),
+            **({"provisional": True} if str(e["row"]).startswith("p-") else {}),
         })
 
     counts = {}
@@ -320,7 +407,6 @@ def main():
     bs["todays_pairings"] = out
     bs["pairings_generated"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
     Path(args.backstory).write_text(json.dumps(bs, indent=2, ensure_ascii=False) + "\n")
-    queue_gaps(Path(args.gaps), out)
 
     log(f"wrote {len(out)} pairings to {args.backstory}")
     log(f"  {sum(1 for e in out if e['needs_review'])} below {REVIEW_THRESHOLD} — flagged for review")

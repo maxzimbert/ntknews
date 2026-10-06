@@ -369,6 +369,24 @@ def main():
             if p["story_id"] in by:
                 p["origin"] = by[p["story_id"]]
                 n += 1
+        # A provisional row has no fixed start: its "It starts in" and "We are here"
+        # are its earliest retrieved origin.
+        store_path = ROOT / "ntk-pulse" / "data" / "provisional-rows.json"
+        store = json.loads(store_path.read_text()) if store_path.exists() else {"rows": []}
+        for r in bs["rows"]:
+            if r.get("stratum") != "provisional":
+                continue
+            os_ = [p["origin"] for p in bs["todays_pairings"]
+                   if p["row"] == r["id"] and p.get("origin", {}).get("status") == "retrieved"]
+            if not os_:
+                continue
+            best = min(os_, key=lambda o: o["year"])
+            r["start_date"] = f"{best['year']}-01-01"
+            r["start_line"] = best["line"].rstrip(".")
+            for sr in store["rows"]:
+                if sr["id"] == r["id"]:
+                    sr["start_date"], sr["start_line"] = r["start_date"], r["start_line"]
+        store_path.write_text(json.dumps(store, indent=2, ensure_ascii=False) + "\n")
         Path(args.pairings).write_text(json.dumps(bs, indent=2, ensure_ascii=False) + "\n")
         log(f"applied {n} origins to {args.pairings}")
 

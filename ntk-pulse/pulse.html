@@ -1365,7 +1365,7 @@ let BSR_PUBLISHED = null;
 let BSR_ROWS = [];
 function loadBsrRows(){
   return fetchPublishedBackstory().then(d => {
-    BSR_ROWS = ((d && d.rows) || []).map(r => ({id: r.id, title: r.title}));
+    BSR_ROWS = ((d && d.rows) || []).map(r => ({id: r.id, title: r.title, provisional: r.stratum === 'provisional'}));
     if (BSR_ROWS.length) render();
     return BSR_ROWS;
   }).catch(() => BSR_ROWS);
@@ -1413,7 +1413,7 @@ function pairingsHtml(d){
           ${dup ? `<span style="font-size:10px;color:var(--warn);border:1px solid var(--warn);padding:0 4px">2 stories, same row</span>` : ''}
         </div>
         ${p.origin ? `<div style="font-size:11px;margin-top:3px;color:var(--dim)">It starts in <b>${esc(p.origin.year)}</b>${p.origin.status==='retrieved'?'':' (the row\u2019s own start, no origin found)'}${p.origin.row_fit==='poor'?` <span style="color:var(--warn);border:1px solid var(--warn);padding:0 4px">poor row fit</span>`:''}${p.origin.fit==='inferred'?' <span style="border:1px solid var(--rule);padding:0 4px">inferred</span>':''}<br>${esc(p.origin.line||'')}</div>` : ''}
-        ${p.gap ? `<div style="font-size:11px;margin-top:3px;color:var(--warn)">No row fits, you noted: ${esc(p.gap)}</div>` : ''}
+        ${p.provisional ? `<div style="font-size:11px;margin-top:3px;color:var(--warn)">New category, drafted from the story: no trend line yet.</div>` : ''}
         <div style="font-size:12px;margin-top:4px">${esc(p.line||'(no line)')}</div>
         <div style="font-size:11px;color:var(--dim);margin-top:3px">${esc(p.headline||'')}</div>
       </div>`;
@@ -2076,9 +2076,11 @@ function buildStoryPayload(){
       // entirely when blank so build_pairings.py's `or None` sees nothing and
       // classifies as before.
       ...(s.backstoryRow ? {backstory_row: s.backstoryRow} : {}),
-      // T-0076 — the editor's note that no row fits this story. Carried to
-      // build_pairings.py, which queues it in ntk-pulse/data/backstory-gaps.json.
-      ...(s.backstoryGap ? {backstory_gap: s.backstoryGap} : {}),
+      // T-0076 — a category the editor named because no row fits this story.
+      // build_pairings.py turns it into a provisional row (or joins an existing
+      // one) and files the story there instead of under the nearest misfit.
+      // The category wins over backstory_row.
+      ...(s.backstoryCategory ? {backstory_category: s.backstoryCategory} : {}),
     };
   });
 }
@@ -3024,17 +3026,18 @@ function bsrTagControl(s){
   if (!BSR_ROWS.length) return '';
   const counts = bsrCollisionCounts();
   const dup = s.backstoryRow && counts[s.backstoryRow] > 1;
-  const unset = !s.backstoryRow;
+  const named = !!s.backstoryCategory;
+  const unset = !s.backstoryRow && !named;
   const style = dup ? ' style="border-color:var(--warn)"' : unset ? ' style="border-color:var(--warn);color:var(--warn)"' : '';
   return `<select class="bsr-tag" title="Row for this story's Backstory. Left unset, the classifier chooses and can pick a poor fit."`+
-    style+`>`+
+    style+(named ? ' disabled' : '')+`>`+
     `<option value=""${unset?' selected':''}>row: not set (classifier picks)</option>`+
     BSR_ROWS.map(r=>`<option value="${esc(r.id)}"${s.backstoryRow===r.id?' selected':''}>`+
-      `row: ${esc(r.title)}</option>`).join('')+
+      `row: ${esc(r.title)}${r.provisional ? ' (new)' : ''}</option>`).join('')+
     `</select>`+
-    `<button class="mini bsr-gap" title="No row fits this story. Saves a note to the gaps queue so a category can be added."`+
-      (s.backstoryGap ? ' style="background:var(--warn);color:#fff"' : '')+`>`+
-      (s.backstoryGap ? 'no row fits \u2713' : 'no row fits')+`</button>`+
+    `<button class="mini bsr-gap" title="No row fits this story. Name a new category: the story is filed under it instead of the nearest misfit."`+
+      (named ? ' style="background:var(--warn);color:#fff"' : '')+`>`+
+      (named ? 'new category: '+esc(s.backstoryCategory)+' \u2715' : 'no row fits')+`</button>`+
     bsrPublishedChip(s)+
     (dup ? `<span class="chip" style="background:var(--warn);color:#fff" `+
            `title="another story in this lineup is tagged to the same row">`+
@@ -3045,15 +3048,16 @@ function bsrTagControl(s){
 // and docs/decisions.md keeps Backstory additive. Pure, so it can be tested.
 function rowPreflight(stories){
   const warn = [];
-  const unset = stories.filter(s => !s.backstory_row);
+  const unset = stories.filter(s => !s.backstory_row && !s.backstory_category);
   if (unset.length)
     warn.push(unset.length + ' stor' + (unset.length === 1 ? 'y has' : 'ies have') +
       ' no row set, so the classifier will pick: ' +
       unset.map(s => '"' + String(s.headline || s.key).slice(0, 40) + '"').join(', '));
-  const gaps = stories.filter(s => s.backstory_gap);
-  if (gaps.length)
-    warn.push(gaps.length + ' stor' + (gaps.length === 1 ? 'y is' : 'ies are') +
-      ' flagged "no row fits" and will be added to the gaps queue.');
+  const cats = stories.filter(s => s.backstory_category);
+  if (cats.length)
+    warn.push(cats.length + ' stor' + (cats.length === 1 ? 'y goes' : 'ies go') +
+      ' to a new category (' + [...new Set(cats.map(s => s.backstory_category))].join(', ') +
+      '). A new category page is drafted from the story and has no trend line.');
   return warn;
 }
 
@@ -3420,10 +3424,11 @@ function renderLineup(root){
     });
     const gapBtn = el.querySelector('.bsr-gap');
     if (gapBtn) gapBtn.addEventListener('click',()=>{
-      const cur = s.backstoryGap || '';
-      const v = prompt('No row fits this story. Say in a sentence what category it needs (blank clears the flag):', cur);
-      if (v === null) return;
-      s.backstoryGap = v.trim();
+      if (s.backstoryCategory){ s.backstoryCategory = ''; saveLineup(); render(); return; }   // second click clears it
+      const v = prompt('No row fits this story. Name the new category, a short noun phrase readers could build expertise in (for example "AI and accountability"). Existing new categories are in the row list; pick one of those instead if it fits.', '');
+      if (v === null || !v.trim()) return;
+      s.backstoryCategory = v.trim().slice(0, 60);
+      s.backstoryRow = '';
       saveLineup(); render();
     });
     el.querySelector('.ord').addEventListener('keydown',e=>{

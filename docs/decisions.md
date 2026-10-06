@@ -334,6 +334,28 @@ missing, has no generation time, or was generated on an earlier day. It does blo
 in two cases where publishing would ship the wrong thing by construction: Generate Today is still
 running, and Generate Today failed (a failure is stored as the text and would ship as the essay).
 
+**Backstory is built from the story's own subject. The fixed library supplies, retrieval fills the gaps, and the editor promotes.**
+Decided 2026-10-06 with the editor, after three separate problems turned out to be one: the origin
+a story shows, the category it is filed under, and the Beginnings behind it were all fixed per row,
+and a story's real subject (an AI company, Russia, a county lawsuit) does not fit a fixed row.
+Every story has a past. Rules, in code (`editorial/build_origins.py`, `build_pairings.py`):
+- *Origin*: retrieved per story from Wikipedia leads and the Truths, checked, fallback to the row's
+  own line only when nothing is found. All origins stay `verified: false`.
+- *Category*: when no row fits, the editor names a new one in Pulse ("no row fits"). It becomes a
+  provisional row (`ntk-pulse/data/provisional-rows.json`), never an entry in `backstory-rows.json`,
+  with a model-drafted contest line and two-sentence stakes that are checked or dropped, no trend
+  line, and the story's own origin as "We are here". A later story with the same name joins it. No
+  story in 30 days archives it. Promotion to a real row is never automatic: it needs 3 stories on 2
+  days, 3 linked matrix objects, a sourced indicator, and the editor's approval.
+- *Beginnings* (next, not built): drawn from the history of what the story is about, not only the
+  row: tech stories from tech history, Russia and China stories from those countries' own histories,
+  and so on. The matrix is the library and has almost none of this today (about 7 Soviet/Russian and
+  8 China objects, all American documents; no tech history). Gaps are filled by retrieval proposing
+  candidates into the staging workbook, link-checked and approved, so the matrix grows on demand
+  and not by an exercise in adding hundreds. Story-specific Beginnings need a page per story,
+  because row pages are shared; that is a decision to take once, with "We are here".
+The classifier never reaches a provisional row (no sub-genres); only an editor tag does.
+
 ## Open questions, not defaults
 
 These are genuinely unresolved. Don't assume either way.
