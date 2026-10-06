@@ -1121,7 +1121,7 @@
     align-items: center;
   }
   .ntk-logo-img-sm {
-    height: 20px;
+    height: 28px;
     width: auto;
     display: block;
   }
@@ -2987,6 +2987,10 @@ updateBeatChip();
 // ── TAB NAVIGATION ───────────────────────────────────────────────
 var activeTab = 'today';
 var tabBeforeStory = 'today';
+// Where the tab's list was scrolled when a story opened, so Back lands there
+// instead of at the top. The tab view is display:none while a story is open,
+// so the browser clamps the real scroll to 0 and this is the only record.
+var scrollBeforeStory = 0;
 
 // ── URL ROUTING ──────────────────────────────────────────────────
 // Each tab has its own path (see ROUTE BOOT in <head>). Netlify rewrites
@@ -3079,7 +3083,7 @@ function switchTab(tab, opts) {
   activeTab = tab;
   if (tab === 'profile') renderProfileTab();
   if (tab === 'backstory' && !BSR_DATA) fetchBackstory();
-  window.scrollTo(0, 0);
+  if (!opts.keepScroll) window.scrollTo(0, 0);
   if (!opts.fromHistory) navTab(tab);
   if (!opts.silent) track('tab_switch', { tab: tab });
 }
@@ -3933,13 +3937,16 @@ function openStory(index, opts) {
   document.getElementById('liesRevealed').style.display = 'none';
 
   // Switch views
+  if (!document.getElementById('storyView').classList.contains('active')) {
+    scrollBeforeStory = window.scrollY || document.documentElement.scrollTop || 0;
+  }
   tabBeforeStory = activeTab;
   ['todayView','digestView','backstoryView','profileView'].forEach(function(v) {
     document.getElementById(v).classList.remove('active');
   });
   document.getElementById('storyView').classList.add('active');
   document.getElementById('bottomNav').classList.add('hidden');
-  window.scrollTo(0, 0);
+  document.getElementById('storyView').scrollTop = 0;
   updateFeedbackBtn();
 
   // Track
@@ -3973,7 +3980,17 @@ function closeStory(opts) {
 
   document.getElementById('storyView').classList.remove('active');
   document.getElementById('bottomNav').classList.remove('hidden');
-  switchTab(tabBeforeStory || 'digest', { fromHistory: true });
+  switchTab(tabBeforeStory || 'digest', { fromHistory: true, keepScroll: true });
+  // Back arrives here from popstate, and the browser applies its own saved
+  // scroll for that history entry just after this runs (0, because the tab
+  // was hidden when the entry was written). Set ours now and again once the
+  // browser is done.
+  var restoreY = scrollBeforeStory;
+  window.scrollTo(0, restoreY);
+  requestAnimationFrame(function () {
+    window.scrollTo(0, restoreY);
+    setTimeout(function () { window.scrollTo(0, restoreY); }, 60);
+  });
   // Closing via navBack() restores the URL through popstate. This is the
   // other path — closing without a history entry to consume — where the
   // address bar would otherwise keep pointing at the story we just left.

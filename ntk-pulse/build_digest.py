@@ -378,7 +378,7 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
 
 
   .story-header-logo {{ text-decoration: none; display: flex; align-items: center; }}
-  .ntk-logo-img-sm {{ height: 20px; width: auto; display: block; }}
+  .ntk-logo-img-sm {{ height: 28px; width: auto; display: block; }}
 
   .story-hero-wrap {{ background: var(--dark); }}
 
