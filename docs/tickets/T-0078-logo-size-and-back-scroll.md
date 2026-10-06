@@ -1,7 +1,7 @@
 ---
 id: T-0078
 title: Logo is 28px on every surface, and Back from a story returns to where you were in the list
-status: BUILT
+status: VERIFIED
 tags: [digest, defect]
 anchor: digest/index.html:114
 ---
@@ -29,7 +29,7 @@ Found by the editor on prod after T-0077 shipped. Measured 2026-10-06.
 Checked in the browser on a local build: with the Digest tab scrolled to 316px,
 opening a story and pressing Back lands at 316px, URL back to `/digest`. Logo
 computes to 28px on the Digest tab, the story view and the landing page.
-**Unverified:** a real iPhone (Safari restores scroll differently), Back via the
+Editor confirmed both on the Netlify deploy preview 2026-10-06. **Unverified:** a real iPhone (Safari restores scroll differently), Back via the
 browser's own back button or swipe, and the static permalink's logo in a render.
 
 ## Why
