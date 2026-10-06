@@ -69,6 +69,6 @@ jobs:
         run: |
           git config user.name "ntk-publish-bot"
           git config user.email "publish@ntknews.org"
-          git add digest/ index.html backstory/ ntk-pulse/data/last-published.json
+          git add digest/ index.html backstory/ ntk-pulse/data/last-published.json ntk-pulse/data/backstory-gaps.json
           git diff --cached --quiet || git commit -m "publish: $(date -u +%Y-%m-%dT%H:%MZ)"
           git push

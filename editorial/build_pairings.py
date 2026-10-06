@@ -33,6 +33,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 LINEUP = ROOT / "ntk-pulse" / "data" / "lineup-publish.json"
 BACKSTORY = ROOT / "digest" / "data" / "backstory.json"
+GAPS = ROOT / "ntk-pulse" / "data" / "backstory-gaps.json"
 PROMPTS = ROOT / "editorial" / "prompts"
 
 API_URL = "https://api.anthropic.com/v1/messages"
@@ -149,6 +150,33 @@ def write_lines(api_key, entries, rows_by_id, mock):
     return user, call_claude(api_key, PAIRING_MODEL, system, user, 3000)
 
 
+def queue_gaps(path, pairings):
+    """Append each story the editor flagged "no row fits" to the gaps queue.
+
+    The queue is what lets a category be added on evidence rather than on a hunch:
+    each entry is a real story, the row it was shown under meanwhile, and the
+    editor's sentence on what it needed. A story already queued keeps its status
+    and is only updated if the note changed. Nothing here edits rows.
+    """
+    flagged = [p for p in pairings if p.get("gap")]
+    if not flagged:
+        return
+    q = json.loads(path.read_text()) if path.exists() else {"gaps": []}
+    by_id = {g["story_id"]: g for g in q["gaps"]}
+    today = datetime.now(timezone.utc).date().isoformat()
+    for p in flagged:
+        g = by_id.get(p["story_id"])
+        if g:
+            g["note"] = p["gap"]
+            g["row_used"] = p["row"]
+        else:
+            q["gaps"].append({"story_id": p["story_id"], "date": today,
+                              "headline": p["headline"], "row_used": p["row"],
+                              "note": p["gap"], "status": "open"})
+    path.write_text(json.dumps(q, indent=2, ensure_ascii=False) + "\n")
+    log(f"  gaps queue: {len(flagged)} flagged, {len(q['gaps'])} total")
+
+
 def elapsed_words(start_date):
     days = (datetime.now(timezone.utc).date()
             - datetime.fromisoformat(start_date).date()).days
@@ -164,11 +192,14 @@ MOCK_VOCAB = []
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--mock", action="store_true", help="no API calls")
+    ap.add_argument("--lineup", default=str(LINEUP), help="test hook")
+    ap.add_argument("--backstory", default=str(BACKSTORY), help="test hook")
+    ap.add_argument("--gaps", default=str(GAPS), help="test hook")
     ap.add_argument("--dry-run", action="store_true",
                     help="print assembled prompts, write nothing")
     args = ap.parse_args()
 
-    bs = json.loads(BACKSTORY.read_text())
+    bs = json.loads(Path(args.backstory).read_text())
     rows = bs["rows"]
     rows_by_id = {r["id"]: r for r in rows}
     lookup, vocab_block = build_vocabulary(rows)
@@ -177,11 +208,13 @@ def main():
         f"{sum(1 for r in rows if r.get('subgenres'))} rows "
         f"({sum(1 for r in rows if not r.get('subgenres'))} editor-only)")
 
-    pub = json.loads(LINEUP.read_text())
+    pub = json.loads(Path(args.lineup).read_text())
     stories = [{"story_id": s["key"], "headline": s["headline"],
                 "summary": strip_html(s.get("lede")) or strip_html(s.get("truth"))[:220],
                 "truths": strip_html(s.get("truth")),
-                "editor_row": s.get("backstory_row") or None}
+                "editor_row": s.get("backstory_row") or None,
+                # T-0076: the editor's note that no row fits (Pulse "no row fits").
+                "gap": (s.get("backstory_gap") or "").strip() or None}
                for s in pub.get("stories", [])]
     if not stories:
         sys.exit("no stories in lineup-publish.json")
@@ -276,6 +309,7 @@ def main():
             "source": "editor" if e.get("editor_row") else "classifier",
             # Surfaced in Pulse for review; never used to hide a card.
             "needs_review": (e["confidence"] or 0) < REVIEW_THRESHOLD,
+            **({"gap": e["gap"]} if e.get("gap") else {}),
         })
 
     counts = {}
@@ -285,9 +319,10 @@ def main():
 
     bs["todays_pairings"] = out
     bs["pairings_generated"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
-    BACKSTORY.write_text(json.dumps(bs, indent=2, ensure_ascii=False) + "\n")
+    Path(args.backstory).write_text(json.dumps(bs, indent=2, ensure_ascii=False) + "\n")
+    queue_gaps(Path(args.gaps), out)
 
-    log(f"wrote {len(out)} pairings to {BACKSTORY.relative_to(ROOT)}")
+    log(f"wrote {len(out)} pairings to {args.backstory}")
     log(f"  {sum(1 for e in out if e['needs_review'])} below {REVIEW_THRESHOLD} — flagged for review")
     log(f"  {sum(1 for e in out if not e['line'])} with no line")
     if collisions:

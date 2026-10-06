@@ -1412,6 +1412,8 @@ function pairingsHtml(d){
           ${p.confidence!=null ? `<span style="font-size:10.5px;color:${low?'var(--stale)':'var(--dim)'}">${Number(p.confidence).toFixed(2)}${low?' &middot; review':''}</span>` : ''}
           ${dup ? `<span style="font-size:10px;color:var(--warn);border:1px solid var(--warn);padding:0 4px">2 stories, same row</span>` : ''}
         </div>
+        ${p.origin ? `<div style="font-size:11px;margin-top:3px;color:var(--dim)">It starts in <b>${esc(p.origin.year)}</b>${p.origin.status==='retrieved'?'':' (the row\u2019s own start, no origin found)'}${p.origin.row_fit==='poor'?` <span style="color:var(--warn);border:1px solid var(--warn);padding:0 4px">poor row fit</span>`:''}${p.origin.fit==='inferred'?' <span style="border:1px solid var(--rule);padding:0 4px">inferred</span>':''}<br>${esc(p.origin.line||'')}</div>` : ''}
+        ${p.gap ? `<div style="font-size:11px;margin-top:3px;color:var(--warn)">No row fits, you noted: ${esc(p.gap)}</div>` : ''}
         <div style="font-size:12px;margin-top:4px">${esc(p.line||'(no line)')}</div>
         <div style="font-size:11px;color:var(--dim);margin-top:3px">${esc(p.headline||'')}</div>
       </div>`;
@@ -2074,6 +2076,9 @@ function buildStoryPayload(){
       // entirely when blank so build_pairings.py's `or None` sees nothing and
       // classifies as before.
       ...(s.backstoryRow ? {backstory_row: s.backstoryRow} : {}),
+      // T-0076 — the editor's note that no row fits this story. Carried to
+      // build_pairings.py, which queues it in ntk-pulse/data/backstory-gaps.json.
+      ...(s.backstoryGap ? {backstory_gap: s.backstoryGap} : {}),
     };
   });
 }
@@ -2187,6 +2192,7 @@ async function publishToDigest(){
 
   const pf = publishPreflight(all);
   pf.warn.push(...tp.warn);
+  pf.warn.push(...rowPreflight(all));
   if ((pf.drop.length || pf.warn.length) && !confirm(preflightDialogText(pf))) return;
   if (!pf.shipping){ alert('Every story in the lineup is missing a headline — nothing to publish.'); return; }
   const stories = all.filter(s => (s.headline || '').trim());
@@ -2995,19 +3001,60 @@ function bsrCollisionCounts(){
   LINEUP.forEach(s => { if (s.backstoryRow) n[s.backstoryRow] = (n[s.backstoryRow]||0)+1; });
   return n;
 }
+// What the last publish did with this story, read from the published
+// backstory.json: which row, who chose it, and how well it fit. This is how a
+// bad pairing reaches the editor, since the classifier's own confidence does
+// not (T-0076: the three poor fits on 2026-10-05 scored 0.68 to 0.74).
+function bsrPublishedFor(s){
+  const ps = (BSR_PUBLISHED && BSR_PUBLISHED.todays_pairings) || [];
+  return ps.find(p => p.story_id === s.key) || null;
+}
+function bsrPublishedChip(s){
+  const p = bsrPublishedFor(s);
+  if (!p) return '';
+  const title = (BSR_ROWS.find(r => r.id === p.row) || {title: p.row}).title;
+  const poor = p.origin && p.origin.row_fit === 'poor';
+  const who = p.source === 'editor' ? 'you' : 'classifier ' + (p.confidence != null ? Number(p.confidence).toFixed(2) : '');
+  const changed = s.backstoryRow && s.backstoryRow !== p.row;
+  return `<span class="chip" title="what the last publish did with this story"`+
+    (poor ? ' style="background:var(--warn);color:#fff"' : '')+`>`+
+    `published: ${esc(title)} \u00b7 ${esc(who)}${poor ? ' \u00b7 poor fit' : ''}${changed ? ' \u00b7 will change' : ''}</span>`;
+}
 function bsrTagControl(s){
   if (!BSR_ROWS.length) return '';
   const counts = bsrCollisionCounts();
   const dup = s.backstoryRow && counts[s.backstoryRow] > 1;
-  return `<select class="bsr-tag" title="Backstory row — blank lets the classifier choose"`+
-    (dup ? ' style="border-color:var(--warn)"' : '')+`>`+
-    `<option value=""${s.backstoryRow?'':' selected'}>backstory: auto</option>`+
+  const unset = !s.backstoryRow;
+  const style = dup ? ' style="border-color:var(--warn)"' : unset ? ' style="border-color:var(--warn);color:var(--warn)"' : '';
+  return `<select class="bsr-tag" title="Row for this story's Backstory. Left unset, the classifier chooses and can pick a poor fit."`+
+    style+`>`+
+    `<option value=""${unset?' selected':''}>row: not set (classifier picks)</option>`+
     BSR_ROWS.map(r=>`<option value="${esc(r.id)}"${s.backstoryRow===r.id?' selected':''}>`+
-      `backstory: ${esc(r.title)}</option>`).join('')+
+      `row: ${esc(r.title)}</option>`).join('')+
     `</select>`+
+    `<button class="mini bsr-gap" title="No row fits this story. Saves a note to the gaps queue so a category can be added."`+
+      (s.backstoryGap ? ' style="background:var(--warn);color:#fff"' : '')+`>`+
+      (s.backstoryGap ? 'no row fits \u2713' : 'no row fits')+`</button>`+
+    bsrPublishedChip(s)+
     (dup ? `<span class="chip" style="background:var(--warn);color:#fff" `+
            `title="another story in this lineup is tagged to the same row">`+
-           `${counts[s.backstoryRow]}× same row</span>` : '');
+           `${counts[s.backstoryRow]}\u00d7 same row</span>` : '');
+}
+
+// Publish check for rows. A warning, not a block: the digest is the product
+// and docs/decisions.md keeps Backstory additive. Pure, so it can be tested.
+function rowPreflight(stories){
+  const warn = [];
+  const unset = stories.filter(s => !s.backstory_row);
+  if (unset.length)
+    warn.push(unset.length + ' stor' + (unset.length === 1 ? 'y has' : 'ies have') +
+      ' no row set, so the classifier will pick: ' +
+      unset.map(s => '"' + String(s.headline || s.key).slice(0, 40) + '"').join(', '));
+  const gaps = stories.filter(s => s.backstory_gap);
+  if (gaps.length)
+    warn.push(gaps.length + ' stor' + (gaps.length === 1 ? 'y is' : 'ies are') +
+      ' flagged "no row fits" and will be added to the gaps queue.');
+  return warn;
 }
 
 /* ─── Subjects: the vocabulary Expertise keys to ───
@@ -3369,6 +3416,14 @@ function renderLineup(root){
     const bsrSel = el.querySelector('.bsr-tag');
     if (bsrSel) bsrSel.addEventListener('change',e=>{
       s.backstoryRow = e.target.value || '';   // '' means leave it to the classifier
+      saveLineup(); render();
+    });
+    const gapBtn = el.querySelector('.bsr-gap');
+    if (gapBtn) gapBtn.addEventListener('click',()=>{
+      const cur = s.backstoryGap || '';
+      const v = prompt('No row fits this story. Say in a sentence what category it needs (blank clears the flag):', cur);
+      if (v === null) return;
+      s.backstoryGap = v.trim();
       saveLineup(); render();
     });
     el.querySelector('.ord').addEventListener('keydown',e=>{
