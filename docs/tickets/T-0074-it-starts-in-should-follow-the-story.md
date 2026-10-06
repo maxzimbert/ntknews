@@ -1,7 +1,7 @@
 ---
 id: T-0074
 title: "It starts in" is one fixed year per row, so most of today's pairings leap from the story to an origin that does not fit it
-status: DECIDED
+status: BUILT
 tags: [backstory, feature]
 anchor: editorial/backstory-rows.json
 ---
@@ -96,21 +96,62 @@ What they show:
 - **The matrix does not hold any of the three origins.** Checked 2026-10-06 against the 384
   objects: no June 2025 Iran strike (only the 1980 hostage rescue and the 2015 nuclear deal), nothing
   on the Utah AI office, nothing on Yemen or the Houthis. Only 4 objects are dated 2024 or later and
-  about 2 to 5 a year from 2010 to 2023. The matrix is the source of origins, so it needs a recent
+  about 2 to 5 a year from 2010 to 2023. (Superseded by the decision below: origins are retrieved.) The matrix would need a recent
   layer: for each sub-genre, the events of the last decade that stories keep tracing back to, each a
   primary document with a verified link, added through the candidates workflow (T-0067). An origin
   is then a matrix object, can use its generated one-sentence line, and its object page is where
   "About this" lands.
 
+## Decision, 2026-10-06: origins are retrieved, not added to the matrix
+
+The editor ruled out growing the matrix by hundreds of recent objects. Origins are found per story
+by `editorial/build_origins.py`: a model reads the full Truths plus the row and sub-genre and writes
+2 to 3 Wikipedia queries; code retrieves article leads and Wikidata dates; a second model chooses
+among the retrieved candidates only; code validates (year and quote verbatim in the lead, numbers
+traced, year inside the row and not after the story, fit rated direct). Only a story with no candidate at all falls
+back to the row's own `start_line`, and records why.
+The Portal:Current_events day page for the event's date is read, and its entry and cited outlet are
+stored when an entry links to the article or names the event. Wikipedia only finds and dates the
+event; it is never linked to a reader. Every origin is `verified: false`.
+
+Runs, 2026-10-06, on the six stories of the 2026-10-05 edition (artefacts in
+`editorial/research/origins-2026-10-06/`; the two model steps were done by hand against the same
+prompts because no API key exists outside Pulse and Actions, so the live API path is untested).
+Run 1 held three of six: a "loose" fit sent Siberia, Altman and Boulder back to the row's fixed line
+(1945, 1973, 1974), the very leap this ticket exists to remove. The editor rejected that: every story
+has a past. Run 2 changed the rules: the query step reads the Truths first and the row only as a hint
+that may be wrong; fit is judged against the Truths (`direct` or `inferred`) and the row's fit is
+rated separately (`row_fit`); the row-start year is a flag, not a rejection; evidence may be quoted
+from the story's own Truths when they state the origin; a short article is read past its lead.
+
+| Story | Row (row_fit) | Origin, run 2 |
+|---|---|---|
+| Utah AI prescribing | Government (good) | 2024, Utah AI Policy Act, direct |
+| Saudi coalition | America Abroad (good) | 2014, Houthis storm Sanaa, direct (the editor's example) |
+| Diesel | Climate (poor) | 2026, the Iran war, direct: the Truths say "the war he started in February". The editor's example was June 2025; it was retrieved too |
+| Siberia lab death | The Bomb (poor) | 1979, Sverdlovsk anthrax leak, inferred |
+| Altman / OpenAI | Work (poor) | 2025, Raine v. OpenAI, inferred |
+| Boulder v. Suncor | Power (good) | 2018, Boulder County sues, direct, quoted from the Truths |
+
+Known limits: search results drift run to run (the script caches a retrieval and replays it); the
+candidate cap was raised from 8 to 12 after "2026 Iran war" fell out of the list; the pairing step
+rewrites `todays_pairings` and would drop `origin` until `build_origins.py` is wired after it in
+`pulse-publish.yml`; there is no Pulse control yet to see or override the origin.
+
 ## Acceptance
 
-1. The origin is chosen from the story's full Truths plus its row and sub-genre, and always from a
-   vetted list: every held row has at least two origins, and every pairing records which origin it
-   chose. When confidence is low it falls back to the row's current `start_line`.
-2. The TODAY line is no worse than today's. Compare a week of output before and after.
-3. For a day's stories, the editor judges the year and line salient for at least five of six, and
-   none absurd. A fixed set of stories, each with the origin the editor accepts, becomes a test.
-4. Later: Pulse shows the chosen origin before publish and lets the editor pick another from the list.
+1. Every pairing carries an `origin`: `retrieved` (passed validation) or `fallback` (the row's own
+   line, with the reason). A retrieved origin has an integer year inside the row and not after the
+   story, a "When" line, and `verified: false`.
+2. The TODAY line is no worse than today's.
+3. For a day's stories the editor judges the year and line salient for at least five of six and none
+   absurd. The six above, with the origin the editor accepts, become the test set.
+4. Wired 2026-10-06: `pulse-publish.yml` runs `build_origins.py --apply` after the pairing step with the
+   API key from Actions secrets, `continue-on-error`. The plumbing was tested with a stand-in for the
+   model (12 calls for six stories; one story's failed call falls back alone). The real model's answers,
+   and a live Actions run, are not yet tested.
+5. Later: Pulse shows the chosen origin and the rejected proposal before publish and lets the editor
+   pick another.
 
 ## Check
 
@@ -120,14 +161,18 @@ import json, sys
 d = json.load(open("digest/data/backstory.json"))
 rows = {r["id"]: r for r in d["rows"]}
 bad = []
-for r in d["rows"]:
-    if r["stratum"] == "held" and len(r.get("origins") or []) < 2:
-        bad.append(f"{r['id']}: {len(r.get('origins') or [])} origins (need 2)")
 for p in d.get("todays_pairings", []):
-    ids = {o.get("id") for o in rows.get(p["row"], {}).get("origins", [])}
-    chosen = (p.get("origin") or {}).get("id")
-    if chosen not in ids:
-        bad.append(f"{p['row']}: the pairing's origin {chosen!r} is not in the row's list")
+    o = p.get("origin")
+    if not o or o.get("status") not in ("retrieved", "fallback"):
+        bad.append(f"{p['story_id']}: no origin"); continue
+    if o["status"] == "retrieved":
+        y = o.get("year"); start = int(rows[p["row"]]["start_date"][:4])
+        if not isinstance(y, int) or y < start:
+            bad.append(f"{p['story_id']}: year {y} before row start {start}")
+        if not str(o.get("line", "")).startswith("When "):
+            bad.append(f"{p['story_id']}: line does not start with When")
+        if o.get("verified") is not False:
+            bad.append(f"{p['story_id']}: origin is marked verified")
 if bad:
     sys.exit("OPEN: %d problems, e.g. %s" % (len(bad), bad[0]))
 PY

@@ -190,7 +190,8 @@ def load_objects():
         by_row[g(11)].append({'title': g(6), 'author': g(7) or '',
                               'year': sort[:4] if g(4) else '',
                               'source': g(10), 'source_url': url, 'day_month': day_month(g(3)),
-                              'object_id': oid, '_sort': sort})
+                              'object_id': oid, '_sort': sort,
+                              '_subgenre': g(12) or '', '_row': g(11) or ''})
     return by_row
 
 
@@ -248,6 +249,48 @@ def select(pool, start_date):
     extra = spread(later, 2 if len(begin) <= 4 else 1)
     case = sorted(begin + [o for o in extra if o['object_id'] not in used], key=lambda o: o['_sort'])
     return begin, case
+
+
+LENSES = os.path.join(ROOT, 'editorial', 'lenses.json')
+
+
+def lens_select(lenses, origin_year, per_lens=3, minimum=3):
+    """Beginnings drawn from the history of what a story is about, not from its row.
+
+    For each lens (editorial/lenses.json) take the most recent `per_lens` linked
+    objects dated before the story's origin, from any row, one per document. The
+    most recent, not an even spread: these are the nearest lineage to the story,
+    which is what makes the connection easy to see. Fewer than `minimum` in all
+    means no lens Beginnings; the page shows the origin alone. Returns
+    (beginnings, case, report) where report counts each lens's eligible objects, so
+    a thin lens shows up as a gap to fill.
+    """
+    spec = json.load(open(LENSES))
+    flat = [o for lst in load_objects().values() for o in lst]
+    picked, report = {}, {}
+    for lens in lenses:
+        cfg = spec.get(lens)
+        if not cfg:
+            report[lens] = {'eligible': 0, 'note': 'unknown lens'}
+            continue
+        word = lambda k, t: re.search(r'\b' + re.escape(k) + r'\b', t, re.I)
+        kws, ex = cfg.get('title_keywords', []), cfg.get('exclude', [])
+        sgs, rws = cfg.get('subgenres', []), cfg.get('rows', [])
+        inc = set(cfg.get('include', []))
+        # A lens matches an object by whole words in its Title, by its sub-genre or row, or by an
+        # id the editor listed. All three are visible in editorial/lenses.json.
+        pool = [o for o in flat if o['source_url'] and o['year'] and o['year'] < str(origin_year)
+                and not any(word(x, o['title']) for x in ex)
+                and (any(word(k, o['title']) for k in kws) or o['_subgenre'] in sgs
+                     or o['_row'] in rws or o['object_id'] in inc)]
+        pool = sorted(one_per_document(pool), key=lambda o: o['_sort'])
+        report[lens] = {'eligible': len(pool)}
+        for o in pool[-per_lens:]:
+            picked[o['object_id']] = o
+    begin = sorted(picked.values(), key=lambda o: o['_sort'])
+    if len(begin) < minimum:
+        return [], [], report
+    return begin, begin, report
 
 
 def load_notes():

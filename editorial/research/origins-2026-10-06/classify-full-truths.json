@@ -1,0 +1,25 @@
+{
+  "note": "Classifier step re-run on 2026-10-06 with the full Truths instead of headline plus summary. Done BY HAND against editorial/prompts/classifier-backstory.md and the live vocabulary, because no API key exists outside Pulse and Actions. The person classifying already knew the earlier result and the editor's reading, so treat this as indicative, not a measurement. The real run is `python3 editorial/build_pairings.py` with a key; the code now sends the Truths.",
+  "stories": [
+    {"story_id": "manual-1791234021220", "today": {"row": "bomb", "subgenre": "proliferation", "confidence": 0.72},
+     "full_truths": {"subgenre": "information and misinformation", "row": "media", "confidence": 0.6},
+     "why": "The Truths argue that the officials' contradictions are the story; nothing in them mentions weapons.", "changed": true},
+    {"story_id": "31b249b6c8ea7c86", "today": {"row": "government", "subgenre": "regulation and the administrative state", "confidence": 0.81},
+     "full_truths": {"subgenre": "regulation and the administrative state", "row": "government", "confidence": 0.8},
+     "why": "Sandbox waivers and audit requirements are the fight.", "changed": false},
+    {"story_id": "5a3de1d2854305d7", "today": {"row": "work", "subgenre": "automation and AI displacement", "confidence": 0.68},
+     "full_truths": {"subgenre": "regulation and the administrative state", "row": "government", "confidence": 0.5,
+                     "second": "children and technology (family)"},
+     "why": "Nothing in the Truths is about jobs. The thread is who answers for AI harm: AG, FTC, a state law, lawsuits. Best available, weak, and it collides with Utah.", "changed": true, "gap": true},
+    {"story_id": "d18ac370ae1ec7b3", "today": {"row": "america-abroad", "subgenre": "military intervention", "confidence": 0.77},
+     "full_truths": {"subgenre": "military intervention", "row": "america-abroad", "confidence": 0.8},
+     "why": "Air war, ground war, regional pact.", "changed": false},
+    {"story_id": "876b2f911876f4f8", "today": {"row": "climate", "subgenre": "regional economic disruption", "confidence": 0.74},
+     "full_truths": {"subgenre": "housing and cost of living", "row": "work", "confidence": 0.5,
+                     "second": "taxes and distribution (government)"},
+     "why": "The Truths are about the price households pay and who is blamed, and a fuel-tax workaround. The war is the cause, not the argument. America Abroad, the editor's reading, scores about 0.4 on the Truths alone.", "changed": true},
+    {"story_id": "cb8b230aafead46e", "today": {"row": "power", "subgenre": "courts and judicial power", "confidence": 0.79},
+     "full_truths": {"subgenre": "courts and judicial power", "row": "power", "confidence": 0.8},
+     "why": "Who decides: state or federal court.", "changed": false}
+  ]
+}

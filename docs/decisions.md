@@ -334,6 +334,47 @@ missing, has no generation time, or was generated on an earlier day. It does blo
 in two cases where publishing would ship the wrong thing by construction: Generate Today is still
 running, and Generate Today failed (a failure is stored as the text and would ship as the essay).
 
+**Backstory is built from the story's own subject. The fixed library supplies, retrieval fills the gaps, and the editor promotes.**
+Decided 2026-10-06 with the editor, after three separate problems turned out to be one: the origin
+a story shows, the category it is filed under, and the Beginnings behind it were all fixed per row,
+and a story's real subject (an AI company, Russia, a county lawsuit) does not fit a fixed row.
+Every story has a past. Rules, in code (`editorial/build_origins.py`, `build_pairings.py`):
+- *Origin*: retrieved per story from Wikipedia leads and the Truths, checked, fallback to the row's
+  own line only when nothing is found. All origins stay `verified: false`.
+- *Category*: when no row fits, the editor names a new one in Pulse ("no row fits"). It becomes a
+  provisional row (`ntk-pulse/data/provisional-rows.json`), never an entry in `backstory-rows.json`,
+  with a model-drafted contest line and two-sentence stakes that are checked or dropped, a trend
+  line only if a sourced, verified indicator exists (never a drafted one), Beginnings from the
+  history of its subject (`editorial/lenses.json`: tech, the regions and countries the news keeps returning to, NATO and
+  the G20 nations; the most recent three linked objects per lens before the origin, at least three in
+  all. Most lenses are thin in the matrix today, which the lens report records as demand), and the story's own origin as
+  "We are here". A later story with the same name joins it. No
+  story in 30 days archives it. Promotion to a real row is never automatic: it needs 3 stories on 2
+  days, 3 linked matrix objects, a sourced indicator, and the editor's approval.
+- *Beginnings* (next, not built): drawn from the history of what the story is about, not only the
+  row: tech stories from tech history, Russia and China stories from those countries' own histories,
+  and so on. The matrix is the library and has almost none of this today (about 7 Soviet/Russian and
+  8 China objects, all American documents; no tech history). Gaps are filled by retrieval proposing
+  candidates into the staging workbook, link-checked and approved, so the matrix grows on demand
+  and not by an exercise in adding hundreds. Story-specific Beginnings need a page per story,
+  because row pages are shared. The editor accepts that cost (2026-10-06): the goal is a system
+  that is defensible and justifiable, and page count is secondary. Every choice (row, origin, each
+  Beginning) should carry the evidence a reader or critic could check.
+The classifier never reaches a provisional row (no sub-genres); only an editor tag does.
+
+**Lenses stay a separate list from the matrix, for now.** Decided 2026-10-06 with the editor.
+A lens (a country, an alliance, a technology) is a tag on an object like Column E's Issue (Theme),
+but on a different axis: Column E says which American argument an object belongs to; a lens says
+who or what it is about. The objects themselves follow the same rules as every other: primary
+text, a verified outward link, the link checker. What differs is the selection rule: a row's
+Beginnings are spread across time before its start year, a lens's are the three nearest before the
+story's origin. The data should be one thing and the two rules should live in code. A `Lens` column
+in the matrix (blank NTK Row allowed for purely foreign objects; the loader currently skips them) is
+the likely end state, and not done yet: it changes the matrix schema, and `editorial/lenses.json`
+works meanwhile. New lens objects arrive through the candidates workbook with a `Lens` column, so
+they graduate by the path the editor already trusts. The workbook's `Lenses` tab records the
+definitions and how thin each lens is.
+
 ## Open questions, not defaults
 
 These are genuinely unresolved. Don't assume either way.
