@@ -1,7 +1,7 @@
 ---
 id: T-0075
 title: At the bottom of the page, the story's Backstory pairing and category cannot be brought fully into view
-status: BUILT
+status: VERIFIED
 tags: [digest, defect]
 anchor: digest/index.html
 ---
@@ -53,3 +53,7 @@ Same page, same 375x812 viewport, scrolled to the true end. Before: the last row
 Backstory link) at 754 to 771px under a nav starting at 748px, entirely hidden. With 88px of padding:
 footer at 690 to 707px, 41px clear of the nav. Checked by applying the one CSS rule to the live page, so
 the staging build is the first time the file itself carries it.
+
+## Shipped 2026-10-06
+
+Merged (#68, #69) and confirmed on ntknews.org: the static pages carry the new timeline rules and the app reserves 88px under the Backstory list. The editor reviewed both on staging before the merge.

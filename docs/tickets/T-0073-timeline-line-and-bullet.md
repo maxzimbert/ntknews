@@ -1,7 +1,7 @@
 ---
 id: T-0073
 title: The Beginnings timeline's line starts above the first bullet and runs half a pixel off the bullets' centre
-status: BUILT
+status: VERIFIED
 tags: [backstory, defect]
 anchor: digest/index.html:593
 ---
@@ -60,5 +60,9 @@ Both copies fixed. The first row's line now starts at the bullet (`label + row` 
 bullet (9px at left 6) and line (1px at left 10) share a centre on whole pixels, in a 21px column.
 Measured after the change on the static page and in the in-app overlay: bullet centre 10.5px, line
 centre 10.5px, first row's line top 11px (bullet centre 11.5px), last row's line ends at 11px. Before:
-10.0 and 10.5, and 0px (7px above the bullet). A single-row timeline draws no line. BUILT, not
+10.0 and 10.5, and 0px (7px above the bullet). A single-row timeline draws no line. Was BUILT, not
 VERIFIED, until the editor has looked at it.
+
+## Shipped 2026-10-06
+
+Merged (#68, #69) and confirmed on ntknews.org: the static pages carry the new timeline rules and the app reserves 88px under the Backstory list. The editor reviewed both on staging before the merge.
