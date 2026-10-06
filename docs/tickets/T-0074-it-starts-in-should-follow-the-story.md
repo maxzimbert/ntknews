@@ -55,7 +55,57 @@ Not decided: where per-sub-genre origins live (`backstory-rows.json` or the matr
 sub-genre, and whether a story with no good origin should be shown no origin at all (T-0064
 already lets a row render without a Today line).
 
+## The goal, in the editor's words (2026-10-06)
+
+The Backstory work should read the Truths, sort the story through the row and the sub-genre, and
+use that to pair the TODAY composition, which is already good and stays as it is, with a much more
+salient "It starts in YYYY" bookend. This is the whole job. It is not about Pulse's category.
+
+Measured the same day: the classifier and the pairing step see the headline plus the lede (14 to 20
+words) or, failing that, the first 220 characters of the Truths (about 35 words). Today's six
+stories carry 317 to 464 words of Truths. The origin is then always the row's single `start_line`.
+
+What stays: the TODAY line, the row choice (both judged good), the fixed `start_date` for the
+elapsed-time number. What changes: (1) the steps read the full Truths; (2) each row, and each
+sub-genre within it, carries several vetted origins (year, one sentence), the natural source being the
+matrix, whose objects already carry a sub-genre and a year and whose Beginnings entries are written
+in exactly this form; (3) the pairing step chooses the origin that best bookends this story's
+argument, says why, and falls back to the row's current origin when it is not confident.
+
+Related, not the cause: Pulse's category (World, Tech, ...) and its Backstory row dropdown are
+independent and the pairing step never reads the category. Choosing a row in Pulse records no
+sub-genre (`build_pairings.py` writes `subgenre: None` for an editor tag), so an override cannot
+steer the origin today. A control to see and change the chosen origin in Pulse is a later phase.
+
+## Acceptance
+
+1. The origin is chosen from the story's full Truths plus its row and sub-genre, and always from a
+   vetted list: every held row has at least two origins, and every pairing records which origin it
+   chose. When confidence is low it falls back to the row's current `start_line`.
+2. The TODAY line is no worse than today's. Compare a week of output before and after.
+3. For a day's stories, the editor judges the year and line salient for at least five of six, and
+   none absurd. A fixed set of stories, each with the origin the editor accepts, becomes a test.
+4. Later: Pulse shows the chosen origin before publish and lets the editor pick another from the list.
+
 ## Check
 
-manual: the editor reads a day's pairings and judges each jump from the story to the origin it
-names. A mechanical check would measure the year gap, which would reward the wrong thing.
+```sh
+python3 - <<'PY'
+import json, sys
+d = json.load(open("digest/data/backstory.json"))
+rows = {r["id"]: r for r in d["rows"]}
+bad = []
+for r in d["rows"]:
+    if r["stratum"] == "held" and len(r.get("origins") or []) < 2:
+        bad.append(f"{r['id']}: {len(r.get('origins') or [])} origins (need 2)")
+for p in d.get("todays_pairings", []):
+    ids = {o.get("id") for o in rows.get(p["row"], {}).get("origins", [])}
+    chosen = (p.get("origin") or {}).get("id")
+    if chosen not in ids:
+        bad.append(f"{p['row']}: the pairing's origin {chosen!r} is not in the row's list")
+if bad:
+    sys.exit("OPEN: %d problems, e.g. %s" % (len(bad), bad[0]))
+PY
+```
+
+Criteria 2 and 3 are the editor's judgement and are not in the check.
