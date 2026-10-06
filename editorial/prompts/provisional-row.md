@@ -38,9 +38,10 @@ RULES
 4. If the Truths do not support a fair two-sided contest, set "contest" to
    null and say why in "note".
 5. "lenses": which histories this category should draw Beginnings from, chosen
-   from ["tech", "china", "russia"] and only where the stories are mainly about
-   that subject (tech companies or technology policy; China as a central actor;
-   Russia as a central actor). An empty list is fine.
+   only from the AVAILABLE LENSES line in the input, and only where the stories
+   are mainly about that subject (a technology or technology policy; a country or
+   alliance as a central actor). Name every lens that clearly applies and no
+   other. An empty list is fine.
 
 OUTPUT
 

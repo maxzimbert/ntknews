@@ -164,7 +164,9 @@ def draft_row(api_key, name, truths_list, contest_file):
     Returns ({"contest", "stakes"} or {}, problems). A failed draft leaves the page
     with the editor's name only: no stakes is better than an unchecked paragraph."""
     sys_ = read_system_prompt("provisional-row.md")
-    user = f"CATEGORY: {name}\n\nTRUTHS OF THE STORIES FILED UNDER IT\n" + "\n\n".join(truths_list)
+    avail = [k for k in json.loads((ROOT / "editorial" / "lenses.json").read_text()) if not k.startswith("_")]
+    user = (f"CATEGORY: {name}\nAVAILABLE LENSES: {', '.join(avail)}\n\n"
+            "TRUTHS OF THE STORIES FILED UNDER IT\n" + "\n\n".join(truths_list))
     if contest_file:
         d = json.loads(Path(contest_file).read_text()).get(name) or {}
     elif api_key:

@@ -345,8 +345,9 @@ Every story has a past. Rules, in code (`editorial/build_origins.py`, `build_pai
   provisional row (`ntk-pulse/data/provisional-rows.json`), never an entry in `backstory-rows.json`,
   with a model-drafted contest line and two-sentence stakes that are checked or dropped, a trend
   line only if a sourced, verified indicator exists (never a drafted one), Beginnings from the
-  history of its subject (`editorial/lenses.json`: tech, china, russia; the most recent three
-  linked objects per lens before the origin, at least three in all), and the story's own origin as
+  history of its subject (`editorial/lenses.json`: tech, the regions and countries the news keeps returning to, NATO and
+  the G20 nations; the most recent three linked objects per lens before the origin, at least three in
+  all. Most lenses are thin in the matrix today, which the lens report records as demand), and the story's own origin as
   "We are here". A later story with the same name joins it. No
   story in 30 days archives it. Promotion to a real row is never automatic: it needs 3 stories on 2
   days, 3 linked matrix objects, a sourced indicator, and the editor's approval.

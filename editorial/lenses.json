@@ -1,5 +1,5 @@
 {
-  "_comment": "A lens is a subject whose own history a story can draw Beginnings from (T-0076, docs/decisions.md). Matched on the object's Title, rule-based, so the editor can read and change it. A story's row can be shared by many subjects; the lens is what the story is about. Rule: per lens, the most recent three linked objects dated before the story's origin; a provisional row needs at least three in all, otherwise it shows its origin alone. A lens with fewer than three linked objects is a gap to fill through the staging workbook.",
+  "_comment": "A lens is a subject whose own history a story can draw Beginnings from (T-0076, docs/decisions.md). Matched by whole words in the object's Title, by sub-genre or row, or by an object id listed under include, rule-based, so the editor can read and change it. A story's row can be shared by many subjects; the lens is what the story is about. Rule: per lens, the most recent three linked objects dated before the story's origin; a provisional row needs at least three in all, otherwise it shows its origin alone. A lens with fewer than three linked objects is a gap to fill through the staging workbook.",
   "tech": {
     "title_keywords": [
       "telecommunications",
@@ -27,6 +27,9 @@
     ],
     "exclude": [
       "exclusion"
+    ],
+    "rows": [
+      "Taiwan"
     ]
   },
   "russia": {
@@ -35,6 +38,185 @@
       "moscow",
       "russia",
       "kremlin"
+    ],
+    "exclude": []
+  },
+  "iran": {
+    "title_keywords": [
+      "iran",
+      "iranian",
+      "persian gulf"
+    ],
+    "exclude": []
+  },
+  "israel": {
+    "title_keywords": [
+      "israel",
+      "israeli",
+      "zionism",
+      "zionist"
+    ],
+    "exclude": [],
+    "subgenres": [
+      "Israel-Palestine policy"
+    ]
+  },
+  "lebanon": {
+    "title_keywords": [
+      "lebanon",
+      "lebanese",
+      "beirut"
+    ],
+    "exclude": []
+  },
+  "syria": {
+    "title_keywords": [
+      "syria",
+      "syrian"
+    ],
+    "exclude": []
+  },
+  "iraq": {
+    "title_keywords": [
+      "iraq",
+      "iraqi",
+      "kuwait",
+      "gulf war"
+    ],
+    "exclude": [],
+    "include": [
+      "2003-02-05-address-to-the-united-nations-security-council"
+    ]
+  },
+  "canada": {
+    "title_keywords": [
+      "canada",
+      "canadian"
+    ],
+    "exclude": []
+  },
+  "nato": {
+    "title_keywords": [
+      "nato",
+      "north atlantic"
+    ],
+    "exclude": []
+  },
+  "argentina": {
+    "title_keywords": [
+      "argentina",
+      "argentine"
+    ],
+    "exclude": []
+  },
+  "australia": {
+    "title_keywords": [
+      "australia",
+      "australian"
+    ],
+    "exclude": []
+  },
+  "brazil": {
+    "title_keywords": [
+      "brazil",
+      "brazilian"
+    ],
+    "exclude": []
+  },
+  "france": {
+    "title_keywords": [
+      "france",
+      "french"
+    ],
+    "exclude": []
+  },
+  "germany": {
+    "title_keywords": [
+      "germany",
+      "german",
+      "germans"
+    ],
+    "exclude": []
+  },
+  "india": {
+    "title_keywords": [
+      "india",
+      "indian subcontinent",
+      "indian ocean"
+    ],
+    "exclude": []
+  },
+  "indonesia": {
+    "title_keywords": [
+      "indonesia",
+      "indonesian"
+    ],
+    "exclude": []
+  },
+  "italy": {
+    "title_keywords": [
+      "italy",
+      "italian"
+    ],
+    "exclude": []
+  },
+  "japan": {
+    "title_keywords": [
+      "japan",
+      "japanese"
+    ],
+    "exclude": []
+  },
+  "mexico": {
+    "title_keywords": [
+      "mexico",
+      "mexican",
+      "mexicans"
+    ],
+    "exclude": []
+  },
+  "saudi-arabia": {
+    "title_keywords": [
+      "saudi",
+      "saudi arabia"
+    ],
+    "exclude": []
+  },
+  "south-africa": {
+    "title_keywords": [
+      "south africa",
+      "south african",
+      "apartheid"
+    ],
+    "exclude": []
+  },
+  "south-korea": {
+    "title_keywords": [
+      "south korea",
+      "south korean",
+      "korea",
+      "korean"
+    ],
+    "exclude": [],
+    "rows": [
+      "Korea"
+    ]
+  },
+  "turkey": {
+    "title_keywords": [
+      "turkey",
+      "turkish",
+      "ottoman"
+    ],
+    "exclude": []
+  },
+  "uk": {
+    "title_keywords": [
+      "great britain",
+      "britain",
+      "british",
+      "england",
+      "united kingdom"
     ],
     "exclude": []
   }

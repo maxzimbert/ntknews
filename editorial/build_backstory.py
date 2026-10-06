@@ -190,7 +190,8 @@ def load_objects():
         by_row[g(11)].append({'title': g(6), 'author': g(7) or '',
                               'year': sort[:4] if g(4) else '',
                               'source': g(10), 'source_url': url, 'day_month': day_month(g(3)),
-                              'object_id': oid, '_sort': sort})
+                              'object_id': oid, '_sort': sort,
+                              '_subgenre': g(12) or '', '_row': g(11) or ''})
     return by_row
 
 
@@ -272,9 +273,16 @@ def lens_select(lenses, origin_year, per_lens=3, minimum=3):
         if not cfg:
             report[lens] = {'eligible': 0, 'note': 'unknown lens'}
             continue
-        kws, ex = [k.lower() for k in cfg['title_keywords']], [x.lower() for x in cfg.get('exclude', [])]
+        word = lambda k, t: re.search(r'\b' + re.escape(k) + r'\b', t, re.I)
+        kws, ex = cfg.get('title_keywords', []), cfg.get('exclude', [])
+        sgs, rws = cfg.get('subgenres', []), cfg.get('rows', [])
+        inc = set(cfg.get('include', []))
+        # A lens matches an object by whole words in its Title, by its sub-genre or row, or by an
+        # id the editor listed. All three are visible in editorial/lenses.json.
         pool = [o for o in flat if o['source_url'] and o['year'] and o['year'] < str(origin_year)
-                and any(k in o['title'].lower() for k in kws) and not any(x in o['title'].lower() for x in ex)]
+                and not any(word(x, o['title']) for x in ex)
+                and (any(word(k, o['title']) for k in kws) or o['_subgenre'] in sgs
+                     or o['_row'] in rws or o['object_id'] in inc)]
         pool = sorted(one_per_document(pool), key=lambda o: o['_sort'])
         report[lens] = {'eligible': len(pool)}
         for o in pool[-per_lens:]:

@@ -3425,7 +3425,7 @@ function renderLineup(root){
     const gapBtn = el.querySelector('.bsr-gap');
     if (gapBtn) gapBtn.addEventListener('click',()=>{
       if (s.backstoryCategory){ s.backstoryCategory = ''; saveLineup(); render(); return; }   // second click clears it
-      const v = prompt('No row fits this story. Name the new category, a short noun phrase readers could build expertise in (for example "AI and accountability"). Existing new categories are in the row list; pick one of those instead if it fits.', '');
+      const v = prompt('No row fits this story. Name the new category, a short noun phrase readers could build expertise in (for example "AI"). Existing new categories are in the row list; pick one of those instead if it fits.', '');
       if (v === null || !v.trim()) return;
       s.backstoryCategory = v.trim().slice(0, 60);
       s.backstoryRow = '';
