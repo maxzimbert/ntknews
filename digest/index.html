@@ -3201,7 +3201,14 @@ function renderBackstoryTab(){
       : '';
     // Held rows lead with the earned beginning; fire rows have none by
     // design (T-0049), so the elapsed time is the whole statement.
-    const origin = (r.stratum !== 'fire' && r.start_line)
+    // T-0074: a story-specific origin, retrieved and checked by
+    // build_origins.py, replaces the row's fixed start_line on this card only.
+    // A fallback origin is the row's own line, so it renders as before.
+    const og = (r.origin && r.origin.status === 'retrieved' && r.origin.year && r.origin.line) ? r.origin : null;
+    const origin = og
+      ? '<div class="bt-label bt-starts">It starts in ' + escBsr(String(og.year)) + '</div>'
+        + '<a class="bt-line bt-origin" data-rid="' + escAttr(r.id) + '" href="' + href + '">' + escBsr(String(og.line).replace(/\.$/, '')) + '.</a>'
+      : (r.stratum !== 'fire' && r.start_line)
       ? '<div class="bt-label bt-starts">It starts in ' + escBsr(bsrYear(r.start_date)) + '</div>'
         + '<a class="bt-line bt-origin" data-rid="' + escAttr(r.id) + '" href="' + href + '">' + escBsr(bsrCapitalize(r.start_line)) + '.</a>'
       : '<div class="bt-label bt-starts">Running for</div>'
