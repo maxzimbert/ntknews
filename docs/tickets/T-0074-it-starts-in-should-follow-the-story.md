@@ -22,10 +22,12 @@ cannot move to suit the story. Measured on the 2026-10-05 edition, `digest/data/
 | Saudi Arabia rebuilds the coalition that lost to the Houthis | America Abroad / military intervention | April 1975, the last helicopter leaves Saigon |
 | A lab worker dies in Siberia, five regions locked down | The Bomb / proliferation | August 1945, the first use of a nuclear weapon |
 
-The editor's examples of the fit that is wanted: diesel prices today to the start of the
-government's formal knowledge of a warming planet; Utah's plan to Proposition 13 as the start of
-the tax-and-regulation argument. Today's table shows five of six leaping further than the story
-justifies.
+The editor's own examples of the jump, the thing to fix: going from diesel prices today to the start
+of the government's formal knowledge of a warming planet, or from Utah's plan to let AI prescribe
+acne medication to the 1978 California Prop 13 start point. Both are rows chosen correctly and
+origins that are too far from the story. Today's table shows five of six leaping further than the
+story justifies. (An earlier version of this ticket described these two examples as the fit that was
+wanted. That was backwards, corrected 2026-10-06.)
 
 Direction, not a design: the classifier already assigns each story a sub-genre and the matrix
 already tags every object with one. A row would carry several vetted origins, keyed by sub-genre
