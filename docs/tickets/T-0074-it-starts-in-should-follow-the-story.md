@@ -65,8 +65,8 @@ Measured the same day: the classifier and the pairing step see the headline plus
 words) or, failing that, the first 220 characters of the Truths (about 35 words). Today's six
 stories carry 317 to 464 words of Truths. The origin is then always the row's single `start_line`.
 
-What stays: the TODAY line, the row choice (both judged good), the fixed `start_date` for the
-elapsed-time number. What changes: (1) the steps read the full Truths; (2) each row, and each
+What stays: the TODAY line and the fixed `start_date` for the elapsed-time number. The row choice is
+mostly good, but not always (see the examples: one of three differs). What changes: (1) the steps read the full Truths; (2) each row, and each
 sub-genre within it, carries several vetted origins (year, one sentence), the natural source being the
 matrix, whose objects already carry a sub-genre and a year and whose Beginnings entries are written
 in exactly this form; (3) the pairing step chooses the origin that best bookends this story's
@@ -76,6 +76,31 @@ Related, not the cause: Pulse's category (World, Tech, ...) and its Backstory ro
 independent and the pairing step never reads the category. Choosing a row in Pulse records no
 sub-genre (`build_pairings.py` writes `subgenre: None` for an editor tag), so an override cannot
 steer the origin today. A control to see and change the chosen origin in Pulse is a later phase.
+
+## The editor's three examples, 2026-10-06 (the first test cases)
+
+| Story (TODAY line) | System chose | Editor would have |
+|---|---|---|
+| "A $6.53 diesel price gets answered with a tax break the president cannot actually authorize alone." | Climate, origin 1988 (a scientist tells Congress the planet is warming) | **America Abroad**, origin **2025**: President Trump used military force to strike Iran in June 2025 |
+| "A state is letting software write prescriptions nobody with a license has to check." | Government, origin 1978 (California voters cap property taxes) | Government, origin **2024**: the Utah Office of Artificial Intelligence Policy opened within the state Department of Commerce in July 2024 |
+| "A coalition that lost this war once is rebuilding it with more jets and the same strait to retake." | America Abroad, origin 1975 (the last helicopter leaves Saigon) | America Abroad, origin **2014**: Houthi forces took over the Yemeni capital and civil war began |
+
+What they show:
+
+- **The wanted origin is the story's proximate cause, 1 to 11 years back, not the row's deep start.**
+  The long lineage already lives on the row page's Beginnings timeline; the bookend on the Thread is
+  the event that makes today's story happen. Two different jobs for two screens.
+- **The row choice is not always right.** Diesel went to Climate; the editor reads it as foreign
+  policy (a war, a strait, a price). So reading the full Truths has to improve the row and
+  sub-genre too, not only the origin.
+- **The matrix does not hold any of the three origins.** Checked 2026-10-06 against the 384
+  objects: no June 2025 Iran strike (only the 1980 hostage rescue and the 2015 nuclear deal), nothing
+  on the Utah AI office, nothing on Yemen or the Houthis. Only 4 objects are dated 2024 or later and
+  about 2 to 5 a year from 2010 to 2023. The matrix is the source of origins, so it needs a recent
+  layer: for each sub-genre, the events of the last decade that stories keep tracing back to, each a
+  primary document with a verified link, added through the candidates workflow (T-0067). An origin
+  is then a matrix object, can use its generated one-sentence line, and its object page is where
+  "About this" lands.
 
 ## Acceptance
 

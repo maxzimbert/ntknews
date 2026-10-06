@@ -43,3 +43,10 @@ add sub-genres; and who owns the matrix content a new row needs.
 
 manual: the editor decides the category changes. Once decided, a check can assert the new row ids
 in `editorial/backstory-rows.json` and that each has at least 3 linked matrix objects.
+
+## Parked idea, raised by the editor 2026-10-06 (not for action)
+
+Rows are what a reader can build expertise in, but on the front end a story could be shown as one of
+three broad kinds: Foreign Policy, Civil Rights, or The Government and the Economy. A radical
+simplification of what the reader sees, keeping the rows underneath. Recorded so it is not lost; no
+decision, and it would touch how rows are named and grouped on the Thread and the Backstory tab.
