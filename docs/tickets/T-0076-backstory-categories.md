@@ -50,3 +50,27 @@ Rows are what a reader can build expertise in, but on the front end a story coul
 three broad kinds: Foreign Policy, Civil Rights, or The Government and the Economy. A radical
 simplification of what the reader sees, keeping the rows underneath. Recorded so it is not lost; no
 decision, and it would touch how rows are named and grouped on the Thread and the Backstory tab.
+
+## Measured 2026-10-06: where poor row fit comes from
+
+Three of the six stories on the 2026-10-05 edition fit their row poorly (diesel under Climate,
+Altman under Work, the Siberia lab death under The Bomb). Findings, with the limits stated:
+
+- **Confidence does not flag them.** The classifier scored those three 0.74, 0.68 and 0.72. The review
+  threshold is 0.55, so none was flagged. The existing signal cannot find a bad row.
+- **Input explains some of it.** The classifier sees the headline plus 14 to 35 words. Re-reading with
+  the full Truths (by hand, so indicative only; `editorial/research/origins-2026-10-06/classify-full-truths.json`)
+  moves three of six: Siberia to The Media (information and misinformation), diesel to Work (housing
+  and cost of living) or Government (taxes), Altman to Government (regulation) at about 0.5.
+- **Vocabulary explains the rest.** Altman has no good row: nothing in the Truths is about jobs, and the
+  nearest sub-genres are weak. The editor reads diesel as America Abroad; on the Truths alone that
+  scores about 0.4, because the war is the cause and the argument is prices and blame. That row is an
+  editorial call a classifier will not make from the text.
+- **Pairing steps still need the Truths.** `build_pairings.py` now sends the Truths to the classifier;
+  the pairing-line writer still sees the summary.
+
+Next, in the order agreed with the editor: a "row doesn't fit" control in Pulse and a gaps queue; then
+Beginnings and "We are here" built around the story's origin; then what a provisional category may show
+without a verified indicator. Each held row has `stakes` (about two sentences) and one hand-typed
+`indicator` with a direction label and an `as_of` date; nothing computes or refreshes the direction,
+and Power's indicator is unverified. The seven Still Counting rows have neither.
