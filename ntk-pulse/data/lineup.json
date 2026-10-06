@@ -1,5 +1,5 @@
 {
- "assembled_at": "2026-10-06T01:11:19.913067+00:00",
+ "assembled_at": "2026-10-06T11:05:03.964404+00:00",
  "slot_plan": "A",
  "displacement": "MANUAL",
  "daytype": "weekday",
@@ -7,76 +7,93 @@
   8,
   10
  ],
- "actual_size": 27,
- "lint_failures": [
-  "no item answers 'what do I do with this'"
- ],
- "slots_unfilled": [
-  "Money & me"
- ],
+ "actual_size": 9,
+ "lint_failures": [],
+ "slots_unfilled": [],
  "stories": [
   {
    "slot": "unavoidable",
    "slot_label": "Unavoidable",
-   "key": "61ab6cdb3841966b",
-   "title": "Trump pledges to pay back taxpayers for $10M in government ads after backlash",
-   "beat": "national",
+   "key": "d4818c90125c9031",
+   "title": "Francis Halzen wins Nobel Prize in Physics for detecting cosmic neutrinos",
+   "beat": "science",
    "publisher_count": 7,
    "publishers": [
+    "BBC",
+    "NPR",
     "New York Times",
-    "Politico",
-    "ABC News",
-    "CBS News",
-    "CNBC",
-    "NBC News",
-    "Memeorandum"
+    "Yahoo News",
+    "Deutsche Welle",
+    "France 24",
+    "ANSA"
    ],
    "scores": {
-    "emotional_load": 3,
-    "explainability": 5,
+    "emotional_load": 1,
+    "explainability": 4,
     "actionability": 1,
     "conversational_currency": 4
    },
-   "politician_led": true,
+   "politician_led": false,
    "ledger_class": null,
    "new_facts": [],
-   "line": "Trump says his PAC will reimburse taxpayers for $10M in government-funded ads promoting him after legal criticism.",
-   "assembly_score": 9.59
+   "line": "Francis Halzen wins the Nobel Prize in Physics for detecting high-energy neutrinos from space using an ice-based detector.",
+   "assembly_score": 9.14
+  },
+  {
+   "slot": "money_me",
+   "slot_label": "Money & me",
+   "key": "c1e2fb98094768e5",
+   "title": "Tax deadline tomorrow; extension process available",
+   "beat": "business",
+   "publisher_count": 1,
+   "publishers": [
+    "CNN"
+   ],
+   "scores": {
+    "emotional_load": 2,
+    "explainability": 5,
+    "actionability": 5,
+    "conversational_currency": 2
+   },
+   "politician_led": false,
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "Tax filing deadline is tomorrow; requesting an extension is available to avoid penalties.",
+   "assembly_score": 1.26
   },
   {
    "slot": "body_mind",
    "slot_label": "Body & mind",
-   "key": "134040cda51bad53",
-   "title": "New York declares measles emergency as U.S. outbreak spreads",
+   "key": "78fe2c82c0c41107",
+   "title": "Kenya confirms first Ebola death as virus spreads from DR Congo",
    "beat": "health",
    "publisher_count": 4,
    "publishers": [
+    "BBC",
     "The Guardian",
     "Al Jazeera",
-    "France 24",
-    "NBC News"
+    "Standard (Kenya)"
    ],
    "scores": {
     "emotional_load": 4,
     "explainability": 5,
-    "actionability": 3,
+    "actionability": 1,
     "conversational_currency": 4
    },
-   "politician_led": true,
+   "politician_led": false,
    "ledger_class": null,
    "new_facts": [],
-   "line": "New York declares measles emergency as U.S. cases surge; Pennsylvania outbreak now largest in 30 years with over 1,000 cases.",
-   "assembly_score": 5.93
+   "line": "Kenya confirms its first Ebola case, a patient who died, as the virus spreads in neighboring DR Congo.",
+   "assembly_score": 7.2
   },
   {
    "slot": "work_machines",
    "slot_label": "Work & machines",
-   "key": "9945cb5716940625",
-   "title": "Etched fields funding offers at $40B+ valuation, sources say",
+   "key": "0a63beacd776dcc2",
+   "title": "London- and Paris-based tokenized cash startup Spiko raised a $90M Series B at an $800M valuation, taking its total funding to $120M, and hits ~$2.7B in AUM (Ryan Weeks/Bloomberg)",
    "beat": "tech",
-   "publisher_count": 2,
+   "publisher_count": 1,
    "publishers": [
-    "TechCrunch",
     "Techmeme"
    ],
    "scores": {
@@ -89,240 +106,23 @@
    "ledger_class": null,
    "new_facts": [],
    "line": "",
-   "assembly_score": 2.64
+   "assembly_score": 4.49
   },
   {
    "slot": "group_chat",
    "slot_label": "The group chat",
-   "key": "2af6ed0850a72a56",
-   "title": "Ovechkin to retire at season's end",
-   "beat": "culture",
-   "publisher_count": 1,
-   "publishers": [
-    "Post and Courier"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Alex Ovechkin, Washington Capitals left wing, will retire at season's end.",
-   "assembly_score": 5.07
-  },
-  {
-   "slot": "elsewhere",
-   "slot_label": "Elsewhere, but here",
-   "key": "b0f4a832e25d70f0",
-   "title": "Researcher dies in Russian lab as US monitors suspected plague outbreak",
-   "beat": "international",
-   "publisher_count": 8,
-   "publishers": [
-    "BBC",
-    "Al Jazeera",
-    "CBS News",
-    "Fox News",
-    "France 24",
-    "NBC News",
-    "Semafor",
-    "The New Republic"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A Russian plague researcher died under unclear circumstances; US and EU are monitoring reports of pneumonic plague in Siberia amid Russian denials.",
-   "assembly_score": 7.36
-  },
-  {
-   "slot": "close",
-   "slot_label": "The close",
-   "key": "5f83b2c716586a39",
-   "title": "Trump permits farm diesel for regular vehicles to ease fuel prices",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Financial Times",
-    "New York Times"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump allows red diesel, normally restricted to farms, to be used in regular vehicles to lower fuel costs.",
-   "assembly_score": 5.79
-  },
-  {
-   "slot": "unavoidable",
-   "slot_label": "Unavoidable",
-   "key": "3b72a7ddc94fa46c",
-   "title": "U.S. moves bombers from British base after Trump cites threat",
-   "beat": "national",
-   "publisher_count": 6,
-   "publishers": [
-    "BBC",
-    "Financial Times",
-    "ABC News",
-    "CBS News",
-    "CNBC",
-    "Daily Mail"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "U.S. military withdrew B-1 bombers from a British air base following what Trump describes as a security threat, though details remain unclear.",
-   "assembly_score": 6.14
-  },
-  {
-   "slot": "unavoidable",
-   "slot_label": "Unavoidable",
-   "key": "a93ba133a22460fd",
-   "title": "GOP support slips with Hispanic voters before midterms",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "BBC",
-    "Al Jazeera",
-    "Daily Beast"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Republican support drops among Hispanic voters and overall electorate ahead of midterm elections.",
-   "assembly_score": 5.69
-  },
-  {
-   "slot": "flex",
-   "slot_label": "Flex",
-   "key": "2394651376c3a912",
-   "title": "Supreme Court hears arguments in climate liability case against oil companies",
-   "beat": "national",
-   "publisher_count": 6,
-   "publishers": [
-    "New York Times",
-    "Washington Post",
-    "CBS News",
-    "Chris Geidner (Law Dork)",
-    "Fox News",
-    "The New Republic"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Supreme Court hears arguments in Boulder's lawsuit seeking to hold oil companies liable for climate damages.",
-   "assembly_score": 5.29
-  },
-  {
-   "slot": "flex",
-   "slot_label": "Flex",
-   "key": "d4f5d80abefebaab",
-   "title": "Tillis calls Hegseth confirmation vote his biggest career regret",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "CBS News",
-    "Memeorandum"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Senator Thom Tillis says his vote to confirm Pete Hegseth as Defense Secretary was his worst career mistake, revealed in an upcoming book.",
-   "assembly_score": 4.78
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "dfd96778aff5afda",
-   "title": "Weekly shopping roundup",
-   "beat": "other",
-   "publisher_count": 3,
-   "publishers": [
-    "CNN",
-    "Daily Beast",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//cnn.com/cnn-underscored/deals/best-amazon-deals-2023-04-12?iid=CNNUnderscoredHPcontainer",
-    "//cnn.com/cnn-underscored/travel/amazon-travel-products?iid=CNNUnderscoredHPcontainer",
-    "//dailymail.com/buyline/article-16138515/Amazon-October-Prime-Day-2026-live-reveal-best-deals-come-half-price-Amazon-devices-savings-Apple-Ninja-Shark-Dyson-more.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//thedailybeast.com/best-prime-big-deal-days-to-shop-in-2026"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 1
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 3.542
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "2ed15e3d241061e0",
-   "title": "Jim Bakker, televangelist who built PTL empire then served prison time for fraud, dies at 86",
+   "key": "d1641a7366b34de0",
+   "title": "Jim Bakker, televangelist felled by fraud and sex scandal, dies at 86",
    "beat": "culture",
    "publisher_count": 7,
    "publishers": [
     "NPR",
     "New York Times",
-    "Washington Post",
-    "Yahoo News",
+    "The Guardian",
     "ABC News",
     "CBS News",
-    "NBC News"
-   ],
-   "urls": [
-    "//abcnews.com/US/wireStory/jim-bakker-built-ptl-club-televangelism-empire-died-137024206",
-    "//cbsnews.com/news/jim-bakker-ptl-club-dies-86",
-    "//nbcnews.com/news/us-news/jim-bakker-tv-pastor-served-time-defrauding-followers-dies-86-rcna601803",
-    "//nbcnews.com/now/video/televangelist-jim-bakker-dies-at-age-86-271100997752",
-    "//npr.org/2026/10/06/g-s1-146603/obit-jim-bakker",
-    "//nytimes.com/2026/10/05/us/jim-bakker-dead.html",
-    "//washingtonpost.com/obituaries/2026/10/06/jim-bakker-disgraced-televangelist-dies-xx",
-    "//yahoo.com/news/us/articles/jim-bakker-built-ptl-club-041516502.html"
+    "NBC News",
+    "Fox 5 Atlanta"
    ],
    "scores": {
     "emotional_load": 2,
@@ -331,94 +131,47 @@
     "conversational_currency": 3
    },
    "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
    "ledger_class": null,
    "new_facts": [],
-   "line": "Jim Bakker, televangelist who built a multimillion-viewer empire before prison time for fraud, has died at 86.",
-   "assembly_score": 3.192
+   "line": "Jim Bakker, who built a major Christian TV empire in the 1970s-80s before being convicted of fraud and caught in a sex scandal, has died at 86.",
+   "assembly_score": 6.29
   },
   {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "570ba73f57e4076a",
-   "title": "Quebec separatists win election, promise independence referendum",
-   "beat": "national",
+   "slot": "elsewhere",
+   "slot_label": "Elsewhere, but here",
+   "key": "44f14c4d36352284",
+   "title": "Yemen forces push back Houthis in Red Sea offensive",
+   "beat": "international",
    "publisher_count": 5,
    "publishers": [
-    "BBC",
-    "New York Times",
-    "The Guardian",
     "Al Jazeera",
-    "Deutsche Welle"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/10/6/secessionist-parti-quebecois-wins-quebec-election-in-canada?traffic_source=rss",
-    "//aljazeera.com/video/newsfeed/2026/10/6/quebec-separatists-win-election-reviving-push-for-independence?traffic_source=rss",
-    "//bbc.co.uk/news/articles/crly09gz7ew4o?at_campaign=rss&at_medium=RSS",
-    "//dw.com/en/canada-quebec-separatists-return-to-power-promise-new-independence-referendum/a-79558642?maca=en-rss-en-all-1573-xml-mrss",
-    "//nytimes.com/2026/10/05/world/canada/quebec-election-parti-quebecois-separatism.html",
-    "//theguardian.com/world/2026/oct/06/election-canada-win-quebec-separatists-parti-quebecois"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Quebec's separatist party wins election with minority government, promises independence referendum.",
-   "assembly_score": 2.05
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "32d633826ab71045",
-   "title": "Republicans push crime message in midterm campaigns",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "ABC News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//abcnews.com/Politics/wireStory/republicans-return-tough-crime-message-ahead-difficult-midterm-137023931",
-    "//memeorandum.com/261005/p131"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Republicans campaign on crime and border security despite lower violent crime rates; Democrats counter with law-enforcement-backed candidates.",
-   "assembly_score": 1.31
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "3d9a14946a363183",
-   "title": "Nationwide strikes and student protests paralyze France",
-   "beat": "international",
-   "publisher_count": 3,
-   "publishers": [
-    "New York Times",
+    "CBS News",
+    "CNBC",
     "France 24",
     "Daily Mail"
    ],
-   "urls": [
-    "//dailymail.com/news/article-16186023/France-braces-day-carnage-tens-thousands-expected-streets-trade-unions-join-far-left-student-protests.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//france24.com/en/europe/20261006-live-tens-of-thousands-expected-at-paris-protests-as-unions-join-students",
-    "//nytimes.com/2026/10/06/world/europe/france-student-strikes-protests.html"
+   "scores": {
+    "emotional_load": 4,
+    "explainability": 3,
+    "actionability": 1,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "Yemen's government forces claim major territorial gains against Iran-backed Houthis in a new offensive near the Red Sea, a strategic chokepoint for global shipping.",
+   "assembly_score": 6.27
+  },
+  {
+   "slot": "close",
+   "slot_label": "The close",
+   "key": "573be21cbf6f10eb",
+   "title": "Jeffrey Archer, author and ex-MP, dies at 86",
+   "beat": "culture",
+   "publisher_count": 2,
+   "publishers": [
+    "BBC",
+    "Daily Mail"
    ],
    "scores": {
     "emotional_load": 2,
@@ -427,56 +180,44 @@
     "conversational_currency": 3
    },
    "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
    "ledger_class": null,
    "new_facts": [],
-   "line": "French unions and students are staging nationwide strikes and protests today, with tens of thousands expected in Paris and other cities.",
-   "assembly_score": 1.222
+   "line": "Jeffrey Archer, British author and former Conservative MP, died at 86.",
+   "assembly_score": 4.74
   },
   {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "d25b9e367ef38186",
-   "title": "Former American Idol singer sentenced to life for wife's murder",
-   "beat": "national",
-   "publisher_count": 2,
+   "slot": "flex",
+   "slot_label": "Flex",
+   "key": "5f24616a74ae70a0",
+   "title": "Students march in Paris as Argentina protests foreign land acquisitions",
+   "beat": "international",
+   "publisher_count": 3,
    "publishers": [
-    "Al Jazeera",
-    "ABC Australia"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-10-06/former-american-idol-singer-caleb-flynn-murder-sentence/107235506",
-    "//aljazeera.com/video/newsfeed/2026/10/6/former-american-idol-singer-caleb-flynn-gets-life-for-wifes-murder?traffic_source=rss"
+    "The Guardian",
+    "France 24",
+    "Daily Mail"
    ],
    "scores": {
-    "emotional_load": 5,
-    "explainability": 5,
+    "emotional_load": 3,
+    "explainability": 3,
     "actionability": 1,
     "conversational_currency": 3
    },
-   "politician_led": false,
-   "progress_coded": true,
-   "promotion_path": "corroborated",
+   "politician_led": true,
    "ledger_class": null,
    "new_facts": [],
-   "line": "Former American Idol contestant convicted of murdering his wife; sentenced to life without parole.",
-   "assembly_score": 0.93
+   "line": "Student protests are underway in Paris; separately, Argentine demonstrators oppose land sales to foreign buyers as Milei's government encourages them.",
+   "assembly_score": 5.01
   },
   {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "8f6a716cc74391d1",
-   "title": "Mexican and Colombian cartel mercenaries filmed fighting in Ukraine",
+   "slot": "flex",
+   "slot_label": "Flex",
+   "key": "f429f70beccb7962",
+   "title": "Candidato Afd eletto presidente del Parlamento in Sassonia-Anhalt, \u00e8 la prima volta",
    "beat": "international",
-   "publisher_count": 2,
+   "publisher_count": 1,
    "publishers": [
-    "Al Jazeera",
-    "France 24"
-   ],
-   "urls": [
-    "//aljazeera.com/video/newsfeed/2026/10/6/mexican-and-colombian-cartel-mercenaries-filmed-fighting-in-ukraine?traffic_source=rss",
-    "//france24.com/en/europe/20261006-massive-ukrainian-drone-attack-targets-moscow-russian-officials-say"
+    "ANSA"
    ],
    "scores": {
     "emotional_load": 3,
@@ -485,381 +226,95 @@
     "conversational_currency": 3
    },
    "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
    "ledger_class": null,
    "new_facts": [],
    "line": "",
-   "assembly_score": 0.54
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "52cc34c79f04470c",
-   "title": "Trump suggests letting Iran \"take out\" LA, San Diego during rally",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "CBS News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//cbsnews.com/news/trump-suggests-allowing-iran-take-out-la-and-san-diego-during-campaign-rally",
-    "//memeorandum.com/261005/p137",
-    "//memeorandum.com/261006/p5"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.22
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "c82f441fbbe597e3",
-   "title": "Andy Burnham\u2019s Manchester City problem",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Financial Times",
-    "Al Jazeera"
-   ],
-   "urls": [
-    "//aljazeera.com/sports/2026/10/6/erling-haaland-faces-injury-scare-ahead-of-man-city-vs-liverpool?traffic_source=rss",
-    "//ft.com/content/ffc5d121-9143-4760-86d7-d1a0fc885af4?syn-25a6b1a6=1"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.26
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "aeeadbec07a68069",
-   "title": "Trump approves firing-squad execution of Fort Hood shooter, Pentagon says",
-   "beat": "national",
-   "publisher_count": 9,
-   "publishers": [
-    "BBC",
-    "The Guardian",
-    "CBS News",
-    "CNBC",
-    "France 24",
-    "NBC News",
-    "ABC Australia",
-    "ANSA",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-10-06/trump-approves-firing-squad-for-convicted-us-military-base-shoot/107233178",
-    "//ansa.it/sito/notizie/mondo/2026/10/06/trump-approva-la-fucilazione-per-lautore-della-strage-nella-base-di-fort_7ee2f639-c35c-40c0-b66c-5e43c79301d7.html",
-    "//bbc.co.uk/news/articles/cq8ezkkkrpy1o?at_campaign=rss&at_medium=RSS",
-    "//cbsnews.com/news/nidal-hasan-firing-squad-trump",
-    "//cnbc.com/2026/10/06/trump-execution-nidal-hasan-firing-squad-fort-hood.html",
-    "//france24.com/en/americas/20261006-trump-approves-firing-squad-execution-of-fort-hood-shooter-nidal-hasan",
-    "//memeorandum.com/261005/p130",
-    "//memeorandum.com/261005/p136",
-    "//nbcnews.com/news/us-news/ex-army-major-fort-hood-shooting-execution-firing-squad-rcna601791",
-    "//theguardian.com/us-news/2026/oct/05/trump-fort-hood-shooter-execution"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.82
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "62dd7d6b55403ca1",
-   "title": "Violent clashes erupt after mass housing protest in Barcelona",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "ABC Australia"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-10-06/barcelona-protests-spain-election-pedro-sanchez/107232696",
-    "//aljazeera.com/video/newsfeed/2026/10/6/10-6-barcelona-protests-clip-mp4?traffic_source=rss"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.82
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "c3feecb53d8cb45b",
-   "title": "Vance Rally Derailed by Heckler With Blistering Insult",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Daily Beast",
-    "American Spectator"
-   ],
-   "urls": [
-    "//spectator.org/its-been-2028-for-while",
-    "//thedailybeast.com/vance-rally-derailed-by-heckler-with-blistering-insult"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.24
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "152771b5bdb084d9",
-   "title": "Massachusetts man pleads guilty to selling radioactive material from Russia",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox News",
-    "NBC News"
-   ],
-   "urls": [
-    "//foxnews.com/us/massachusetts-felon-pleads-guilty-after-doj-says-he-sold-russian-plutonium-67-customers",
-    "//nbcnews.com/news/us-news/massachusetts-man-pleads-guilty-selling-radioactive-material-rcna601780"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.28
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "7690a904d6b24f07",
-   "title": "Potential Iranian Drone Attack Led to Exit of U.S. Aircraft From British Air Base",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "New York Times",
-    "CBS News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//cbsnews.com/video/b-1-bomber-removal-rubio-says-administration-confidence-in-all-international-bases",
-    "//memeorandum.com/261005/p134",
-    "//nytimes.com/2026/10/05/us/politics/iran-drone-attack-threat.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.35
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "99575f924a1e2a8b",
-   "title": "Falcons turn primetime doubters into believers behind Bijan Robinson's back-to-back masterpieces",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox News",
-    "Fox 5 Atlanta"
-   ],
-   "urls": [
-    "//fox5atlanta.com/news/bijan-robinson-leads-atlanta-45-24-win-new-orleans",
-    "//foxnews.com/outkick-sports/falcons-turn-primetime-doubters-believers-bijan-robinson-back-to-back-masterpieces"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.88
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "21ee260ae388acb8",
-   "title": "Trump offers U.S. help to Russia after plague death; WHO assesses the situation as low risk",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "CNBC",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//cnbc.com/2026/10/06/russia-plague-death-trump-offers-us-help.html",
-    "//memeorandum.com/261005/p132"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -4.49
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "c37597020e951e3a",
-   "title": "\u2018Ban the frats\u2019: Protests erupt at Cornell over handling of rape allegation",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Yahoo News",
-    "ABC Australia"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-10-06/cornell-students-protest-handling-of-rape-allegation/107232446",
-    "//yahoo.com/news/us/articles/student-protests-erupt-cornell-over-013011295.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -4.59
+   "assembly_score": 4.55
   }
  ],
  "excluded_sample": [
   {
-   "title": "Trump Throws Full-Fledged Tantrum Over Reports on His Latest Rally",
+   "title": "Scouted: The Best Prime Big Deal Days Scores to Shop This Week",
    "why": "triage verdict NO"
   },
   {
-   "title": "Shiatzy Chen Spring 2027 Ready-to-Wear",
+   "title": "Why deep-red Kansas has become an unexpected Senate battleground",
    "why": "triage verdict NO"
   },
   {
-   "title": "The 'mess' that Harlequins can't escape: Too many yes men, fears Marcus Smith could leave, pressure mounting on Jason Gilmore and Robbie Deans, recruitment errors and Quins legends' anguish at 'turning from a rugby club to a brand'",
+   "title": "Chanel Spring 2027 Ready-to-Wear",
    "why": "triage verdict NO"
   },
   {
-   "title": "Oldest Aussie turns 113 and swaps messages with world's only older man in incredible shared birthday coincidence",
+   "title": "Disney, ABC battle Trump's FCC in court over free speech protections",
    "why": "triage verdict NO"
   },
   {
-   "title": "Garver-Verity",
+   "title": "Dr. Renu Khator (Oct. 6, 2026)",
    "why": "triage verdict NO"
   },
   {
-   "title": "Person of Interest",
+   "title": "Zombie Originalism",
    "why": "triage verdict NO"
   },
   {
-   "title": "John Travolta's Daughter Ella Bleu Makes Major Career Move in Paris",
+   "title": "Dire Straits rocker Mark Knopfler's actress daughter Issy announces her engagement to co-star boyfriend Sam Buchanan",
    "why": "triage verdict NO"
   },
   {
-   "title": "Is the Dodgers dynasty already in jeopardy after brutal game two NLDS loss to Atlanta Braves?",
+   "title": "GamerCard Review: A Flawed Pocket-Size Retro Handheld",
    "why": "triage verdict NO"
   },
   {
-   "title": "Tributes pour in for girl, 18, killed in crash in Banbury: Man is charged over 'drink-driving smash'",
+   "title": "Your voice is more than sound. It\u2019s part of who you are",
    "why": "triage verdict NO"
   },
   {
-   "title": "Ernest Shaw",
+   "title": "Who Had It Better? The Generational Money Showdown | Money Moves with Jill Schlesinger",
    "why": "triage verdict NO"
   },
   {
-   "title": "Michael Douglas details brief separation from Catherine Zeta-Jones in new interview: 'Marriage is hard work'",
+   "title": "Bidets save you money and reduce waste \u2014 we tested the best options out there",
    "why": "triage verdict NO"
   },
   {
-   "title": "The shabby west London street plagued by 33 fast food restaurants, 11 barbers and tacky vape shops... and the campaigners facing death threats in their fight to turn it around: ROBERT HARDMAN",
+   "title": "50+ products to make your life easier and our planet cleaner",
    "why": "triage verdict NO"
   },
   {
-   "title": "(URGENT) Seoul shares open higher after U.S. tech-led rally",
+   "title": "Mother's Day is around the corner. Here are 50+ thoughtful gifts she'll love",
    "why": "triage verdict NO"
   },
   {
-   "title": "Still No Reason to Panic, but Maybe...Concerned...About Plague Lab Leak in Russia (David Strom/HotAir)",
+   "title": "A head-to-toe guide of how men should dress this spring, and where they should shop",
    "why": "triage verdict NO"
   },
   {
-   "title": "Medical expert on reported plague lab death in Russia",
+   "title": "The 7 best high-yield savings accounts of April 2023",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Composting is an easy way to reduce food waste. Here's how to do it",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "We stopped using aluminum foil for cooking and you should too. Here's what to use instead",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "The beloved Dyson Supersonic hair dryer is at its lowest price ever",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Everything you need to know about Way Day 2023, Wayfair's biggest sale of the year",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "The 2024 presidential alternative many voters will want",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Mancini: 'Sto ritrovando l'Italia, ma mi manca Vialli'",
    "why": "triage verdict NO"
   }
  ]
