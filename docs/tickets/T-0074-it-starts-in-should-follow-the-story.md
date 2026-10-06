@@ -108,24 +108,30 @@ The editor ruled out growing the matrix by hundreds of recent objects. Origins a
 by `editorial/build_origins.py`: a model reads the full Truths plus the row and sub-genre and writes
 2 to 3 Wikipedia queries; code retrieves article leads and Wikidata dates; a second model chooses
 among the retrieved candidates only; code validates (year and quote verbatim in the lead, numbers
-traced, year inside the row and not after the story, fit rated direct). Anything doubtful falls back
-to the row's own `start_line` and records why, with the rejected proposal kept for the editor.
+traced, year inside the row and not after the story, fit rated direct). Only a story with no candidate at all falls
+back to the row's own `start_line`, and records why.
 The Portal:Current_events day page for the event's date is read, and its entry and cited outlet are
 stored when an entry links to the article or names the event. Wikipedia only finds and dates the
 event; it is never linked to a reader. Every origin is `verified: false`.
 
-First run, 2026-10-06, the six stories of the 2026-10-05 edition (artefacts in
+Runs, 2026-10-06, on the six stories of the 2026-10-05 edition (artefacts in
 `editorial/research/origins-2026-10-06/`; the two model steps were done by hand against the same
-prompts because no API key exists outside Pulse and Actions, so the live API path is untested):
+prompts because no API key exists outside Pulse and Actions, so the live API path is untested).
+Run 1 held three of six: a "loose" fit sent Siberia, Altman and Boulder back to the row's fixed line
+(1945, 1973, 1974), the very leap this ticket exists to remove. The editor rejected that: every story
+has a past. Run 2 changed the rules: the query step reads the Truths first and the row only as a hint
+that may be wrong; fit is judged against the Truths (`direct` or `inferred`) and the row's fit is
+rated separately (`row_fit`); the row-start year is a flag, not a rejection; evidence may be quoted
+from the story's own Truths when they state the origin; a short article is read past its lead.
 
-| Story | Row | Result |
+| Story | Row (row_fit) | Origin, run 2 |
 |---|---|---|
-| Utah AI prescribing | Government | 2024, Utah AI Policy Act (retrieved, direct) |
-| Saudi coalition | America Abroad | 2014, Houthis storm Sanaa (retrieved, direct; matches the editor's example) |
-| Diesel | Climate | 2026, the Iran war, because the Truths say "the war he started in February". The editor's example was June 2025; that article was retrieved too and the editor can prefer it |
-| Siberia lab death | The Bomb | held: Sverdlovsk 1979 proposed, rated loose because the Truths never mention bioweapons |
-| Altman / OpenAI | Work | held: the story is about harm accountability, not work; the row looks wrong |
-| Boulder v. Suncor | Power | held: the 2018 filing is the origin but no retrieved lead states it |
+| Utah AI prescribing | Government (good) | 2024, Utah AI Policy Act, direct |
+| Saudi coalition | America Abroad (good) | 2014, Houthis storm Sanaa, direct (the editor's example) |
+| Diesel | Climate (poor) | 2026, the Iran war, direct: the Truths say "the war he started in February". The editor's example was June 2025; it was retrieved too |
+| Siberia lab death | The Bomb (poor) | 1979, Sverdlovsk anthrax leak, inferred |
+| Altman / OpenAI | Work (poor) | 2025, Raine v. OpenAI, inferred |
+| Boulder v. Suncor | Power (good) | 2018, Boulder County sues, direct, quoted from the Truths |
 
 Known limits: search results drift run to run (the script caches a retrieval and replays it); the
 candidate cap was raised from 8 to 12 after "2026 Iran war" fell out of the list; the pairing step

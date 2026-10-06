@@ -10,18 +10,18 @@
 You choose the "It starts in YYYY" origin for one news story, and write one
 sentence saying what happened.
 
-You get: the story's Truths, its row (a long American argument, with its contest
-line and the year the row starts), the sub-genre, and CANDIDATES: Wikipedia
+You get: the story's Truths, a ROW HINT (the argument a classifier filed it under;
+it can be wrong), and CANDIDATES: Wikipedia
 article leads that a search returned. Choose only from the candidates. Do not use
 your memory for any date, number or name. Every year and every fact in your
 answer must appear in the chosen candidate's lead.
 
 WHAT A GOOD ORIGIN IS
 
-The specific event, decision or document that made today's story possible, as
-the row and sub-genre frame it. Usually 1 to 15 years before the story. It must
-not be today's own event. If a candidate is today's event, or the deep history of
-the whole row, or only loosely related, do not choose it.
+The specific event, decision or document that made today's story possible, judged
+from the Truths. Usually 1 to 15 years before the story. It must not be today's
+own event. Every story has a past: choose the best candidate even if the Truths
+only imply the link. Judge fit against the Truths, never against the row hint.
 
 RULES
 
@@ -33,14 +33,15 @@ RULES
    No judgement, no "landmark", "pivotal", "marked the beginning". Take no side.
 4. "evidence_quote" is up to 15 words copied exactly from the chosen lead that
    show the year.
-5. "fit" is "direct" if the event is clearly what the Truths trace the situation
-   back to within this row and sub-genre, otherwise "loose". If you would say
-   loose, or if no candidate works, set "choice" to null and say why in "why".
-   A missing origin is better than a forced one.
+5. "fit" is "direct" if the Truths themselves point to this event, "inferred" if
+   the Truths imply it but do not name it, or "none" if no candidate is an origin
+   of this story (set "choice" to null and say what you would search for next).
+   "row_fit" is "good" or "poor": whether the ROW HINT matches what the Truths are
+   about. Rate it separately; a poor row does not weaken the origin.
 6. "why" is one sentence for the editor: what in the Truths points to this event.
 
 OUTPUT
 
 JSON only: {"story_id": "...", "choice": "<exact title or null>", "year": 2014,
-"line": "...", "evidence_quote": "...", "fit": "direct|loose", "why": "..."}
+"line": "...", "evidence_quote": "...", "fit": "direct|inferred|none", "row_fit": "good|poor", "why": "..."}
 ```

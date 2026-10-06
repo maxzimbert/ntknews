@@ -9,9 +9,11 @@ finds the proximate origin by retrieval, not memory:
   2. RETRIEVE  code            Wikipedia search -> leads, Wikidata dates,
                                Portal:Current_events day page (date check)
   3. CHOOSE    model (Sonnet)  picks among the retrieved candidates only
-  4. VALIDATE  code            year, quote and numbers must be in the lead;
-                               anything doubtful falls back to the row's own
-                               start_line and is marked so the editor sees it
+  4. VALIDATE  code            year, quote and numbers must be in the lead; an
+                               origin that fails falls back to the row's own
+                               start_line and is marked so the editor sees it.
+                               A story's past is read from its Truths; the row
+                               is only a hint and its fit is rated separately.
 
 Wikipedia is used to find and date the event. It is never a link shown to the
 reader. Nothing here is verified; every origin carries "verified": false.
@@ -82,6 +84,15 @@ def wiki_leads(titles):
             out[p["title"]] = {"title": p["title"], "url": p.get("fullurl"),
                                "lead": re.sub(r"\s+", " ", p["extract"]).strip()[:1800],
                                "qid": (p.get("pageprops") or {}).get("wikibase_item")}
+    # A short lead (a pending case, a stub) rarely states the origin. Read further
+    # into the article so the origin can be quoted from text we retrieved.
+    for t, c in out.items():
+        if len(c["lead"]) < 500:
+            d = get_json(WIKI, {"action": "query", "prop": "extracts", "explaintext": 1,
+                                "exchars": 3500, "titles": t, "redirects": 1, "format": "json"})
+            for p in d.get("query", {}).get("pages", {}).values():
+                if p.get("extract"):
+                    c["lead"] = re.sub(r"\s+", " ", p["extract"]).strip()
     return out
 
 
@@ -170,10 +181,11 @@ def lineage(row):
 
 def story_block(s, row):
     return (f"STORY {s['story_id']}: {s['headline']}\n"
-            f"ROW: {row['title']} (starts {str(row['start_date'])[:4]}). CONTEST: {row.get('milestone')}\n"
+            f"TRUTHS:\n{s['truths']}\n\n"
+            f"ROW HINT (may be wrong): {row['title']}, starts {str(row['start_date'])[:4]}. "
+            f"CONTEST: {row.get('milestone')}\n"
             f"SUB-GENRE: {s.get('subgenre') or '(editor-tagged row, no sub-genre)'}\n"
-            f"ROW LINEAGE (context only): {lineage(row)}\n"
-            f"TRUTHS:\n{s['truths']}")
+            f"ROW LINEAGE (context only): {lineage(row)}")
 
 
 def choose_block(s, row, cands):
@@ -197,35 +209,38 @@ def validate(s, row, cands, ch):
     cand = next((c for c in cands if c["title"] == ch["choice"]), None)
     if not cand:
         return False, ["chosen title was not among the retrieved candidates"], None
-    if ch.get("fit") != "direct":
-        p.append("model rated the fit loose")
+    if ch.get("fit") not in ("direct", "inferred"):
+        p.append("model found no origin among the candidates")
     y, line = ch.get("year"), ch.get("line") or ""
-    lead = norm(cand["lead"])
-    if not isinstance(y, int) or not (y in cand["years_in_lead"] or y == cand["wikidata_year"]):
+    lead, truths = norm(cand["lead"]), norm(s.get("truths"))
+    q = norm(ch.get("evidence_quote"))
+    # Evidence is a verbatim quote from the retrieved article, or from the story's own
+    # Truths when they state the origin themselves (the Truths are cited reporting).
+    src = "lead" if q and q in lead else "truths" if q and q in truths else None
+    text = cand["lead"] if src == "lead" else s.get("truths") or ""
+    if not src:
+        p.append("evidence quote is not verbatim in the lead or the Truths")
+    elif str(y) not in q:
+        p.append("evidence quote does not contain the year")
+    if not isinstance(y, int):
+        p.append(f"year {y} is not an integer")
+    elif src == "lead" and not (y in cand["years_in_lead"] or y == cand["wikidata_year"]):
         p.append(f"year {y} is not stated in the chosen lead")
-    elif isinstance(y, int) and cand["wikidata_year"] and y != cand["wikidata_year"] \
-            and y not in cand["years_in_lead"]:
-        p.append("year disagrees with Wikidata")
     sy = int(str(s.get("story_year") or datetime.now(timezone.utc).year))
     if isinstance(y, int) and y > sy:
         p.append("origin is later than the story")
-    if isinstance(y, int) and y < int(str(row["start_date"])[:4]):
-        p.append(f"origin predates the row ({row['start_date'][:4]}); that is a Beginning, not a bookend")
-    q = norm(ch.get("evidence_quote"))
-    if not q or q not in lead:
-        p.append("evidence quote is not verbatim in the lead")
-    elif str(y) not in q:
-        p.append("evidence quote does not contain the year")
     n = len(line.split())
     if not (12 <= n <= 30):
         p.append(f"line is {n} words, wants 12 to 30")
     if not line.startswith("When "):
         p.append('line does not start with "When"')
-    if re.search(r"[—–]| -- ", line):
+    if re.search(r"[\u2014\u2013]| -- ", line):
         p.append("line has a dash")
+    pool = cand["lead"] + " " + (s.get("truths") or "")
     for num in re.findall(r"\d[\d,.]*", line):
-        if num.strip(",.") not in cand["lead"]:
-            p.append(f"number {num} in the line is not in the lead")
+        if num.strip(",.") not in pool:
+            p.append(f"number {num} in the line is not in the lead or the Truths")
+    ch["_evidence_source"] = src
     return not p, p, cand
 
 
@@ -318,6 +333,7 @@ def main():
         ch = cby.get(s["story_id"])
         ok, problems, cand = validate(s, row, cands, ch)
         entry = {"story_id": s["story_id"], "headline": s["headline"], "row": s["row"],
+                 "row_fit": (qby.get(s["story_id"]) or {}).get("row_fit"),
                  "subgenre": s["subgenre"], "origin_event": qby.get(s["story_id"], {}).get("origin_event"),
                  "queries": qby.get(s["story_id"], {}).get("queries"),
                  "candidates": [c["title"] for c in cands]}
@@ -326,6 +342,9 @@ def main():
             entry["origin"] = {"status": "retrieved", "year": ch["year"], "line": ch["line"],
                                "title": cand["title"], "url": cand["url"],
                                "evidence_quote": ch["evidence_quote"], "why": ch.get("why"),
+                               "fit": ch["fit"], "row_fit": ch.get("row_fit"),
+                               "evidence_source": ch.get("_evidence_source"),
+                               "before_row_start": ch["year"] < int(str(row["start_date"])[:4]),
                                "portal": portal_check(iso, cand["title"]),
                                "verified": False}
         else:
