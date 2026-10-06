@@ -362,6 +362,19 @@ Every story has a past. Rules, in code (`editorial/build_origins.py`, `build_pai
   Beginning) should carry the evidence a reader or critic could check.
 The classifier never reaches a provisional row (no sub-genres); only an editor tag does.
 
+**Lenses stay a separate list from the matrix, for now.** Decided 2026-10-06 with the editor.
+A lens (a country, an alliance, a technology) is a tag on an object like Column E's Issue (Theme),
+but on a different axis: Column E says which American argument an object belongs to; a lens says
+who or what it is about. The objects themselves follow the same rules as every other: primary
+text, a verified outward link, the link checker. What differs is the selection rule: a row's
+Beginnings are spread across time before its start year, a lens's are the three nearest before the
+story's origin. The data should be one thing and the two rules should live in code. A `Lens` column
+in the matrix (blank NTK Row allowed for purely foreign objects; the loader currently skips them) is
+the likely end state, and not done yet: it changes the matrix schema, and `editorial/lenses.json`
+works meanwhile. New lens objects arrive through the candidates workbook with a `Lens` column, so
+they graduate by the path the editor already trusts. The workbook's `Lenses` tab records the
+definitions and how thin each lens is.
+
 ## Open questions, not defaults
 
 These are genuinely unresolved. Don't assume either way.

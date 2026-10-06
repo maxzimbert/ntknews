@@ -50,6 +50,20 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python editorial/build_pairings.py
 
+      # T-0074: find each story's "It starts in" by retrieval (Wikipedia, Wikidata,
+      # the Portal:Current_events day page), then fill provisional rows' start and
+      # Beginnings. Runs after the pairings, which it reads, and before the digest
+      # and pages, which render it. continue-on-error for the same reason as the
+      # pairings step: a failure leaves each card on its row's own "since" line.
+      # openpyxl is for the lens Beginnings, which read the Object Matrix.
+      - name: Find origins
+        continue-on-error: true
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          python -m pip install --quiet openpyxl
+          python editorial/build_origins.py --apply
+
       - name: Build digest
         working-directory: ntk-pulse
         env:
@@ -69,6 +83,6 @@ jobs:
         run: |
           git config user.name "ntk-publish-bot"
           git config user.email "publish@ntknews.org"
-          git add digest/ index.html backstory/ ntk-pulse/data/last-published.json ntk-pulse/data/provisional-rows.json
+          git add digest/ index.html backstory/ ntk-pulse/data/last-published.json ntk-pulse/data/provisional-rows.json editorial/origins.json
           git diff --cached --quiet || git commit -m "publish: $(date -u +%Y-%m-%dT%H:%MZ)"
           git push

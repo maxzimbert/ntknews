@@ -314,6 +314,17 @@ def load_stories(lineup_path, pairings_path):
     return stories, {r["id"]: r for r in bs["rows"]}
 
 
+def safe(fn, default, story_id, step):
+    """One story's failed model call (a timeout, a malformed answer) must not cost the
+    other five their origins: that story falls back to its row's own line."""
+    try:
+        r = fn()
+        return r if isinstance(r, dict) else default
+    except Exception as e:  # noqa: BLE001
+        log(f"  {story_id}: {step} call failed ({type(e).__name__}: {str(e)[:80]}); falling back")
+        return default
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--lineup", default=str(LINEUP))
@@ -338,8 +349,8 @@ def main():
         qs = json.loads(Path(args.queries).read_text())
     elif key:
         sysq = read_system_prompt("origin-queries.md")
-        qs = [call_claude(key, QUERY_MODEL, sysq, story_block(s, rows[s["row"]]), 600)
-              for s in stories]
+        qs = [safe(lambda s=s: call_claude(key, QUERY_MODEL, sysq, story_block(s, rows[s["row"]]), 600),
+                   {"story_id": s["story_id"], "queries": []}, s["story_id"], "queries") for s in stories]
     else:
         sys.exit("no ANTHROPIC_API_KEY and no --queries file; step 1 cannot run")
     qby = {q["story_id"]: q for q in qs}
@@ -362,9 +373,10 @@ def main():
         cs = json.loads(Path(args.choices).read_text())
     elif key:
         sysc = read_system_prompt("origin-choice.md")
-        cs = [call_claude(key, CHOOSE_MODEL, sysc,
-                          choose_block(s, rows[s["row"]], retrieved[s["story_id"]]), 800)
-              for s in stories]
+        cs = [safe(lambda s=s: call_claude(key, CHOOSE_MODEL, sysc,
+                                           choose_block(s, rows[s["row"]], retrieved[s["story_id"]]), 800),
+                   {"story_id": s["story_id"], "choice": None, "fit": "none",
+                    "why": "the model call failed"}, s["story_id"], "choice") for s in stories]
     else:
         wd = Path(args.out).with_name("origins-retrieved.json")
         wd.write_text(json.dumps({s["story_id"]: {"prompt": choose_block(s, rows[s["row"]], retrieved[s["story_id"]])}

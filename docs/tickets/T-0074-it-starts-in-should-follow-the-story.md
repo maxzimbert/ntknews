@@ -146,7 +146,10 @@ rewrites `todays_pairings` and would drop `origin` until `build_origins.py` is w
 2. The TODAY line is no worse than today's.
 3. For a day's stories the editor judges the year and line salient for at least five of six and none
    absurd. The six above, with the origin the editor accepts, become the test set.
-4. Wire into the publish workflow after the pairing step, with the API key from Actions secrets.
+4. Wired 2026-10-06: `pulse-publish.yml` runs `build_origins.py --apply` after the pairing step with the
+   API key from Actions secrets, `continue-on-error`. The plumbing was tested with a stand-in for the
+   model (12 calls for six stories; one story's failed call falls back alone). The real model's answers,
+   and a live Actions run, are not yet tested.
 5. Later: Pulse shows the chosen origin and the rejected proposal before publish and lets the editor
    pick another.
 
