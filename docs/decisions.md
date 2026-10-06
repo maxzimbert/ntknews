@@ -353,7 +353,9 @@ Every story has a past. Rules, in code (`editorial/build_origins.py`, `build_pai
   8 China objects, all American documents; no tech history). Gaps are filled by retrieval proposing
   candidates into the staging workbook, link-checked and approved, so the matrix grows on demand
   and not by an exercise in adding hundreds. Story-specific Beginnings need a page per story,
-  because row pages are shared; that is a decision to take once, with "We are here".
+  because row pages are shared. The editor accepts that cost (2026-10-06): the goal is a system
+  that is defensible and justifiable, and page count is secondary. Every choice (row, origin, each
+  Beginning) should carry the evidence a reader or critic could check.
 The classifier never reaches a provisional row (no sub-genres); only an editor tag does.
 
 ## Open questions, not defaults
