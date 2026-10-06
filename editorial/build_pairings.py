@@ -193,7 +193,9 @@ def draft_row(api_key, name, truths_list, contest_file):
         problems.append("stakes is not two sentences")
     if problems:
         return {}, problems
-    return {"contest": contest, "stakes": stakes}, []
+    ok = json.loads((ROOT / "editorial" / "lenses.json").read_text())
+    lenses = [x for x in (d.get("lenses") or []) if x in ok and not x.startswith("_")]
+    return {"contest": contest, "stakes": stakes, "lenses": lenses}, []
 
 
 def sync_provisional(path, stories, bs, api_key, contest_file, today):
@@ -221,6 +223,7 @@ def sync_provisional(path, stories, bs, api_key, contest_file, today):
             draft, probs = draft_row(api_key, name, [s["truths"]], contest_file)
             r = {"id": rid, "title": name, "status": "provisional", "created": today,
                  "contest": draft.get("contest"), "stakes": draft.get("stakes"),
+                 "lenses": draft.get("lenses") or [],
                  "draft_problems": probs, "stories": []}
             store["rows"].append(r); by_id[rid] = r
             log(f"  provisional row created: {name!r}" + (f" ({'; '.join(probs)})" if probs else ""))
@@ -249,7 +252,8 @@ def sync_provisional(path, stories, bs, api_key, contest_file, today):
             "id": r["id"], "stratum": "provisional", "title": r["title"],
             "start_date": r.get("start_date") or r["created"], "start_line": r.get("start_line"),
             "milestone": r.get("contest") or "", "stakes": r.get("stakes"),
-            "indicator": None, "objects": [], "beginnings": [], "subgenres": [], "roots": [],
+            "indicator": r.get("indicator"), "objects": r.get("objects") or [],
+            "beginnings": r.get("beginnings") or [], "subgenres": [], "roots": [],
             "updated": False, "narrative": None, "instances": [], "photo": None})
     return store
 

@@ -42,7 +42,7 @@ add sub-genres; and who owns the matrix content a new row needs.
 ## Check
 
 The editor decides the category changes; what is checkable is that the provisional-row machinery
-holds its rules. A provisional row never has an indicator, never has sub-genres, is never in
+holds its rules. A provisional row has an indicator only if it is verified with a source and a date, never has sub-genres, is never in
 `backstory-rows.json`, and a provisional pairing points at a row that exists.
 
 ```sh
@@ -55,7 +55,9 @@ store = json.load(open("ntk-pulse/data/provisional-rows.json"))["rows"]
 bad = []
 for r in bs["rows"]:
     if r.get("stratum") == "provisional":
-        if r.get("indicator"): bad.append(r["id"] + ": has an indicator")
+        i = r.get("indicator")
+        if i and not (i.get("verified") is True and i.get("source") and i.get("as_of")):
+            bad.append(r["id"] + ": indicator is not verified with a source and a date")
         if r.get("subgenres"): bad.append(r["id"] + ": has sub-genres")
         if r["id"] in fixed: bad.append(r["id"] + ": is in backstory-rows.json")
 for r in store:

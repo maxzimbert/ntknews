@@ -20,9 +20,10 @@ Write:
    existing ones read: "Whether American power should actively shape the world,
    or husband its strength and stay out." 12 to 30 words.
 
-2. "stakes": TWO sentences, 25 to 55 words in all, saying what readers and
-   the country stand to gain or lose depending on how the argument goes.
-   Plain words, Grade 8 to 10.
+2. "stakes": TWO short sentences, 25 to 55 words in all, in plain words
+   (Grade 8 to 10). Frame it as the open questions the argument turns on, such
+   as whether, when and by whom something should be decided, and who gets the
+   benefit. Do not write about "risks" in the abstract or "who pays".
 
 RULES
 
@@ -36,8 +37,12 @@ RULES
    "seminal".
 4. If the Truths do not support a fair two-sided contest, set "contest" to
    null and say why in "note".
+5. "lenses": which histories this category should draw Beginnings from, chosen
+   from ["tech", "china", "russia"] and only where the stories are mainly about
+   that subject (tech companies or technology policy; China as a central actor;
+   Russia as a central actor). An empty list is fine.
 
 OUTPUT
 
-JSON only: {"contest": "...", "stakes": "...", "note": "<one sentence for the editor>"}
+JSON only: {"contest": "...", "stakes": "...", "lenses": [], "note": "<one sentence for the editor>"}
 ```

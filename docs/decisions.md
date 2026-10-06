@@ -343,8 +343,11 @@ Every story has a past. Rules, in code (`editorial/build_origins.py`, `build_pai
   own line only when nothing is found. All origins stay `verified: false`.
 - *Category*: when no row fits, the editor names a new one in Pulse ("no row fits"). It becomes a
   provisional row (`ntk-pulse/data/provisional-rows.json`), never an entry in `backstory-rows.json`,
-  with a model-drafted contest line and two-sentence stakes that are checked or dropped, no trend
-  line, and the story's own origin as "We are here". A later story with the same name joins it. No
+  with a model-drafted contest line and two-sentence stakes that are checked or dropped, a trend
+  line only if a sourced, verified indicator exists (never a drafted one), Beginnings from the
+  history of its subject (`editorial/lenses.json`: tech, china, russia; the most recent three
+  linked objects per lens before the origin, at least three in all), and the story's own origin as
+  "We are here". A later story with the same name joins it. No
   story in 30 days archives it. Promotion to a real row is never automatic: it needs 3 stories on 2
   days, 3 linked matrix objects, a sourced indicator, and the editor's approval.
 - *Beginnings* (next, not built): drawn from the history of what the story is about, not only the

@@ -3279,7 +3279,7 @@ function bpRowHtml(r){
     h += '<section class="bp-sec" style="text-align:center"><div style="font:700 34px Overpass,sans-serif">' + bsrFormatDuration(bsrDaysSince(r.start_date)) + '</div>'
       + '<div class="bp-src" style="margin-top:8px">SINCE ' + escBsr(r.start_date) + '</div></section>';
   } else {
-    if (r.stratum === 'provisional') h += '<section class="bp-sec"><div class="bp-src">New thread. Drafted from today\u2019s reporting. No trend line yet.</div></section>';
+    if (r.stratum === 'provisional') h += '<section class="bp-sec"><div class="bp-src">New thread. Drafted from today\u2019s reporting.' + (r.indicator ? '' : ' No trend line yet.') + '</div></section>';
     if (r.stakes) h += '<section class="bp-sec"><p class="bp-stakes">' + escBsr(r.stakes) + '</p></section>';
     if (r.indicator) h += bpIndicator(r.indicator);
     var begs = (r.beginnings || []).map(function(b){

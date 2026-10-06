@@ -249,6 +249,53 @@ def fallback(row, why):
             "line": row.get("start_line"), "why_fallback": why, "verified": False}
 
 
+def update_provisional(bs):
+    """Fill a provisional row from its stories' origins (T-0076).
+
+    A provisional row has no fixed start: its "It starts in" and "We are here" are its
+    earliest retrieved origin. Its Beginnings come from the history of what the stories
+    are about, by the row's lenses (editorial/lenses.json), and each Beginning is also in
+    The case. A lens with too few linked objects yields no Beginnings, and is reported.
+    """
+    store_path = ROOT / "ntk-pulse" / "data" / "provisional-rows.json"
+    store = json.loads(store_path.read_text()) if store_path.exists() else {"rows": []}
+    by_store = {r["id"]: r for r in store["rows"]}
+    for r in bs["rows"]:
+        if r.get("stratum") != "provisional":
+            continue
+        os_ = [p["origin"] for p in bs["todays_pairings"]
+               if p["row"] == r["id"] and p.get("origin", {}).get("status") == "retrieved"]
+        if not os_:
+            continue
+        best = min(os_, key=lambda o: o["year"])
+        r["start_date"] = f"{best['year']}-01-01"
+        r["start_line"] = best["line"].rstrip(".")
+        sr = by_store.get(r["id"], {})
+        sr["start_date"], sr["start_line"] = r["start_date"], r["start_line"]
+        lenses = sr.get("lenses") or []
+        if lenses:
+            try:
+                import build_backstory
+                begin, case, rep = build_backstory.lens_select(lenses, best["year"])
+                notes = build_backstory.load_notes()
+            except ImportError as e:
+                log(f"  lens Beginnings skipped ({e})")
+                begin, case, rep, notes = [], [], {}, {}
+            r["beginnings"] = [{"year": o["year"], "line": notes[o["object_id"]]["line"],
+                                "object_id": o["object_id"]} for o in begin
+                               if notes.get(o["object_id"], {}).get("line")]
+            keep = {b["object_id"] for b in r["beginnings"]}
+            r["objects"] = [{"title": o["title"], "author": o["author"], "year": o["year"],
+                             "source": o["source"], "source_url": o["source_url"],
+                             "object_id": o["object_id"],
+                             "about": notes.get(o["object_id"], {}).get("about", "")}
+                            for o in case if o["object_id"] in keep]
+            sr["lens_report"] = rep
+            sr["beginnings"], sr["objects"] = r["beginnings"], r["objects"]
+            log(f"  {r['id']}: {len(r['beginnings'])} lens Beginnings; eligible by lens {rep}")
+    store_path.write_text(json.dumps(store, indent=2, ensure_ascii=False) + "\n")
+
+
 # --- main ---------------------------------------------------------------------------
 
 def load_stories(lineup_path, pairings_path):
@@ -369,24 +416,7 @@ def main():
             if p["story_id"] in by:
                 p["origin"] = by[p["story_id"]]
                 n += 1
-        # A provisional row has no fixed start: its "It starts in" and "We are here"
-        # are its earliest retrieved origin.
-        store_path = ROOT / "ntk-pulse" / "data" / "provisional-rows.json"
-        store = json.loads(store_path.read_text()) if store_path.exists() else {"rows": []}
-        for r in bs["rows"]:
-            if r.get("stratum") != "provisional":
-                continue
-            os_ = [p["origin"] for p in bs["todays_pairings"]
-                   if p["row"] == r["id"] and p.get("origin", {}).get("status") == "retrieved"]
-            if not os_:
-                continue
-            best = min(os_, key=lambda o: o["year"])
-            r["start_date"] = f"{best['year']}-01-01"
-            r["start_line"] = best["line"].rstrip(".")
-            for sr in store["rows"]:
-                if sr["id"] == r["id"]:
-                    sr["start_date"], sr["start_line"] = r["start_date"], r["start_line"]
-        store_path.write_text(json.dumps(store, indent=2, ensure_ascii=False) + "\n")
+        update_provisional(bs)
         Path(args.pairings).write_text(json.dumps(bs, indent=2, ensure_ascii=False) + "\n")
         log(f"applied {n} origins to {args.pairings}")
 

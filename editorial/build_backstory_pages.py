@@ -232,7 +232,7 @@ def render_held(row):
 
     if row.get("stratum") == "provisional":
         # T-0076: a category added from the news, not yet an editorial row.
-        parts.append('<section><div class="src">New thread. Drafted from today\u2019s reporting. No trend line yet.</div></section>')
+        parts.append('<section><div class="src">New thread. Drafted from today\u2019s reporting.' + ('' if row.get("indicator") else ' No trend line yet.') + '</div></section>')
 
     if row.get("stakes"):
         parts.append(f'<section><p class="stakes">{html_esc(row["stakes"])}</p></section>')

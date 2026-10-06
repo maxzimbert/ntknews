@@ -250,6 +250,41 @@ def select(pool, start_date):
     return begin, case
 
 
+LENSES = os.path.join(ROOT, 'editorial', 'lenses.json')
+
+
+def lens_select(lenses, origin_year, per_lens=3, minimum=3):
+    """Beginnings drawn from the history of what a story is about, not from its row.
+
+    For each lens (editorial/lenses.json) take the most recent `per_lens` linked
+    objects dated before the story's origin, from any row, one per document. The
+    most recent, not an even spread: these are the nearest lineage to the story,
+    which is what makes the connection easy to see. Fewer than `minimum` in all
+    means no lens Beginnings; the page shows the origin alone. Returns
+    (beginnings, case, report) where report counts each lens's eligible objects, so
+    a thin lens shows up as a gap to fill.
+    """
+    spec = json.load(open(LENSES))
+    flat = [o for lst in load_objects().values() for o in lst]
+    picked, report = {}, {}
+    for lens in lenses:
+        cfg = spec.get(lens)
+        if not cfg:
+            report[lens] = {'eligible': 0, 'note': 'unknown lens'}
+            continue
+        kws, ex = [k.lower() for k in cfg['title_keywords']], [x.lower() for x in cfg.get('exclude', [])]
+        pool = [o for o in flat if o['source_url'] and o['year'] and o['year'] < str(origin_year)
+                and any(k in o['title'].lower() for k in kws) and not any(x in o['title'].lower() for x in ex)]
+        pool = sorted(one_per_document(pool), key=lambda o: o['_sort'])
+        report[lens] = {'eligible': len(pool)}
+        for o in pool[-per_lens:]:
+            picked[o['object_id']] = o
+    begin = sorted(picked.values(), key=lambda o: o['_sort'])
+    if len(begin) < minimum:
+        return [], [], report
+    return begin, begin, report
+
+
 def load_notes():
     return json.load(open(NOTES)) if os.path.exists(NOTES) else {}
 
