@@ -52,6 +52,11 @@ find "$OUT/digest" "$OUT/backstory" "$OUT/index.html" \( -name '*.html' -o -name
       s#fetch\(\x27/digest/#fetch(\x27'$BASE'/digest/#g;
     '
 
+# Pages runs Jekyll unless told not to. Any .md with front matter and a stray
+# "{{" (a ticket quoting CSS, say) fails the whole build, and nothing here needs
+# Jekyll. Found 2026-10-06: T-0078 broke every staging build.
+touch "$OUT/.nojekyll"
+
 SHA=$(git -C "$WT" rev-parse --short HEAD)
 cd "$OUT"
 git init -q -b main
