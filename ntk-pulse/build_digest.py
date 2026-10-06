@@ -358,6 +358,7 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
     background: var(--cream);
     max-width: 640px;
     margin: 0 auto;
+    padding-bottom: calc(64px + 32px + env(safe-area-inset-bottom));
   }}
 
   a {{ color: var(--blue-deep); }}
@@ -376,7 +377,7 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
   }}
 
 
-  .story-header-logo {{ text-decoration: none; margin-left: auto; display: flex; align-items: center; }}
+  .story-header-logo {{ text-decoration: none; display: flex; align-items: center; }}
   .ntk-logo-img-sm {{ height: 20px; width: auto; display: block; }}
 
   .story-hero-wrap {{ background: var(--dark); }}
@@ -392,6 +393,7 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: 50% 25%;
     display: block;
   }}
 
@@ -538,17 +540,6 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
     padding-top: 20px;
   }}
 
-  .back-footer {{
-    display: block;
-    text-align: center;
-    padding: 28px 20px 40px;
-    font-family: 'Overpass', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--blue-deep);
-    text-decoration: none;
-  }}
-
   /* T-0046: the one place this page points somewhere other than back to
      /digest — same terra used for "worse"/unverified across the app,
      reserved for exactly this kind of "there's more, elsewhere" signal. */
@@ -576,30 +567,41 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
     color: var(--dark);
   }}
 
-  .story-actions {{
+  /* ── ACTION BAR ──────────────────────────────────────────────────
+     Listen · Share · Back. Same bar on the story permalink and the in-app
+     story view (design-system §9). Chrome values are the app's own tab
+     bar (.bottom-nav in digest/index.html); resting colour is brighter
+     than an inactive tab because nothing here is "selected". */
+  .action-bar {{
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 64px;
     display: flex;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 22px;
-    padding: 0 20px;
+    background: #1A1419;
+    border-top: 1px solid rgba(234,217,197,0.1);
+    z-index: 90;
+    padding-bottom: env(safe-area-inset-bottom);
   }}
-  .action-btn {{
+  .action-item {{
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 5px; background: transparent; border: none;
+    cursor: pointer; padding: 8px 4px 10px; min-height: 44px;
+    -webkit-tap-highlight-color: transparent;
+    text-decoration: none;
+    color: rgba(234,217,197,0.6);
+  }}
+  .action-item:active {{ color: var(--blue); }}
+  .action-item span {{
     font-family: 'Overpass', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--white);
-    border: none;
-    border-radius: 2px;
-    padding: 10px 20px;
-    cursor: pointer;
+    font-size: 10px; font-weight: 600;
+    letter-spacing: .1em; text-transform: uppercase;
+    color: inherit;
   }}
-  .listen-btn {{ background: var(--teal); }}
-  .listen-btn.speaking {{
-    background: rgba(38,31,35,0.08);
-    color: var(--teal-deep);
-    border: 1px solid var(--teal-deep);
+  /* Wide screens: the bar keeps to the reading column. */
+  @media (min-width: 700px) {{
+    .action-bar {{ left: 50%; right: auto; width: 640px; transform: translateX(-50%); }}
   }}
-  .share-btn {{ background: var(--blue); }}
 </style>
 </head>
 <body>
@@ -659,14 +661,13 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
 
   <div class="end-mark">&mdash; 30 &mdash;</div>
 
-  <div class="story-actions">
-    <button type="button" class="action-btn listen-btn" id="listenBtn" onclick="toggleListen()">&#128266; Listen</button>
-    <button type="button" class="action-btn share-btn" id="shareBtn" onclick="shareStory()">Share this story</button>
-  </div>
-
   {backstory_link}
 
-  <a class="back-footer" href="../">Back to today's digest</a>
+  <nav class="action-bar" id="actionBar" aria-label="Story actions">
+    <button type="button" class="action-item" id="listenBtn" onclick="toggleListen()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g transform="translate(1.5 0)"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></g></svg><span id="listenLabel">Listen</span></button>
+    <button type="button" class="action-item" id="shareBtn" onclick="shareStory()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 12v6a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-6"/><path d="M15.5 7.5L12 4 8.5 7.5"/><path d="M12 4v11"/></svg><span id="shareLabel">Share</span></button>
+    <a class="action-item" href="../" aria-label="Back to today's digest"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4.5L8 12l8 7.5"/></svg><span>Back</span></a>
+  </nav>
 
 <script>
   // Browser-native text-to-speech — same Web Speech API approach as the
@@ -691,11 +692,15 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
 
   var currentUtterance = null;
 
+  function setListenLabel(t) {{
+    var l = document.getElementById('listenLabel');
+    if (l) l.textContent = t;
+  }}
+
   function resetListenBtn() {{
     var btn = document.getElementById('listenBtn');
     if (!btn) return;
-    btn.textContent = '\\u{{1F50A}} Listen';
-    btn.classList.remove('speaking');
+    setListenLabel('Listen');
   }}
 
   function toggleListen() {{
@@ -705,12 +710,12 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
 
     if (synth.speaking && !synth.paused) {{
       synth.pause();
-      btn.textContent = '▶ Resume';
+      setListenLabel('Resume');
       return;
     }}
     if (synth.paused) {{
       synth.resume();
-      btn.textContent = '⏸ Pause';
+      setListenLabel('Pause');
       return;
     }}
 
@@ -726,8 +731,7 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
     currentUtterance.onend = resetListenBtn;
     currentUtterance.onerror = resetListenBtn;
     synth.speak(currentUtterance);
-    btn.textContent = '⏸ Pause';
-    btn.classList.add('speaking');
+    setListenLabel('Pause');
   }}
 
   window.addEventListener('pagehide', function() {{
@@ -735,14 +739,40 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
   }});
 
   // Same share pattern as the app's share bar (shareStory() in
-  // digest/index.html): the native share sheet where it's available, an
-  // alert with the URL as a fallback.
+  // digest/index.html): the native share sheet where it's available, a
+  // copied link where it isn't (most desktop browsers).
+  function copyShareLink(url, title) {{
+    var done = function() {{
+      var l = document.getElementById('shareLabel');
+      if (!l) return;
+      l.textContent = 'Copied';
+      setTimeout(function() {{ l.textContent = 'Share'; }}, 1800);
+    }};
+    var legacy = function() {{
+      var ta = document.createElement('textarea');
+      ta.value = url;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      var ok = false;
+      try {{ ok = document.execCommand('copy'); }} catch (e) {{}}
+      document.body.removeChild(ta);
+      if (ok) done(); else alert('Share: ' + title + '\\n\\n' + url);
+    }};
+    if (navigator.clipboard && navigator.clipboard.writeText) {{
+      navigator.clipboard.writeText(url).then(done, legacy);
+    }} else {{
+      legacy();
+    }}
+  }}
+
   function shareStory() {{
     var shareUrl = location.href;
     if (navigator.share) {{
       navigator.share({{ title: STORY_TEXT.headline, text: STORY_TEXT.lede, url: shareUrl }});
     }} else {{
-      alert('Share: ' + STORY_TEXT.headline + '\\n\\n' + shareUrl);
+      copyShareLink(shareUrl, STORY_TEXT.headline);
     }}
   }}
 </script>
