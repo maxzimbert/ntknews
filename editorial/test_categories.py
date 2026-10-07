@@ -128,6 +128,16 @@ def main():
     c, p = run(x)
     check("a system-verified indicator whose evidence holds both figures is kept", c["indicator"] is not None, p)
 
+    import build_pairings as BP
+    check("model JSON: trailing text after the object is ignored", BP.parse_json_loose('{"a": 1}\n\nNote: I chose this because...') == {"a": 1}, None)
+    check("model JSON: a fence and a second object: the first wins", BP.parse_json_loose('```json\n{"a": 1}\n```\n{"b": 2}') == {"a": 1}, None)
+    check("model JSON: an array still parses", BP.parse_json_loose('[{"x": 1}]') == [{"x": 1}], None)
+    try:
+        BP.parse_json_loose("I could not do that.")
+        check("model JSON: no JSON at all raises, saying what it saw", False, None)
+    except ValueError as e:
+        check("model JSON: no JSON at all raises, saying what it saw", "I could not do that" in str(e), e)
+
     x = good(); x["beginnings"].reverse(); x["objects"].reverse()
     c, p = run(x)
     yrs = [b["year"] for b in c["beginnings"]]

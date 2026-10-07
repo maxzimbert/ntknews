@@ -47,7 +47,7 @@ QUERY_MODEL = "claude-haiku-4-5-20251001"
 CHOOSE_MODEL = "claude-sonnet-5"
 UA = "ntknews-origins/1.0 (https://ntknews.org; editorial research)"
 WIKI = "https://en.wikipedia.org/w/api.php"
-MAX_CANDIDATES = 12
+MAX_CANDIDATES = 14
 
 
 def log(msg):
@@ -204,6 +204,8 @@ def norm(s):
 def validate(s, row, cands, ch):
     """Return (ok, problems, candidate). Hard problems send the story to fallback."""
     p = []
+    if ch and str(ch.get("choice") or "").strip().lower() in ("", "none", "null", "n/a"):
+        ch = dict(ch, choice=None)           # the real model answers the string "none" as often as null
     if not ch or not ch.get("choice"):
         return False, [f"no origin chosen: {(ch or {}).get('why', 'no answer')}"], None
     cand = next((c for c in cands if c["title"] == ch["choice"]), None)
@@ -220,10 +222,10 @@ def validate(s, row, cands, ch):
     text = cand["lead"] if src == "lead" else s.get("truths") or ""
     if not src:
         p.append("evidence quote is not verbatim in the lead or the Truths")
-    elif str(y) not in q:
-        p.append("evidence quote does not contain the year")
     if not isinstance(y, int):
         p.append(f"year {y} is not an integer")
+    elif src == "truths" and str(y) not in text:
+        p.append(f"year {y} is not stated in the Truths")
     elif src == "lead" and not (y in cand["years_in_lead"] or y == cand["wikidata_year"]):
         p.append(f"year {y} is not stated in the chosen lead")
     sy = int(str(s.get("story_year") or datetime.now(timezone.utc).year))
@@ -400,6 +402,48 @@ def main():
         o = entry["origin"]
         log(f"  {o['status'].upper():9} {s['story_id']} {o['year']}  {o.get('line') or ''}"
             + (f"   [{o.get('why_fallback')}]" if o["status"] == "fallback" else ""))
+
+    # 5 RETRY. The first real run (2026-10-07) showed the weak link is retrieval: a query that does not
+    # name the story's own actors returns unrelated articles, and the model then picks the nearest one
+    # (Utah's AI sandbox became the EU AI Act). A story whose origin is a fallback or only inferred
+    # gets one more round, with the first round's titles shown so the new queries differ.
+    if key and not args.queries and not args.choices:
+        sysq, sysc = read_system_prompt("origin-queries.md"), read_system_prompt("origin-choice.md")
+        for e in out:
+            if e["origin"]["status"] == "retrieved" and e["origin"].get("fit") == "direct":
+                continue
+            s = next(x for x in stories if x["story_id"] == e["story_id"]); row = rows[s["row"]]
+            prev = retrieved[s["story_id"]]
+            extra = ("\n\nPREVIOUS ATTEMPT. Your queries " + json.dumps(e.get("queries")) + " returned these article titles: "
+                     + "; ".join(c["title"] for c in prev)
+                     + ". None was clearly the origin. Write 3 NEW queries, using the specific names (state, agency, law, "
+                       "person, company, place) that the Truths themselves use. Do not repeat the earlier queries.")
+            q2 = safe(lambda: call_claude(key, QUERY_MODEL, sysq, story_block(s, row) + extra, 600),
+                      {"queries": []}, s["story_id"], "retry queries")
+            extra_c = retrieve(q2.get("queries") or []) if q2.get("queries") else []
+            have = {c["title"] for c in prev}
+            cands2 = prev + [c for c in extra_c if c["title"] not in have]
+            if len(cands2) == len(prev):
+                continue
+            ch2 = safe(lambda: call_claude(key, CHOOSE_MODEL, sysc, choose_block(s, row, cands2), 800),
+                       {"story_id": s["story_id"], "choice": None, "fit": "none", "why": "the model call failed"},
+                       s["story_id"], "retry choice")
+            ok2, problems2, cand2 = validate(s, row, cands2, ch2)
+            rank = lambda o: 0 if o["status"] != "retrieved" else 3 if o.get("fit") == "direct" else 2
+            if ok2:
+                new = {"status": "retrieved", "year": ch2["year"], "line": ch2["line"], "title": cand2["title"],
+                       "url": cand2["url"], "evidence_quote": ch2["evidence_quote"], "why": ch2.get("why"),
+                       "fit": ch2["fit"], "row_fit": ch2.get("row_fit"), "evidence_source": ch2.get("_evidence_source"),
+                       "before_row_start": ch2["year"] < int(str(row["start_date"])[:4]),
+                       "portal": portal_check(cand2["wikidata_date"], cand2["title"]), "verified": False, "round": 2}
+                if rank(new) > rank(e["origin"]):
+                    e["origin"] = new
+                    e["queries_round2"] = q2.get("queries")
+                    e["candidates"] = [c["title"] for c in cands2]
+                    e.pop("rejected", None)
+                    log(f"  RETRY     {s['story_id']} -> {new['year']}  {new['line']}")
+                    continue
+            log(f"  RETRY     {s['story_id']}: no better origin ({'; '.join(problems2)[:120] if not ok2 else 'not better'})")
 
     Path(args.out).write_text(json.dumps(
         {"generated": datetime.now(timezone.utc).isoformat(timespec="seconds"),

@@ -21,8 +21,10 @@ what the story is really about, and use the hint only to choose between
 candidate origins that the Truths support equally. If the hint does not fit the
 Truths, ignore it.
 
-Your job: write 2 or 3 Wikipedia search queries that would find the article about
-that originating event.
+Your job: write 4 Wikipedia search queries that would find the right articles:
+two for the event the Truths trace the situation back to, and two for an earlier
+incident or precedent that this situation repeats or answers (a previous lab
+accident, an earlier ban, an earlier ruling, an earlier war).
 
 RULES
 
@@ -33,13 +35,18 @@ RULES
    Truths only imply it. Prefer an event the Truths themselves point to; otherwise
    the best-known event that made this kind of story possible.
 3. Never query today's event itself. Query what made it possible.
-4. Queries are plain keywords, 2 to 7 words, the way a person would search
-   Wikipedia. No quotation marks, no years unless the Truths give one.
+4. Write each query as your best guess at the TITLE of the Wikipedia article, with
+   the proper names in it: "Utah Artificial Intelligence Policy Act", "Suncor Energy v.
+   Boulder County", "Sverdlovsk anthrax leak". Plain keywords, 2 to 7 words, no
+   quotation marks. No quotation marks, no years unless the Truths give one. Put the
+   story's own proper nouns (the state, agency, law, court, company or place the
+   Truths name) in at least two of the three queries: a query with no name in it
+   returns general articles, not this story's origin.
 5. Take no side. Do not rely on your memory for dates or facts: you are only
    choosing what to search for.
 
 OUTPUT
 
 JSON only, one object: {"story_id": "...", "origin_event": "<one phrase naming
-the event you are looking for>", "row_fit": "good|poor", "queries": ["...", "..."]}
+the event you are looking for>", "row_fit": "good|poor", "queries": ["...", "...", "...", "..."]}
 ```
