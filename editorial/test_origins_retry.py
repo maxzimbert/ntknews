@@ -43,4 +43,17 @@ o = json.load(open(T / "o.json"))["origins"][0]["origin"]
 ok = o["status"] == "retrieved" and o["title"] == RIGHT["title"] and o.get("round") == 2 and o["fit"] == "direct"
 print(("ok   " if ok else "FAIL ") + "a guess in round one is replaced by the direct origin found in round two", o if not ok else "")
 shutil.rmtree(T)
-sys.exit(0 if ok else 1)
+
+# the real model answers the string "none", and quotes a sentence that does not repeat the year
+row = {"title": "America Abroad", "start_date": "1975-04-30", "start_line": "x", "milestone": "m"}
+story = {"story_id": "s", "story_year": "2026", "truths": "The coalition intervened in Yemen.", "headline": "h", "row": "america-abroad", "subgenre": None}
+lead = "On 26 March 2015, Saudi Arabia, leading a coalition of nine countries, staged a military intervention in Yemen at the request of its president."
+yem = cand("Saudi-led intervention in the Yemeni civil war", 2015, lead)
+line = "When Saudi Arabia led a coalition of nine countries to intervene militarily in Yemen in March 2015 at the president's request."
+good_ch = {"choice": yem["title"], "year": 2015, "line": line, "evidence_quote": "Saudi Arabia, leading a coalition of nine countries, staged a military intervention", "fit": "direct"}
+ok2, p2, _ = bo.validate(story, row, [yem], good_ch)
+none_ch = {"choice": "none", "year": 2024, "line": "When something happened in 2024 at some length of words here.", "evidence_quote": "x", "fit": "none", "why": "nothing retrieved"}
+ok3, p3, _ = bo.validate(story, row, [yem], none_ch)
+c2 = ok2 and "no origin chosen" in " ".join(p3) and not ok3
+print(("ok   " if c2 else "FAIL ") + "a quote that does not repeat the year is accepted; the string \"none\" is no choice", p2, p3)
+sys.exit(0 if (ok and c2) else 1)

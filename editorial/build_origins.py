@@ -47,7 +47,7 @@ QUERY_MODEL = "claude-haiku-4-5-20251001"
 CHOOSE_MODEL = "claude-sonnet-5"
 UA = "ntknews-origins/1.0 (https://ntknews.org; editorial research)"
 WIKI = "https://en.wikipedia.org/w/api.php"
-MAX_CANDIDATES = 12
+MAX_CANDIDATES = 14
 
 
 def log(msg):
@@ -204,6 +204,8 @@ def norm(s):
 def validate(s, row, cands, ch):
     """Return (ok, problems, candidate). Hard problems send the story to fallback."""
     p = []
+    if ch and str(ch.get("choice") or "").strip().lower() in ("", "none", "null", "n/a"):
+        ch = dict(ch, choice=None)           # the real model answers the string "none" as often as null
     if not ch or not ch.get("choice"):
         return False, [f"no origin chosen: {(ch or {}).get('why', 'no answer')}"], None
     cand = next((c for c in cands if c["title"] == ch["choice"]), None)
@@ -220,10 +222,10 @@ def validate(s, row, cands, ch):
     text = cand["lead"] if src == "lead" else s.get("truths") or ""
     if not src:
         p.append("evidence quote is not verbatim in the lead or the Truths")
-    elif str(y) not in q:
-        p.append("evidence quote does not contain the year")
     if not isinstance(y, int):
         p.append(f"year {y} is not an integer")
+    elif src == "truths" and str(y) not in text:
+        p.append(f"year {y} is not stated in the Truths")
     elif src == "lead" and not (y in cand["years_in_lead"] or y == cand["wikidata_year"]):
         p.append(f"year {y} is not stated in the chosen lead")
     sy = int(str(s.get("story_year") or datetime.now(timezone.utc).year))
