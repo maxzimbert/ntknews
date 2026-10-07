@@ -34,7 +34,10 @@ RULES
    the best-known event that made this kind of story possible.
 3. Never query today's event itself. Query what made it possible.
 4. Queries are plain keywords, 2 to 7 words, the way a person would search
-   Wikipedia. No quotation marks, no years unless the Truths give one.
+   Wikipedia. No quotation marks, no years unless the Truths give one. Put the
+   story's own proper nouns (the state, agency, law, court, company or place the
+   Truths name) in at least two of the three queries: a query with no name in it
+   returns general articles, not this story's origin.
 5. Take no side. Do not rely on your memory for dates or facts: you are only
    choosing what to search for.
 

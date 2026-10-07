@@ -33,12 +33,19 @@ RULES
    No judgement, no "landmark", "pivotal", "marked the beginning". Take no side.
 4. "evidence_quote" is up to 15 words copied exactly from the chosen lead that
    show the year.
-5. "fit" is "direct" if the Truths themselves point to this event, "inferred" if
+5. The origin must involve the same actor, place or institution as the story (the same state,
+   country, agency, court or company), unless the Truths themselves name an outside event as the
+   cause. An article about a different state or country, or a general overview of a whole field,
+   is not this story's origin: it is at most "inferred", and if nothing better was retrieved,
+   answer "none" and say what you would search for next. An agency's or company's founding is
+   not an origin unless the story is about its founding; prefer the earlier incident, law or
+   decision that this situation repeats or answers.
+6. "fit" is "direct" if the Truths themselves point to this event, "inferred" if
    the Truths imply it but do not name it, or "none" if no candidate is an origin
    of this story (set "choice" to null and say what you would search for next).
    "row_fit" is "good" or "poor": whether the ROW HINT matches what the Truths are
    about. Rate it separately; a poor row does not weaken the origin.
-6. "why" is one sentence for the editor: what in the Truths points to this event.
+7. "why" is one sentence for the editor: what in the Truths points to this event.
 
 OUTPUT
 
