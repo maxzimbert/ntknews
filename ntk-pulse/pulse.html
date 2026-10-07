@@ -1405,6 +1405,18 @@ function applySourceEdit(c, oid, f){
   c.approved_objects=(c.approved_objects||[]).filter(x=>x!==oid);
   return {ok:true, id:cid};
 }
+// The key under which a typed-but-unsent field is remembered across a redraw. Every field in one object's
+// row shares the row, so the field's own name must be part of the key (a bug found in the browser: five
+// fields in the edit-source form all got the key "about:<id>" and one value overwrote the rest).
+function catFieldKey(el){
+  const row=el.closest && el.closest('[data-oid]'), cl=el.classList;
+  if (el.id) return el.id;
+  if (row && cl.contains('cat-src-f')) return 'src:'+row.dataset.oid+':'+el.dataset.f;
+  if (row && cl.contains('cat-line')) return 'line:'+row.dataset.oid;
+  if (row && cl.contains('cat-about')) return 'about:'+row.dataset.oid;
+  if (cl.contains('cat-ind')) return 'ind:'+el.dataset.k;
+  return null;
+}
 /* CATS:END */
 
 const CAT_MAXTOK = 2400;
@@ -1803,14 +1815,6 @@ function catEditorHtml(c){
 }
 // Something else in Pulse (a story generating in Lineup, say) calls render() while you are typing here.
 // Capture what you have typed and where your cursor is, and put it back after the tab redraws.
-function catFieldKey(el){
-  const row=el.closest && el.closest('[data-oid]');
-  if (el.id) return el.id;
-  if (row) return (el.classList.contains('cat-line')?'line:':'about:')+row.dataset.oid;
-  if (el.classList.contains('cat-ind')) return 'ind:'+el.dataset.k;
-  if (el.classList.contains('cat-src-f') && row) return 'src:'+row.dataset.oid+':'+el.dataset.f;
-  return null;
-}
 const CAT_FIELDS='textarea, input[type=text], input:not([type])';
 function catCaptureInputs(){
   const ed=document.getElementById('cat-editor'); if (!ed) return null;

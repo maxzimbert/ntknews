@@ -7,7 +7,7 @@ const root = path.resolve(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'ntk-pulse/pulse.html'), 'utf8');
 const m = html.match(/\/\* CATS:BEGIN \*\/([\s\S]*?)\/\* CATS:END \*\//);
 if (!m) { console.error('FAIL: CATS block not found'); process.exit(1); }
-const L = new Function(m[1] + '; return {validateCat, selectBeginnings, pickBeginnings, lensSupported, catTextProblems, verifyIndicator, catSentences, verifyFoundObject, applySourceEdit};')();
+const L = new Function(m[1] + '; return {validateCat, selectBeginnings, pickBeginnings, lensSupported, catTextProblems, verifyIndicator, catSentences, verifyFoundObject, applySourceEdit, catFieldKey};')();
 const poolDoc = JSON.parse(fs.readFileSync(path.join(root, 'ntk-pulse/data/backstory-pool.json'), 'utf8'));
 const poolBy = Object.fromEntries(poolDoc.objects.map(o => [o.id, o]));
 const spec = JSON.parse(fs.readFileSync(path.join(root, 'editorial/lenses.json'), 'utf8'));
@@ -98,6 +98,10 @@ x = good(); ed = L.applySourceEdit(x, pid('PATRIOT'), { title: 'x', year: '2001'
 check('edit source: Wikipedia is refused and nothing changes', !ed.ok && x.custom_objects === undefined && x.objects.some(o => o.object_id === pid('PATRIOT')), ed);
 ed = L.applySourceEdit(x, pid('PATRIOT'), { title: 'USA PATRIOT Act', year: '', url: 'https://www.govinfo.gov/x' });
 check('edit source: a missing year is refused', !ed.ok, ed);
+const fake = (cls, extra) => Object.assign({ id: '', classList: { contains: c => cls.includes(c) }, dataset: {}, closest: sel => (sel === '[data-oid]' ? { dataset: { oid: 'obj1' } } : null) }, extra);
+const keys = ['title', 'author', 'year', 'source', 'url'].map(f => L.catFieldKey(fake(['cat-src-f'], { dataset: { f } })));
+check('catFieldKey: the five edit-source fields of one object get five different keys', new Set(keys).size === 5, keys);
+check('catFieldKey: a Beginning line and an About in the same row differ', L.catFieldKey(fake(['cat-line'])) !== L.catFieldKey(fake(['cat-about'])), null);
 check('catSentences counts a last sentence with no full stop', L.catSentences('Whether A, or B') === 1 && L.catSentences('One. Two') === 2, null);
 x = good(); x.beginnings[1].line = x.beginnings[0].line; r = run(x);
 check('two Beginnings with the same line: the second is dropped', r.clean.beginnings.length === 3 && r.problems.some(p => p.includes('same line')), r.problems);
