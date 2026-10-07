@@ -14,6 +14,8 @@ Record shape (all text fields carry who wrote them in `by`: "model" or "editor")
   contest       one "Whether X, or Y" sentence
   stakes        two short sentences
   lenses        subject histories this category draws Beginnings from (editorial/lenses.json)
+  subgenres     American arguments (sub-genres of the fixed rows) it also draws Beginnings from
+  custom_objects [{id, title, author, year, source, url}] objects the editor added by link
   indicator     a sourced, verified then/now figure, or null
   objects       [{object_id, ...}] the primary sources, each from the pool
   beginnings    [{object_id, year, line}] dated lineage, each also in objects
@@ -33,6 +35,7 @@ category's lenses (unless the editor put it there) and be dated before the origi
 """
 import re
 
+DENY_HOSTS = ("wikipedia.org", "amazon.", "abebooks.", "ebay.", "goodreads.", "scribd.", "studocu.", "coursehero.", "quizlet.", "unz.com")
 BANNED = ["this document", "this reflects", "underscores", "highlights", "serves as",
           "a reminder that", "pivotal", "landmark", "groundbreaking", "seminal"]
 SENT = re.compile(r"[.!?](?:[\"')\]]*)(?:\s|$)")
@@ -64,14 +67,17 @@ def text_problems(label, text, lo, hi, sentences=None, starts=None):
         p.append(f"{label} has a dash")
     if any(b in text.lower() for b in BANNED):
         p.append(f"{label} has a banned phrase")
-    if sentences is not None and len(SENT.findall(text)) != sentences:
+    norm = text.strip()
+    if norm and norm[-1] not in '.!?"\')]':
+        norm += "."            # a last sentence with no full stop is still a sentence
+    if sentences is not None and len(SENT.findall(norm)) != sentences:
         p.append(f"{label} is not {sentences} sentence{'s' if sentences != 1 else ''}")
     if starts and not text.startswith(starts):
         p.append(f'{label} does not start with "{starts}"')
     return p
 
 
-def validate(cat, pool, spec, story_texts, origin_year=None):
+def validate(cat, pool, spec, story_texts, origin_year=None, vocab=None):
     """Return (clean_category, problems). `pool` maps object id to a pool entry from
     ntk-pulse/data/backstory-pool.json; `story_texts` is the text of the stories filed
     under this category (may be empty)."""
@@ -108,6 +114,34 @@ def validate(cat, pool, spec, story_texts, origin_year=None):
         else:
             keep.append(lens)
     c["lenses"] = keep
+    sg_keep = []
+    for sg in c.get("subgenres") or []:
+        if vocab is not None and sg not in vocab:
+            problems.append(f"unknown sub-genre {sg!r}")
+        else:
+            sg_keep.append(sg)
+    c["subgenres"] = sg_keep
+
+    # objects the editor added by link become pool entries of their own
+    pool = dict(pool)
+    for cu in c.get("custom_objects") or []:
+        url = (cu.get("url") or "").strip()
+        host = re.sub(r"^https?://([^/]+).*$", r"\1", url).lower()
+        why = None
+        if not url.startswith("https://"):
+            why = "a link must start with https://"
+        elif any(d in host for d in DENY_HOSTS):
+            why = f"{host} is not a primary source"
+        elif not re.fullmatch(r"\d{3,4}", str(cu.get("year") or "")):
+            why = "year must be a number"
+        elif not (cu.get("title") or "").strip():
+            why = "missing title"
+        if why:
+            problems.append(f"added object {cu.get('title')!r}: {why}"); continue
+        cid = cu.get("id") or "custom-" + re.sub(r"[^a-z0-9]+", "-", cu["title"].lower())[:60]
+        pool[cid] = {"id": cid, "pool": "custom", "approved": True, "title": cu["title"].strip(), "author": cu.get("author") or "",
+                     "year": str(cu["year"]), "source": cu.get("source") or host, "url": url, "lenses": [], "subgenre": "",
+                     "link_status": "unchecked", "about": "", "line": ""}
 
     # objects
     approved = set(c.get("approved_objects") or [])
@@ -144,8 +178,10 @@ def validate(cat, pool, spec, story_texts, origin_year=None):
             problems.append(f"Beginning {oid!r} is not among the category's objects"); continue
         if origin_year and str(o["year"]) >= str(origin_year):
             problems.append(f"Beginning {o['title']!r} is dated {o['year']}, not before the origin"); continue
-        if by.get("lenses") != "editor" and b.get("by") != "editor" and keep and not set(o["lenses"]) & set(keep):
-            problems.append(f"Beginning {o['title']!r} belongs to none of the category's lenses {keep}"); continue
+        subjects = set(keep) | set(sg_keep)
+        if by.get("lenses") != "editor" and b.get("by") != "editor" and subjects and o["pool"] != "custom" \
+                and not (set(o["lenses"]) & set(keep) or pool[o["object_id"]].get("subgenre") in sg_keep):
+            problems.append(f"Beginning {o['title']!r} belongs to none of the category's lenses or sub-genres"); continue
         line = (b.get("line") or "").strip()
         if line.lower() in lines_seen:
             problems.append(f"Beginning {o['title']!r}: same line as another Beginning"); continue
@@ -160,9 +196,75 @@ def validate(cat, pool, spec, story_texts, origin_year=None):
     # rule from T-0069: a Beginning is also in The case (already: begins from objects)
 
     ind = c.get("indicator")
-    if ind and not (ind.get("verified") is True and ind.get("source") and ind.get("source_url")
-                    and ind.get("as_of") and ind.get("label") and ind.get("then_value") and ind.get("now_value")):
-        problems.append("indicator needs a label, two values, a source with a link, a date, and the editor's check")
-        c["indicator"] = None
+    if ind:
+        need = ("label", "then_value", "now_value", "source", "source_url", "as_of")
+        miss = [k for k in need if not str(ind.get(k) or "").strip()]
+        host = re.sub(r"^https?://([^/]+).*$", r"\1", str(ind.get("source_url") or "")).lower()
+        if miss:
+            problems.append("indicator is missing " + ", ".join(miss)); c["indicator"] = None
+        elif ind.get("verified") is not True:
+            problems.append("indicator is not verified"); c["indicator"] = None
+        elif any(d in host for d in DENY_HOSTS):
+            problems.append(f"indicator source {host} is not a primary source"); c["indicator"] = None
+        elif ind.get("verified_by") == "system":
+            ev = " ".join(ind.get("evidence") or [])
+            nums = [re.sub(r"[^0-9.]", "", str(ind[k])) for k in ("then_value", "now_value")]
+            if not ev or any(n and n not in ev for n in nums):
+                problems.append("indicator: the system's evidence does not contain both figures"); c["indicator"] = None
     c["by"] = by
+    return c, problems
+
+
+# --- live checks (CI only: they use the network) ---------------------------------------
+
+import html as _html
+import urllib.error
+import urllib.request
+
+_UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Safari/605.1.15"
+
+
+def _fetch(url, limit=700000):
+    """(status, text). status 0 means the host could not be reached at all."""
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": _UA})
+        with urllib.request.urlopen(req, timeout=25) as r:
+            body = r.read(limit)
+            if "pdf" in r.headers.get("content-type", "") or body[:4] == b"%PDF":
+                return r.status, ""
+            return r.status, _html.unescape(re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", re.sub(r"<(script|style).*?</\1>", "", body.decode("utf-8", "ignore"), flags=re.S))))
+    except urllib.error.HTTPError as e:
+        return e.code, ""
+    except Exception:  # noqa: BLE001
+        return 0, ""
+
+
+def live_checks(c):
+    """Links the editor added are checked, and an indicator's figures are looked for on
+    its source page. Only a definite failure drops something: a host that refuses scripts
+    (403, 429, a challenge page) leaves the item in, as the link checker does."""
+    problems = []
+    keep = []
+    for o in c.get("objects") or []:
+        if o.get("pool") == "custom":
+            st, _ = _fetch(o["source_url"])
+            if st in (404, 410) or st == 0:
+                problems.append(f"added object {o['title']!r}: the link does not load (status {st})")
+                continue
+        keep.append(o)
+    dropped = {o["object_id"] for o in c.get("objects") or []} - {o["object_id"] for o in keep}
+    c["objects"] = keep
+    c["beginnings"] = [b for b in c.get("beginnings") or [] if b["object_id"] not in dropped]
+    ind = c.get("indicator")
+    if ind:
+        st, text = _fetch(ind["source_url"])
+        if st == 200 and text:
+            nums = [re.sub(r"[^0-9.]", "", str(ind[k])) for k in ("then_value", "now_value")]
+            gone = [n for n in nums if n and n not in re.sub(r"[^0-9.%\s]", "", text) and n not in text]
+            if gone:
+                problems.append(f"indicator: {', '.join(gone)} not found on {ind['source_url']}")
+                c["indicator"] = None
+        elif st in (404, 410):
+            problems.append(f"indicator source returns {st}")
+            c["indicator"] = None
     return c, problems

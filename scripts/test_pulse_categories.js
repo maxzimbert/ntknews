@@ -7,7 +7,7 @@ const root = path.resolve(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'ntk-pulse/pulse.html'), 'utf8');
 const m = html.match(/\/\* CATS:BEGIN \*\/([\s\S]*?)\/\* CATS:END \*\//);
 if (!m) { console.error('FAIL: CATS block not found'); process.exit(1); }
-const L = new Function(m[1] + '; return {validateCat, selectBeginnings, pickBeginnings, lensSupported, catTextProblems};')();
+const L = new Function(m[1] + '; return {validateCat, selectBeginnings, pickBeginnings, lensSupported, catTextProblems, verifyIndicator, catSentences};')();
 const poolDoc = JSON.parse(fs.readFileSync(path.join(root, 'ntk-pulse/data/backstory-pool.json'), 'utf8'));
 const poolBy = Object.fromEntries(poolDoc.objects.map(o => [o.id, o]));
 const spec = JSON.parse(fs.readFileSync(path.join(root, 'editorial/lenses.json'), 'utf8'));
@@ -26,7 +26,8 @@ const good = () => ({
     { object_id: pid('PATRIOT'), line: "Congress passed the USA PATRIOT Act soon after the terrorist attacks of that year, widening the government's powers to investigate and watch people." },
     { object_id: pid('Executive Order 14110'), line: 'President Biden ordered the first broad federal rules on the safety and testing of artificial intelligence systems.' }]
 });
-const run = (c, texts = [ALTMAN], origin = 2025) => L.validateCat(c, poolBy, spec, texts, origin);
+const VOCAB = new Set(poolDoc.vocab.subgenres.map(g => g.name));
+const run = (c, texts = [ALTMAN], origin = 2025) => L.validateCat(c, poolBy, spec, texts, origin, VOCAB);
 let fails = 0;
 const check = (name, ok, detail) => { console.log((ok ? 'ok   ' : 'FAIL ') + name + (ok ? '' : '  ' + JSON.stringify(detail))); if (!ok) fails++; };
 let r = run(good());
@@ -53,6 +54,26 @@ x = good(); x.indicator = { label: 'Oppose a data center nearby', then_value: '4
 check('an indicator with no source link is dropped', r.clean.indicator === null, r.problems);
 x.indicator.source_url = 'https://heatmap.news/daily/data-center-opposition-poll-collapse'; r = run(x);
 check('a fully sourced, checked indicator is kept', r.clean.indicator !== null, r.problems);
+x = good(); x.contest = x.contest.replace(/\.$/, ''); r = run(x);
+check('a contest with no final full stop still counts as one sentence', r.clean.contest !== '' && !r.problems.some(p => p.includes('sentence')), r.problems);
+const war = poolDoc.objects.find(o => o.pool === 'matrix' && o.subgenre === 'military intervention').id;
+x = { id: 'p-war', title: 'War powers', status: 'approved', lenses: [], subgenres: ['military intervention', 'no such sub-genre'], by: { contest: 'editor', stakes: 'editor' }, contest: 'Whether presidents may start wars alone, or only with Congress.', stakes: 'Who decides, and when, is still open.', objects: [{ object_id: war }], beginnings: [{ object_id: war, line: 'A president asked Congress to approve the use of American force abroad, and Congress took up the request.' }] };
+r = L.validateCat(x, poolBy, spec, [], 2025, VOCAB);
+check('a category can draw Beginnings from a sub-genre; an unknown sub-genre is dropped', r.clean.subgenres.join() === 'military intervention' && r.clean.beginnings.length === 1 && r.problems.some(p => p.includes('sub-genre')), r);
+x = good(); x.custom_objects = [{ id: 'custom-x', title: 'A speech', author: 'Someone', year: '1998', source: 'National Archives', url: 'https://www.archives.gov/x' }];
+x.objects.push({ object_id: 'custom-x', by: 'editor', about: 'A speech given in 1998.' }); x.beginnings.push({ object_id: 'custom-x', line: 'Someone gave a speech about the new technology.', by: 'editor' }); r = run(x);
+check('an object added by link is kept and can be a Beginning', r.clean.objects.some(o => o.object_id === 'custom-x') && r.clean.beginnings.some(b => b.object_id === 'custom-x'), r.problems);
+x.custom_objects[0].url = 'https://en.wikipedia.org/wiki/X'; r = run(x);
+check('an added object on Wikipedia is refused', !r.clean.objects.some(o => o.object_id === 'custom-x') && r.problems.some(p => p.includes('primary source')), r.problems);
+x = good(); x.indicator = { label: 'L', then_value: '42%', now_value: '75%', source: 'S', source_url: 'https://example.org/p', as_of: 'August 2026', verified: true, verified_by: 'system', evidence: [] }; r = run(x);
+check('a system-verified indicator with no evidence is dropped', r.clean.indicator === null, r.problems);
+x.indicator.evidence = ['43% in support and 42% opposed, then 75% oppose']; r = run(x);
+check('a system-verified indicator whose evidence holds both figures is kept', r.clean.indicator !== null, r.problems);
+const ind = { source_url: 'https://example.org/p', then_value: '42%', now_value: '75%' };
+check('verifyIndicator: a link the search did not return fails', !L.verifyIndicator(ind, { urls: ['https://other.org'], citations: [] }).ok, null);
+check('verifyIndicator: a figure missing from the cited passage fails', !L.verifyIndicator(ind, { urls: [ind.source_url], citations: [{ url: ind.source_url, cited_text: 'Opposition was 42% last year.' }] }).ok, null);
+check('verifyIndicator: both figures in the cited passage passes', L.verifyIndicator(ind, { urls: [ind.source_url], citations: [{ url: ind.source_url, cited_text: 'Opposition rose from 42% to 75%.' }] }).ok, null);
+check('catSentences counts a last sentence with no full stop', L.catSentences('Whether A, or B') === 1 && L.catSentences('One. Two') === 2, null);
 x = good(); x.beginnings[1].line = x.beginnings[0].line; r = run(x);
 check('two Beginnings with the same line: the second is dropped', r.clean.beginnings.length === 3 && r.problems.some(p => p.includes('same line')), r.problems);
 x = good(); r = run(x, []);

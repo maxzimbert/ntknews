@@ -82,6 +82,7 @@ def main():
         "generated": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "matrix_sha256": sha(MATRIX_PATH), "candidates_sha256": sha(CANDS),
         "notes_sha256": sha(bb.NOTES), "lenses_sha256": sha(bb.LENSES),
+        "vocab": {"subgenres": [{"name": sg, "row": r["id"], "row_title": r["title"]} for r in json.load(open(ROOT / "editorial" / "backstory-rows.json"))["rows"] for sg in r.get("subgenres", [])]},
         "lenses": {k: {"story_terms": v.get("story_terms", []), "story_terms_cs": v.get("story_terms_cs", [])}
                    for k, v in spec.items() if not k.startswith("_")},
         "objects": out,

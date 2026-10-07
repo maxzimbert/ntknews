@@ -157,7 +157,7 @@ def slug(name):
     return "p-" + re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")[:40]
 
 
-def apply_categories(path, pub, stories, bs, today):
+def apply_categories(path, pub, stories, bs, today, live=True):
     """Merge the categories Pulse sent into the store, validate them, expire, and inject (T-0079).
 
     Pulse composes a category (a model drafts, the editor revises and edits) and carries the
@@ -176,13 +176,17 @@ def apply_categories(path, pub, stories, bs, today):
     pool_doc = json.loads((ROOT / "ntk-pulse" / "data" / "backstory-pool.json").read_text())
     pool = {o["id"]: o for o in pool_doc["objects"]}
     spec = json.loads((ROOT / "editorial" / "lenses.json").read_text())
+    vocab = {x["name"] for x in pool_doc.get("vocab", {}).get("subgenres", [])} or None
     for cat in pub.get("backstory_categories") or []:
         cid = cat.get("id") or ""
         if cat.get("status") != "approved":
             log(f"  category {cid!r} is a draft; not published")
             continue
         filed = [s for s in stories if s.get("editor_row") == cid]
-        clean, probs = categories.validate(cat, pool, spec, [s["text"] for s in filed])
+        clean, probs = categories.validate(cat, pool, spec, [s["text"] for s in filed], None, vocab)
+        if clean and live:
+            clean, lp = categories.live_checks(clean)
+            probs = probs + lp
         if not clean:
             log(f"  category {cid!r} rejected: {'; '.join(probs)}")
             continue
@@ -276,7 +280,7 @@ def main():
     # row exists when the story is looked up.
     api_key = os.environ.get("ANTHROPIC_API_KEY")
     apply_categories(Path(args.provisional), pub, stories, bs,
-                     datetime.now(timezone.utc).date().isoformat())
+                     datetime.now(timezone.utc).date().isoformat(), live=not (args.mock or args.dry_run))
     rows = bs["rows"]
     rows_by_id = {r["id"]: r for r in rows}
 

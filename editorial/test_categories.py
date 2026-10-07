@@ -8,6 +8,7 @@ import categories as C
 ROOT = Path(__file__).resolve().parent.parent
 POOL = {o["id"]: o for o in json.load(open(ROOT / "ntk-pulse/data/backstory-pool.json"))["objects"]}
 SPEC = json.load(open(ROOT / "editorial/lenses.json"))
+VOCAB = {g["name"] for g in json.load(open(ROOT / "ntk-pulse/data/backstory-pool.json"))["vocab"]["subgenres"]}
 ALTMAN = ("OpenAI's publicist tried to shut down a question about a dead teenager. Altman told a magazine "
           "that some bad things will happen as a result of AI. Lawmakers and the FTC opened probes of the chatbot maker.")
 
@@ -37,7 +38,7 @@ def good():
 
 
 def run(cat, texts=(ALTMAN,), origin=2025):
-    return C.validate(cat, POOL, SPEC, list(texts), origin)
+    return C.validate(cat, POOL, SPEC, list(texts), origin, VOCAB)
 
 
 fails = []
@@ -98,6 +99,34 @@ def main():
     x["indicator"]["source_url"] = "https://heatmap.news/daily/data-center-opposition-poll-collapse"
     c, p = run(x)
     check("a fully sourced, checked indicator is kept", c["indicator"] is not None, p)
+
+    x = good(); x["contest"] = x["contest"].rstrip(".")
+    c, p = run(x)
+    check("a contest with no final full stop still counts as one sentence", c["contest"] != "" and not any("sentence" in q for q in p), p)
+
+    vocab = {g["name"] for g in json.load(open(ROOT / "ntk-pulse/data/backstory-pool.json"))["vocab"]["subgenres"]}
+    war = next(o["id"] for o in POOL.values() if o["pool"] == "matrix" and o["subgenre"] == "military intervention")
+    x = {"id": "p-war", "title": "War powers", "status": "approved", "lenses": [], "subgenres": ["military intervention", "no such sub-genre"],
+         "by": {"contest": "editor", "stakes": "editor"}, "contest": "Whether presidents may start wars alone, or only with Congress.", "stakes": "Who decides, and when, is still open.",
+         "objects": [{"object_id": war}], "beginnings": [{"object_id": war, "line": "A president asked Congress to approve the use of American force abroad, and Congress took up the request."}]}
+    c, p = C.validate(x, POOL, SPEC, [], 2025, vocab)
+    check("a category can draw Beginnings from a sub-genre; an unknown sub-genre is dropped", c["subgenres"] == ["military intervention"] and len(c["beginnings"]) == 1 and any("sub-genre" in q for q in p), (c["subgenres"], p))
+
+    x = good(); x["custom_objects"] = [{"id": "custom-x", "title": "A speech", "author": "Someone", "year": "1998", "source": "National Archives", "url": "https://www.archives.gov/x"}]
+    x["objects"].append({"object_id": "custom-x", "by": "editor", "about": "A speech given in 1998."}); x["beginnings"].append({"object_id": "custom-x", "line": "Someone gave a speech about the new technology.", "by": "editor"})
+    c, p = run(x)
+    check("an object added by link is kept and can be a Beginning", any(o["object_id"] == "custom-x" for o in c["objects"]) and any(b["object_id"] == "custom-x" for b in c["beginnings"]), p)
+
+    x["custom_objects"][0]["url"] = "https://en.wikipedia.org/wiki/X"
+    c, p = run(x)
+    check("an added object on Wikipedia is refused", not any(o["object_id"] == "custom-x" for o in c["objects"]) and any("primary source" in q for q in p), p)
+
+    x = good(); x["indicator"] = {"label": "L", "then_value": "42%", "now_value": "75%", "source": "S", "source_url": "https://example.org/p", "as_of": "August 2026", "verified": True, "verified_by": "system", "evidence": []}
+    c, p = run(x)
+    check("a system-verified indicator with no evidence is dropped", c["indicator"] is None, p)
+    x["indicator"]["evidence"] = ["43% in support and 42% opposed, then 75% oppose"]
+    c, p = run(x)
+    check("a system-verified indicator whose evidence holds both figures is kept", c["indicator"] is not None, p)
 
     x = good(); x["beginnings"][1]["line"] = x["beginnings"][0]["line"]
     c, p = run(x)
