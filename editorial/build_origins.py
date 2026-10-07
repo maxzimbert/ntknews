@@ -250,12 +250,12 @@ def fallback(row, why):
 
 
 def update_provisional(bs):
-    """Fill a provisional row from its stories' origins (T-0076).
+    """Fill a category's start from its stories' origins (T-0079).
 
-    A provisional row has no fixed start: its "It starts in" and "We are here" are its
-    earliest retrieved origin. Its Beginnings come from the history of what the stories
-    are about, by the row's lenses (editorial/lenses.json), and each Beginning is also in
-    The case. A lens with too few linked objects yields no Beginnings, and is reported.
+    A category has no fixed start: its "It starts in" and "We are here" are its earliest
+    retrieved origin. Its Beginnings come from the record the editor approved in Pulse; here
+    any Beginning dated at or after the origin is dropped, since a Beginning is by definition
+    earlier than where we are. Nothing is composed here.
     """
     store_path = ROOT / "ntk-pulse" / "data" / "provisional-rows.json"
     store = json.loads(store_path.read_text()) if store_path.exists() else {"rows": []}
@@ -270,29 +270,15 @@ def update_provisional(bs):
         best = min(os_, key=lambda o: o["year"])
         r["start_date"] = f"{best['year']}-01-01"
         r["start_line"] = best["line"].rstrip(".")
+        before = [b for b in r.get("beginnings") or [] if int(b["year"]) < best["year"]]
+        if len(before) != len(r.get("beginnings") or []):
+            log(f"  {r['id']}: dropped {len(r['beginnings']) - len(before)} Beginning(s) dated at or after {best['year']}")
+        keep = {b["object_id"] for b in before}
+        r["beginnings"] = before
+        r["objects"] = [o for o in r.get("objects") or [] if o["object_id"] in keep or int(o["year"]) >= best["year"]]
         sr = by_store.get(r["id"], {})
-        sr["start_date"], sr["start_line"] = r["start_date"], r["start_line"]
-        lenses = sr.get("lenses") or []
-        if lenses:
-            try:
-                import build_backstory
-                begin, case, rep = build_backstory.lens_select(lenses, best["year"])
-                notes = build_backstory.load_notes()
-            except ImportError as e:
-                log(f"  lens Beginnings skipped ({e})")
-                begin, case, rep, notes = [], [], {}, {}
-            r["beginnings"] = [{"year": o["year"], "line": notes[o["object_id"]]["line"],
-                                "object_id": o["object_id"]} for o in begin
-                               if notes.get(o["object_id"], {}).get("line")]
-            keep = {b["object_id"] for b in r["beginnings"]}
-            r["objects"] = [{"title": o["title"], "author": o["author"], "year": o["year"],
-                             "source": o["source"], "source_url": o["source_url"],
-                             "object_id": o["object_id"],
-                             "about": notes.get(o["object_id"], {}).get("about", "")}
-                            for o in case if o["object_id"] in keep]
-            sr["lens_report"] = rep
-            sr["beginnings"], sr["objects"] = r["beginnings"], r["objects"]
-            log(f"  {r['id']}: {len(r['beginnings'])} lens Beginnings; eligible by lens {rep}")
+        sr.update(start_date=r["start_date"], start_line=r["start_line"],
+                  beginnings=r["beginnings"], objects=r["objects"])
     store_path.write_text(json.dumps(store, indent=2, ensure_ascii=False) + "\n")
 
 

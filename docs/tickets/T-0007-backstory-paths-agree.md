@@ -9,8 +9,12 @@ anchor: editorial/build_backstory.py:31
 ## What
 
 Three places name the Backstory data file and all three must agree on
-`digest/data/backstory.json`: the generator's output path, Pulse's publish
-path, and the app's fetch. Verified passing 2026-09-17.
+`digest/data/backstory.json`: the generator's output path, Pulse's read of what
+published, and the app's fetch. Verified passing 2026-09-17. Amended 2026-10-07:
+Pulse's own Backstory publish (the disabled `GH_BACKSTORY_PATH` write) was
+removed with the legacy Backstory editor (T-0079), so the Pulse leg of the check
+is now its read of the published file, not a publish path. The property is the
+same: no reader and writer pointing at different files.
 
 ## Why
 
@@ -31,7 +35,7 @@ because any single path being right is not the property that matters.
 ## Check
 
 ```sh
-grep -q "GH_BACKSTORY_PATH = 'digest/data/backstory.json'" ntk-pulse/pulse.html
+grep -q "../digest/data/backstory.json" ntk-pulse/pulse.html
 grep -q "'digest', 'data', 'backstory.json'" editorial/build_backstory.py
 grep -q "/digest/data/backstory.json" digest/index.html
 ```

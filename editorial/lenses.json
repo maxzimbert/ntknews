@@ -1,5 +1,5 @@
 {
-  "_comment": "A lens is a subject whose own history a story can draw Beginnings from (T-0076, docs/decisions.md). Matched by whole words in the object's Title, by sub-genre or row, or by an object id listed under include, rule-based, so the editor can read and change it. A story's row can be shared by many subjects; the lens is what the story is about. Rule: per lens, the most recent three linked objects dated before the story's origin; a provisional row needs at least three in all, otherwise it shows its origin alone. A lens with fewer than three linked objects is a gap to fill through the staging workbook.",
+  "_comment": "A lens is a subject whose own history a story can draw Beginnings from (T-0076, docs/decisions.md). Matched by whole words in the object's Title, by sub-genre or row, or by an object id listed under include, rule-based, so the editor can read and change it. A story's row can be shared by many subjects; the lens is what the story is about. Rule: per lens, the most recent three linked objects dated before the story's origin; a provisional row needs at least three in all, otherwise it shows its origin alone. A lens with fewer than three linked objects is a gap to fill through the staging workbook. `story_terms` (whole words, any case) and `story_terms_cs` (whole words, exact case) are what the story's own text must contain before a lens may be applied to it; a lens with no support in the story is dropped (T-0079).",
   "tech": {
     "title_keywords": [
       "telecommunications",
@@ -15,6 +15,33 @@
     ],
     "exclude": [
       "silver"
+    ],
+    "story_terms": [
+      "artificial intelligence",
+      "chatbot",
+      "chatbots",
+      "ChatGPT",
+      "OpenAI",
+      "Anthropic",
+      "software",
+      "algorithm",
+      "algorithms",
+      "internet",
+      "online platform",
+      "online platforms",
+      "social media",
+      "data center",
+      "data centers",
+      "data centre",
+      "semiconductor",
+      "semiconductors",
+      "cybersecurity",
+      "big tech",
+      "machine learning",
+      "large language model"
+    ],
+    "story_terms_cs": [
+      "AI"
     ]
   },
   "china": {
@@ -30,6 +57,17 @@
     ],
     "rows": [
       "Taiwan"
+    ],
+    "story_terms": [
+      "China",
+      "Chinese",
+      "Taiwan",
+      "Beijing",
+      "Taipei",
+      "Xi Jinping"
+    ],
+    "story_terms_cs": [
+      "PLA"
     ]
   },
   "russia": {
@@ -39,7 +77,16 @@
       "russia",
       "kremlin"
     ],
-    "exclude": []
+    "exclude": [],
+    "story_terms": [
+      "Russia",
+      "Russian",
+      "Moscow",
+      "Kremlin",
+      "Putin",
+      "Soviet"
+    ],
+    "story_terms_cs": []
   },
   "iran": {
     "title_keywords": [
@@ -47,7 +94,17 @@
       "iranian",
       "persian gulf"
     ],
-    "exclude": []
+    "exclude": [],
+    "story_terms": [
+      "Iran",
+      "Iranian",
+      "Tehran",
+      "Khamenei",
+      "Hormuz"
+    ],
+    "story_terms_cs": [
+      "IRGC"
+    ]
   },
   "israel": {
     "title_keywords": [
@@ -59,7 +116,17 @@
     "exclude": [],
     "subgenres": [
       "Israel-Palestine policy"
-    ]
+    ],
+    "story_terms": [
+      "Israel",
+      "Israeli",
+      "Gaza",
+      "Hamas",
+      "West Bank",
+      "Netanyahu",
+      "Jerusalem"
+    ],
+    "story_terms_cs": []
   },
   "lebanon": {
     "title_keywords": [
@@ -67,14 +134,28 @@
       "lebanese",
       "beirut"
     ],
-    "exclude": []
+    "exclude": [],
+    "story_terms": [
+      "Lebanon",
+      "Lebanese",
+      "Hezbollah",
+      "Beirut"
+    ],
+    "story_terms_cs": []
   },
   "syria": {
     "title_keywords": [
       "syria",
       "syrian"
     ],
-    "exclude": []
+    "exclude": [],
+    "story_terms": [
+      "Syria",
+      "Syrian",
+      "Damascus",
+      "Assad"
+    ],
+    "story_terms_cs": []
   },
   "iraq": {
     "title_keywords": [
@@ -86,49 +167,96 @@
     "exclude": [],
     "include": [
       "2003-02-05-address-to-the-united-nations-security-council"
-    ]
+    ],
+    "story_terms": [
+      "Iraq",
+      "Iraqi",
+      "Baghdad"
+    ],
+    "story_terms_cs": []
   },
   "canada": {
     "title_keywords": [
       "canada",
       "canadian"
     ],
-    "exclude": []
+    "exclude": [],
+    "story_terms": [
+      "Canada",
+      "Canadian",
+      "Ottawa",
+      "Carney",
+      "Trudeau"
+    ],
+    "story_terms_cs": []
   },
   "nato": {
     "title_keywords": [
       "nato",
       "north atlantic"
     ],
-    "exclude": []
+    "exclude": [],
+    "story_terms": [
+      "North Atlantic Treaty",
+      "North Atlantic Alliance"
+    ],
+    "story_terms_cs": [
+      "NATO"
+    ]
   },
   "argentina": {
     "title_keywords": [
       "argentina",
       "argentine"
     ],
-    "exclude": []
+    "exclude": [],
+    "story_terms": [
+      "Argentina",
+      "Argentine",
+      "Buenos Aires",
+      "Milei"
+    ],
+    "story_terms_cs": []
   },
   "australia": {
     "title_keywords": [
       "australia",
       "australian"
     ],
-    "exclude": []
+    "exclude": [],
+    "story_terms": [
+      "Australia",
+      "Australian",
+      "Canberra"
+    ],
+    "story_terms_cs": []
   },
   "brazil": {
     "title_keywords": [
       "brazil",
       "brazilian"
     ],
-    "exclude": []
+    "exclude": [],
+    "story_terms": [
+      "Brazil",
+      "Brazilian",
+      "Lula"
+    ],
+    "story_terms_cs": []
   },
   "france": {
     "title_keywords": [
       "france",
       "french"
     ],
-    "exclude": []
+    "exclude": [],
+    "story_terms": [
+      "France",
+      "French",
+      "Paris",
+      "Macron"
+    ],
+    "story_terms_cs": []
   },
   "germany": {
     "title_keywords": [
@@ -136,7 +264,15 @@
       "german",
       "germans"
     ],
-    "exclude": []
+    "exclude": [],
+    "story_terms": [
+      "Germany",
+      "German",
+      "Berlin",
+      "Scholz",
+      "Merz"
+    ],
+    "story_terms_cs": []
   },
   "india": {
     "title_keywords": [
@@ -144,28 +280,54 @@
       "indian subcontinent",
       "indian ocean"
     ],
-    "exclude": []
+    "exclude": [],
+    "story_terms": [
+      "India",
+      "Indian",
+      "New Delhi",
+      "Modi"
+    ],
+    "story_terms_cs": []
   },
   "indonesia": {
     "title_keywords": [
       "indonesia",
       "indonesian"
     ],
-    "exclude": []
+    "exclude": [],
+    "story_terms": [
+      "Indonesia",
+      "Indonesian",
+      "Jakarta"
+    ],
+    "story_terms_cs": []
   },
   "italy": {
     "title_keywords": [
       "italy",
       "italian"
     ],
-    "exclude": []
+    "exclude": [],
+    "story_terms": [
+      "Italy",
+      "Italian",
+      "Rome",
+      "Meloni"
+    ],
+    "story_terms_cs": []
   },
   "japan": {
     "title_keywords": [
       "japan",
       "japanese"
     ],
-    "exclude": []
+    "exclude": [],
+    "story_terms": [
+      "Japan",
+      "Japanese",
+      "Tokyo"
+    ],
+    "story_terms_cs": []
   },
   "mexico": {
     "title_keywords": [
@@ -173,14 +335,26 @@
       "mexican",
       "mexicans"
     ],
-    "exclude": []
+    "exclude": [],
+    "story_terms": [
+      "Mexico",
+      "Mexican",
+      "Sheinbaum"
+    ],
+    "story_terms_cs": []
   },
   "saudi-arabia": {
     "title_keywords": [
       "saudi",
       "saudi arabia"
     ],
-    "exclude": []
+    "exclude": [],
+    "story_terms": [
+      "Saudi",
+      "Saudi Arabia",
+      "Riyadh"
+    ],
+    "story_terms_cs": []
   },
   "south-africa": {
     "title_keywords": [
@@ -188,7 +362,14 @@
       "south african",
       "apartheid"
     ],
-    "exclude": []
+    "exclude": [],
+    "story_terms": [
+      "South Africa",
+      "South African",
+      "Pretoria",
+      "Ramaphosa"
+    ],
+    "story_terms_cs": []
   },
   "south-korea": {
     "title_keywords": [
@@ -200,7 +381,13 @@
     "exclude": [],
     "rows": [
       "Korea"
-    ]
+    ],
+    "story_terms": [
+      "South Korea",
+      "South Korean",
+      "Seoul"
+    ],
+    "story_terms_cs": []
   },
   "turkey": {
     "title_keywords": [
@@ -208,7 +395,14 @@
       "turkish",
       "ottoman"
     ],
-    "exclude": []
+    "exclude": [],
+    "story_terms": [
+      "Turkey",
+      "Turkish",
+      "Ankara",
+      "Erdogan"
+    ],
+    "story_terms_cs": []
   },
   "uk": {
     "title_keywords": [
@@ -218,6 +412,16 @@
       "england",
       "united kingdom"
     ],
-    "exclude": []
+    "exclude": [],
+    "story_terms": [
+      "Britain",
+      "British",
+      "United Kingdom",
+      "London",
+      "Starmer"
+    ],
+    "story_terms_cs": [
+      "UK"
+    ]
   }
 }

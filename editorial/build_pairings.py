@@ -31,13 +31,11 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from merge_object_notes import BANNED  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 LINEUP = ROOT / "ntk-pulse" / "data" / "lineup-publish.json"
 BACKSTORY = ROOT / "digest" / "data" / "backstory.json"
 PROVISIONAL = ROOT / "ntk-pulse" / "data" / "provisional-rows.json"
-PROVISIONAL_MODEL = "claude-sonnet-5"
 EXPIRE_DAYS = 30
 PROMPTS = ROOT / "editorial" / "prompts"
 
@@ -159,85 +157,59 @@ def slug(name):
     return "p-" + re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")[:40]
 
 
-def draft_row(api_key, name, truths_list, contest_file):
-    """One model call: a contest line and stakes for a new category, then checked.
-    Returns ({"contest", "stakes"} or {}, problems). A failed draft leaves the page
-    with the editor's name only: no stakes is better than an unchecked paragraph."""
-    sys_ = read_system_prompt("provisional-row.md")
-    avail = [k for k in json.loads((ROOT / "editorial" / "lenses.json").read_text()) if not k.startswith("_")]
-    user = (f"CATEGORY: {name}\nAVAILABLE LENSES: {', '.join(avail)}\n\n"
-            "TRUTHS OF THE STORIES FILED UNDER IT\n" + "\n\n".join(truths_list))
-    if contest_file:
-        d = json.loads(Path(contest_file).read_text()).get(name) or {}
-    elif api_key:
-        d = call_claude(api_key, PROVISIONAL_MODEL, sys_, user, 600)
-    else:
-        return {}, ["no API key; page carries the name only"]
-    problems = []
-    contest, stakes = (d.get("contest") or "").strip(), (d.get("stakes") or "").strip()
-    pool = " ".join(truths_list) + " " + name
-    for label, text, lo, hi in (("contest", contest, 12, 30), ("stakes", stakes, 25, 55)):
-        if not text:
-            problems.append(f"{label} is empty"); continue
-        n = len(text.split())
-        if not lo <= n <= hi:
-            problems.append(f"{label} is {n} words, wants {lo} to {hi}")
-        if re.search(r"[\u2014\u2013]| -- ", text):
-            problems.append(f"{label} has a dash")
-        if any(b in text.lower() for b in BANNED):
-            problems.append(f"{label} has a banned phrase")
-        for num in re.findall(r"\d[\d,.]*", text):
-            if num.strip(",.") not in pool:
-                problems.append(f"{label}: number {num} is not in the Truths")
-    if contest and not contest.startswith("Whether"):
-        problems.append('contest does not start with "Whether"')
-    if len(re.findall(r"[.!?](?:\s|$)", stakes)) != 2 and stakes:
-        problems.append("stakes is not two sentences")
-    if problems:
-        return {}, problems
-    ok = json.loads((ROOT / "editorial" / "lenses.json").read_text())
-    lenses = [x for x in (d.get("lenses") or []) if x in ok and not x.startswith("_")]
-    return {"contest": contest, "stakes": stakes, "lenses": lenses}, []
+def apply_categories(path, pub, stories, bs, today, live=True):
+    """Merge the categories Pulse sent into the store, validate them, expire, and inject (T-0079).
 
-
-def sync_provisional(path, stories, bs, api_key, contest_file, today):
-    """Create, reuse, expire and inject provisional rows (T-0076).
-
-    A story the editor files under a new category name gets a provisional row
-    instead of the closest misfit. Rules, all in code, none by the model:
-      reuse    a name that slugs to an existing provisional row joins it
-      create   otherwise a new row; the model drafts the contest line and stakes,
-               and the draft is validated or dropped
-      expire   no story in EXPIRE_DAYS days: archived, no longer shown
-      promote  never automatic. `promotion` records what is still missing
-    Provisional rows never enter backstory-rows.json and have no sub-genres, so
-    the classifier cannot reach them; only an editor tag can.
+    Pulse composes a category (a model drafts, the editor revises and edits) and carries the
+    whole record in lineup-publish.json as `backstory_categories`. Here each approved record
+    is validated by editorial/categories.py, which drops what fails and invents nothing, then
+    stored in ntk-pulse/data/provisional-rows.json and injected into the published rows.
+      draft      saved in Pulse, never published: ignored here
+      expire     no story filed under it for EXPIRE_DAYS days: archived, no longer shown
+      promote    never automatic. `promotion` records what is still missing
+    Categories never enter backstory-rows.json and have no sub-genres, so the classifier
+    cannot reach them; only an editor tag (a story's backstory_row) can.
     """
+    import categories
     store = json.loads(path.read_text()) if path.exists() else {"rows": []}
     by_id = {r["id"]: r for r in store["rows"]}
-    for s in stories:
-        name = s.get("category")
-        if not name:
+    pool_doc = json.loads((ROOT / "ntk-pulse" / "data" / "backstory-pool.json").read_text())
+    pool = {o["id"]: o for o in pool_doc["objects"]}
+    spec = json.loads((ROOT / "editorial" / "lenses.json").read_text())
+    vocab = {x["name"] for x in pool_doc.get("vocab", {}).get("subgenres", [])} or None
+    for cat in pub.get("backstory_categories") or []:
+        cid = cat.get("id") or ""
+        if cat.get("status") != "approved":
+            log(f"  category {cid!r} is a draft; not published")
             continue
-        rid = slug(name)
-        r = by_id.get(rid)
+        filed = [s for s in stories if s.get("editor_row") == cid]
+        clean, probs = categories.validate(cat, pool, spec, [s["text"] for s in filed], None, vocab)
+        if clean and live:
+            clean, lp = categories.live_checks(clean)
+            probs = probs + lp
+        if not clean:
+            log(f"  category {cid!r} rejected: {'; '.join(probs)}")
+            continue
+        if probs:
+            log(f"  category {cid!r}: dropped {len(probs)} part(s): " + "; ".join(probs[:4]))
+        r = by_id.get(cid)
         if not r:
-            draft, probs = draft_row(api_key, name, [s["truths"]], contest_file)
-            r = {"id": rid, "title": name, "status": "provisional", "created": today,
-                 "contest": draft.get("contest"), "stakes": draft.get("stakes"),
-                 "lenses": draft.get("lenses") or [],
-                 "draft_problems": probs, "stories": []}
-            store["rows"].append(r); by_id[rid] = r
-            log(f"  provisional row created: {name!r}" + (f" ({'; '.join(probs)})" if probs else ""))
-        if not any(x["story_id"] == s["story_id"] for x in r["stories"]):
-            r["stories"].append({"story_id": s["story_id"], "date": today, "headline": s["headline"]})
-        r["last_story"] = today
-        s["editor_row"] = rid
+            r = {"id": cid, "created": today, "stories": []}
+            store["rows"].append(r); by_id[cid] = r
+            log(f"  category created: {clean['title']!r}")
+        keep = {k: r[k] for k in ("created", "stories", "last_story", "start_date", "start_line") if k in r}
+        r.clear(); r.update(clean); r.update(keep)
+        r["status"] = "provisional"; r["draft_problems"] = probs
+        for s in filed:
+            if not any(x["story_id"] == s["story_id"] for x in r["stories"]):
+                r["stories"].append({"story_id": s["story_id"], "date": today, "headline": s["headline"]})
+        if filed:
+            r["last_story"] = today
     cutoff = (datetime.fromisoformat(today) - __import__("datetime").timedelta(days=EXPIRE_DAYS)).date().isoformat()
     for r in store["rows"]:
         if r["status"] == "provisional" and r.get("last_story", r["created"]) < cutoff:
             r["status"] = "archived"
-            log(f"  provisional row archived (no story since {r.get('last_story')}): {r['title']!r}")
+            log(f"  category archived (no story since {r.get('last_story')}): {r['title']!r}")
         days = {x["date"] for x in r["stories"]}
         missing = []
         if len(r["stories"]) < 3 or len(days) < 2:
@@ -255,8 +227,8 @@ def sync_provisional(path, stories, bs, api_key, contest_file, today):
             "start_date": r.get("start_date") or r["created"], "start_line": r.get("start_line"),
             "milestone": r.get("contest") or "", "stakes": r.get("stakes"),
             "indicator": r.get("indicator"), "objects": r.get("objects") or [],
-            "beginnings": r.get("beginnings") or [], "subgenres": [], "roots": [],
-            "updated": False, "narrative": None, "instances": [], "photo": None})
+            "beginnings": r.get("beginnings") or [], "lenses": r.get("lenses") or [],
+            "subgenres": [], "roots": [], "updated": False, "narrative": None, "instances": [], "photo": None})
     return store
 
 
@@ -278,7 +250,6 @@ def main():
     ap.add_argument("--lineup", default=str(LINEUP), help="test hook")
     ap.add_argument("--backstory", default=str(BACKSTORY), help="test hook")
     ap.add_argument("--provisional", default=str(PROVISIONAL), help="test hook")
-    ap.add_argument("--contest-file", help="test hook: JSON {name: {contest, stakes}} instead of the model")
     ap.add_argument("--dry-run", action="store_true",
                     help="print assembled prompts, write nothing")
     args = ap.parse_args()
@@ -296,20 +267,20 @@ def main():
     stories = [{"story_id": s["key"], "headline": s["headline"],
                 "summary": strip_html(s.get("lede")) or strip_html(s.get("truth"))[:220],
                 "truths": strip_html(s.get("truth")),
+                "text": " ".join(strip_html(s.get(k)) for k in ("truth", "prob", "poss", "lies")),
                 "editor_row": s.get("backstory_row") or None,
-                # T-0076: a category the editor named because no row fits (Pulse
-                # "no row fits"). It becomes a provisional row.
-                "category": (s.get("backstory_category") or "").strip() or None}
+                }
                for s in pub.get("stories", [])]
     if not stories:
         sys.exit("no stories in lineup-publish.json")
     log(f"lineup: {len(stories)} stories")
 
-    # -- Provisional rows (T-0076): a story filed under a new category gets its own
-    # row now, not the nearest misfit.
+    # -- Categories (T-0079): the editor composes them in Pulse; a story filed under one
+    # carries its id as backstory_row. Applied before the editor-row check below, so the
+    # row exists when the story is looked up.
     api_key = os.environ.get("ANTHROPIC_API_KEY")
-    sync_provisional(Path(args.provisional), stories, bs, api_key, args.contest_file,
-                     datetime.now(timezone.utc).date().isoformat())
+    apply_categories(Path(args.provisional), pub, stories, bs,
+                     datetime.now(timezone.utc).date().isoformat(), live=not (args.mock or args.dry_run))
     rows = bs["rows"]
     rows_by_id = {r["id"]: r for r in rows}
 
