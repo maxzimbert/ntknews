@@ -12,6 +12,15 @@ stranger.
 
 ---
 
+## 2026-10-07 — GitHub Pages had been failing for a day, and Pulse is served from it
+
+A ticket (T-0078) quoting CSS with `{{` landed on 2026-10-06. Jekyll reads `{{` as a Liquid tag and aborts
+the whole build, so every GitHub Pages build of this repo failed from then on (23 in a row, last good
+2026-10-06 16:12Z). Pulse is served from Pages, so every Pulse change merged since looked deployed and was
+not; the same failure hit the staging copy two days running before the cause was found. A root `.nojekyll`
+ends it, and the check that would have caught it is `gh api repos/maxzimbert/ntknews/pages/builds/latest`,
+not the Netlify preview, which does not run Jekyll.
+
 ## 2026-09-29 — the same rot, in the doc that was supposed to be fixed
 
 `docs/backstory.md` still described the `build_backstory.py` output-path bug as
