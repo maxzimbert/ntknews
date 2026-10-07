@@ -73,6 +73,13 @@ const ind = { source_url: 'https://example.org/p', then_value: '42%', now_value:
 check('verifyIndicator: a link the search did not return fails', !L.verifyIndicator(ind, { urls: ['https://other.org'], citations: [] }).ok, null);
 check('verifyIndicator: a figure missing from the cited passage fails', !L.verifyIndicator(ind, { urls: [ind.source_url], citations: [{ url: ind.source_url, cited_text: 'Opposition was 42% last year.' }] }).ok, null);
 check('verifyIndicator: both figures in the cited passage passes', L.verifyIndicator(ind, { urls: [ind.source_url], citations: [{ url: ind.source_url, cited_text: 'Opposition rose from 42% to 75%.' }] }).ok, null);
+x = good(); x.beginnings.reverse(); x.objects.reverse(); r = run(x);
+const yrs = r.clean.beginnings.map(b => b.year);
+check('Beginnings and objects always come out oldest to newest', yrs.join() === yrs.slice().sort().join() && r.clean.objects.map(o => o.year).join() === r.clean.objects.map(o => o.year).slice().sort().join(), yrs);
+const q = { urls: [ind.source_url], citations: [] };
+check('verifyIndicator: no citation but a quoted sentence holding both figures passes, marked quoted', (v => v.ok && v.source === 'quoted')(L.verifyIndicator(Object.assign({ evidence_quote: 'Opposition rose from 42% to 75% in a year.' }, ind), q)), null);
+check('verifyIndicator: no citation and a quote missing a figure fails', !L.verifyIndicator(Object.assign({ evidence_quote: 'Opposition is now 75%.' }, ind), q).ok, null);
+check('verifyIndicator: no citation and no quote fails', !L.verifyIndicator(ind, q).ok, null);
 check('catSentences counts a last sentence with no full stop', L.catSentences('Whether A, or B') === 1 && L.catSentences('One. Two') === 2, null);
 x = good(); x.beginnings[1].line = x.beginnings[0].line; r = run(x);
 check('two Beginnings with the same line: the second is dropped', r.clean.beginnings.length === 3 && r.problems.some(p => p.includes('same line')), r.problems);

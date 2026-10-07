@@ -1313,7 +1313,7 @@ function validateCat(cat, poolBy0, spec, storyTexts, originYear, vocab){
     else if (!(cu.title||'').trim()) why='missing title';
     if (why){ problems.push('added object '+cu.title+': '+why); return; }
     const cid=cu.id||('custom-'+cu.title.toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,60));
-    poolBy[cid]={id:cid,pool:'custom',approved:true,title:cu.title.trim(),author:cu.author||'',year:String(cu.year),source:cu.source||host,url:url,lenses:[],subgenre:'',link_status:'unchecked',about:'',line:''};
+    poolBy[cid]={id:cid,pool:'custom',approved:true,title:cu.title.trim(),author:cu.author||'',year:String(cu.year),sort:String(cu.year)+'-01-01',source:cu.source||host,url:url,lenses:[],subgenre:'',link_status:'unchecked',about:'',line:''};
   });
   const approved=new Set(c.approved_objects||[]); const objs=[]; const abouts=new Set(), linesSeen=new Set();
   (c.objects||[]).forEach(o=>{
@@ -1324,10 +1324,10 @@ function validateCat(cat, poolBy0, spec, storyTexts, originYear, vocab){
     let about=(o.about||e.about||'').trim();
     if (about && o.by!=='editor'){ const ap=catTextProblems('about',about,1,70); if (abouts.has(about.toLowerCase())) ap.push('about is the same text as another object\u2019s'); if (ap.length){ ap.forEach(x=>problems.push(e.title+': '+x)); about=''; } }
     if (about) abouts.add(about.toLowerCase());
-    objs.push({object_id:e.id,title:e.title,author:e.author,year:e.year,source:e.source,source_url:e.url,about:about,pool:e.pool,lenses:e.lenses,by:o.by||'model'});
+    objs.push({object_id:e.id,title:e.title,author:e.author,year:e.year,source:e.source,source_url:e.url,about:about,pool:e.pool,lenses:e.lenses,by:o.by||'model',sort:e.sort||(e.year+'-01-01')});
   });
-  objs.sort((a,b)=> a.year<b.year?-1:a.year>b.year?1:(a.title<b.title?-1:1));
-  c.objects=objs;
+  objs.sort((a,b)=> a.sort<b.sort?-1:a.sort>b.sort?1:(a.title<b.title?-1:1));     // oldest to newest, always
+  c.objects=objs; const order={}; objs.forEach(o=>{ order[o.object_id]=o.sort; });
   const begs=[], seen=new Set();
   (c.beginnings||[]).forEach(b=>{
     const o=objs.find(x=>x.object_id===b.object_id);
@@ -1340,7 +1340,7 @@ function validateCat(cat, poolBy0, spec, storyTexts, originYear, vocab){
     if (lp.length){ lp.forEach(x=>problems.push('Beginning '+o.title+': '+x)); return; }
     seen.add(b.object_id); linesSeen.add(line.toLowerCase()); begs.push({object_id:b.object_id,year:o.year,line:line,by:b.by||'model'});
   });
-  begs.sort((a,b)=> a.year<b.year?-1:a.year>b.year?1:0);
+  begs.sort((a,b)=> order[a.object_id]<order[b.object_id]?-1:order[a.object_id]>order[b.object_id]?1:0);
   c.beginnings=begs;
   const ind=c.indicator;
   if (ind){
@@ -1364,12 +1364,16 @@ function verifyIndicator(ind, search){
   if (!ind || !ind.source_url) return {ok:false, reason:'no source link'};
   const urls=search.urls||[], cites=(search.citations||[]).filter(c=>c.url===ind.source_url);
   if (!urls.includes(ind.source_url)) return {ok:false, reason:'the link is not one the search returned'};
-  const text=cites.map(c=>c.cited_text||'').join(' ');
-  if (!text) return {ok:false, reason:'nothing was cited from that link, so the figures could not be checked'};
   const nums=['then_value','now_value'].map(k=>String(ind[k]||'').replace(/[^0-9.]/g,''));
-  const miss=nums.filter((n,i)=>!n || !text.includes(n));
-  if (miss.length) return {ok:false, reason:'the figure '+miss.join(' and ')+' does not appear in the cited passage'};
-  return {ok:true, evidence:cites.map(c=>c.cited_text).filter(Boolean)};
+  const has=t=>nums.every(n=>n && String(t).includes(n));
+  const cited=cites.map(c=>c.cited_text||'').join(' ');
+  if (cited && has(cited)) return {ok:true, source:'cited', evidence:cites.map(c=>c.cited_text).filter(Boolean)};
+  // The search tool does not always attach citations to a JSON answer. Then the model's own quoted
+  // sentence must hold both figures, and publish confirms it against the page itself.
+  const q=String(ind.evidence_quote||'').trim();
+  if (q && has(q)) return {ok:true, source:'quoted', evidence:[q]};
+  if (!q && !cited) return {ok:false, reason:'no passage was cited and no quote was given, so the figures could not be checked'};
+  return {ok:false, reason:'both figures do not appear together in the cited or quoted passage'};
 }
 /* CATS:END */
 
@@ -1379,7 +1383,7 @@ let POOL = null, POOL_BY = {};         // ntk-pulse/data/backstory-pool.json
 let PUBCATS = [];                      // categories already published (ntk-pulse/data/provisional-rows.json)
 let CAT_SEL = null;                    // the category open in the Backstory tab
 let CAT_BUSY = {}, CAT_MSG = {}, CAT_VOCAB = null;
-function saveCats(){ localStorage.setItem(LS.cats, JSON.stringify(CATS)); }
+function saveCats(){ Object.values(CATS).forEach(c=>{ try { catSortRecord(c); } catch(e){} }); localStorage.setItem(LS.cats, JSON.stringify(CATS)); }
 function catSlug(name){ return 'p-' + String(name).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40); }
 function catPlain(h){ return String(h||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim(); }
 function catStoryText(s){ const p=s.packages||{}; return SECS.map(x=>catPlain(p[x])).join(' '); }
@@ -1388,12 +1392,18 @@ function catRecord(id){ return CATS[id] || PUBCATS.find(r=>r.id===id) || null; }
 function catEntry(c, oid){
   if (POOL_BY[oid]) return POOL_BY[oid];
   const cu=(c.custom_objects||[]).find(x=>(x.id||'')===oid);
-  return cu ? {id:oid,pool:'custom',approved:true,title:cu.title,author:cu.author||'',year:String(cu.year),source:cu.source||'',url:cu.url,lenses:[],subgenre:'',link_status:'unchecked',about:'',line:''} : null;
+  return cu ? {id:oid,pool:'custom',approved:true,title:cu.title,author:cu.author||'',year:String(cu.year),sort:String(cu.year)+'-01-01',source:cu.source||'',url:cu.url,lenses:[],subgenre:'',link_status:'unchecked',about:'',line:''} : null;
 }
 function catListAll(){
   const out=Object.values(CATS).map(r=>({rec:r, where:'local'}));
   PUBCATS.forEach(r=>{ if (!CATS[r.id]) out.push({rec:r, where:'published'}); });
   return out;
+}
+// oldest to newest, by full date, wherever an object came from
+function catSortRecord(c){
+  const key=oid=>{ const e=catEntry(c,oid); return e ? (e.sort||(e.year+'-01-01')) : '9999'; };
+  c.objects=(c.objects||[]).slice().sort((a,b)=> key(a.object_id)<key(b.object_id)?-1:key(a.object_id)>key(b.object_id)?1:0);
+  c.beginnings=(c.beginnings||[]).slice().sort((a,b)=> key(a.object_id)<key(b.object_id)?-1:key(a.object_id)>key(b.object_id)?1:0);
 }
 function catEnsureLocal(id){            // editing a published category copies it into CATS first
   if (CATS[id]) return CATS[id];
@@ -1473,20 +1483,22 @@ CONTEST: ${c.contest||'(not written yet)'}
 STORIES FILED UNDER IT: ${stories.map(s=>s.title).join(' | ')||'(none yet)'}
 ${guidance?"THE EDITOR'S REQUEST FOR THIS TREND LINE: "+guidance+"\n":''}
 Use web search to find a real published figure at its original source (the pollster, agency, court, statistics office or organisation that ran the survey), not an article repeating it. Prefer a measure asked the same way at two dates, or a rate published as a series. Then answer with JSON only:
-{"label":"what is measured, as a reader would say it","then_value":"42%","then_year":"2025","now_value":"75%","direction":"worse|better|contested|flat","source":"the organisation","source_url":"the exact page where you found both figures","as_of":"month and year of the latest figure","note":"one sentence on what the two figures are"}
-Rules: both figures must be stated on the page at source_url, in the form you give. Do not estimate or calculate. "direction" describes the figure, not your opinion of it: use contested when a rise or fall is not clearly good or bad. If you cannot find such a pair, answer {"none":"why"}.`;
+{"label":"what is measured, as a reader would say it","then_value":"42%","then_year":"2025","now_value":"75%","direction":"worse|better|contested|flat","source":"the organisation","source_url":"the exact page where you found both figures","as_of":"month and year of the latest figure","evidence_quote":"one sentence copied word for word from that page that states both figures","note":"one sentence on what the two figures are"}
+Rules: both figures must be stated on the page at source_url, in the form you give, and evidence_quote must be copied exactly from it. Do not estimate or calculate. "direction" describes the figure, not your opinion of it: use contested when a rise or fall is not clearly good or bad. If you cannot find such a pair, answer {"none":"why"}.`;
   const r=await aiSearch(p,2500);
   const j=catJson(r.text);
-  if (j.none){ c.indicator=null; return 'No trend line found: '+j.none; }
-  const ind={label:j.label,then_value:j.then_value,then_year:j.then_year,now_value:j.now_value,direction:j.direction,source:j.source,source_url:j.source_url,as_of:j.as_of,note:j.note||''};
+  if (j.none){ return 'No trend line found: '+j.none; }
+  const ind={label:j.label,then_value:j.then_value,then_year:j.then_year,now_value:j.now_value,direction:j.direction,source:j.source,source_url:j.source_url,as_of:j.as_of,evidence_quote:j.evidence_quote||'',note:j.note||''};
   const v=verifyIndicator(ind,{urls:r.urls,citations:r.citations});
   if (v.ok){
-    ind.verified=true; ind.verified_by='system'; ind.evidence=v.evidence;
-    ind.how_checked='Both figures appear in the passage cited from '+String(ind.source_url).replace(/^https?:\/\/([^\/]+).*$/,'$1')+'.';
-    c.by.indicator='model'; c.indicator=ind; return 'Trend line found and checked.';
+    ind.verified=true; ind.verified_by='system'; ind.evidence=v.evidence; ind.evidence_source=v.source;
+    const host=String(ind.source_url).replace(/^https?:\/\/([^\/]+).*$/,'$1');
+    ind.how_checked = v.source==='cited' ? 'Both figures appear in the passage cited from '+host+'.' : 'The search returned this page and the quoted sentence holds both figures. Publish confirms them against the page itself.';
+    c.by.indicator='model'; c.indicator=ind; delete c.indicator_proposal; return 'Trend line found and checked.';
   }
-  ind.verified=false; ind.unverified_reason=v.reason; c.by.indicator='model'; c.indicator=ind;
-  return 'Trend line proposed but not verified: '+v.reason+'. It will not publish. Tell me what to change.';
+  // Not verified: keep the trend line you already have, and show this as a proposal you can take or refuse.
+  ind.verified=false; ind.unverified_reason=v.reason; c.indicator_proposal=ind;
+  return 'Proposed a trend line but could not verify it ('+v.reason+'). '+(c.indicator?'Your current one stays. ':'')+'You can use the proposal if you have looked at the source.';
 }
 const CAT_STYLE_RULES = `STYLE (all text): plain words, Grade 8 to 10. No em dashes. Never use: this document, this reflects, underscores, highlights, serves as, a reminder that, pivotal, landmark, groundbreaking, seminal. Take no side. Use only facts in the material you are given; no numbers that do not appear in it.`;
 async function composeCat(id){
@@ -1568,7 +1580,7 @@ async function reviseCat(id, request){
   const c=catEnsureLocal(id); if (!c || !request.trim()) return;
   if (c.status==='approved') c.status='draft';
   CAT_BUSY[id]='Revising…'; CAT_MSG[id]=''; render();
-  if (/\b(trend|chart|indicator|poll|statistic|measure|figure|data point)\b/i.test(request)){
+  if (/trend\s*-?\s*line|trendline|\btrend\b|\bchart|\bgraph|indicator|\bpoll|survey|statistic|measure|\bfigure|data point|think tank/i.test(request)){
     try {
       CAT_MSG[id]=await proposeIndicator(c, request);
       c.revisions=(c.revisions||[]).concat([{at:new Date().toISOString(),request:request,summary:CAT_MSG[id]}]);
@@ -1697,6 +1709,7 @@ function catEditorHtml(c){
         <span style="color:${c.indicator.verified?'var(--certified)':'var(--stale)'}">${c.indicator.verified?'Checked'+(c.indicator.verified_by==='system'?' by the system':' by you')+': '+esc(c.indicator.how_checked||''):'Proposed, not verified: '+esc(c.indicator.unverified_reason||'it needs a source link and a check')+'. It will not publish.'}</span>
         ${(c.indicator.evidence||[]).length?`<br><span style="color:var(--dim)">Cited passage: \u201c${esc((c.indicator.evidence||[])[0].slice(0,220))}\u201d</span>`:''}</div>`
         :`<div style="font-size:12px;color:var(--dim);margin:4px 0">None yet. Compose finds one by web search, or tell me what to track in the revision box ("use a measure of local opposition").</div>`}
+      ${c.indicator_proposal?`<div style="font-size:12px;margin:6px 0;padding:6px 8px;border:1px dashed var(--warn)"><b>Proposal, not verified:</b> ${esc(c.indicator_proposal.label||'')}: ${esc(c.indicator_proposal.then_value||'')} (${esc(c.indicator_proposal.then_year||'')}) to ${esc(c.indicator_proposal.now_value||'')} \u00b7 <a href="${esc(c.indicator_proposal.source_url||'#')}" target="_blank" rel="noopener">${esc(c.indicator_proposal.source||'source')} \u2197</a><br><span style="color:var(--stale)">${esc(c.indicator_proposal.unverified_reason||'')}</span><br><button class="mini" id="cat-use-prop">Use it (I looked at the source)</button> <button class="mini" id="cat-drop-prop">Drop it</button></div>`:''}
       <details><summary style="cursor:pointer;font-size:11px;color:var(--dim)">edit by hand</summary>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">${f('label',260)}${f('then_value',70)}${f('then_year',60)}${f('now_value',70)}${f('direction',90)}${f('source',170)}${f('source_url',260)}${f('as_of',100)}
         <input class="cat-ind" data-k="how_checked" value="${esc(ind.how_checked||'')}" placeholder="how you checked it" style="width:100%">
@@ -1763,6 +1776,10 @@ function renderBackstory(root){
     const ln=row.querySelector('.cat-line'); if (ln) ln.addEventListener('change',e=>{ const b=c.beginnings.find(x=>x.object_id===oid); if (b){ b.line=e.target.value.trim(); b.by='editor'; } touch(); render(); });
     row.querySelector('.cat-about').addEventListener('change',e=>{ const o=c.objects.find(x=>x.object_id===oid); if (o){ o.about=e.target.value.trim(); o.by='editor'; } touch(); render(); });
   });
+  const useP=document.getElementById('cat-use-prop'); if (useP) useP.addEventListener('click',()=>{
+    const pr=Object.assign({}, c.indicator_proposal); pr.verified=true; pr.verified_by='editor'; pr.how_checked='You looked at the source.'; delete pr.unverified_reason;
+    c.indicator=pr; delete c.indicator_proposal; c.by.indicator='editor'; touch(); render(); });
+  const dropP=document.getElementById('cat-drop-prop'); if (dropP) dropP.addEventListener('click',()=>{ delete c.indicator_proposal; touch(); render(); });
   const aa=document.getElementById('cat-approve-all'); if (aa) aa.addEventListener('click',()=>{
     c.approved_objects=Array.from(new Set((c.approved_objects||[]).concat(c.objects.map(o=>o.object_id).filter(oid=>(catEntry(c,oid)||{}).pool==='candidate')))); touch(); render(); });
   ed.querySelectorAll('.cat-sg').forEach(el=>el.addEventListener('change',()=>{ c.subgenres=el.checked?Array.from(new Set((c.subgenres||[]).concat([el.dataset.sg]))):(c.subgenres||[]).filter(x=>x!==el.dataset.sg); c.by.lenses='editor'; touch(); render(); }));

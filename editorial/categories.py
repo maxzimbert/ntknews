@@ -165,9 +165,10 @@ def validate(cat, pool, spec, story_texts, origin_year=None, vocab=None):
             abouts_seen.add(about.lower())
         objs.append({"object_id": e["id"], "title": e["title"], "author": e["author"], "year": e["year"],
                      "source": e["source"], "source_url": e["url"], "about": about,
-                     "pool": e["pool"], "lenses": e["lenses"], "by": o.get("by", "model")})
+                     "pool": e["pool"], "lenses": e["lenses"], "by": o.get("by", "model"),
+                     "sort": e.get("sort") or f"{e['year']}-01-01"})
     ids = {o["object_id"] for o in objs}
-    c["objects"] = sorted(objs, key=lambda o: (o["year"], o["title"]))
+    c["objects"] = sorted(objs, key=lambda o: (o["sort"], o["title"]))        # oldest to newest, always
 
     # beginnings
     begs, seen, lines_seen = [], set(), set()
@@ -192,7 +193,8 @@ def validate(cat, pool, spec, story_texts, origin_year=None, vocab=None):
         if lp:
             problems += [f"Beginning {o['title']!r}: {x}" for x in lp]; continue
         seen.add(oid); lines_seen.add(line.lower()); begs.append({"object_id": oid, "year": o["year"], "line": line, "by": b.get("by", "model")})
-    c["beginnings"] = sorted(begs, key=lambda b: b["year"])
+    order = {o["object_id"]: o["sort"] for o in objs}
+    c["beginnings"] = sorted(begs, key=lambda b: (order[b["object_id"]], b["object_id"]))        # oldest to newest, always
     # rule from T-0069: a Beginning is also in The case (already: begins from objects)
 
     ind = c.get("indicator")
@@ -211,6 +213,7 @@ def validate(cat, pool, spec, story_texts, origin_year=None, vocab=None):
             nums = [re.sub(r"[^0-9.]", "", str(ind[k])) for k in ("then_value", "now_value")]
             if not ev or any(n and n not in ev for n in nums):
                 problems.append("indicator: the system's evidence does not contain both figures"); c["indicator"] = None
+    c.pop("indicator_proposal", None)       # a proposal is Pulse working state, never published
     c["by"] = by
     return c, problems
 

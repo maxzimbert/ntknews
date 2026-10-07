@@ -128,6 +128,11 @@ def main():
     c, p = run(x)
     check("a system-verified indicator whose evidence holds both figures is kept", c["indicator"] is not None, p)
 
+    x = good(); x["beginnings"].reverse(); x["objects"].reverse()
+    c, p = run(x)
+    yrs = [b["year"] for b in c["beginnings"]]
+    check("Beginnings and objects always come out oldest to newest", yrs == sorted(yrs) and [o["year"] for o in c["objects"]] == sorted(o["year"] for o in c["objects"]), yrs)
+
     x = good(); x["beginnings"][1]["line"] = x["beginnings"][0]["line"]
     c, p = run(x)
     check("two Beginnings with the same line: the second is dropped", len(c["beginnings"]) == 3 and any("same line" in q for q in p), p)
