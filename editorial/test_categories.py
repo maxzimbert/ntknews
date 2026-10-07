@@ -99,6 +99,10 @@ def main():
     c, p = run(x)
     check("a fully sourced, checked indicator is kept", c["indicator"] is not None, p)
 
+    x = good(); x["beginnings"][1]["line"] = x["beginnings"][0]["line"]
+    c, p = run(x)
+    check("two Beginnings with the same line: the second is dropped", len(c["beginnings"]) == 3 and any("same line" in q for q in p), p)
+
     x = good(); x["lenses"] = ["tech"]
     c, p = run(x, texts=())
     check("with no story filed yet, a model-chosen lens is kept (nothing to check it against)", c["lenses"] == ["tech"], c["lenses"])

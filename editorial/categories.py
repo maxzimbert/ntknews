@@ -111,7 +111,7 @@ def validate(cat, pool, spec, story_texts, origin_year=None):
 
     # objects
     approved = set(c.get("approved_objects") or [])
-    objs = []
+    objs, abouts_seen = [], set()
     for o in c.get("objects") or []:
         e = pool.get(o.get("object_id"))
         if not e:
@@ -123,8 +123,12 @@ def validate(cat, pool, spec, story_texts, origin_year=None):
         about = (o.get("about") or e.get("about") or "").strip()
         if about and o.get("by") != "editor":
             ap = text_problems("about", about, 1, 70)
+            if about.lower() in abouts_seen:
+                ap = ap + ["about is the same text as another object's"]
             if ap:
                 problems += [f"{e['title']!r}: {x}" for x in ap]; about = ""
+        if about:
+            abouts_seen.add(about.lower())
         objs.append({"object_id": e["id"], "title": e["title"], "author": e["author"], "year": e["year"],
                      "source": e["source"], "source_url": e["url"], "about": about,
                      "pool": e["pool"], "lenses": e["lenses"], "by": o.get("by", "model")})
@@ -132,7 +136,7 @@ def validate(cat, pool, spec, story_texts, origin_year=None):
     c["objects"] = sorted(objs, key=lambda o: (o["year"], o["title"]))
 
     # beginnings
-    begs, seen = [], set()
+    begs, seen, lines_seen = [], set(), set()
     for b in c.get("beginnings") or []:
         oid = b.get("object_id")
         o = next((x for x in objs if x["object_id"] == oid), None)
@@ -143,13 +147,15 @@ def validate(cat, pool, spec, story_texts, origin_year=None):
         if by.get("lenses") != "editor" and b.get("by") != "editor" and keep and not set(o["lenses"]) & set(keep):
             problems.append(f"Beginning {o['title']!r} belongs to none of the category's lenses {keep}"); continue
         line = (b.get("line") or "").strip()
+        if line.lower() in lines_seen:
+            problems.append(f"Beginning {o['title']!r}: same line as another Beginning"); continue
         if b.get("by") == "editor":
             lp = [] if line else ["line is empty"]
         else:
             lp = text_problems("line", line, 12, 25, sentences=1)
         if lp:
             problems += [f"Beginning {o['title']!r}: {x}" for x in lp]; continue
-        seen.add(oid); begs.append({"object_id": oid, "year": o["year"], "line": line, "by": b.get("by", "model")})
+        seen.add(oid); lines_seen.add(line.lower()); begs.append({"object_id": oid, "year": o["year"], "line": line, "by": b.get("by", "model")})
     c["beginnings"] = sorted(begs, key=lambda b: b["year"])
     # rule from T-0069: a Beginning is also in The case (already: begins from objects)
 

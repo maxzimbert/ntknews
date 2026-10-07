@@ -53,6 +53,8 @@ x = good(); x.indicator = { label: 'Oppose a data center nearby', then_value: '4
 check('an indicator with no source link is dropped', r.clean.indicator === null, r.problems);
 x.indicator.source_url = 'https://heatmap.news/daily/data-center-opposition-poll-collapse'; r = run(x);
 check('a fully sourced, checked indicator is kept', r.clean.indicator !== null, r.problems);
+x = good(); x.beginnings[1].line = x.beginnings[0].line; r = run(x);
+check('two Beginnings with the same line: the second is dropped', r.clean.beginnings.length === 3 && r.problems.some(p => p.includes('same line')), r.problems);
 x = good(); r = run(x, []);
 check('with no story filed yet, a model-chosen lens is kept', r.clean.lenses.join() === 'tech', r.clean.lenses);
 // selection rule

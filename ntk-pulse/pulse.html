@@ -1496,14 +1496,15 @@ function validateCat(cat, poolBy, spec, storyTexts, originYear){
     else keep.push(l);
   });
   c.lenses=keep;
-  const approved=new Set(c.approved_objects||[]); const objs=[];
+  const approved=new Set(c.approved_objects||[]); const objs=[]; const abouts=new Set(), linesSeen=new Set();
   (c.objects||[]).forEach(o=>{
     const e=poolBy[o.object_id];
     if (!e){ problems.push('object '+o.object_id+' is not in the pool'); return; }
     if (e.link_status==='dead' || !e.url){ problems.push('object '+e.title+' has no live link'); return; }
     if (e.pool==='candidate' && !(e.approved || approved.has(e.id))){ problems.push('candidate '+e.title+' is not approved'); return; }
     let about=(o.about||e.about||'').trim();
-    if (about && o.by!=='editor'){ const ap=catTextProblems('about',about,1,70); if (ap.length){ ap.forEach(x=>problems.push(e.title+': '+x)); about=''; } }
+    if (about && o.by!=='editor'){ const ap=catTextProblems('about',about,1,70); if (abouts.has(about.toLowerCase())) ap.push('about is the same text as another object\u2019s'); if (ap.length){ ap.forEach(x=>problems.push(e.title+': '+x)); about=''; } }
+    if (about) abouts.add(about.toLowerCase());
     objs.push({object_id:e.id,title:e.title,author:e.author,year:e.year,source:e.source,source_url:e.url,about:about,pool:e.pool,lenses:e.lenses,by:o.by||'model'});
   });
   objs.sort((a,b)=> a.year<b.year?-1:a.year>b.year?1:(a.title<b.title?-1:1));
@@ -1515,9 +1516,10 @@ function validateCat(cat, poolBy, spec, storyTexts, originYear){
     if (originYear && String(o.year)>=String(originYear)){ problems.push('Beginning '+o.title+' is dated '+o.year+', not before the origin'); return; }
     if (by.lenses!=='editor' && b.by!=='editor' && keep.length && !o.lenses.some(l=>keep.includes(l))){ problems.push('Beginning '+o.title+' belongs to none of the category’s lenses'); return; }
     const line=(b.line||'').trim();
+    if (linesSeen.has(line.toLowerCase())){ problems.push('Beginning '+o.title+': same line as another Beginning'); return; }
     const lp = b.by==='editor' ? (line?[]:['line is empty']) : catTextProblems('line',line,12,25,{sentences:1});
     if (lp.length){ lp.forEach(x=>problems.push('Beginning '+o.title+': '+x)); return; }
-    seen.add(b.object_id); begs.push({object_id:b.object_id,year:o.year,line:line,by:b.by||'model'});
+    seen.add(b.object_id); linesSeen.add(line.toLowerCase()); begs.push({object_id:b.object_id,year:o.year,line:line,by:b.by||'model'});
   });
   begs.sort((a,b)=> a.year<b.year?-1:a.year>b.year?1:0);
   c.beginnings=begs;
