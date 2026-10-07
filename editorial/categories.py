@@ -154,8 +154,9 @@ def validate(cat, pool, spec, story_texts, origin_year=None):
     # rule from T-0069: a Beginning is also in The case (already: begins from objects)
 
     ind = c.get("indicator")
-    if ind and not (ind.get("verified") is True and ind.get("source") and ind.get("as_of")):
-        problems.append("indicator is not verified with a source and a date")
+    if ind and not (ind.get("verified") is True and ind.get("source") and ind.get("source_url")
+                    and ind.get("as_of") and ind.get("label") and ind.get("then_value") and ind.get("now_value")):
+        problems.append("indicator needs a label, two values, a source with a link, a date, and the editor's check")
         c["indicator"] = None
     c["by"] = by
     return c, problems

@@ -91,6 +91,14 @@ def main():
     c, p = run(x)
     check("an unverified indicator is dropped", c["indicator"] is None, p)
 
+    x = good(); x["indicator"] = {"label": "Oppose a data center nearby", "then_value": "42%", "now_value": "75%", "source": "Heatmap Pro", "as_of": "August 2026", "verified": True}
+    c, p = run(x)
+    check("an indicator with no source link is dropped", c["indicator"] is None, p)
+
+    x["indicator"]["source_url"] = "https://heatmap.news/daily/data-center-opposition-poll-collapse"
+    c, p = run(x)
+    check("a fully sourced, checked indicator is kept", c["indicator"] is not None, p)
+
     x = good(); x["lenses"] = ["tech"]
     c, p = run(x, texts=())
     check("with no story filed yet, a model-chosen lens is kept (nothing to check it against)", c["lenses"] == ["tech"], c["lenses"])
