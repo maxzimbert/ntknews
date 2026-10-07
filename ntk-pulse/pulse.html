@@ -1313,7 +1313,7 @@ function validateCat(cat, poolBy0, spec, storyTexts, originYear, vocab){
     else if (!(cu.title||'').trim()) why='missing title';
     if (why){ problems.push('added object '+cu.title+': '+why); return; }
     const cid=cu.id||('custom-'+cu.title.toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,60));
-    poolBy[cid]={id:cid,pool:'custom',approved:true,title:cu.title.trim(),author:cu.author||'',year:String(cu.year),sort:String(cu.year)+'-01-01',source:cu.source||host,url:url,lenses:[],subgenre:'',link_status:'unchecked',about:'',line:''};
+    poolBy[cid]={id:cid,pool:'custom',approved:true,title:cu.title.trim(),author:cu.author||'',year:String(cu.year),sort:/^\d{4}-\d\d-\d\d$/.test(cu.date||'')?cu.date:String(cu.year)+'-01-01',source:cu.source||host,url:url,lenses:[],subgenre:'',link_status:'unchecked',about:'',line:''};
   });
   const approved=new Set(c.approved_objects||[]); const objs=[]; const abouts=new Set(), linesSeen=new Set();
   (c.objects||[]).forEach(o=>{
@@ -1375,6 +1375,17 @@ function verifyIndicator(ind, search){
   if (!q && !cited) return {ok:false, reason:'no passage was cited and no quote was given, so the figures could not be checked'};
   return {ok:false, reason:'both figures do not appear together in the cited or quoted passage'};
 }
+// A document the model found by web search: the link must be one the search returned, https, not on
+// the refused list, and it needs a title and a year. CI checks that the link loads at publish.
+function verifyFoundObject(o, search){
+  const url=String(o.source_url||'').trim(), host=url.replace(/^https?:\/\/([^\/]+).*$/,'$1').toLowerCase();
+  if (!url.startsWith('https://')) return {ok:false, reason:'the link must start with https://'};
+  if (!(search.urls||[]).includes(url)) return {ok:false, reason:'the link is not one the search returned'};
+  if (CAT_DENY.some(d=>host.includes(d))) return {ok:false, reason:host+' is not a primary source'};
+  if (!/^\d{3,4}$/.test(String(o.year||''))) return {ok:false, reason:'it has no year'};
+  if (!String(o.title||'').trim()) return {ok:false, reason:'it has no title'};
+  return {ok:true};
+}
 /* CATS:END */
 
 const CAT_MAXTOK = 2400;
@@ -1392,7 +1403,7 @@ function catRecord(id){ return CATS[id] || PUBCATS.find(r=>r.id===id) || null; }
 function catEntry(c, oid){
   if (POOL_BY[oid]) return POOL_BY[oid];
   const cu=(c.custom_objects||[]).find(x=>(x.id||'')===oid);
-  return cu ? {id:oid,pool:'custom',approved:true,title:cu.title,author:cu.author||'',year:String(cu.year),sort:String(cu.year)+'-01-01',source:cu.source||'',url:cu.url,lenses:[],subgenre:'',link_status:'unchecked',about:'',line:''} : null;
+  return cu ? {id:oid,pool:'custom',approved:true,title:cu.title,author:cu.author||'',year:String(cu.year),sort:/^\d{4}-\d\d-\d\d$/.test(cu.date||'')?cu.date:String(cu.year)+'-01-01',source:cu.source||'',url:cu.url,lenses:[],subgenre:'',link_status:'unchecked',about:'',line:''} : null;
 }
 function catListAll(){
   const out=Object.values(CATS).map(r=>({rec:r, where:'local'}));
@@ -1576,6 +1587,26 @@ JSON only: {"<id>":{"line":"...","about":"..."}, ...}`;
     if (bg && !bg.line && t.line) bg.line=String(t.line).trim();
   });
 }
+async function proposeObject(c, desc){
+  const p=`You find ONE primary-source document for a Backstory category page at NTK.
+
+CATEGORY: ${c.title}
+THE EDITOR WANTS: ${desc}
+
+Use web search to find the document itself, or the copy held by an archive, court, legislature, government agency or the original publisher. Not Wikipedia, not a news article or summary about it, not a retail or study-guide page. Then answer with JSON only:
+{"title":"the document's exact title","author":"who issued or wrote it","year":"YYYY","date":"YYYY-MM-DD if you know the exact date, else null","source":"the publishing body or archive","source_url":"the exact page or PDF where the document can be read","note":"one sentence"}
+If you cannot find one, answer {"none":"why"}.`;
+  const r=await aiSearch(p,1500), j=catJson(r.text);
+  if (j.none) return 'Could not find "'+desc+'": '+j.none+'.';
+  const v=verifyFoundObject(j,{urls:r.urls});
+  if (!v.ok) return 'Found "'+(j.title||desc)+'" but could not use it: '+v.reason+'.';
+  const cid='custom-'+String(j.title).toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,60);
+  if ((c.objects||[]).some(o=>o.object_id===cid)) return '"'+j.title+'" is already here.';
+  const cu={id:cid,title:String(j.title).trim(),author:j.author||'',year:String(j.year),date:/^\d{4}-\d\d-\d\d$/.test(j.date||'')?j.date:'',source:j.source||'',url:j.source_url,found_by:'search'};
+  c.custom_objects=(c.custom_objects||[]).filter(x=>x.id!==cid).concat([cu]);
+  c.objects.push({object_id:cid,about:'',by:'model'}); c.beginnings.push({object_id:cid,line:'',by:'model'});
+  return 'Added '+cu.title+' ('+cu.year+') from '+String(cu.url).replace(/^https?:\/\/([^\/]+).*$/,'$1')+'.';
+}
 async function reviseCat(id, request){
   const c=catEnsureLocal(id); if (!c || !request.trim()) return;
   if (c.status==='approved') c.status='draft';
@@ -1605,8 +1636,9 @@ ${avail.slice(0,60).map(o=>o.id+' | '+o.year+' | '+o.title).join('\n')||'(none)'
 THE EDITOR'S REQUEST: ${request}
 
 Change only what the request asks for. Return JSON with only the keys that change:
-{"contest":"...","stakes":"...","lines":{"<id>":"..."},"abouts":{"<id>":"..."},"add":["<id from the available list>"],"drop":["<id>"],"note":"one sentence saying what you changed"}
+{"contest":"...","stakes":"...","lines":{"<id>":"..."},"abouts":{"<id>":"..."},"add":["<id from the available list>"],"drop":["<id>"],"find":["a short description of a document to look up"],"note":"one sentence saying what you changed"}
 contest: "Whether X, or Y", 12 to 30 words. stakes: two short sentences, 25 to 55 words. A line is one sentence of 12 to 25 words. An about is two to four sentences, at most 70 words.
+If the editor asks for a document that is not in the available list, NEVER refuse and never say it does not exist: put a short description of it in "find" (for example "the Mueller report on Russian interference in the 2016 election") and a web search will look for the original. Up to three.
 ${CAT_STYLE_RULES}`;
     const r=catJson(await ai(p,CAT_MAXTOK));
     if (r.contest){ c.contest=String(r.contest).trim(); c.by.contest='model'; }
@@ -1618,10 +1650,15 @@ ${CAT_STYLE_RULES}`;
     });
     Object.entries(r.lines||{}).forEach(([oid,t])=>{ const b=c.beginnings.find(x=>x.object_id===oid); if (b){ b.line=String(t).trim(); b.by='model'; } });
     Object.entries(r.abouts||{}).forEach(([oid,t])=>{ const o=c.objects.find(x=>x.object_id===oid); if (o){ o.about=String(t).trim(); o.by='model'; } });
+    const found=[];
+    for (const d of (r.find||[]).slice(0,3)){
+      try { found.push(await proposeObject(c, d)); } catch(e){ found.push('Could not search for "'+d+'": '+e.message+' (web search may not be enabled for this key).'); }
+    }
     const need=c.beginnings.filter(b=>!b.line).map(b=>catEntry(c,b.object_id)).filter(Boolean);
     if (need.length) await writeObjectText(c, need);
-    c.revisions=(c.revisions||[]).concat([{at:new Date().toISOString(),request:request,summary:r.note||''}]);
-    CAT_MSG[id]=r.note||'Revised.';
+    const summary=[r.note||''].concat(found).filter(Boolean).join(' ');
+    c.revisions=(c.revisions||[]).concat([{at:new Date().toISOString(),request:request,summary:summary}]);
+    CAT_MSG[id]=summary||'Revised.';
   } catch(e){ CAT_MSG[id]='Revision failed: '+e.message; }
   delete CAT_BUSY[id]; saveCats(); render();
 }
@@ -1675,7 +1712,7 @@ function catEditorHtml(c){
         <b>${esc(e.year||'')}</b> <span>${esc(e.title||o.object_id)}</span>
         <a href="${esc(e.url||'#')}" target="_blank" rel="noopener" style="font-size:11px">open source ↗</a>
         <span class="chip">${esc(e.link_status||'')}</span>
-        ${cand?`<label style="font-size:11px;${ok?'':'color:var(--warn)'}"><input type="checkbox" class="cat-approve" ${ok?'checked':''} ${e.approved?'disabled':''}> ${ok?'approved':'candidate, needs your approval'}</label>`:'<span class="chip">matrix</span>'}
+        ${cand?`<label style="font-size:11px;${ok?'':'color:var(--warn)'}"><input type="checkbox" class="cat-approve" ${ok?'checked':''} ${e.approved?'disabled':''}> ${ok?'approved':'candidate, needs your approval'}</label>`:'<span class="chip">'+esc(e.pool==='custom'?'added':'matrix')+'</span>'}
         <button class="mini cat-rm" style="margin-left:auto">remove</button>
       </div>
       ${bg?`<textarea class="cat-line" rows="2" style="width:100%;margin-top:5px" placeholder="Beginning line, one sentence">${esc(bg.line)}</textarea>`:''}
@@ -1732,7 +1769,37 @@ function catEditorHtml(c){
     <div style="margin:12px 0 4px"><b style="font-size:11px">PREVIEW</b></div>${catPreviewHtml(c)}
   </div>`;
 }
+// Something else in Pulse (a story generating in Lineup, say) calls render() while you are typing here.
+// Capture what you have typed and where your cursor is, and put it back after the tab redraws.
+function catFieldKey(el){
+  const row=el.closest && el.closest('[data-oid]');
+  if (el.id) return el.id;
+  if (row) return (el.classList.contains('cat-line')?'line:':'about:')+row.dataset.oid;
+  if (el.classList.contains('cat-ind')) return 'ind:'+el.dataset.k;
+  return null;
+}
+const CAT_FIELDS='textarea, input[type=text], input:not([type])';
+function catCaptureInputs(){
+  const ed=document.getElementById('cat-editor'); if (!ed) return null;
+  const dirty={}; let focus=null; const ae=document.activeElement;
+  ed.querySelectorAll(CAT_FIELDS).forEach(el=>{
+    const k=catFieldKey(el); if (!k) return;
+    if (el.value!==el.defaultValue) dirty[k]=el.value;
+    if (el===ae) focus={k:k,s:el.selectionStart,e:el.selectionEnd};
+  });
+  return {dirty:dirty, focus:focus, y:window.scrollY, sel:CAT_SEL};
+}
+function catRestoreInputs(st){
+  const ed=document.getElementById('cat-editor'); if (!st || !ed || st.sel!==CAT_SEL) return;
+  ed.querySelectorAll(CAT_FIELDS).forEach(el=>{
+    const k=catFieldKey(el); if (!k) return;
+    if (st.dirty[k]!==undefined) el.value=st.dirty[k];
+    if (st.focus && st.focus.k===k){ el.focus(); try { el.setSelectionRange(st.focus.s, st.focus.e); } catch(e){} }
+  });
+  window.scrollTo(0, st.y);
+}
 function renderBackstory(root){
+  const _kept=catCaptureInputs();
   const list=catListAll();
   if (CAT_SEL && !catRecord(CAT_SEL)) CAT_SEL=null;
   const sel=CAT_SEL?catRecord(CAT_SEL):null;
@@ -1748,6 +1815,7 @@ function renderBackstory(root){
       </div>
       <div id="cat-editor">${sel? (CATS[sel.id]||catEnsureLocal(sel.id) ? catEditorHtml(CATS[sel.id]) : '') : '<i style="color:var(--dim)">Pick a category on the left, or make a new one. A category named from a story in Lineup opens here.</i>'}</div>
     </div>`;
+  catRestoreInputs(_kept);
   fetchPublishedBackstory().then(d=>{ const el=document.getElementById('bs-published'); if (el) el.innerHTML=pairingsHtml(d); });
   root.querySelectorAll('.cat-pick').forEach(el=>el.addEventListener('click',()=>{ CAT_SEL=el.dataset.id; if (!CATS[CAT_SEL]) catEnsureLocal(CAT_SEL); render(); }));
   document.getElementById('cat-new').addEventListener('click',()=>{

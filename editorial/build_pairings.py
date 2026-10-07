@@ -66,6 +66,23 @@ def strip_html(s):
     return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", s or "")).strip()
 
 
+def parse_json_loose(text, label="model"):
+    """The first JSON value in a model's answer, ignoring fences and anything after it.
+
+    Found by the first real run (2026-10-07): Haiku answered with a JSON object and then more
+    text, and a strict json.loads failed on every origin query. Take the first object or array
+    that parses and say what the answer looked like if none does."""
+    t = text.replace("```json", "").replace("```", "").strip()
+    dec = json.JSONDecoder()
+    for i, ch in enumerate(t):
+        if ch in "{[":
+            try:
+                return dec.raw_decode(t[i:])[0]
+            except json.JSONDecodeError:
+                continue
+    raise ValueError(f"{label} returned no JSON; it began: {t[:200]!r}")
+
+
 def call_claude(api_key, model, system, user, max_tokens):
     body = {
         "model": model,
@@ -89,10 +106,9 @@ def call_claude(api_key, model, system, user, max_tokens):
     # returns undefined the moment a non-text block leads the response.
     text = "".join(b.get("text", "") for b in data.get("content", [])
                    if b.get("type") == "text")
-    text = text.replace("```json", "").replace("```", "").strip()
-    if not text:
+    if not text.strip():
         raise RuntimeError(f"{model} returned no text block")
-    return json.loads(text)
+    return parse_json_loose(text, model)
 
 
 def build_vocabulary(rows):

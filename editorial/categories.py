@@ -140,7 +140,8 @@ def validate(cat, pool, spec, story_texts, origin_year=None, vocab=None):
             problems.append(f"added object {cu.get('title')!r}: {why}"); continue
         cid = cu.get("id") or "custom-" + re.sub(r"[^a-z0-9]+", "-", cu["title"].lower())[:60]
         pool[cid] = {"id": cid, "pool": "custom", "approved": True, "title": cu["title"].strip(), "author": cu.get("author") or "",
-                     "year": str(cu["year"]), "source": cu.get("source") or host, "url": url, "lenses": [], "subgenre": "",
+                     "year": str(cu["year"]), "sort": cu["date"] if re.fullmatch(r"\d{4}-\d\d-\d\d", cu.get("date") or "") else f"{cu['year']}-01-01",
+                     "source": cu.get("source") or host, "url": url, "lenses": [], "subgenre": "",
                      "link_status": "unchecked", "about": "", "line": ""}
 
     # objects
