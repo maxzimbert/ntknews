@@ -7,7 +7,7 @@ const root = path.resolve(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'ntk-pulse/pulse.html'), 'utf8');
 const m = html.match(/\/\* CATS:BEGIN \*\/([\s\S]*?)\/\* CATS:END \*\//);
 if (!m) { console.error('FAIL: CATS block not found'); process.exit(1); }
-const L = new Function(m[1] + '; return {validateCat, selectBeginnings, lensSupported, catTextProblems};')();
+const L = new Function(m[1] + '; return {validateCat, selectBeginnings, pickBeginnings, lensSupported, catTextProblems};')();
 const poolDoc = JSON.parse(fs.readFileSync(path.join(root, 'ntk-pulse/data/backstory-pool.json'), 'utf8'));
 const poolBy = Object.fromEntries(poolDoc.objects.map(o => [o.id, o]));
 const spec = JSON.parse(fs.readFileSync(path.join(root, 'editorial/lenses.json'), 'utf8'));
@@ -59,5 +59,7 @@ check('with no story filed yet, a model-chosen lens is kept', r.clean.lenses.joi
 const techs = poolDoc.objects.filter(o => o.lenses.includes('tech') && o.url);
 const pick = L.selectBeginnings(techs, 6);
 check('selectBeginnings keeps the most recent object and spreads the rest', pick.length === 6 && pick[pick.length - 1].id === techs.slice().sort((a, b) => a.sort < b.sort ? -1 : 1).pop().id, pick.map(o => o.year));
+const pk = L.pickBeginnings(techs, 6);
+check('pickBeginnings takes every matrix object first, then fills with candidates', techs.filter(o => o.pool === 'matrix').every(o => pk.some(p => p.id === o.id)) && pk.length === 6, pk.map(o => o.pool + ' ' + o.year));
 check('lensSupported reads whole words only', L.lensSupported('tech', spec, ALTMAN) && !L.lensSupported('china', spec, ALTMAN) && !L.lensSupported('tech', spec, 'The mail arrived said the senator'), null);
 console.log('\n' + fails + ' failed'); process.exit(fails ? 1 : 0);

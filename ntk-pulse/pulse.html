@@ -1470,6 +1470,14 @@ function selectBeginnings(objs, k){
   }
   return out.concat([last]).sort((x,y)=> x.sort<y.sort ? -1 : x.sort>y.sort ? 1 : 0);
 }
+// Matrix objects first (already vetted, text written), then candidates spread over the rest
+// of the span to fill up to k. Beginnings come from one list, in date order.
+function pickBeginnings(objs, k){
+  const m=objs.filter(o=>o.pool==='matrix'), c=objs.filter(o=>o.pool!=='matrix');
+  const first=selectBeginnings(m,k);
+  if (first.length>=k || !c.length) return first;
+  return first.concat(selectBeginnings(c,k-first.length)).sort((x,y)=> x.sort<y.sort ? -1 : x.sort>y.sort ? 1 : 0);
+}
 // Mirror of editorial/categories.py validate(). Returns {clean, problems}.
 function validateCat(cat, poolBy, spec, storyTexts, originYear){
   const problems=[]; const c=Object.assign({}, cat); const by=Object.assign({}, c.by||{});
@@ -1580,13 +1588,14 @@ function catPoolFor(lenses){
 function catPick(lenses){
   const k = lenses.length===1 ? 6 : 3, seen=new Set(), out=[];
   lenses.forEach(l=>{
-    selectBeginnings(catPoolFor([l]), k).forEach(o=>{ if (!seen.has(o.id)){ seen.add(o.id); out.push(o); } });
+    pickBeginnings(catPoolFor([l]), k).forEach(o=>{ if (!seen.has(o.id)){ seen.add(o.id); out.push(o); } });
   });
   return out.sort((a,b)=> a.sort<b.sort?-1:1);
 }
 const CAT_STYLE_RULES = `STYLE (all text): plain words, Grade 8 to 10. No em dashes. Never use: this document, this reflects, underscores, highlights, serves as, a reminder that, pivotal, landmark, groundbreaking, seminal. Take no side. Use only facts in the material you are given; no numbers that do not appear in it.`;
 async function composeCat(id){
-  const c=CATS[id]; if (!c) return;
+  const c=catEnsureLocal(id); if (!c) return;
+  if (c.status==='approved') c.status='draft';       // new text needs a fresh approval
   if (!POOL){ CAT_MSG[id]='The object pool has not loaded.'; render(); return; }
   CAT_BUSY[id]='Composing…'; CAT_MSG[id]=''; render();
   try {
@@ -1645,7 +1654,8 @@ JSON only: {"<id>":{"line":"...","about":"..."}, ...}`;
   });
 }
 async function reviseCat(id, request){
-  const c=CATS[id]; if (!c || !request.trim()) return;
+  const c=catEnsureLocal(id); if (!c || !request.trim()) return;
+  if (c.status==='approved') c.status='draft';
   CAT_BUSY[id]='Revising…'; CAT_MSG[id]=''; render();
   try {
     const avail=catPoolFor(c.lenses).filter(o=>!c.objects.some(x=>x.object_id===o.id));
@@ -1767,6 +1777,7 @@ function catEditorHtml(c){
       <label style="font-size:11px"><input type="checkbox" class="cat-ind-ok" ${ind.verified?'checked':''}> I checked it against the source</label></div>
       <div style="font-size:11px;color:var(--dim);margin-top:4px">Direction: worse, better, contested or flat. Nothing is drawn unless every field is filled and you have checked it. A model never supplies these numbers.</div></details>
     <div style="margin:10px 0 4px"><b style="font-size:11px">BEGINNINGS AND OBJECTS</b> <span style="font-size:11px;color:var(--dim)">${(c.beginnings||[]).length} Beginnings, ${(c.objects||[]).length} objects. The reader sees them in date order.</span></div>
+    ${(()=>{ const un=(c.objects||[]).filter(o=>{ const e=POOL_BY[o.object_id]||{}; return e.pool==='candidate' && !e.approved && !(c.approved_objects||[]).includes(o.object_id); }); return un.length?`<button class="mini" id="cat-approve-all" style="margin:4px 0">Approve all ${un.length} candidate${un.length===1?'':'s'} (I have opened the links)</button>`:''; })()}
     ${objRows||'<i style="font-size:12px;color:var(--dim)">none yet. Compose, or add from the pool below.</i>'}
     ${addable.length?`<div style="margin-top:6px"><select id="cat-add"><option value="">add from the pool for these lenses (${addable.length})…</option>${addable.map(o=>`<option value="${esc(o.id)}">${esc(o.year)} · ${esc(o.title.slice(0,70))} (${o.pool})</option>`).join('')}</select></div>`:''}
     ${probs.length?`<div style="margin-top:8px;font-size:11px;color:var(--stale)"><b>Will be dropped at publish:</b><br>${probs.map(esc).join('<br>')}</div>`:''}
@@ -1821,6 +1832,8 @@ function renderBackstory(root){
     const ln=row.querySelector('.cat-line'); if (ln) ln.addEventListener('change',e=>{ const b=c.beginnings.find(x=>x.object_id===oid); if (b){ b.line=e.target.value.trim(); b.by='editor'; } touch(); render(); });
     row.querySelector('.cat-about').addEventListener('change',e=>{ const o=c.objects.find(x=>x.object_id===oid); if (o){ o.about=e.target.value.trim(); o.by='editor'; } touch(); render(); });
   });
+  const aa=document.getElementById('cat-approve-all'); if (aa) aa.addEventListener('click',()=>{
+    c.approved_objects=Array.from(new Set((c.approved_objects||[]).concat(c.objects.map(o=>o.object_id).filter(oid=>(POOL_BY[oid]||{}).pool==='candidate')))); touch(); render(); });
   const add=document.getElementById('cat-add'); if (add) add.addEventListener('change',e=>{
     const oid=e.target.value; if (!oid) return; const o=POOL_BY[oid];
     c.objects.push({object_id:oid,about:o.about||'',by:'editor'}); c.beginnings.push({object_id:oid,line:o.line||'',by:'editor'});
