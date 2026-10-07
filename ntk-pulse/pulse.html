@@ -1386,6 +1386,25 @@ function verifyFoundObject(o, search){
   if (!String(o.title||'').trim()) return {ok:false, reason:'it has no title'};
   return {ok:true};
 }
+// The editor supplies or corrects an object's primary source. A pool object becomes an object of this
+// category's own (custom) with the editor's link; its Beginning line and About text are kept.
+function applySourceEdit(c, oid, f){
+  const url=String(f.url||'').trim(), host=url.replace(/^https?:\/\/([^\/]+).*$/,'$1').toLowerCase();
+  if (!String(f.title||'').trim()) return {ok:false, reason:'it needs a title'};
+  if (!/^\d{3,4}$/.test(String(f.year||'').trim())) return {ok:false, reason:'the year must be a number'};
+  if (!url.startsWith('https://')) return {ok:false, reason:'the link must start with https://'};
+  if (CAT_DENY.some(d=>host.includes(d))) return {ok:false, reason:host+' is not accepted as a primary source'};
+  const cid = oid.indexOf('custom-')===0 ? oid : 'custom-'+String(f.title).toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,60);
+  if (cid!==oid && (c.objects||[]).some(o=>o.object_id===cid)) return {ok:false, reason:'an object with that title is already in this category'};
+  const cu={id:cid,title:String(f.title).trim(),author:String(f.author||'').trim(),year:String(f.year).trim(),
+            date:/^\d{4}-\d\d-\d\d$/.test(f.date||'')?f.date:'',source:String(f.source||'').trim(),url:url,edited_by:'editor'};
+  c.custom_objects=(c.custom_objects||[]).filter(x=>x.id!==oid && x.id!==cid).concat([cu]);
+  const ob=(c.objects||[]).find(o=>o.object_id===oid), bg=(c.beginnings||[]).find(b=>b.object_id===oid);
+  if (ob){ ob.object_id=cid; ob.by='editor'; }
+  if (bg){ bg.object_id=cid; }
+  c.approved_objects=(c.approved_objects||[]).filter(x=>x!==oid);
+  return {ok:true, id:cid};
+}
 /* CATS:END */
 
 const CAT_MAXTOK = 2400;
@@ -1393,7 +1412,7 @@ let CATS = load(LS.cats, {});          // id -> record. Drafts and approved-not-
 let POOL = null, POOL_BY = {};         // ntk-pulse/data/backstory-pool.json
 let PUBCATS = [];                      // categories already published (ntk-pulse/data/provisional-rows.json)
 let CAT_SEL = null;                    // the category open in the Backstory tab
-let CAT_BUSY = {}, CAT_MSG = {}, CAT_VOCAB = null;
+let CAT_BUSY = {}, CAT_MSG = {}, CAT_VOCAB = null, CAT_SRC_OPEN = {};
 function saveCats(){ Object.values(CATS).forEach(c=>{ try { catSortRecord(c); } catch(e){} }); localStorage.setItem(LS.cats, JSON.stringify(CATS)); }
 function catSlug(name){ return 'p-' + String(name).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,40); }
 function catPlain(h){ return String(h||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim(); }
@@ -1715,6 +1734,19 @@ function catEditorHtml(c){
         ${cand?`<label style="font-size:11px;${ok?'':'color:var(--warn)'}"><input type="checkbox" class="cat-approve" ${ok?'checked':''} ${e.approved?'disabled':''}> ${ok?'approved':'candidate, needs your approval'}</label>`:'<span class="chip">'+esc(e.pool==='custom'?'added':'matrix')+'</span>'}
         <button class="mini cat-rm" style="margin-left:auto">remove</button>
       </div>
+      <div style="margin:3px 0 0 2px;font-size:11px"><a href="#" class="cat-editsrc">${CAT_SRC_OPEN[o.object_id]?'close':'edit source'}</a> <span style="color:var(--dim)">${esc(e.source||'')}${e.pool==='custom'?' \u00b7 added by you or by search':''}</span></div>
+      ${CAT_SRC_OPEN[o.object_id]?`<div style="margin:4px 0;padding:6px 8px;border:1px solid var(--rule)">
+        <div style="font-size:11px;color:var(--dim);margin-bottom:4px">Supply the primary source yourself. The link must be the document or an archive's, court's or government's copy of it. Your Beginning line and About text stay.</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <input class="cat-src-f" data-f="title" value="${esc(e.title||'')}" placeholder="title" style="width:260px">
+          <input class="cat-src-f" data-f="author" value="${esc(e.author||'')}" placeholder="author" style="width:150px">
+          <input class="cat-src-f" data-f="year" value="${esc(e.year||'')}" placeholder="year" style="width:60px">
+          <input class="cat-src-f" data-f="source" value="${esc(e.source||'')}" placeholder="source (archive or publisher)" style="width:200px">
+          <input class="cat-src-f" data-f="url" value="${esc(e.url||'')}" placeholder="https:// link to the document" style="width:100%">
+        </div>
+        <button class="mini go cat-src-save" style="margin-top:4px">Save source</button> <button class="mini cat-src-cancel">Cancel</button>
+        <span class="cat-src-msg" style="font-size:11px;color:var(--stale);margin-left:6px"></span>
+      </div>`:''}
       ${bg?`<textarea class="cat-line" rows="2" style="width:100%;margin-top:5px" placeholder="Beginning line, one sentence">${esc(bg.line)}</textarea>`:''}
       <textarea class="cat-about" rows="2" style="width:100%;margin-top:4px" placeholder="About this: two to four sentences">${esc(o.about||'')}</textarea>
     </div>`;
@@ -1776,6 +1808,7 @@ function catFieldKey(el){
   if (el.id) return el.id;
   if (row) return (el.classList.contains('cat-line')?'line:':'about:')+row.dataset.oid;
   if (el.classList.contains('cat-ind')) return 'ind:'+el.dataset.k;
+  if (el.classList.contains('cat-src-f') && row) return 'src:'+row.dataset.oid+':'+el.dataset.f;
   return null;
 }
 const CAT_FIELDS='textarea, input[type=text], input:not([type])';
@@ -1840,6 +1873,13 @@ function renderBackstory(root){
       touch(); render(); });
     const ap=row.querySelector('.cat-approve'); if (ap) ap.addEventListener('change',e=>{
       c.approved_objects=e.target.checked?Array.from(new Set((c.approved_objects||[]).concat([oid]))):(c.approved_objects||[]).filter(x=>x!==oid); touch(); render(); });
+    row.querySelector('.cat-editsrc').addEventListener('click',ev=>{ ev.preventDefault(); CAT_SRC_OPEN[oid]=!CAT_SRC_OPEN[oid]; render(); });
+    const sv=row.querySelector('.cat-src-save'); if (sv) sv.addEventListener('click',()=>{
+      const f={}; row.querySelectorAll('.cat-src-f').forEach(el=>{ f[el.dataset.f]=el.value; });
+      const res=applySourceEdit(c, oid, f);
+      if (!res.ok){ row.querySelector('.cat-src-msg').textContent='Not saved: '+res.reason+'.'; return; }
+      delete CAT_SRC_OPEN[oid]; CAT_MSG[c.id]='Source saved. The link is checked when you publish.'; touch(); render(); });
+    const cn=row.querySelector('.cat-src-cancel'); if (cn) cn.addEventListener('click',()=>{ delete CAT_SRC_OPEN[oid]; render(); });
     row.querySelector('.cat-rm').addEventListener('click',()=>{ c.objects=c.objects.filter(o=>o.object_id!==oid); c.beginnings=c.beginnings.filter(b=>b.object_id!==oid); touch(); render(); });
     const ln=row.querySelector('.cat-line'); if (ln) ln.addEventListener('change',e=>{ const b=c.beginnings.find(x=>x.object_id===oid); if (b){ b.line=e.target.value.trim(); b.by='editor'; } touch(); render(); });
     row.querySelector('.cat-about').addEventListener('change',e=>{ const o=c.objects.find(x=>x.object_id===oid); if (o){ o.about=e.target.value.trim(); o.by='editor'; } touch(); render(); });

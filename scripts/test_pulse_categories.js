@@ -7,7 +7,7 @@ const root = path.resolve(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'ntk-pulse/pulse.html'), 'utf8');
 const m = html.match(/\/\* CATS:BEGIN \*\/([\s\S]*?)\/\* CATS:END \*\//);
 if (!m) { console.error('FAIL: CATS block not found'); process.exit(1); }
-const L = new Function(m[1] + '; return {validateCat, selectBeginnings, pickBeginnings, lensSupported, catTextProblems, verifyIndicator, catSentences, verifyFoundObject};')();
+const L = new Function(m[1] + '; return {validateCat, selectBeginnings, pickBeginnings, lensSupported, catTextProblems, verifyIndicator, catSentences, verifyFoundObject, applySourceEdit};')();
 const poolDoc = JSON.parse(fs.readFileSync(path.join(root, 'ntk-pulse/data/backstory-pool.json'), 'utf8'));
 const poolBy = Object.fromEntries(poolDoc.objects.map(o => [o.id, o]));
 const spec = JSON.parse(fs.readFileSync(path.join(root, 'editorial/lenses.json'), 'utf8'));
@@ -88,6 +88,16 @@ check('verifyFoundObject: no year fails', !L.verifyFoundObject(Object.assign({},
 x = good(); x.custom_objects = [{ id: 'custom-m', title: 'A report', author: 'Office', year: '2019', date: '2019-04-18', source: 'Justice Department', url: 'https://www.justice.gov/x' }];
 x.objects.push({ object_id: 'custom-m', by: 'editor', about: 'A report released in 2019.' }); x.beginnings.push({ object_id: 'custom-m', line: 'An office released a report on interference in an election.', by: 'editor' }); r = run(x);
 check('an added object with an exact date sorts by that date', r.clean.objects[r.clean.objects.length - 1].object_id === 'custom-m' || r.clean.objects.some(o => o.object_id === 'custom-m'), r.problems);
+x = good(); const tel = x.objects.find(o => o.object_id === pid('Telecommunications Act of 1996')).object_id;
+const lineBefore = x.beginnings.find(b => b.object_id === tel).line;
+let ed = L.applySourceEdit(x, tel, { title: 'Telecommunications Act of 1996', author: 'U.S. Congress', year: '1996', source: 'Federal Communications Commission', url: 'https://www.fcc.gov/general/telecommunications-act-1996' });
+check('edit source: a pool object becomes the category\'s own with the editor\'s link, keeping its Beginning line', ed.ok && x.custom_objects.length === 1 && x.beginnings.some(b => b.object_id === ed.id && b.line === lineBefore) && !x.objects.some(o => o.object_id === tel), ed);
+r = run(x);
+check('edit source: the edited object validates and keeps its place', r.clean.objects.some(o => o.object_id === ed.id && o.source_url.includes('fcc.gov')) && r.clean.beginnings.some(b => b.object_id === ed.id), r.problems);
+x = good(); ed = L.applySourceEdit(x, pid('PATRIOT'), { title: 'x', year: '2001', url: 'https://en.wikipedia.org/wiki/USA_PATRIOT_Act' });
+check('edit source: Wikipedia is refused and nothing changes', !ed.ok && x.custom_objects === undefined && x.objects.some(o => o.object_id === pid('PATRIOT')), ed);
+ed = L.applySourceEdit(x, pid('PATRIOT'), { title: 'USA PATRIOT Act', year: '', url: 'https://www.govinfo.gov/x' });
+check('edit source: a missing year is refused', !ed.ok, ed);
 check('catSentences counts a last sentence with no full stop', L.catSentences('Whether A, or B') === 1 && L.catSentences('One. Two') === 2, null);
 x = good(); x.beginnings[1].line = x.beginnings[0].line; r = run(x);
 check('two Beginnings with the same line: the second is dropped', r.clean.beginnings.length === 3 && r.problems.some(p => p.includes('same line')), r.problems);
