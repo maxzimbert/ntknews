@@ -254,6 +254,24 @@ def select(pool, start_date):
 LENSES = os.path.join(ROOT, 'editorial', 'lenses.json')
 
 
+def lens_names(o, spec):
+    """Every lens an object belongs to: by whole words in its Title, by its sub-genre or
+    row, or by an id the editor listed under include (editorial/lenses.json)."""
+    word = lambda k, t: re.search(r'\b' + re.escape(k) + r'\b', t, re.I)
+    out = []
+    for lens, cfg in spec.items():
+        if lens.startswith('_'):
+            continue
+        if any(word(x, o['title']) for x in cfg.get('exclude', [])):
+            continue
+        if (any(word(k, o['title']) for k in cfg.get('title_keywords', []))
+                or o.get('_subgenre') in cfg.get('subgenres', [])
+                or o.get('_row') in cfg.get('rows', [])
+                or o['object_id'] in cfg.get('include', [])):
+            out.append(lens)
+    return out
+
+
 def lens_select(lenses, origin_year, per_lens=3, minimum=3):
     """Beginnings drawn from the history of what a story is about, not from its row.
 
@@ -273,16 +291,8 @@ def lens_select(lenses, origin_year, per_lens=3, minimum=3):
         if not cfg:
             report[lens] = {'eligible': 0, 'note': 'unknown lens'}
             continue
-        word = lambda k, t: re.search(r'\b' + re.escape(k) + r'\b', t, re.I)
-        kws, ex = cfg.get('title_keywords', []), cfg.get('exclude', [])
-        sgs, rws = cfg.get('subgenres', []), cfg.get('rows', [])
-        inc = set(cfg.get('include', []))
-        # A lens matches an object by whole words in its Title, by its sub-genre or row, or by an
-        # id the editor listed. All three are visible in editorial/lenses.json.
         pool = [o for o in flat if o['source_url'] and o['year'] and o['year'] < str(origin_year)
-                and not any(word(x, o['title']) for x in ex)
-                and (any(word(k, o['title']) for k in kws) or o['_subgenre'] in sgs
-                     or o['_row'] in rws or o['object_id'] in inc)]
+                and lens in lens_names(o, spec)]
         pool = sorted(one_per_document(pool), key=lambda o: o['_sort'])
         report[lens] = {'eligible': len(pool)}
         for o in pool[-per_lens:]:
