@@ -1,7 +1,7 @@
 ---
 id: T-0080
 title: The landing page leads with "Get clear on what's news" and shows the product before explaining it
-status: BUILT
+status: VERIFIED
 tags: [editorial, feature]
 anchor: index.html
 ---
