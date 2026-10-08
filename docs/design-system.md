@@ -88,6 +88,12 @@ plus a handful of named exceptions inside specific components (the ladder's
 small-caps section titles, the end mark) — check the file before adding a
 new value rather than picking one.
 
+**Known exception, left alone on purpose (2026-10-08, T-0080):** the
+landing page (`index.html`) tracks its Newsreader display headlines tight,
+-.015em to -.035em, and has since before this doc existed. The app follows
+the `0` rule. The editor chose to leave the landing page as it is for now.
+Revisit as a decision, not as a cleanup pass.
+
 ## 4. Capital labels — the thing to delete first, not add
 
 Uppercase, tracked labels are the single most "AI-generated" tell a page

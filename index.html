@@ -180,8 +180,6 @@
   /* ---------- Closing CTA ---------- */
   .closing{background:var(--amber); color:var(--ink); padding:94px 40px;}
   .closing-inner{max-width:900px; margin:0 auto; text-align:center;}
-  .closing-eyebrow{font-size:10px; font-weight:500; letter-spacing: 0;
-    color:rgba(38,31,35,.74); margin-bottom:26px;}
   .closing-h2{font-family:'Newsreader',serif; font-size:60px; line-height:1.02; letter-spacing:-.035em;
     font-weight:600; margin:0 0 26px;}
   .closing-h2 em{font-style:italic;}
@@ -249,6 +247,8 @@
   /* ---------- T-0080: remake sections ---------- */
   /* A kicker names a section (design-system §4); it never decorates one.
      Neutral ink, not an accent: terracotta stays Backstory's signal. */
+  .hero-deck strong{color:var(--cream); font-weight:600;}
+  .section-kicker.on-ink{color:rgba(234,217,197,.6);}
   .section-kicker{font-size:10px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;
     color:rgba(38,31,35,.67); margin-bottom:18px;}
 
@@ -380,7 +380,7 @@
         <span id="heroDateline">Today's edition</span>
       </div>
       <h1 class="hero-h1">NTK is the news you need, so you can <em>stop reading the news.</em></h1>
-      <p class="hero-deck">Three minutes every morning. The stories that matter, with the context to actually understand them. Then you're done.</p>
+      <p class="hero-deck">Three minutes every morning. The stories that matter, with the context to actually understand them. <strong>News that ends.</strong></p>
       <div class="cta-row">
         <a href="/digest" class="btn-primary">Read today's NTK</a>
         <span class="cta-note">Free. No sign-up. No endless feed.</span>
@@ -413,6 +413,7 @@
   <div class="wrap">
     <div class="story-header">
       <div>
+        <div class="section-kicker">Today's NTK</div>
         <h2 class="story-h2">One story from<br>this morning.</h2>
       </div>
     </div>
@@ -520,6 +521,7 @@
 <section class="jefferson" id="jefferson">
   <div class="wrap jeff-grid">
     <div>
+      <div class="section-kicker on-ink">The origin</div>
       <h2 class="jeff-h2">Thomas Jefferson<br>hated the news.<br><em>He also designed NTK.</em></h2>
     </div>
     <div class="jeff-body">
@@ -534,7 +536,10 @@
 <!-- THE PROMISE. Now that the reader knows the product, the brand line. -->
 <section class="promise">
   <div class="wrap promise-grid">
-    <h2 class="promise-h2">News that <em>ends.</em></h2>
+    <div>
+      <div class="section-kicker">The NTK Promise</div>
+      <h2 class="promise-h2">News that <em>ends.</em></h2>
+    </div>
     <div class="promise-list">
       <div class="promise-item">
         <div class="promise-lead">Three minutes. Then you're done.</div>
@@ -580,6 +585,7 @@
       <div class="duotone"></div>
     </div>
     <div>
+      <div class="section-kicker">NTK's Founder/Editor</div>
       <h2 class="editor-h2">Someone<br>reads the news.</h2>
       <p class="editor-copy">One editor reads broadly, decides what matters, and does the work of turning an overwhelming news cycle into something you can actually understand.</p>
       <p class="editor-copy">Max Zimbert was a CNN producer and a senior editor at Yahoo News Digest, where software did the gathering and editors made the calls. NTK works the same way. Every judgment on the page has a name behind it.</p>
@@ -612,7 +618,6 @@
 <!-- THE PAYOFF. -->
 <section class="closing">
   <div class="closing-inner">
-    <div class="closing-eyebrow">Tomorrow, 6:00 a.m.</div>
     <h2 class="closing-h2">We're not trying to keep you informed all day.</h2>
     <p class="closing-copy">We're trying to make you informed enough to stop.<br><strong>Know what matters. Understand it. Go live your life.</strong></p>
     <a href="/digest" class="btn-dark">Read today's NTK</a>
