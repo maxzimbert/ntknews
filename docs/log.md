@@ -12,6 +12,15 @@ stranger.
 
 ---
 
+## 2026-10-08 — Netlify's usage limit took ntknews.org down, and credits did not bring the last deploys back
+
+The site returned 503 `usage_exceeded` on every route until credits were added. Builds that fired during the
+pause were lost: after the site came back it served a stale build, and Netlify did not replay them. Seven
+production deploys and about eight PR deploy previews in one day of copy iteration is a plausible cause
+(unverified). Bot commits are not: `netlify.toml`'s ignore rule skips anything confined to `ntk-pulse/data/`.
+That same rule means an empty commit does not deploy; it needs a real diff outside the excluded paths.
+Batch copy changes into fewer pushes, and after any outage compare the live page to `main` before trusting a 200.
+
 ## 2026-10-07 — GitHub Pages had been failing for a day, and Pulse is served from it
 
 A ticket (T-0078) quoting CSS with `{{` landed on 2026-10-06. Jekyll reads `{{` as a Liquid tag and aborts
