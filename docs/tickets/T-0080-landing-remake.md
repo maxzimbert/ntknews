@@ -26,8 +26,8 @@ editor's calls from 2026-10-08:
   argued for keeping it and against "antidote to information overload" (an
   old phrase, and it frames NTK against a problem again); the editor decided
   otherwise. Record of the disagreement, so the reader test can settle it.
-- Order: proposition, a real story from this morning (on cream), the method
-  (four questions), Jefferson, the promise ("News that ends."), Backstory,
+- Order: proposition, the method (four questions), the lead story right now
+  (on cream), Jefferson, the promise ("News that ends."), Backstory,
   the editor, `/me`, payoff. A "problem" band ("The news is infinite. Your
   attention isn't.") was in the first draft and cut on the editor's review:
   the problem is universal, the hero already carries it, and a band that
@@ -140,9 +140,10 @@ for anchor in ['id="backstory"', 'id="me"', 'id="jefferson"', 'id="method"']:
     if anchor not in s: sys.exit('section missing: ' + anchor)
 if 'href="/today"' in s: sys.exit('a CTA still points at /today; the editor chose /digest')
 if 'The news is infinite' in t: sys.exit('the cut problem band is back')
-# Order: story, method, origin, then the brand line.
-pos = [s.index(m) for m in ['id="story"', 'id="method"', 'id="jefferson"', 'class="promise"']]
-if pos != sorted(pos): sys.exit('section order changed: story, method, jefferson, promise')
+# Order: method, then the lead story, origin, then the brand line.
+pos = [s.index(m) for m in ['id="method"', 'id="story"', 'id="jefferson"', 'class="promise"']]
+if pos != sorted(pos): sys.exit('section order changed: method, story, jefferson, promise')
+if re.search(r'(?i)this morning|each morning', t): sys.exit('"morning" framing is back; the product is always on, the lead is "right now"')
 
 # A stray comment terminator makes the browser drop the next CSS rule silently.
 css = re.search(r'<style>([\s\S]*?)</style>', s).group(1)
