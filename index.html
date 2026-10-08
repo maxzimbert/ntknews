@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NTK News · Know what matters. Enjoy it.</title>
-<meta name="description" content="Three minutes every morning. The stories that matter, written to be read rather than endured. Every story runs through Truths, Probabilities, Possibilities and Lies.">
+<title>NTK News · The news you need, so you can stop reading the news.</title>
+<meta name="description" content="Three minutes every morning. The stories that matter, with the context to actually understand them. Then you're done. News that ends.">
 
 <!-- Favicon / home-screen icon — real hosted files, not data URIs.
      Link-preview crawlers (iMessage, Slack, Facebook, Twitter) fetch these
@@ -21,8 +21,8 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="NTK News">
 <meta property="og:url" content="https://ntknews.org/">
-<meta property="og:title" content="NTK News · Know what matters. Enjoy it.">
-<meta property="og:description" content="Three minutes every morning. The stories that matter, written to be read rather than endured. News that ends.">
+<meta property="og:title" content="NTK News · The news you need, so you can stop reading the news.">
+<meta property="og:description" content="Three minutes every morning. The stories that matter, with the context to actually understand them. Then you're done. News that ends.">
 <meta property="og:image" content="https://ntknews.org/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -30,8 +30,8 @@
 
 <!-- Twitter Card — same image, its own tag namespace -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="NTK News · Know what matters. Enjoy it.">
-<meta name="twitter:description" content="Three minutes every morning. The stories that matter, written to be read rather than endured. News that ends.">
+<meta name="twitter:title" content="NTK News · The news you need, so you can stop reading the news.">
+<meta name="twitter:description" content="Three minutes every morning. The stories that matter, with the context to actually understand them. Then you're done. News that ends.">
 <meta name="twitter:image" content="https://ntknews.org/og-image.png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -270,6 +270,108 @@
 
   a,button{-webkit-tap-highlight-color:transparent;}
   a:focus-visible,button:focus-visible{outline:2px solid var(--amber); outline-offset:2px;}
+
+  /* ---------- T-0080: remake sections ---------- */
+  /* Section kicker: a real section name, so it earns its tracked caps
+     (design-system §4). Amber on ink, coral-deep on cream. */
+  .section-kicker{font-size:10px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--amber); margin-bottom:18px;}
+  .section-kicker.dark{color:var(--coral-deep);}
+
+  .hero-h1{font-size:76px; line-height:.98;}
+  a.hero-card{display:block; color:var(--ink); transition:transform 140ms ease;}
+  a.hero-card:hover{transform:translateY(-2px);}
+  .hero-card-more{font-size:13px; font-weight:600; margin-top:14px; color:var(--coral-deep);}
+
+  .statement{padding:76px 0 20px;}
+  .statement em{font-style:italic; color:var(--coral-deep);}
+  .statement-sub{font-family:'Newsreader',serif; font-size:20px; line-height:1.55; max-width:52ch;
+    color:rgba(38,31,35,.72); margin:0; padding:0 0 80px; text-wrap:pretty;}
+
+  .fw-card-name{font-size:26px; letter-spacing:-.02em; line-height:1.1;}
+  .fw-card-section{font-family:'Newsreader',serif; font-size:16px; font-variant:small-caps;
+    letter-spacing:.05em; margin-top:10px; color:rgba(38,31,35,.6);}
+  .fw-card.c4 .fw-card-section{color:var(--coral-deep); font-style:italic;}
+
+  /* ---------- Promise ---------- */
+  .promise{background:var(--ink); color:var(--cream); padding:100px 40px;}
+  .promise-grid{display:grid; grid-template-columns:.9fr 1.1fr; gap:72px; align-items:start; padding:0;}
+  .promise-h2{font-family:'Newsreader',serif; font-size:104px; line-height:.94; letter-spacing:-.035em;
+    font-weight:600; margin:0;}
+  .promise-h2 em{font-style:italic; color:var(--amber);}
+  .promise-list{display:flex; flex-direction:column; gap:30px; padding-top:10px;}
+  .promise-item{border-top:1px solid rgba(234,217,197,.18); padding-top:20px;}
+  .promise-lead{font-family:'Newsreader',serif; font-size:26px; letter-spacing:-.015em; margin-bottom:8px;}
+  .promise-item p{font-family:'Newsreader',serif; font-size:20px; line-height:1.5; margin:0;
+    color:rgba(234,217,197,.7); text-wrap:pretty;}
+
+  /* ---------- Backstory ---------- */
+  .backstory-section{background:var(--cream-raised); padding:100px 40px;
+    border-top:1px solid rgba(38,31,35,.12);}
+  .backstory-section .section-kicker{color:var(--coral-deep);}
+  .backstory-grid{display:grid; grid-template-columns:1fr 1fr; gap:72px; align-items:center; padding:0;}
+  .bs-h2{font-family:'Newsreader',serif; font-size:60px; line-height:1; letter-spacing:-.03em; font-weight:600; margin:0 0 26px;}
+  .bs-copy{font-family:'Newsreader',serif; font-size:20px; line-height:1.55; color:rgba(38,31,35,.72);
+    max-width:46ch; margin:0 0 34px; text-wrap:pretty;}
+  .bs-ladder{list-style:none; margin:0; padding:0; position:relative;}
+  .bs-ladder::before{content:""; position:absolute; left:6px; top:14px; bottom:14px; width:2px; background:rgba(38,31,35,.18);}
+  .bs-ladder li{position:relative; display:grid; grid-template-columns:72px 1fr; gap:16px; align-items:baseline;
+    padding:16px 0 16px 30px;}
+  .bs-ladder li::before{content:""; position:absolute; left:0; top:22px; width:14px; height:14px; border-radius:999px;
+    background:var(--cream-raised); border:2px solid rgba(38,31,35,.4);}
+  .bs-ladder li.now::before{background:var(--coral); border-color:var(--coral);}
+  .bs-step{font-size:13px; font-weight:600; color:rgba(38,31,35,.55);}
+  .bs-ladder li.now .bs-step{color:var(--coral-deep);}
+  .bs-text{font-family:'Newsreader',serif; font-size:20px; line-height:1.35; color:rgba(38,31,35,.82);}
+  .bs-ladder li.now .bs-text{color:var(--ink); font-weight:600;}
+
+  /* ---------- Editor ---------- */
+  .editor-h2{font-family:'Newsreader',serif; font-size:60px; line-height:1; letter-spacing:-.03em; font-weight:600; margin:0 0 28px;}
+  .editor-copy{margin:0 0 20px;}
+  .editor-nots{display:flex; flex-direction:column; gap:4px; margin-top:28px;
+    font-family:'Newsreader',serif; font-size:20px; color:rgba(38,31,35,.6);}
+  .editor-nots strong{color:var(--ink); font-size:26px; margin-top:8px;}
+
+  /* ---------- /me ---------- */
+  .me-section{background:var(--cream); padding:0 40px 100px;}
+  .me-grid{display:grid; grid-template-columns:.8fr 1.2fr; gap:72px; align-items:start; padding:64px 0 0;
+    border-top:1px solid rgba(38,31,35,.18);}
+  .me-h2{font-family:'Newsreader',serif; font-size:60px; line-height:1; letter-spacing:-.03em; font-weight:600; margin:0;}
+  .me-copy{font-family:'Newsreader',serif; font-size:20px; line-height:1.55; color:rgba(38,31,35,.72);
+    max-width:54ch; margin:0 0 20px; text-wrap:pretty;}
+  .me-copy strong{color:var(--ink);}
+
+  /* ---------- Jefferson ---------- */
+  .jefferson{background:var(--ink); color:var(--cream); padding:100px 40px;}
+  .jeff-grid{display:grid; grid-template-columns:1fr 1fr; gap:72px; align-items:start; padding:0;}
+  .jeff-h2{font-family:'Newsreader',serif; font-size:60px; line-height:1.02; letter-spacing:-.03em; font-weight:600; margin:0;}
+  .jeff-h2 em{font-style:italic; font-weight:400; color:var(--amber);}
+  .jeff-body p{font-family:'Newsreader',serif; font-size:20px; line-height:1.55; color:rgba(234,217,197,.74);
+    margin:0 0 20px; text-wrap:pretty;}
+  .jeff-body strong{color:var(--cream); font-weight:600;}
+  .jeff-quote{font-family:'Newsreader',serif; font-style:italic; font-size:34px; line-height:1.22; letter-spacing:-.02em;
+    color:var(--cream); margin:30px 0; padding-left:24px; border-left:4px solid var(--amber); text-wrap:pretty;}
+
+  .closing-h2{font-size:60px; line-height:1.02;}
+  .closing-copy strong{color:var(--ink);}
+
+  #method,#story,#editor,#backstory,#jefferson,#me{scroll-margin-top:74px;}
+
+  @media (max-width:900px){
+    .hero-h1{font-size:clamp(46px,8vw,76px);}
+    .promise-grid,.backstory-grid,.me-grid,.jeff-grid{grid-template-columns:1fr; gap:32px;}
+    .promise-h2{font-size:clamp(60px,14vw,104px);}
+    .bs-h2,.editor-h2,.me-h2,.jeff-h2{font-size:clamp(34px,7vw,60px);}
+    .jeff-quote{font-size:26px;}
+    .closing-h2{font-size:clamp(34px,7vw,60px);}
+  }
+  @media (max-width:640px){
+    .hero-h1{font-size:clamp(34px,10vw,46px);}
+    .promise,.backstory-section,.me-section,.jefferson{padding-left:20px; padding-right:20px;}
+    .promise{padding-top:72px; padding-bottom:72px;}
+    .bs-ladder li{grid-template-columns:1fr; gap:2px;}
+    .fw-card{min-height:0;}
+  }
 </style>
 </head>
 <body>
@@ -280,20 +382,24 @@
       <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjY5IiB6b29tQW5kUGFuPSJtYWduaWZ5IiB2aWV3Qm94PSIwIDAgMjAxLjc1IDEwMC40OTk5OTciIGhlaWdodD0iMTM0IiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWlkWU1pZCBtZWV0IiB2ZXJzaW9uPSIxLjAiPjxkZWZzPjxnPjwvZz48Y2xpcFBhdGggaWQ9ImVlZmZkM2ZlNGQiPjxwYXRoIGQ9Ik0gNDIuNjEzMjgxIDAgTCAxNTguMjU3ODEyIDAgTCAxNTguMjU3ODEyIDEzLjc2MTcxOSBMIDQyLjYxMzI4MSAxMy43NjE3MTkgWiBNIDQyLjYxMzI4MSAwICIgY2xpcC1ydWxlPSJub256ZXJvIj48L3BhdGg+PC9jbGlwUGF0aD48Y2xpcFBhdGggaWQ9IjY0YjZjNWI4MjEiPjxwYXRoIGQ9Ik0gNDUuNjAxNTYyIDAgTCAxNTUuMjQyMTg4IDAgQyAxNTYuODkwNjI1IDAgMTU4LjIyNjU2MiAxLjMzNTkzOCAxNTguMjI2NTYyIDIuOTg0Mzc1IEwgMTU4LjIyNjU2MiAxMC43NzczNDQgQyAxNTguMjI2NTYyIDEyLjQyNTc4MSAxNTYuODkwNjI1IDEzLjc2MTcxOSAxNTUuMjQyMTg4IDEzLjc2MTcxOSBMIDQ1LjYwMTU2MiAxMy43NjE3MTkgQyA0My45NTMxMjUgMTMuNzYxNzE5IDQyLjYxMzI4MSAxMi40MjU3ODEgNDIuNjEzMjgxIDEwLjc3NzM0NCBMIDQyLjYxMzI4MSAyLjk4NDM3NSBDIDQyLjYxMzI4MSAxLjMzNTkzOCA0My45NTMxMjUgMCA0NS42MDE1NjIgMCBaIE0gNDUuNjAxNTYyIDAgIiBjbGlwLXJ1bGU9Im5vbnplcm8iPjwvcGF0aD48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iMTNjNzNjMDllMiI+PHBhdGggZD0iTSAwLjYxMzI4MSAwIEwgMTE2LjIzMDQ2OSAwIEwgMTE2LjIzMDQ2OSAxMy43NjE3MTkgTCAwLjYxMzI4MSAxMy43NjE3MTkgWiBNIDAuNjEzMjgxIDAgIiBjbGlwLXJ1bGU9Im5vbnplcm8iPjwvcGF0aD48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iOTAxYzRhN2I1NyI+PHBhdGggZD0iTSAzLjYwMTU2MiAwIEwgMTEzLjI0MjE4OCAwIEMgMTE0Ljg5MDYyNSAwIDExNi4yMjY1NjIgMS4zMzU5MzggMTE2LjIyNjU2MiAyLjk4NDM3NSBMIDExNi4yMjY1NjIgMTAuNzc3MzQ0IEMgMTE2LjIyNjU2MiAxMi40MjU3ODEgMTE0Ljg5MDYyNSAxMy43NjE3MTkgMTEzLjI0MjE4OCAxMy43NjE3MTkgTCAzLjYwMTU2MiAxMy43NjE3MTkgQyAxLjk1MzEyNSAxMy43NjE3MTkgMC42MTMyODEgMTIuNDI1NzgxIDAuNjEzMjgxIDEwLjc3NzM0NCBMIDAuNjEzMjgxIDIuOTg0Mzc1IEMgMC42MTMyODEgMS4zMzU5MzggMS45NTMxMjUgMCAzLjYwMTU2MiAwIFogTSAzLjYwMTU2MiAwICIgY2xpcC1ydWxlPSJub256ZXJvIj48L3BhdGg+PC9jbGlwUGF0aD48Y2xpcFBhdGggaWQ9IjAyM2Y2ODE5NTkiPjxyZWN0IHg9IjAiIHdpZHRoPSIxMTciIHk9IjAiIGhlaWdodD0iMTQiPjwvcmVjdD48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iY2FhN2JmNjI4OSI+PHBhdGggZD0iTSA0Mi42MTMyODEgMjEuNzg5MDYyIEwgMTU4LjIyNjU2MiAyMS43ODkwNjIgTCAxNTguMjI2NTYyIDI4LjA1ODU5NCBMIDQyLjYxMzI4MSAyOC4wNTg1OTQgWiBNIDQyLjYxMzI4MSAyMS43ODkwNjIgIiBjbGlwLXJ1bGU9Im5vbnplcm8iPjwvcGF0aD48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iNmY5M2QzNmJlMiI+PHBhdGggZD0iTSA0NC4xMDkzNzUgMjEuNzg5MDYyIEwgMTU2LjczNDM3NSAyMS43ODkwNjIgQyAxNTcuNTU4NTk0IDIxLjc4OTA2MiAxNTguMjI2NTYyIDIyLjQ1NzAzMSAxNTguMjI2NTYyIDIzLjI4MTI1IEwgMTU4LjIyNjU2MiAyNi41NjY0MDYgQyAxNTguMjI2NTYyIDI3LjM5MDYyNSAxNTcuNTU4NTk0IDI4LjA1ODU5NCAxNTYuNzM0Mzc1IDI4LjA1ODU5NCBMIDQ0LjEwOTM3NSAyOC4wNTg1OTQgQyA0My4yODUxNTYgMjguMDU4NTk0IDQyLjYxMzI4MSAyNy4zOTA2MjUgNDIuNjEzMjgxIDI2LjU2NjQwNiBMIDQyLjYxMzI4MSAyMy4yODEyNSBDIDQyLjYxMzI4MSAyMi40NTcwMzEgNDMuMjg1MTU2IDIxLjc4OTA2MiA0NC4xMDkzNzUgMjEuNzg5MDYyIFogTSA0NC4xMDkzNzUgMjEuNzg5MDYyICIgY2xpcC1ydWxlPSJub256ZXJvIj48L3BhdGg+PC9jbGlwUGF0aD48Y2xpcFBhdGggaWQ9ImUwN2ZmZDk1NzciPjxwYXRoIGQ9Ik0gMC42MTMyODEgMC43ODkwNjIgTCAxMTYuMjI2NTYyIDAuNzg5MDYyIEwgMTE2LjIyNjU2MiA3LjA1ODU5NCBMIDAuNjEzMjgxIDcuMDU4NTk0IFogTSAwLjYxMzI4MSAwLjc4OTA2MiAiIGNsaXAtcnVsZT0ibm9uemVybyI+PC9wYXRoPjwvY2xpcFBhdGg+PGNsaXBQYXRoIGlkPSI1MzczMjAzMTlhIj48cGF0aCBkPSJNIDIuMTA5Mzc1IDAuNzg5MDYyIEwgMTE0LjczNDM3NSAwLjc4OTA2MiBDIDExNS41NTg1OTQgMC43ODkwNjIgMTE2LjIyNjU2MiAxLjQ1NzAzMSAxMTYuMjI2NTYyIDIuMjgxMjUgTCAxMTYuMjI2NTYyIDUuNTY2NDA2IEMgMTE2LjIyNjU2MiA2LjM5MDYyNSAxMTUuNTU4NTk0IDcuMDU4NTk0IDExNC43MzQzNzUgNy4wNTg1OTQgTCAyLjEwOTM3NSA3LjA1ODU5NCBDIDEuMjg1MTU2IDcuMDU4NTk0IDAuNjEzMjgxIDYuMzkwNjI1IDAuNjEzMjgxIDUuNTY2NDA2IEwgMC42MTMyODEgMi4yODEyNSBDIDAuNjEzMjgxIDEuNDU3MDMxIDEuMjg1MTU2IDAuNzg5MDYyIDIuMTA5Mzc1IDAuNzg5MDYyIFogTSAyLjEwOTM3NSAwLjc4OTA2MiAiIGNsaXAtcnVsZT0ibm9uemVybyI+PC9wYXRoPjwvY2xpcFBhdGg+PGNsaXBQYXRoIGlkPSI0NzY1NGU3M2MyIj48cmVjdCB4PSIwIiB3aWR0aD0iMTE3IiB5PSIwIiBoZWlnaHQ9IjgiPjwvcmVjdD48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iMzcwYWU3ODRhMCI+PHBhdGggZD0iTSA0Mi42MTMyODEgNzIuNjA1NDY5IEwgMTU4LjIyNjU2MiA3Mi42MDU0NjkgTCAxNTguMjI2NTYyIDc4Ljg3NSBMIDQyLjYxMzI4MSA3OC44NzUgWiBNIDQyLjYxMzI4MSA3Mi42MDU0NjkgIiBjbGlwLXJ1bGU9Im5vbnplcm8iPjwvcGF0aD48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iNTIzYWRiMGI1NiI+PHBhdGggZD0iTSA0NC4xMDkzNzUgNzIuNjA1NDY5IEwgMTU2LjczNDM3NSA3Mi42MDU0NjkgQyAxNTcuNTU4NTk0IDcyLjYwNTQ2OSAxNTguMjI2NTYyIDczLjI3MzQzOCAxNTguMjI2NTYyIDc0LjA5NzY1NiBMIDE1OC4yMjY1NjIgNzcuMzgyODEyIEMgMTU4LjIyNjU2MiA3OC4yMDcwMzEgMTU3LjU1ODU5NCA3OC44NzUgMTU2LjczNDM3NSA3OC44NzUgTCA0NC4xMDkzNzUgNzguODc1IEMgNDMuMjg1MTU2IDc4Ljg3NSA0Mi42MTMyODEgNzguMjA3MDMxIDQyLjYxMzI4MSA3Ny4zODI4MTIgTCA0Mi42MTMyODEgNzQuMDk3NjU2IEMgNDIuNjEzMjgxIDczLjI3MzQzOCA0My4yODUxNTYgNzIuNjA1NDY5IDQ0LjEwOTM3NSA3Mi42MDU0NjkgWiBNIDQ0LjEwOTM3NSA3Mi42MDU0NjkgIiBjbGlwLXJ1bGU9Im5vbnplcm8iPjwvcGF0aD48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iN2FkNDU3ZGI1NCI+PHBhdGggZD0iTSAwLjYxMzI4MSAwLjYwNTQ2OSBMIDExNi4yMjY1NjIgMC42MDU0NjkgTCAxMTYuMjI2NTYyIDYuODc1IEwgMC42MTMyODEgNi44NzUgWiBNIDAuNjEzMjgxIDAuNjA1NDY5ICIgY2xpcC1ydWxlPSJub256ZXJvIj48L3BhdGg+PC9jbGlwUGF0aD48Y2xpcFBhdGggaWQ9IjczNThiNWQ1YWUiPjxwYXRoIGQ9Ik0gMi4xMDkzNzUgMC42MDU0NjkgTCAxMTQuNzM0Mzc1IDAuNjA1NDY5IEMgMTE1LjU1ODU5NCAwLjYwNTQ2OSAxMTYuMjI2NTYyIDEuMjczNDM4IDExNi4yMjY1NjIgMi4wOTc2NTYgTCAxMTYuMjI2NTYyIDUuMzgyODEyIEMgMTE2LjIyNjU2MiA2LjIwNzAzMSAxMTUuNTU4NTk0IDYuODc1IDExNC43MzQzNzUgNi44NzUgTCAyLjEwOTM3NSA2Ljg3NSBDIDEuMjg1MTU2IDYuODc1IDAuNjEzMjgxIDYuMjA3MDMxIDAuNjEzMjgxIDUuMzgyODEyIEwgMC42MTMyODEgMi4wOTc2NTYgQyAwLjYxMzI4MSAxLjI3MzQzOCAxLjI4NTE1NiAwLjYwNTQ2OSAyLjEwOTM3NSAwLjYwNTQ2OSBaIE0gMi4xMDkzNzUgMC42MDU0NjkgIiBjbGlwLXJ1bGU9Im5vbnplcm8iPjwvcGF0aD48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iODBhOGRhNDEwYSI+PHJlY3QgeD0iMCIgd2lkdGg9IjExNyIgeT0iMCIgaGVpZ2h0PSI3Ij48L3JlY3Q+PC9jbGlwUGF0aD48Y2xpcFBhdGggaWQ9ImY5ZDA3ZDA0YzgiPjxwYXRoIGQ9Ik0gNDIuNjEzMjgxIDg2LjE2NDA2MiBMIDE1OC4yNTc4MTIgODYuMTY0MDYyIEwgMTU4LjI1NzgxMiA5OS45MjU3ODEgTCA0Mi42MTMyODEgOTkuOTI1NzgxIFogTSA0Mi42MTMyODEgODYuMTY0MDYyICIgY2xpcC1ydWxlPSJub256ZXJvIj48L3BhdGg+PC9jbGlwUGF0aD48Y2xpcFBhdGggaWQ9IjdjMjM4NWY2ZWQiPjxwYXRoIGQ9Ik0gNDUuNjAxNTYyIDg2LjE2NDA2MiBMIDE1NS4yNDIxODggODYuMTY0MDYyIEMgMTU2Ljg5MDYyNSA4Ni4xNjQwNjIgMTU4LjIyNjU2MiA4Ny41IDE1OC4yMjY1NjIgODkuMTQ4NDM4IEwgMTU4LjIyNjU2MiA5Ni45NDE0MDYgQyAxNTguMjI2NTYyIDk4LjU4OTg0NCAxNTYuODkwNjI1IDk5LjkyNTc4MSAxNTUuMjQyMTg4IDk5LjkyNTc4MSBMIDQ1LjYwMTU2MiA5OS45MjU3ODEgQyA0My45NTMxMjUgOTkuOTI1NzgxIDQyLjYxMzI4MSA5OC41ODk4NDQgNDIuNjEzMjgxIDk2Ljk0MTQwNiBMIDQyLjYxMzI4MSA4OS4xNDg0MzggQyA0Mi42MTMyODEgODcuNSA0My45NTMxMjUgODYuMTY0MDYyIDQ1LjYwMTU2MiA4Ni4xNjQwNjIgWiBNIDQ1LjYwMTU2MiA4Ni4xNjQwNjIgIiBjbGlwLXJ1bGU9Im5vbnplcm8iPjwvcGF0aD48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iYWZhM2JmOTIxYiI+PHBhdGggZD0iTSAwLjYxMzI4MSAwLjE2NDA2MiBMIDExNi4yMzA0NjkgMC4xNjQwNjIgTCAxMTYuMjMwNDY5IDEzLjkyNTc4MSBMIDAuNjEzMjgxIDEzLjkyNTc4MSBaIE0gMC42MTMyODEgMC4xNjQwNjIgIiBjbGlwLXJ1bGU9Im5vbnplcm8iPjwvcGF0aD48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iNDYzMjQ4NTcyMCI+PHBhdGggZD0iTSAzLjYwMTU2MiAwLjE2NDA2MiBMIDExMy4yNDIxODggMC4xNjQwNjIgQyAxMTQuODkwNjI1IDAuMTY0MDYyIDExNi4yMjY1NjIgMS41IDExNi4yMjY1NjIgMy4xNDg0MzggTCAxMTYuMjI2NTYyIDEwLjk0MTQwNiBDIDExNi4yMjY1NjIgMTIuNTg5ODQ0IDExNC44OTA2MjUgMTMuOTI1NzgxIDExMy4yNDIxODggMTMuOTI1NzgxIEwgMy42MDE1NjIgMTMuOTI1NzgxIEMgMS45NTMxMjUgMTMuOTI1NzgxIDAuNjEzMjgxIDEyLjU4OTg0NCAwLjYxMzI4MSAxMC45NDE0MDYgTCAwLjYxMzI4MSAzLjE0ODQzOCBDIDAuNjEzMjgxIDEuNSAxLjk1MzEyNSAwLjE2NDA2MiAzLjYwMTU2MiAwLjE2NDA2MiBaIE0gMy42MDE1NjIgMC4xNjQwNjIgIiBjbGlwLXJ1bGU9Im5vbnplcm8iPjwvcGF0aD48L2NsaXBQYXRoPjxjbGlwUGF0aCBpZD0iZjY1OWMyZTM5YyI+PHJlY3QgeD0iMCIgd2lkdGg9IjExNyIgeT0iMCIgaGVpZ2h0PSIxNCI+PC9yZWN0PjwvY2xpcFBhdGg+PGNsaXBQYXRoIGlkPSIxODY5ZWRhZjJjIj48cmVjdCB4PSIwIiB3aWR0aD0iMTI2IiB5PSIwIiBoZWlnaHQ9IjQ2Ij48L3JlY3Q+PC9jbGlwUGF0aD48L2RlZnM+PGcgY2xpcC1wYXRoPSJ1cmwoI2VlZmZkM2ZlNGQpIj48ZyBjbGlwLXBhdGg9InVybCgjNjRiNmM1YjgyMSkiPjxnIHRyYW5zZm9ybT0ibWF0cml4KDEsIDAsIDAsIDEsIDQyLCAwKSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzAyM2Y2ODE5NTkpIj48ZyBjbGlwLXBhdGg9InVybCgjMTNjNzNjMDllMikiPjxnIGNsaXAtcGF0aD0idXJsKCM5MDFjNGE3YjU3KSI+PHBhdGggZmlsbD0iI2YyZjJmMiIgZD0iTSAwLjYxMzI4MSAwIEwgMTE2LjIwMzEyNSAwIEwgMTE2LjIwMzEyNSAxMy43NjE3MTkgTCAwLjYxMzI4MSAxMy43NjE3MTkgWiBNIDAuNjEzMjgxIDAgIiBmaWxsLW9wYWNpdHk9IjEiIGZpbGwtcnVsZT0ibm9uemVybyI+PC9wYXRoPjwvZz48L2c+PC9nPjwvZz48L2c+PC9nPjxnIGNsaXAtcGF0aD0idXJsKCNjYWE3YmY2Mjg5KSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzZmOTNkMzZiZTIpIj48ZyB0cmFuc2Zvcm09Im1hdHJpeCgxLCAwLCAwLCAxLCA0MiwgMjEpIj48ZyBjbGlwLXBhdGg9InVybCgjNDc2NTRlNzNjMikiPjxnIGNsaXAtcGF0aD0idXJsKCNlMDdmZmQ5NTc3KSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzUzNzMyMDMxOWEpIj48cGF0aCBmaWxsPSIjZjJmMmYyIiBkPSJNIDAuNjEzMjgxIDAuNzg5MDYyIEwgMTE2LjIyNjU2MiAwLjc4OTA2MiBMIDExNi4yMjY1NjIgNy4wNTg1OTQgTCAwLjYxMzI4MSA3LjA1ODU5NCBaIE0gMC42MTMyODEgMC43ODkwNjIgIiBmaWxsLW9wYWNpdHk9IjEiIGZpbGwtcnVsZT0ibm9uemVybyI+PC9wYXRoPjwvZz48L2c+PC9nPjwvZz48L2c+PC9nPjxnIGNsaXAtcGF0aD0idXJsKCMzNzBhZTc4NGEwKSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzUyM2FkYjBiNTYpIj48ZyB0cmFuc2Zvcm09Im1hdHJpeCgxLCAwLCAwLCAxLCA0MiwgNzIpIj48ZyBjbGlwLXBhdGg9InVybCgjODBhOGRhNDEwYSkiPjxnIGNsaXAtcGF0aD0idXJsKCM3YWQ0NTdkYjU0KSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzczNThiNWQ1YWUpIj48cGF0aCBmaWxsPSIjZjJmMmYyIiBkPSJNIDAuNjEzMjgxIDAuNjA1NDY5IEwgMTE2LjIyNjU2MiAwLjYwNTQ2OSBMIDExNi4yMjY1NjIgNi44NzUgTCAwLjYxMzI4MSA2Ljg3NSBaIE0gMC42MTMyODEgMC42MDU0NjkgIiBmaWxsLW9wYWNpdHk9IjEiIGZpbGwtcnVsZT0ibm9uemVybyI+PC9wYXRoPjwvZz48L2c+PC9nPjwvZz48L2c+PC9nPjxnIGNsaXAtcGF0aD0idXJsKCNmOWQwN2QwNGM4KSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzdjMjM4NWY2ZWQpIj48ZyB0cmFuc2Zvcm09Im1hdHJpeCgxLCAwLCAwLCAxLCA0MiwgODYpIj48ZyBjbGlwLXBhdGg9InVybCgjZjY1OWMyZTM5YykiPjxnIGNsaXAtcGF0aD0idXJsKCNhZmEzYmY5MjFiKSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzQ2MzI0ODU3MjApIj48cGF0aCBmaWxsPSIjZjJmMmYyIiBkPSJNIDAuNjEzMjgxIDAuMTY0MDYyIEwgMTE2LjIwMzEyNSAwLjE2NDA2MiBMIDExNi4yMDMxMjUgMTMuOTI1NzgxIEwgMC42MTMyODEgMTMuOTI1NzgxIFogTSAwLjYxMzI4MSAwLjE2NDA2MiAiIGZpbGwtb3BhY2l0eT0iMSIgZmlsbC1ydWxlPSJub256ZXJvIj48L3BhdGg+PC9nPjwvZz48L2c+PC9nPjwvZz48L2c+PGcgdHJhbnNmb3JtPSJtYXRyaXgoMSwgMCwgMCwgMSwgNDIsIDI3KSI+PGcgY2xpcC1wYXRoPSJ1cmwoIzE4NjllZGFmMmMpIj48ZyBmaWxsPSIjZjJmMmYyIiBmaWxsLW9wYWNpdHk9IjEiPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEuMjAzMTk4LCAzNy40Nzc5NTMpIj48Zz48cGF0aCBkPSJNIDI0LjI2NTYyNSAtMTIgTCAyNC4yNjU2MjUgLTI3LjczNDM3NSBMIDMxLjY3MTg3NSAtMjcuNzM0Mzc1IEwgMzEuNjcxODc1IDAgTCAyNS4wMzEyNSAwIEwgOS44NDM3NSAtMTcuMjUgTCA5Ljg0Mzc1IDAgTCAyLjQzNzUgMCBMIDIuNDM3NSAtMjcuNzM0Mzc1IEwgMTAuNzE4NzUgLTI3LjczNDM3NSBaIE0gMjQuMjY1NjI1IC0xMiAiPjwvcGF0aD48L2c+PC9nPjwvZz48ZyBmaWxsPSIjZjJmMmYyIiBmaWxsLW9wYWNpdHk9IjEiPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDQ0LjI0NDI2NiwgMzcuNDc3OTUzKSI+PGc+PHBhdGggZD0iTSAxMS4xMjUgLTIwLjgxMjUgTCAwLjY0MDYyNSAtMjAuODEyNSBMIDAuNjQwNjI1IC0yNy43MzQzNzUgTCAyOS40Njg3NSAtMjcuNzM0Mzc1IEwgMjkuNDY4NzUgLTIwLjgxMjUgTCAxOS4wMzEyNSAtMjAuODEyNSBMIDE5LjAzMTI1IDAgTCAxMS4xMjUgMCBaIE0gMTEuMTI1IC0yMC44MTI1ICI+PC9wYXRoPjwvZz48L2c+PC9nPjxnIGZpbGw9IiNmMmYyZjIiIGZpbGwtb3BhY2l0eT0iMSI+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoODMuMjU4NjEsIDM3LjQ3Nzk1MykiPjxnPjxwYXRoIGQ9Ik0gMzIuNTQ2ODc1IDAgTCAyMi45ODQzNzUgMCBMIDE1LjEyNSAtMTIuMTU2MjUgTCAxMC4yMTg3NSAtNi44NDM3NSBMIDEwLjIxODc1IDAgTCAyLjQzNzUgMCBMIDIuNDM3NSAtMjcuNzM0Mzc1IEwgMTAuMjE4NzUgLTI3LjczNDM3NSBMIDEwLjIxODc1IC0xNS43OTY4NzUgTCAyMS4yNjU2MjUgLTI3LjczNDM3NSBMIDMxLjg3NSAtMjcuNzM0Mzc1IEwgMjEuMzEyNSAtMTYuNjQwNjI1IFogTSAzMi41NDY4NzUgMCAiPjwvcGF0aD48L2c+PC9nPjwvZz48L2c+PC9nPjwvc3ZnPg==" alt="NTK — Need to Know News">
     </div>
     <nav class="site-nav">
-      <a href="#framework">The Framework</a>
-      <a href="#story">Inside a Briefing</a>
-      <a href="#editor">Who Writes It</a>
+      <a href="#method">The Method</a>
+      <a href="#backstory">Backstory</a>
+      <a href="#editor">Who Reads It</a>
+      <a href="#jefferson">Origin</a>
     </nav>
-    <a href="/digest/latest" class="nav-cta">Read this morning</a>
+    <a href="/today" class="nav-cta">Read today's NTK</a>
     <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false">☰</button>
   </div>
   <nav class="mobile-menu" id="mobileMenu">
-    <a href="#framework">The Framework</a>
-    <a href="#story">Inside a Briefing</a>
-    <a href="#editor">Who Writes It</a>
+    <a href="#method">The Method</a>
+    <a href="#backstory">Backstory</a>
+    <a href="#editor">Who Reads It</a>
+    <a href="#jefferson">Origin</a>
   </nav>
 </header>
 
+<!-- 1. THE PROPOSITION. Concrete promise first; the brand line waits
+     until the reader knows what the product is. -->
 <section class="hero">
   <div class="wrap hero-grid">
     <div class="hero-left">
@@ -301,11 +407,11 @@
         <span class="dot"></span>
         <span id="heroDateline">Today's edition</span>
       </div>
-      <h1 class="hero-h1">Know what <em>matters.</em><br>Enjoy it.</h1>
-      <p class="hero-deck">Three minutes every morning. The stories that matter, written to be read rather than endured. News that ends.</p>
+      <h1 class="hero-h1">NTK is the news you need, so you can <em>stop reading the news.</em></h1>
+      <p class="hero-deck">Three minutes every morning. The stories that matter, with the context to actually understand them. Then you're done.</p>
       <div class="cta-row">
-        <a href="/digest/latest" class="btn-primary">Start your free briefing →</a>
-        <span class="cta-note">No sign-up. No algorithm.</span>
+        <a href="/today" class="btn-primary">Read today's NTK →</a>
+        <span class="cta-note">Free. No sign-up. No endless feed.</span>
       </div>
     </div>
 
@@ -320,69 +426,33 @@
           </div>
         </div>
       </div>
-      <div class="hero-card">
-        <div class="hero-card-eyebrow">Story of the day</div>
+      <a class="hero-card" href="#story">
+        <div class="hero-card-eyebrow">This morning's lead</div>
         <div class="hero-card-headline" id="heroCardHeadline">Today's lead story headline appears here.</div>
-      </div>
+        <div class="hero-card-more">See how NTK reads it ↓</div>
+      </a>
     </div>
   </div>
 </section>
 
+<!-- 2. THE PROBLEM. The enemy is endlessness, not any outlet. -->
 <section class="stat-band">
   <div class="wrap">
-    <p class="statement">Three minutes. No algorithm. A format Thomas Jefferson pitched to a journalism student and no one built until now.</p>
+    <p class="statement">The news is infinite. <em>Your attention isn't.</em></p>
+    <p class="statement-sub">You don't need more headlines. You need someone to decide which ones matter, and help you understand them before you move on.</p>
   </div>
 </section>
 
-<section class="framework" id="framework">
-  <div class="wrap">
-    <div class="fw-header">
-      <div>
-        <h2 class="fw-h2">Four sections.<br>Every story.<br>Every morning.</h2>
-      </div>
-      <p class="fw-copy">In 1807, Jefferson described the ideal newspaper as one split into four sections: Truths, Probabilities, Possibilities and Lies. For two centuries the idea stayed a footnote. NTK runs every story through all four.</p>
-    </div>
-
-    <div class="fw-grid">
-      <div class="fw-card c1">
-        <div class="fw-card-top">
-          <div class="fw-card-name">Truths</div>
-          <div class="fw-card-num">01</div>
-        </div>
-        <p class="fw-card-body">What is established and verifiable. The facts as they stand, and who they land on.</p>
-      </div>
-      <div class="fw-card c2">
-        <div class="fw-card-top">
-          <div class="fw-card-name long">Probabilities</div>
-          <div class="fw-card-num">02</div>
-        </div>
-        <p class="fw-card-body">What happens next, read from historical pattern and political logic. A forecast that shows its reasoning.</p>
-      </div>
-      <div class="fw-card c3">
-        <div class="fw-card-top">
-          <div class="fw-card-name long">Possibilities</div>
-          <div class="fw-card-num">03</div>
-        </div>
-        <p class="fw-card-body">Plausible outcomes that nobody is pricing in. The edge cases that would surprise a pundit but not a historian.</p>
-      </div>
-      <div class="fw-card c4">
-        <div class="fw-card-top">
-          <div class="fw-card-name">Lies</div>
-          <div class="fw-card-num">04</div>
-        </div>
-        <p class="fw-card-body">Deliberate distortions in circulation. NTK names the claim, names who is making it, and traces who profits.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
+<!-- 3. THE PRODUCT. A real story, before any explanation of it.
+     Every id in this block is filled from heroStory below. -->
 <section class="story-section" id="story">
   <div class="wrap">
     <div class="story-header">
       <div>
-        <h2 class="story-h2">What a story looks like<br>inside NTK.</h2>
+        <div class="section-kicker">Today's NTK</div>
+        <h2 class="story-h2">One story from<br>this morning.</h2>
       </div>
-      <div class="story-meta">4–10 stories daily<br>The same four sections<br>Every story, every time</div>
+      <div class="story-meta">Every story, the same four questions</div>
     </div>
 
     <div class="story-card">
@@ -426,13 +496,103 @@
         </div>
         <div class="story-footer">
           <span class="story-footer-frame" id="storyCategory">Today's briefing</span>
-          <a href="/digest/latest" class="story-footer-link" id="storyReadMore">Read the full briefing</a>
+          <a href="/today" class="story-footer-link" id="storyReadMore">Read the whole story</a>
         </div>
       </div>
     </div>
   </div>
 </section>
 
+<!-- 4. THE METHOD. The four sections as four questions: one descending
+     ramp of certainty, with Lies as the single reversal. -->
+<section class="framework" id="method">
+  <div class="wrap">
+    <div class="fw-header">
+      <div>
+        <div class="section-kicker dark">The NTK Method</div>
+        <h2 class="fw-h2">Four questions.<br>One story.</h2>
+      </div>
+      <p class="fw-copy">Every story NTK publishes answers the same four questions, in the same order, from most certain to least. Once you know the shape, you can read any story in a minute and know exactly how sure to be about each part of it.</p>
+    </div>
+
+    <div class="fw-grid">
+      <div class="fw-card c1">
+        <div class="fw-card-top">
+          <div class="fw-card-name">What's true?</div>
+          <div class="fw-card-num">01</div>
+        </div>
+        <div class="fw-card-section">Truths</div>
+        <p class="fw-card-body">What actually happened, and who it lands on. Every fact sourced.</p>
+      </div>
+      <div class="fw-card c2">
+        <div class="fw-card-top">
+          <div class="fw-card-name">What's probable?</div>
+          <div class="fw-card-num">02</div>
+        </div>
+        <div class="fw-card-section">Probabilities</div>
+        <p class="fw-card-body">What will most likely happen next, read from precedent. A forecast that shows its reasoning.</p>
+      </div>
+      <div class="fw-card c3">
+        <div class="fw-card-top">
+          <div class="fw-card-name">What's possible?</div>
+          <div class="fw-card-num">03</div>
+        </div>
+        <div class="fw-card-section">Possibilities</div>
+        <p class="fw-card-body">What could happen, even if it's less likely. The outcome that would surprise a pundit but not a historian.</p>
+      </div>
+      <div class="fw-card c4">
+        <div class="fw-card-top">
+          <div class="fw-card-name">What's false?</div>
+          <div class="fw-card-num">04</div>
+        </div>
+        <div class="fw-card-section">Lies</div>
+        <p class="fw-card-body">Not claims we disagree with. Claims that can be shown false. You'll know the truth before someone tries the lie on you.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. THE PROMISE. Now that the reader knows the product, the brand line. -->
+<section class="promise">
+  <div class="wrap promise-grid">
+    <h2 class="promise-h2">News that <em>ends.</em></h2>
+    <div class="promise-list">
+      <div class="promise-item">
+        <div class="promise-lead">Three minutes. Then you're done.</div>
+        <p>Not because we cut corners. Because three minutes is enough, if someone has done the reading first.</p>
+      </div>
+      <div class="promise-item">
+        <div class="promise-lead">4–10 stories, and a last one.</div>
+        <p>Enough to know what matters. Not enough to lose your morning. When you reach the end, there's no more.</p>
+      </div>
+      <div class="promise-item">
+        <div class="promise-lead">No endless feed.</div>
+        <p>NTK isn't trying to keep you scrolling. It's trying to make you informed enough to stop.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. THE DIFFERENTIATOR. -->
+<section class="backstory-section" id="backstory">
+  <div class="wrap backstory-grid">
+    <div>
+      <div class="section-kicker">Backstory</div>
+      <h2 class="bs-h2">The news didn't<br>start today.</h2>
+      <p class="bs-copy">Every story has a history. Backstory shows you the decisions, fights, precedents and turning points that explain how we got here. Most news tells you what happened. Backstory tells you why it's happening now.</p>
+      <a href="/backstory" class="btn-primary">Explore Backstory</a>
+    </div>
+    <ol class="bs-ladder" aria-label="How a Backstory reads">
+      <li><span class="bs-step">Then</span><span class="bs-text">The decision nobody noticed at the time.</span></li>
+      <li><span class="bs-step">Then</span><span class="bs-text">The fight it started.</span></li>
+      <li><span class="bs-step">Then</span><span class="bs-text">The precedent it set.</span></li>
+      <li class="now"><span class="bs-step">Now</span><span class="bs-text">This morning's story, which suddenly makes sense.</span></li>
+    </ol>
+  </div>
+</section>
+
+<!-- 7. THE EDITORIAL PHILOSOPHY. Judgment is the product, not the
+     absence of software. -->
 <section class="editor-section" id="editor">
   <div class="editor-grid">
     <div class="editor-portrait">
@@ -440,24 +600,60 @@
       <div class="duotone"></div>
     </div>
     <div>
-      <blockquote class="editor-quote">"The best news formats I worked on had one thing in common: <em>a real editor making real decisions</em> about what mattered."</blockquote>
-      <cite class="editor-attrib">Max Zimbert, editor of NTK News</cite>
-      <p class="editor-copy">A former CNN producer and senior editor at one of the most respected mobile news formats ever built. The same person reads the wire, picks the stories and writes the sections. Every judgment on the page has a name behind it.</p>
-      <div class="chip-row">
-        <span class="chip">Reader-funded</span>
-        <span class="chip">No ads</span>
-        <span class="chip">One human editor</span>
+      <h2 class="editor-h2">Someone has already<br>read the news.</h2>
+      <p class="editor-copy">One editor reads broadly, decides what matters, and does the work of turning an overwhelming news cycle into something you can actually understand.</p>
+      <p class="editor-copy">Max Zimbert was a CNN producer and a senior editor at Yahoo News Digest, where software did the gathering and editors made the calls. NTK works the same way. Every judgment on the page has a name behind it.</p>
+      <div class="editor-nots">
+        <span>No engagement algorithm.</span>
+        <span>No outrage optimization.</span>
+        <strong>Just judgment.</strong>
       </div>
     </div>
   </div>
 </section>
 
+<!-- 8. THE LONG-TERM PROMISE. Written as an expectation we have to meet:
+     /me ships the subject ladder today; the rest is the Backstory and
+     theme work. -->
+<section class="me-section" id="me">
+  <div class="wrap me-grid">
+    <div>
+      <div class="section-kicker dark">Your NTK</div>
+      <h2 class="me-h2">Know what<br>you know.</h2>
+    </div>
+    <div>
+      <p class="me-copy">NTK should build a relationship with the news, not an addiction to it. Follow the subjects you care about, see how well you know them, and build context over time, so each morning starts from what you already understand instead of from zero.</p>
+      <p class="me-copy"><strong>Stay curious. Don't stay glued to the feed.</strong></p>
+      <a href="/me" class="story-footer-link">See your NTK</a>
+    </div>
+  </div>
+</section>
+
+<!-- 9. THE ORIGIN. Proof the framework is deliberate, placed after the
+     reader already gets the product. Source: Jefferson to John Norvell,
+     11 June 1807 (Founders Online, National Archives). -->
+<section class="jefferson" id="jefferson">
+  <div class="wrap jeff-grid">
+    <div>
+      <div class="section-kicker">The origin</div>
+      <h2 class="jeff-h2">Thomas Jefferson<br>hated the news.<br><em>He also designed NTK.</em></h2>
+    </div>
+    <div class="jeff-body">
+      <p>He had his reasons. A pamphleteer Jefferson once paid to attack John Adams had turned his pen on Jefferson himself, and by his second term the president had decided the papers were beyond saving. So when a young man wrote asking how to run a good one, Jefferson told him what he really thought:</p>
+      <blockquote class="jeff-quote">"The man who never looks into a newspaper is better informed than he who reads them."</blockquote>
+      <p>Then, in the same letter, he described the newspaper that might fix it. Four chapters: <strong>Truths. Probabilities. Possibilities. Lies.</strong> The first chapter, he warned, would be very short.</p>
+      <p>It stayed a footnote for two centuries. <strong>Until now.</strong></p>
+    </div>
+  </div>
+</section>
+
+<!-- 10. THE PAYOFF. -->
 <section class="closing">
   <div class="closing-inner">
     <div class="closing-eyebrow">Tomorrow, 6:00 a.m.</div>
-    <h2 class="closing-h2">Three minutes.<br><em>One shared reality.</em></h2>
-    <p class="closing-copy">Every other outlet profits when you stay longer. NTK profits when you understand faster.</p>
-    <a href="/digest/latest" class="btn-dark">Start reading</a>
+    <h2 class="closing-h2">We're not trying to keep you informed all day.</h2>
+    <p class="closing-copy">We're trying to make you informed enough to stop.<br><strong>Know what matters. Understand it. Go live your life.</strong></p>
+    <a href="/today" class="btn-dark">Read today's NTK</a>
     <div class="closing-note">Free. No sign-up required.</div>
   </div>
 </section>
@@ -513,7 +709,7 @@ const heroStory = {
     var s = heroStory;
 
     var dateline = document.getElementById("heroDateline");
-    if(dateline && s.date) dateline.textContent = s.date;
+    if(dateline && s.date) dateline.textContent = s.date.replace(/\s*\u2014\s*/g, " \u00b7 ");
 
     var panelDate = document.getElementById("heroPanelDate");
     if(panelDate) panelDate.textContent = "Lead story";
@@ -543,7 +739,7 @@ const heroStory = {
     if(storyLies && s.lies) storyLies.textContent = truncate(s.lies, 200);
 
     var storyCategory = document.getElementById("storyCategory");
-    if(storyCategory && s.category) storyCategory.textContent = "Historical frame, " + s.category;
+    if(storyCategory && s.category) storyCategory.textContent = s.category;
 
     var storyReadMore = document.getElementById("storyReadMore");
     if(storyReadMore && s.permalink) storyReadMore.href = s.permalink.replace(/^https?:\/\/[^/]+/, "");
@@ -558,7 +754,7 @@ const heroStory = {
     var storyDuotone = document.getElementById("storyDuotone");
     setImage(storyImage, storyImagePanel, storyDuotone, s.featuredImage, s.overlayColor);
     // Note: nav-cta / btn-primary / btn-dark intentionally stay pointed at
-    // /digest/latest — only the "Read the full briefing →" link inside the
+    // /today — only the "Read the full briefing →" link inside the
     // story card should deep-link to today's specific lead story.
   } catch(e){
     console.error("NTK homepage: failed to apply today's story, falling back to static copy.", e);

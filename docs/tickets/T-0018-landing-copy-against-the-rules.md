@@ -1,10 +1,17 @@
 ---
 id: T-0018
 title: The landing page copy predates the product it describes and breaks three of its own rules
-status: VERIFIED
+status: DISCARDED
 tags: [editorial, feature]
 anchor: index.html:379
 ---
+
+## Superseded by T-0080
+
+Closed 2026-10-08. The structural rework this ticket ruled out is now being
+done in T-0080 (landing page remake). Its three measurable rules, no em dash in
+visible copy, the story count matching the locked range, and "Truths" not
+"Truth", are carried verbatim into T-0080's check, so the signal survives.
 
 ## What
 
