@@ -1,6 +1,6 @@
 ---
 id: T-0080
-title: The landing page leads with what NTK does, and says "News that ends" only once the reader knows what it is
+title: The landing page leads with "Get clear on what's news" and shows the product before explaining it
 status: BUILT
 tags: [editorial, feature]
 anchor: index.html
@@ -11,9 +11,21 @@ anchor: index.html
 `ntknews.org` rebuilt from `ntk-marketing-page-recommendations.md`, with the
 editor's calls from 2026-10-08:
 
-- Hero H1 is the concrete proposition, comma version, no em dash: "NTK is the
-  news you need, so you can stop reading the news." "News that ends." moves
-  below the fold as the brand line, after the reader has seen the product.
+- Hero, the editor's final wording after three rounds (2026-10-08): H1 "Get
+  clear on what's news." Deck: "What happened, why, and what's next. Three
+  minutes, with backstory when you want. The antidote to information
+  overload." The first draft's H1 ("NTK is the news you need, so you can stop
+  reading the news.") was rejected as abstract and as defining NTK against
+  doomscrolling, which the editor doubts news readers actually do. His
+  framing: the benefit of a finite digest with ways into depth and history is
+  clarity of thought, range across publications, and sitting clearly with
+  reality.
+- **The editor is unconvinced "News that ends." means anything to readers.**
+  It stays as the Promise zone's headline for now. The test is reader
+  reaction when he sends the page to people, not further copy rounds. Claude
+  argued for keeping it and against "antidote to information overload" (an
+  old phrase, and it frames NTK against a problem again); the editor decided
+  otherwise. Record of the disagreement, so the reader test can settle it.
 - Order: proposition, a real story from this morning (on cream), the method
   (four questions), Jefferson, the promise ("News that ends."), Backstory,
   the editor, `/me`, payoff. A "problem" band ("The news is infinite. Your
@@ -109,16 +121,15 @@ t = re.sub(r'(?is)<(script|style|svg)[^>]*>[\s\S]*?</\1>', '', s)
 t = html.unescape(re.sub(r'<[^>]+>', ' ', t))
 t = re.sub(r'\s+', ' ', t)
 
-# The proposition leads; the brand line follows.
+# The hero is the editor's wording.
 h1 = re.search(r'(?is)<h1[^>]*>(.*?)</h1>', s)
 if not h1: sys.exit('no h1 on the landing page')
 h1t = re.sub(r'\s+', ' ', html.unescape(re.sub(r'<[^>]+>', '', h1.group(1))))
-if 'the news you need, so you can stop reading the news' not in h1t:
-    sys.exit('hero h1 no longer leads with the proposition: %r' % h1t)
-if 'ends' in h1t.lower():
-    sys.exit('"News that ends" has moved back into the hero')
-if 'News that ends' not in t:
-    sys.exit('"News that ends" is gone from the page')
+if "Get clear on what's news" not in h1t:
+    sys.exit('hero h1 changed from the editor\'s wording: %r' % h1t)
+if "What happened, why, and what's next" not in t:
+    sys.exit('hero deck lost its first line')
+# "News that ends." is deliberately not asserted: it is under reader test.
 
 for q in ["What's true?", "What's probable?", "What's possible?", "What's false?"]:
     if q not in t: sys.exit('method question missing: ' + q)
