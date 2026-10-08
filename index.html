@@ -70,7 +70,7 @@
   .nav-cta{background:var(--amber); color:var(--ink); padding:12px 19px; border-radius:3px;
     font-size:13px; font-weight:600; white-space:nowrap; flex-shrink:0; transition:background-color 140ms ease;}
   .nav-cta:hover{background:var(--cream); color:var(--ink);}
-  .nav-toggle{display:none; margin-left:auto; background:none; border:none; color:var(--cream);
+  .nav-toggle{display:none; font-family:inherit; margin-left:auto; background:none; border:none; color:var(--cream);
     font-size:26px; line-height:1; cursor:pointer; padding:8px;}
   .mobile-menu{display:none;}
 
@@ -80,8 +80,8 @@
   .hero-left{padding:72px 0 78px;}
   .dateline{display:flex; align-items:center; gap:10px; font-size:10px; font-weight:500;
     letter-spacing:.1em; text-transform:uppercase; color:var(--amber); margin-bottom:34px;}
-  .dot{width:7px; height:7px; background:var(--amber); border-radius:50%; animation:ntk-blink 2.4s ease-in-out infinite; flex-shrink:0;}
-  .hero-h1{font-family:'Newsreader',serif; font-size:104px; line-height:.94; letter-spacing:-.035em;
+  .dot{width:7px; height:7px; background:var(--amber); border-radius:999px; animation:ntk-blink 2.4s ease-in-out infinite; flex-shrink:0;}
+  .hero-h1{font-family:'Newsreader',serif; font-size:76px; line-height:.98; letter-spacing:-.035em;
     font-weight:600; margin:0 0 30px; text-wrap:balance;}
   .hero-h1 em{font-style:italic; color:var(--amber);}
   .hero-deck{font-family:'Newsreader',serif; font-size:20px; line-height:1.5; max-width:31ch;
@@ -107,31 +107,20 @@
   .hero-card-eyebrow{font-size:10px; letter-spacing: 0; color:var(--coral-deep); margin-bottom:12px;}
   .hero-card-headline{font-family:'Newsreader',serif; font-size:20px; line-height:1.2; letter-spacing:-.015em;}
 
-  /* ---------- Stat band ---------- */
-  .stat-band{background:var(--cream); border-bottom:1px solid rgba(38,31,35,.18);}
-  /* A sentence, not a dashboard. The two real figures live inside the claim
-     rather than sitting in tiles beside two ornamental ones. */
-  /* A sentence, not a dashboard, and set to the full measure rather than a
-     column — at 46px the line breaks about twice across 1240px, which is why
-     it reads as a statement instead of a paragraph. */
-  .statement{font-family:'Newsreader',serif; font-size:clamp(26px,3.6vw,46px);
-    line-height:1.22; letter-spacing:-.02em; margin:0; padding:76px 0 80px;
-    color:var(--ink);}
-
   /* ---------- Framework ---------- */
-  .framework{background:var(--cream); padding:100px 40px 96px;}
+  .framework{background:var(--cream-raised); padding:100px 40px 96px;}
   .fw-header{display:grid; grid-template-columns:1fr 1fr; gap:72px; align-items:start; margin-bottom:58px;}
   .fw-h2{font-family:'Newsreader',serif; font-size:60px; line-height:1; letter-spacing:-.03em; font-weight:600; margin:0;}
   .fw-copy{font-family:'Newsreader',serif; font-size:20px; line-height:1.55; color:rgba(38,31,35,.72);
     margin:0; padding-top:46px; text-wrap:pretty;}
   .fw-grid{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:24px;}
-  .fw-card{background:var(--cream-raised); border-top:6px solid; padding:26px 24px 28px; min-height:288px;
+  .fw-card{background:var(--cream); border-top:6px solid; padding:26px 24px 28px; min-height:288px;
     display:flex; flex-direction:column;}
   .fw-card-top{display:flex; align-items:baseline; justify-content:space-between; gap:12px;}
-  .fw-card-name{font-family:'Newsreader',serif; font-size:34px; letter-spacing:-.02em;}
+  .fw-card-name{font-family:'Newsreader',serif; font-size:26px; line-height:1.1; letter-spacing:-.02em;}
   .fw-card-name.long{font-size:26px; letter-spacing:-.025em; min-width:0;}
   .fw-card-num{font-size:13px; font-weight:600; letter-spacing:.1em;}
-  .fw-card-body{font-size:16px; line-height:1.6; margin:16px 0 0; color:rgba(38,31,35,.78);}
+  .fw-card-body{font-family:'Newsreader',serif; font-size:16px; line-height:1.5; margin:16px 0 0; color:rgba(38,31,35,.78);}
 
   /* The four sections are a descending ladder of certainty, not four
      categories, so they are drawn as one ramp rather than four hues:
@@ -152,12 +141,10 @@
   .fw-card.c4 .fw-card-num{color:var(--coral-deep);}
 
   /* ---------- Inside a briefing ---------- */
-  .story-section{background:var(--ink); color:var(--cream); padding:96px 40px;}
+  .story-section{background:var(--cream); color:var(--ink); padding:96px 40px;}
   .story-header{display:flex; align-items:flex-end; justify-content:space-between; gap:40px; margin-bottom:46px; flex-wrap:wrap;}
   .story-h2{font-family:'Newsreader',serif; font-size:60px; line-height:1.02; letter-spacing:-.03em; font-weight:600; margin:0;}
-  .story-meta{font-size:10px; font-weight:500; letter-spacing:.1em; text-transform:uppercase;
-    color:rgba(234,217,197,.56); text-align:right; line-height:2;}
-  .story-card{background:var(--cream); color:var(--ink); display:grid; grid-template-columns:.88fr 1.12fr;}
+  .story-card{background:var(--cream-raised); color:var(--ink); border:1px solid rgba(38,31,35,.14); display:grid; grid-template-columns:.88fr 1.12fr;}
   .story-image-panel{position:relative; overflow:hidden; background:var(--blue-deep);
     background-image:repeating-linear-gradient(135deg,#0798F2 0 9px,#4FB4F6 9px 18px);}
   .story-image-panel img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center;}
@@ -188,24 +175,14 @@
   .editor-portrait img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:top center;
     filter:grayscale(1) contrast(1.05); mix-blend-mode:luminosity;}
   .editor-portrait .duotone{position:absolute; inset:0; mix-blend-mode:multiply; background:var(--ink); opacity:.5; pointer-events:none;}
-  .editor-quote{font-family:'Newsreader',serif; font-size:34px; line-height:1.22; letter-spacing:-.025em;
-    margin:0 0 28px; text-wrap:pretty;}
-  .editor-quote em{font-style:italic; color:var(--coral);}
-  .editor-attrib{display:block; font-family:'Overpass',sans-serif; font-size:13px;
-    font-style:normal; letter-spacing: 0;
-    color:rgba(38,31,35,.67); margin-top:18px;}
   .editor-copy{font-family:'Newsreader',serif; font-size:20px; line-height:1.55; color:rgba(38,31,35,.72);
     max-width:54ch; margin:0 0 30px; text-wrap:pretty;}
-  .chip-row{display:flex; gap:10px; flex-wrap:wrap;}
-  .chip{border:1px solid rgba(38,31,35,.28); padding:9px 14px; font-size:10px; font-weight:500;
-    letter-spacing:.1em; text-transform:uppercase;}
-
   /* ---------- Closing CTA ---------- */
   .closing{background:var(--amber); color:var(--ink); padding:94px 40px;}
   .closing-inner{max-width:900px; margin:0 auto; text-align:center;}
   .closing-eyebrow{font-size:10px; font-weight:500; letter-spacing: 0;
     color:rgba(38,31,35,.74); margin-bottom:26px;}
-  .closing-h2{font-family:'Newsreader',serif; font-size:76px; line-height:.98; letter-spacing:-.035em;
+  .closing-h2{font-family:'Newsreader',serif; font-size:60px; line-height:1.02; letter-spacing:-.035em;
     font-weight:600; margin:0 0 26px;}
   .closing-h2 em{font-style:italic;}
   .closing-copy{font-family:'Newsreader',serif; font-size:20px; line-height:1.5; max-width:50ch;
@@ -222,11 +199,11 @@
     gap:24px; font-size:10px; font-weight:500; letter-spacing: 0; flex-wrap:wrap;}
   .footer-brand{display:flex; align-items:center; gap:10px;}
   .footer-brand img{height:36px; width:auto;}
-  .footer-brand span{font-family:'Newsreader',serif; font-size:16px; letter-spacing:0; text-transform:none;
+  .footer-brand span{font-family:'Newsreader',serif; font-size:16px; font-weight:400; letter-spacing:0; text-transform:none;
     color:rgba(234,217,197,.7);}
 
   /* ---------- Anchor offset for sticky header ---------- */
-  #framework,#story,#editor{scroll-margin-top:74px;}
+  #method,#story,#editor,#backstory,#jefferson,#me{scroll-margin-top:74px;}
 
   /* ---------- Responsive ---------- */
   @media (max-width:940px){
@@ -241,7 +218,7 @@
   @media (max-width:900px){
     .hero-grid{grid-template-columns:1fr;}
     .hero-left{padding:48px 0 32px;}
-    .hero-h1{font-size:clamp(46px,9vw,104px);}
+    .hero-h1{font-size:clamp(46px,8vw,76px);}
     .hero-right{display:block;}
     .hero-image-panel{aspect-ratio:16/10; flex:none; width:100%;}
     .hero-card{position:static; left:auto; bottom:auto; max-width:none; box-shadow:none; margin-top:-1px;}
@@ -251,19 +228,17 @@
     .fw-grid{grid-template-columns:1fr 1fr; gap:16px;}
     .story-header{align-items:flex-start;}
     .story-h2{font-size:clamp(34px,7vw,60px);}
-    .story-meta{text-align:left;}
     .story-card{grid-template-columns:1fr;}
     .story-image-overlay{min-height:280px; padding:24px;}
     .story-image-headline{font-size:26px;}
     .editor-grid{grid-template-columns:1fr; gap:32px;}
     .editor-portrait{max-width:280px;}
-    .editor-quote{font-size:clamp(26px,6vw,34px);}
-    .closing-h2{font-size:clamp(34px,9vw,76px);}
+    .closing-h2{font-size:clamp(34px,7vw,60px);}
   }
 
   @media (max-width:640px){
     .wrap,.framework,.story-section,.editor-section,.closing,.site-footer{padding-left:20px; padding-right:20px;}
-    .hero-h1{font-size:clamp(34px,11vw,60px);}
+    .hero-h1{font-size:clamp(34px,10vw,46px);}
     .fw-grid{grid-template-columns:1fr;}
     .footer-inner{flex-direction:column; align-items:flex-start; gap:14px;}
   }
@@ -272,65 +247,69 @@
   a:focus-visible,button:focus-visible{outline:2px solid var(--amber); outline-offset:2px;}
 
   /* ---------- T-0080: remake sections ---------- */
-  /* Section kicker: a real section name, so it earns its tracked caps
-     (design-system §4). Amber on ink, coral-deep on cream. */
+  /* A kicker names a section (design-system §4); it never decorates one.
+     Neutral ink, not an accent: terracotta stays Backstory's signal. */
   .section-kicker{font-size:10px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;
-    color:var(--amber); margin-bottom:18px;}
-  .section-kicker.dark{color:var(--coral-deep);}
+    color:rgba(38,31,35,.67); margin-bottom:18px;}
 
-  .hero-h1{font-size:76px; line-height:.98;}
   a.hero-card{display:block; color:var(--ink); transition:transform 140ms ease;}
   a.hero-card:hover{transform:translateY(-2px);}
-  .hero-card-more{font-size:13px; font-weight:600; margin-top:14px; color:var(--coral-deep);}
+  .hero-card-more{font-size:13px; font-weight:600; margin-top:14px; color:var(--ink); transition:color 140ms ease;}
+  a.hero-card:hover .hero-card-more{color:var(--coral);}
 
-  .statement{padding:76px 0 20px;}
-  .statement em{font-style:italic; color:var(--coral-deep);}
-  .statement-sub{font-family:'Newsreader',serif; font-size:20px; line-height:1.55; max-width:52ch;
-    color:rgba(38,31,35,.72); margin:0; padding:0 0 80px; text-wrap:pretty;}
-
-  .fw-card-name{font-size:26px; letter-spacing:-.02em; line-height:1.1;}
   .fw-card-section{font-family:'Newsreader',serif; font-size:16px; font-variant:small-caps;
     letter-spacing:.05em; margin-top:10px; color:rgba(38,31,35,.6);}
   .fw-card.c4 .fw-card-section{color:var(--coral-deep); font-style:italic;}
 
   /* ---------- Promise ---------- */
-  .promise{background:var(--ink); color:var(--cream); padding:100px 40px;}
+  .promise{background:var(--cream); color:var(--ink); padding:100px 40px;}
   .promise-grid{display:grid; grid-template-columns:.9fr 1.1fr; gap:72px; align-items:start; padding:0;}
   .promise-h2{font-family:'Newsreader',serif; font-size:104px; line-height:.94; letter-spacing:-.035em;
     font-weight:600; margin:0;}
-  .promise-h2 em{font-style:italic; color:var(--amber);}
+  .promise-h2 em{font-style:italic; font-weight:400;}
   .promise-list{display:flex; flex-direction:column; gap:30px; padding-top:10px;}
-  .promise-item{border-top:1px solid rgba(234,217,197,.18); padding-top:20px;}
-  .promise-lead{font-family:'Newsreader',serif; font-size:26px; letter-spacing:-.015em; margin-bottom:8px;}
+  .promise-item{border-top:1px solid rgba(38,31,35,.18); padding-top:20px;}
+  .promise-lead{font-family:'Newsreader',serif; font-size:26px; font-weight:600; letter-spacing:-.015em; margin-bottom:8px;}
   .promise-item p{font-family:'Newsreader',serif; font-size:20px; line-height:1.5; margin:0;
-    color:rgba(234,217,197,.7); text-wrap:pretty;}
+    color:rgba(38,31,35,.72); text-wrap:pretty;}
 
   /* ---------- Backstory ---------- */
   .backstory-section{background:var(--cream-raised); padding:100px 40px;
     border-top:1px solid rgba(38,31,35,.12);}
-  .backstory-section .section-kicker{color:var(--coral-deep);}
   .backstory-grid{display:grid; grid-template-columns:1fr 1fr; gap:72px; align-items:center; padding:0;}
   .bs-h2{font-family:'Newsreader',serif; font-size:60px; line-height:1; letter-spacing:-.03em; font-weight:600; margin:0 0 26px;}
   .bs-copy{font-family:'Newsreader',serif; font-size:20px; line-height:1.55; color:rgba(38,31,35,.72);
     max-width:46ch; margin:0 0 34px; text-wrap:pretty;}
-  .bs-ladder{list-style:none; margin:0; padding:0; position:relative;}
-  .bs-ladder::before{content:""; position:absolute; left:6px; top:14px; bottom:14px; width:2px; background:rgba(38,31,35,.18);}
-  .bs-ladder li{position:relative; display:grid; grid-template-columns:72px 1fr; gap:16px; align-items:baseline;
-    padding:16px 0 16px 30px;}
-  .bs-ladder li::before{content:""; position:absolute; left:0; top:22px; width:14px; height:14px; border-radius:999px;
-    background:var(--cream-raised); border:2px solid rgba(38,31,35,.4);}
-  .bs-ladder li.now::before{background:var(--coral); border-color:var(--coral);}
-  .bs-step{font-size:13px; font-weight:600; color:rgba(38,31,35,.55);}
-  .bs-ladder li.now .bs-step{color:var(--coral-deep);}
-  .bs-text{font-family:'Newsreader',serif; font-size:20px; line-height:1.35; color:rgba(38,31,35,.82);}
-  .bs-ladder li.now .bs-text{color:var(--ink); font-weight:600;}
+
+  /* The Beginnings timeline, ported from the Backstory permalink pages
+     (the .tr rows in the backstory permalink pages): year column, 1px rail, filled dots,
+     and the terracotta ringed "you came in here" row. Same geometry, scoped
+     here. Two changes to fit the design system: the year is 13px (the page
+     used 14, which is off the scale) and the dot radius is 999px. Rail and
+     dot share a centre on whole pixels, which is why the numbers look fussy. */
+  .bs-tl .lab, .bs-tl .ty, .bs-tl .here-lab{font-family:'Overpass',sans-serif;}
+  .bs-tl .lab{font-size:13px; font-weight:600; margin-bottom:14px;}
+  .bs-tl .tr{display:grid; grid-template-columns:64px 21px 1fr; align-items:start;
+    font-family:'Newsreader',serif; font-size:16px; line-height:1.4;}
+  .bs-tl .ty{font-size:13px; font-weight:700; padding-top:3px;}
+  .bs-tl .td{position:relative; align-self:stretch;}
+  .bs-tl .td::before{content:''; position:absolute; left:10px; top:0; bottom:0; border-left:1px solid rgba(38,31,35,.3);}
+  .bs-tl .lab + .tr .td::before{top:11px;}
+  .bs-tl .tr:last-child .td::before{bottom:auto; height:11px;}
+  .bs-tl .td i{position:absolute; left:6px; top:7px; width:9px; height:9px; border-radius:999px; background:var(--ink);}
+  .bs-tl .tt{padding:0 0 20px 8px;}
+  .bs-tl .tr:last-child .tt{padding-bottom:0;}
+  .bs-tl .tr.here .ty{color:var(--coral);}
+  .bs-tl .tr.here .td i{background:var(--coral); box-shadow:0 0 0 2px var(--cream-raised), 0 0 0 3px var(--coral);}
+  .bs-tl .here-lab{display:block; font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--coral); margin:3px 0 2px;}
 
   /* ---------- Editor ---------- */
   .editor-h2{font-family:'Newsreader',serif; font-size:60px; line-height:1; letter-spacing:-.03em; font-weight:600; margin:0 0 28px;}
   .editor-copy{margin:0 0 20px;}
   .editor-nots{display:flex; flex-direction:column; gap:4px; margin-top:28px;
     font-family:'Newsreader',serif; font-size:20px; color:rgba(38,31,35,.6);}
-  .editor-nots strong{color:var(--ink); font-size:26px; margin-top:8px;}
+  .editor-nots strong{color:var(--ink); font-size:26px; font-weight:600; margin-top:8px;}
 
   /* ---------- /me ---------- */
   .me-section{background:var(--cream); padding:0 40px 100px;}
@@ -339,7 +318,7 @@
   .me-h2{font-family:'Newsreader',serif; font-size:60px; line-height:1; letter-spacing:-.03em; font-weight:600; margin:0;}
   .me-copy{font-family:'Newsreader',serif; font-size:20px; line-height:1.55; color:rgba(38,31,35,.72);
     max-width:54ch; margin:0 0 20px; text-wrap:pretty;}
-  .me-copy strong{color:var(--ink);}
+  .me-copy strong{color:var(--ink); font-weight:600;}
 
   /* ---------- Jefferson ---------- */
   .jefferson{background:var(--ink); color:var(--cream); padding:100px 40px;}
@@ -352,25 +331,18 @@
   .jeff-quote{font-family:'Newsreader',serif; font-style:italic; font-size:34px; line-height:1.22; letter-spacing:-.02em;
     color:var(--cream); margin:30px 0; padding-left:24px; border-left:4px solid var(--amber); text-wrap:pretty;}
 
-  .closing-h2{font-size:60px; line-height:1.02;}
-  .closing-copy strong{color:var(--ink);}
-
-  #method,#story,#editor,#backstory,#jefferson,#me{scroll-margin-top:74px;}
+  .closing-copy strong{color:var(--ink); font-weight:600;}
 
   @media (max-width:900px){
-    .hero-h1{font-size:clamp(46px,8vw,76px);}
     .promise-grid,.backstory-grid,.me-grid,.jeff-grid{grid-template-columns:1fr; gap:32px;}
     .promise-h2{font-size:clamp(60px,14vw,104px);}
     .bs-h2,.editor-h2,.me-h2,.jeff-h2{font-size:clamp(34px,7vw,60px);}
     .jeff-quote{font-size:26px;}
-    .closing-h2{font-size:clamp(34px,7vw,60px);}
   }
   @media (max-width:640px){
-    .hero-h1{font-size:clamp(34px,10vw,46px);}
     .promise,.backstory-section,.me-section,.jefferson{padding-left:20px; padding-right:20px;}
     .promise{padding-top:72px; padding-bottom:72px;}
-    .bs-ladder li{grid-template-columns:1fr; gap:2px;}
-    .fw-card{min-height:0;}
+    .bs-tl .tr{grid-template-columns:52px 21px 1fr;}
   }
 </style>
 </head>
@@ -383,22 +355,22 @@
     </div>
     <nav class="site-nav">
       <a href="#method">The Method</a>
+      <a href="#jefferson">Origin</a>
       <a href="#backstory">Backstory</a>
       <a href="#editor">Who Reads It</a>
-      <a href="#jefferson">Origin</a>
     </nav>
-    <a href="/today" class="nav-cta">Read today's NTK</a>
+    <a href="/digest" class="nav-cta">Read today's NTK</a>
     <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false">☰</button>
   </div>
   <nav class="mobile-menu" id="mobileMenu">
     <a href="#method">The Method</a>
+    <a href="#jefferson">Origin</a>
     <a href="#backstory">Backstory</a>
     <a href="#editor">Who Reads It</a>
-    <a href="#jefferson">Origin</a>
   </nav>
 </header>
 
-<!-- 1. THE PROPOSITION. Concrete promise first; the brand line waits
+<!-- THE PROPOSITION. Concrete promise first; the brand line waits
      until the reader knows what the product is. -->
 <section class="hero">
   <div class="wrap hero-grid">
@@ -410,7 +382,7 @@
       <h1 class="hero-h1">NTK is the news you need, so you can <em>stop reading the news.</em></h1>
       <p class="hero-deck">Three minutes every morning. The stories that matter, with the context to actually understand them. Then you're done.</p>
       <div class="cta-row">
-        <a href="/today" class="btn-primary">Read today's NTK →</a>
+        <a href="/digest" class="btn-primary">Read today's NTK</a>
         <span class="cta-note">Free. No sign-up. No endless feed.</span>
       </div>
     </div>
@@ -429,30 +401,20 @@
       <a class="hero-card" href="#story">
         <div class="hero-card-eyebrow">This morning's lead</div>
         <div class="hero-card-headline" id="heroCardHeadline">Today's lead story headline appears here.</div>
-        <div class="hero-card-more">See how NTK reads it ↓</div>
+        <div class="hero-card-more">See how NTK reads it</div>
       </a>
     </div>
   </div>
 </section>
 
-<!-- 2. THE PROBLEM. The enemy is endlessness, not any outlet. -->
-<section class="stat-band">
-  <div class="wrap">
-    <p class="statement">The news is infinite. <em>Your attention isn't.</em></p>
-    <p class="statement-sub">You don't need more headlines. You need someone to decide which ones matter, and help you understand them before you move on.</p>
-  </div>
-</section>
-
-<!-- 3. THE PRODUCT. A real story, before any explanation of it.
+<!-- THE PRODUCT. A real story, before any explanation of it.
      Every id in this block is filled from heroStory below. -->
 <section class="story-section" id="story">
   <div class="wrap">
     <div class="story-header">
       <div>
-        <div class="section-kicker">Today's NTK</div>
         <h2 class="story-h2">One story from<br>this morning.</h2>
       </div>
-      <div class="story-meta">Every story, the same four questions</div>
     </div>
 
     <div class="story-card">
@@ -496,20 +458,20 @@
         </div>
         <div class="story-footer">
           <span class="story-footer-frame" id="storyCategory">Today's briefing</span>
-          <a href="/today" class="story-footer-link" id="storyReadMore">Read the whole story</a>
+          <a href="/digest" class="story-footer-link" id="storyReadMore">Read the whole story</a>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- 4. THE METHOD. The four sections as four questions: one descending
+<!-- THE METHOD. The four sections as four questions: one descending
      ramp of certainty, with Lies as the single reversal. -->
 <section class="framework" id="method">
   <div class="wrap">
     <div class="fw-header">
       <div>
-        <div class="section-kicker dark">The NTK Method</div>
+        <div class="section-kicker">The NTK Method</div>
         <h2 class="fw-h2">Four questions.<br>One story.</h2>
       </div>
       <p class="fw-copy">Every story NTK publishes answers the same four questions, in the same order, from most certain to least. Once you know the shape, you can read any story in a minute and know exactly how sure to be about each part of it.</p>
@@ -552,7 +514,24 @@
   </div>
 </section>
 
-<!-- 5. THE PROMISE. Now that the reader knows the product, the brand line. -->
+<!-- THE ORIGIN. Proof the framework is deliberate, placed after the
+     reader already gets the product. Source: Jefferson to John Norvell,
+     11 June 1807 (Founders Online, National Archives). -->
+<section class="jefferson" id="jefferson">
+  <div class="wrap jeff-grid">
+    <div>
+      <h2 class="jeff-h2">Thomas Jefferson<br>hated the news.<br><em>He also designed NTK.</em></h2>
+    </div>
+    <div class="jeff-body">
+      <p>He had his reasons. A pamphleteer Jefferson once paid to attack John Adams had turned his pen on Jefferson himself, and by his second term the president had decided the papers were beyond saving. So when a young man wrote asking how to run a good one, Jefferson told him what he really thought:</p>
+      <blockquote class="jeff-quote">"The man who never looks into a newspaper is better informed than he who reads them."</blockquote>
+      <p>Then, in the same letter, he described the newspaper that might fix it. Four chapters: <strong>Truths. Probabilities. Possibilities. Lies.</strong> The first chapter, he warned, would be very short.</p>
+      <p>It stayed a footnote for two centuries. <strong>Until now.</strong></p>
+    </div>
+  </div>
+</section>
+
+<!-- THE PROMISE. Now that the reader knows the product, the brand line. -->
 <section class="promise">
   <div class="wrap promise-grid">
     <h2 class="promise-h2">News that <em>ends.</em></h2>
@@ -573,7 +552,7 @@
   </div>
 </section>
 
-<!-- 6. THE DIFFERENTIATOR. -->
+<!-- THE DIFFERENTIATOR. -->
 <section class="backstory-section" id="backstory">
   <div class="wrap backstory-grid">
     <div>
@@ -582,16 +561,17 @@
       <p class="bs-copy">Every story has a history. Backstory shows you the decisions, fights, precedents and turning points that explain how we got here. Most news tells you what happened. Backstory tells you why it's happening now.</p>
       <a href="/backstory" class="btn-primary">Explore Backstory</a>
     </div>
-    <ol class="bs-ladder" aria-label="How a Backstory reads">
-      <li><span class="bs-step">Then</span><span class="bs-text">The decision nobody noticed at the time.</span></li>
-      <li><span class="bs-step">Then</span><span class="bs-text">The fight it started.</span></li>
-      <li><span class="bs-step">Then</span><span class="bs-text">The precedent it set.</span></li>
-      <li class="now"><span class="bs-step">Now</span><span class="bs-text">This morning's story, which suddenly makes sense.</span></li>
-    </ol>
+    <div class="bs-tl">
+      <div class="lab">Backstory: America Abroad</div>
+      <div class="tr"><span class="ty">1823</span><span class="td"><i></i></span><div class="tt">John Quincy Adams wrote that Monroe's cabinet weighed British proposals about Spain and South America, and he opposed a joint pledge.</div></div>
+      <div class="tr"><span class="ty">1917</span><span class="td"><i></i></span><div class="tt">President Wilson asked a joint session of Congress to declare war on Germany after its submarines sank ships, and Congress then voted for war.</div></div>
+      <div class="tr"><span class="ty">1947</span><span class="td"><i></i></span><div class="tt">Secretary of State George Marshall told Harvard graduates that the United States should help Europe recover from the war, through a plan the Europeans would draw up.</div></div>
+      <div class="tr here"><span class="ty">Today</span><span class="td"><i></i></span><div class="tt"><span class="here-lab">You came in here</span>This morning's news, with the history behind it.</div></div>
+    </div>
   </div>
 </section>
 
-<!-- 7. THE EDITORIAL PHILOSOPHY. Judgment is the product, not the
+<!-- THE EDITORIAL PHILOSOPHY. Judgment is the product, not the
      absence of software. -->
 <section class="editor-section" id="editor">
   <div class="editor-grid">
@@ -600,25 +580,25 @@
       <div class="duotone"></div>
     </div>
     <div>
-      <h2 class="editor-h2">Someone has already<br>read the news.</h2>
+      <h2 class="editor-h2">Someone<br>reads the news.</h2>
       <p class="editor-copy">One editor reads broadly, decides what matters, and does the work of turning an overwhelming news cycle into something you can actually understand.</p>
       <p class="editor-copy">Max Zimbert was a CNN producer and a senior editor at Yahoo News Digest, where software did the gathering and editors made the calls. NTK works the same way. Every judgment on the page has a name behind it.</p>
       <div class="editor-nots">
         <span>No engagement algorithm.</span>
         <span>No outrage optimization.</span>
-        <strong>Just judgment.</strong>
+        <strong>Just news judgment.</strong>
       </div>
     </div>
   </div>
 </section>
 
-<!-- 8. THE LONG-TERM PROMISE. Written as an expectation we have to meet:
+<!-- THE LONG-TERM PROMISE. Written as an expectation we have to meet:
      /me ships the subject ladder today; the rest is the Backstory and
      theme work. -->
 <section class="me-section" id="me">
   <div class="wrap me-grid">
     <div>
-      <div class="section-kicker dark">Your NTK</div>
+      <div class="section-kicker">Your NTK</div>
       <h2 class="me-h2">Know what<br>you know.</h2>
     </div>
     <div>
@@ -629,31 +609,13 @@
   </div>
 </section>
 
-<!-- 9. THE ORIGIN. Proof the framework is deliberate, placed after the
-     reader already gets the product. Source: Jefferson to John Norvell,
-     11 June 1807 (Founders Online, National Archives). -->
-<section class="jefferson" id="jefferson">
-  <div class="wrap jeff-grid">
-    <div>
-      <div class="section-kicker">The origin</div>
-      <h2 class="jeff-h2">Thomas Jefferson<br>hated the news.<br><em>He also designed NTK.</em></h2>
-    </div>
-    <div class="jeff-body">
-      <p>He had his reasons. A pamphleteer Jefferson once paid to attack John Adams had turned his pen on Jefferson himself, and by his second term the president had decided the papers were beyond saving. So when a young man wrote asking how to run a good one, Jefferson told him what he really thought:</p>
-      <blockquote class="jeff-quote">"The man who never looks into a newspaper is better informed than he who reads them."</blockquote>
-      <p>Then, in the same letter, he described the newspaper that might fix it. Four chapters: <strong>Truths. Probabilities. Possibilities. Lies.</strong> The first chapter, he warned, would be very short.</p>
-      <p>It stayed a footnote for two centuries. <strong>Until now.</strong></p>
-    </div>
-  </div>
-</section>
-
-<!-- 10. THE PAYOFF. -->
+<!-- THE PAYOFF. -->
 <section class="closing">
   <div class="closing-inner">
     <div class="closing-eyebrow">Tomorrow, 6:00 a.m.</div>
     <h2 class="closing-h2">We're not trying to keep you informed all day.</h2>
     <p class="closing-copy">We're trying to make you informed enough to stop.<br><strong>Know what matters. Understand it. Go live your life.</strong></p>
-    <a href="/today" class="btn-dark">Read today's NTK</a>
+    <a href="/digest" class="btn-dark">Read today's NTK</a>
     <div class="closing-note">Free. No sign-up required.</div>
   </div>
 </section>

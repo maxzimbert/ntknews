@@ -14,14 +14,19 @@ editor's calls from 2026-10-08:
 - Hero H1 is the concrete proposition, comma version, no em dash: "NTK is the
   news you need, so you can stop reading the news." "News that ends." moves
   below the fold as the brand line, after the reader has seen the product.
-- Order: proposition, problem ("The news is infinite. Your attention isn't."),
-  a real story from this morning, the method (four questions), the promise
-  ("News that ends."), Backstory, the editor, `/me`, Jefferson, payoff.
+- Order: proposition, a real story from this morning (on cream), the method
+  (four questions), Jefferson, the promise ("News that ends."), Backstory,
+  the editor, `/me`, payoff. A "problem" band ("The news is infinite. Your
+  attention isn't.") was in the first draft and cut on the editor's review:
+  the problem is universal, the hero already carries it, and a band that
+  restates the hero is not doing a job.
+- Jefferson sits straight after the method because it answers the question
+  the method raises (why these four?). It was section 9 in the first draft.
 - The four sections are shown as questions (What's true? ... What's false?)
   and keep the certainty ramp from `docs/design-system.md` §6.
 - Lies is sold as a benefit to the reader ("You'll know the truth before
   someone tries the lie on you"), not defined defensively.
-- Editor section: "Someone has already read the news." Names Yahoo News Digest
+- Editor section: "Someone reads the news." and "Just news judgment." Names Yahoo News Digest
   as the human-in-the-loop precedent, at the editor's request.
 - `/me` ("Know what you know") is written as an expectation the product has
   to meet. Measured 2026-10-08: `/me` ships the per-subject ladder ("Following
@@ -35,8 +40,12 @@ editor's calls from 2026-10-08:
 
 Unchanged on purpose: the `heroStory` block and every DOM id
 `build_digest.py` writes to, the embedded base64 images, the type scale, the
-dark/cream grounds. CTAs now point at `/today` rather than `/digest/latest`
-(a 301 to the same place).
+dark/cream grounds. Every CTA points at `/digest` (the editor's call; it was
+`/digest/latest`, a 301 to `/today`). Only the hero button carries no arrow.
+
+The Backstory section reuses the Beginnings timeline CSS from the Backstory
+permalink pages (`.tr` rows) with real rows from the published America Abroad
+page, replacing a hand-rolled list.
 
 Two JS display fixes rode along: the dateline's em dash (written by
 `build_digest.py`'s `date_label`) renders as a middle dot, and the story card's
@@ -68,6 +77,18 @@ The hero still depends on `build_digest.py`'s regex finding exactly one
 `const heroStory = {...};`. If a future edit breaks that match, the publish
 logs a WARNING and the landing page silently freezes on an old story. The
 check asserts the match and the ids.
+
+Design-system audit 2026-10-08 (computed styles, every text element): all
+sizes on the ten-step scale, only the loaded weights, radii 3px and 999px
+only, Overpass on chrome only. It found and fixed four things: the method
+cards' written copy was Overpass (now Newsreader); the Backstory year and
+labels silently rendered in the wrong face because a CSS comment containing
+`*/` ended early and the browser dropped the next rule without any error; the
+mobile-menu button fell back to Arial; one footer span asked for a weight the
+page does not load. **Open, not changed:** the landing page's display type
+uses negative letter-spacing (-.015em to -.035em) where design-system §3 says
+`0` outside named exceptions, and `digest/index.html` follows the rule. That
+is a look the editor has approved, so it is a decision, not a cleanup.
 
 The first draft broke T-0029 twice: arrows on five CTAs (only the primary
 keeps one) and a bare "1807" label (an ornament T-0029 removed). `rot.sh`
@@ -102,10 +123,22 @@ if 'News that ends' not in t:
 for q in ["What's true?", "What's probable?", "What's possible?", "What's false?"]:
     if q not in t: sys.exit('method question missing: ' + q)
 
-for href in ['/today', '/backstory', '/me']:
+for href in ['/digest', '/backstory', '/me']:
     if 'href="%s"' % href not in s: sys.exit('no link to ' + href)
 for anchor in ['id="backstory"', 'id="me"', 'id="jefferson"', 'id="method"']:
     if anchor not in s: sys.exit('section missing: ' + anchor)
+if 'href="/today"' in s: sys.exit('a CTA still points at /today; the editor chose /digest')
+if 'The news is infinite' in t: sys.exit('the cut problem band is back')
+# Order: story, method, origin, then the brand line.
+pos = [s.index(m) for m in ['id="story"', 'id="method"', 'id="jefferson"', 'class="promise"']]
+if pos != sorted(pos): sys.exit('section order changed: story, method, jefferson, promise')
+
+# A stray comment terminator makes the browser drop the next CSS rule silently.
+css = re.search(r'<style>([\s\S]*?)</style>', s).group(1)
+if '*/' in re.sub(r'/\*[\s\S]*?\*/', '', css): sys.exit('stray */ in landing CSS: the next rule is being dropped')
+if not re.search(r"\.fw-card-body\{font-family:'Newsreader'", css): sys.exit('method card copy is not Newsreader')
+if not re.search(r"\.bs-tl \.ty\b[^}]*\{[^}]*font-family:'Overpass'", css) and not re.search(r"\.bs-tl \.ty,[^{]*\{font-family:'Overpass'", css) and ".bs-tl .lab, .bs-tl .ty" not in css:
+    sys.exit('Backstory timeline years lost their Overpass rule')
 
 # build_digest.py rewrites this block on every publish; one match or it freezes.
 n = len(re.findall(r'const heroStory = \{.*?\n\};', s, re.DOTALL))
