@@ -166,10 +166,14 @@ dec = open('docs/decisions.md', encoding='utf-8').read()
 m = re.search(r'\*\*The digest must end\.\*\*\s*(\d+)[–-](\d+) cards', dec)
 if not m: sys.exit('the locked story-count range is no longer stated in docs/decisions.md')
 lo_d, hi_d = int(m.group(1)), int(m.group(2))
-claims = re.findall(r'(\d+)\s*(?:[–-]\s*(\d+))?\s*stories', t)
+# House style spells out one to nine ("Four to 10 stories"), so read words too.
+W = {w: i for i, w in enumerate('zero one two three four five six seven eight nine ten'.split())}
+N = r'(\d+|' + '|'.join(W) + r')'
+num = lambda x: int(x) if x.isdigit() else W[x.lower()]
+claims = re.findall(r'(?i)\b' + N + r'\s*(?:(?:[–-]|to)\s*' + N + r')?\s+stories', t)
 if not claims: sys.exit('the landing page no longer says how many stories a digest carries')
 for c in claims:
-    lo = int(c[0]); hi = int(c[1]) if c[1] else lo
+    lo = num(c[0]); hi = num(c[1]) if c[1] else lo
     if (lo, hi) != (lo_d, hi_d):
         sys.exit('landing claims %s stories; docs/decisions.md locks %d-%d' % (
             '%d-%d' % (lo, hi) if hi != lo else str(lo), lo_d, hi_d))
