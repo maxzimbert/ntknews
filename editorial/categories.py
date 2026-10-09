@@ -205,6 +205,8 @@ def validate(cat, pool, spec, story_texts, origin_year=None, vocab=None):
                      "source": e["source"], "source_url": e["url"], "about": about,
                      "pool": e["pool"], "lenses": e["lenses"], "by": o.get("by", "model"),
                      "sort": e.get("sort") or f"{e['year']}-01-01"})
+    if not objs:
+        return None, problems + ["no objects: a category needs at least one primary source, so it is not published"]
     ids = {o["object_id"] for o in objs}
     c["objects"] = sorted(objs, key=lambda o: (o["sort"], o["title"]))        # oldest to newest, always
 

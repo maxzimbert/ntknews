@@ -155,7 +155,7 @@ JSON only: {"choose":["<id>", ...],"why":"one sentence"}"""
     return pick(objs, lenses, [])
 
 
-RELATIONS = ("same subject", "earlier instance of the same action", "origin of the background")
+RELATIONS = ("same subject", "earlier instance of the same action", "origin of the background", "comparable case of the same kind of event")
 _STOP = set("the a an and or of to in on for with from by at as is are was were be been that this it its their his her they who which what when where about into over after before under than then also not no".split())
 
 
@@ -192,10 +192,10 @@ ALREADY ON THE PAGE (do not repeat): {have_txt}
 
 First ask yourself: what is the history of the action, the consequences, the people, the setting and the background in this story? Which events, in order, are the steps that lead to what the story reports today? Choose the {need} that matter most, spread across time, earlier than today's event, the last one the most recent turn before it. Then use web search to find, for each, a primary source that defends it from editorial scrutiny: the document itself or the copy held by an archive, court, legislature, government agency or the original publisher. Not Wikipedia, not a news article or summary about it, not a retail or study-guide page.
 
-Every milestone must be part of this story's own history: the same subject, an earlier instance of the same action, or the origin of a background the story names. A document that shares only a theme (secrecy, government power, regulation) is an analogy and does not belong. {need} is a target, not a quota: if you cannot source a milestone, leave it out. Fewer well-sourced milestones are better than padding.
+Every milestone must be part of this story's own history: the same subject, an earlier instance of the same action, the origin of a background the story names, or a comparable case of the same kind of event elsewhere (when the category is named for a kind of event, such as an outbreak or a fuel waiver, cases in other places count, before or after the story's own origin). Date each milestone by when the event happened, not when the document was written. A document that shares only a theme (secrecy, government power, regulation) is an analogy and does not belong. {need} is a target, not a quota: if you cannot source a milestone, leave it out. Fewer well-sourced milestones are better than padding.
 
 Answer with JSON only, a list in date order:
-[{{"year":"YYYY","date":"YYYY-MM-DD if the document gives it, else null","title":"the document's exact title","author":"who issued or wrote it","source":"the publishing body or archive","source_url":"the exact page or PDF where it can be read","line":"ONE sentence, 12 to 25 words, saying what happened, starting with the actor or the event","about":"two to four sentences, at most 70 words: what the document is, who made it and when, what it says or did","evidence_quote":"one sentence copied word for word from that page that supports the line","ties_to":"a few words from TODAY'S STORY naming the subject, person, place or action this milestone belongs to","relation":"same subject | earlier instance of the same action | origin of the background","because":"one sentence: how this step leads to the next one, or to today's story"}}]
+[{{"event_year":"YYYY, the year the event itself happened, which can be earlier than the document","year":"YYYY, the year of the document","date":"YYYY-MM-DD, the document's own date if it gives one, else null","title":"the document's exact title","author":"who issued or wrote it","source":"the publishing body or archive","source_url":"the exact page or PDF where it can be read","line":"ONE sentence, 12 to 25 words, saying what happened, starting with the actor or the event","about":"two to four sentences, at most 70 words: what the document is, who made it and when, what it says or did","evidence_quote":"one sentence copied word for word from that page that supports the line","ties_to":"a few words from TODAY'S STORY naming the subject, person, place or action this milestone belongs to","relation":"same subject | earlier instance of the same action | origin of the background | comparable case of the same kind of event","because":"one sentence: how this step leads to the next one, or to today's story"}}]
 Rules: use only facts that the page states; the line and about may contain no number that is not in the title, the date or the evidence_quote. If you find none, answer [].
 {STYLE}"""
     text, urls, cites = searcher(api_key, model, p, 4000)
@@ -237,11 +237,16 @@ Rules: use only facts that the page states; the line and about may contain no nu
     def accept(m):
         host = re.sub(r"^https?://([^/]+).*$", r"\1", m["source_url"]).lower()
         t = m["title"].strip()
+        # a milestone is dated by the event, not the document; trusted only if the title or the quoted
+        # sentence states the event year, otherwise the document's year stands
+        ey = str(m.get("event_year") or "").strip()
+        if re.fullmatch(r"\d{3,4}", ey) and ey != str(m["year"]) and (ey in t or ey in m["evidence_quote"]) and int(ey) < int(m["year"]):
+            m = dict(m, doc_date=m.get("date") or m["year"], year=ey, date=None)
         out.append({"id": "custom-" + re.sub(r"[^a-z0-9]+", "-", t.lower())[:60], "title": t, "author": (m.get("author") or "").strip(),
                     "year": str(m["year"]), "date": m.get("date") if re.fullmatch(r"\d{4}-\d\d-\d\d", str(m.get("date") or "")) else "",
                     "source": (m.get("source") or host).strip(), "url": m["source_url"].strip(), "found_by": "search",
                     "evidence_quote": m["evidence_quote"].strip(), "line": m["line"].strip(), "about": m["about"].strip(),
-                    "ties_to": m["ties_to"].strip(), "relation": m["relation"], "because": str(m.get("because") or "").strip()[:240]})
+                    "doc_date": str(m.get("doc_date") or ""), "ties_to": m["ties_to"].strip(), "relation": m["relation"], "because": str(m.get("because") or "").strip()[:240]})
 
     for m in items[:need + 3]:
         bad = provenance(m)
@@ -299,7 +304,7 @@ TODAY'S STORY: {story['headline']}
 ITEMS ON THE PAGE:
 """ + "\n".join(f"- id: {i['id']} | {i['year']} | {i['title'][:100]} | " + (f"why it was added: {i['ties']}" if i.get("ties") else "chosen from the matrix") for i in items) + """
 
-For each item decide keep or drop. Keep it only if a reader of today's story would see it as part of that story's own history: it is about the same subject, or an earlier instance of the same action, or the origin of a background the story names. Drop it if it is an analogy from another field, or shares only a theme with the story (secrecy, government power, regulation, a decade, a branch of government). Be strict: a short true page is better than a long loose one.
+For each item decide keep or drop. Keep it only if a reader of today's story would see it as part of that story's own history: it is about the same subject, or an earlier instance of the same action, or the origin of a background the story names, or a comparable case of the same kind of event elsewhere when the category is named for that kind of event (an outbreak in another country counts under an outbreak story; a decade, a branch of government or a shared theme does not). Drop it if it is an analogy from another field, or shares only a theme with the story (secrecy, government power, regulation, a decade, a branch of government). Be strict: a short true page is better than a long loose one.
 JSON only: {"<id>":{"keep":true,"why":"one sentence naming what in the story it connects to"}, ...}"""
     try:
         r = caller(api_key, model, "", p, 2000) or {}
