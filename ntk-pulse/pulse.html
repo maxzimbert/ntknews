@@ -1832,6 +1832,7 @@ function catEditorHtml(c){
       <button class="mini ${c.status==='approved'?'':'primary'}" id="cat-approve">${c.status==='approved'?'Back to draft':'Approve for publish'}</button>
       <button class="mini" id="cat-del">${PUBCATS.some(r=>r.id===c.id)?'(published)':'Delete'}</button>
     </div>
+    ${(()=>{ const pb=PUBCATS.find(r=>r.id===c.id); if (!pb || JSON.stringify([pb.contest,pb.stakes,(pb.beginnings||[]).map(b=>b.object_id)])===JSON.stringify([c.contest,c.stakes,(c.beginnings||[]).map(b=>b.object_id)])) return ''; return `<div style="font-size:12px;margin-bottom:8px;padding:6px 8px;border:1px solid var(--warn)">You are looking at your own copy of this category. The published version${pb.auto?' (made automatically)':''} is different. <button class="mini" id="cat-load-pub">Load the published version</button> <span style="color:var(--dim)">(replaces your copy)</span></div>`; })()}
     ${c.auto?`<div style="font-size:12px;margin-bottom:8px;padding:6px 8px;border:1px solid var(--rule);background:#faf8f3">Made automatically by the publish step from the story filed under it, because no row fit. It is live as written. Read it, and revise or edit whatever is wrong.${(c.auto_approved||[]).length?` ${(c.auto_approved||[]).length} candidate source${(c.auto_approved||[]).length===1?' was':'s were'} included without your review (their links were read).`:''}</div>`:''}
     ${CAT_MSG[c.id]?`<div style="font-size:12px;margin-bottom:8px;color:${/failed/.test(CAT_MSG[c.id])?'var(--stale)':'var(--dim)'}">${esc(CAT_MSG[c.id])}</div>`:''}
     <div style="font-size:11px;color:var(--dim);margin-bottom:6px">Filed under it: ${stories.length?stories.map(s=>esc(s.title)).join(' · '):'no story yet. In Lineup, pick this category on a story.'}</div>
@@ -1903,7 +1904,7 @@ function renderBackstory(root){
       <div>
         <div style="font-size:11px;color:var(--dim);margin-bottom:6px">CATEGORIES</div>
         ${list.map(({rec,where})=>`<div class="story cat-pick" data-id="${esc(rec.id)}" style="padding:7px 9px;cursor:pointer;${rec.id===CAT_SEL?'border-color:var(--ink)':''}">
-          <b style="font-size:12px">${esc(rec.title)}</b><br><span style="font-size:10.5px;color:var(--dim)">${esc(where==='published'?'published':rec.status)}${rec.auto?' · auto':''} · ${catStories(rec.id).length} stor${catStories(rec.id).length===1?'y':'ies'} filed</span></div>`).join('')||'<i style="font-size:12px;color:var(--dim)">none yet</i>'}
+          <b style="font-size:12px">${esc(rec.title)}</b><br><span style="font-size:10.5px;color:var(--dim)">${esc(where==='published'?'published':rec.status)}${rec.auto?' · auto':''} · ${Math.max(catStories(rec.id).length,(rec.stories||[]).length)} stor${Math.max(catStories(rec.id).length,(rec.stories||[]).length)===1?'y':'ies'} filed</span></div>`).join('')||'<i style="font-size:12px;color:var(--dim)">none yet</i>'}
         <button class="mini primary" id="cat-new" style="margin-top:6px">+ new category</button>
         <div style="font-size:11px;color:var(--dim);margin-top:10px;line-height:1.5">The 21 fixed rows are edited in <code>editorial/backstory-rows.json</code>. A category made here becomes a page of its own and is sent with the Lineup publish once approved.</div>
       </div>
@@ -1946,6 +1947,7 @@ function renderBackstory(root){
     const ln=row.querySelector('.cat-line'); if (ln) ln.addEventListener('change',e=>{ const b=c.beginnings.find(x=>x.object_id===oid); if (b){ b.line=e.target.value.trim(); b.by='editor'; } touch(); render(); });
     row.querySelector('.cat-about').addEventListener('change',e=>{ const o=c.objects.find(x=>x.object_id===oid); if (o){ o.about=e.target.value.trim(); o.by='editor'; } touch(); render(); });
   });
+  const lp=document.getElementById('cat-load-pub'); if (lp) lp.addEventListener('click',()=>{ if (!confirm('Replace your copy of "'+c.title+'" with the published version?')) return; delete CATS[c.id]; catEnsureLocal(c.id); saveCats(); render(); });
   const useP=document.getElementById('cat-use-prop'); if (useP) useP.addEventListener('click',()=>{
     const pr=Object.assign({}, c.indicator_proposal); pr.verified=true; pr.verified_by='editor'; pr.how_checked='You looked at the source.'; delete pr.unverified_reason;
     c.indicator=pr; delete c.indicator_proposal; c.by.indicator='editor'; touch(); render(); });
