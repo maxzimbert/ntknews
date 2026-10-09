@@ -128,6 +128,8 @@ def main():
     c, p = run(x)
     check("a system-verified indicator whose evidence holds both figures is kept", c["indicator"] is not None, p)
 
+    check("sentences: 'v.' and 'U.S.' do not end a sentence", C.count_sentences("The Court decided Loper Bright Enterprises v. Raimondo, ending a rule the U.S. government relied on.") == 1, C.count_sentences("The Court decided Loper Bright Enterprises v. Raimondo, ending a rule the U.S. government relied on."))
+    check("sentences: two real sentences count as two, and a last one with no full stop still counts", C.count_sentences("One thing happened. Another did") == 2 and C.count_sentences("Whether A, or B") == 1 and C.count_sentences("It rose 3.5% in a year.") == 1, None)
     import build_pairings as BP
     check("model JSON: trailing text after the object is ignored", BP.parse_json_loose('{"a": 1}\n\nNote: I chose this because...') == {"a": 1}, None)
     check("model JSON: a fence and a second object: the first wins", BP.parse_json_loose('```json\n{"a": 1}\n```\n{"b": 2}') == {"a": 1}, None)

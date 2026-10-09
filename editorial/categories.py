@@ -41,6 +41,31 @@ BANNED = ["this document", "this reflects", "underscores", "highlights", "serves
 SENT = re.compile(r"[.!?](?:[\"')\]]*)(?:\s|$)")
 
 
+ABBR = {"u.s", "u.k", "u.n", "e.u", "d.c", "v", "vs", "mr", "mrs", "ms", "dr", "jr", "sr", "st", "no", "inc", "co", "corp",
+        "gen", "sen", "rep", "gov", "pres", "hon", "e.g", "i.e", "etc", "approx", "fig", "lt", "col", "sgt", "ave"}
+
+
+def count_sentences(text):
+    """Sentences in a line. A full stop after "v.", "U.S.", "Mr." or a single initial is not the end of
+    one (found by the first real run: "Loper Bright Enterprises v. Raimondo" counted as two). A last
+    sentence with no full stop still counts."""
+    t = (text or "").strip()
+    if not t:
+        return 0
+    if t[-1] not in '.!?"\')]':
+        t += "."
+    n = 0
+    for m in re.finditer(r'[.!?]["\')\]]*(?=\s|$)', t):
+        i = m.start()
+        if t[i] == "." and m.end() < len(t):          # the final full stop always ends the last sentence
+            tok = re.search(r"(\S+)$", t[:i])
+            tok = (tok.group(1).lower().strip("(\"'") if tok else "")
+            if tok in ABBR or re.fullmatch(r"[a-z]", tok) or re.fullmatch(r"(?:[a-z]\.)+[a-z]", tok):
+                continue
+        n += 1
+    return n
+
+
 def words(t):
     return len((t or "").split())
 
@@ -67,10 +92,7 @@ def text_problems(label, text, lo, hi, sentences=None, starts=None):
         p.append(f"{label} has a dash")
     if any(b in text.lower() for b in BANNED):
         p.append(f"{label} has a banned phrase")
-    norm = text.strip()
-    if norm and norm[-1] not in '.!?"\')]':
-        norm += "."            # a last sentence with no full stop is still a sentence
-    if sentences is not None and len(SENT.findall(norm)) != sentences:
+    if sentences is not None and count_sentences(text) != sentences:
         p.append(f"{label} is not {sentences} sentence{'s' if sentences != 1 else ''}")
     if starts and not text.startswith(starts):
         p.append(f'{label} does not start with "{starts}"')

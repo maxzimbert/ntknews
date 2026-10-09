@@ -1243,7 +1243,21 @@ function pairingsHtml(d){
 /* CATS:BEGIN */
 const CAT_BANNED = ['this document','this reflects','underscores','highlights','serves as','a reminder that','pivotal','landmark','groundbreaking','seminal'];
 function catWords(t){ const s=(t||'').trim(); return s ? s.split(/\s+/).length : 0; }
-function catSentences(t){ let x=(t||'').trim(); if (x && !/[.!?]["')\]]*$/.test(x)) x+='.'; return (x.match(/[.!?]["')\]]*(?:\s|$)/g)||[]).length; }
+const CAT_ABBR=new Set(['u.s','u.k','u.n','e.u','d.c','v','vs','mr','mrs','ms','dr','jr','sr','st','no','inc','co','corp','gen','sen','rep','gov','pres','hon','e.g','i.e','etc','approx','fig','lt','col','sgt','ave']);
+// Sentences in a line. A full stop after "v.", "U.S.", "Mr." or a single initial is not the end of one.
+function catSentences(t){
+  let x=(t||'').trim(); if (!x) return 0;
+  if (!/[.!?]["')\]]*$/.test(x)) x+='.';
+  let n=0; const re=/[.!?]["')\]]*(?=\s|$)/g; let m;
+  while ((m=re.exec(x))){
+    if (x[m.index]==='.' && m.index+m[0].length<x.length){
+      const mm=/(\S+)$/.exec(x.slice(0,m.index)); const tok=mm?mm[1].toLowerCase().replace(/^[("']+/,''):'';
+      if (CAT_ABBR.has(tok) || /^[a-z]$/.test(tok) || /^([a-z]\.)+[a-z]$/.test(tok)) continue;
+    }
+    n++;
+  }
+  return n;
+}
 function catEscRe(w){ return w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
 function catTextProblems(label, text, lo, hi, opt){
   opt = opt||{}; const p=[]; const t=(text||'').trim();
@@ -1263,6 +1277,19 @@ function lensSupported(lens, spec, text){
 }
 // The Beginnings rule: the most recent object (the turn closest to today) plus the rest
 // spread evenly across time, no repeated author where a neighbour will do.
+// Four to six objects across all of a category's subjects, matrix first (mirrors compose_category.pick_for_subjects).
+function pickForSubjects(pools, total, minimum){
+  total=total||6; minimum=minimum||4;
+  const per=Math.ceil(total/Math.max(pools.length,1))+1, seen={};
+  pools.forEach(pool=>{ pickBeginnings(pool, per).forEach(o=>{ seen[o.id]=o; }); });
+  let out=pickBeginnings(Object.values(seen), total);
+  if (out.length<minimum){
+    const have=new Set(out.map(o=>o.id)), rest={};
+    pools.forEach(pool=>pool.forEach(o=>{ if (!have.has(o.id)) rest[o.id]=o; }));
+    out=out.concat(selectBeginnings(Object.values(rest), minimum-out.length)).sort((x,y)=> x.sort<y.sort ? -1 : x.sort>y.sort ? 1 : 0);
+  }
+  return out;
+}
 function selectBeginnings(objs, k){
   const a = objs.slice().sort((x,y)=> x.sort<y.sort ? -1 : x.sort>y.sort ? 1 : 0);
   if (a.length<=k) return a;
@@ -1488,15 +1515,11 @@ function catPoolFor(lenses, subgenres){
   const sg=subgenres||[];
   return (POOL?POOL.objects:[]).filter(o=>o.url && o.link_status!=='dead' && (o.lenses.some(l=>lenses.includes(l)) || (o.subgenre && sg.includes(o.subgenre))));
 }
-// One subject takes up to six Beginnings, two or more take up to three each. A subject is a lens
-// (a country or a technology) or a sub-genre (an American argument).
+// Four to six objects in all, matrix first. A subject is a lens (a country or a technology) or a
+// sub-genre (an American argument).
 function catPick(lenses, subgenres){
-  const subjects=(lenses||[]).map(l=>({l:l})).concat((subgenres||[]).map(g=>({g:g})));
-  const k = subjects.length===1 ? 6 : 3, seen=new Set(), out=[];
-  subjects.forEach(sj=>{
-    pickBeginnings(sj.l ? catPoolFor([sj.l],[]) : catPoolFor([],[sj.g]), k).forEach(o=>{ if (!seen.has(o.id)){ seen.add(o.id); out.push(o); } });
-  });
-  return out.sort((a,b)=> a.sort<b.sort ? -1 : 1);
+  const pools=(lenses||[]).map(l=>catPoolFor([l],[])).concat((subgenres||[]).map(g=>catPoolFor([],[g])));
+  return pickForSubjects(pools, 6, 4);
 }
 async function aiSearch(prompt, maxTok){
   if (!SETTINGS.antKey) throw new Error('No Anthropic key — set it in ⚙');

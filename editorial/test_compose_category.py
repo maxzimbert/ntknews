@@ -58,6 +58,22 @@ def caller_none(key, model, system, user, mt):
 rec3, notes3 = CC.compose("k", "m", STORY, "AI", POOL, SPEC, caller_none, searcher_ok)
 check("a category with no history to draw on is not created", rec3 is None, notes3)
 
+# the object count: four to six, matrix first
+M = lambda i, y, pool="matrix": {"id": f"{pool[0]}{i}", "pool": pool, "author": f"a{i}", "sort": f"{y}-01-01", "title": "t", "lenses": [], "url": "u", "year": str(y)}
+big = [[M(i, 1800 + i * 10) for i in range(10)], [M(i + 50, 1900 + i * 5) for i in range(10)], [M(i + 90, 1950 + i * 3) for i in range(10)]]
+got = CC.pick_for_subjects(big)
+check("three subjects with plenty of sources still give six objects, not nine", len(got) == 6, len(got))
+mixed = [[M(i, 1900 + i * 10) for i in range(2)] + [M(i + 20, 1920 + i * 7, "candidate") for i in range(8)]]
+got = CC.pick_for_subjects(mixed)
+check("matrix objects are all used before candidates fill the six", all(o in got for o in mixed[0][:2]) and len(got) == 6 and sum(1 for o in got if o["pool"] == "matrix") == 2, [(o["pool"], o["year"]) for o in got])
+thin = [[M(1, 1950), M(2, 1990)], [M(3, 1970)]]
+got = CC.pick_for_subjects(thin)
+check("a thin pool gives what exists (three here), not padding", len(got) == 3, len(got))
+four = [[M(i, 1900 + i * 20, "candidate") for i in range(5)]]
+check("with five sources it takes five; it never goes below four when the pool allows", len(CC.pick_for_subjects(four)) == 5, None)
+latest = max(big[0], key=lambda o: o["sort"])
+check("the most recent object of a single pool is always kept", latest in CC.pick_for_subjects([big[0]]), None)
+
 # misfit detection
 E = lambda **k: dict({"story_id": "x", "editor_row": None, "row_fit": "good", "confidence": 0.9}, **k)
 fl = BP.misfits([E(story_id="a"), E(story_id="b", confidence=0.6), E(story_id="c", row_fit="poor"), E(story_id="d", editor_row="government", confidence=0.1),

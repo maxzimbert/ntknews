@@ -14,6 +14,7 @@ proposeIndicator). They are written out twice, once per language, and should be 
 """
 import json
 import re
+import urllib.error
 import urllib.request
 from datetime import datetime, timezone
 
@@ -77,17 +78,28 @@ def pool_for(pool_objs, lenses, subgenres):
     return [o for o in pool_objs if eligible(o) and (set(o["lenses"]) & set(lenses) or (o.get("subgenre") and o["subgenre"] in subgenres))]
 
 
+def pick_for_subjects(pools, total=6, minimum=4):
+    """Four to six objects across all the category's subjects, matrix objects first.
+
+    Each subject contributes a little more than its share; the union is then cut to `total` by the
+    same rule as one pool (matrix first, the latest kept, the rest spread across time). If that
+    leaves fewer than `minimum` and the pools hold more, the earliest gaps are filled."""
+    per = -(-total // max(len(pools), 1)) + 1
+    seen = {}
+    for pool in pools:
+        for o in pick_beginnings(pool, per):
+            seen[o["id"]] = o
+    out = pick_beginnings(list(seen.values()), total)
+    if len(out) < minimum:
+        have = {o["id"] for o in out}
+        rest = {o["id"]: o for pool in pools for o in pool if o["id"] not in have}
+        out = sorted(out + select_beginnings(list(rest.values()), minimum - len(out)), key=lambda o: o["sort"])
+    return out
+
+
 def pick(pool_objs, lenses, subgenres):
-    subjects = [("l", x) for x in lenses] + [("g", x) for x in subgenres]
-    k = 6 if len(subjects) == 1 else 3
-    seen, out = set(), []
-    for kind, x in subjects:
-        pool = pool_for(pool_objs, [x] if kind == "l" else [], [x] if kind == "g" else [])
-        for o in pick_beginnings(pool, k):
-            if o["id"] not in seen:
-                seen.add(o["id"])
-                out.append(o)
-    return sorted(out, key=lambda o: o["sort"])
+    pools = [pool_for(pool_objs, [x], []) for x in lenses] + [pool_for(pool_objs, [], [x]) for x in subgenres]
+    return pick_for_subjects(pools)
 
 
 # --- web search, for the trend line ------------------------------------------------------------
@@ -99,8 +111,11 @@ def call_search(api_key, model, prompt, max_tokens=2500):
     req = urllib.request.Request("https://api.anthropic.com/v1/messages", data=json.dumps(body).encode(),
                                  headers={"Content-Type": "application/json", "x-api-key": api_key,
                                           "anthropic-version": "2023-06-01"}, method="POST")
-    with urllib.request.urlopen(req, timeout=180) as r:
-        d = json.loads(r.read())
+    try:
+        with urllib.request.urlopen(req, timeout=180) as r:
+            d = json.loads(r.read())
+    except urllib.error.HTTPError as e:            # say why: the first real run only said "HTTP 400"
+        raise RuntimeError(f"HTTP {e.code}: {e.read().decode('utf-8', 'ignore')[:400]}") from None
     urls, cites, text = [], [], ""
     for b in d.get("content", []):
         if b.get("type") == "web_search_tool_result" and isinstance(b.get("content"), list):
@@ -168,6 +183,7 @@ def compose(api_key, model, story, name, pool_doc, spec, caller, searcher=None, 
     """Returns (record or None, notes). `caller(api_key, model, system, user, max_tokens)` is call_claude."""
     notes = []
     objs = pool_doc["objects"]
+    BYID = {o["id"]: o for o in objs}
     vocab = [x for x in pool_doc.get("vocab", {}).get("subgenres", [])]
     vocab_names = {x["name"] for x in vocab}
     supported = [k for k in spec if not k.startswith("_") and C.lens_supported(k, spec, story["text"])]
@@ -216,6 +232,28 @@ DOCUMENTS:
 
 JSON only: {"<id>":{"line":"...","about":"..."}, ...}"""
         texts = caller(api_key, model, "", p2, 2400) or {}
+    # Lines the model wrote that break the rules get one repair round, with the problem named.
+    problems = {}
+    for o in need:
+        t = texts.get(o["id"]) or {}
+        lp = C.text_problems("line", (t.get("line") or "").strip(), 12, 25, sentences=1)
+        ap = C.text_problems("about", (t.get("about") or "").strip(), 1, 70) if t.get("about") else []
+        if lp or ap:
+            problems[o["id"]] = lp + ap
+    if problems:
+        p3 = ("Some text you wrote broke the rules. Rewrite ONLY these, fixing the problem named. A line is ONE sentence of 12 to 25 words. "
+              "An about is two to four sentences, at most 70 words.\n" + STYLE + "\n\n"
+              + "\n".join(f"- id: {i} | title: {BYID[i]['title']} | year: {BYID[i]['year']} | problem: {'; '.join(ps)} | your text: "
+                          f"{json.dumps(texts.get(i))}" for i, ps in problems.items() if i in BYID)
+              + '\n\nJSON only: {"<id>":{"line":"...","about":"..."}, ...}')
+        try:
+            fixed = caller(api_key, model, "", p3, 2000) or {}
+            for i, v in fixed.items():
+                if i in texts and isinstance(v, dict):
+                    texts[i] = {**texts[i], **{k: x for k, x in v.items() if x}}
+            notes.append(f"repaired {len(problems)} line(s)")
+        except Exception as e:  # noqa: BLE001
+            notes.append(f"repair skipped ({type(e).__name__})")
     rec = {
         "id": slug(title), "title": title, "status": "approved", "auto": True,
         "contest": (r1.get("contest") or "").strip(), "stakes": (r1.get("stakes") or "").strip(),
