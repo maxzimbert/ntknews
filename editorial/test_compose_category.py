@@ -230,5 +230,15 @@ alt = [p for p in bs["todays_pairings"] if p["story_id"] == ALT][0]
 check("integration: the misfit story is paired to its new category, marked as automatic", alt["row"] == "p-ai" and alt["source"] == "auto-category", (alt["row"], alt["source"]))
 check("integration: the category is stored, published as a row, and keeps its trend line", prov["rows"] and any(r["id"] == "p-ai" and r["auto"] and r.get("indicator") for r in prov["rows"]) and any(r["id"] == "p-ai" and r["stratum"] == "provisional" for r in bs["rows"]), None)
 check("integration: stories that fit keep their rows", all(p["row"] != "p-ai" for p in bs["todays_pairings"] if p["story_id"] != ALT), None)
+# an automatic category left with fewer than two objects by the checks is not created
+import copy
+one = copy.deepcopy(prov["rows"][0]); one["id"] = "p-lonely"; one["title"] = "Lonely"; one["status"] = "approved"; one["auto"] = True
+one["objects"] = one["objects"][:1]
+one["beginnings"] = [b for b in one["beginnings"] if b["object_id"] == one["objects"][0]["object_id"]]
+logs = []; _log = BP.log; BP.log = lambda m: logs.append(m)
+BP.apply_categories(T / "lonely.json", {"backstory_categories": [one]}, [], {"rows": [], "todays_pairings": []}, "2026-10-09", live=False)
+BP.log = _log
+lone_store = json.load(open(T / "lonely.json")) if (T / "lonely.json").exists() else {"rows": []}
+check("an automatic category with one surviving object is not created", not any(r["id"] == "p-lonely" for r in lone_store["rows"]) and any("needs two" in l for l in logs), logs)
 shutil.rmtree(T)
 print(f"\n{len(fails)} failed"); sys.exit(1 if fails else 0)

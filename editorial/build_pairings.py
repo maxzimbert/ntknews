@@ -211,6 +211,9 @@ def apply_categories(path, pub, stories, bs, today, live=True):
         if clean and live:
             clean, lp = categories.live_checks(clean)
             probs = probs + lp
+        if clean and clean.get("auto") and len(clean.get("objects") or []) < 2:
+            probs = probs + [f"only {len(clean.get('objects') or [])} object(s) survived the checks; an automatic category needs two"]
+            clean = None
         if not clean:
             log(f"  category {cid!r} rejected: {'; '.join(probs)}")
             continue
