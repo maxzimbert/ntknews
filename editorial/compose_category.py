@@ -104,8 +104,11 @@ def pick(pool_objs, lenses, subgenres):
 
 # --- web search, for the trend line ------------------------------------------------------------
 
-def call_search(api_key, model, prompt, max_tokens=2500):
-    body = {"model": model, "max_tokens": max_tokens, "thinking": {"type": "disabled"},
+def call_search(api_key, model, prompt, max_tokens=3000):
+    # Sonnet 5.5 answers HTTP 400 to thinking: disabled (the first real run, 2026-10-09, with the search
+    # tool on); between_tools is its thinking-off mode, as in build_pairings.call_claude.
+    body = {"model": model, "max_tokens": max_tokens,
+            "thinking": {"type": "between_tools" if "sonnet" in model else "disabled"},
             "tools": [{"type": "web_search_20250305", "name": "web_search", "max_uses": 5}],
             "messages": [{"role": "user", "content": prompt}]}
     req = urllib.request.Request("https://api.anthropic.com/v1/messages", data=json.dumps(body).encode(),

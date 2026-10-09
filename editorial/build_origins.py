@@ -362,7 +362,7 @@ def main():
     elif key:
         sysc = read_system_prompt("origin-choice.md")
         cs = [safe(lambda s=s: call_claude(key, CHOOSE_MODEL, sysc,
-                                           choose_block(s, rows[s["row"]], retrieved[s["story_id"]]), 800),
+                                           choose_block(s, rows[s["row"]], retrieved[s["story_id"]]), 1500),
                    {"story_id": s["story_id"], "choice": None, "fit": "none",
                     "why": "the model call failed"}, s["story_id"], "choice") for s in stories]
     else:
@@ -425,7 +425,7 @@ def main():
             cands2 = prev + [c for c in extra_c if c["title"] not in have]
             if len(cands2) == len(prev):
                 continue
-            ch2 = safe(lambda: call_claude(key, CHOOSE_MODEL, sysc, choose_block(s, row, cands2), 800),
+            ch2 = safe(lambda: call_claude(key, CHOOSE_MODEL, sysc, choose_block(s, row, cands2), 1500),
                        {"story_id": s["story_id"], "choice": None, "fit": "none", "why": "the model call failed"},
                        s["story_id"], "retry choice")
             ok2, problems2, cand2 = validate(s, row, cands2, ch2)

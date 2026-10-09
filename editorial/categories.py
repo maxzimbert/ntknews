@@ -112,7 +112,7 @@ def validate(cat, pool, spec, story_texts, origin_year=None, vocab=None):
     c["title"] = c["title"].strip()[:60]
 
     # contest and stakes
-    for f, lo, hi, kw in (("contest", 12, 30, {"sentences": 1, "starts": "Whether"}),
+    for f, lo, hi, kw in (("contest", 12, 35, {"sentences": 1, "starts": "Whether"}),
                           ("stakes", 25, 55, {"sentences": 2})):
         t = (c.get(f) or "").strip()
         if by.get(f) == "editor":

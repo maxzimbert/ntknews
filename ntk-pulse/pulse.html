@@ -1318,7 +1318,7 @@ function validateCat(cat, poolBy0, spec, storyTexts, originYear, vocab){
   const problems=[]; const c=Object.assign({}, cat); const by=Object.assign({}, c.by||{}); const poolBy=Object.assign({}, poolBy0);
   if (!(c.id||'').trim() || !(c.title||'').trim()) return {clean:null, problems:['missing id or title']};
   c.title=c.title.trim().slice(0,60);
-  [['contest',12,30,{sentences:1,starts:'Whether'}],['stakes',25,55,{sentences:2}]].forEach(([f,lo,hi,opt])=>{
+  [['contest',12,35,{sentences:1,starts:'Whether'}],['stakes',25,55,{sentences:2}]].forEach(([f,lo,hi,opt])=>{
     const t=(c[f]||'').trim(); let p;
     if (by[f]==='editor') p = (t && catWords(t)<=120) ? [] : [f+' is empty or over 120 words'];
     else p = catTextProblems(f,t,lo,hi,opt);
