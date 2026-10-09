@@ -84,14 +84,14 @@ All in `ntk-pulse/`.
 |---|---|---|
 | `ingest.py` | Polls 97 feeds into `data/window.json` (6-hour window). Lenient XML recovery for malformed feeds — retry only, never rewrites well-formed XML. | — |
 | `cluster.py` | IDF-weighted entity clustering, cohesion split, bridge detection, velocity. | — |
-| `triage.py` | Beat, verdict, one-line description, four scoring axes, generated headline, and the `progress_coded` flag. | `claude-haiku-4-5-20251001` |
-| `ledger.py` | DEVELOPMENT / INCREMENT / RECYCLED classification and contradiction tracking. | `claude-sonnet-5` |
+| `triage.py` | Beat, verdict, one-line description, four scoring axes, generated headline, and the `progress_coded` flag. | `claude-haiku-5-5` |
+| `ledger.py` | DEVELOPMENT / INCREMENT / RECYCLED classification and contradiction tracking. | `claude-sonnet-5-5` |
 | `assembly.py` | Editorial selection — slot plans, set constraints, lint. | — |
 | `lineup_promote.py` | Stream → Lineup. Additive only, never removes or reorders. | — |
-| `build_digest.py` | Generates the live site. Fun fact via Wikipedia's On This Day. | `claude-haiku-4-5` |
+| `build_digest.py` | Generates the live site. Fun fact via Wikipedia's On This Day. | `claude-haiku-5-5` |
 
-**Note:** `triage.py` pins a dated Haiku (`-20251001`), `build_digest.py` uses
-the undated alias. Both currently resolve; worth making consistent.
+**Note:** all Haiku callers use `claude-haiku-5-5`. Haiku 5.5 thinks by default, so
+`triage.py`, `newscast.py` and `build_digest.py` send `thinking: disabled`.
 
 ---
 

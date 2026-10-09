@@ -40,8 +40,8 @@ EXPIRE_DAYS = 30
 PROMPTS = ROOT / "editorial" / "prompts"
 
 API_URL = "https://api.anthropic.com/v1/messages"
-CLASSIFIER_MODEL = "claude-haiku-4-5-20251001"
-PAIRING_MODEL = "claude-sonnet-5"
+CLASSIFIER_MODEL = "claude-haiku-5-5"
+PAIRING_MODEL = "claude-sonnet-5-5"
 
 # Below this the assignment is surfaced for editor review rather than dropped
 # (classifier-backstory.md, roll-up rule 5). Nothing is filtered on the front
@@ -94,7 +94,8 @@ def call_claude(api_key, model, system, user, max_tokens):
         # disables it: under Sonnet 5 thinking tokens bill out of this same
         # max_tokens ceiling, and reliability matters more here than a
         # speculative quality gain.
-        "thinking": {"type": "disabled"},
+        # Sonnet 5.5 400s on "disabled"; between_tools is its thinking-off mode.
+        "thinking": {"type": "between_tools" if "sonnet" in model else "disabled"},
     }
     req = urllib.request.Request(
         API_URL, data=json.dumps(body).encode("utf-8"),

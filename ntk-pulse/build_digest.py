@@ -55,7 +55,7 @@ INK = "#261F23"
 CREAM = "#EAD9C5"
 GOLD = "#F2AE2E"
 API_URL = "https://api.anthropic.com/v1/messages"
-MODEL = "claude-haiku-4-5"
+MODEL = "claude-haiku-5-5"
 
 
 def log(msg):
@@ -78,6 +78,7 @@ def fetch_on_this_day():
 
 def call_claude(api_key, prompt, max_tokens=300):
     body = {"model": MODEL, "max_tokens": max_tokens,
+            "thinking": {"type": "disabled"},  # Haiku 5.5 thinks by default
             "messages": [{"role": "user", "content": prompt}]}
     req = urllib.request.Request(
         API_URL, data=json.dumps(body).encode("utf-8"),

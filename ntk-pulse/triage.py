@@ -25,7 +25,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).parent
 DATA = ROOT / "data"
-MODEL = "claude-haiku-4-5-20251001"
+MODEL = "claude-haiku-5-5"
 MAX_CALLS_PER_RUN = int(os.environ.get("PULSE_MAX_CALLS", "25"))
 API_URL = "https://api.anthropic.com/v1/messages"
 
@@ -165,6 +165,7 @@ def call_claude(api_key, cluster):
     body = {
         "model": MODEL,
         "max_tokens": 300,
+        "thinking": {"type": "disabled"},  # Haiku 5.5 thinks by default; bills from max_tokens
         "messages": [{"role": "user", "content": prompt}],
     }
     req = urllib.request.Request(

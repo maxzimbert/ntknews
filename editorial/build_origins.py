@@ -43,8 +43,8 @@ BACKSTORY = ROOT / "digest" / "data" / "backstory.json"
 LINEUP = ROOT / "ntk-pulse" / "data" / "lineup-publish.json"
 OUT = ROOT / "editorial" / "origins.json"
 
-QUERY_MODEL = "claude-haiku-4-5-20251001"
-CHOOSE_MODEL = "claude-sonnet-5"
+QUERY_MODEL = "claude-haiku-5-5"
+CHOOSE_MODEL = "claude-sonnet-5-5"
 UA = "ntknews-origins/1.0 (https://ntknews.org; editorial research)"
 WIKI = "https://en.wikipedia.org/w/api.php"
 MAX_CANDIDATES = 14

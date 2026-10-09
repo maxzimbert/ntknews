@@ -53,7 +53,7 @@ SHOW_URL = "https://www.npr.org/podcasts/500005/npr-news-now"
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
 TIMEOUT = 20
 
-MODEL = "claude-haiku-4-5-20251001"  # matches triage.py's pin — see T-0005, both should move together
+MODEL = "claude-haiku-5-5"  # matches triage.py and build_digest.py — see T-0005, all three move together
 API_URL = "https://api.anthropic.com/v1/messages"
 
 # Not committed — a 487MB model file has no business in git. Set this env
@@ -246,6 +246,7 @@ def call_claude_topics(api_key, transcript):
     body = {
         "model": MODEL,
         "max_tokens": 600,
+        "thinking": {"type": "disabled"},  # Haiku 5.5 thinks by default; bills from max_tokens
         "messages": [{"role": "user", "content": TOPIC_PROMPT + transcript}],
     }
     req = urllib.request.Request(
