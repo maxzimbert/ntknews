@@ -1592,11 +1592,11 @@ Choose 5 to 7 documents that connect most directly to this story and category. A
 JSON only: {"choose":["<id>", ...],"why":"one sentence"}`;
   try {
     const r=catJson(await ai(p,900));
-    const ids=Array.from(new Set((r.choose||[]).filter(i=>pool[i])));
+    const ids=Array.from(new Set(((Array.isArray(r)?r:r.choose)||[]).filter(i=>pool[i])));
     if (ids.length){ msgs.push('Objects chosen for relevance: '+(r.why||'')); return ids.map(i=>pool[i]).sort((a,b)=>a.sort<b.sort?-1:1); }
-    msgs.push('The model chose no objects from the pool; the rule picked.');
-  } catch(e){ msgs.push('Object choice failed ('+e.message+'); the rule picked.'); }
-  return catPick(c.lenses, c.subgenres);
+    msgs.push('The model chose no objects from the pool; the rule picked from the lenses alone.');
+  } catch(e){ msgs.push('Object choice failed ('+e.message+'); the rule picked from the lenses alone.'); }
+  return catPick(c.lenses, []);     // a broad sub-genre by date is how off-topic documents got in
 }
 async function composeCat(id){
   const c=catEnsureLocal(id); if (!c) return;

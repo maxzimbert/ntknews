@@ -134,16 +134,22 @@ Choose 5 to 7 documents that connect most directly to this story and category. A
 3. Do NOT choose a document only because it is about a related branch of government, a general theme, or the same decade. If fewer than 5 connect, choose fewer, but never choose one that does not connect.
 4. Use only ids from the list.
 JSON only: {"choose":["<id>", ...],"why":"one sentence"}"""
-    try:
-        r = caller(api_key, model, "", p, 900)
-        ids = [i for i in (r.get("choose") or []) if i in pool]
-        if ids:
-            notes.append("objects chosen for relevance: " + (r.get("why") or ""))
-            return sorted((pool[i] for i in dict.fromkeys(ids)), key=lambda o: o["sort"])
-        notes.append("the model chose no objects from the pool")
-    except Exception as e:  # noqa: BLE001
-        notes.append(f"object choice failed ({type(e).__name__}); the rule picked")
-    return pick(objs, lenses, subgenres)
+    for attempt in (1, 2):
+        try:
+            r = caller(api_key, model, "", p, 900)
+            if isinstance(r, list):                    # the model answered a bare list of ids
+                r = {"choose": r}
+            ids = [i for i in ((r.get("choose") if isinstance(r, dict) else None) or []) if i in pool]
+            if ids:
+                notes.append("objects chosen for relevance: " + ((r.get("why") if isinstance(r, dict) else "") or ""))
+                return sorted((pool[i] for i in dict.fromkeys(ids)), key=lambda o: o["sort"])
+            notes.append("the model chose no objects from the pool")
+        except Exception as e:  # noqa: BLE001
+            notes.append(f"object choice failed ({type(e).__name__}: {str(e)[:80]})")
+    # The rule is the fallback only for the subjects that are specific (a country or a technology). A broad
+    # sub-genre by date is how off-topic documents got in, so with only sub-genres the story gets none.
+    notes.append("the rule picked from the lenses alone")
+    return pick(objs, lenses, [])
 
 
 # --- web search, for the trend line ------------------------------------------------------------

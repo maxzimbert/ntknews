@@ -70,6 +70,20 @@ def caller_off(key, model, system, user, mt):
     if "choose the primary sources" in user: raise RuntimeError("down")
     return caller(key, model, system, user, mt)
 recx, nx = CC.compose("k", "m", STORY, "AI", POOL, SPEC, caller_off, searcher_ok)
+def caller_list(key, model, system, user, mt):
+    if "choose the primary sources" in user:
+        ids = [l.split(" | ")[0] for l in user.split("DOCUMENTS (id | year | title | author | pool | sub-genre):")[1].split("Choose 5 to 7")[0].strip().splitlines()]
+        return [i for i in ids if BY[i]["pool"] == "matrix"][:5]       # a bare list, as the real model once answered
+    return caller(key, model, system, user, mt)
+recl, nl = CC.compose("k", "m", STORY, "AI", POOL, SPEC, caller_list, searcher_ok)
+check("a bare list of ids from the model is accepted", recl is not None and len(recl["objects"]) == 5 and any("chosen for relevance" in n for n in nl), nl)
+def caller_sg(key, model, system, user, mt):
+    if "choose the primary sources" in user: raise RuntimeError("down")
+    r = caller(key, model, system, user, mt)
+    if "opening of a new category page" in user: r = dict(r, lenses=[], subgenres=["regulation and the administrative state"])
+    return r
+recs, ns = CC.compose("k", "m", STORY, "AI", POOL, SPEC, caller_sg, searcher_ok)
+check("with only a sub-genre and a failed choice, no off-topic objects are drawn in: no category", recs is None, ns)
 check("if the model's choice fails, the rule picks four to six", recx is not None and 4 <= len(recx["objects"]) <= 6 and any("rule picked" in n for n in nx), (len(recx["objects"]) if recx else None, nx))
 
 # the object count: four to six, matrix first
