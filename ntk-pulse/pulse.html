@@ -1567,6 +1567,37 @@ Rules: both figures must be stated on the page at source_url, in the form you gi
   return 'Proposed a trend line but could not verify it ('+v.reason+'). '+(c.indicator?'Your current one stays. ':'')+'You can use the proposal if you have looked at the source.';
 }
 const CAT_STYLE_RULES = `STYLE (all text): plain words, Grade 8 to 10. No em dashes. Never use: this document, this reflects, underscores, highlights, serves as, a reminder that, pivotal, landmark, groundbreaking, seminal. Take no side. Use only facts in the material you are given; no numbers that do not appear in it.`;
+// The pool is fixed by rule (every eligible object of the category's lenses and sub-genres); the model
+// chooses the five to seven that connect to THIS story (a rule cannot: the first real run drew Rugged
+// Individualism (1928) and the Nixon pardon into a lab-accident category through a broad sub-genre).
+// The answer is checked against the pool; if the call fails the rule picks. Mirrors compose_category.choose_objects.
+async function catChoose(c, stories, texts, msgs){
+  const pool={}; (c.lenses||[]).forEach(l=>catPoolFor([l],[]).forEach(o=>{ pool[o.id]=o; })); (c.subgenres||[]).forEach(g=>catPoolFor([],[g]).forEach(o=>{ pool[o.id]=o; }));
+  const all=Object.values(pool); if (!all.length) return [];
+  const ordered=all.sort((a,b)=>(a.pool!=='matrix')-(b.pool!=='matrix') || (a.sort<b.sort?-1:1)).slice(0,90).sort((a,b)=>a.sort<b.sort?-1:1);
+  const p=`You choose the primary sources for a Backstory category page at NTK. The page shows how today's story sits inside a long argument: a dated list of documents, oldest to newest, each one a step in how we got here.
+
+CATEGORY: ${c.title}
+CONTEST: ${c.contest||''}
+TODAY'S STORY: ${stories[0]?stories[0].title+'. '+(texts[0]||'').slice(0,700):'(none filed yet: use the category name)'}
+
+DOCUMENTS (id | year | title | author | pool | sub-genre):
+${ordered.map(o=>[o.id,o.year,String(o.title).slice(0,90),String(o.author||'').slice(0,40),o.pool,o.subgenre||''].join(' | ')).join('\n')}
+
+Choose 5 to 7 documents that connect most directly to this story and category. A reader should see why each one is part of the road to today. Rules:
+1. Prefer pool=matrix whenever a matrix document connects equally well.
+2. Spread them across time, and include the most recent document that truly bears on the story.
+3. Do NOT choose a document only because it is about a related branch of government, a general theme, or the same decade. If fewer than 5 connect, choose fewer, but never choose one that does not connect.
+4. Use only ids from the list.
+JSON only: {"choose":["<id>", ...],"why":"one sentence"}`;
+  try {
+    const r=catJson(await ai(p,900));
+    const ids=Array.from(new Set((r.choose||[]).filter(i=>pool[i])));
+    if (ids.length){ msgs.push('Objects chosen for relevance: '+(r.why||'')); return ids.map(i=>pool[i]).sort((a,b)=>a.sort<b.sort?-1:1); }
+    msgs.push('The model chose no objects from the pool; the rule picked.');
+  } catch(e){ msgs.push('Object choice failed ('+e.message+'); the rule picked.'); }
+  return catPick(c.lenses, c.subgenres);
+}
 async function composeCat(id){
   const c=catEnsureLocal(id); if (!c) return;
   if (c.status==='approved') c.status='draft';       // new text needs a fresh approval
@@ -1592,7 +1623,7 @@ SUB-GENRES (long American arguments, with their row): ${vocab.map(x=>x.name+' ['
 Write JSON only: {"contest":"...","stakes":"...","lenses":["..."],"subgenres":["..."],"note":"one sentence for the editor"}
 1. contest: ONE sentence ending in a full stop, "Whether X, or Y", two positions a reasonable person holds. 12 to 30 words.
 2. stakes: TWO short sentences, 25 to 55 words in all, framed as the open questions the argument turns on (whether, when, by whom, who benefits). Do not write about "risks" in the abstract or "who pays". Write about the category as a whole, not about one story.
-3. lenses: choose from the lenses above only those the category is mainly about. A lens is for a country, alliance or technology. Do not add a lens because it is a related topic.
+3. lenses: choose from the lenses above only the one or two the category is NAMED for. A lens is for a country, alliance or technology. Do not add a lens because it appears in one incident or is a related topic.
 4. subgenres: choose up to two from the sub-genres above that name the American argument this category belongs to, exactly as written, if it belongs to one. Choose at least one lens or one sub-genre: a category needs a history to draw on.
 ${CAT_STYLE_RULES}`;
     const r1=catJson(await ai(p1,1100));
@@ -1603,7 +1634,7 @@ ${CAT_STYLE_RULES}`;
       c.subgenres=(r1.subgenres||[]).filter(g=>CAT_VOCAB && CAT_VOCAB.has(g)).slice(0,2);
       c.by.lenses='model';
     }
-    const picked=catPick(c.lenses, c.subgenres);
+    const picked=await catChoose(c, stories, texts, msgs);
     const keepEd=(c.objects||[]).filter(o=>o.by==='editor'), edIds=new Set(keepEd.map(o=>o.object_id));
     c.objects=picked.map(o=>({object_id:o.id,about:o.about||'',by:'model'})).filter(o=>!edIds.has(o.object_id)).concat(keepEd);
     c.beginnings=picked.map(o=>({object_id:o.id,line:o.line||'',by:'model'})).concat((c.beginnings||[]).filter(b=>edIds.has(b.object_id)));

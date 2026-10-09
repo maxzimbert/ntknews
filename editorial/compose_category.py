@@ -102,6 +102,50 @@ def pick(pool_objs, lenses, subgenres):
     return pick_for_subjects(pools)
 
 
+def choose_objects(api_key, model, story, title, contest, objs, lenses, subgenres, caller, notes):
+    """The pool is fixed by rule (every eligible object of the category's lenses and sub-genres, matrix
+    first); the model chooses the five to seven that connect to THIS story. A rule cannot judge that:
+    the first real run drew Rugged Individualism (1928) and the Nixon pardon into a lab-accident
+    category because they share a broad sub-genre. Whatever the model returns is checked against the
+    pool; if the call fails, the rule picks."""
+    pool = {}
+    for x in lenses:
+        for o in pool_for(objs, [x], []):
+            pool[o["id"]] = o
+    for x in subgenres:
+        for o in pool_for(objs, [], [x]):
+            pool[o["id"]] = o
+    if not pool:
+        return []
+    ordered = sorted(pool.values(), key=lambda o: (o["pool"] != "matrix", o["sort"]))[:90]
+    ordered.sort(key=lambda o: o["sort"])
+    p = f"""You choose the primary sources for a Backstory category page at NTK. The page shows how today's story sits inside a long argument: a dated list of documents, oldest to newest, each one a step in how we got here.
+
+CATEGORY: {title}
+CONTEST: {contest or ''}
+TODAY'S STORY: {story['headline']}. {story['text'][:700]}
+
+DOCUMENTS (id | year | title | author | pool | sub-genre):
+""" + "\n".join(f"{o['id']} | {o['year']} | {o['title'][:90]} | {o['author'][:40]} | {o['pool']} | {o.get('subgenre') or ''}" for o in ordered) + """
+
+Choose 5 to 7 documents that connect most directly to this story and category. A reader should see why each one is part of the road to today. Rules:
+1. Prefer pool=matrix whenever a matrix document connects equally well.
+2. Spread them across time, and include the most recent document that truly bears on the story.
+3. Do NOT choose a document only because it is about a related branch of government, a general theme, or the same decade. If fewer than 5 connect, choose fewer, but never choose one that does not connect.
+4. Use only ids from the list.
+JSON only: {"choose":["<id>", ...],"why":"one sentence"}"""
+    try:
+        r = caller(api_key, model, "", p, 900)
+        ids = [i for i in (r.get("choose") or []) if i in pool]
+        if ids:
+            notes.append("objects chosen for relevance: " + (r.get("why") or ""))
+            return sorted((pool[i] for i in dict.fromkeys(ids)), key=lambda o: o["sort"])
+        notes.append("the model chose no objects from the pool")
+    except Exception as e:  # noqa: BLE001
+        notes.append(f"object choice failed ({type(e).__name__}); the rule picked")
+    return pick(objs, lenses, subgenres)
+
+
 # --- web search, for the trend line ------------------------------------------------------------
 
 def call_search(api_key, model, prompt, max_tokens=3000):
@@ -204,7 +248,7 @@ Write JSON only: {{"title":"the category name, 1 to 4 words","contest":"...","st
 1. title: a short noun phrase for the whole subject (for example "AI"), not for this one story.
 2. contest: ONE sentence ending in a full stop, "Whether X, or Y", two positions a reasonable person holds. 12 to 30 words.
 3. stakes: TWO short sentences, 25 to 55 words in all, framed as the open questions the argument turns on (whether, when, by whom, who benefits). Do not write about "risks" in the abstract or "who pays". Write about the category as a whole, not about one story.
-4. lenses: choose from the supported lenses only those the category is mainly about. A lens is for a country, alliance or technology. Do not add a lens because it is a related topic.
+4. lenses: choose from the supported lenses only the one or two the category is NAMED for. A lens is for a country, alliance or technology. Do not add a lens because it appears in one incident or is a related topic.
 5. subgenres: choose up to two from the sub-genres above that name the American argument this category belongs to, exactly as written, if it belongs to one. Choose at least one lens or one sub-genre: a category needs a history to draw on.
 {STYLE}"""
     r1 = caller(api_key, model, "", p1, 1100)
@@ -213,7 +257,7 @@ Write JSON only: {{"title":"the category name, 1 to 4 words","contest":"...","st
         return None, ["the model gave no category name"]
     lenses = [x for x in (r1.get("lenses") or []) if x in supported]
     subgenres = [x for x in (r1.get("subgenres") or []) if x in vocab_names][:2]
-    picked = pick(objs, lenses, subgenres)
+    picked = choose_objects(api_key, model, story, title, r1.get("contest"), objs, lenses, subgenres, caller, notes)
     if not picked:
         return None, [f"no lens or sub-genre with sources matched ({lenses}, {subgenres}); the story keeps its row"]
     approved_auto = [o["id"] for o in picked if o["pool"] == "candidate" and not o.get("approved")]

@@ -275,6 +275,14 @@ def update_provisional(bs):
         before = [b for b in r.get("beginnings") or [] if int(b["year"]) < best["year"]]
         if len(before) != len(r.get("beginnings") or []):
             log(f"  {r['id']}: dropped {len(r['beginnings']) - len(before)} Beginning(s) dated at or after {best['year']}")
+        if len(before) > 6:                       # the page shows four to six; matrix objects first
+            import compose_category
+            objs = {o["object_id"]: o for o in r.get("objects") or []}
+            cut = compose_category.pick_beginnings(
+                [{"id": b["object_id"], "pool": objs[b["object_id"]].get("pool", "matrix"), "author": objs[b["object_id"]].get("author", ""),
+                  "sort": objs[b["object_id"]].get("sort", b["year"] + "-01-01")} for b in before if b["object_id"] in objs], 6)
+            ids = {o["id"] for o in cut}
+            before = [b for b in before if b["object_id"] in ids]
         keep = {b["object_id"] for b in before}
         r["beginnings"] = before
         r["objects"] = [o for o in r.get("objects") or [] if o["object_id"] in keep or int(o["year"]) >= best["year"]]

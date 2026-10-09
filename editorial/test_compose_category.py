@@ -19,7 +19,14 @@ def check(name, ok, detail=""):
     print(("ok   " if ok else "FAIL ") + name + ("" if ok else "  " + str(detail)))
     if not ok: fails.append(name)
 
+CHOSEN = {}
 def caller(key, model, system, user, mt):
+    if "choose the primary sources" in user:
+        ids = [l.split(" | ")[0] for l in user.split("DOCUMENTS (id | year | title | author | pool | sub-genre):")[1].split("Choose 5 to 7")[0].strip().splitlines()]
+        m = [i for i in ids if BY[i]["pool"] == "matrix"][:3]
+        c = [i for i in ids if BY[i]["pool"] == "candidate"][:3]
+        CHOSEN["ids"] = m + c + ["not-in-the-pool"]
+        return {"choose": CHOSEN["ids"], "why": "These connect."}
     if "opening of a new category page" in user:
         return {"title": "AI", "contest": "Whether the companies building AI should answer for the harm it causes, or whether its benefits justify letting society absorb some of that harm.",
                 "stakes": "Whether, when and by whom this new technology should be regulated, and who should share in its benefits, is still being settled. Companies, courts and lawmakers each claim the decision.",
@@ -57,6 +64,13 @@ def caller_none(key, model, system, user, mt):
     return r
 rec3, notes3 = CC.compose("k", "m", STORY, "AI", POOL, SPEC, caller_none, searcher_ok)
 check("a category with no history to draw on is not created", rec3 is None, notes3)
+
+check("the model's choice is used, and an id outside the pool is ignored", rec is not None and "not-in-the-pool" not in [o["object_id"] for o in rec["objects"]] and len(rec["objects"]) == len(CHOSEN["ids"]) - 1, [o["object_id"] for o in rec["objects"]])
+def caller_off(key, model, system, user, mt):
+    if "choose the primary sources" in user: raise RuntimeError("down")
+    return caller(key, model, system, user, mt)
+recx, nx = CC.compose("k", "m", STORY, "AI", POOL, SPEC, caller_off, searcher_ok)
+check("if the model's choice fails, the rule picks four to six", recx is not None and 4 <= len(recx["objects"]) <= 6 and any("rule picked" in n for n in nx), (len(recx["objects"]) if recx else None, nx))
 
 # the object count: four to six, matrix first
 M = lambda i, y, pool="matrix": {"id": f"{pool[0]}{i}", "pool": pool, "author": f"a{i}", "sort": f"{y}-01-01", "title": "t", "lenses": [], "url": "u", "year": str(y)}
