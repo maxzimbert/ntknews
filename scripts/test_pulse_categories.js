@@ -125,6 +125,10 @@ check('pickForSubjects: a thin pool gives what exists', L.pickForSubjects([[MM(1
 const MSU = 'https://www.govinfo.gov/content/pkg/example-act.pdf';
 const msv = (o) => Object.assign({ year: '1972', date: '1972-04-10', title: 'Convention on Biological Weapons', source_url: MSU, line: 'Dozens of states signed a treaty banning the development and stockpiling of biological weapons in April 1972.', about: 'Governments signed this treaty in 1972. It bans developing and stockpiling biological weapons. It was opened for signature in April.', evidence_quote: 'The Convention was opened for signature on 10 April 1972.' }, o || {});
 check('verifyMilestone: a well-formed milestone from a returned link passes', L.verifyMilestone(msv(), [MSU]).ok, L.verifyMilestone(msv(), [MSU]));
+const STORYT = 'A worker died at an anti-plague lab in Irkutsk. Russia locked down five regions.';
+check('verifyMilestone: a ties_to copied from the story passes', L.verifyMilestone(msv({ ties_to: 'anti-plague lab in Irkutsk', relation: 'same subject' }), [MSU], STORYT).ok, L.verifyMilestone(msv({ ties_to: 'anti-plague lab in Irkutsk', relation: 'same subject' }), [MSU], STORYT));
+check('verifyMilestone: a ties_to not in the story fails', !L.verifyMilestone(msv({ ties_to: 'a phrase nowhere in it', relation: 'same subject' }), [MSU], STORYT).ok, null);
+check('verifyMilestone: a relation outside the three fails', !L.verifyMilestone(msv({ ties_to: 'anti-plague lab in Irkutsk', relation: 'shares a theme' }), [MSU], STORYT).ok, null);
 check('verifyMilestone: a link the search did not return fails', !L.verifyMilestone(msv(), ['https://other.org']).ok, null);
 check('verifyMilestone: Wikipedia fails', !L.verifyMilestone(msv({ source_url: 'https://en.wikipedia.org/wiki/X' }), ['https://en.wikipedia.org/wiki/X']).ok, null);
 check('verifyMilestone: a number not in the quote fails', !L.verifyMilestone(msv({ line: 'A total of 150 states signed a treaty banning the development and stockpiling of biological weapons in April 1972.' }), [MSU]).ok, null);

@@ -1456,13 +1456,20 @@ function catFieldKey(el){
 }
 // A milestone the model found by web search: link returned by the search, https, not refused, a year, a
 // quote, text that meets the rules, and no number that the quote, title and date do not hold.
-function verifyMilestone(m, urls){
+const CAT_RELATIONS=['same subject','earlier instance of the same action','origin of the background'];
+const catNorm=t=>String(t||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim().replace(/\s+/g,' ');
+function verifyMilestone(m, urls, storyText){
   const url=String(m.source_url||'').trim(), host=url.replace(/^https?:\/\/([^\/]+).*$/,'$1').toLowerCase(), t=String(m.title||'').trim();
   if (!url.startsWith('https://')) return {ok:false, reason:'link is not https'};
   if (!(urls||[]).includes(url)) return {ok:false, reason:'the link is not one the search returned'};
   if (CAT_DENY.some(d=>host.includes(d))) return {ok:false, reason:host+' is not a primary source'};
   if (!/^\d{3,4}$/.test(String(m.year||''))) return {ok:false, reason:'no year'};
   if (!t || !String(m.evidence_quote||'').trim()) return {ok:false, reason:'no title or no quote from the page'};
+  if (storyText!=null){
+    const tie=String(m.ties_to||'').trim();
+    if (tie.split(/\s+/).length<3 || !catNorm(storyText).includes(catNorm(tie))) return {ok:false, reason:'ties_to is not a phrase copied from the story'};
+    if (!CAT_RELATIONS.includes(m.relation)) return {ok:false, reason:'relation is not one of the allowed three'};
+  }
   const lp=catTextProblems('line',String(m.line||'').trim(),12,25,{sentences:1}), ap=catTextProblems('about',String(m.about||'').trim(),1,70);
   if (lp.length||ap.length) return {ok:false, reason:lp.concat(ap).join('; ')};
   if (!catNumbersOk(m.line+' '+m.about,t,m.year,m.date,m.evidence_quote)) return {ok:false, reason:'a number is not in the quote'};
@@ -1602,7 +1609,7 @@ async function catChoose(c, stories, texts, msgs){
 
 CATEGORY: ${c.title}
 CONTEST: ${c.contest||''}
-TODAY'S STORY: ${stories[0]?stories[0].title+'. '+(texts[0]||'').slice(0,700):'(none filed yet: use the category name)'}
+TODAY'S STORY: ${stories[0]?stories[0].title+'. '+(texts[0]||'').slice(0,3500):'(none filed yet: use the category name)'}
 
 DOCUMENTS (id | year | title | author | pool | sub-genre):
 ${ordered.map(o=>[o.id,o.year,String(o.title).slice(0,90),String(o.author||'').slice(0,40),o.pool,o.subgenre||''].join(' | ')).join('\n')}
@@ -1640,16 +1647,17 @@ TODAY'S STORY: ${stories[0]?stories[0].title+'. '+(texts[0]||'').slice(0,700):'(
 ALREADY ON THE PAGE (do not repeat): ${haveTxt}
 
 Find ${need} more milestones: turning points in how we got to this story. Each is a law, ruling, report, treaty, hearing, speech or incident with an official record. Use web search. For each, give the primary document itself or the copy held by an archive, court, legislature, government agency or the original publisher: not Wikipedia, not a news article or summary about it, not a retail or study-guide page. Spread them across time, earlier than today's event, with the last one the most recent turn before it. Every milestone must be about the category's own subject, not an analogy from another field. Answer with JSON only, a list:
-[{"year":"YYYY","date":"YYYY-MM-DD if you know it, else null","title":"the document's exact title","author":"who issued or wrote it","source":"the publishing body or archive","source_url":"the exact page or PDF where it can be read","line":"ONE sentence, 12 to 25 words, saying what happened, starting with the actor or the event","about":"two to four sentences, at most 70 words: what the document is, who made it and when, what it says or did","evidence_quote":"one sentence copied word for word from that page that supports the line"}]
-Rules: use only facts that the page states; the line and about may contain no number that is not in the title, the date or the evidence_quote. If you cannot find ${need}, give fewer. If you find none, answer [].
+[{"year":"YYYY","date":"YYYY-MM-DD if you know it, else null","title":"the document's exact title","author":"who issued or wrote it","source":"the publishing body or archive","source_url":"the exact page or PDF where it can be read","line":"ONE sentence, 12 to 25 words, saying what happened, starting with the actor or the event","about":"two to four sentences, at most 70 words: what the document is, who made it and when, what it says or did","evidence_quote":"one sentence copied word for word from that page that supports the line","ties_to":"3 to 12 words copied word for word from TODAY'S STORY naming the subject or action this milestone belongs to","relation":"same subject | earlier instance of the same action | origin of the background"}]
+Rules: a milestone belongs only if a reader of today's story would see it as part of that story's own history: the same subject, an earlier instance of the same action, or the origin of a background the story names. A document that shares only a theme (secrecy, government power, regulation) is an analogy and does not belong. Use only facts that the page states; the line and about may contain no number that is not in the title, the date or the evidence_quote. If you cannot find ${need}, give fewer. If you find none, answer [].
 ${CAT_STYLE_RULES}`;
+  const storyJoined=(texts||[]).join(' ');
   const r=await aiSearch(p,4000), items=catJsonAny(r.text), out=[], fixable=[];
   const accept=m=>{
     const cid='custom-'+String(m.title).trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,60);
-    out.push({cu:{id:cid,title:String(m.title).trim(),author:String(m.author||'').trim(),year:String(m.year),date:/^\d{4}-\d\d-\d\d$/.test(m.date||'')?m.date:'',source:String(m.source||'').trim(),url:String(m.source_url).trim(),found_by:'search',evidence_quote:String(m.evidence_quote).trim()},line:String(m.line).trim(),about:String(m.about).trim()});
+    out.push({cu:{id:cid,title:String(m.title).trim(),author:String(m.author||'').trim(),year:String(m.year),date:/^\d{4}-\d\d-\d\d$/.test(m.date||'')?m.date:'',source:String(m.source||'').trim(),url:String(m.source_url).trim(),found_by:'search',evidence_quote:String(m.evidence_quote).trim()},line:String(m.line).trim(),about:String(m.about).trim(),ties:{relation:m.relation,phrase:String(m.ties_to).trim()}});
   };
   items.slice(0,need+3).forEach(m=>{
-    const v=verifyMilestone(m, r.urls);
+    const v=verifyMilestone(m, r.urls, storyJoined);
     if (v.ok) return accept(m);
     // a sound source with wording that broke a rule (a line of 28 words, a number the quote lacks) gets one repair round
     const textOnly=m.source_url && (r.urls||[]).includes(m.source_url) && /^\d{3,4}$/.test(String(m.year||'')) && m.title && m.evidence_quote && /words|sentence|number|dash|banned|empty/.test(v.reason);
@@ -1659,10 +1667,29 @@ ${CAT_STYLE_RULES}`;
     const rp="Some milestone text broke the rules. Rewrite ONLY the line and the about for each item, fixing the problem named. A line is ONE sentence of 12 to 25 words. An about is two to four sentences, at most 70 words. The only facts you may use are in the title, the date and the evidence quote; use no number that is not in them.\n"+CAT_STYLE_RULES+"\n\n"+fixable.map((f,i)=>'- '+i+' | problem: '+f.reason+' | title: '+f.m.title+' | date: '+(f.m.date||f.m.year)+' | evidence quote: '+f.m.evidence_quote).join('\n')+'\n\nJSON only: {"0":{"line":"...","about":"..."}, ...}';
     try {
       const fx=catJson(await ai(rp,1500));
-      fixable.forEach((f,i)=>{ const t=fx[String(i)]; if (t){ const m2=Object.assign({}, f.m, {line:t.line||'',about:t.about||''}); if (verifyMilestone(m2,r.urls).ok){ accept(m2); return; } } msgs.push('Milestone "'+String(f.m.title).slice(0,40)+'" rejected: '+f.reason+'.'); });
+      fixable.forEach((f,i)=>{ const t=fx[String(i)]; if (t){ const m2=Object.assign({}, f.m, {line:t.line||'',about:t.about||''}); if (verifyMilestone(m2,r.urls,storyJoined).ok){ accept(m2); return; } } msgs.push('Milestone "'+String(f.m.title).slice(0,40)+'" rejected: '+f.reason+'.'); });
     } catch(e){ fixable.forEach(f=>msgs.push('Milestone "'+String(f.m.title).slice(0,40)+'" rejected: '+f.reason+'.')); }
   }
   return out.slice(0,need);
+}
+// A second, skeptical reading of every object, by a call that did not choose it. The checks prove an item is
+// real and sourced; only this asks whether it belongs. An item the judge does not answer for is kept.
+async function catJudge(c, stories, texts, items){
+  if (!items.length) return {};
+  const p=`You are a skeptical editor at NTK checking a Backstory page before it is published. The page shows how today's story sits inside its own history: a dated list of documents, each one a step in how we got here.
+
+CATEGORY: ${c.title}
+TODAY'S STORY: ${stories[0]?stories[0].title+'\n'+(texts[0]||'').slice(0,3500):'(none)'}
+
+ITEMS ON THE PAGE:
+${items.map(i=>'- id: '+i.id+' | '+i.year+' | '+String(i.title).slice(0,100)+' | '+(i.ties?'why it was added: '+i.ties:'chosen from the matrix')).join('\n')}
+
+For each item decide keep or drop. Keep it only if a reader of today's story would see it as part of that story's own history: the same subject, an earlier instance of the same action, or the origin of a background the story names. Drop it if it is an analogy from another field, or shares only a theme with the story (secrecy, government power, regulation, a decade, a branch of government). Be strict: a short true page is better than a long loose one.
+JSON only: {"<id>":{"keep":true,"why":"one sentence naming what in the story it connects to"}, ...}`;
+  let r={}; try { r=catJson(await ai(p,2000))||{}; } catch(e){ return {}; }
+  const out={};
+  items.forEach(i=>{ const v=r[i.id]; if (v && typeof v==='object' && 'keep' in v) out[i.id]={keep:!!v.keep, why:String(v.why||'').slice(0,200)}; });
+  return out;
 }
 async function composeCat(id){
   const c=catEnsureLocal(id); if (!c) return;
@@ -1709,6 +1736,7 @@ ${CAT_STYLE_RULES}`;
       try {
         const found=await proposeMilestones(c, stories, texts, picked, 6-picked.length, msgs);
         found.forEach(f=>{
+          c.ties=c.ties||{}; c.ties[f.cu.id]=f.ties;
           c.custom_objects=(c.custom_objects||[]).filter(x=>x.id!==f.cu.id).concat([f.cu]);
           c.objects.push({object_id:f.cu.id,about:f.about,by:'model'}); c.beginnings.push({object_id:f.cu.id,line:f.line,by:'model'});
           c.auto_approved=Array.from(new Set((c.auto_approved||[]).concat([f.cu.id])));
@@ -1716,6 +1744,23 @@ ${CAT_STYLE_RULES}`;
         msgs.push(found.length+' milestone'+(found.length===1?'':'s')+' found by search.');
         picked.found=found.length;
       } catch(e){ msgs.push('Milestone search failed: '+e.message+' (web search may not be enabled for this key).'); }
+    }
+    // the judge: every object, matrix or found, must read as part of this story's own history
+    {
+      const foundList=(c.custom_objects||[]).filter(x=>x.found_by==='search'&&(c.objects||[]).some(o=>o.object_id===x.id&&o.by==='model'));
+      const items=picked.map(o=>({id:o.id,year:o.year,title:o.title,ties:''})).concat(foundList.map(x=>{ const t=(c.ties||{})[x.id]||{}; return {id:x.id,year:x.year,title:x.title,ties:(t.relation?t.relation+': "'+(t.phrase||'')+'"':'')}; }));
+      CAT_BUSY[id]='Checking that each object belongs…'; render();
+      const verdict=await catJudge(c, stories, texts, items);
+      c.ties=c.ties||{};
+      Object.keys(verdict).forEach(k=>{
+        if (!verdict[k].keep){
+          msgs.push('Dropped by the judge: '+k.slice(0,50)+' ('+verdict[k].why+').');
+          c.objects=c.objects.filter(o=>o.object_id!==k||o.by==='editor'); c.beginnings=c.beginnings.filter(b=>b.object_id!==k||b.by==='editor');
+          c.custom_objects=(c.custom_objects||[]).filter(x=>x.id!==k); c.auto_approved=(c.auto_approved||[]).filter(x=>x!==k);
+          const ix=picked.findIndex(o=>o.id===k); if (ix>=0) picked.splice(ix,1);
+          delete c.ties[k];
+        } else c.ties[k]=Object.assign({}, c.ties[k]||{}, {why:verdict[k].why});
+      });
     }
     if (!picked.length && !picked.found) msgs.push(!stories.length ? 'No story is filed under this category yet and the model chose no lens or sub-genre with sources. Pick lenses or sub-genres below, or add objects by hand.' : withText ? 'No Beginnings: no lens or sub-genre with sources matched this story. Pick some below, or add objects by hand.' : 'The filed story has no generated text yet, so no lens could be matched. Generate the story, or pick lenses and sub-genres below.');
     await writeObjectText(c, picked.filter(o=>!(o.line&&o.about)));
@@ -1881,6 +1926,7 @@ function catEditorHtml(c){
         ${cand?`<label style="font-size:11px;${ok?'':'color:var(--warn)'}"><input type="checkbox" class="cat-approve" ${ok?'checked':''} ${e.approved?'disabled':''}> ${ok?'approved':'candidate, needs your approval'}</label>`:'<span class="chip">'+esc(e.pool==='custom'?'added':'matrix')+'</span>'}
         <button class="mini cat-rm" style="margin-left:auto">remove</button>
       </div>
+      ${((c.ties||{})[o.object_id]||{}).why?'<div style="margin:3px 0 0 2px;font-size:11px;color:var(--dim)">Why it belongs: '+esc(c.ties[o.object_id].why)+(c.ties[o.object_id].phrase?' (story: \u201c'+esc(c.ties[o.object_id].phrase)+'\u201d, '+esc(c.ties[o.object_id].relation||'')+')':'')+'</div>':''}
       <div style="margin:3px 0 0 2px;font-size:11px"><a href="#" class="cat-editsrc">${CAT_SRC_OPEN[o.object_id]?'close':'edit source'}</a> <span style="color:var(--dim)">${esc(e.source||'')}${e.pool==='custom'?' \u00b7 added by you or by search':''}</span></div>
       ${CAT_SRC_OPEN[o.object_id]?`<div style="margin:4px 0;padding:6px 8px;border:1px solid var(--rule)">
         <div style="font-size:11px;color:var(--dim);margin-bottom:4px">Supply the primary source yourself. The link must be the document or an archive's, court's or government's copy of it. Your Beginning line and About text stay.</div>

@@ -154,6 +154,10 @@ JSON only: {"choose":["<id>", ...],"why":"one sentence"}"""
     return pick(objs, lenses, [])
 
 
+RELATIONS = ("same subject", "earlier instance of the same action", "origin of the background")
+_norm = lambda t: " ".join(re.sub(r"[^a-z0-9]+", " ", str(t).lower()).split())
+
+
 def find_milestones(api_key, model, story, title, contest, have, need, searcher=None, caller=None):
     """Milestones in the history of this subject, each with a primary document, found by web search.
 
@@ -168,12 +172,13 @@ def find_milestones(api_key, model, story, title, contest, have, need, searcher=
 
 CATEGORY: {title}
 CONTEST: {contest or ''}
-TODAY'S STORY: {story['headline']}. {story['text'][:700]}
+TODAY'S STORY: {story['headline']}
+{story['text'][:3500]}
 ALREADY ON THE PAGE (do not repeat): {have_txt}
 
 Find {need} more milestones: turning points in how we got to this story. Each is a law, ruling, report, treaty, hearing, speech or incident with an official record. Use web search. For each, give the primary document itself or the copy held by an archive, court, legislature, government agency or the original publisher: not Wikipedia, not a news article or summary about it, not a retail or study-guide page. Spread them across time, earlier than today's event, with the last one the most recent turn before it. Every milestone must be about the category's own subject, not an analogy from another field. Answer with JSON only, a list:
-[{{"year":"YYYY","date":"YYYY-MM-DD if you know it, else null","title":"the document's exact title","author":"who issued or wrote it","source":"the publishing body or archive","source_url":"the exact page or PDF where it can be read","line":"ONE sentence, 12 to 25 words, saying what happened, starting with the actor or the event","about":"two to four sentences, at most 70 words: what the document is, who made it and when, what it says or did","evidence_quote":"one sentence copied word for word from that page that supports the line"}}]
-Rules: use only facts that the page states; the line and about may contain no number that is not in the title, the date or the evidence_quote. If you cannot find {need}, give fewer. If you find none, answer [].
+[{{"year":"YYYY","date":"YYYY-MM-DD if you know it, else null","title":"the document's exact title","author":"who issued or wrote it","source":"the publishing body or archive","source_url":"the exact page or PDF where it can be read","line":"ONE sentence, 12 to 25 words, saying what happened, starting with the actor or the event","about":"two to four sentences, at most 70 words: what the document is, who made it and when, what it says or did","evidence_quote":"one sentence copied word for word from that page that supports the line","ties_to":"3 to 12 words copied word for word from TODAY'S STORY naming the subject or action this milestone belongs to","relation":"same subject | earlier instance of the same action | origin of the background"}}]
+Rules: a milestone belongs only if a reader of today's story would see it as part of that story's own history: it is about the same subject, or an earlier instance of the same action, or the origin of a background the story names. A document that shares only a theme (secrecy, government power, regulation) is an analogy and does not belong. Use only facts that the page states; the line and about may contain no number that is not in the title, the date or the evidence_quote. If you cannot find {need}, give fewer. If you find none, answer [].
 {STYLE}"""
     text, urls, cites = searcher(api_key, model, p, 4000)
     from build_pairings import parse_json_loose
@@ -196,6 +201,11 @@ Rules: use only facts that the page states; the line and about may contain no nu
             return "no year"
         if not t or not (m.get("evidence_quote") or "").strip():
             return "no title or no quote from the page"
+        tie = str(m.get("ties_to") or "").strip()
+        if len(tie.split()) < 3 or _norm(tie) not in _norm(story["text"]):
+            return "ties_to is not a phrase copied from the story"
+        if m.get("relation") not in RELATIONS:
+            return "relation is not one of the allowed three"
         return None
 
     def text_problems(m):
@@ -212,7 +222,8 @@ Rules: use only facts that the page states; the line and about may contain no nu
         out.append({"id": "custom-" + re.sub(r"[^a-z0-9]+", "-", t.lower())[:60], "title": t, "author": (m.get("author") or "").strip(),
                     "year": str(m["year"]), "date": m.get("date") if re.fullmatch(r"\d{4}-\d\d-\d\d", str(m.get("date") or "")) else "",
                     "source": (m.get("source") or host).strip(), "url": m["source_url"].strip(), "found_by": "search",
-                    "evidence_quote": m["evidence_quote"].strip(), "line": m["line"].strip(), "about": m["about"].strip()})
+                    "evidence_quote": m["evidence_quote"].strip(), "line": m["line"].strip(), "about": m["about"].strip(),
+                    "ties_to": m["ties_to"].strip(), "relation": m["relation"]})
 
     for m in items[:need + 3]:
         bad = provenance(m)
@@ -250,6 +261,38 @@ Rules: use only facts that the page states; the line and about may contain no nu
         for m, tp in fixable:
             notes.append(f"milestone {m['title'][:40]!r} rejected: {'; '.join(tp)}")
     return out[:need], notes
+
+
+def judge(api_key, model, story, title, items, caller):
+    """A second, skeptical reading of every object on the page, by a call that did not choose it.
+
+    The checks above prove an item is real and sourced; they cannot say it belongs. The model that picks
+    an item is the worst judge of it (it picked Kennan and Red Lion for a lab accident). The judge sees the
+    story, the category and the items only, and keeps an item only if a reader of the story would see it as
+    part of the story's own history. Returns {id: {keep, why}}; an item the judge does not answer for is kept."""
+    if not items:
+        return {}
+    p = f"""You are a skeptical editor at NTK checking a Backstory page before it is published. The page shows how today's story sits inside its own history: a dated list of documents, each one a step in how we got here.
+
+CATEGORY: {title}
+TODAY'S STORY: {story['headline']}
+{story['text'][:3500]}
+
+ITEMS ON THE PAGE:
+""" + "\n".join(f"- id: {i['id']} | {i['year']} | {i['title'][:100]} | " + (f"why it was added: {i['ties']}" if i.get("ties") else "chosen from the matrix") for i in items) + """
+
+For each item decide keep or drop. Keep it only if a reader of today's story would see it as part of that story's own history: it is about the same subject, or an earlier instance of the same action, or the origin of a background the story names. Drop it if it is an analogy from another field, or shares only a theme with the story (secrecy, government power, regulation, a decade, a branch of government). Be strict: a short true page is better than a long loose one.
+JSON only: {"<id>":{"keep":true,"why":"one sentence naming what in the story it connects to"}, ...}"""
+    try:
+        r = caller(api_key, model, "", p, 2000) or {}
+    except Exception:  # noqa: BLE001
+        return {}
+    out = {}
+    for i in items:
+        v = r.get(i["id"]) if isinstance(r, dict) else None
+        if isinstance(v, dict) and "keep" in v:
+            out[i["id"]] = {"keep": bool(v["keep"]), "why": str(v.get("why") or "")[:200]}
+    return out
 
 
 # --- web search, for the trend line ------------------------------------------------------------
@@ -374,6 +417,18 @@ Write JSON only: {{"title":"the category name, 1 to 4 words","contest":"...","st
             notes.append(f"milestone search skipped ({type(e).__name__}: {str(e)[:100]})")
     if not picked and not found:
         return None, notes + ["nothing in the pool connects and no milestone was found; the story keeps its row"]
+    items = ([{"id": o["id"], "year": o["year"], "title": o["title"], "ties": ""} for o in picked]
+             + [{"id": f["id"], "year": f["year"], "title": f["title"], "ties": f"{f['relation']}: \"{f['ties_to']}\""} for f in found])
+    verdict = judge(api_key, model, story, title, items, caller)
+    dropped = [k for k, v in verdict.items() if not v["keep"]]
+    for k in dropped:
+        notes.append(f"dropped by the judge: {k[:50]} ({verdict[k]['why']})")
+    picked = [o for o in picked if verdict.get(o["id"], {}).get("keep", True)]
+    found = [f for f in found if verdict.get(f["id"], {}).get("keep", True)]
+    if not picked and not found:
+        return None, notes + ["the judge kept nothing; the story keeps its row"]
+    ties = {o["id"]: {"relation": "pool", "why": verdict.get(o["id"], {}).get("why", "")} for o in picked}
+    ties.update({f["id"]: {"relation": f["relation"], "phrase": f["ties_to"], "why": verdict.get(f["id"], {}).get("why", "")} for f in found})
     approved_auto = [o["id"] for o in picked if o["pool"] == "candidate" and not o.get("approved")]
     need = [o for o in picked if not (o.get("line") and o.get("about"))]
     texts = {}
@@ -424,6 +479,7 @@ JSON only: {"<id>":{"line":"...","about":"..."}, ...}"""
         "by": {"contest": "model", "stakes": "model", "lenses": "model"},
         "approved_objects": approved_auto, "auto_approved": approved_auto + [f["id"] for f in found],
         "custom_objects": [{k: v for k, v in f.items() if k not in ("line", "about")} for f in found],
+        "ties": ties,
         "revisions": [{"at": datetime.now(timezone.utc).isoformat(timespec="seconds"), "request": "(made automatically)",
                        "summary": r1.get("note") or ""}],
         "created": today or datetime.now(timezone.utc).date().isoformat(),

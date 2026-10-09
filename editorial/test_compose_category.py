@@ -20,7 +20,11 @@ def check(name, ok, detail=""):
     if not ok: fails.append(name)
 
 CHOSEN = {}
+JUDGE_DROPS = []
 def caller(key, model, system, user, mt):
+    if "skeptical editor" in user:
+        ids = [l.split("id: ")[1].split(" |")[0] for l in user.splitlines() if l.startswith("- id: ")]
+        return {i: {"keep": not ("*" in JUDGE_DROPS or any(d in i for d in JUDGE_DROPS)), "why": "It connects to the story."} for i in ids}
     if "choose the primary sources" in user:
         ids = [l.split(" | ")[0] for l in user.split("DOCUMENTS (id | year | title | author | pool | sub-genre):")[1].split("Choose up to 6")[0].strip().splitlines()]
         m = [i for i in ids if BY[i]["pool"] == "matrix"][:3]
@@ -42,7 +46,7 @@ def searcher_ok(key, model, prompt, mt=2500):
     return t, ["https://heatmap.news/x"], []
 MS_URL = "https://www.govinfo.gov/content/pkg/example-act.pdf"
 def ms_item(**kw):
-    d = {"year": "1972", "date": "1972-04-10", "title": "Convention on Biological Weapons", "author": "Parties to the Convention", "source": "UN Treaty Collection",
+    d = {"ties_to": "anti-plague lab in Irkutsk", "relation": "same subject", "year": "1972", "date": "1972-04-10", "title": "Convention on Biological Weapons", "author": "Parties to the Convention", "source": "UN Treaty Collection",
          "source_url": MS_URL, "line": "Dozens of states signed a treaty banning the development and stockpiling of biological weapons in April 1972.",
          "about": "Governments signed this treaty in 1972. It bans developing, producing and stockpiling biological weapons. It was opened for signature in April.",
          "evidence_quote": "The Convention was opened for signature on 10 April 1972."}
@@ -129,6 +133,29 @@ recn, nn2 = CC.compose("k", "m", STORY2, "Biosecurity", POOL, SPEC, caller_none_
 check("nothing in the pool and nothing found: no category", recn is None, nn2)
 recs2, ns2 = CC.compose("k", "m", STORY, "AI", POOL, SPEC, caller, searcher_ok)
 check("when four or more pool documents connect, no search is made for milestones", not any("found by search" in n for n in ns2), ns2)
+
+# the independent judge and the tie to the story
+def caller_soviet(key, model, system, user, mt):
+    if "choose the primary sources" in user:
+        ids = [l.split(" | ")[0] for l in user.split("DOCUMENTS (id | year | title | author | pool | sub-genre):")[1].split("Choose up to 6")[0].strip().splitlines()]
+        picks = [i for i in ids if BY[i]["pool"] == "matrix"][:3]
+        JUDGE_DROPS[:] = picks[:1]
+        return {"choose": picks, "why": "official candor"}
+    return caller(key, model, system, user, mt)
+CC_lenses = None
+JUDGE_DROPS[:] = []
+recj, nj = CC.compose("k", "m", STORY, "AI", POOL, SPEC, caller_soviet, searcher_ok)
+check("the judge drops the items it rejects and the rest stay", recj is not None and not any(o["object_id"] in JUDGE_DROPS for o in recj["objects"]) and len(recj["objects"]) >= 1 and any("dropped by the judge" in n for n in nj), (nj, [o["object_id"] for o in recj["objects"]] if recj else None))
+check("each kept item carries why it connects", recj and all(v.get("why") for v in recj["ties"].values()) , recj and recj["ties"])
+JUDGE_DROPS[:] = []
+badtie, nbt = CC.find_milestones("k", "m", STORY2, "t", "c", [], 3, searcher_ms([ms_item(ties_to="a phrase that is not in the story at all")]))
+check("a ties_to that is not copied from the story is rejected", badtie == [] and any("ties_to" in n for n in nbt), nbt)
+badrel, nbr = CC.find_milestones("k", "m", STORY2, "t", "c", [], 3, searcher_ms([ms_item(relation="shares a theme")]))
+check("a relation outside the three allowed is rejected", badrel == [], nbr)
+JUDGE_DROPS[:] = ["*"]
+recz, nz = CC.compose("k", "m", STORY, "AI", POOL, SPEC, caller, searcher_ok)
+check("if the judge drops everything, no category is made", recz is None, nz)
+JUDGE_DROPS[:] = []
 
 # the object count: four to six, matrix first
 M = lambda i, y, pool="matrix": {"id": f"{pool[0]}{i}", "pool": pool, "author": f"a{i}", "sort": f"{y}-01-01", "title": "t", "lenses": [], "url": "u", "year": str(y)}
