@@ -362,6 +362,14 @@ Every story has a past. Rules, in code (`editorial/build_origins.py`, `build_pai
   Beginning) should carry the evidence a reader or critic could check.
 The classifier never reaches a provisional row (no sub-genres); only an editor tag does.
 
+**A category needs objects; Backstory is AP-level.** Decided 2026-10-09 with the editor. A category with no
+objects is never published, whoever made it; an automatic one needs two that survive the checks; the story
+keeps its row. Backstory is written for an AP-level reader (/today middle school, /digest high school); the
+Jamie persona no longer guides it. Tried and reverted the same day: dating milestones by event year, a
+fourth "comparable case elsewhere" relation, and not cutting Beginnings by the origin. One live run each
+gave thinner pages (3 Beginnings against 4 and 5) and cannot separate the change from run-to-run variance;
+revisit with several runs. The event-year idea itself stands (the editor: a milestone is dated by its event).
+
 **Lenses stay a separate list from the matrix, for now.** Decided 2026-10-06 with the editor.
 A lens (a country, an alliance, a technology) is a tag on an object like Column E's Issue (Theme),
 but on a different axis: Column E says which American argument an object belongs to; a lens says

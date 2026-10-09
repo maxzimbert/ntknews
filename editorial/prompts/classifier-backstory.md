@@ -49,13 +49,21 @@ bargaining power," and it is easy to miss because the story never says the
 word "inequality." Before you finalize, ask of every story: does this
 distribute a cost or a benefit unevenly, and is that part of the fight?
 
+6. Judge honestly whether the row fits. "fit" is "good" when the story is a move
+   inside the argument of the row its sub-genre belongs to, and "poor" when the best
+   sub-genre is a stretch (a technology story filed under Work because it mentions
+   jobs; a lab accident filed under The Bomb). When "fit" is "poor", "category" is a
+   short noun phrase (1 to 4 words) naming the subject readers could build expertise
+   in, such as "AI". Otherwise "category" is null. A poor fit is not a failure: a new
+   category is composed for it.
+
 OUTPUT
 
 Return only a JSON array. No prose, no markdown fences.
 
 [
-  { "story_id": "s01", "subgenre": "military intervention", "confidence": 0.88 },
-  { "story_id": "s02", "subgenre": "Israel-Palestine policy", "confidence": 0.84 }
+  { "story_id": "s01", "subgenre": "military intervention", "confidence": 0.88, "fit": "good", "category": null },
+  { "story_id": "s02", "subgenre": "automation and AI displacement", "confidence": 0.55, "fit": "poor", "category": "AI" }
 ]
 ```
 

@@ -53,6 +53,9 @@ def check(name, ok, detail=""):
 def main():
 
     c, p = run(good())
+    nobj = good(); nobj["approved_objects"] = []; nobj["objects"] = []; nobj["beginnings"] = []
+    cz, pz = run(nobj)
+    check("a category with no objects is not valid, so it is never published", cz is None and any("no objects" in x for x in pz), (cz and cz.get("objects"), pz))
     check("a well-formed tech category validates cleanly", not p and len(c["beginnings"]) == 4 and len(c["objects"]) == 4, p)
 
     x = good(); x["lenses"] = ["tech", "china"]
@@ -128,6 +131,8 @@ def main():
     c, p = run(x)
     check("a system-verified indicator whose evidence holds both figures is kept", c["indicator"] is not None, p)
 
+    check("sentences: 'v.' and 'U.S.' do not end a sentence", C.count_sentences("The Court decided Loper Bright Enterprises v. Raimondo, ending a rule the U.S. government relied on.") == 1, C.count_sentences("The Court decided Loper Bright Enterprises v. Raimondo, ending a rule the U.S. government relied on."))
+    check("sentences: two real sentences count as two, and a last one with no full stop still counts", C.count_sentences("One thing happened. Another did") == 2 and C.count_sentences("Whether A, or B") == 1 and C.count_sentences("It rose 3.5% in a year.") == 1, None)
     import build_pairings as BP
     check("model JSON: trailing text after the object is ignored", BP.parse_json_loose('{"a": 1}\n\nNote: I chose this because...') == {"a": 1}, None)
     check("model JSON: a fence and a second object: the first wins", BP.parse_json_loose('```json\n{"a": 1}\n```\n{"b": 2}') == {"a": 1}, None)
@@ -137,6 +142,9 @@ def main():
         check("model JSON: no JSON at all raises, saying what it saw", False, None)
     except ValueError as e:
         check("model JSON: no JSON at all raises, saying what it saw", "I could not do that" in str(e), e)
+
+    check("quote check: a run of five words from the quote on the page passes", C._quote_on_page("The Convention was opened for signature on 10 April 1972.", "<p>... The Convention WAS opened for signature on 10 April 1972, and ...</p>"), None)
+    check("quote check: a quote that is not on the page fails", not C._quote_on_page("The Convention was opened for signature on 10 April 1972.", "Something else entirely about another treaty and its text."), None)
 
     x = good(); x["beginnings"].reverse(); x["objects"].reverse()
     c, p = run(x)

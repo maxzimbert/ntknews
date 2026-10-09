@@ -26,6 +26,7 @@ import json
 import os
 import re
 import sys
+import urllib.error
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
@@ -87,7 +88,7 @@ def call_claude(api_key, model, system, user, max_tokens):
     body = {
         "model": model,
         "max_tokens": max_tokens,
-        "system": system,
+        **({"system": system} if system else {}),
         "messages": [{"role": "user", "content": user}],
         # These are rubric-bound classification and short-form writing, not
         # multi-step reasoning. Disabled for the same reason pulse.html's ai()
@@ -101,8 +102,11 @@ def call_claude(api_key, model, system, user, max_tokens):
         API_URL, data=json.dumps(body).encode("utf-8"),
         headers={"Content-Type": "application/json", "x-api-key": api_key,
                  "anthropic-version": "2023-06-01"}, method="POST")
-    with urllib.request.urlopen(req, timeout=120) as resp:
-        data = json.loads(resp.read())
+    try:
+        with urllib.request.urlopen(req, timeout=120) as resp:
+            data = json.loads(resp.read())
+    except urllib.error.HTTPError as e:      # say why: a bare "HTTP Error 400" cost a whole run to diagnose
+        raise RuntimeError(f"{model} HTTP {e.code}: {e.read().decode('utf-8', 'ignore')[:300]}") from None
     # Filter by block type rather than taking content[0] — a positional read
     # returns undefined the moment a non-text block leads the response.
     text = "".join(b.get("text", "") for b in data.get("content", [])
@@ -154,11 +158,14 @@ def write_lines(api_key, entries, rows_by_id, mock):
     lines = []
     for e in entries:
         row = rows_by_id[e["row"]]
-        elapsed = elapsed_words(row["start_date"])
+        # A category composed from the news has no fixed start: its origin is found per story later, so
+        # it carries no RUNNING line (a start date of "today" would tell the writer it just began).
+        running = ("" if row.get("stratum") == "provisional" else
+                   f"  RUNNING: {row.get('start_line') or row['start_date']} — {elapsed_words(row['start_date'])}\n")
         lines.append(
             f"{e['story_id']}\n  ROW: {row['title']} ({row['id']})\n"
             f"  CONTEST: {row.get('milestone') or ''}\n"
-            f"  RUNNING: {row.get('start_line') or row['start_date']} — {elapsed}\n"
+            + running +
             f"  STORY: {e['headline']}\n  SUMMARY: {e['summary']}")
     user = ("TODAY: " + datetime.now(timezone.utc).date().isoformat()
             + "\n\nENTRIES\n" + "\n\n".join(lines))
@@ -204,6 +211,9 @@ def apply_categories(path, pub, stories, bs, today, live=True):
         if clean and live:
             clean, lp = categories.live_checks(clean)
             probs = probs + lp
+        if clean and clean.get("auto") and len(clean.get("objects") or []) < 2:
+            probs = probs + [f"only {len(clean.get('objects') or [])} object(s) survived the checks; an automatic category needs two"]
+            clean = None
         if not clean:
             log(f"  category {cid!r} rejected: {'; '.join(probs)}")
             continue
@@ -249,6 +259,54 @@ def apply_categories(path, pub, stories, bs, today, live=True):
     return store
 
 
+MISFIT_CONFIDENCE = 0.70      # below this the classifier is saying it is guessing
+MAX_AUTO_CATEGORIES = 3       # a bound on model calls per publish
+
+
+def misfits(entries):
+    """Stories the fixed rows do not fit: the classifier says so, or its confidence is low. Editor-filed
+    stories are never touched. The lowest confidence goes first and the number is capped."""
+    flagged = [e for e in entries if not e.get("editor_row")
+               and (e.get("row_fit") == "poor" or (e.get("confidence") is not None and e["confidence"] < MISFIT_CONFIDENCE))]
+    flagged.sort(key=lambda e: (e.get("row_fit") != "poor", e.get("confidence") or 0))
+    return flagged[:MAX_AUTO_CATEGORIES]
+
+
+def auto_categories(api_key, entries, stories, bs, store_path, today):
+    import categories
+    import compose_category
+    flagged = misfits(entries)
+    if not flagged:
+        log("5C: every story fits a row")
+        return
+    pool_doc = json.loads((ROOT / "ntk-pulse" / "data" / "backstory-pool.json").read_text())
+    spec = json.loads((ROOT / "editorial" / "lenses.json").read_text())
+    store = json.loads(store_path.read_text()) if store_path.exists() else {"rows": []}
+    existing = {r["id"]: r for r in store["rows"] if r.get("status") == "provisional"}
+    records = []
+    for e in flagged:
+        name = e.get("proposed_category")
+        try:
+            if name and slug(name) in existing:
+                rec = dict(existing[slug(name)], status="approved")      # a later story joins the category
+                log(f"5C: {e['story_id']} joins the existing category {rec['title']!r}")
+            else:
+                rec, notes = compose_category.compose(api_key, PAIRING_MODEL, e, name, pool_doc, spec, call_claude, today=today)
+                log(f"5C: {e['story_id']} -> " + (f"new category {rec['title']!r}" if rec else "no category") + "; " + "; ".join(notes))
+        except Exception as ex:  # noqa: BLE001
+            log(f"5C: {e['story_id']}: composing failed ({type(ex).__name__}: {str(ex)[:120]}); the story keeps its row")
+            continue
+        if not rec:
+            continue
+        records.append(rec)
+        for s in stories:
+            if s["story_id"] == e["story_id"]:
+                s["editor_row"] = rec["id"]
+        e["row"], e["subgenre"], e["auto"] = rec["id"], None, True
+    if records:
+        apply_categories(store_path, {"backstory_categories": records}, stories, bs, today, live=True)
+
+
 def elapsed_words(start_date):
     days = (datetime.now(timezone.utc).date()
             - datetime.fromisoformat(start_date).date()).days
@@ -267,6 +325,7 @@ def main():
     ap.add_argument("--lineup", default=str(LINEUP), help="test hook")
     ap.add_argument("--backstory", default=str(BACKSTORY), help="test hook")
     ap.add_argument("--provisional", default=str(PROVISIONAL), help="test hook")
+    ap.add_argument("--no-auto-categories", action="store_true", help="skip step 5C")
     ap.add_argument("--dry-run", action="store_true",
                     help="print assembled prompts, write nothing")
     args = ap.parse_args()
@@ -355,11 +414,20 @@ def main():
             unmapped.append((s["story_id"], c.get("subgenre")))
             continue
         entries.append({**s, "row": row_id, "subgenre": c.get("subgenre"),
-                        "confidence": c.get("confidence")})
+                        "confidence": c.get("confidence"),
+                        "row_fit": c.get("fit"), "proposed_category": (c.get("category") or "").strip() or None})
     for sid, sub in unmapped:
         log(f"  UNMAPPED {sid}: sub-genre {sub!r} not in vocabulary — story dropped")
     if not entries:
         sys.exit("no story mapped to a row; nothing written")
+
+    # -- 5C: a story no row fits gets a category of its own, composed here (T-0079). The editor reviews
+    # it in Pulse afterwards; nothing waits on a click. Skipped in mock and dry runs: it costs model calls.
+    if not (args.mock or args.dry_run) and not args.no_auto_categories:
+        auto_categories(api_key, entries, stories, bs, Path(args.provisional),
+                        datetime.now(timezone.utc).date().isoformat())
+        rows = bs["rows"]
+        rows_by_id = {r["id"]: r for r in rows}
 
     pair_user, pairs = write_lines(api_key, entries, rows_by_id,
                                    args.mock or args.dry_run)
@@ -387,7 +455,7 @@ def main():
             "subgenre": e["subgenre"], "confidence": e["confidence"],
             # Which of the two paths put this row here. The editor needs to
             # know whether they are looking at their own call or the model's.
-            "source": "editor" if e.get("editor_row") else "classifier",
+            "source": "auto-category" if e.get("auto") else "editor" if e.get("editor_row") else "classifier",
             # Surfaced in Pulse for review; never used to hide a card.
             "needs_review": (e["confidence"] or 0) < REVIEW_THRESHOLD,
             **({"provisional": True} if str(e["row"]).startswith("p-") else {}),

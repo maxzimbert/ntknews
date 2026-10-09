@@ -256,8 +256,8 @@ def update_provisional(bs):
 
     A category has no fixed start: its "It starts in" and "We are here" are its earliest
     retrieved origin. Its Beginnings come from the record the editor approved in Pulse; here
-    any Beginning dated at or after the origin is dropped, since a Beginning is by definition
-    earlier than where we are. Nothing is composed here.
+    any Beginning dated after the origin is dropped. The same year is kept: a search-found chronology ends
+    at the story's own origin, and dropping it left the Raine and Sverdlovsk pages with no Beginnings. Nothing is composed here.
     """
     store_path = ROOT / "ntk-pulse" / "data" / "provisional-rows.json"
     store = json.loads(store_path.read_text()) if store_path.exists() else {"rows": []}
@@ -272,9 +272,17 @@ def update_provisional(bs):
         best = min(os_, key=lambda o: o["year"])
         r["start_date"] = f"{best['year']}-01-01"
         r["start_line"] = best["line"].rstrip(".")
-        before = [b for b in r.get("beginnings") or [] if int(b["year"]) < best["year"]]
+        before = [b for b in r.get("beginnings") or [] if int(b["year"]) <= best["year"]]
         if len(before) != len(r.get("beginnings") or []):
-            log(f"  {r['id']}: dropped {len(r['beginnings']) - len(before)} Beginning(s) dated at or after {best['year']}")
+            log(f"  {r['id']}: dropped {len(r['beginnings']) - len(before)} Beginning(s) dated after {best['year']}")
+        if len(before) > 6:                       # the page shows four to six; matrix objects first
+            import compose_category
+            objs = {o["object_id"]: o for o in r.get("objects") or []}
+            cut = compose_category.pick_beginnings(
+                [{"id": b["object_id"], "pool": objs[b["object_id"]].get("pool", "matrix"), "author": objs[b["object_id"]].get("author", ""),
+                  "sort": objs[b["object_id"]].get("sort", b["year"] + "-01-01")} for b in before if b["object_id"] in objs], 6)
+            ids = {o["id"] for o in cut}
+            before = [b for b in before if b["object_id"] in ids]
         keep = {b["object_id"] for b in before}
         r["beginnings"] = before
         r["objects"] = [o for o in r.get("objects") or [] if o["object_id"] in keep or int(o["year"]) >= best["year"]]
@@ -362,7 +370,7 @@ def main():
     elif key:
         sysc = read_system_prompt("origin-choice.md")
         cs = [safe(lambda s=s: call_claude(key, CHOOSE_MODEL, sysc,
-                                           choose_block(s, rows[s["row"]], retrieved[s["story_id"]]), 800),
+                                           choose_block(s, rows[s["row"]], retrieved[s["story_id"]]), 1500),
                    {"story_id": s["story_id"], "choice": None, "fit": "none",
                     "why": "the model call failed"}, s["story_id"], "choice") for s in stories]
     else:
@@ -425,7 +433,7 @@ def main():
             cands2 = prev + [c for c in extra_c if c["title"] not in have]
             if len(cands2) == len(prev):
                 continue
-            ch2 = safe(lambda: call_claude(key, CHOOSE_MODEL, sysc, choose_block(s, row, cands2), 800),
+            ch2 = safe(lambda: call_claude(key, CHOOSE_MODEL, sysc, choose_block(s, row, cands2), 1500),
                        {"story_id": s["story_id"], "choice": None, "fit": "none", "why": "the model call failed"},
                        s["story_id"], "retry choice")
             ok2, problems2, cand2 = validate(s, row, cands2, ch2)

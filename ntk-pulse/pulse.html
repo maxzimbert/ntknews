@@ -1243,7 +1243,21 @@ function pairingsHtml(d){
 /* CATS:BEGIN */
 const CAT_BANNED = ['this document','this reflects','underscores','highlights','serves as','a reminder that','pivotal','landmark','groundbreaking','seminal'];
 function catWords(t){ const s=(t||'').trim(); return s ? s.split(/\s+/).length : 0; }
-function catSentences(t){ let x=(t||'').trim(); if (x && !/[.!?]["')\]]*$/.test(x)) x+='.'; return (x.match(/[.!?]["')\]]*(?:\s|$)/g)||[]).length; }
+const CAT_ABBR=new Set(['u.s','u.k','u.n','e.u','d.c','v','vs','mr','mrs','ms','dr','jr','sr','st','no','inc','co','corp','gen','sen','rep','gov','pres','hon','e.g','i.e','etc','approx','fig','lt','col','sgt','ave']);
+// Sentences in a line. A full stop after "v.", "U.S.", "Mr." or a single initial is not the end of one.
+function catSentences(t){
+  let x=(t||'').trim(); if (!x) return 0;
+  if (!/[.!?]["')\]]*$/.test(x)) x+='.';
+  let n=0; const re=/[.!?]["')\]]*(?=\s|$)/g; let m;
+  while ((m=re.exec(x))){
+    if (x[m.index]==='.' && m.index+m[0].length<x.length){
+      const mm=/(\S+)$/.exec(x.slice(0,m.index)); const tok=mm?mm[1].toLowerCase().replace(/^[("']+/,''):'';
+      if (CAT_ABBR.has(tok) || /^[a-z]$/.test(tok) || /^([a-z]\.)+[a-z]$/.test(tok)) continue;
+    }
+    n++;
+  }
+  return n;
+}
 function catEscRe(w){ return w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
 function catTextProblems(label, text, lo, hi, opt){
   opt = opt||{}; const p=[]; const t=(text||'').trim();
@@ -1256,6 +1270,12 @@ function catTextProblems(label, text, lo, hi, opt){
   if (opt.starts && !t.startsWith(opt.starts)) p.push(label+' does not start with "'+opt.starts+'"');
   return p;
 }
+// Every number in `text` appears in one of the sources (mirrors categories.numbers_ok).
+function catNumbersOk(text){
+  const src=Array.prototype.slice.call(arguments,1), tok=t=>new Set(String(t||'').match(/\d[\d,.]*\d|\d/g)||[]);
+  const allowed=new Set(); src.forEach(x=>tok(x).forEach(n=>allowed.add(n)));
+  return Array.from(tok(text)).every(n=>allowed.has(n));
+}
 function lensSupported(lens, spec, text){
   const c=(spec||{})[lens]||{};
   return (c.story_terms||[]).some(w=>new RegExp('\\b'+catEscRe(w)+'\\b','i').test(text)) ||
@@ -1263,6 +1283,19 @@ function lensSupported(lens, spec, text){
 }
 // The Beginnings rule: the most recent object (the turn closest to today) plus the rest
 // spread evenly across time, no repeated author where a neighbour will do.
+// Four to six objects across all of a category's subjects, matrix first (mirrors compose_category.pick_for_subjects).
+function pickForSubjects(pools, total, minimum){
+  total=total||6; minimum=minimum||4;
+  const per=Math.ceil(total/Math.max(pools.length,1))+1, seen={};
+  pools.forEach(pool=>{ pickBeginnings(pool, per).forEach(o=>{ seen[o.id]=o; }); });
+  let out=pickBeginnings(Object.values(seen), total);
+  if (out.length<minimum){
+    const have=new Set(out.map(o=>o.id)), rest={};
+    pools.forEach(pool=>pool.forEach(o=>{ if (!have.has(o.id)) rest[o.id]=o; }));
+    out=out.concat(selectBeginnings(Object.values(rest), minimum-out.length)).sort((x,y)=> x.sort<y.sort ? -1 : x.sort>y.sort ? 1 : 0);
+  }
+  return out;
+}
 function selectBeginnings(objs, k){
   const a = objs.slice().sort((x,y)=> x.sort<y.sort ? -1 : x.sort>y.sort ? 1 : 0);
   if (a.length<=k) return a;
@@ -1291,7 +1324,7 @@ function validateCat(cat, poolBy0, spec, storyTexts, originYear, vocab){
   const problems=[]; const c=Object.assign({}, cat); const by=Object.assign({}, c.by||{}); const poolBy=Object.assign({}, poolBy0);
   if (!(c.id||'').trim() || !(c.title||'').trim()) return {clean:null, problems:['missing id or title']};
   c.title=c.title.trim().slice(0,60);
-  [['contest',12,30,{sentences:1,starts:'Whether'}],['stakes',25,55,{sentences:2}]].forEach(([f,lo,hi,opt])=>{
+  [['contest',12,35,{sentences:1,starts:'Whether'}],['stakes',25,55,{sentences:2}]].forEach(([f,lo,hi,opt])=>{
     const t=(c[f]||'').trim(); let p;
     if (by[f]==='editor') p = (t && catWords(t)<=120) ? [] : [f+' is empty or over 120 words'];
     else p = catTextProblems(f,t,lo,hi,opt);
@@ -1314,7 +1347,9 @@ function validateCat(cat, poolBy0, spec, storyTexts, originYear, vocab){
     else if (!(cu.title||'').trim()) why='missing title';
     if (why){ problems.push('added object '+cu.title+': '+why); return; }
     const cid=cu.id||('custom-'+cu.title.toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,60));
-    poolBy[cid]={id:cid,pool:'custom',approved:true,title:cu.title.trim(),author:cu.author||'',year:String(cu.year),sort:/^\d{4}-\d\d-\d\d$/.test(cu.date||'')?cu.date:String(cu.year)+'-01-01',source:cu.source||host,url:url,lenses:[],subgenre:'',link_status:'unchecked',about:'',line:''};
+    poolBy[cid]={id:cid,pool:'custom',approved:true,title:cu.title.trim(),author:cu.author||'',year:String(cu.year),sort:/^\d{4}-\d\d-\d\d$/.test(cu.date||'')?cu.date:String(cu.year)+'-01-01',source:cu.source||host,url:url,lenses:[],subgenre:'',link_status:'unchecked',about:'',line:'',
+      found_by:cu.found_by||null,evidence:String(cu.evidence_quote||'').trim(),date:cu.date||''};
+    if (cu.found_by==='search' && !poolBy[cid].evidence){ problems.push('found object '+cu.title+': no evidence quote from the page'); delete poolBy[cid]; }
   });
   const approved=new Set(c.approved_objects||[]); const objs=[]; const abouts=new Set(), linesSeen=new Set();
   (c.objects||[]).forEach(o=>{
@@ -1323,11 +1358,12 @@ function validateCat(cat, poolBy0, spec, storyTexts, originYear, vocab){
     if (e.link_status==='dead' || !e.url){ problems.push('object '+e.title+' has no live link'); return; }
     if (e.pool==='candidate' && !(e.approved || approved.has(e.id))){ problems.push('candidate '+e.title+' is not approved'); return; }
     let about=(o.about||e.about||'').trim();
-    if (about && o.by!=='editor'){ const ap=catTextProblems('about',about,1,70); if (abouts.has(about.toLowerCase())) ap.push('about is the same text as another object\u2019s'); if (ap.length){ ap.forEach(x=>problems.push(e.title+': '+x)); about=''; } }
+    if (about && o.by!=='editor'){ const ap=catTextProblems('about',about,1,70); if (abouts.has(about.toLowerCase())) ap.push('about is the same text as another object\u2019s'); if (e.found_by==='search' && !catNumbersOk(about,e.title,e.year,e.date,e.evidence)) ap.push('about states a number that the page quote does not'); if (ap.length){ ap.forEach(x=>problems.push(e.title+': '+x)); about=''; } }
     if (about) abouts.add(about.toLowerCase());
     objs.push({object_id:e.id,title:e.title,author:e.author,year:e.year,source:e.source,source_url:e.url,about:about,pool:e.pool,lenses:e.lenses,by:o.by||'model',sort:e.sort||(e.year+'-01-01')});
   });
   objs.sort((a,b)=> a.sort<b.sort?-1:a.sort>b.sort?1:(a.title<b.title?-1:1));     // oldest to newest, always
+  if (!objs.length) return {clean:null, problems:problems.concat(['no objects: a category needs at least one primary source, so it is not published'])};
   c.objects=objs; const order={}; objs.forEach(o=>{ order[o.object_id]=o.sort; });
   const begs=[], seen=new Set();
   (c.beginnings||[]).forEach(b=>{
@@ -1337,7 +1373,8 @@ function validateCat(cat, poolBy0, spec, storyTexts, originYear, vocab){
     const eo=poolBy[o.object_id]||{}; if (by.lenses!=='editor' && b.by!=='editor' && (keep.length||sgKeep.length) && o.pool!=='custom' && !(o.lenses.some(l=>keep.includes(l)) || sgKeep.includes(eo.subgenre))){ problems.push('Beginning '+o.title+' belongs to none of the category\u2019s lenses or sub-genres'); return; }
     const line=(b.line||'').trim();
     if (linesSeen.has(line.toLowerCase())){ problems.push('Beginning '+o.title+': same line as another Beginning'); return; }
-    const lp = b.by==='editor' ? (line?[]:['line is empty']) : catTextProblems('line',line,12,25,{sentences:1});
+    let lp = b.by==='editor' ? (line?[]:['line is empty']) : catTextProblems('line',line,12,25,{sentences:1});
+    if (b.by!=='editor' && eo.found_by==='search' && !catNumbersOk(line,o.title,o.year,eo.date,eo.evidence)) lp=lp.concat(['line states a number that the page quote does not']);
     if (lp.length){ lp.forEach(x=>problems.push('Beginning '+o.title+': '+x)); return; }
     seen.add(b.object_id); linesSeen.add(line.toLowerCase()); begs.push({object_id:b.object_id,year:o.year,line:line,by:b.by||'model'});
   });
@@ -1418,6 +1455,33 @@ function catFieldKey(el){
   if (cl.contains('cat-ind')) return 'ind:'+el.dataset.k;
   return null;
 }
+// A milestone the model found by web search: link returned by the search, https, not refused, a year, a
+// quote, text that meets the rules, and no number that the quote, title and date do not hold.
+const CAT_RELATIONS=['same subject','earlier instance of the same action','origin of the background'];
+const catNorm=t=>String(t||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim().replace(/\s+/g,' ');
+const CAT_STOP=new Set('the a an and or of to in on for with from by at as is are was were be been that this it its their his her they who which what when where about into over after before under than then also not no'.split(' '));
+// the phrase tying a milestone to the story must be made of the story's own words: two content words, 70% present
+function catTiesOk(tie, text){
+  const w=catNorm(tie).split(' ').filter(x=>x.length>3 && !CAT_STOP.has(x)), have=new Set(catNorm(text).split(' '));
+  return w.length>=2 && w.filter(x=>have.has(x)).length/w.length>=0.7;
+}
+function verifyMilestone(m, urls, storyText){
+  const url=String(m.source_url||'').trim(), host=url.replace(/^https?:\/\/([^\/]+).*$/,'$1').toLowerCase(), t=String(m.title||'').trim();
+  if (!url.startsWith('https://')) return {ok:false, reason:'link is not https'};
+  if (!(urls||[]).includes(url)) return {ok:false, reason:'the link is not one the search returned'};
+  if (CAT_DENY.some(d=>host.includes(d))) return {ok:false, reason:host+' is not a primary source'};
+  if (!/^\d{3,4}$/.test(String(m.year||''))) return {ok:false, reason:'no year'};
+  if (!t || !String(m.evidence_quote||'').trim()) return {ok:false, reason:'no title or no quote from the page'};
+  if (storyText!=null){
+    const tie=String(m.ties_to||'').trim();
+    if (!catTiesOk(tie, storyText)) return {ok:false, reason:'ties_to does not name anything in the story'};
+    if (!CAT_RELATIONS.includes(m.relation)) return {ok:false, reason:'relation is not one of the allowed three'};
+  }
+  const lp=catTextProblems('line',String(m.line||'').trim(),12,25,{sentences:1}), ap=catTextProblems('about',String(m.about||'').trim(),1,70);
+  if (lp.length||ap.length) return {ok:false, reason:lp.concat(ap).join('; ')};
+  if (!catNumbersOk(m.line+' '+m.about,t,m.year,m.date,m.evidence_quote)) return {ok:false, reason:'a number is not in the quote'};
+  return {ok:true};
+}
 /* CATS:END */
 
 const CAT_MAXTOK = 2400;
@@ -1454,7 +1518,7 @@ function catEnsureLocal(id){            // editing a published category copies i
   CATS[id]=JSON.parse(JSON.stringify({id:p.id,title:p.title,status:'approved',contest:p.contest||'',stakes:p.stakes||'',lenses:p.lenses||[],subgenres:p.subgenres||[],custom_objects:p.custom_objects||[],
     indicator:p.indicator||null,objects:(p.objects||[]).map(o=>({object_id:o.object_id,about:o.about,by:o.by||'model'})),
     beginnings:(p.beginnings||[]).map(b=>({object_id:b.object_id,line:b.line,by:b.by||'model'})),
-    by:p.by||{},approved_objects:p.approved_objects||[],revisions:p.revisions||[],created:p.created}));
+    by:p.by||{},approved_objects:p.approved_objects||[],auto:!!p.auto,auto_approved:p.auto_approved||[],revisions:p.revisions||[],created:p.created}));
   saveCats(); return CATS[id];
 }
 function newCategory(name, storyKeys){
@@ -1488,15 +1552,11 @@ function catPoolFor(lenses, subgenres){
   const sg=subgenres||[];
   return (POOL?POOL.objects:[]).filter(o=>o.url && o.link_status!=='dead' && (o.lenses.some(l=>lenses.includes(l)) || (o.subgenre && sg.includes(o.subgenre))));
 }
-// One subject takes up to six Beginnings, two or more take up to three each. A subject is a lens
-// (a country or a technology) or a sub-genre (an American argument).
+// Four to six objects in all, matrix first. A subject is a lens (a country or a technology) or a
+// sub-genre (an American argument).
 function catPick(lenses, subgenres){
-  const subjects=(lenses||[]).map(l=>({l:l})).concat((subgenres||[]).map(g=>({g:g})));
-  const k = subjects.length===1 ? 6 : 3, seen=new Set(), out=[];
-  subjects.forEach(sj=>{
-    pickBeginnings(sj.l ? catPoolFor([sj.l],[]) : catPoolFor([],[sj.g]), k).forEach(o=>{ if (!seen.has(o.id)){ seen.add(o.id); out.push(o); } });
-  });
-  return out.sort((a,b)=> a.sort<b.sort ? -1 : 1);
+  const pools=(lenses||[]).map(l=>catPoolFor([l],[])).concat((subgenres||[]).map(g=>catPoolFor([],[g])));
+  return pickForSubjects(pools, 6, 4);
 }
 async function aiSearch(prompt, maxTok){
   if (!SETTINGS.antKey) throw new Error('No Anthropic key — set it in ⚙');
@@ -1544,6 +1604,104 @@ Rules: both figures must be stated on the page at source_url, in the form you gi
   return 'Proposed a trend line but could not verify it ('+v.reason+'). '+(c.indicator?'Your current one stays. ':'')+'You can use the proposal if you have looked at the source.';
 }
 const CAT_STYLE_RULES = `STYLE (all text): plain words, Grade 8 to 10. No em dashes. Never use: this document, this reflects, underscores, highlights, serves as, a reminder that, pivotal, landmark, groundbreaking, seminal. Take no side. Use only facts in the material you are given; no numbers that do not appear in it.`;
+// The pool is fixed by rule (every eligible object of the category's lenses and sub-genres); the model
+// chooses the five to seven that connect to THIS story (a rule cannot: the first real run drew Rugged
+// Individualism (1928) and the Nixon pardon into a lab-accident category through a broad sub-genre).
+// The answer is checked against the pool; if the call fails the rule picks. Mirrors compose_category.choose_objects.
+async function catChoose(c, stories, texts, msgs){
+  const pool={}; (c.lenses||[]).forEach(l=>catPoolFor([l],[]).forEach(o=>{ pool[o.id]=o; })); (c.subgenres||[]).forEach(g=>catPoolFor([],[g]).forEach(o=>{ pool[o.id]=o; }));
+  const all=Object.values(pool); if (!all.length) return [];
+  const ordered=all.sort((a,b)=>(a.pool!=='matrix')-(b.pool!=='matrix') || (a.sort<b.sort?-1:1)).slice(0,90).sort((a,b)=>a.sort<b.sort?-1:1);
+  const p=`You choose the primary sources for a Backstory category page at NTK. The page shows how today's story sits inside a long argument: a dated list of documents, oldest to newest, each one a step in how we got here.
+
+CATEGORY: ${c.title}
+CONTEST: ${c.contest||''}
+TODAY'S STORY: ${stories[0]?stories[0].title+'. '+(texts[0]||'').slice(0,3500):'(none filed yet: use the category name)'}
+
+DOCUMENTS (id | year | title | author | pool | sub-genre):
+${ordered.map(o=>[o.id,o.year,String(o.title).slice(0,90),String(o.author||'').slice(0,40),o.pool,o.subgenre||''].join(' | ')).join('\n')}
+
+Choose up to 6 documents that connect to this story and category. A reader should see why each one is part of the road to today. Rules:
+1. A document connects only if its own subject matter is the category's subject: the thing the story is about. It must not be an analogy from another field. For an outbreak category, that means epidemics, public-health law, disease surveillance, biological weapons or official disclosure of health risks. A document about foreign policy, broadcasting or federalism does not connect to a public-health category because both involve secrecy or government power.
+2. Prefer pool=matrix whenever a matrix document connects equally well.
+3. Spread them across time, and include the most recent document that truly bears on the story.
+4. Choosing NONE is correct when nothing connects: a web search will then find the right documents. Never choose one that does not connect just to fill the list.
+5. Use only ids from the list.
+JSON only: {"choose":["<id>", ...],"why":"one sentence"}`;
+  try {
+    const r=catJson(await ai(p,900));
+    const ids=Array.from(new Set(((Array.isArray(r)?r:r.choose)||[]).filter(i=>pool[i])));
+    msgs.push(ids.length ? 'Objects chosen for relevance: '+(r.why||'') : 'No pool document connects to this story.');
+    return ids.map(i=>pool[i]).sort((a,b)=>a.sort<b.sort?-1:1);
+  } catch(e){ msgs.push('Object choice failed ('+e.message+'); the rule picked from the lenses alone.'); }
+  return catPick(c.lenses, []);     // a broad sub-genre by date is how off-topic documents got in
+}
+function catJsonAny(text){
+  const t=String(text).replace(/```json|```/g,'').trim(), i=t.indexOf('['), j=t.lastIndexOf(']');
+  if (i<0||j<i) throw new Error('the model did not return a list');
+  return JSON.parse(t.slice(i,j+1));
+}
+// Milestones in this subject's history, each with a primary document, found by web search (used when fewer than
+// four pool documents connect). Each answer is checked by verifyMilestone; CI then checks the link loads and the
+// quote is on the page. Mirrors compose_category.find_milestones.
+async function proposeMilestones(c, stories, texts, have, need, msgs){
+  const haveTxt=have.map(o=>o.year+' '+o.title).join('; ')||'(none)';
+  const p=`You are the researcher for NTK's Backstory, a page for college-educated adults who want to stay informed with less effort. Write for the standard of an Advanced Placement history reader: precise, plain, no hand-waving. The page is a chronology of dated milestones, oldest to newest, that leads to today's story, and each milestone is defended by a primary source the reader can open.
+
+CATEGORY: ${c.title}
+THE ARGUMENT IT SITS IN: ${c.contest||''}
+TODAY'S STORY: ${stories[0]?stories[0].title+'. '+(texts[0]||'').slice(0,3500):'(none filed yet: use the category name)'}
+ALREADY ON THE PAGE (do not repeat): ${haveTxt}
+
+First ask yourself: what is the history of the action, the consequences, the people, the setting and the background in this story? Which events, in order, are the steps that lead to what the story reports today? Choose the ${need} that matter most, spread across time, earlier than today's event, the last one the most recent turn before it. Then use web search to find, for each, a primary source that defends it from editorial scrutiny: the document itself or the copy held by an archive, court, legislature, government agency or the original publisher. Not Wikipedia, not a news article or summary about it, not a retail or study-guide page.
+
+Every milestone must be part of this story's own history: the same subject, an earlier instance of the same action, or the origin of a background the story names. A document that shares only a theme (secrecy, government power, regulation) is an analogy and does not belong. ${need} is a target, not a quota: if you cannot source a milestone, leave it out. Fewer well-sourced milestones are better than padding.
+
+Answer with JSON only, a list in date order:
+[{"year":"YYYY","date":"YYYY-MM-DD if the document gives it, else null","title":"the document's exact title","author":"who issued or wrote it","source":"the publishing body or archive","source_url":"the exact page or PDF where it can be read","line":"ONE sentence, 12 to 25 words, saying what happened, starting with the actor or the event","about":"two to four sentences, at most 70 words: what the document is, who made it and when, what it says or did","evidence_quote":"one sentence copied word for word from that page that supports the line","ties_to":"a few words from TODAY'S STORY naming the subject, person, place or action this milestone belongs to","relation":"same subject | earlier instance of the same action | origin of the background","because":"one sentence: how this step leads to the next one, or to today's story"}]
+Rules: use only facts that the page states; the line and about may contain no number that is not in the title, the date or the evidence_quote. If you find none, answer [].
+${CAT_STYLE_RULES}`;
+  const storyJoined=(texts||[]).join(' ');
+  const r=await aiSearch(p,4000), items=catJsonAny(r.text), out=[], fixable=[];
+  const accept=m=>{
+    const cid='custom-'+String(m.title).trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,60);
+    out.push({cu:{id:cid,title:String(m.title).trim(),author:String(m.author||'').trim(),year:String(m.year),date:/^\d{4}-\d\d-\d\d$/.test(m.date||'')?m.date:'',source:String(m.source||'').trim(),url:String(m.source_url).trim(),found_by:'search',evidence_quote:String(m.evidence_quote).trim()},line:String(m.line).trim(),about:String(m.about).trim(),ties:{relation:m.relation,phrase:String(m.ties_to).trim(),because:String(m.because||'').trim().slice(0,240)}});
+  };
+  items.slice(0,need+3).forEach(m=>{
+    const v=verifyMilestone(m, r.urls, storyJoined);
+    if (v.ok) return accept(m);
+    // a sound source with wording that broke a rule (a line of 28 words, a number the quote lacks) gets one repair round
+    const textOnly=m.source_url && (r.urls||[]).includes(m.source_url) && /^\d{3,4}$/.test(String(m.year||'')) && m.title && m.evidence_quote && /words|sentence|number|dash|banned|empty/.test(v.reason);
+    if (textOnly) fixable.push({m:m,reason:v.reason}); else msgs.push('Milestone "'+String(m.title||'').slice(0,40)+'" rejected: '+v.reason+'.');
+  });
+  if (fixable.length){
+    const rp="Some milestone text broke the rules. Rewrite ONLY the line and the about for each item, fixing the problem named. A line is ONE sentence of 12 to 25 words. An about is two to four sentences, at most 70 words. The only facts you may use are in the title, the date and the evidence quote; use no number that is not in them.\n"+CAT_STYLE_RULES+"\n\n"+fixable.map((f,i)=>'- '+i+' | problem: '+f.reason+' | title: '+f.m.title+' | date: '+(f.m.date||f.m.year)+' | evidence quote: '+f.m.evidence_quote).join('\n')+'\n\nJSON only: {"0":{"line":"...","about":"..."}, ...}';
+    try {
+      const fx=catJson(await ai(rp,1500));
+      fixable.forEach((f,i)=>{ const t=fx[String(i)]; if (t){ const m2=Object.assign({}, f.m, {line:t.line||'',about:t.about||''}); if (verifyMilestone(m2,r.urls,storyJoined).ok){ accept(m2); return; } } msgs.push('Milestone "'+String(f.m.title).slice(0,40)+'" rejected: '+f.reason+'.'); });
+    } catch(e){ fixable.forEach(f=>msgs.push('Milestone "'+String(f.m.title).slice(0,40)+'" rejected: '+f.reason+'.')); }
+  }
+  return out.slice(0,need);
+}
+// A second, skeptical reading of every object, by a call that did not choose it. The checks prove an item is
+// real and sourced; only this asks whether it belongs. An item the judge does not answer for is kept.
+async function catJudge(c, stories, texts, items){
+  if (!items.length) return {};
+  const p=`You are a skeptical editor at NTK checking a Backstory page before it is published. The page shows how today's story sits inside its own history: a dated list of documents, each one a step in how we got here.
+
+CATEGORY: ${c.title}
+TODAY'S STORY: ${stories[0]?stories[0].title+'\n'+(texts[0]||'').slice(0,3500):'(none)'}
+
+ITEMS ON THE PAGE:
+${items.map(i=>'- id: '+i.id+' | '+i.year+' | '+String(i.title).slice(0,100)+' | '+(i.ties?'why it was added: '+i.ties:'chosen from the matrix')).join('\n')}
+
+For each item decide keep or drop. Keep it only if a reader of today's story would see it as part of that story's own history: the same subject, an earlier instance of the same action, or the origin of a background the story names. Drop it if it is an analogy from another field, or shares only a theme with the story (secrecy, government power, regulation, a decade, a branch of government). Be strict: a short true page is better than a long loose one.
+JSON only: {"<id>":{"keep":true,"why":"one sentence naming what in the story it connects to"}, ...}`;
+  let r={}; try { r=catJson(await ai(p,2000))||{}; } catch(e){ return {}; }
+  const out={};
+  items.forEach(i=>{ const v=r[i.id]; if (v && typeof v==='object' && 'keep' in v) out[i.id]={keep:!!v.keep, why:String(v.why||'').slice(0,200)}; });
+  return out;
+}
 async function composeCat(id){
   const c=catEnsureLocal(id); if (!c) return;
   if (c.status==='approved') c.status='draft';       // new text needs a fresh approval
@@ -1569,7 +1727,7 @@ SUB-GENRES (long American arguments, with their row): ${vocab.map(x=>x.name+' ['
 Write JSON only: {"contest":"...","stakes":"...","lenses":["..."],"subgenres":["..."],"note":"one sentence for the editor"}
 1. contest: ONE sentence ending in a full stop, "Whether X, or Y", two positions a reasonable person holds. 12 to 30 words.
 2. stakes: TWO short sentences, 25 to 55 words in all, framed as the open questions the argument turns on (whether, when, by whom, who benefits). Do not write about "risks" in the abstract or "who pays". Write about the category as a whole, not about one story.
-3. lenses: choose from the lenses above only those the category is mainly about. A lens is for a country, alliance or technology. Do not add a lens because it is a related topic.
+3. lenses: choose from the lenses above only the one or two the category is NAMED for. A lens is for a country, alliance or technology. Do not add a lens because it appears in one incident or is a related topic.
 4. subgenres: choose up to two from the sub-genres above that name the American argument this category belongs to, exactly as written, if it belongs to one. Choose at least one lens or one sub-genre: a category needs a history to draw on.
 ${CAT_STYLE_RULES}`;
     const r1=catJson(await ai(p1,1100));
@@ -1580,11 +1738,49 @@ ${CAT_STYLE_RULES}`;
       c.subgenres=(r1.subgenres||[]).filter(g=>CAT_VOCAB && CAT_VOCAB.has(g)).slice(0,2);
       c.by.lenses='model';
     }
-    const picked=catPick(c.lenses, c.subgenres);
+    const picked=await catChoose(c, stories, texts, msgs);
     const keepEd=(c.objects||[]).filter(o=>o.by==='editor'), edIds=new Set(keepEd.map(o=>o.object_id));
     c.objects=picked.map(o=>({object_id:o.id,about:o.about||'',by:'model'})).filter(o=>!edIds.has(o.object_id)).concat(keepEd);
     c.beginnings=picked.map(o=>({object_id:o.id,line:o.line||'',by:'model'})).concat((c.beginnings||[]).filter(b=>edIds.has(b.object_id)));
-    if (!picked.length) msgs.push(!stories.length ? 'No story is filed under this category yet and the model chose no lens or sub-genre with sources. Pick lenses or sub-genres below, or add objects by hand.' : withText ? 'No Beginnings: no lens or sub-genre with sources matched this story. Pick some below, or add objects by hand.' : 'The filed story has no generated text yet, so no lens could be matched. Generate the story, or pick lenses and sub-genres below.');
+    if (picked.length<6){
+      CAT_BUSY[id]='Searching for milestones…'; render();
+      try {
+        const found=await proposeMilestones(c, stories, texts, picked, Math.max(3,6-picked.length), msgs);
+        found.forEach(f=>{
+          c.ties=c.ties||{}; c.ties[f.cu.id]=f.ties;
+          c.custom_objects=(c.custom_objects||[]).filter(x=>x.id!==f.cu.id).concat([f.cu]);
+          c.objects.push({object_id:f.cu.id,about:f.about,by:'model'}); c.beginnings.push({object_id:f.cu.id,line:f.line,by:'model'});
+          c.auto_approved=Array.from(new Set((c.auto_approved||[]).concat([f.cu.id])));
+        });
+        msgs.push(found.length+' milestone'+(found.length===1?'':'s')+' found by search.');
+        picked.found=found.length;
+      } catch(e){ msgs.push('Milestone search failed: '+e.message+' (web search may not be enabled for this key).'); }
+    }
+    // the judge: every object, matrix or found, must read as part of this story's own history
+    {
+      const foundList=(c.custom_objects||[]).filter(x=>x.found_by==='search'&&(c.objects||[]).some(o=>o.object_id===x.id&&o.by==='model'));
+      const items=picked.map(o=>({id:o.id,year:o.year,title:o.title,ties:''})).concat(foundList.map(x=>{ const t=(c.ties||{})[x.id]||{}; return {id:x.id,year:x.year,title:x.title,ties:(t.relation?t.relation+': "'+(t.phrase||'')+'"':'')}; }));
+      CAT_BUSY[id]='Checking that each object belongs…'; render();
+      const verdict=await catJudge(c, stories, texts, items);
+      c.ties=c.ties||{};
+      Object.keys(verdict).forEach(k=>{
+        if (!verdict[k].keep){
+          msgs.push('Dropped by the judge: '+k.slice(0,50)+' ('+verdict[k].why+').');
+          c.objects=c.objects.filter(o=>o.object_id!==k||o.by==='editor'); c.beginnings=c.beginnings.filter(b=>b.object_id!==k||b.by==='editor');
+          c.custom_objects=(c.custom_objects||[]).filter(x=>x.id!==k); c.auto_approved=(c.auto_approved||[]).filter(x=>x!==k);
+          const ix=picked.findIndex(o=>o.id===k); if (ix>=0) picked.splice(ix,1);
+          delete c.ties[k];
+        } else c.ties[k]=Object.assign({}, c.ties[k]||{}, {why:verdict[k].why});
+      });
+    }
+    // at most six objects on a page: the search may over-supply, so the newest found ones go first
+    for (let k=c.objects.length-1; k>=0 && c.objects.length>6; k--){
+      const o=c.objects[k]; if (o.by==='model' && (c.custom_objects||[]).some(x=>x.id===o.object_id)){
+        c.objects.splice(k,1); c.beginnings=c.beginnings.filter(b=>b.object_id!==o.object_id);
+        c.custom_objects=c.custom_objects.filter(x=>x.id!==o.object_id); c.auto_approved=(c.auto_approved||[]).filter(x=>x!==o.object_id);
+      }
+    }
+    if (!picked.length && !picked.found) msgs.push(!stories.length ? 'No story is filed under this category yet and the model chose no lens or sub-genre with sources. Pick lenses or sub-genres below, or add objects by hand.' : withText ? 'No Beginnings: no lens or sub-genre with sources matched this story. Pick some below, or add objects by hand.' : 'The filed story has no generated text yet, so no lens could be matched. Generate the story, or pick lenses and sub-genres below.');
     await writeObjectText(c, picked.filter(o=>!(o.line&&o.about)));
     c.revisions=(c.revisions||[]).concat([{at:new Date().toISOString(),request:'(first draft)',summary:r1.note||''}]);
     if (r1.note) msgs.push(r1.note);
@@ -1744,9 +1940,11 @@ function catEditorHtml(c){
         <b>${esc(e.year||'')}</b> <span>${esc(e.title||o.object_id)}</span>
         <a href="${esc(e.url||'#')}" target="_blank" rel="noopener" style="font-size:11px">open source ↗</a>
         <span class="chip">${esc(e.link_status||'')}</span>
+        ${(c.auto_approved||[]).includes(o.object_id)?'<span class="chip" style="background:var(--warn);color:#fff" title="included automatically; you have not reviewed it">'+(e.pool==='custom'?'found by search':'auto-included')+'</span> <button class="mini cat-reviewed">mark reviewed</button>':''}
         ${cand?`<label style="font-size:11px;${ok?'':'color:var(--warn)'}"><input type="checkbox" class="cat-approve" ${ok?'checked':''} ${e.approved?'disabled':''}> ${ok?'approved':'candidate, needs your approval'}</label>`:'<span class="chip">'+esc(e.pool==='custom'?'added':'matrix')+'</span>'}
         <button class="mini cat-rm" style="margin-left:auto">remove</button>
       </div>
+      ${((c.ties||{})[o.object_id]||{}).why?'<div style="margin:3px 0 0 2px;font-size:11px;color:var(--dim)">Why it belongs: '+esc(c.ties[o.object_id].why)+(c.ties[o.object_id].phrase?' (story: \u201c'+esc(c.ties[o.object_id].phrase)+'\u201d, '+esc(c.ties[o.object_id].relation||'')+')':'')+'</div>':''}
       <div style="margin:3px 0 0 2px;font-size:11px"><a href="#" class="cat-editsrc">${CAT_SRC_OPEN[o.object_id]?'close':'edit source'}</a> <span style="color:var(--dim)">${esc(e.source||'')}${e.pool==='custom'?' \u00b7 added by you or by search':''}</span></div>
       ${CAT_SRC_OPEN[o.object_id]?`<div style="margin:4px 0;padding:6px 8px;border:1px solid var(--rule)">
         <div style="font-size:11px;color:var(--dim);margin-bottom:4px">Supply the primary source yourself. The link must be the document or an archive's, court's or government's copy of it. Your Beginning line and About text stay.</div>
@@ -1777,6 +1975,8 @@ function catEditorHtml(c){
       <button class="mini ${c.status==='approved'?'':'primary'}" id="cat-approve">${c.status==='approved'?'Back to draft':'Approve for publish'}</button>
       <button class="mini" id="cat-del">${PUBCATS.some(r=>r.id===c.id)?'(published)':'Delete'}</button>
     </div>
+    ${(()=>{ const pb=PUBCATS.find(r=>r.id===c.id); if (!pb || JSON.stringify([pb.contest,pb.stakes,(pb.beginnings||[]).map(b=>b.object_id)])===JSON.stringify([c.contest,c.stakes,(c.beginnings||[]).map(b=>b.object_id)])) return ''; return `<div style="font-size:12px;margin-bottom:8px;padding:6px 8px;border:1px solid var(--warn)">You are looking at your own copy of this category. The published version${pb.auto?' (made automatically)':''} is different. <button class="mini" id="cat-load-pub">Load the published version</button> <span style="color:var(--dim)">(replaces your copy)</span></div>`; })()}
+    ${c.auto?`<div style="font-size:12px;margin-bottom:8px;padding:6px 8px;border:1px solid var(--rule);background:#faf8f3">Made automatically by the publish step from the story filed under it, because no row fit. It is live as written. Read it, and revise or edit whatever is wrong.${(c.auto_approved||[]).length?` ${(c.auto_approved||[]).length} candidate source${(c.auto_approved||[]).length===1?' was':'s were'} included without your review (their links were read).`:''}</div>`:''}
     ${CAT_MSG[c.id]?`<div style="font-size:12px;margin-bottom:8px;color:${/failed/.test(CAT_MSG[c.id])?'var(--stale)':'var(--dim)'}">${esc(CAT_MSG[c.id])}</div>`:''}
     <div style="font-size:11px;color:var(--dim);margin-bottom:6px">Filed under it: ${stories.length?stories.map(s=>esc(s.title)).join(' · '):'no story yet. In Lineup, pick this category on a story.'}</div>
     <div style="margin:8px 0"><b style="font-size:11px">LENSES</b> <span style="font-size:11px;color:var(--dim)">histories to draw Beginnings from. A ⚠ means the story never mentions the subject, and publish will drop it unless you chose it.</span><div style="margin-top:4px">${lensHtml||'<i>none</i>'}</div></div>
@@ -1847,7 +2047,7 @@ function renderBackstory(root){
       <div>
         <div style="font-size:11px;color:var(--dim);margin-bottom:6px">CATEGORIES</div>
         ${list.map(({rec,where})=>`<div class="story cat-pick" data-id="${esc(rec.id)}" style="padding:7px 9px;cursor:pointer;${rec.id===CAT_SEL?'border-color:var(--ink)':''}">
-          <b style="font-size:12px">${esc(rec.title)}</b><br><span style="font-size:10.5px;color:var(--dim)">${esc(where==='published'?'published':rec.status)} · ${catStories(rec.id).length} stor${catStories(rec.id).length===1?'y':'ies'} filed</span></div>`).join('')||'<i style="font-size:12px;color:var(--dim)">none yet</i>'}
+          <b style="font-size:12px">${esc(rec.title)}</b><br><span style="font-size:10.5px;color:var(--dim)">${esc(where==='published'?'published':rec.status)}${rec.auto?' · auto':''} · ${Math.max(catStories(rec.id).length,(rec.stories||[]).length)} stor${Math.max(catStories(rec.id).length,(rec.stories||[]).length)===1?'y':'ies'} filed</span></div>`).join('')||'<i style="font-size:12px;color:var(--dim)">none yet</i>'}
         <button class="mini primary" id="cat-new" style="margin-top:6px">+ new category</button>
         <div style="font-size:11px;color:var(--dim);margin-top:10px;line-height:1.5">The 21 fixed rows are edited in <code>editorial/backstory-rows.json</code>. A category made here becomes a page of its own and is sent with the Lineup publish once approved.</div>
       </div>
@@ -1878,6 +2078,7 @@ function renderBackstory(root){
       touch(); render(); });
     const ap=row.querySelector('.cat-approve'); if (ap) ap.addEventListener('change',e=>{
       c.approved_objects=e.target.checked?Array.from(new Set((c.approved_objects||[]).concat([oid]))):(c.approved_objects||[]).filter(x=>x!==oid); touch(); render(); });
+    const rv=row.querySelector('.cat-reviewed'); if (rv) rv.addEventListener('click',()=>{ c.auto_approved=(c.auto_approved||[]).filter(x=>x!==oid); touch(); render(); });
     row.querySelector('.cat-editsrc').addEventListener('click',ev=>{ ev.preventDefault(); CAT_SRC_OPEN[oid]=!CAT_SRC_OPEN[oid]; render(); });
     const sv=row.querySelector('.cat-src-save'); if (sv) sv.addEventListener('click',()=>{
       const f={}; row.querySelectorAll('.cat-src-f').forEach(el=>{ f[el.dataset.f]=el.value; });
@@ -1889,6 +2090,7 @@ function renderBackstory(root){
     const ln=row.querySelector('.cat-line'); if (ln) ln.addEventListener('change',e=>{ const b=c.beginnings.find(x=>x.object_id===oid); if (b){ b.line=e.target.value.trim(); b.by='editor'; } touch(); render(); });
     row.querySelector('.cat-about').addEventListener('change',e=>{ const o=c.objects.find(x=>x.object_id===oid); if (o){ o.about=e.target.value.trim(); o.by='editor'; } touch(); render(); });
   });
+  const lp=document.getElementById('cat-load-pub'); if (lp) lp.addEventListener('click',()=>{ if (!confirm('Replace your copy of "'+c.title+'" with the published version?')) return; delete CATS[c.id]; catEnsureLocal(c.id); saveCats(); render(); });
   const useP=document.getElementById('cat-use-prop'); if (useP) useP.addEventListener('click',()=>{
     const pr=Object.assign({}, c.indicator_proposal); pr.verified=true; pr.verified_by='editor'; pr.how_checked='You looked at the source.'; delete pr.unverified_reason;
     c.indicator=pr; delete c.indicator_proposal; c.by.indicator='editor'; touch(); render(); });
