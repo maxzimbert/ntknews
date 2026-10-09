@@ -80,7 +80,7 @@ not edited by hand.
 All five slices are in one branch. Data layer: `editorial/export_for_pulse.py` writes
 `ntk-pulse/data/backstory-pool.json` (334 linked matrix objects and 96 candidates, each with the lenses
 it belongs to); `editorial/categories.py` validates a category record; `build_pairings.py` merges the
-`backstory_categories` Pulse sends and no longer drafts anything with a model. Pulse: the Backstory tab
+`backstory_categories` Pulse sends. (Superseded 2026-10-09: step 5C now composes categories with a model; see below.) Pulse: the Backstory tab
 is now a category editor (compose, revise, edit, approve, preview); Lineup's row dropdown lists
 categories and "+ new category" replaces "no row fits"; Publish carries approved categories. The trend
 line needs what is tracked, values, a source with a link, a date and the editor's check, or it is not
@@ -88,9 +88,48 @@ drawn. Tested: 15 fixture cases in Python and the same cases in node against the
 flow (file a story, compose, approve candidates, revise, edit, approve, payload) in a browser with a
 stand-in for the model; and the exact payload that flow produced through the CI merge.
 
-Not tested: the real model has not run these prompts. The first Compose click in Pulse is that test.
+Not tested at the time: the real model had not run these prompts. (It has since; see below.)
 The AI category on staging still carries the old China-lens Beginnings until it is recomposed and
 published, which is why the check below stays OPEN.
+
+## Hybrid, built 2026-10-09 (PR #78)
+
+The editor found the Pulse-first flow too much work and liked the pairing step's output, so categories are
+now composed in the publish pipeline and Pulse is the review layer. Step 5C of `build_pairings.py` takes the
+stories the classifier flags as misfits (poor fit or confidence under 0.70, at most 3, never editor-filed) and
+calls `editorial/compose_category.py`: the model writes the contest, stakes, lenses and sub-genres; chooses
+up to 6 objects from the pool (matrix first; choosing none is allowed); searches the web for a chronology of
+milestones with primary sources (always, when the pool gives fewer than six); an independent judge call then
+keeps only objects that read as part of the story's own history; a trend line is searched for and verified.
+Everything is checked again by `categories.py` and `live_checks`. Rules: a category with no objects is never
+published (any author); an automatic one needs two; the story keeps its row. Found items carry `ties_to` (a
+phrase made of the story's own words), `relation` and `because`, shown in Pulse next to the judge's reason.
+Backstory is written for an AP-level reader.
+
+What the real runs showed (Sonnet 5.5, same six stories, runs 37976901200 to 37983677004):
+
+- The credit balance was empty for the first run, which failed every call with HTTP 400 and still showed
+  green. The earlier bare 400s were probably the same cause.
+- The judge works: it dropped Dartmouth 1955, EO 14110 and EO 14179 under an AI-in-medicine and an Altman
+  story, a 2022 import order under fuel prices, and Ebola under a Siberian lab death, each with a reason.
+- The checks remove real finds: a repaired line that gains a number the quote lacks, a quote not found on
+  the page, a `ties_to` that does not match. Yield swung from 4 and 5 Beginnings (Biosecurity, Fuel Prices) to
+  3 and 3 with no AI category, on the same stories. One run each; the revert is not proven to be the cause.
+- Classifier misfit flags vary run to run (diesel flagged in some runs only).
+- The origin step deleted Beginnings dated in the origin year, which emptied two pages; it now drops only
+  those dated after it. A category with zero objects was created once; now it is not.
+
+Tried and reverted 2026-10-09 (commit 11205de, reverted in f5eba6c): dating a milestone by its event year
+(kept the document's date apart), a fourth relation "comparable case of the same kind of event" so that an
+outbreak elsewhere counts under an outbreak story, and not cutting Beginnings by the origin. The editor's
+position stands: a milestone is dated by the event (Sverdlovsk is 1979, though the source is a 1994 paper),
+and a category is the history of a theme, so comparable cases before or after one story's origin are fine.
+Not yet in the code. Try again after several runs on the same stories show the spread.
+
+Open: event-year dating; comparable cases; retrying one rejected item with its reason (number or quote
+failures) the way line length already is; trend lines were found for AI topics but not for Biosecurity or
+Fuel Prices; per-story origin override in Pulse; the 96 lens candidates await the editor's Approve column.
+The check below stays OPEN until the AI category is recomposed and published without the China lens.
 
 ## Check
 
