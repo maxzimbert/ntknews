@@ -362,21 +362,6 @@ Every story has a past. Rules, in code (`editorial/build_origins.py`, `build_pai
   Beginning) should carry the evidence a reader or critic could check.
 The classifier never reaches a provisional row (no sub-genres); only an editor tag does.
 
-**Category chronologies are the history of a theme, dated by the event, and a category needs objects.**
-Decided 2026-10-09 with the editor, after the first chronology-first runs.
-- A milestone's year is the year the event happened, not the document's. The document's own date is
-  kept apart (`doc_date`). The event year is trusted only if the title or the quoted sentence states
-  it; otherwise the document's year stands.
-- A category's Beginnings are not cut by one story's origin year. "It starts in" marks the story; the
-  category is the history of its theme, so it may include comparable cases elsewhere, before or after
-  (an outbreak outside Siberia under an outbreak story). The allowed relations are: same subject,
-  earlier instance of the same action, origin of the background, comparable case of the same kind of
-  event. A decade, a branch of government or a shared theme is still an analogy and is dropped by the judge.
-- A category with no objects is never published (any author). An automatic one needs two that survive
-  the checks. The story keeps its row.
-- Backstory is written for an AP-level reader (/today middle school, /digest high school). The Jamie
-  persona no longer guides it.
-
 **Lenses stay a separate list from the matrix, for now.** Decided 2026-10-06 with the editor.
 A lens (a country, an alliance, a technology) is a tag on an object like Column E's Issue (Theme),
 but on a different axis: Column E says which American argument an object belongs to; a lens says

@@ -256,8 +256,8 @@ def update_provisional(bs):
 
     A category has no fixed start: its "It starts in" and "We are here" are its earliest
     retrieved origin. Its Beginnings come from the record the editor approved in Pulse; here
-    no Beginning is dropped for its date. A category is the history of a theme, so its Beginnings may fall
-    before or after one story's origin (an outbreak elsewhere, a later ruling); the judge decides relevance. Nothing is composed here.
+    any Beginning dated after the origin is dropped. The same year is kept: a search-found chronology ends
+    at the story's own origin, and dropping it left the Raine and Sverdlovsk pages with no Beginnings. Nothing is composed here.
     """
     store_path = ROOT / "ntk-pulse" / "data" / "provisional-rows.json"
     store = json.loads(store_path.read_text()) if store_path.exists() else {"rows": []}
@@ -272,7 +272,9 @@ def update_provisional(bs):
         best = min(os_, key=lambda o: o["year"])
         r["start_date"] = f"{best['year']}-01-01"
         r["start_line"] = best["line"].rstrip(".")
-        before = list(r.get("beginnings") or [])      # a category is the history of a theme: Beginnings may fall before or after one story's origin
+        before = [b for b in r.get("beginnings") or [] if int(b["year"]) <= best["year"]]
+        if len(before) != len(r.get("beginnings") or []):
+            log(f"  {r['id']}: dropped {len(r['beginnings']) - len(before)} Beginning(s) dated after {best['year']}")
         if len(before) > 6:                       # the page shows four to six; matrix objects first
             import compose_category
             objs = {o["object_id"]: o for o in r.get("objects") or []}
@@ -283,6 +285,7 @@ def update_provisional(bs):
             before = [b for b in before if b["object_id"] in ids]
         keep = {b["object_id"] for b in before}
         r["beginnings"] = before
+        r["objects"] = [o for o in r.get("objects") or [] if o["object_id"] in keep or int(o["year"]) >= best["year"]]
         sr = by_store.get(r["id"], {})
         sr.update(start_date=r["start_date"], start_line=r["start_line"],
                   beginnings=r["beginnings"], objects=r["objects"])

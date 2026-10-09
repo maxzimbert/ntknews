@@ -1363,7 +1363,6 @@ function validateCat(cat, poolBy0, spec, storyTexts, originYear, vocab){
     objs.push({object_id:e.id,title:e.title,author:e.author,year:e.year,source:e.source,source_url:e.url,about:about,pool:e.pool,lenses:e.lenses,by:o.by||'model',sort:e.sort||(e.year+'-01-01')});
   });
   objs.sort((a,b)=> a.sort<b.sort?-1:a.sort>b.sort?1:(a.title<b.title?-1:1));     // oldest to newest, always
-  if (!objs.length) return {clean:null, problems:problems.concat(['no objects: a category needs at least one primary source, so it is not published'])};
   c.objects=objs; const order={}; objs.forEach(o=>{ order[o.object_id]=o.sort; });
   const begs=[], seen=new Set();
   (c.beginnings||[]).forEach(b=>{
@@ -1457,7 +1456,7 @@ function catFieldKey(el){
 }
 // A milestone the model found by web search: link returned by the search, https, not refused, a year, a
 // quote, text that meets the rules, and no number that the quote, title and date do not hold.
-const CAT_RELATIONS=['same subject','earlier instance of the same action','origin of the background','comparable case of the same kind of event'];
+const CAT_RELATIONS=['same subject','earlier instance of the same action','origin of the background'];
 const catNorm=t=>String(t||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim().replace(/\s+/g,' ');
 const CAT_STOP=new Set('the a an and or of to in on for with from by at as is are was were be been that this it its their his her they who which what when where about into over after before under than then also not no'.split(' '));
 // the phrase tying a milestone to the story must be made of the story's own words: two content words, 70% present
@@ -1655,18 +1654,15 @@ ALREADY ON THE PAGE (do not repeat): ${haveTxt}
 
 First ask yourself: what is the history of the action, the consequences, the people, the setting and the background in this story? Which events, in order, are the steps that lead to what the story reports today? Choose the ${need} that matter most, spread across time, earlier than today's event, the last one the most recent turn before it. Then use web search to find, for each, a primary source that defends it from editorial scrutiny: the document itself or the copy held by an archive, court, legislature, government agency or the original publisher. Not Wikipedia, not a news article or summary about it, not a retail or study-guide page.
 
-Every milestone must be part of this story's own history: the same subject, an earlier instance of the same action, the origin of a background the story names, or a comparable case of the same kind of event elsewhere (when the category is named for a kind of event, such as an outbreak or a fuel waiver, cases in other places count, before or after the story's own origin). Date each milestone by when the event happened, not when the document was written. A document that shares only a theme (secrecy, government power, regulation) is an analogy and does not belong. ${need} is a target, not a quota: if you cannot source a milestone, leave it out. Fewer well-sourced milestones are better than padding.
+Every milestone must be part of this story's own history: the same subject, an earlier instance of the same action, or the origin of a background the story names. A document that shares only a theme (secrecy, government power, regulation) is an analogy and does not belong. ${need} is a target, not a quota: if you cannot source a milestone, leave it out. Fewer well-sourced milestones are better than padding.
 
 Answer with JSON only, a list in date order:
-[{"event_year":"YYYY, the year the event itself happened, which can be earlier than the document","year":"YYYY, the year of the document","date":"YYYY-MM-DD, the document's own date if it gives one, else null","title":"the document's exact title","author":"who issued or wrote it","source":"the publishing body or archive","source_url":"the exact page or PDF where it can be read","line":"ONE sentence, 12 to 25 words, saying what happened, starting with the actor or the event","about":"two to four sentences, at most 70 words: what the document is, who made it and when, what it says or did","evidence_quote":"one sentence copied word for word from that page that supports the line","ties_to":"a few words from TODAY'S STORY naming the subject, person, place or action this milestone belongs to","relation":"same subject | earlier instance of the same action | origin of the background | comparable case of the same kind of event","because":"one sentence: how this step leads to the next one, or to today's story"}]
+[{"year":"YYYY","date":"YYYY-MM-DD if the document gives it, else null","title":"the document's exact title","author":"who issued or wrote it","source":"the publishing body or archive","source_url":"the exact page or PDF where it can be read","line":"ONE sentence, 12 to 25 words, saying what happened, starting with the actor or the event","about":"two to four sentences, at most 70 words: what the document is, who made it and when, what it says or did","evidence_quote":"one sentence copied word for word from that page that supports the line","ties_to":"a few words from TODAY'S STORY naming the subject, person, place or action this milestone belongs to","relation":"same subject | earlier instance of the same action | origin of the background","because":"one sentence: how this step leads to the next one, or to today's story"}]
 Rules: use only facts that the page states; the line and about may contain no number that is not in the title, the date or the evidence_quote. If you find none, answer [].
 ${CAT_STYLE_RULES}`;
   const storyJoined=(texts||[]).join(' ');
   const r=await aiSearch(p,4000), items=catJsonAny(r.text), out=[], fixable=[];
   const accept=m=>{
-    // dated by the event, not the document; trusted only if the title or the quoted sentence states the event year
-    const ey=String(m.event_year||'').trim();
-    if (/^\d{3,4}$/.test(ey) && ey!==String(m.year) && (String(m.title).includes(ey)||String(m.evidence_quote).includes(ey)) && +ey<+m.year) m=Object.assign({}, m, {doc_date:m.date||m.year, year:ey, date:null});
     const cid='custom-'+String(m.title).trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,60);
     out.push({cu:{id:cid,title:String(m.title).trim(),author:String(m.author||'').trim(),year:String(m.year),date:/^\d{4}-\d\d-\d\d$/.test(m.date||'')?m.date:'',source:String(m.source||'').trim(),url:String(m.source_url).trim(),found_by:'search',evidence_quote:String(m.evidence_quote).trim()},line:String(m.line).trim(),about:String(m.about).trim(),ties:{relation:m.relation,phrase:String(m.ties_to).trim(),because:String(m.because||'').trim().slice(0,240)}});
   };
@@ -1698,7 +1694,7 @@ TODAY'S STORY: ${stories[0]?stories[0].title+'\n'+(texts[0]||'').slice(0,3500):'
 ITEMS ON THE PAGE:
 ${items.map(i=>'- id: '+i.id+' | '+i.year+' | '+String(i.title).slice(0,100)+' | '+(i.ties?'why it was added: '+i.ties:'chosen from the matrix')).join('\n')}
 
-For each item decide keep or drop. Keep it only if a reader of today's story would see it as part of that story's own history: the same subject, an earlier instance of the same action, the origin of a background the story names, or a comparable case of the same kind of event elsewhere when the category is named for that kind of event (an outbreak in another country counts under an outbreak story; a decade, a branch of government or a shared theme does not). Drop it if it is an analogy from another field, or shares only a theme with the story (secrecy, government power, regulation, a decade, a branch of government). Be strict: a short true page is better than a long loose one.
+For each item decide keep or drop. Keep it only if a reader of today's story would see it as part of that story's own history: the same subject, an earlier instance of the same action, or the origin of a background the story names. Drop it if it is an analogy from another field, or shares only a theme with the story (secrecy, government power, regulation, a decade, a branch of government). Be strict: a short true page is better than a long loose one.
 JSON only: {"<id>":{"keep":true,"why":"one sentence naming what in the story it connects to"}, ...}`;
   let r={}; try { r=catJson(await ai(p,2000))||{}; } catch(e){ return {}; }
   const out={};

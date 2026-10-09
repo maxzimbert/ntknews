@@ -53,9 +53,6 @@ def check(name, ok, detail=""):
 def main():
 
     c, p = run(good())
-    nobj = good(); nobj["approved_objects"] = []; nobj["objects"] = []; nobj["beginnings"] = []
-    cz, pz = run(nobj)
-    check("a category with no objects is not valid, so it is never published", cz is None and any("no objects" in x for x in pz), (cz and cz.get("objects"), pz))
     check("a well-formed tech category validates cleanly", not p and len(c["beginnings"]) == 4 and len(c["objects"]) == 4, p)
 
     x = good(); x["lenses"] = ["tech", "china"]

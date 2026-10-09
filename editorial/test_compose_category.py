@@ -169,14 +169,6 @@ def searcher_spy(key, model, prompt, mt=2500):
 CC.compose("k", "m", STORY, "AI", POOL, SPEC, caller, searcher_spy)
 check("search is asked for a chronology even when the pool supplies some objects", len(asked) == 1 and "what is the history of the action" in asked[0] and "target, not a quota" in asked[0], len(asked))
 
-# a milestone is dated by the event, and a comparable case elsewhere is an allowed relation
-ev, nev = CC.find_milestones("k", "m", STORY2, "t", "c", [], 3, searcher_ms([ms_item(title="The Sverdlovsk Anthrax Outbreak of 1979", year="1994", date="1994-05-20", event_year="1979", evidence_quote="An aerosol of anthrax escaped and caused the 1979 outbreak in Sverdlovsk.", line="An anthrax aerosol escaped a military facility in Sverdlovsk, and the Soviet government blamed contaminated meat for the deaths.", about="This 1994 paper in Science studies the 1979 outbreak in Sverdlovsk. It concludes that anthrax released from a facility caused the deaths.")]))
-check("a milestone is dated by the event year when the title or quote states it; the document date is kept apart", len(ev) == 1 and ev[0]["year"] == "1979" and ev[0]["doc_date"] == "1994-05-20", (ev, nev))
-ev2, _ = CC.find_milestones("k", "m", STORY2, "t", "c", [], 3, searcher_ms([ms_item(event_year="1850")]))
-check("an event year that neither the title nor the quote states is not trusted", len(ev2) == 1 and ev2[0]["year"] == ms_item()["year"], ev2)
-cmp_, _ = CC.find_milestones("k", "m", STORY2, "t", "c", [], 3, searcher_ms([ms_item(relation="comparable case of the same kind of event")]))
-check("a comparable case of the same kind of event elsewhere is an allowed relation", len(cmp_) == 1, cmp_)
-
 # the object count: four to six, matrix first
 M = lambda i, y, pool="matrix": {"id": f"{pool[0]}{i}", "pool": pool, "author": f"a{i}", "sort": f"{y}-01-01", "title": "t", "lenses": [], "url": "u", "year": str(y)}
 big = [[M(i, 1800 + i * 10) for i in range(10)], [M(i + 50, 1900 + i * 5) for i in range(10)], [M(i + 90, 1950 + i * 3) for i in range(10)]]
