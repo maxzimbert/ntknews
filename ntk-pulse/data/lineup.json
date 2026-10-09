@@ -1,5 +1,5 @@
 {
- "assembled_at": "2026-10-09T04:58:02.372474+00:00",
+ "assembled_at": "2026-10-09T15:03:20.811093+00:00",
  "slot_plan": "A",
  "displacement": "MANUAL",
  "daytype": "weekday",
@@ -7,76 +7,77 @@
   8,
   10
  ],
- "actual_size": 31,
- "lint_failures": [],
- "slots_unfilled": [
-  "Body & mind"
+ "actual_size": 10,
+ "lint_failures": [
+  "no item answers 'what do I do with this'"
  ],
+ "slots_unfilled": [],
  "stories": [
   {
    "slot": "unavoidable",
    "slot_label": "Unavoidable",
-   "key": "a918b6a292131568",
-   "title": "ICE agent shoots man in NYC with child in car; immigrant dies in custody",
+   "key": "b32d2da3f2b5c380",
+   "title": "Category 3 hurricane nears Gulf Coast, disrupts oil production",
    "beat": "national",
    "publisher_count": 12,
    "publishers": [
-    "BBC",
     "The Guardian",
-    "Washington Post",
     "Yahoo News",
-    "Al Jazeera",
+    "ABC News",
     "CBS News",
+    "CNBC",
     "Deutsche Welle",
-    "Fox News",
+    "EarthSky",
     "NBC News",
     "Daily Mail",
+    "Fox 5 Atlanta",
     "Fox 5 DC",
     "Memeorandum"
    ],
    "scores": {
-    "emotional_load": 5,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
+    "emotional_load": 4,
+    "explainability": 5,
+    "actionability": 3,
+    "conversational_currency": 5
    },
    "politician_led": false,
    "ledger_class": null,
    "new_facts": [],
-   "line": "ICE agent shot a man in New York City; a five-year-old was reportedly in the car. Separate incident: undocumented immigrant died in ICE custody in Louisiana.",
-   "assembly_score": 6.71
+   "line": "Category 3 hurricane approaching Gulf Coast; oil production shutdowns and refinery threats reported.",
+   "assembly_score": 12.2
   },
   {
    "slot": "money_me",
    "slot_label": "Money & me",
-   "key": "c1e2fb98094768e5",
-   "title": "Tax deadline tomorrow; how to request an extension",
+   "key": "663e843692cea2f5",
+   "title": "SpaceX spectrum deal triggers $45bn selloff in telecom stocks",
    "beat": "business",
-   "publisher_count": 1,
+   "publisher_count": 2,
    "publishers": [
-    "CNN"
+    "Financial Times",
+    "CNBC"
    ],
    "scores": {
     "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 5,
+    "explainability": 3,
+    "actionability": 3,
     "conversational_currency": 4
    },
    "politician_led": false,
    "ledger_class": null,
    "new_facts": [],
-   "line": "Tax deadline is tomorrow; filing an extension delays your deadline without penalty if you request it before midnight.",
-   "assembly_score": 6.13
+   "line": "SpaceX announced a spectrum purchase that wiped $45 billion in value from major US telecom stocks in hours.",
+   "assembly_score": 5.52
   },
   {
-   "slot": "work_machines",
-   "slot_label": "Work & machines",
-   "key": "8d2841c097ef89b0",
-   "title": "Anthropic is setting up a \"presidential engagement\" program for the 2028 US elections that will offer AI policy education to candidates in both parties (Emily Forlini/Fortune)",
-   "beat": "tech",
+   "slot": "body_mind",
+   "slot_label": "Body & mind",
+   "key": "895d2925484fd3c2",
+   "title": "How Does Life Unfold? A Landscape Metaphor Comes Into Its Own.",
+   "beat": "science",
    "publisher_count": 1,
    "publishers": [
-    "Techmeme"
+    "Quanta Magazine"
    ],
    "scores": {
     "emotional_load": 3,
@@ -88,218 +89,80 @@
    "ledger_class": null,
    "new_facts": [],
    "line": "",
-   "assembly_score": 3.28
+   "assembly_score": 3.63
+  },
+  {
+   "slot": "work_machines",
+   "slot_label": "Work & machines",
+   "key": "753fc11ffd6907b3",
+   "title": "Anthropic bans cruel treatment of Claude chatbot",
+   "beat": "tech",
+   "publisher_count": 2,
+   "publishers": [
+    "BBC",
+    "CBS News"
+   ],
+   "scores": {
+    "emotional_load": 1,
+    "explainability": 5,
+    "actionability": 2,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "Anthropic prohibits users from verbally abusing its Claude AI chatbot, citing harms to AI development.",
+   "assembly_score": 5.18
   },
   {
    "slot": "group_chat",
    "slot_label": "The group chat",
-   "key": "4fa88a80b0f3e766",
-   "title": "Country musician calls on peers to break silence on gun violence",
+   "key": "138387708d2bd923",
+   "title": "King pays Andrew's Royal Lodge repair bill after forcing him out",
    "beat": "culture",
-   "publisher_count": 1,
+   "publisher_count": 4,
    "publishers": [
-    "CNN"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 2,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Country musician urges fellow artists to speak publicly against gun violence, breaking years of political silence in the genre.",
-   "assembly_score": 3.43
-  },
-  {
-   "slot": "elsewhere",
-   "slot_label": "Elsewhere, but here",
-   "key": "b11eab44a8af81ab",
-   "title": "OpenAI bans Russian and Iranian propaganda networks on ChatGPT",
-   "beat": "international",
-   "publisher_count": 3,
-   "publishers": [
-    "NPR",
-    "CNN",
-    "France 24"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "OpenAI shut down Russian and Iranian accounts using ChatGPT for propaganda; Western officials say Russia is also deploying obsolete tanks in Ukraine.",
-   "assembly_score": 5.03
-  },
-  {
-   "slot": "close",
-   "slot_label": "The close",
-   "key": "927875f466998739",
-   "title": "Michigan Senate candidates clash over Israel, Iran in heated first debate",
-   "beat": "national",
-   "publisher_count": 10,
-   "publishers": [
-    "New York Times",
-    "Politico Congress",
+    "BBC",
     "The Guardian",
-    "Yahoo News",
-    "Al Jazeera",
-    "CBS News",
-    "Fox News",
-    "NBC News",
-    "Fox 5 Atlanta",
-    "Memeorandum"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Michigan Senate candidates El-Sayed and Rogers traded personal attacks in their first debate, with disagreement over Israel and Iran policy.",
-   "assembly_score": 6.55
-  },
-  {
-   "slot": "unavoidable",
-   "slot_label": "Unavoidable",
-   "key": "c2ae45993ac7577b",
-   "title": "Guilfoyle allegedly sought $100K from donor for Trump access",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "CBS News",
-    "Daily Beast",
+    "ABC Australia",
     "Daily Mail"
    ],
    "scores": {
     "emotional_load": 2,
     "explainability": 4,
     "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Kimberly Guilfoyle, U.S. Ambassador to Greece, allegedly sought $100,000 from a businessman in exchange for Trump administration access.",
-   "assembly_score": 4.45
-  },
-  {
-   "slot": "unavoidable",
-   "slot_label": "Unavoidable",
-   "key": "42c765af81d07bf7",
-   "title": "Fort Hood Shooter\u2019s Execution Will Be Public and Streamed Live, Pentagon Says",
-   "beat": "national",
-   "publisher_count": 8,
-   "publishers": [
-    "New York Times",
-    "Al Jazeera",
-    "CBS News",
-    "Deutsche Welle",
-    "Fox News",
-    "NBC News",
-    "Daily Mail",
-    "Memeorandum"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
     "conversational_currency": 3
    },
    "politician_led": false,
    "ledger_class": null,
    "new_facts": [],
-   "line": "",
-   "assembly_score": 2.26
+   "line": "King Charles pays Andrew's \u00a31.5m repair bill after forcing him from Royal Lodge; Andrew receives \u00a3302k compensation for early lease termination.",
+   "assembly_score": 5.56
   },
   {
-   "slot": "flex",
-   "slot_label": "Flex",
-   "key": "d9e77ff925b799a5",
-   "title": "Data center expansion leaves Reston residents trapped by outdated zoning approval",
-   "beat": "national",
-   "publisher_count": 1,
-   "publishers": [
-    "NBC Washington"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Northern Virginia residents say a data center expansion near their homes causes severe noise and light pollution; prior zoning approval shields the company from new county regulations.",
-   "assembly_score": 4.1
-  },
-  {
-   "slot": "flex",
-   "slot_label": "Flex",
-   "key": "0ff753dc0971328c",
-   "title": "SoftBank seeks $100bn from Gulf investors to expand AI bet",
-   "beat": "international",
-   "publisher_count": 1,
-   "publishers": [
-    "Financial Times"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 3.69
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
+   "slot": "elsewhere",
+   "slot_label": "Elsewhere, but here",
    "key": "d7c7a0654af4ae30",
    "title": "South African lawyer Pillay wins Nobel Peace Prize for war crimes prosecution",
    "beat": "international",
-   "publisher_count": 13,
+   "publisher_count": 16,
    "publishers": [
+    "BBC",
     "Financial Times",
+    "New York Times",
     "The Guardian",
     "ABC News",
     "Al Jazeera",
     "CBS News",
     "CNBC",
     "Daily Beast",
-    "Deutsche Welle",
     "France 24",
-    "NBC News",
+    "Semafor",
+    "The New Republic",
     "ABC Australia",
     "ANSA",
+    "Daily Mail",
     "Memeorandum"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-10-09/nobel-peace-prize-2026-winner-judge-navi-pillay/107249984",
-    "//abcnews.com/US/nobel-peace-prize-navanethem-pillay-efforts-promote-peace/story?id=137088187",
-    "//aljazeera.com/news/2026/10/9/2026-nobel-peace-prize-awarded-to-navi-pillay?traffic_source=rss",
-    "//ansa.it/sito/notizie/mondo/2026/10/09/oggi-il-premio-nobel-per-la-pace_1a002ce2-cdbd-4b9c-aebc-21767cd04154.html",
-    "//cbsnews.com/news/nobel-peace-prize-2026-navanethem-navi-pillay-south-africa",
-    "//cnbc.com/2026/10/09/nobel-peace-prize-navanethem-navi-pillay-winner.html",
-    "//dw.com/en/nobel-peace-prize-2026-goes-to-navanethem-navi-pillay-for-her-efforts-to-promote-peace-and-international-law/live-79598020?maca=en-rss-en-all-1573-xml-mrss",
-    "//france24.com/en/europe/20261009-south-africa-s-navanethem-navi-pillay-wins-2026-nobel-peace-prize",
-    "//ft.com/content/3ae8dc9c-ee3a-4fe5-9749-b88390b5930b?syn-25a6b1a6=1",
-    "//memeorandum.com/261009/p6",
-    "//nbcnews.com/world/europe/nobel-peace-prize-favorites-include-yulia-navalnaya-donald-trump-downp-rcna602462",
-    "//thedailybeast.com/trumps-desperate-nobel-dream-crushed-as-winner-revealed",
-    "//theguardian.com/world/live/2026/oct/09/2026-nobel-peace-prize-winner-russia-ukraine-sudan-war-france-protests-poland-latest-news-updates"
    ],
    "scores": {
     "emotional_load": 2,
@@ -308,685 +171,168 @@
     "conversational_currency": 4
    },
    "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
    "ledger_class": null,
    "new_facts": [],
    "line": "South African human rights lawyer Navi Pillay wins Nobel Peace Prize for prosecuting war crimes and genocide.",
-   "assembly_score": 3.2
+   "assembly_score": 11.94
   },
   {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "153b71c672c5516d",
-   "title": "Anti-migrant violence erupts in South Africa's major cities",
-   "beat": "international",
+   "slot": "close",
+   "slot_label": "The close",
+   "key": "3450be4b166b2eaa",
+   "title": "Man City guilty of financial breaches, appeals verdict as Premier League awaits outcome",
+   "beat": "culture",
    "publisher_count": 3,
    "publishers": [
     "BBC",
-    "Deutsche Welle",
-    "ABC Australia"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-10-09/south-africa-australia-live-first-test-durban-day-one/107249690",
-    "//bbc.co.uk/news/articles/cwm24v45p4jgo?at_campaign=rss&at_medium=RSS",
-    "//dw.com/en/south-africa-pulls-asylum-directive-after-violent-protests/a-79605037?maca=en-rss-en-all-1573-xml-mrss"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Anti-migrant protests turned violent in South Africa's two largest cities, with vehicles burned and shops looted amid anger over a court order easing asylum barriers.",
-   "assembly_score": 0.57
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "47d19a1698bae70f",
-   "title": "News digest roundup",
-   "beat": "other",
-   "publisher_count": 4,
-   "publishers": [
-    "BBC",
-    "NPR",
-    "Yahoo News",
+    "Al Jazeera",
     "Daily Mail"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/c6zjx7jexz1do?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/news/article-16193807/Video-CHRIS-PLEASANCE-Russias-new-jet-powered-drones-raining-death-destruction-Kyiv.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//npr.org/2026/10/09/nx-s1-5988274/newsbrief-hurricane-isaias-ukraine-war-latest-politics-of-iran-war",
-    "//yahoo.com/news/weather-news/live/hurricane-isaias-tracker-category-1-storm-expected-to-strengthen-before-making-landfall-along-gulf-coast-florida-county-orders-evacuations-200409463.html"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 1,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 0.55
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "265c0e391ddf9c25",
-   "title": "Senate debates in Michigan, Georgia, Maine test midterm races",
-   "beat": "national",
-   "publisher_count": 4,
-   "publishers": [
-    "NPR",
-    "New York Times",
-    "The Guardian",
-    "Daily Beast"
-   ],
-   "urls": [
-    "//npr.org/2026/10/09/nx-s1-5986150/lawler-new-york-congress-trump",
-    "//nytimes.com/2026/10/09/us/fiery-senate-debates-in-maine-michigan-and-georgia-five-takeaways.html",
-    "//thedailybeast.com/panicked-trump-loses-it-at-dem-star-after-explosive-debate",
-    "//thedailybeast.com/trump-pick-mike-collins-suffers-humiliating-takedown-on-debate",
-    "//theguardian.com/us-news/2026/oct/09/us-midterms-michigan-georgia-maine-senate-debate-key-takeaways"
    ],
    "scores": {
     "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Senate debates in Michigan, Georgia, and Maine show competitive midterm races as Republicans fight to hold ground.",
-   "assembly_score": 0.37
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "722e78462e38618d",
-   "title": "Houthis claim destruction of Saudi jet at Riyadh airport, killing pilot",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Semafor",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16195367/Houthis-destroy-passenger-jet-Riyadhs-international-airport-Iran-backed-rebels-escalate-attacks-Saudi-Arabia.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//semafor.com/article/10/09/2026/saudi-arabia-faces-its-toughest-moment-of-war"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 4,
+    "explainability": 3,
     "actionability": 1,
     "conversational_currency": 4
    },
    "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
    "ledger_class": null,
    "new_facts": [],
-   "line": "Houthi forces claim to have destroyed a Saudi passenger jet at Riyadh airport, killing a pilot, in an escalation of attacks on Saudi Arabia.",
-   "assembly_score": 0.15
+   "line": "Manchester City found guilty of financial breaches; faces potential points deduction while appealing verdict; uncertainty roils Premier League.",
+   "assembly_score": 5.49
   },
   {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "691cbeb3a3fec4d1",
-   "title": "Trump reserves campaign funds for family legal defense if Democrats retake House",
+   "slot": "unavoidable",
+   "slot_label": "Unavoidable",
+   "key": "7343e10e8dea17e0",
+   "title": "Pentagon plans to livestream Fort Hood shooter's execution; UN calls it torture",
    "beat": "national",
-   "publisher_count": 2,
+   "publisher_count": 10,
    "publishers": [
-    "Daily Beast",
-    "Semafor"
-   ],
-   "urls": [
-    "//semafor.com/article/10/09/2026/democrats-unite-around-hegseth-impeachment-push",
-    "//thedailybeast.com/trump-plots-to-save-barron-from-embarrassment"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump is setting aside campaign funds for family legal defense if Democrats win House control and launch investigations.",
-   "assembly_score": 0.1
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "e4474826fa21b9f9",
-   "title": "Labour wins London byelection amid candidate's Israel controversy",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
+    "BBC",
+    "New York Times",
     "The Guardian",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16194609/Polanski-polls-close-Holborn-election-Green.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//theguardian.com/politics/2026/oct/09/labour-wins-holborn-st-pancras-byelection-green-party"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Labour held a London seat against Green challengers in a byelection; a Labour candidate faced criticism over past statements on Israel.",
-   "assembly_score": 0.02
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "c804e0ef07b44b3f",
-   "title": "Live: 141 French high schools closed as student protests continue for fifth day",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
+    "Yahoo News",
     "Al Jazeera",
-    "France 24"
-   ],
-   "urls": [
-    "//aljazeera.com/sports/2026/10/9/nba-star-wembanyama-to-french-students-i-hear-you?traffic_source=rss",
-    "//france24.com/en/france/20261009-live-141-french-high-schools-closed-as-student-protests-continue-for-fifth-day"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.1
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "608277eef827c120",
-   "title": "Hurricane Isaias \u2018biggest test\u2019 for Fema since Trump cuts, experts warn",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "Fox 5 Atlanta"
-   ],
-   "urls": [
-    "//fox5atlanta.com/live-blog/news/hurricane-isaias-live-weather-alerts-cancellations-updates-georgia",
-    "//fox5atlanta.com/news/isaias-strengthens-gulf-georgia-prepares-weekend-storms",
-    "//theguardian.com/us-news/2026/oct/09/hurricane-isaias-fema-trump-cuts"
+    "CBS News",
+    "France 24",
+    "NBC News",
+    "Daily Mail",
+    "Memeorandum"
    ],
    "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
+    "emotional_load": 5,
+    "explainability": 5,
+    "actionability": 1,
+    "conversational_currency": 5
    },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
+   "politician_led": true,
    "ledger_class": null,
    "new_facts": [],
-   "line": "",
-   "assembly_score": -0.12
+   "line": "Pentagon plans to livestream the execution of the Fort Hood shooter; UN says it violates international law against torture.",
+   "assembly_score": 10.22
   },
   {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "99817125d9062a10",
-   "title": "A student hated reading for years. Her podcast explores finding the right diagnosis",
+   "slot": "unavoidable",
+   "slot_label": "Unavoidable",
+   "key": "f8bd54ee929016d1",
+   "title": "Trump establishes committee to investigate Fed governor Lisa Cook",
    "beat": "national",
-   "publisher_count": 2,
+   "publisher_count": 5,
    "publishers": [
-    "NPR",
-    "CBS News"
-   ],
-   "urls": [
-    "//cbsnews.com/losangeles/news/student-fights-threats-in-schools-higher-than-4-years-ago-lausd-data-shows",
-    "//npr.org/2026/10/09/nx-s1-5977043/dyslexia-teenager-diagnosis-reading"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.13
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "02393f34e63782ea",
-   "title": "In new Elon Musk documentary, his lieutenants are the most damning voices",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
+    "Financial Times",
+    "New York Times",
+    "CNBC",
     "NBC News",
     "Memeorandum"
    ],
-   "urls": [
-    "//memeorandum.com/261009/p3",
-    "//nbcnews.com/tech/elon-musk/elon-musk-documentary-lieutenants-are-damning-voices-rcna601834"
-   ],
    "scores": {
     "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
+    "explainability": 4,
+    "actionability": 1,
+    "conversational_currency": 4
    },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
+   "politician_led": true,
    "ledger_class": null,
    "new_facts": [],
-   "line": "",
-   "assembly_score": -0.13
+   "line": "Trump establishes a committee to investigate Federal Reserve governor Lisa Cook, potentially laying groundwork to remove her.",
+   "assembly_score": 7.51
   },
   {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "7f5fdfab08c9e760",
-   "title": "AI, Tech Leaders Are Lobbying Trump Health Officials in a Government-Run Chat Room",
+   "slot": "flex",
+   "slot_label": "Flex",
+   "key": "905b9b11eeae5587",
+   "title": "Senate candidates debate in Georgia, Maine, Michigan ahead of midterms",
    "beat": "national",
-   "publisher_count": 2,
+   "publisher_count": 3,
    "publishers": [
-    "KFF Health News",
-    "CBS News"
-   ],
-   "urls": [
-    "//cbsnews.com/news/ai-tech-leaders-trump-health-officials-slack",
-    "//kffhealthnews.org/health-industry/ai-tech-lobbying-medicare-medical-records-apps-trump-cms-slack-fda"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.13
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "c8f23c5b7f012726",
-   "title": "OpenAI defends decision to fire researchers: 'These decisions were not about raising safety concerns or speaking out'",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "CNBC",
-    "Techmeme"
-   ],
-   "urls": [
-    "//cnbc.com/2026/10/09/openai-fired-researchers-ai-concerns.html",
-    "//techmeme.com/261009/p5"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.3
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "1fe5ee33d6a0ac77",
-   "title": "Anthony Vaccarello Bows Out at Saint Laurent",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "ANSA",
-    "Vogue"
-   ],
-   "urls": [
-    "//ansa.it/sito/notizie/economia/aziende/2026/10/09/vaccarello-lascia-la-direzione-creativa-di-yves-saint-laurent-_aef72980-cc6a-40b7-ac4a-435d623f0849.html",
-    "//vogue.com/article/anthony-vaccarello-bows-out-at-yves-saint-laurent"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.36
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "1ce36caa6c8fec6f",
-   "title": "Trump says US will not strike Iran before midterm elections",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "CNBC"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/10/9/trump-says-us-will-not-strike-iran-before-midterm-elections?traffic_source=rss",
-    "//cnbc.com/2026/10/09/us-treasurys-bond-yields-midterms.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.72
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "782cef128aae165c",
-   "title": "Everton owners consider selling club two years after takeover",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//bbc.co.uk/sport/football/articles/cmvg9pgg4keyo?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/sport/football/article-16195451/Everton-owners-Friedkin-Group-open-sale-club.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.74
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "372aa43bea90b2ca",
-   "title": "Obama throws support behind Pennsylvania Gov. Josh Shapiro's reelection bid",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
+    "ABC News",
     "CBS News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//cbsnews.com/news/obama-endorses-pennsylvania-governor-josh-shapiro",
-    "//memeorandum.com/261009/p2"
+    "The Atlantic"
    ],
    "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
+    "emotional_load": 2,
+    "explainability": 5,
     "actionability": 3,
     "conversational_currency": 3
    },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
+   "politician_led": true,
    "ledger_class": null,
    "new_facts": [],
-   "line": "",
-   "assembly_score": -1.13
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "24865d4734b99717",
-   "title": "Adidas accuses Australian label White Fox of \u2018trading off its reputation\u2019 with use of four-stripe branding",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16195325/Adidas-sues-White-Fox-stripe-design-trademark.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//theguardian.com/business/2026/oct/09/adidas-white-fox-fashion-australia-trading-branding-sydney-ntwnfb"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.38
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "1fcf8cc28156fee2",
-   "title": "Why Elon Musk is taking on India's richest man over Starlink",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "CNBC"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/cvglw9ryjrylo?at_campaign=rss&at_medium=RSS",
-    "//cnbc.com/2026/10/09/musk-starlink-ambani-india-us.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.42
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "6d1a9fbef2a4be59",
-   "title": "Byron Donalds says he is not a \u2018yes man\u2019 to Trump",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Politico",
-    "Atlanta Black Star"
-   ],
-   "urls": [
-    "//atlantablackstar.com/2026/10/09/trump-erupts-after-brutal-close-up",
-    "//politico.com/video/2026/10/08/byron-donalds-says-he-is-not-a-yes-man-to-trump-2194998"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.13
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "8b42f544a7aa16fd",
-   "title": "Bucky Irving runs riot as Buccaneers stun Cowboys for first win of season",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "Fox News"
-   ],
-   "urls": [
-    "//foxnews.com/outkick-sports/brian-schottenheimer-hottest-seat-nfl-cowboys-collapse-buccaneers",
-    "//theguardian.com/sport/2026/oct/08/bucky-irving-tampa-bay-buccaneers-dallas-cowboys-nfl"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -5.21
+   "line": "Senate candidates debated in competitive states days before midterm voting.",
+   "assembly_score": 5.28
   }
  ],
  "excluded_sample": [
   {
-   "title": "Julie de Libran Spring 2027 Ready-to-Wear",
+   "title": "Verstappen on sprint pole after another settings issue",
    "why": "triage verdict NO"
   },
   {
-   "title": "Bidets save you money and reduce waste \u2014 we tested the best options out there",
+   "title": "Jimmy Kimmel on Trump\u2019s government: \u2018There\u2019s just so much lying and stealing\u2019",
    "why": "triage verdict NO"
   },
   {
-   "title": "50+ products to make your life easier and our planet cleaner",
+   "title": "Rocket Report: A rare Falcon 9 scrub; is it just about Vulcan's time to shine?",
    "why": "triage verdict NO"
   },
   {
-   "title": "Mother's Day is around the corner. Here are 50+ thoughtful gifts she'll love",
+   "title": "Hegseth Wants You to Watch a Snuff Film",
    "why": "triage verdict NO"
   },
   {
-   "title": "A head-to-toe guide of how men should dress this spring, and where they should shop",
+   "title": "I\u2019m Still Convinced the iPod Was the Perfect Gadget",
    "why": "triage verdict NO"
   },
   {
-   "title": "42 of the most useful travel products you can buy on Amazon",
+   "title": "Telfar Spring 2027 Ready-to-Wear",
    "why": "triage verdict NO"
   },
   {
-   "title": "The 7 best high-yield savings accounts of April 2023",
+   "title": "What's the healthiest meal to order from Greggs? Diet expert reveals the pastry that's surprisingly good for you",
    "why": "triage verdict NO"
   },
   {
-   "title": "Composting is an easy way to reduce food waste. Here's how to do it",
+   "title": "How John Lewis became cool again: High street giant now rivals Zara and Mango as THE place to shop at any age - and the 22 picks our fashion stylist says are a must-have this season",
    "why": "triage verdict NO"
   },
   {
-   "title": "We stopped using aluminum foil for cooking and you should too. Here's what to use instead",
+   "title": "The courtier who modernised the monarchy: ROBERT HARDMAN remembers inventor of the 'walkabout' Sir William Heseltine, who organised 1969 Royal Family film - and made the late Queen laugh",
    "why": "triage verdict NO"
   },
   {
-   "title": "The beloved Dyson Supersonic hair dryer is at its lowest price ever",
+   "title": "The Vogue Business Beauty Trend Tracker",
    "why": "triage verdict NO"
   },
   {
-   "title": "Everything you need to know about Way Day 2023, Wayfair's biggest sale of the year",
+   "title": "Germany women's football team: Can Ena Mahmutovic make a case to become Germany's next No.1 goalkeeper?",
    "why": "triage verdict NO"
   },
   {
-   "title": "The 2024 presidential alternative many voters will want",
+   "title": "British mother who broke her back in Greece when car slammed into her quadbike is left with \u00a328,000 medical bill due to 'wrong travel insurance'",
    "why": "triage verdict NO"
   },
   {
-   "title": "Brooklyn Beckham carries his 'world' Nicola Peltz on his back in loved-up clip after reigniting family feud with parents David and Victoria",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "01) Beckett Brookshire 10-21-26",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "In the Age of AI, Fashion Wants to Turn You On",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "The Scoop With Guess\u2019s Nicolai Marciano: On the Brand\u2019s Latest Campaign and New Ambassador",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Leafy outcome",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Tony Romo got disqualified from his Korn Ferry qualifier the same day he 'parted ways' with CBS Sports",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "How affordability crisis impacts Americans' everyday lives \u2013 and how some are dealing with it",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "$10million thriller! Michael Jackson's jacket goes up for sale",
+   "title": "Proteste in Francia, un poliziotto balla l\u2019haka e conquista i liceali",
    "why": "triage verdict NO"
   }
  ]
