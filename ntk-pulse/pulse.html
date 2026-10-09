@@ -1454,7 +1454,7 @@ function catEnsureLocal(id){            // editing a published category copies i
   CATS[id]=JSON.parse(JSON.stringify({id:p.id,title:p.title,status:'approved',contest:p.contest||'',stakes:p.stakes||'',lenses:p.lenses||[],subgenres:p.subgenres||[],custom_objects:p.custom_objects||[],
     indicator:p.indicator||null,objects:(p.objects||[]).map(o=>({object_id:o.object_id,about:o.about,by:o.by||'model'})),
     beginnings:(p.beginnings||[]).map(b=>({object_id:b.object_id,line:b.line,by:b.by||'model'})),
-    by:p.by||{},approved_objects:p.approved_objects||[],revisions:p.revisions||[],created:p.created}));
+    by:p.by||{},approved_objects:p.approved_objects||[],auto:!!p.auto,auto_approved:p.auto_approved||[],revisions:p.revisions||[],created:p.created}));
   saveCats(); return CATS[id];
 }
 function newCategory(name, storyKeys){
@@ -1744,6 +1744,7 @@ function catEditorHtml(c){
         <b>${esc(e.year||'')}</b> <span>${esc(e.title||o.object_id)}</span>
         <a href="${esc(e.url||'#')}" target="_blank" rel="noopener" style="font-size:11px">open source ↗</a>
         <span class="chip">${esc(e.link_status||'')}</span>
+        ${(c.auto_approved||[]).includes(o.object_id)?'<span class="chip" style="background:var(--warn);color:#fff" title="included automatically; its link was read but you have not reviewed it">auto-included</span> <button class="mini cat-reviewed">mark reviewed</button>':''}
         ${cand?`<label style="font-size:11px;${ok?'':'color:var(--warn)'}"><input type="checkbox" class="cat-approve" ${ok?'checked':''} ${e.approved?'disabled':''}> ${ok?'approved':'candidate, needs your approval'}</label>`:'<span class="chip">'+esc(e.pool==='custom'?'added':'matrix')+'</span>'}
         <button class="mini cat-rm" style="margin-left:auto">remove</button>
       </div>
@@ -1777,6 +1778,7 @@ function catEditorHtml(c){
       <button class="mini ${c.status==='approved'?'':'primary'}" id="cat-approve">${c.status==='approved'?'Back to draft':'Approve for publish'}</button>
       <button class="mini" id="cat-del">${PUBCATS.some(r=>r.id===c.id)?'(published)':'Delete'}</button>
     </div>
+    ${c.auto?`<div style="font-size:12px;margin-bottom:8px;padding:6px 8px;border:1px solid var(--rule);background:#faf8f3">Made automatically by the publish step from the story filed under it, because no row fit. It is live as written. Read it, and revise or edit whatever is wrong.${(c.auto_approved||[]).length?` ${(c.auto_approved||[]).length} candidate source${(c.auto_approved||[]).length===1?' was':'s were'} included without your review (their links were read).`:''}</div>`:''}
     ${CAT_MSG[c.id]?`<div style="font-size:12px;margin-bottom:8px;color:${/failed/.test(CAT_MSG[c.id])?'var(--stale)':'var(--dim)'}">${esc(CAT_MSG[c.id])}</div>`:''}
     <div style="font-size:11px;color:var(--dim);margin-bottom:6px">Filed under it: ${stories.length?stories.map(s=>esc(s.title)).join(' · '):'no story yet. In Lineup, pick this category on a story.'}</div>
     <div style="margin:8px 0"><b style="font-size:11px">LENSES</b> <span style="font-size:11px;color:var(--dim)">histories to draw Beginnings from. A ⚠ means the story never mentions the subject, and publish will drop it unless you chose it.</span><div style="margin-top:4px">${lensHtml||'<i>none</i>'}</div></div>
@@ -1847,7 +1849,7 @@ function renderBackstory(root){
       <div>
         <div style="font-size:11px;color:var(--dim);margin-bottom:6px">CATEGORIES</div>
         ${list.map(({rec,where})=>`<div class="story cat-pick" data-id="${esc(rec.id)}" style="padding:7px 9px;cursor:pointer;${rec.id===CAT_SEL?'border-color:var(--ink)':''}">
-          <b style="font-size:12px">${esc(rec.title)}</b><br><span style="font-size:10.5px;color:var(--dim)">${esc(where==='published'?'published':rec.status)} · ${catStories(rec.id).length} stor${catStories(rec.id).length===1?'y':'ies'} filed</span></div>`).join('')||'<i style="font-size:12px;color:var(--dim)">none yet</i>'}
+          <b style="font-size:12px">${esc(rec.title)}</b><br><span style="font-size:10.5px;color:var(--dim)">${esc(where==='published'?'published':rec.status)}${rec.auto?' · auto':''} · ${catStories(rec.id).length} stor${catStories(rec.id).length===1?'y':'ies'} filed</span></div>`).join('')||'<i style="font-size:12px;color:var(--dim)">none yet</i>'}
         <button class="mini primary" id="cat-new" style="margin-top:6px">+ new category</button>
         <div style="font-size:11px;color:var(--dim);margin-top:10px;line-height:1.5">The 21 fixed rows are edited in <code>editorial/backstory-rows.json</code>. A category made here becomes a page of its own and is sent with the Lineup publish once approved.</div>
       </div>
@@ -1878,6 +1880,7 @@ function renderBackstory(root){
       touch(); render(); });
     const ap=row.querySelector('.cat-approve'); if (ap) ap.addEventListener('change',e=>{
       c.approved_objects=e.target.checked?Array.from(new Set((c.approved_objects||[]).concat([oid]))):(c.approved_objects||[]).filter(x=>x!==oid); touch(); render(); });
+    const rv=row.querySelector('.cat-reviewed'); if (rv) rv.addEventListener('click',()=>{ c.auto_approved=(c.auto_approved||[]).filter(x=>x!==oid); touch(); render(); });
     row.querySelector('.cat-editsrc').addEventListener('click',ev=>{ ev.preventDefault(); CAT_SRC_OPEN[oid]=!CAT_SRC_OPEN[oid]; render(); });
     const sv=row.querySelector('.cat-src-save'); if (sv) sv.addEventListener('click',()=>{
       const f={}; row.querySelectorAll('.cat-src-f').forEach(el=>{ f[el.dataset.f]=el.value; });
