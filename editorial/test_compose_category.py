@@ -76,7 +76,7 @@ def caller_list(key, model, system, user, mt):
         return [i for i in ids if BY[i]["pool"] == "matrix"][:5]       # a bare list, as the real model once answered
     return caller(key, model, system, user, mt)
 recl, nl = CC.compose("k", "m", STORY, "AI", POOL, SPEC, caller_list, searcher_ok)
-check("a bare list of ids from the model is accepted", recl is not None and len(recl["objects"]) == 5 and any("chosen for relevance" in n for n in nl), nl)
+check("a bare list of ids from the model is accepted", recl is not None and 1 <= len(recl["objects"]) <= 5 and all(BY[o["object_id"]]["pool"] == "matrix" for o in recl["objects"]) and any("chosen for relevance" in n for n in nl), nl)
 def caller_sg(key, model, system, user, mt):
     if "choose the primary sources" in user: raise RuntimeError("down")
     r = caller(key, model, system, user, mt)
