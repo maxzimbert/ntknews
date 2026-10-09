@@ -1,7 +1,7 @@
 ---
 id: T-0082
 title: Stream has a keyword search held to the publisher bar, and Lineup never auto-fills a story with no source URLs
-status: BUILT
+status: VERIFIED
 tags: [pulse, feature]
 anchor: ntk-pulse/pulse.html
 ---
@@ -35,8 +35,10 @@ Verified 2026-10-09 on localhost: with four edition clusters removed from the st
 a recorded URL and two with none, a cleared Lineup refilled to 8 with 0 sourceless stories; the
 URL-less story stayed a candidate. Against production's `news.js` (no mode yet), the search kept
 its window results and reported the missing mode instead of using the unfiltered fallback.
-Not verified: a real ER call through `keyword-search` (the same query shape was run directly
-against ER and returned relevant results), and anything on the Pages Pulse.
+After merge (9c605d3), the production function answered `keyword-search` with the tag for both
+pools: `pool=ntk` returned only NTK-list outlets (usatoday.com, cbsnews.com), `pool=top` returned
+Yahoo Sports, Economic Times, USA Today. The Pages Pulse served the search box. Not verified: a
+search run by the editor inside the Pages Pulse.
 
 ## Why
 
