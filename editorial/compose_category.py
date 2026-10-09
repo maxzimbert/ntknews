@@ -154,7 +154,7 @@ JSON only: {"choose":["<id>", ...],"why":"one sentence"}"""
     return pick(objs, lenses, [])
 
 
-def find_milestones(api_key, model, story, title, contest, have, need, searcher=None):
+def find_milestones(api_key, model, story, title, contest, have, need, searcher=None, caller=None):
     """Milestones in the history of this subject, each with a primary document, found by web search.
 
     Used when the pool does not hold enough that connect (the matrix has almost nothing on biosecurity
@@ -180,36 +180,75 @@ Rules: use only facts that the page states; the line and about may contain no nu
     items = parse_json_loose(text, "milestones")
     if isinstance(items, dict):
         items = items.get("milestones") or []
-    out, notes = [], []
-    for m in items[:need + 2]:
+    out, notes, fixable = [], [], []
+
+    def provenance(m):
         t = str(m.get("title") or "").strip()
         url = str(m.get("source_url") or "").strip()
         host = re.sub(r"^https?://([^/]+).*$", r"\1", url).lower()
-        why = None
         if not url.startswith("https://"):
-            why = "link is not https"
-        elif url not in urls:
-            why = "the link is not one the search returned"
-        elif any(d in host for d in C.DENY_HOSTS):
-            why = f"{host} is not a primary source"
-        elif not re.fullmatch(r"\d{3,4}", str(m.get("year") or "")):
-            why = "no year"
-        elif not t or not (m.get("evidence_quote") or "").strip():
-            why = "no title or no quote from the page"
-        else:
-            lp = C.text_problems("line", (m.get("line") or "").strip(), 12, 25, sentences=1)
-            ap = C.text_problems("about", (m.get("about") or "").strip(), 1, 70)
-            if lp or ap:
-                why = "; ".join(lp + ap)
-            elif not C.numbers_ok(m["line"] + " " + m["about"], t, m["year"], m.get("date"), m["evidence_quote"]):
-                why = "a number is not in the quote"
-        if why:
-            notes.append(f"milestone {t[:40]!r} rejected: {why}")
-            continue
+            return "link is not https"
+        if url not in urls:
+            return "the link is not one the search returned"
+        if any(d in host for d in C.DENY_HOSTS):
+            return f"{host} is not a primary source"
+        if not re.fullmatch(r"\d{3,4}", str(m.get("year") or "")):
+            return "no year"
+        if not t or not (m.get("evidence_quote") or "").strip():
+            return "no title or no quote from the page"
+        return None
+
+    def text_problems(m):
+        lp = C.text_problems("line", (m.get("line") or "").strip(), 12, 25, sentences=1)
+        ap = C.text_problems("about", (m.get("about") or "").strip(), 1, 70)
+        p = lp + ap
+        if not p and not C.numbers_ok(m["line"] + " " + m["about"], m["title"], m["year"], m.get("date"), m["evidence_quote"]):
+            p = ["a number is not in the quote"]
+        return p
+
+    def accept(m):
+        host = re.sub(r"^https?://([^/]+).*$", r"\1", m["source_url"]).lower()
+        t = m["title"].strip()
         out.append({"id": "custom-" + re.sub(r"[^a-z0-9]+", "-", t.lower())[:60], "title": t, "author": (m.get("author") or "").strip(),
                     "year": str(m["year"]), "date": m.get("date") if re.fullmatch(r"\d{4}-\d\d-\d\d", str(m.get("date") or "")) else "",
-                    "source": (m.get("source") or host).strip(), "url": url, "found_by": "search",
+                    "source": (m.get("source") or host).strip(), "url": m["source_url"].strip(), "found_by": "search",
                     "evidence_quote": m["evidence_quote"].strip(), "line": m["line"].strip(), "about": m["about"].strip()})
+
+    for m in items[:need + 3]:
+        bad = provenance(m)
+        if bad:
+            notes.append(f"milestone {str(m.get('title'))[:40]!r} rejected: {bad}")
+            continue
+        tp = text_problems(m)
+        if tp:
+            fixable.append((m, tp))
+        else:
+            accept(m)
+    # The source is sound but the wording broke a rule (a line of 28 words, a number the quote lacks).
+    # The first real run threw the Sverdlovsk outbreak away for being three words over: one repair round.
+    if fixable and caller:
+        rp = ("Some milestone text broke the rules. Rewrite ONLY the line and the about for each item, fixing the problem named. "
+              "A line is ONE sentence of 12 to 25 words. An about is two to four sentences, at most 70 words. The only facts you may "
+              "use are in the title, the date and the evidence quote; use no number that is not in them.\n" + STYLE + "\n\n"
+              + "\n".join(f"- {i} | problem: {'; '.join(tp)} | title: {m['title']} | date: {m.get('date') or m['year']} | evidence quote: {m['evidence_quote']}"
+                          for i, (m, tp) in enumerate(fixable))
+              + '\n\nJSON only: {"0":{"line":"...","about":"..."}, ...}')
+        try:
+            fixed = caller(api_key, model, "", rp, 1500) or {}
+            for i, (m, tp) in enumerate(fixable):
+                f = fixed.get(str(i)) if isinstance(fixed, dict) else None
+                if isinstance(f, dict):
+                    m2 = dict(m, line=f.get("line") or "", about=f.get("about") or "")
+                    if not text_problems(m2):
+                        accept(m2)
+                        notes.append(f"milestone {m['title'][:40]!r} repaired")
+                        continue
+                notes.append(f"milestone {m['title'][:40]!r} rejected: {'; '.join(tp)}")
+        except Exception as e:  # noqa: BLE001
+            notes.append(f"milestone repair skipped ({type(e).__name__}: {str(e)[:80]})")
+    else:
+        for m, tp in fixable:
+            notes.append(f"milestone {m['title'][:40]!r} rejected: {'; '.join(tp)}")
     return out[:need], notes
 
 
@@ -328,7 +367,7 @@ Write JSON only: {{"title":"the category name, 1 to 4 words","contest":"...","st
     found = []
     if len(picked) < 4:
         try:
-            found, fnotes = find_milestones(api_key, model, story, title, r1.get("contest"), picked, 6 - len(picked), searcher)
+            found, fnotes = find_milestones(api_key, model, story, title, r1.get("contest"), picked, 6 - len(picked), searcher, caller)
             notes += fnotes
             notes.append(f"{len(found)} milestone(s) found by search")
         except Exception as e:  # noqa: BLE001

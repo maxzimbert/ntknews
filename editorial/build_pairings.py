@@ -26,6 +26,7 @@ import json
 import os
 import re
 import sys
+import urllib.error
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
@@ -101,8 +102,11 @@ def call_claude(api_key, model, system, user, max_tokens):
         API_URL, data=json.dumps(body).encode("utf-8"),
         headers={"Content-Type": "application/json", "x-api-key": api_key,
                  "anthropic-version": "2023-06-01"}, method="POST")
-    with urllib.request.urlopen(req, timeout=120) as resp:
-        data = json.loads(resp.read())
+    try:
+        with urllib.request.urlopen(req, timeout=120) as resp:
+            data = json.loads(resp.read())
+    except urllib.error.HTTPError as e:      # say why: a bare "HTTP Error 400" cost a whole run to diagnose
+        raise RuntimeError(f"{model} HTTP {e.code}: {e.read().decode('utf-8', 'ignore')[:300]}") from None
     # Filter by block type rather than taking content[0] — a positional read
     # returns undefined the moment a non-text block leads the response.
     text = "".join(b.get("text", "") for b in data.get("content", [])

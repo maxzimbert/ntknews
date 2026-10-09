@@ -116,6 +116,15 @@ num, nn = CC.find_milestones("k", "m", STORY2, "t", "c", [], 3, searcher_ms([ms_
 check("a number not in the quote is rejected", num == [] and any("number" in n for n in nn), nn)
 noq, nq = CC.find_milestones("k", "m", STORY2, "t", "c", [], 3, searcher_ms([ms_item(evidence_quote="")]))
 check("a milestone with no quote from the page is rejected", noq == [], nq)
+long_line = "Dozens of states signed a treaty banning the development, production and stockpiling of biological weapons in April 1972 after years of talks in Geneva and elsewhere."
+def caller_fix(key, model, system, user, mt):
+    if "broke the rules" in user:
+        return {"0": {"line": "Dozens of states signed a treaty banning biological weapons in April 1972.", "about": "Governments signed this treaty in 1972. It bans biological weapons. It was opened for signature in April."}}
+    return caller(key, model, system, user, mt)
+fixed_ms, nf = CC.find_milestones("k", "m", STORY2, "t", "c", [], 3, searcher_ms([ms_item(line=long_line)]), caller_fix)
+check("a milestone whose line is a few words too long is repaired, not thrown away", len(fixed_ms) == 1 and len(fixed_ms[0]["line"].split()) <= 25 and any("repaired" in n for n in nf), nf)
+unfixed, nu = CC.find_milestones("k", "m", STORY2, "t", "c", [], 3, searcher_ms([ms_item(line=long_line)]), None)
+check("without a repair caller the long line is rejected", unfixed == [], nu)
 recn, nn2 = CC.compose("k", "m", STORY2, "Biosecurity", POOL, SPEC, caller_none_connect, searcher_ms([]))
 check("nothing in the pool and nothing found: no category", recn is None, nn2)
 recs2, ns2 = CC.compose("k", "m", STORY, "AI", POOL, SPEC, caller, searcher_ok)

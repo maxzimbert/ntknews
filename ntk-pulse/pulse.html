@@ -1643,13 +1643,25 @@ Find ${need} more milestones: turning points in how we got to this story. Each i
 [{"year":"YYYY","date":"YYYY-MM-DD if you know it, else null","title":"the document's exact title","author":"who issued or wrote it","source":"the publishing body or archive","source_url":"the exact page or PDF where it can be read","line":"ONE sentence, 12 to 25 words, saying what happened, starting with the actor or the event","about":"two to four sentences, at most 70 words: what the document is, who made it and when, what it says or did","evidence_quote":"one sentence copied word for word from that page that supports the line"}]
 Rules: use only facts that the page states; the line and about may contain no number that is not in the title, the date or the evidence_quote. If you cannot find ${need}, give fewer. If you find none, answer [].
 ${CAT_STYLE_RULES}`;
-  const r=await aiSearch(p,4000), items=catJsonAny(r.text), out=[];
-  items.slice(0,need+2).forEach(m=>{
-    const v=verifyMilestone(m, r.urls);
-    if (!v.ok){ msgs.push('Milestone "'+String(m.title||'').slice(0,40)+'" rejected: '+v.reason+'.'); return; }
+  const r=await aiSearch(p,4000), items=catJsonAny(r.text), out=[], fixable=[];
+  const accept=m=>{
     const cid='custom-'+String(m.title).trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,60);
     out.push({cu:{id:cid,title:String(m.title).trim(),author:String(m.author||'').trim(),year:String(m.year),date:/^\d{4}-\d\d-\d\d$/.test(m.date||'')?m.date:'',source:String(m.source||'').trim(),url:String(m.source_url).trim(),found_by:'search',evidence_quote:String(m.evidence_quote).trim()},line:String(m.line).trim(),about:String(m.about).trim()});
+  };
+  items.slice(0,need+3).forEach(m=>{
+    const v=verifyMilestone(m, r.urls);
+    if (v.ok) return accept(m);
+    // a sound source with wording that broke a rule (a line of 28 words, a number the quote lacks) gets one repair round
+    const textOnly=m.source_url && (r.urls||[]).includes(m.source_url) && /^\d{3,4}$/.test(String(m.year||'')) && m.title && m.evidence_quote && /words|sentence|number|dash|banned|empty/.test(v.reason);
+    if (textOnly) fixable.push({m:m,reason:v.reason}); else msgs.push('Milestone "'+String(m.title||'').slice(0,40)+'" rejected: '+v.reason+'.');
   });
+  if (fixable.length){
+    const rp="Some milestone text broke the rules. Rewrite ONLY the line and the about for each item, fixing the problem named. A line is ONE sentence of 12 to 25 words. An about is two to four sentences, at most 70 words. The only facts you may use are in the title, the date and the evidence quote; use no number that is not in them.\n"+CAT_STYLE_RULES+"\n\n"+fixable.map((f,i)=>'- '+i+' | problem: '+f.reason+' | title: '+f.m.title+' | date: '+(f.m.date||f.m.year)+' | evidence quote: '+f.m.evidence_quote).join('\n')+'\n\nJSON only: {"0":{"line":"...","about":"..."}, ...}';
+    try {
+      const fx=catJson(await ai(rp,1500));
+      fixable.forEach((f,i)=>{ const t=fx[String(i)]; if (t){ const m2=Object.assign({}, f.m, {line:t.line||'',about:t.about||''}); if (verifyMilestone(m2,r.urls).ok){ accept(m2); return; } } msgs.push('Milestone "'+String(f.m.title).slice(0,40)+'" rejected: '+f.reason+'.'); });
+    } catch(e){ fixable.forEach(f=>msgs.push('Milestone "'+String(f.m.title).slice(0,40)+'" rejected: '+f.reason+'.')); }
+  }
   return out.slice(0,need);
 }
 async function composeCat(id){
