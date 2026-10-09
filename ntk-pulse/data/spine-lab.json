@@ -2,9 +2,9 @@
  "generated": "2026-10-09T23:19:24+00:00",
  "model": "claude-sonnet-5-5",
  "usage": {
-  "calls": 23,
-  "input_tokens": 1862528,
-  "output_tokens": 39776,
+  "calls": 35,
+  "input_tokens": 1885962,
+  "output_tokens": 46748,
   "web_searches": 83
  },
  "log": [
@@ -30,7 +30,14 @@
   "thread 'Sam Altman Says \"Bad Things Will Happen\" From AI. ': start m3 | beginnings ['m1', 'm2'] | since ['m5']",
   "thread 'Saudi Arabia Just Rebuilt the Exact Coalition That': start m8 | beginnings ['m2', 'm3', 'm4', 'm5', 'm6'] | since []",
   "thread \"Diesel Hit $6.53 a Gallon This Year. Trump's Fix I\": start m4 | beginnings ['m1', 'm2', 'm3'] | since ['m11', 'm12']",
-  "thread 'Boulder County Wants Exxon to Pay for Its Wildfire': start m4 | beginnings ['m1', 'm2', 'm3', 'm5'] | since ['m7', 'm9']"
+  "thread 'Boulder County Wants Exxon to Pay for Its Wildfire': start m4 | beginnings ['m1', 'm2', 'm3', 'm5'] | since ['m7', 'm9']",
+  "--- threads redone ---",
+  "thread 'A 28-Year-Old Lab Worker Died in Siberia. Russia L': start m5 | beginnings ['m2', 'm3', 'm4'] | since ['m8', 'm9']",
+  "thread 'Utah Will Let AI Prescribe Acne Drugs With No Doct': start m2 | beginnings ['m1'] | since ['m5', 'm6']",
+  "thread 'Sam Altman Says \"Bad Things Will Happen\" From AI. ': start m3 | beginnings ['m1', 'm2'] | since ['m5']",
+  "thread 'Saudi Arabia Just Rebuilt the Exact Coalition That': start m6 | beginnings ['m2', 'm3', 'm4', 'm5'] | since ['m8']",
+  "thread \"Diesel Hit $6.53 a Gallon This Year. Trump's Fix I\": start m4 | beginnings ['m1', 'm2', 'm3'] | since ['m9', 'm12']",
+  "thread 'Boulder County Wants Exxon to Pay for Its Wildfire': start m4 | beginnings ['m1', 'm2', 'm3', 'm6'] | since ['m7', 'm9']"
  ],
  "stories": [
   {
@@ -59,79 +66,71 @@
     "why": "A lab worker's unexplained death, conflicting official diagnoses and a regional lockdown form a public-health disclosure story that fits no existing category's history."
    },
    "thread": {
-    "start": "m7",
-    "start_line": "When Irkutsk Anti-Plague Research Institute lab worker Darya Shipilova died of severe pneumonia, the Russian government met the same day over a suspected dangerous infection.",
+    "start": "m5",
+    "start_line": "When the 58th World Health Assembly adopted the International Health Regulations (2005), it required each state to assess outbreaks in its territory and notify WHO within 24 hours.",
     "runner_ups": [
      {
-      "id": "m5",
-      "why_weaker": "The 2005 regulations set the notification duty that frames the dispute, but a rule in force for two decades did not by itself create this lab death or the lockdown."
+      "id": "m4",
+      "why_weaker": "It let WHO act on unofficial reports, but only asked the Director-General to do so; the binding duty to notify came with the 2005 regulations."
      },
      {
       "id": "m2",
-      "why_weaker": "The 1980 Sverdlovsk exchange is a distant root for Soviet-era official denial, not the specific event that set this story in motion."
+      "why_weaker": "It shows the Soviet pattern of denial over Sverdlovsk, but it predates any binding duty to report outbreaks and is a distant root."
      }
     ],
     "beginnings": [
      {
       "id": "m2",
-      "why": "Soviet officials answered the United States by attributing the Sverdlovsk deaths to contaminated meat, an early case of a Russian-state explanation for a deadly outbreak that outside governments doubted."
+      "why": "It shows the Soviet government answering a foreign inquiry about mass deaths with an official explanation of tainted meat, the same Russian-state pattern of contested accounts seen in Irkutsk."
+     },
+     {
+      "id": "m3",
+      "why": "It shows a state revising its reported case and death counts only after a WHO team reviewed the data, an earlier case of official figures failing to match events."
      },
      {
       "id": "m4",
-      "why": "The 2003 World Health Assembly resolution let WHO act on reports from sources other than official notifications, the basis for its later request to Russia after media reports of plague."
-     },
-     {
-      "id": "m5",
-      "why": "The 2005 International Health Regulations require Russia to assess events on its territory and notify WHO within 24 hours, the standard its handling of the Irkutsk death is measured against."
-     },
-     {
-      "id": "m6",
-      "why": "WHO's 2020 notice on pneumonia of unknown cause in Wuhan, issued after it asked Chinese authorities for information, parallels Rospotrebnadzor's later label of pneumonia of unknown aetiology and WHO's reliance on unofficial reports."
+      "why": "It authorized WHO to act on media and other unofficial reports, which is how WHO came to question Russia about the Irkutsk death."
      }
     ],
     "since": [
      {
       "id": "m8",
-      "why": "WHO asked Russia under the International Health Regulations for more information after its monitoring picked up media reports of suspected pneumonic plague."
+      "why": "WHO asked Russia for information under the International Health Regulations after its monitoring picked up media reports of suspected pneumonic plague."
      },
      {
       "id": "m9",
-      "why": "Russian health authorities told WHO that no plague case had recently been reported in Irkutsk oblast and that about 200 contacts were in quarantine, the official account set against the governor's earlier claim."
+      "why": "Russian authorities answered WHO that no plague case had recently been reported in Irkutsk oblast while confirming about 200 contacts in quarantine."
      }
     ],
     "judge": {
      "items": {
-      "m7": {
+      "m5": {
        "keep": true,
-       "why": "This is the death of Shipilova itself and the same-day government meeting, the event the whole story is about."
+       "why": "The IHR (2005) is the legal obligation to notify WHO within 24 hours that Russia's contested account runs up against, so it explains why WHO is asking questions at all."
       },
       "m2": {
-       "keep": false,
-       "why": "The 1980 Sverdlovsk anthrax episode is a Cold War analogy of official Soviet denial, but it is a different outbreak and the story never names it as background."
+       "keep": true,
+       "why": "Sverdlovsk 1980 is a prior case of Soviet authorities giving an implausible natural-cause explanation for deaths at a lab-linked site, showing the pattern of official denial that the story hinges on."
+      },
+      "m3": {
+       "keep": true,
+       "why": "China's 2003 SARS under-reporting to WHO is an earlier case of a state revising and minimizing an unexplained pneumonia outbreak only under WHO scrutiny, directly paralleling the Rospotrebnadzor 'unknown aetiology' stance."
       },
       "m4": {
-       "keep": false,
-       "why": "A 2003 WHA resolution on non-official sources is general institutional background that the story does not name, and it is not part of this event's own history."
-      },
-      "m5": {
-       "keep": false,
-       "why": "The 2005 IHR adoption is a general framework; the story mentions WHO's contacts but never names the IHR as a background, so it reads as thematic context rather than this story's history."
-      },
-      "m6": {
-       "keep": false,
-       "why": "The Wuhan unknown-pneumonia notice is an analogy sharing only the theme of opaque official reporting, not an earlier instance in this story's own thread."
+       "keep": true,
+       "why": "WHA56.28 is the origin of WHO's ability to act on unofficial media reports, which is exactly how WHO came to query Russia here."
       },
       "m8": {
        "keep": true,
-       "why": "WHO's request for information on the Irkutsk death is a direct development of this story and matches the story's WHO line about unofficial information."
+       "why": "WHO's formal IHR information request to Russia is a direct step in this story's own unfolding."
       },
       "m9": {
        "keep": true,
-       "why": "Russia's reply to WHO denying a recent plague case and reporting about 200 quarantined contacts is a direct development bearing on the story's central contradiction."
+       "why": "Russia's reply denying a recent plague case while confirming about 200 quarantined contacts is a direct development in the story and highlights the contradiction the piece is about."
       }
      },
-     "start_ok": true,
-     "start_note": "Shipilova's death and the same-day government meeting over a suspected dangerous infection is the specific turn that set the whole story in motion."
+     "start_ok": false,
+     "start_note": "The 2005 IHR is a reasonable legal backdrop, but it is not the specific turn that set this story in motion; the 2003 WHA56.28 (reliance on unofficial reports) or the Sverdlovsk precedent would anchor the 'It starts in' better, with the IHR placed as a later beginning item."
     }
    }
   },
@@ -159,54 +158,55 @@
     "why": "Utah's sandbox letting an AI company prescribe drugs without a doctor raises the question of who answers for harm an AI system causes, which is the AI category's contest."
    },
    "thread": {
-    "start": "m6",
-    "start_line": "When Utah's AI policy office and licensing division signed an agreement with Magic Health, Nolla Health's AI gained state permission to prescribe acne drugs.",
+    "start": "m2",
+    "start_line": "When Utah Governor Spencer Cox signed SB 149, the state created an AI policy office and a learning laboratory that could temporarily waive regulations for companies testing AI products.",
     "runner_ups": [
      {
-      "id": "m2",
-      "why_weaker": "It created the sandbox and the policy office, but it authorized no prescribing and named no company, so it is the enabling framework rather than the turn."
+      "id": "m5",
+      "why_weaker": "California's AB 316 is another state's liability rule, not the Utah waiver mechanism that Nolla's pilot runs on."
      },
      {
-      "id": "m5",
-      "why_weaker": "It is a California liability rule about AI-caused harm, with no tie to Utah's sandbox, Nolla Health, or prescribing."
+      "id": "m3",
+      "why_weaker": "The Raine lawsuit is a private wrongful death case over a chatbot, not a regulatory step toward AI prescribing."
      }
     ],
     "beginnings": [
      {
-      "id": "m2",
-      "why": "Governor Cox's signing of SB 149 created the Office of Artificial Intelligence Policy and the regulatory mitigation program that Nolla's pilot operates inside."
-     },
-     {
-      "id": "m3",
-      "why": "The Raine lawsuit shows the legal question behind the story, who answers when an AI system's output harms a person, being raised in court against a developer."
-     },
-     {
-      "id": "m5",
-      "why": "California's AB 316 shows a state closing off the argument that AI acted autonomously, a counterpart to Utah's choice to waive rules and require audits instead."
+      "id": "m1",
+      "why": "Section 230 set the early American pattern of shielding online services from publisher liability, the background to today's argument over who answers when AI causes harm."
      }
     ],
-    "since": [],
+    "since": [
+     {
+      "id": "m5",
+      "why": "California barred AI developers and users from claiming the AI acted autonomously, a liability rule that stands in contrast to Utah's waiver approach."
+     },
+     {
+      "id": "m6",
+      "why": "Utah's AI policy office and licensing division signed the regulatory mitigation agreement with Nolla Health's operator covering AI-issued acne prescriptions, the step directly behind today's announcement."
+     }
+    ],
     "judge": {
      "items": {
-      "m6": {
-       "keep": true,
-       "why": "This is the regulatory agreement that directly authorizes Nolla's AI acne prescribing, the specific event the story reports."
-      },
       "m2": {
        "keep": true,
-       "why": "SB 149 created the Office of AI Policy and the sandbox that the story names as the program underneath Nolla's pilot, so it is the origin of that background."
+       "why": "SB 149 created the Office of AI Policy and the learning-laboratory sandbox that the Nolla pilot sits inside, so it is the origin of the program the story names."
       },
-      "m3": {
+      "m1": {
        "keep": false,
-       "why": "The Raine v. OpenAI wrongful-death suit is a chatbot-harm case in California that shares only the broad AI-liability theme and has no link to Utah's sandbox or Nolla."
+       "why": "Section 230 is about online platform liability for third-party content and has no direct bearing on a state regulatory sandbox for AI prescribing; it shares only a broad tech-regulation theme."
       },
       "m5": {
        "keep": false,
-       "why": "California's AB 316 is a different state's AI liability law that the story never mentions and that only shares the theme of AI accountability."
+       "why": "California's AB 316 concerns liability defenses in AI harm lawsuits in another state, which is a different legal question from Utah's sandbox waivers and does not explain this story's events."
+      },
+      "m6": {
+       "keep": true,
+       "why": "The regulatory mitigation agreement with Magic Health is the specific formal step that authorized Nolla's AI-issued acne prescriptions, directly underlying the announcement."
       }
      },
-     "start_ok": false,
-     "start_note": "The Nolla agreement is the story's news event, but the sandbox that made it possible began with SB 149 in 2024, so 'It starts in 2024' is the better origin than 2026."
+     "start_ok": true,
+     "start_note": "SB 149 in March 2024 is the earlier, specific turn that created the sandbox and AI policy office that made the Nolla approval possible, and it is not today's news itself."
     }
    }
   },
@@ -236,54 +236,54 @@
    },
    "thread": {
     "start": "m3",
-    "start_line": "When Matthew and Maria Raine sued OpenAI and Sam Altman in August 2025 over their son's suicide, a ChatGPT user's death became a courtroom claim of product liability.",
+    "start_line": "When Matthew and Maria Raine sued OpenAI and Sam Altman in San Francisco Superior Court, they made a ChatGPT user's suicide a product liability and wrongful death claim.",
     "runner_ups": [
      {
       "id": "m5",
-      "why_weaker": "AB 316 set a rule for AI liability suits but followed the Raine case and does not involve the suicide the interviewer raised."
+      "why_weaker": "It governs how AI harm is litigated, but it came after the Raine suit and does not itself raise the suicide question."
      },
      {
       "id": "m1",
-      "why_weaker": "Section 230 is a distant legal root that shapes platform liability generally but does not name OpenAI, ChatGPT or any death."
+      "why_weaker": "It is the distant legal root of platform immunity, three decades back and not specific to AI or OpenAI."
      }
     ],
     "beginnings": [
      {
       "id": "m1",
-      "why": "Section 230's shield for publishers of third-party content is the baseline against which claims that ChatGPT's own output harmed a user are argued."
+      "why": "Section 230 set the original rule that online services are not treated as publishers of others' content, the baseline against which AI makers' liability is argued."
      },
      {
       "id": "m2",
-      "why": "Utah's 2024 law, which let AI companies test products under temporary regulatory mitigation, is an early example of the state-level approach to AI risk that the story's probes and lawsuits now test."
+      "why": "Utah's SB 149 created a regulatory sandbox letting AI companies test products under temporary regulatory mitigation, an early case of government weighing AI risk against benefit."
      }
     ],
     "since": [
      {
       "id": "m5",
-      "why": "California's AB 316, signed in October 2025, is the state law that the story says a California public interest group has since sued OpenAI over, and it bars defendants from blaming AI for acting on its own."
+      "why": "California's AB 316 barred AI developers from arguing that the AI acted autonomously, the state law a public interest group is now suing OpenAI over."
      }
     ],
     "judge": {
      "items": {
       "m3": {
        "keep": true,
-       "why": "The Raine lawsuit is the ChatGPT-user suicide case the Vanity Fair interviewer raised, so it is the same subject and the origin of the question the PR staffer tried to shut down."
+       "why": "The Raine wrongful-death suit over a teen's ChatGPT-linked suicide is the specific case that led to the Vanity Fair question about a dead teenager, making it the story's direct origin."
       },
       "m1": {
        "keep": false,
-       "why": "Section 230 is a broad 1996 liability backdrop the story never names, so it is thematic context rather than part of this story's own history."
+       "why": "Section 230 from 1996 is a broad internet-liability background the story never names or invokes; it shares only the general theme of platform liability and would distract."
       },
       "m2": {
        "keep": false,
-       "why": "Utah's AI policy office and regulatory sandbox law share only the general theme of AI regulation and connect to none of the story's named events."
+       "why": "Utah's 2024 AI regulatory sandbox law is a different kind of regulation (pilot-testing relief) unrelated to harm accountability, safety lawsuits, or anything the story discusses."
       },
       "m5": {
        "keep": true,
-       "why": "AB 316 is the California law barring the 'AI did it autonomously' defense, which is the state law the story says a public interest group sued over, so it is the origin of a background the story names."
+       "why": "AB 316 is the California law the story's public-interest-group lawsuit is about (keeping humans accountable for AI harm), so it supplies the origin of a legal background the story names."
       }
      },
      "start_ok": true,
-     "start_note": "The Raine lawsuit filing is the specific turn that put a ChatGPT user's suicide and OpenAI's legal exposure in play, leading directly to the interviewer's question."
+     "start_note": "The August 2025 Raine lawsuit is the earlier, specific turn (the dead teenager case) that set the Vanity Fair exchange and the legal fallout in motion, and it is not today's news."
     }
    }
   },
@@ -314,70 +314,71 @@
     "why": "The Saudi-backed offensive to retake Mocha and the Bab el-Mandeb Strait from the Houthis is a distinct Yemeni conflict with its own history, not a consequence of the US–Israel–Iran campaign."
    },
    "thread": {
-    "start": "m8",
-    "start_line": "When the Houthis launched a major offensive on 10 September 2026, including an assault on Mokha, UN envoy Grundberg told the Security Council the risk of large-scale war had become reality.",
+    "start": "m6",
+    "start_line": "When President Hadi, speaking from Riyadh, transferred his powers to an eight-member Presidential Leadership Council chaired by Rashad al-Alimi, the government now leading the offensive took shape.",
     "runner_ups": [
      {
       "id": "m5",
-      "why_weaker": "The 2022 truce explains the lull the war later broke, but it halted fighting rather than starting the present offensive and the strait fight."
+      "why_weaker": "The truce paused fighting but did not create the government that now announces the offensive."
      },
      {
-      "id": "m6",
-      "why_weaker": "The 2022 transfer of power created al-Alimi's council, but it set up the government side and did not itself produce the Mokha fighting."
+      "id": "m4",
+      "why_weaker": "The Riyadh Agreement tried to unify anti-Houthi forces, but it is an earlier and more distant root than the council itself."
      }
     ],
     "beginnings": [
      {
       "id": "m2",
-      "why": "Resolution 2216 gave the internationally recognized government's claim, and the Saudi-led effort to reverse the Houthi seizure of Sanaa, its legal backing, the promise al-Alimi repeats."
+      "why": "The Security Council demanded that the Houthis leave Sanaa and other seized areas, setting the international terms of the war the coalition has pursued since the 2014 takeover."
      },
      {
       "id": "m3",
-      "why": "The Stockholm Agreement tied the Hodeidah coast and its ports to negotiation, the same Red Sea shoreline now at issue around Mocha and Bab el-Mandeb."
+      "why": "The Stockholm Agreement on Hodeidah and its ports was an earlier attempt to settle a Red Sea coastal front like the one now contested at Mocha."
      },
      {
       "id": "m4",
-      "why": "The Riyadh Agreement tried to merge anti-Houthi forces under one Defense Ministry, the divided ground force whose limits Raiman al-Hamdani describes."
+      "why": "The Riyadh Agreement from Saudi Arabia tried to merge the government's forces with southern fighters, an earlier effort to build the unified anti-Houthi coalition now being rebuilt."
      },
      {
       "id": "m5",
-      "why": "The 2022 truce halted air, ground and naval operations, so its collapse is why Saudi jets and Yemeni ground forces are fighting again."
-     },
-     {
-      "id": "m6",
-      "why": "Hadi's transfer of power created the Presidential Leadership Council under Rashad al-Alimi, the body announcing the offensive."
+      "why": "The two-month truce halted air, ground and naval operations, creating the pause whose later collapse led to the renewed war."
      }
     ],
-    "since": [],
+    "since": [
+     {
+      "id": "m8",
+      "why": "Grundberg told the Security Council that large-scale conflict had returned as the Houthis attacked Mokha, the port city the government now says it has retaken."
+     }
+    ],
     "judge": {
      "items": {
-      "m8": {
+      "m6": {
        "keep": true,
-       "why": "The Houthi offensive including on Mokha is the direct trigger of the story: the government's retaking of Mocha and the Bab el-Mandeb push respond to this assault."
+       "why": "The story names Rashad al-Alimi as head of the Presidential Leadership Council, and this item explains the origin of that body and his role."
       },
       "m2": {
        "keep": true,
-       "why": "Resolution 2216 is the origin of the Houthi-vs-government war framing (withdrawal from Sanaa, arms embargo), which the story invokes via the 2014 Sanaa takeover and the vow to liberate the country."
+       "why": "Resolution 2216 is the foundational UN demand that the Houthis withdraw from seized areas, underpinning the long-running 'liberation from the Houthis' promise and the coalition's legal basis."
       },
       "m3": {
        "keep": true,
-       "why": "The Stockholm Agreement on Hodeidah's ports is an earlier attempt to settle the same conflict over coastal and port control, relevant to the Red Sea port fighting now."
+       "why": "The Stockholm Agreement on Hodeidah and its ports is a prior attempt at a settlement around the same Red Sea coast the story's fighting centers on, showing the pattern of failed deals."
       },
       "m4": {
        "keep": false,
-       "why": "The Riyadh Agreement concerns the government-STC split in the south, a side thread the story never mentions."
+       "why": "The Riyadh Agreement concerned the government-STC split in the south, which the story does not mention and which does not explain the Mocha/Bab el-Mandeb offensive or the Saudi coalition."
       },
       "m5": {
        "keep": true,
-       "why": "The 2022 truce is the ceasefire whose collapse underlies the story's 'war resumed' and the 184,000 displaced since then."
+       "why": "The 2022 truce is the ceasefire whose collapse the story's 'war resumed' framing implies, and it shows the earlier pause that preceded this renewed escalation."
       },
-      "m6": {
+      "m8": {
        "keep": true,
-       "why": "This creates the Presidential Leadership Council, whose head Rashad al-Alimi announces the offensive in the story, so it is the origin of a named background."
+       "why": "Grundberg's warning about the Houthi offensive including on Mokha is the immediate prelude to the government's counter-claim of retaking the city, directly part of this story's own sequence."
       }
      },
-     "start_ok": true,
-     "start_note": "The Houthi offensive on Mokha and the UN envoy's warning that large-scale conflict has become reality is the specific turn that set this counteroffensive and the Saudi coalition rebuild in motion."
+     "start_ok": false,
+     "start_note": "The 2022 PLC formation is a reasonable background item but not the turn that set this story in motion; a better start would be the 2015 Saudi-led intervention/Resolution 2216 or the collapse of the truce that resumed the war, since the PLC only explains one named figure."
     }
    }
   },
@@ -409,70 +410,70 @@
    },
    "thread": {
     "start": "m4",
-    "start_line": "When President Trump and Israel launched major combat operations against Iran on 28 February 2026, the war that closed Hormuz and drove up diesel prices began.",
+    "start_line": "When President Trump announced major combat operations in Iran with Israel on 28 February 2026, the war that closed Hormuz and drove up diesel prices began.",
     "runner_ups": [
      {
       "id": "m6",
-      "why_weaker": "The IEA stock release answered the price shock, so it follows the war and does not cause the price crisis itself."
+      "why_weaker": "The record oil release answered the Hormuz closure that the war had already caused, so it is a response to the start rather than its cause."
      },
      {
-      "id": "m9",
-      "why_weaker": "Resumed strikes and the reimposed blockade renewed supply pressure, but they came after the war and its first price spike were already underway."
+      "id": "m2",
+      "why_weaker": "The June 2025 strikes were a shorter, separate episode with no sustained shipping disruption, so they precede the war that moved fuel prices."
      }
     ],
     "beginnings": [
      {
       "id": "m1",
-      "why": "The War Powers Resolution sets the 48-hour report and later 60-day limit that the White House invoked and disputed once Trump began the Iran war."
+      "why": "The War Powers Resolution set the 48-hour report and consultation rules that Trump's later Iran notifications and the dispute over the 60-day clock invoke."
      },
      {
       "id": "m2",
-      "why": "Trump's June 2025 strikes on Fordow, Natanz and Isfahan were the first U.S. attack on Iran, the direct precursor to the 2026 war that disrupted oil and diesel markets."
+      "why": "The June 2025 U.S. strikes on Fordow, Natanz and Isfahan were the first time Trump joined Israel's war on Iran, the earlier step that made the 2026 campaign possible."
      },
      {
       "id": "m3",
-      "why": "The White House's War Powers letter claimed Commander in Chief authority and readiness for further action, the legal template Trump used again in 2026."
+      "why": "The White House's June 2025 letter claiming Commander in Chief authority and readiness for further action set the legal pattern it repeated when the larger war began."
      }
     ],
     "since": [
      {
-      "id": "m11",
-      "why": "The Senate's 49 to 50 rejection of H.Con.Res. 89 left Trump's Iran hostilities with no congressional authorization or order to end them, leaving him to answer prices by executive action."
+      "id": "m9",
+      "why": "Renewed strikes and the reimposed naval blockade in July 2026 after attacks on ships in Hormuz kept the fuel supply threat alive after the June memorandum."
      },
      {
       "id": "m12",
-      "why": "The G7's 100 million barrel release, with diesel front-loaded, is the allied supply response that the story says replaced a diesel export ban."
+      "why": "The G7's 100 million barrel release, with diesel front-loaded, is the allied emergency response the story cites alongside the dropped export ban."
      }
     ],
     "judge": {
      "items": {
       "m4": {
        "keep": true,
-       "why": "The story explicitly cites 'the war he started in February' as the origin of the fuel price spike, and this is that war's launch."
+       "why": "The February 2026 Iran strikes are the war the story says Trump skipped past, and they set off the diesel price spike."
       },
       "m1": {
        "keep": false,
-       "why": "The 1973 War Powers Resolution is a legal-framework background item that the story never names or relies on, so it shares only a theme."
+       "why": "The 1973 War Powers Resolution is a broad separation-of-powers background; the story is about diesel prices and a farm tax break, not Congress's war authority."
       },
       "m2": {
        "keep": true,
-       "why": "The June 2025 strikes on Iran's nuclear sites are an earlier instance of the same action (U.S. military action against Iran) that led directly to the February 2026 war the story references."
+       "why": "The June 2025 strikes on Iranian nuclear sites are the earlier phase of the same conflict and show how the 2026 war built up."
       },
       "m3": {
        "keep": false,
-       "why": "The June 2025 War Powers letter concerns the congressional-authorization question, which the story does not raise; it is tangential to the fuel price and farm tax break narrative."
+       "why": "The War Powers letter concerns presidential war authority, which shares only a broad theme with a story about fuel prices and tax policy."
       },
-      "m11": {
-       "keep": false,
-       "why": "The Senate war powers vote on Iran hostilities is about congressional authorization, a topic the story never touches, so it is not part of this story's history."
+      "m9": {
+       "keep": true,
+       "why": "The July 2026 resumed strikes and reimposed blockade of Hormuz are a direct step in the war driving diesel prices."
       },
       "m12": {
        "keep": true,
-       "why": "The G7 100-million-barrel reserve release is directly named in the story as the reason the White House dropped the diesel export ban."
+       "why": "The G7 100-million-barrel release is the alternative the story says replaced a diesel export ban, so it explains a named background."
       }
      },
      "start_ok": true,
-     "start_note": "The February 28, 2026 launch of combat operations in Iran is the specific turn that set the fuel price crisis and Trump's response in motion, matching the story's reference to 'the war he started in February.'"
+     "start_note": "The February 28, 2026 announcement of combat operations in Iran is the specific turn that set the price shock in motion, and the story itself names the February war."
     }
    }
   },
@@ -501,78 +502,78 @@
    },
    "thread": {
     "start": "m4",
-    "start_line": "When Boulder County, San Miguel County and the City of Boulder sued Exxon Mobil and Suncor affiliates in Boulder District Court in April 2018, they began the case now before the Supreme Court.",
+    "start_line": "When Boulder County, San Miguel County and the City of Boulder sued Exxon Mobil and Suncor affiliates in state court in 2018, seeking to share the costs of climate impacts.",
     "runner_ups": [
      {
       "id": "m7",
-      "why_weaker": "It sent the case up to the Supreme Court, but the case itself already existed and the Colorado ruling was a step within it."
+      "why_weaker": "The Colorado Supreme Court ruling let the case proceed and set up review, but it only worked because the 2018 filing existed, so it is a later step rather than the origin."
      },
      {
-      "id": "m9",
-      "why_weaker": "It put the case on the Court's docket, but it presupposes the suit and the state ruling and adds a jurisdiction question rather than creating the dispute."
+      "id": "m5",
+      "why_weaker": "The Ninth Circuit decision shaped the state-versus-federal question for similar suits, but it concerned California cities and did not itself create the Boulder case."
      }
     ],
     "beginnings": [
      {
       "id": "m1",
-      "why": "The Clean Air Amendments of 1970 created the federal air pollution authority that Exxon and Suncor now say displaces Boulder's state-law claims."
+      "why": "The 1970 Clean Air Amendments created the federal air pollution framework whose reach over state-law claims is the dispute the justices argued."
      },
      {
       "id": "m2",
-      "why": "By holding greenhouse gases are regulable air pollutants under the Clean Air Act, it supplied the federal framework the oil companies cite in arguing that climate harm is a federal matter."
+      "why": "Massachusetts v. EPA established that greenhouse gases are air pollutants under the Clean Air Act, the premise for arguments that federal law governs emissions."
      },
      {
       "id": "m3",
-      "why": "It held the Clean Air Act displaces federal common-law nuisance claims over carbon dioxide and left state-law claims open, the gap Boulder's suit tries to use."
+      "why": "American Electric Power v. Connecticut held the Clean Air Act displaces federal common-law nuisance claims over carbon dioxide and left state-law claims unresolved, the gap Boulder's suit occupies."
      },
      {
-      "id": "m5",
-      "why": "The Ninth Circuit's ruling that California cities' nuisance claims against oil companies arise under state law gave local governments a model for suing in state court, as Boulder did."
+      "id": "m6",
+      "why": "West Virginia v. EPA limited EPA's power to cap power plant carbon, bearing on the claim that federal regulation leaves no room for state remedies."
      }
     ],
     "since": [
      {
       "id": "m7",
-      "why": "The Colorado Supreme Court's 5 to 2 ruling that federal law does not preempt Boulder's claims is the decision the oil companies appealed to the Supreme Court."
+      "why": "The Colorado Supreme Court's 5 to 2 ruling that federal law does not preempt Boulder's tort claims is the decision the companies appealed to the U.S. Supreme Court."
      },
      {
       "id": "m9",
-      "why": "The Supreme Court's grant of review, with an added question on its own jurisdiction, set up the argument in which the justices split."
+      "why": "The Supreme Court's grant of certiorari, with an added question on its own jurisdiction, put the case on the docket and shaped the argument heard in October."
      }
     ],
     "judge": {
      "items": {
       "m4": {
        "keep": true,
-       "why": "This is the filing of the very lawsuit the story covers, so it is the story's own origin."
+       "why": "The 2018 filing is the specific origin of this lawsuit, which the story itself names as the starting point of the fight now before the Court."
       },
       "m1": {
-       "keep": false,
-       "why": "The 1970 Clean Air Amendments are distant statutory background that the story never names, and a reader would not see them as this lawsuit's own history."
+       "keep": true,
+       "why": "The Clean Air Act framework is the federal air-pollution regime that Kavanaugh and Barrett's 'wall of precedent' preemption argument rests on, so it explains the background the story invokes."
       },
       "m2": {
        "keep": true,
-       "why": "The story's 'wall of precedent' argument over federal control of air pollution rests on the Clean Air Act line of cases, and this ruling established greenhouse gases as regulated air pollutants."
+       "why": "Massachusetts v. EPA established greenhouse gases as Clean Air Act pollutants, which is the foundation for whether climate claims are federal territory."
       },
       "m3": {
        "keep": true,
-       "why": "This is one of the prior rulings underlying the federal-versus-state displacement fight Kavanaugh and Barrett cite, and it expressly left state-law claims open, which is the question now before the Court."
+       "why": "AEP v. Connecticut displaced federal common-law climate nuisance claims and explicitly left state-law claims open, directly setting up the question in Boulder."
       },
-      "m5": {
-       "keep": true,
-       "why": "This is an earlier ruling in a closely related case, one of the similar suits the story says are waiting on this decision, and it addressed the same state-law versus federal-law question."
+      "m6": {
+       "keep": false,
+       "why": "West Virginia v. EPA concerns agency authority under the major-questions doctrine for power plant rules, which is only broadly related and does not bear on state tort preemption."
       },
       "m7": {
        "keep": true,
-       "why": "This is the direct lower-court ruling under review, the decision that Boulder's claims are not preempted and that the Supreme Court is now examining."
+       "why": "The Colorado Supreme Court ruling against preemption is the immediate decision under review and the reason the case reached the U.S. Supreme Court."
       },
       "m9": {
        "keep": true,
-       "why": "The grant of certiorari is the step that brought this case to the Supreme Court argument the story reports, and it flagged the jurisdiction question Jackson raised."
+       "why": "The cert grant, including the added jurisdiction question, explains why the justices are debating jurisdiction and whether the case is premature, as Jackson suggested."
       }
      },
      "start_ok": true,
-     "start_note": "The April 2018 filing is the specific act that created this lawsuit and the story itself opens with it, so 'It starts in 2018' is the right anchor."
+     "start_note": "The April 2018 filing of Boulder's suit is the specific earlier event that set this case in motion, not today's oral argument."
     }
    }
   }
@@ -1833,5 +1834,6 @@
     "check_note": "the page could not be read as text (200); open it to confirm the values"
    }
   }
- ]
+ ],
+ "threads_generated": "2026-10-09T23:22:04+00:00"
 }
