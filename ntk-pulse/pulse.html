@@ -1363,6 +1363,7 @@ function validateCat(cat, poolBy0, spec, storyTexts, originYear, vocab){
     objs.push({object_id:e.id,title:e.title,author:e.author,year:e.year,source:e.source,source_url:e.url,about:about,pool:e.pool,lenses:e.lenses,by:o.by||'model',sort:e.sort||(e.year+'-01-01')});
   });
   objs.sort((a,b)=> a.sort<b.sort?-1:a.sort>b.sort?1:(a.title<b.title?-1:1));     // oldest to newest, always
+  if (!objs.length) return {clean:null, problems:problems.concat(['no objects: a category needs at least one primary source, so it is not published'])};
   c.objects=objs; const order={}; objs.forEach(o=>{ order[o.object_id]=o.sort; });
   const begs=[], seen=new Set();
   (c.beginnings||[]).forEach(b=>{
