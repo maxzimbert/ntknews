@@ -1,0 +1,39 @@
+name: Spine lab (prototype, spine-lab branch only)
+
+# Builds ntk-pulse/data/spine-lab.json for the prototype at ntk-pulse/spine-lab.html.
+# Runs only on the spine-lab branch, only when the script or the trigger file changes;
+# the data commit it makes touches neither, so it cannot retrigger itself.
+on:
+  push:
+    branches: [spine-lab]
+    paths:
+      - 'editorial/spine_lab.py'
+      - 'editorial/spine-lab-run.txt'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: spine-lab
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Build spines and threads
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python editorial/spine_lab.py
+      - name: Commit
+        run: |
+          git config user.name "spine-lab"
+          git config user.email "actions@users.noreply.github.com"
+          git add ntk-pulse/data/spine-lab.json
+          git commit -m "spine-lab: build $(date -u +%Y-%m-%dT%H:%MZ)" || exit 0
+          git pull --rebase origin spine-lab && git push origin HEAD:spine-lab
