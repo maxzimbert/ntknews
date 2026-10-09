@@ -457,6 +457,32 @@ exports.handler = async (event) => {
     // keyword "UFC") instead of pulling that person's entire news firehose.
     if (q.keyword) body.keyword = q.keyword;
     if (q.pool === 'ntk') body.sourceUri = NTK_SOURCES;
+  } else if (mode === 'keyword-search') {
+    // Stream's search box. q is comma-separated terms; each term is a phrase
+    // and any one of them is a match. Held to the same publisher bar as the
+    // rest of the scan: pool=ntk is the NTK_SOURCES list, pool=top is
+    // EventRegistry's top 20% of sources (scan-broad's threshold). Pulse
+    // calls both and merges. The fallback mode below has no quality filter
+    // and no date window, which is why this is its own mode.
+    const terms = (q.q || '').split(',').map(t => t.trim()).filter(Boolean).slice(0, 10);
+    body = {
+      apiKey: process.env.NEWSAPI_KEY,
+      action: 'getArticles',
+      keyword: terms,
+      keywordOper: 'or',
+      keywordLoc: 'title,body',
+      lang: 'eng',
+      articlesCount: Math.min(parseInt(q.articlesCount) || 20, 50),
+      articlesSortBy: 'rel',
+      resultType: 'articles',
+      includeArticleBody: false,
+      includeArticleDate: true,
+      includeSourceInfo: true,
+      isDuplicateFilter: 'skipDuplicates',
+      forceMaxDataTimeWindow: RECENT_WINDOW_DAYS
+    };
+    if (q.pool === 'top') { body.startSourceRankPercentile = 0; body.endSourceRankPercentile = 20; }
+    else body.sourceUri = NTK_SOURCES;
   } else if (mode === 'fetch-by-uri') {
     // Fetch full bodies for specific article URIs selected during the scan
     const uris = (q.uris || '').split(',').filter(Boolean);
@@ -490,6 +516,11 @@ exports.handler = async (event) => {
   }
 
   const result = await post(path, body);
+  // Tagged so Pulse can tell this mode answered, not the unfiltered
+  // fallback (which is what an older deploy would run for the same request).
+  if (mode === 'keyword-search') {
+    try { const d = JSON.parse(result.body); d.ntkMode = 'keyword-search'; result.body = JSON.stringify(d); } catch (e) {}
+  }
   return {
     statusCode: 200,
     headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },

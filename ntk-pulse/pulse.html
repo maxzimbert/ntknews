@@ -421,6 +421,7 @@ function rememberSubject(v) {
 let NOTES = load(LS.notes, { items: [], genCounter: 0 });
 let notesOpen = false;
 let STREAM = null;                          // clusters.json payload
+let STREAM_SETTLED = false;                 // clusters.json fetch has answered, either way
 let TAB = 'lineup';   // Lineup is the homepage — assembled by assembly.py, authored here
 function saveSettings(){ localStorage.setItem(LS.settings, JSON.stringify(SETTINGS)); }
 function saveLineup(){ const clean = LINEUP.map(({busy,status,err,...s})=>s); localStorage.setItem(LS.lineup, JSON.stringify(clean)); }
@@ -3142,6 +3143,56 @@ function mcApplySearch(mc){
   saveManual(); render();
 }
 
+/* ─── Stream search box: comma-separated terms → a new manual cluster.
+   Each term is a phrase, any one matches. Pulls from the current window
+   first (already held to feeds.json), then EventRegistry twice: the
+   NTK_SOURCES list and ER's top 20% of sources, so nothing below the
+   scan's publisher bar gets in. Two ER calls per search. ─── */
+let STREAM_Q = { text:'', busy:false, note:'' };
+function streamTerms(text){ return text.split(',').map(t=>t.trim()).filter(Boolean).slice(0,10); }
+async function streamSearch(text){
+  const terms = streamTerms(text);
+  if (!terms.length || STREAM_Q.busy) return;
+  STREAM_Q = { text, busy:true, note:'Searching the window and EventRegistry…' }; render();
+  const res = terms.map(t=>new RegExp('\\b'+t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b','i'));
+  const seen = new Set(); const items = []; let nWin = 0, nEr = 0; const errs = [];
+  for (const c of (STREAM?.clusters||[])) for (const it of c.items){
+    if (!res.some(r=>r.test(it.title))) continue;
+    const cn = canon(it.url); if (seen.has(cn)) continue; seen.add(cn);
+    items.push({...it}); nWin++;
+  }
+  for (const pool of ['ntk','top']){
+    try {
+      const r = await fetch(proxyUrl({mode:'keyword-search', q:terms.join(','), pool, articlesCount:'15'}));
+      const d = await r.json();
+      // An older news.js answers with its unfiltered fallback; refuse it.
+      if (d.ntkMode !== 'keyword-search') throw new Error('the deployed news function has no keyword-search mode yet');
+      if (typeof d.error === 'string') throw new Error(d.error);
+      const raw = d.articles?.results || [];
+      for (const a of raw){
+        if (!a.url) continue;
+        const cn = canon(a.url); if (seen.has(cn)) continue; seen.add(cn);
+        items.push({id:'er-'+cn, title:a.title||'Untitled', url:a.url,
+          publisher:a.source?.title||'Unknown', published:a.dateTimePub||a.date||''});
+        nEr++;
+      }
+    } catch(e){ errs.push(e.message); }
+  }
+  const err = errs.length ? ' · EventRegistry: '+errs[0].slice(0,120) : '';
+  if (!items.length){ STREAM_Q = { text, busy:false, note:'Nothing found for '+terms.join(', ')+err }; render(); return; }
+  const mc = { key:'manual-'+Date.now(), title:'Search: '+terms.join(', '), query:terms,
+    items, manual:true, createdAt:new Date().toISOString(), beat_hint:'other', triage:null,
+    rescanResults:null, rescanAt:null, search:{open:false,kw:'',src:'',results:[],busy:false,note:''} };
+  MANUAL.push(mc); saveManual();
+  STREAM_Q = { text:'', busy:false, note:nWin+' from the window, '+nEr+' from EventRegistry → new cluster'+err };
+  render();
+  requestAnimationFrame(()=>{
+    const card = document.querySelector(`.cluster[data-mc-key="${mc.key}"]`);
+    if (card){ card.scrollIntoView({behavior:'smooth', block:'center'});
+      card.style.outline='2px solid #5a2d82'; setTimeout(()=>{ card.style.outline=''; }, 2000); }
+  });
+}
+
 /* ─── Create cluster by query (2b) ─── */
 let Q = { open:false, kw:'', src:'', results:[], busy:false, note:'' };
 function windowSearch(){
@@ -3220,6 +3271,9 @@ function renderStream(root){
     `<span>${SELECTED.size} selected</span>`+
     `<button class="mini go" id="merge-btn">merge into one cluster</button>`+
     `<button class="mini" id="clear-sel">clear</button></div>`+
+    `<div class="addurl" title="Comma-separated words or phrases; any one matches. Searches the current window plus EventRegistry (NTK source list and ER's top 20% of publishers) and makes a new cluster from what it finds.">`+
+    `<input class="stream-q" placeholder="search: keywords or phrases, comma-separated, Enter" value="${esc(STREAM_Q.text)}" ${STREAM_Q.busy?'disabled':''}></div>`+
+    (STREAM_Q.note?`<div style="font-size:11px;color:var(--dim);margin-top:3px">${esc(STREAM_Q.note)}</div>`:'')+
     `<div class="addurl" style="margin-bottom:10px" title="For a single-outlet scoop that isn't corroborated or wasn't in the window at all — it becomes a candidate you can certify like any other.">`+
     `<input class="scoop-add-in" placeholder="https:// add a one-source scoop as a candidate">`+
     `<button class="mini go scoop-add-go">add</button></div>`+
@@ -3229,6 +3283,9 @@ function renderStream(root){
   document.querySelector('.scoop-add-go')?.addEventListener('click', ()=>{
     const inp = document.querySelector('.scoop-add-in');
     newManualFromUrl(inp.value); inp.value='';
+  });
+  document.querySelector('.stream-q')?.addEventListener('keydown', e=>{
+    if (e.key==='Enter') streamSearch(e.target.value);
   });
   const list = document.getElementById('stream-list');
 
@@ -4295,19 +4352,27 @@ function materializeEditionStory(s){
     }
   }
 
+  let articles = items.map(it=>({
+    url: it.url, title: it.title, source: it.publisher, date: it.published||'',
+    body:'', bodyFrom:'', included:true, dupOf:null, origin:'rss'
+  }));
+  // Cluster aged out of the window: fall back to the URLs lineup_promote.py
+  // recorded at promotion. No titles, but the package has sources.
+  if (!articles.length && (s.urls||[]).length){
+    articles = s.urls.map(u=>({ url:u, title:u, source:(()=>{ try { return new URL(u).hostname.replace(/^www\./,''); } catch { return ''; } })(),
+      date:'', body:'', bodyFrom:'', included:true, dupOf:null, origin:'recorded' }));
+  }
+
   return {
     id: 'ln-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),
     key: s.key, title: s.title,
     beat: s.beat, category: BEAT_TO_CAT[s.beat] || 'Nation', categoryCustom: '',
     angle: s.line || '',
     conceptEntity:'', narrowKeyword:'',
-    articles: items.map(it=>({
-      url: it.url, title: it.title, source: it.publisher, date: it.published||'',
-      body:'', bodyFrom:'', included:true, dupOf:null, origin:'rss'
-    })),
+    articles,
     enrichedAt: null, packages: null, open: false, outOpen: false,
     fromEdition: true, slotLabel: s.slot_label,
-    syncFailed: !streamCluster && !recoveredFrom && !suggestion,
+    syncFailed: !articles.length && !suggestion,
     recoveredFrom, reconnectSuggestion: suggestion,
   };
 }
@@ -4352,7 +4417,9 @@ function syncEditionToLineup(){
   // edition pick happens to sort first — that's the machine making an
   // editorial choice you didn't ask it to make. Candidates get offered
   // instead; you choose.
-  const bootstrap = LINEUP.length === 0;
+  // Wait for clusters.json to answer before bootstrapping: lineup.json can
+  // land first, and every story would then look sourceless.
+  const bootstrap = LINEUP.length === 0 && STREAM_SETTLED;
   const candidates = [];
 
   for (const s of EDITION.stories){
@@ -4376,7 +4443,11 @@ function syncEditionToLineup(){
     if (existing){ continue; }   // never touch authored state
     if (!bootstrap){ candidates.push(s); continue; }   // offer, don't auto-add
     if (LINEUP.length >= LINEUP_MAX){ candidates.push(s); continue; }
-    LINEUP.push(materializeEditionStory(s));
+    // Rule: the machine never puts a story in the Lineup without source
+    // URLs. A sourceless one stays a candidate; the editor can still add it.
+    const story = materializeEditionStory(s);
+    if (!story.articles.some(a=>a.url)){ candidates.push(s); continue; }
+    LINEUP.push(story);
     changed = true;
   }
   EDITION._candidates = candidates;
@@ -4537,8 +4608,8 @@ function renderStaleBanner(){
 
 fetch('data/clusters.json?t='+Date.now())
   .then(r=>{ if(!r.ok) throw 0; return r.json(); })
-  .then(d=>{ STREAM=d; syncEditionToLineup(); render(); renderStaleBanner(); })
-  .catch(()=>{ STREAM=null; render(); });
+  .then(d=>{ STREAM=d; STREAM_SETTLED=true; syncEditionToLineup(); render(); renderStaleBanner(); })
+  .catch(()=>{ STREAM=null; STREAM_SETTLED=true; syncEditionToLineup(); render(); });
 
 // The assembled edition. Absent until the workflow's Assemble step has run —
 // a 404 here is normal, not an error worth surfacing.
