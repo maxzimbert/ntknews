@@ -13,6 +13,7 @@ The prompts are the same as the ones in ntk-pulse/pulse.html (composeCat, writeO
 proposeIndicator). They are written out twice, once per language, and should be kept in step.
 """
 import json
+import os
 import re
 import urllib.error
 import urllib.request
@@ -155,6 +156,18 @@ JSON only: {"choose":["<id>", ...],"why":"one sentence"}"""
 
 
 RELATIONS = ("same subject", "earlier instance of the same action", "origin of the background")
+_STOP = set("the a an and or of to in on for with from by at as is are was were be been that this it its their his her they who which what when where about into over after before under than then also not no".split())
+
+
+def ties_ok(tie, text):
+    """The phrase the model says ties a milestone to the story must be made of the story's own words: at
+    least two content words, and at least 70% of them present in the story. (Word for word was too strict:
+    the model quotes loosely, and the first real run lost the Sverdlovsk outbreak that way.)"""
+    words = [w for w in _norm(tie).split() if len(w) > 3 and w not in _STOP]
+    have = set(_norm(text).split())
+    return len(words) >= 2 and sum(w in have for w in words) / len(words) >= 0.7
+
+
 _norm = lambda t: " ".join(re.sub(r"[^a-z0-9]+", " ", str(t).lower()).split())
 
 
@@ -168,17 +181,22 @@ def find_milestones(api_key, model, story, title, contest, have, need, searcher=
     date or the quoted sentence. CI then checks that the link loads (categories.live_checks)."""
     searcher = searcher or call_search
     have_txt = "; ".join(f"{o['year']} {o['title']}" for o in have) or "(none)"
-    p = f"""You find the milestones in the history of one subject, each with its primary source, for a Backstory category page at NTK. The page shows how today's story sits inside a long argument: dated milestones, oldest to newest, each tied to a primary document the reader can open.
+    model = os.environ.get("NTK_SEARCH_MODEL") or model
+    p = f"""You are the researcher for NTK's Backstory, a page for college-educated adults who want to stay informed with less effort. Write for the standard of an Advanced Placement history reader: precise, plain, no hand-waving. The page is a chronology of dated milestones, oldest to newest, that leads to today's story, and each milestone is defended by a primary source the reader can open.
 
 CATEGORY: {title}
-CONTEST: {contest or ''}
+THE ARGUMENT IT SITS IN: {contest or ''}
 TODAY'S STORY: {story['headline']}
 {story['text'][:3500]}
 ALREADY ON THE PAGE (do not repeat): {have_txt}
 
-Find {need} more milestones: turning points in how we got to this story. Each is a law, ruling, report, treaty, hearing, speech or incident with an official record. Use web search. For each, give the primary document itself or the copy held by an archive, court, legislature, government agency or the original publisher: not Wikipedia, not a news article or summary about it, not a retail or study-guide page. Spread them across time, earlier than today's event, with the last one the most recent turn before it. Every milestone must be about the category's own subject, not an analogy from another field. Answer with JSON only, a list:
-[{{"year":"YYYY","date":"YYYY-MM-DD if you know it, else null","title":"the document's exact title","author":"who issued or wrote it","source":"the publishing body or archive","source_url":"the exact page or PDF where it can be read","line":"ONE sentence, 12 to 25 words, saying what happened, starting with the actor or the event","about":"two to four sentences, at most 70 words: what the document is, who made it and when, what it says or did","evidence_quote":"one sentence copied word for word from that page that supports the line","ties_to":"3 to 12 words copied word for word from TODAY'S STORY naming the subject or action this milestone belongs to","relation":"same subject | earlier instance of the same action | origin of the background"}}]
-Rules: a milestone belongs only if a reader of today's story would see it as part of that story's own history: it is about the same subject, or an earlier instance of the same action, or the origin of a background the story names. A document that shares only a theme (secrecy, government power, regulation) is an analogy and does not belong. Use only facts that the page states; the line and about may contain no number that is not in the title, the date or the evidence_quote. If you cannot find {need}, give fewer. If you find none, answer [].
+First ask yourself: what is the history of the action, the consequences, the people, the setting and the background in this story? Which events, in order, are the steps that lead to what the story reports today? Choose the {need} that matter most, spread across time, earlier than today's event, the last one the most recent turn before it. Then use web search to find, for each, a primary source that defends it from editorial scrutiny: the document itself or the copy held by an archive, court, legislature, government agency or the original publisher. Not Wikipedia, not a news article or summary about it, not a retail or study-guide page.
+
+Every milestone must be part of this story's own history: the same subject, an earlier instance of the same action, or the origin of a background the story names. A document that shares only a theme (secrecy, government power, regulation) is an analogy and does not belong. {need} is a target, not a quota: if you cannot source a milestone, leave it out. Fewer well-sourced milestones are better than padding.
+
+Answer with JSON only, a list in date order:
+[{{"year":"YYYY","date":"YYYY-MM-DD if the document gives it, else null","title":"the document's exact title","author":"who issued or wrote it","source":"the publishing body or archive","source_url":"the exact page or PDF where it can be read","line":"ONE sentence, 12 to 25 words, saying what happened, starting with the actor or the event","about":"two to four sentences, at most 70 words: what the document is, who made it and when, what it says or did","evidence_quote":"one sentence copied word for word from that page that supports the line","ties_to":"a few words from TODAY'S STORY naming the subject, person, place or action this milestone belongs to","relation":"same subject | earlier instance of the same action | origin of the background","because":"one sentence: how this step leads to the next one, or to today's story"}}]
+Rules: use only facts that the page states; the line and about may contain no number that is not in the title, the date or the evidence_quote. If you find none, answer [].
 {STYLE}"""
     text, urls, cites = searcher(api_key, model, p, 4000)
     from build_pairings import parse_json_loose
@@ -202,8 +220,8 @@ Rules: a milestone belongs only if a reader of today's story would see it as par
         if not t or not (m.get("evidence_quote") or "").strip():
             return "no title or no quote from the page"
         tie = str(m.get("ties_to") or "").strip()
-        if len(tie.split()) < 3 or _norm(tie) not in _norm(story["text"]):
-            return "ties_to is not a phrase copied from the story"
+        if not ties_ok(tie, story["headline"] + " " + story["text"]):
+            return "ties_to does not name anything in the story"
         if m.get("relation") not in RELATIONS:
             return "relation is not one of the allowed three"
         return None
@@ -223,7 +241,7 @@ Rules: a milestone belongs only if a reader of today's story would see it as par
                     "year": str(m["year"]), "date": m.get("date") if re.fullmatch(r"\d{4}-\d\d-\d\d", str(m.get("date") or "")) else "",
                     "source": (m.get("source") or host).strip(), "url": m["source_url"].strip(), "found_by": "search",
                     "evidence_quote": m["evidence_quote"].strip(), "line": m["line"].strip(), "about": m["about"].strip(),
-                    "ties_to": m["ties_to"].strip(), "relation": m["relation"]})
+                    "ties_to": m["ties_to"].strip(), "relation": m["relation"], "because": str(m.get("because") or "").strip()[:240]})
 
     for m in items[:need + 3]:
         bad = provenance(m)
@@ -285,7 +303,8 @@ For each item decide keep or drop. Keep it only if a reader of today's story wou
 JSON only: {"<id>":{"keep":true,"why":"one sentence naming what in the story it connects to"}, ...}"""
     try:
         r = caller(api_key, model, "", p, 2000) or {}
-    except Exception:  # noqa: BLE001
+    except Exception as e:  # noqa: BLE001
+        print(f"  judge call failed: {type(e).__name__}: {str(e)[:200]}")
         return {}
     out = {}
     for i in items:
@@ -408,9 +427,10 @@ Write JSON only: {{"title":"the category name, 1 to 4 words","contest":"...","st
     subgenres = [x for x in (r1.get("subgenres") or []) if x in vocab_names][:2]
     picked = choose_objects(api_key, model, story, title, r1.get("contest"), objs, lenses, subgenres, caller, notes)
     found = []
-    if len(picked) < 4:
+    if len(picked) < 6:
+        # always asked, not only when the matrix is thin: the matrix is old, and the judge decides what stays
         try:
-            found, fnotes = find_milestones(api_key, model, story, title, r1.get("contest"), picked, 6 - len(picked), searcher, caller)
+            found, fnotes = find_milestones(api_key, model, story, title, r1.get("contest"), picked, max(3, 6 - len(picked)), searcher, caller)
             notes += fnotes
             notes.append(f"{len(found)} milestone(s) found by search")
         except Exception as e:  # noqa: BLE001
@@ -418,13 +438,16 @@ Write JSON only: {{"title":"the category name, 1 to 4 words","contest":"...","st
     if not picked and not found:
         return None, notes + ["nothing in the pool connects and no milestone was found; the story keeps its row"]
     items = ([{"id": o["id"], "year": o["year"], "title": o["title"], "ties": ""} for o in picked]
-             + [{"id": f["id"], "year": f["year"], "title": f["title"], "ties": f"{f['relation']}: \"{f['ties_to']}\""} for f in found])
+             + [{"id": f["id"], "year": f["year"], "title": f["title"], "ties": f"{f['relation']}: \"{f['ties_to']}\"" + (f"; {f['because']}" if f.get("because") else "")} for f in found])
     verdict = judge(api_key, model, story, title, items, caller)
+    unjudged = [i["id"] for i in items if i["id"] not in verdict]
+    if unjudged:
+        notes.append(f"the judge gave no answer for {len(unjudged)} of {len(items)} items; they were kept unjudged")
     dropped = [k for k, v in verdict.items() if not v["keep"]]
     for k in dropped:
         notes.append(f"dropped by the judge: {k[:50]} ({verdict[k]['why']})")
     picked = [o for o in picked if verdict.get(o["id"], {}).get("keep", True)]
-    found = [f for f in found if verdict.get(f["id"], {}).get("keep", True)]
+    found = [f for f in found if verdict.get(f["id"], {}).get("keep", True)][:max(0, 6 - len(picked))]
     if not picked and not found:
         return None, notes + ["the judge kept nothing; the story keeps its row"]
     ties = {o["id"]: {"relation": "pool", "why": verdict.get(o["id"], {}).get("why", "")} for o in picked}

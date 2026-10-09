@@ -7,7 +7,7 @@ const root = path.resolve(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'ntk-pulse/pulse.html'), 'utf8');
 const m = html.match(/\/\* CATS:BEGIN \*\/([\s\S]*?)\/\* CATS:END \*\//);
 if (!m) { console.error('FAIL: CATS block not found'); process.exit(1); }
-const L = new Function(m[1] + '; return {validateCat, selectBeginnings, pickBeginnings, lensSupported, catTextProblems, verifyIndicator, catSentences, verifyFoundObject, applySourceEdit, catFieldKey, pickForSubjects, verifyMilestone, catNumbersOk};')();
+const L = new Function(m[1] + '; return {validateCat, selectBeginnings, pickBeginnings, lensSupported, catTextProblems, verifyIndicator, catSentences, verifyFoundObject, applySourceEdit, catFieldKey, pickForSubjects, verifyMilestone, catNumbersOk, catTiesOk};')();
 const poolDoc = JSON.parse(fs.readFileSync(path.join(root, 'ntk-pulse/data/backstory-pool.json'), 'utf8'));
 const poolBy = Object.fromEntries(poolDoc.objects.map(o => [o.id, o]));
 const spec = JSON.parse(fs.readFileSync(path.join(root, 'editorial/lenses.json'), 'utf8'));
@@ -127,6 +127,7 @@ const msv = (o) => Object.assign({ year: '1972', date: '1972-04-10', title: 'Con
 check('verifyMilestone: a well-formed milestone from a returned link passes', L.verifyMilestone(msv(), [MSU]).ok, L.verifyMilestone(msv(), [MSU]));
 const STORYT = 'A worker died at an anti-plague lab in Irkutsk. Russia locked down five regions.';
 check('verifyMilestone: a ties_to copied from the story passes', L.verifyMilestone(msv({ ties_to: 'anti-plague lab in Irkutsk', relation: 'same subject' }), [MSU], STORYT).ok, L.verifyMilestone(msv({ ties_to: 'anti-plague lab in Irkutsk', relation: 'same subject' }), [MSU], STORYT));
+check('catTiesOk: reordered words from the story pass; a one-word tie or foreign words fail', L.catTiesOk('Irkutsk anti-plague laboratory', STORYT) && !L.catTiesOk('Irkutsk', STORYT) && !L.catTiesOk('nuclear arms treaty', STORYT), null);
 check('verifyMilestone: a ties_to not in the story fails', !L.verifyMilestone(msv({ ties_to: 'a phrase nowhere in it', relation: 'same subject' }), [MSU], STORYT).ok, null);
 check('verifyMilestone: a relation outside the three fails', !L.verifyMilestone(msv({ ties_to: 'anti-plague lab in Irkutsk', relation: 'shares a theme' }), [MSU], STORYT).ok, null);
 check('verifyMilestone: a link the search did not return fails', !L.verifyMilestone(msv(), ['https://other.org']).ok, null);

@@ -1458,6 +1458,12 @@ function catFieldKey(el){
 // quote, text that meets the rules, and no number that the quote, title and date do not hold.
 const CAT_RELATIONS=['same subject','earlier instance of the same action','origin of the background'];
 const catNorm=t=>String(t||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim().replace(/\s+/g,' ');
+const CAT_STOP=new Set('the a an and or of to in on for with from by at as is are was were be been that this it its their his her they who which what when where about into over after before under than then also not no'.split(' '));
+// the phrase tying a milestone to the story must be made of the story's own words: two content words, 70% present
+function catTiesOk(tie, text){
+  const w=catNorm(tie).split(' ').filter(x=>x.length>3 && !CAT_STOP.has(x)), have=new Set(catNorm(text).split(' '));
+  return w.length>=2 && w.filter(x=>have.has(x)).length/w.length>=0.7;
+}
 function verifyMilestone(m, urls, storyText){
   const url=String(m.source_url||'').trim(), host=url.replace(/^https?:\/\/([^\/]+).*$/,'$1').toLowerCase(), t=String(m.title||'').trim();
   if (!url.startsWith('https://')) return {ok:false, reason:'link is not https'};
@@ -1467,7 +1473,7 @@ function verifyMilestone(m, urls, storyText){
   if (!t || !String(m.evidence_quote||'').trim()) return {ok:false, reason:'no title or no quote from the page'};
   if (storyText!=null){
     const tie=String(m.ties_to||'').trim();
-    if (tie.split(/\s+/).length<3 || !catNorm(storyText).includes(catNorm(tie))) return {ok:false, reason:'ties_to is not a phrase copied from the story'};
+    if (!catTiesOk(tie, storyText)) return {ok:false, reason:'ties_to does not name anything in the story'};
     if (!CAT_RELATIONS.includes(m.relation)) return {ok:false, reason:'relation is not one of the allowed three'};
   }
   const lp=catTextProblems('line',String(m.line||'').trim(),12,25,{sentences:1}), ap=catTextProblems('about',String(m.about||'').trim(),1,70);
@@ -1639,22 +1645,26 @@ function catJsonAny(text){
 // quote is on the page. Mirrors compose_category.find_milestones.
 async function proposeMilestones(c, stories, texts, have, need, msgs){
   const haveTxt=have.map(o=>o.year+' '+o.title).join('; ')||'(none)';
-  const p=`You find the milestones in the history of one subject, each with its primary source, for a Backstory category page at NTK. The page shows how today's story sits inside a long argument: dated milestones, oldest to newest, each tied to a primary document the reader can open.
+  const p=`You are the researcher for NTK's Backstory, a page for college-educated adults who want to stay informed with less effort. Write for the standard of an Advanced Placement history reader: precise, plain, no hand-waving. The page is a chronology of dated milestones, oldest to newest, that leads to today's story, and each milestone is defended by a primary source the reader can open.
 
 CATEGORY: ${c.title}
-CONTEST: ${c.contest||''}
-TODAY'S STORY: ${stories[0]?stories[0].title+'. '+(texts[0]||'').slice(0,700):'(none filed yet: use the category name)'}
+THE ARGUMENT IT SITS IN: ${c.contest||''}
+TODAY'S STORY: ${stories[0]?stories[0].title+'. '+(texts[0]||'').slice(0,3500):'(none filed yet: use the category name)'}
 ALREADY ON THE PAGE (do not repeat): ${haveTxt}
 
-Find ${need} more milestones: turning points in how we got to this story. Each is a law, ruling, report, treaty, hearing, speech or incident with an official record. Use web search. For each, give the primary document itself or the copy held by an archive, court, legislature, government agency or the original publisher: not Wikipedia, not a news article or summary about it, not a retail or study-guide page. Spread them across time, earlier than today's event, with the last one the most recent turn before it. Every milestone must be about the category's own subject, not an analogy from another field. Answer with JSON only, a list:
-[{"year":"YYYY","date":"YYYY-MM-DD if you know it, else null","title":"the document's exact title","author":"who issued or wrote it","source":"the publishing body or archive","source_url":"the exact page or PDF where it can be read","line":"ONE sentence, 12 to 25 words, saying what happened, starting with the actor or the event","about":"two to four sentences, at most 70 words: what the document is, who made it and when, what it says or did","evidence_quote":"one sentence copied word for word from that page that supports the line","ties_to":"3 to 12 words copied word for word from TODAY'S STORY naming the subject or action this milestone belongs to","relation":"same subject | earlier instance of the same action | origin of the background"}]
-Rules: a milestone belongs only if a reader of today's story would see it as part of that story's own history: the same subject, an earlier instance of the same action, or the origin of a background the story names. A document that shares only a theme (secrecy, government power, regulation) is an analogy and does not belong. Use only facts that the page states; the line and about may contain no number that is not in the title, the date or the evidence_quote. If you cannot find ${need}, give fewer. If you find none, answer [].
+First ask yourself: what is the history of the action, the consequences, the people, the setting and the background in this story? Which events, in order, are the steps that lead to what the story reports today? Choose the ${need} that matter most, spread across time, earlier than today's event, the last one the most recent turn before it. Then use web search to find, for each, a primary source that defends it from editorial scrutiny: the document itself or the copy held by an archive, court, legislature, government agency or the original publisher. Not Wikipedia, not a news article or summary about it, not a retail or study-guide page.
+
+Every milestone must be part of this story's own history: the same subject, an earlier instance of the same action, or the origin of a background the story names. A document that shares only a theme (secrecy, government power, regulation) is an analogy and does not belong. ${need} is a target, not a quota: if you cannot source a milestone, leave it out. Fewer well-sourced milestones are better than padding.
+
+Answer with JSON only, a list in date order:
+[{"year":"YYYY","date":"YYYY-MM-DD if the document gives it, else null","title":"the document's exact title","author":"who issued or wrote it","source":"the publishing body or archive","source_url":"the exact page or PDF where it can be read","line":"ONE sentence, 12 to 25 words, saying what happened, starting with the actor or the event","about":"two to four sentences, at most 70 words: what the document is, who made it and when, what it says or did","evidence_quote":"one sentence copied word for word from that page that supports the line","ties_to":"a few words from TODAY'S STORY naming the subject, person, place or action this milestone belongs to","relation":"same subject | earlier instance of the same action | origin of the background","because":"one sentence: how this step leads to the next one, or to today's story"}]
+Rules: use only facts that the page states; the line and about may contain no number that is not in the title, the date or the evidence_quote. If you find none, answer [].
 ${CAT_STYLE_RULES}`;
   const storyJoined=(texts||[]).join(' ');
   const r=await aiSearch(p,4000), items=catJsonAny(r.text), out=[], fixable=[];
   const accept=m=>{
     const cid='custom-'+String(m.title).trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,60);
-    out.push({cu:{id:cid,title:String(m.title).trim(),author:String(m.author||'').trim(),year:String(m.year),date:/^\d{4}-\d\d-\d\d$/.test(m.date||'')?m.date:'',source:String(m.source||'').trim(),url:String(m.source_url).trim(),found_by:'search',evidence_quote:String(m.evidence_quote).trim()},line:String(m.line).trim(),about:String(m.about).trim(),ties:{relation:m.relation,phrase:String(m.ties_to).trim()}});
+    out.push({cu:{id:cid,title:String(m.title).trim(),author:String(m.author||'').trim(),year:String(m.year),date:/^\d{4}-\d\d-\d\d$/.test(m.date||'')?m.date:'',source:String(m.source||'').trim(),url:String(m.source_url).trim(),found_by:'search',evidence_quote:String(m.evidence_quote).trim()},line:String(m.line).trim(),about:String(m.about).trim(),ties:{relation:m.relation,phrase:String(m.ties_to).trim(),because:String(m.because||'').trim().slice(0,240)}});
   };
   items.slice(0,need+3).forEach(m=>{
     const v=verifyMilestone(m, r.urls, storyJoined);
@@ -1731,10 +1741,10 @@ ${CAT_STYLE_RULES}`;
     const keepEd=(c.objects||[]).filter(o=>o.by==='editor'), edIds=new Set(keepEd.map(o=>o.object_id));
     c.objects=picked.map(o=>({object_id:o.id,about:o.about||'',by:'model'})).filter(o=>!edIds.has(o.object_id)).concat(keepEd);
     c.beginnings=picked.map(o=>({object_id:o.id,line:o.line||'',by:'model'})).concat((c.beginnings||[]).filter(b=>edIds.has(b.object_id)));
-    if (picked.length<4){
+    if (picked.length<6){
       CAT_BUSY[id]='Searching for milestones…'; render();
       try {
-        const found=await proposeMilestones(c, stories, texts, picked, 6-picked.length, msgs);
+        const found=await proposeMilestones(c, stories, texts, picked, Math.max(3,6-picked.length), msgs);
         found.forEach(f=>{
           c.ties=c.ties||{}; c.ties[f.cu.id]=f.ties;
           c.custom_objects=(c.custom_objects||[]).filter(x=>x.id!==f.cu.id).concat([f.cu]);
@@ -1761,6 +1771,13 @@ ${CAT_STYLE_RULES}`;
           delete c.ties[k];
         } else c.ties[k]=Object.assign({}, c.ties[k]||{}, {why:verdict[k].why});
       });
+    }
+    // at most six objects on a page: the search may over-supply, so the newest found ones go first
+    for (let k=c.objects.length-1; k>=0 && c.objects.length>6; k--){
+      const o=c.objects[k]; if (o.by==='model' && (c.custom_objects||[]).some(x=>x.id===o.object_id)){
+        c.objects.splice(k,1); c.beginnings=c.beginnings.filter(b=>b.object_id!==o.object_id);
+        c.custom_objects=c.custom_objects.filter(x=>x.id!==o.object_id); c.auto_approved=(c.auto_approved||[]).filter(x=>x!==o.object_id);
+      }
     }
     if (!picked.length && !picked.found) msgs.push(!stories.length ? 'No story is filed under this category yet and the model chose no lens or sub-genre with sources. Pick lenses or sub-genres below, or add objects by hand.' : withText ? 'No Beginnings: no lens or sub-genre with sources matched this story. Pick some below, or add objects by hand.' : 'The filed story has no generated text yet, so no lens could be matched. Generate the story, or pick lenses and sub-genres below.');
     await writeObjectText(c, picked.filter(o=>!(o.line&&o.about)));

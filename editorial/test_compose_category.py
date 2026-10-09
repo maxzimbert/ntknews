@@ -53,7 +53,7 @@ def ms_item(**kw):
     d.update(kw); return d
 def searcher_ms(items, urls=None):
     def f(key, model, prompt, mt=2500):
-        if "You find the milestones" in prompt:
+        if "You are the researcher for NTK" in prompt:
             return json.dumps(items), (MS_URL not in (urls or [])) and [MS_URL] if urls is None else urls, []
         return searcher_ok(key, model, prompt, mt)
     return f
@@ -132,7 +132,7 @@ check("without a repair caller the long line is rejected", unfixed == [], nu)
 recn, nn2 = CC.compose("k", "m", STORY2, "Biosecurity", POOL, SPEC, caller_none_connect, searcher_ms([]))
 check("nothing in the pool and nothing found: no category", recn is None, nn2)
 recs2, ns2 = CC.compose("k", "m", STORY, "AI", POOL, SPEC, caller, searcher_ok)
-check("when four or more pool documents connect, no search is made for milestones", not any("found by search" in n for n in ns2), ns2)
+check("the search runs when the pool gives fewer than six, and finding none leaves the pool objects", recs2 is not None and any("0 milestone(s) found" in n for n in ns2), ns2)
 
 # the independent judge and the tie to the story
 def caller_soviet(key, model, system, user, mt):
@@ -156,6 +156,18 @@ JUDGE_DROPS[:] = ["*"]
 recz, nz = CC.compose("k", "m", STORY, "AI", POOL, SPEC, caller, searcher_ok)
 check("if the judge drops everything, no category is made", recz is None, nz)
 JUDGE_DROPS[:] = []
+
+# looser tie: the story's own words, not a verbatim copy
+check("ties_to made of the story's words passes even when reordered", CC.ties_ok("Irkutsk anti-plague laboratory", STORY2["text"]))
+check("ties_to with words that are not in the story fails", not CC.ties_ok("nuclear arms treaty negotiations", STORY2["text"]))
+check("a one-word ties_to fails", not CC.ties_ok("Irkutsk", STORY2["text"]))
+# the search is asked even when the matrix supplies enough, and asks for a chronology
+asked = []
+def searcher_spy(key, model, prompt, mt=2500):
+    if "You are the researcher for NTK" in prompt: asked.append(prompt)
+    return searcher_ms([ms_item()])(key, model, prompt, mt)
+CC.compose("k", "m", STORY, "AI", POOL, SPEC, caller, searcher_spy)
+check("search is asked for a chronology even when the pool supplies some objects", len(asked) == 1 and "what is the history of the action" in asked[0] and "target, not a quota" in asked[0], len(asked))
 
 # the object count: four to six, matrix first
 M = lambda i, y, pool="matrix": {"id": f"{pool[0]}{i}", "pool": pool, "author": f"a{i}", "sort": f"{y}-01-01", "title": "t", "lenses": [], "url": "u", "year": str(y)}
