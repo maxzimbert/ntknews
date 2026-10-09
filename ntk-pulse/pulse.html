@@ -1270,6 +1270,12 @@ function catTextProblems(label, text, lo, hi, opt){
   if (opt.starts && !t.startsWith(opt.starts)) p.push(label+' does not start with "'+opt.starts+'"');
   return p;
 }
+// Every number in `text` appears in one of the sources (mirrors categories.numbers_ok).
+function catNumbersOk(text){
+  const src=Array.prototype.slice.call(arguments,1), tok=t=>new Set(String(t||'').match(/\d[\d,.]*\d|\d/g)||[]);
+  const allowed=new Set(); src.forEach(x=>tok(x).forEach(n=>allowed.add(n)));
+  return Array.from(tok(text)).every(n=>allowed.has(n));
+}
 function lensSupported(lens, spec, text){
   const c=(spec||{})[lens]||{};
   return (c.story_terms||[]).some(w=>new RegExp('\\b'+catEscRe(w)+'\\b','i').test(text)) ||
@@ -1341,7 +1347,9 @@ function validateCat(cat, poolBy0, spec, storyTexts, originYear, vocab){
     else if (!(cu.title||'').trim()) why='missing title';
     if (why){ problems.push('added object '+cu.title+': '+why); return; }
     const cid=cu.id||('custom-'+cu.title.toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,60));
-    poolBy[cid]={id:cid,pool:'custom',approved:true,title:cu.title.trim(),author:cu.author||'',year:String(cu.year),sort:/^\d{4}-\d\d-\d\d$/.test(cu.date||'')?cu.date:String(cu.year)+'-01-01',source:cu.source||host,url:url,lenses:[],subgenre:'',link_status:'unchecked',about:'',line:''};
+    poolBy[cid]={id:cid,pool:'custom',approved:true,title:cu.title.trim(),author:cu.author||'',year:String(cu.year),sort:/^\d{4}-\d\d-\d\d$/.test(cu.date||'')?cu.date:String(cu.year)+'-01-01',source:cu.source||host,url:url,lenses:[],subgenre:'',link_status:'unchecked',about:'',line:'',
+      found_by:cu.found_by||null,evidence:String(cu.evidence_quote||'').trim(),date:cu.date||''};
+    if (cu.found_by==='search' && !poolBy[cid].evidence){ problems.push('found object '+cu.title+': no evidence quote from the page'); delete poolBy[cid]; }
   });
   const approved=new Set(c.approved_objects||[]); const objs=[]; const abouts=new Set(), linesSeen=new Set();
   (c.objects||[]).forEach(o=>{
@@ -1350,7 +1358,7 @@ function validateCat(cat, poolBy0, spec, storyTexts, originYear, vocab){
     if (e.link_status==='dead' || !e.url){ problems.push('object '+e.title+' has no live link'); return; }
     if (e.pool==='candidate' && !(e.approved || approved.has(e.id))){ problems.push('candidate '+e.title+' is not approved'); return; }
     let about=(o.about||e.about||'').trim();
-    if (about && o.by!=='editor'){ const ap=catTextProblems('about',about,1,70); if (abouts.has(about.toLowerCase())) ap.push('about is the same text as another object\u2019s'); if (ap.length){ ap.forEach(x=>problems.push(e.title+': '+x)); about=''; } }
+    if (about && o.by!=='editor'){ const ap=catTextProblems('about',about,1,70); if (abouts.has(about.toLowerCase())) ap.push('about is the same text as another object\u2019s'); if (e.found_by==='search' && !catNumbersOk(about,e.title,e.year,e.date,e.evidence)) ap.push('about states a number that the page quote does not'); if (ap.length){ ap.forEach(x=>problems.push(e.title+': '+x)); about=''; } }
     if (about) abouts.add(about.toLowerCase());
     objs.push({object_id:e.id,title:e.title,author:e.author,year:e.year,source:e.source,source_url:e.url,about:about,pool:e.pool,lenses:e.lenses,by:o.by||'model',sort:e.sort||(e.year+'-01-01')});
   });
@@ -1364,7 +1372,8 @@ function validateCat(cat, poolBy0, spec, storyTexts, originYear, vocab){
     const eo=poolBy[o.object_id]||{}; if (by.lenses!=='editor' && b.by!=='editor' && (keep.length||sgKeep.length) && o.pool!=='custom' && !(o.lenses.some(l=>keep.includes(l)) || sgKeep.includes(eo.subgenre))){ problems.push('Beginning '+o.title+' belongs to none of the category\u2019s lenses or sub-genres'); return; }
     const line=(b.line||'').trim();
     if (linesSeen.has(line.toLowerCase())){ problems.push('Beginning '+o.title+': same line as another Beginning'); return; }
-    const lp = b.by==='editor' ? (line?[]:['line is empty']) : catTextProblems('line',line,12,25,{sentences:1});
+    let lp = b.by==='editor' ? (line?[]:['line is empty']) : catTextProblems('line',line,12,25,{sentences:1});
+    if (b.by!=='editor' && eo.found_by==='search' && !catNumbersOk(line,o.title,o.year,eo.date,eo.evidence)) lp=lp.concat(['line states a number that the page quote does not']);
     if (lp.length){ lp.forEach(x=>problems.push('Beginning '+o.title+': '+x)); return; }
     seen.add(b.object_id); linesSeen.add(line.toLowerCase()); begs.push({object_id:b.object_id,year:o.year,line:line,by:b.by||'model'});
   });
@@ -1444,6 +1453,20 @@ function catFieldKey(el){
   if (row && cl.contains('cat-about')) return 'about:'+row.dataset.oid;
   if (cl.contains('cat-ind')) return 'ind:'+el.dataset.k;
   return null;
+}
+// A milestone the model found by web search: link returned by the search, https, not refused, a year, a
+// quote, text that meets the rules, and no number that the quote, title and date do not hold.
+function verifyMilestone(m, urls){
+  const url=String(m.source_url||'').trim(), host=url.replace(/^https?:\/\/([^\/]+).*$/,'$1').toLowerCase(), t=String(m.title||'').trim();
+  if (!url.startsWith('https://')) return {ok:false, reason:'link is not https'};
+  if (!(urls||[]).includes(url)) return {ok:false, reason:'the link is not one the search returned'};
+  if (CAT_DENY.some(d=>host.includes(d))) return {ok:false, reason:host+' is not a primary source'};
+  if (!/^\d{3,4}$/.test(String(m.year||''))) return {ok:false, reason:'no year'};
+  if (!t || !String(m.evidence_quote||'').trim()) return {ok:false, reason:'no title or no quote from the page'};
+  const lp=catTextProblems('line',String(m.line||'').trim(),12,25,{sentences:1}), ap=catTextProblems('about',String(m.about||'').trim(),1,70);
+  if (lp.length||ap.length) return {ok:false, reason:lp.concat(ap).join('; ')};
+  if (!catNumbersOk(m.line+' '+m.about,t,m.year,m.date,m.evidence_quote)) return {ok:false, reason:'a number is not in the quote'};
+  return {ok:true};
 }
 /* CATS:END */
 
@@ -1584,19 +1607,50 @@ TODAY'S STORY: ${stories[0]?stories[0].title+'. '+(texts[0]||'').slice(0,700):'(
 DOCUMENTS (id | year | title | author | pool | sub-genre):
 ${ordered.map(o=>[o.id,o.year,String(o.title).slice(0,90),String(o.author||'').slice(0,40),o.pool,o.subgenre||''].join(' | ')).join('\n')}
 
-Choose 5 to 7 documents that connect most directly to this story and category. A reader should see why each one is part of the road to today. Rules:
-1. Prefer pool=matrix whenever a matrix document connects equally well.
-2. Spread them across time, and include the most recent document that truly bears on the story.
-3. Do NOT choose a document only because it is about a related branch of government, a general theme, or the same decade. If fewer than 5 connect, choose fewer, but never choose one that does not connect.
-4. Use only ids from the list.
+Choose up to 6 documents that connect to this story and category. A reader should see why each one is part of the road to today. Rules:
+1. A document connects only if its own subject matter is the category's subject: the thing the story is about. It must not be an analogy from another field. For an outbreak category, that means epidemics, public-health law, disease surveillance, biological weapons or official disclosure of health risks. A document about foreign policy, broadcasting or federalism does not connect to a public-health category because both involve secrecy or government power.
+2. Prefer pool=matrix whenever a matrix document connects equally well.
+3. Spread them across time, and include the most recent document that truly bears on the story.
+4. Choosing NONE is correct when nothing connects: a web search will then find the right documents. Never choose one that does not connect just to fill the list.
+5. Use only ids from the list.
 JSON only: {"choose":["<id>", ...],"why":"one sentence"}`;
   try {
     const r=catJson(await ai(p,900));
     const ids=Array.from(new Set(((Array.isArray(r)?r:r.choose)||[]).filter(i=>pool[i])));
-    if (ids.length){ msgs.push('Objects chosen for relevance: '+(r.why||'')); return ids.map(i=>pool[i]).sort((a,b)=>a.sort<b.sort?-1:1); }
-    msgs.push('The model chose no objects from the pool; the rule picked from the lenses alone.');
+    msgs.push(ids.length ? 'Objects chosen for relevance: '+(r.why||'') : 'No pool document connects to this story.');
+    return ids.map(i=>pool[i]).sort((a,b)=>a.sort<b.sort?-1:1);
   } catch(e){ msgs.push('Object choice failed ('+e.message+'); the rule picked from the lenses alone.'); }
   return catPick(c.lenses, []);     // a broad sub-genre by date is how off-topic documents got in
+}
+function catJsonAny(text){
+  const t=String(text).replace(/```json|```/g,'').trim(), i=t.indexOf('['), j=t.lastIndexOf(']');
+  if (i<0||j<i) throw new Error('the model did not return a list');
+  return JSON.parse(t.slice(i,j+1));
+}
+// Milestones in this subject's history, each with a primary document, found by web search (used when fewer than
+// four pool documents connect). Each answer is checked by verifyMilestone; CI then checks the link loads and the
+// quote is on the page. Mirrors compose_category.find_milestones.
+async function proposeMilestones(c, stories, texts, have, need, msgs){
+  const haveTxt=have.map(o=>o.year+' '+o.title).join('; ')||'(none)';
+  const p=`You find the milestones in the history of one subject, each with its primary source, for a Backstory category page at NTK. The page shows how today's story sits inside a long argument: dated milestones, oldest to newest, each tied to a primary document the reader can open.
+
+CATEGORY: ${c.title}
+CONTEST: ${c.contest||''}
+TODAY'S STORY: ${stories[0]?stories[0].title+'. '+(texts[0]||'').slice(0,700):'(none filed yet: use the category name)'}
+ALREADY ON THE PAGE (do not repeat): ${haveTxt}
+
+Find ${need} more milestones: turning points in how we got to this story. Each is a law, ruling, report, treaty, hearing, speech or incident with an official record. Use web search. For each, give the primary document itself or the copy held by an archive, court, legislature, government agency or the original publisher: not Wikipedia, not a news article or summary about it, not a retail or study-guide page. Spread them across time, earlier than today's event, with the last one the most recent turn before it. Every milestone must be about the category's own subject, not an analogy from another field. Answer with JSON only, a list:
+[{"year":"YYYY","date":"YYYY-MM-DD if you know it, else null","title":"the document's exact title","author":"who issued or wrote it","source":"the publishing body or archive","source_url":"the exact page or PDF where it can be read","line":"ONE sentence, 12 to 25 words, saying what happened, starting with the actor or the event","about":"two to four sentences, at most 70 words: what the document is, who made it and when, what it says or did","evidence_quote":"one sentence copied word for word from that page that supports the line"}]
+Rules: use only facts that the page states; the line and about may contain no number that is not in the title, the date or the evidence_quote. If you cannot find ${need}, give fewer. If you find none, answer [].
+${CAT_STYLE_RULES}`;
+  const r=await aiSearch(p,4000), items=catJsonAny(r.text), out=[];
+  items.slice(0,need+2).forEach(m=>{
+    const v=verifyMilestone(m, r.urls);
+    if (!v.ok){ msgs.push('Milestone "'+String(m.title||'').slice(0,40)+'" rejected: '+v.reason+'.'); return; }
+    const cid='custom-'+String(m.title).trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,60);
+    out.push({cu:{id:cid,title:String(m.title).trim(),author:String(m.author||'').trim(),year:String(m.year),date:/^\d{4}-\d\d-\d\d$/.test(m.date||'')?m.date:'',source:String(m.source||'').trim(),url:String(m.source_url).trim(),found_by:'search',evidence_quote:String(m.evidence_quote).trim()},line:String(m.line).trim(),about:String(m.about).trim()});
+  });
+  return out.slice(0,need);
 }
 async function composeCat(id){
   const c=catEnsureLocal(id); if (!c) return;
@@ -1638,7 +1692,20 @@ ${CAT_STYLE_RULES}`;
     const keepEd=(c.objects||[]).filter(o=>o.by==='editor'), edIds=new Set(keepEd.map(o=>o.object_id));
     c.objects=picked.map(o=>({object_id:o.id,about:o.about||'',by:'model'})).filter(o=>!edIds.has(o.object_id)).concat(keepEd);
     c.beginnings=picked.map(o=>({object_id:o.id,line:o.line||'',by:'model'})).concat((c.beginnings||[]).filter(b=>edIds.has(b.object_id)));
-    if (!picked.length) msgs.push(!stories.length ? 'No story is filed under this category yet and the model chose no lens or sub-genre with sources. Pick lenses or sub-genres below, or add objects by hand.' : withText ? 'No Beginnings: no lens or sub-genre with sources matched this story. Pick some below, or add objects by hand.' : 'The filed story has no generated text yet, so no lens could be matched. Generate the story, or pick lenses and sub-genres below.');
+    if (picked.length<4){
+      CAT_BUSY[id]='Searching for milestones…'; render();
+      try {
+        const found=await proposeMilestones(c, stories, texts, picked, 6-picked.length, msgs);
+        found.forEach(f=>{
+          c.custom_objects=(c.custom_objects||[]).filter(x=>x.id!==f.cu.id).concat([f.cu]);
+          c.objects.push({object_id:f.cu.id,about:f.about,by:'model'}); c.beginnings.push({object_id:f.cu.id,line:f.line,by:'model'});
+          c.auto_approved=Array.from(new Set((c.auto_approved||[]).concat([f.cu.id])));
+        });
+        msgs.push(found.length+' milestone'+(found.length===1?'':'s')+' found by search.');
+        picked.found=found.length;
+      } catch(e){ msgs.push('Milestone search failed: '+e.message+' (web search may not be enabled for this key).'); }
+    }
+    if (!picked.length && !picked.found) msgs.push(!stories.length ? 'No story is filed under this category yet and the model chose no lens or sub-genre with sources. Pick lenses or sub-genres below, or add objects by hand.' : withText ? 'No Beginnings: no lens or sub-genre with sources matched this story. Pick some below, or add objects by hand.' : 'The filed story has no generated text yet, so no lens could be matched. Generate the story, or pick lenses and sub-genres below.');
     await writeObjectText(c, picked.filter(o=>!(o.line&&o.about)));
     c.revisions=(c.revisions||[]).concat([{at:new Date().toISOString(),request:'(first draft)',summary:r1.note||''}]);
     if (r1.note) msgs.push(r1.note);
@@ -1798,7 +1865,7 @@ function catEditorHtml(c){
         <b>${esc(e.year||'')}</b> <span>${esc(e.title||o.object_id)}</span>
         <a href="${esc(e.url||'#')}" target="_blank" rel="noopener" style="font-size:11px">open source ↗</a>
         <span class="chip">${esc(e.link_status||'')}</span>
-        ${(c.auto_approved||[]).includes(o.object_id)?'<span class="chip" style="background:var(--warn);color:#fff" title="included automatically; its link was read but you have not reviewed it">auto-included</span> <button class="mini cat-reviewed">mark reviewed</button>':''}
+        ${(c.auto_approved||[]).includes(o.object_id)?'<span class="chip" style="background:var(--warn);color:#fff" title="included automatically; you have not reviewed it">'+(e.pool==='custom'?'found by search':'auto-included')+'</span> <button class="mini cat-reviewed">mark reviewed</button>':''}
         ${cand?`<label style="font-size:11px;${ok?'':'color:var(--warn)'}"><input type="checkbox" class="cat-approve" ${ok?'checked':''} ${e.approved?'disabled':''}> ${ok?'approved':'candidate, needs your approval'}</label>`:'<span class="chip">'+esc(e.pool==='custom'?'added':'matrix')+'</span>'}
         <button class="mini cat-rm" style="margin-left:auto">remove</button>
       </div>

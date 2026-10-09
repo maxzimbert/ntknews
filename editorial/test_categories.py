@@ -140,6 +140,9 @@ def main():
     except ValueError as e:
         check("model JSON: no JSON at all raises, saying what it saw", "I could not do that" in str(e), e)
 
+    check("quote check: a run of five words from the quote on the page passes", C._quote_on_page("The Convention was opened for signature on 10 April 1972.", "<p>... The Convention WAS opened for signature on 10 April 1972, and ...</p>"), None)
+    check("quote check: a quote that is not on the page fails", not C._quote_on_page("The Convention was opened for signature on 10 April 1972.", "Something else entirely about another treaty and its text."), None)
+
     x = good(); x["beginnings"].reverse(); x["objects"].reverse()
     c, p = run(x)
     yrs = [b["year"] for b in c["beginnings"]]

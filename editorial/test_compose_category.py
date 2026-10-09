@@ -22,7 +22,7 @@ def check(name, ok, detail=""):
 CHOSEN = {}
 def caller(key, model, system, user, mt):
     if "choose the primary sources" in user:
-        ids = [l.split(" | ")[0] for l in user.split("DOCUMENTS (id | year | title | author | pool | sub-genre):")[1].split("Choose 5 to 7")[0].strip().splitlines()]
+        ids = [l.split(" | ")[0] for l in user.split("DOCUMENTS (id | year | title | author | pool | sub-genre):")[1].split("Choose up to 6")[0].strip().splitlines()]
         m = [i for i in ids if BY[i]["pool"] == "matrix"][:3]
         c = [i for i in ids if BY[i]["pool"] == "candidate"][:3]
         CHOSEN["ids"] = m + c + ["not-in-the-pool"]
@@ -40,6 +40,19 @@ def searcher_ok(key, model, prompt, mt=2500):
                     "source": "Heatmap Pro", "source_url": "https://heatmap.news/x", "as_of": "August 2026",
                     "evidence_quote": "Opposition rose from 42% to 75% in a year.", "note": "n"})
     return t, ["https://heatmap.news/x"], []
+MS_URL = "https://www.govinfo.gov/content/pkg/example-act.pdf"
+def ms_item(**kw):
+    d = {"year": "1972", "date": "1972-04-10", "title": "Convention on Biological Weapons", "author": "Parties to the Convention", "source": "UN Treaty Collection",
+         "source_url": MS_URL, "line": "Dozens of states signed a treaty banning the development and stockpiling of biological weapons in April 1972.",
+         "about": "Governments signed this treaty in 1972. It bans developing, producing and stockpiling biological weapons. It was opened for signature in April.",
+         "evidence_quote": "The Convention was opened for signature on 10 April 1972."}
+    d.update(kw); return d
+def searcher_ms(items, urls=None):
+    def f(key, model, prompt, mt=2500):
+        if "You find the milestones" in prompt:
+            return json.dumps(items), (MS_URL not in (urls or [])) and [MS_URL] if urls is None else urls, []
+        return searcher_ok(key, model, prompt, mt)
+    return f
 def searcher_boom(*a, **k):
     raise RuntimeError("web search is not enabled")
 
@@ -72,7 +85,7 @@ def caller_off(key, model, system, user, mt):
 recx, nx = CC.compose("k", "m", STORY, "AI", POOL, SPEC, caller_off, searcher_ok)
 def caller_list(key, model, system, user, mt):
     if "choose the primary sources" in user:
-        ids = [l.split(" | ")[0] for l in user.split("DOCUMENTS (id | year | title | author | pool | sub-genre):")[1].split("Choose 5 to 7")[0].strip().splitlines()]
+        ids = [l.split(" | ")[0] for l in user.split("DOCUMENTS (id | year | title | author | pool | sub-genre):")[1].split("Choose up to 6")[0].strip().splitlines()]
         return [i for i in ids if BY[i]["pool"] == "matrix"][:5]       # a bare list, as the real model once answered
     return caller(key, model, system, user, mt)
 recl, nl = CC.compose("k", "m", STORY, "AI", POOL, SPEC, caller_list, searcher_ok)
@@ -85,6 +98,28 @@ def caller_sg(key, model, system, user, mt):
 recs, ns = CC.compose("k", "m", STORY, "AI", POOL, SPEC, caller_sg, searcher_ok)
 check("with only a sub-genre and a failed choice, no off-topic objects are drawn in: no category", recs is None, ns)
 check("if the model's choice fails, the rule picks four to six", recx is not None and 4 <= len(recx["objects"]) <= 6 and any("rule picked" in n for n in nx), (len(recx["objects"]) if recx else None, nx))
+
+# milestones found by search fill a gap the pool cannot
+def caller_none_connect(key, model, system, user, mt):
+    if "choose the primary sources" in user: return {"choose": [], "why": "nothing connects"}
+    return caller(key, model, system, user, mt)
+STORY2 = dict(STORY, headline="A lab worker died in Siberia", text="A 28-year-old worker died at an anti-plague lab in Irkutsk. Russia locked down five regions. Officials disagree on the cause.")
+recm, nm = CC.compose("k", "m", STORY2, "Biosecurity", POOL, SPEC, caller_none_connect, searcher_ms([ms_item()]))
+check("when nothing in the pool connects, milestones found by search fill the page", recm is not None and len(recm["custom_objects"]) == 1 and recm["custom_objects"][0]["found_by"] == "search", nm)
+cm, pm = C.validate(recm, BY, SPEC, [STORY2["text"]], None, VOCAB)
+check("a found milestone validates and is flagged for the editor's review", [b["object_id"] for b in cm["beginnings"]] == [recm["custom_objects"][0]["id"]] and recm["custom_objects"][0]["id"] in recm["auto_approved"], pm)
+bad_url, nb = CC.find_milestones("k", "m", STORY2, "t", "c", [], 3, searcher_ms([ms_item(source_url="https://elsewhere.org/x")], urls=[MS_URL]))
+check("a link the search did not return is rejected", bad_url == [] and any("not one the search returned" in n for n in nb), nb)
+wiki, nw = CC.find_milestones("k", "m", STORY2, "t", "c", [], 3, searcher_ms([ms_item(source_url="https://en.wikipedia.org/wiki/X")], urls=["https://en.wikipedia.org/wiki/X"]))
+check("Wikipedia is rejected", wiki == [] and any("not a primary source" in n for n in nw), nw)
+num, nn = CC.find_milestones("k", "m", STORY2, "t", "c", [], 3, searcher_ms([ms_item(line="A total of 150 states signed a treaty banning the development and stockpiling of biological weapons in April 1972.")]))
+check("a number not in the quote is rejected", num == [] and any("number" in n for n in nn), nn)
+noq, nq = CC.find_milestones("k", "m", STORY2, "t", "c", [], 3, searcher_ms([ms_item(evidence_quote="")]))
+check("a milestone with no quote from the page is rejected", noq == [], nq)
+recn, nn2 = CC.compose("k", "m", STORY2, "Biosecurity", POOL, SPEC, caller_none_connect, searcher_ms([]))
+check("nothing in the pool and nothing found: no category", recn is None, nn2)
+recs2, ns2 = CC.compose("k", "m", STORY, "AI", POOL, SPEC, caller, searcher_ok)
+check("when four or more pool documents connect, no search is made for milestones", not any("found by search" in n for n in ns2), ns2)
 
 # the object count: four to six, matrix first
 M = lambda i, y, pool="matrix": {"id": f"{pool[0]}{i}", "pool": pool, "author": f"a{i}", "sort": f"{y}-01-01", "title": "t", "lenses": [], "url": "u", "year": str(y)}

@@ -70,6 +70,14 @@ def words(t):
     return len((t or "").split())
 
 
+def numbers_ok(text, *sources):
+    """Every number in `text` appears in one of the sources. A found milestone's line and About may state
+    only what the page quote, the title and the date state."""
+    tok = lambda t: set(re.findall(r"\d[\d,.]*\d|\d", str(t or "")))
+    allowed = set().union(*(tok(x) for x in sources))
+    return all(n in allowed for n in tok(text))
+
+
 def lens_supported(lens, spec, text):
     cfg = spec.get(lens) or {}
     for w in cfg.get("story_terms", []):
@@ -164,7 +172,12 @@ def validate(cat, pool, spec, story_texts, origin_year=None, vocab=None):
         pool[cid] = {"id": cid, "pool": "custom", "approved": True, "title": cu["title"].strip(), "author": cu.get("author") or "",
                      "year": str(cu["year"]), "sort": cu["date"] if re.fullmatch(r"\d{4}-\d\d-\d\d", cu.get("date") or "") else f"{cu['year']}-01-01",
                      "source": cu.get("source") or host, "url": url, "lenses": [], "subgenre": "",
-                     "link_status": "unchecked", "about": "", "line": ""}
+                     "link_status": "unchecked", "about": "", "line": "",
+                     "found_by": cu.get("found_by"), "evidence": (cu.get("evidence_quote") or "").strip(),
+                     "date": cu.get("date") or ""}
+        if cu.get("found_by") == "search" and not pool[cid]["evidence"]:
+            problems.append(f"found object {cu['title']!r}: no evidence quote from the page")
+            del pool[cid]
 
     # objects
     approved = set(c.get("approved_objects") or [])
@@ -182,6 +195,8 @@ def validate(cat, pool, spec, story_texts, origin_year=None, vocab=None):
             ap = text_problems("about", about, 1, 70)
             if about.lower() in abouts_seen:
                 ap = ap + ["about is the same text as another object's"]
+            if e.get("found_by") == "search" and not numbers_ok(about, e["title"], e["year"], e.get("date"), e["evidence"]):
+                ap = ap + ["about states a number that the page quote does not"]
             if ap:
                 problems += [f"{e['title']!r}: {x}" for x in ap]; about = ""
         if about:
@@ -213,6 +228,8 @@ def validate(cat, pool, spec, story_texts, origin_year=None, vocab=None):
             lp = [] if line else ["line is empty"]
         else:
             lp = text_problems("line", line, 12, 25, sentences=1)
+        if b.get("by") != "editor" and pool[oid].get("found_by") == "search" and not numbers_ok(line, o["title"], o["year"], pool[oid].get("date"), pool[oid]["evidence"]):
+            lp = lp + ["line states a number that the page quote does not"]
         if lp:
             problems += [f"Beginning {o['title']!r}: {x}" for x in lp]; continue
         seen.add(oid); lines_seen.add(line.lower()); begs.append({"object_id": oid, "year": o["year"], "line": line, "by": b.get("by", "model")})
@@ -265,17 +282,32 @@ def _fetch(url, limit=700000):
         return 0, ""
 
 
+def _quote_on_page(quote, page):
+    """A run of five consecutive words of the quote appears on the page (case, spacing and punctuation
+    ignored). A page that could not be read as text (a PDF, a blocked host) is not tested."""
+    norm = lambda t: re.sub(r"[^a-z0-9]+", " ", t.lower()).split()
+    q, p = norm(quote), " " + " ".join(norm(page)) + " "
+    if len(q) < 5:
+        return True
+    return any(" " + " ".join(q[i:i + 5]) + " " in p for i in range(len(q) - 4))
+
+
 def live_checks(c):
     """Links the editor added are checked, and an indicator's figures are looked for on
     its source page. Only a definite failure drops something: a host that refuses scripts
     (403, 429, a challenge page) leaves the item in, as the link checker does."""
     problems = []
     keep = []
+    ev = {cu.get("id"): (cu.get("evidence_quote") or "") for cu in c.get("custom_objects") or [] if cu.get("found_by") == "search"}
     for o in c.get("objects") or []:
         if o.get("pool") == "custom":
-            st, _ = _fetch(o["source_url"])
+            st, page = _fetch(o["source_url"])
             if st in (404, 410) or st == 0:
                 problems.append(f"added object {o['title']!r}: the link does not load (status {st})")
+                continue
+            q = ev.get(o["object_id"])
+            if q and st == 200 and page and not _quote_on_page(q, page):
+                problems.append(f"found object {o['title']!r}: the quoted sentence is not on the page")
                 continue
         keep.append(o)
     dropped = {o["object_id"] for o in c.get("objects") or []} - {o["object_id"] for o in keep}

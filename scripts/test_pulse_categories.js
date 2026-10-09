@@ -7,7 +7,7 @@ const root = path.resolve(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'ntk-pulse/pulse.html'), 'utf8');
 const m = html.match(/\/\* CATS:BEGIN \*\/([\s\S]*?)\/\* CATS:END \*\//);
 if (!m) { console.error('FAIL: CATS block not found'); process.exit(1); }
-const L = new Function(m[1] + '; return {validateCat, selectBeginnings, pickBeginnings, lensSupported, catTextProblems, verifyIndicator, catSentences, verifyFoundObject, applySourceEdit, catFieldKey, pickForSubjects};')();
+const L = new Function(m[1] + '; return {validateCat, selectBeginnings, pickBeginnings, lensSupported, catTextProblems, verifyIndicator, catSentences, verifyFoundObject, applySourceEdit, catFieldKey, pickForSubjects, verifyMilestone, catNumbersOk};')();
 const poolDoc = JSON.parse(fs.readFileSync(path.join(root, 'ntk-pulse/data/backstory-pool.json'), 'utf8'));
 const poolBy = Object.fromEntries(poolDoc.objects.map(o => [o.id, o]));
 const spec = JSON.parse(fs.readFileSync(path.join(root, 'editorial/lenses.json'), 'utf8'));
@@ -122,5 +122,18 @@ const mx = [Array.from({ length: 2 }, (_, i) => MM(i, 1900 + i * 10)).concat(Arr
 const gp = L.pickForSubjects(mx);
 check('pickForSubjects: every matrix object is used before candidates fill the six', gp.length === 6 && gp.filter(o => o.pool === 'matrix').length === 2, gp.map(o => o.pool));
 check('pickForSubjects: a thin pool gives what exists', L.pickForSubjects([[MM(1, 1950), MM(2, 1990)], [MM(3, 1970)]]).length === 3, null);
+const MSU = 'https://www.govinfo.gov/content/pkg/example-act.pdf';
+const msv = (o) => Object.assign({ year: '1972', date: '1972-04-10', title: 'Convention on Biological Weapons', source_url: MSU, line: 'Dozens of states signed a treaty banning the development and stockpiling of biological weapons in April 1972.', about: 'Governments signed this treaty in 1972. It bans developing and stockpiling biological weapons. It was opened for signature in April.', evidence_quote: 'The Convention was opened for signature on 10 April 1972.' }, o || {});
+check('verifyMilestone: a well-formed milestone from a returned link passes', L.verifyMilestone(msv(), [MSU]).ok, L.verifyMilestone(msv(), [MSU]));
+check('verifyMilestone: a link the search did not return fails', !L.verifyMilestone(msv(), ['https://other.org']).ok, null);
+check('verifyMilestone: Wikipedia fails', !L.verifyMilestone(msv({ source_url: 'https://en.wikipedia.org/wiki/X' }), ['https://en.wikipedia.org/wiki/X']).ok, null);
+check('verifyMilestone: a number not in the quote fails', !L.verifyMilestone(msv({ line: 'A total of 150 states signed a treaty banning the development and stockpiling of biological weapons in April 1972.' }), [MSU]).ok, null);
+check('verifyMilestone: no quote fails', !L.verifyMilestone(msv({ evidence_quote: '' }), [MSU]).ok, null);
+x = good(); x.custom_objects = [{ id: 'custom-ms', title: 'Convention on Biological Weapons', author: 'Parties', year: '1972', date: '1972-04-10', source: 'UN', url: MSU, found_by: 'search', evidence_quote: 'The Convention was opened for signature on 10 April 1972.' }];
+x.objects.push({ object_id: 'custom-ms', by: 'model', about: 'Governments signed this treaty in 1972. It bans developing and stockpiling biological weapons. It was opened for signature in April.' });
+x.beginnings.push({ object_id: 'custom-ms', by: 'model', line: 'Dozens of states signed a treaty banning the development and stockpiling of biological weapons in April 1972.' }); r = run(x);
+check('a found milestone validates', r.clean.beginnings.some(b => b.object_id === 'custom-ms') && r.clean.objects.some(o => o.object_id === 'custom-ms'), r.problems);
+x.beginnings[x.beginnings.length - 1].line = 'A total of 150 states signed a treaty banning the development and stockpiling of biological weapons in April 1972.'; r = run(x);
+check('a found milestone whose line states a number the quote lacks is dropped as a Beginning', !r.clean.beginnings.some(b => b.object_id === 'custom-ms') && r.problems.some(p => p.includes('number')), r.problems);
 check('lensSupported reads whole words only', L.lensSupported('tech', spec, ALTMAN) && !L.lensSupported('china', spec, ALTMAN) && !L.lensSupported('tech', spec, 'The mail arrived said the senator'), null);
 console.log('\n' + fails + ' failed'); process.exit(fails ? 1 : 0);

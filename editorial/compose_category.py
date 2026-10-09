@@ -128,28 +128,89 @@ TODAY'S STORY: {story['headline']}. {story['text'][:700]}
 DOCUMENTS (id | year | title | author | pool | sub-genre):
 """ + "\n".join(f"{o['id']} | {o['year']} | {o['title'][:90]} | {o['author'][:40]} | {o['pool']} | {o.get('subgenre') or ''}" for o in ordered) + """
 
-Choose 5 to 7 documents that connect most directly to this story and category. A reader should see why each one is part of the road to today. Rules:
-1. Prefer pool=matrix whenever a matrix document connects equally well.
-2. Spread them across time, and include the most recent document that truly bears on the story.
-3. Do NOT choose a document only because it is about a related branch of government, a general theme, or the same decade. If fewer than 5 connect, choose fewer, but never choose one that does not connect.
-4. Use only ids from the list.
+Choose up to 6 documents that connect to this story and category. A reader should see why each one is part of the road to today. Rules:
+1. A document connects only if its own subject matter is the category's subject: the thing the story is about. It must not be an analogy from another field. For an outbreak category, that means epidemics, public-health law, disease surveillance, biological weapons or official disclosure of health risks. A document about foreign policy, broadcasting or federalism does not connect to a public-health category because both involve secrecy or government power.
+2. Prefer pool=matrix whenever a matrix document connects equally well.
+3. Spread them across time, and include the most recent document that truly bears on the story.
+4. Choosing NONE is correct when nothing connects: a web search will then find the right documents. Never choose one that does not connect just to fill the list.
+5. Use only ids from the list.
 JSON only: {"choose":["<id>", ...],"why":"one sentence"}"""
     for attempt in (1, 2):
         try:
             r = caller(api_key, model, "", p, 900)
             if isinstance(r, list):                    # the model answered a bare list of ids
                 r = {"choose": r}
-            ids = [i for i in ((r.get("choose") if isinstance(r, dict) else None) or []) if i in pool]
-            if ids:
-                notes.append("objects chosen for relevance: " + ((r.get("why") if isinstance(r, dict) else "") or ""))
-                return sorted((pool[i] for i in dict.fromkeys(ids)), key=lambda o: o["sort"])
-            notes.append("the model chose no objects from the pool")
+            if not isinstance(r, dict) or "choose" not in r:
+                notes.append("the model's answer had no list of documents")
+                continue
+            ids = [i for i in (r.get("choose") or []) if i in pool]
+            notes.append(("objects chosen for relevance: " + (r.get("why") or "")) if ids else "no pool document connects to this story")
+            return sorted((pool[i] for i in dict.fromkeys(ids)), key=lambda o: o["sort"])
         except Exception as e:  # noqa: BLE001
             notes.append(f"object choice failed ({type(e).__name__}: {str(e)[:80]})")
     # The rule is the fallback only for the subjects that are specific (a country or a technology). A broad
     # sub-genre by date is how off-topic documents got in, so with only sub-genres the story gets none.
     notes.append("the rule picked from the lenses alone")
     return pick(objs, lenses, [])
+
+
+def find_milestones(api_key, model, story, title, contest, have, need, searcher=None):
+    """Milestones in the history of this subject, each with a primary document, found by web search.
+
+    Used when the pool does not hold enough that connect (the matrix has almost nothing on biosecurity
+    or fuel prices, so the first real run filled such categories with Kennan and the Maysville Road
+    veto). Each answer is checked: the link must be one the search returned, https, not a refused host;
+    the line and About must meet the text rules; and a number in either must come from the title, the
+    date or the quoted sentence. CI then checks that the link loads (categories.live_checks)."""
+    searcher = searcher or call_search
+    have_txt = "; ".join(f"{o['year']} {o['title']}" for o in have) or "(none)"
+    p = f"""You find the milestones in the history of one subject, each with its primary source, for a Backstory category page at NTK. The page shows how today's story sits inside a long argument: dated milestones, oldest to newest, each tied to a primary document the reader can open.
+
+CATEGORY: {title}
+CONTEST: {contest or ''}
+TODAY'S STORY: {story['headline']}. {story['text'][:700]}
+ALREADY ON THE PAGE (do not repeat): {have_txt}
+
+Find {need} more milestones: turning points in how we got to this story. Each is a law, ruling, report, treaty, hearing, speech or incident with an official record. Use web search. For each, give the primary document itself or the copy held by an archive, court, legislature, government agency or the original publisher: not Wikipedia, not a news article or summary about it, not a retail or study-guide page. Spread them across time, earlier than today's event, with the last one the most recent turn before it. Every milestone must be about the category's own subject, not an analogy from another field. Answer with JSON only, a list:
+[{{"year":"YYYY","date":"YYYY-MM-DD if you know it, else null","title":"the document's exact title","author":"who issued or wrote it","source":"the publishing body or archive","source_url":"the exact page or PDF where it can be read","line":"ONE sentence, 12 to 25 words, saying what happened, starting with the actor or the event","about":"two to four sentences, at most 70 words: what the document is, who made it and when, what it says or did","evidence_quote":"one sentence copied word for word from that page that supports the line"}}]
+Rules: use only facts that the page states; the line and about may contain no number that is not in the title, the date or the evidence_quote. If you cannot find {need}, give fewer. If you find none, answer [].
+{STYLE}"""
+    text, urls, cites = searcher(api_key, model, p, 4000)
+    from build_pairings import parse_json_loose
+    items = parse_json_loose(text, "milestones")
+    if isinstance(items, dict):
+        items = items.get("milestones") or []
+    out, notes = [], []
+    for m in items[:need + 2]:
+        t = str(m.get("title") or "").strip()
+        url = str(m.get("source_url") or "").strip()
+        host = re.sub(r"^https?://([^/]+).*$", r"\1", url).lower()
+        why = None
+        if not url.startswith("https://"):
+            why = "link is not https"
+        elif url not in urls:
+            why = "the link is not one the search returned"
+        elif any(d in host for d in C.DENY_HOSTS):
+            why = f"{host} is not a primary source"
+        elif not re.fullmatch(r"\d{3,4}", str(m.get("year") or "")):
+            why = "no year"
+        elif not t or not (m.get("evidence_quote") or "").strip():
+            why = "no title or no quote from the page"
+        else:
+            lp = C.text_problems("line", (m.get("line") or "").strip(), 12, 25, sentences=1)
+            ap = C.text_problems("about", (m.get("about") or "").strip(), 1, 70)
+            if lp or ap:
+                why = "; ".join(lp + ap)
+            elif not C.numbers_ok(m["line"] + " " + m["about"], t, m["year"], m.get("date"), m["evidence_quote"]):
+                why = "a number is not in the quote"
+        if why:
+            notes.append(f"milestone {t[:40]!r} rejected: {why}")
+            continue
+        out.append({"id": "custom-" + re.sub(r"[^a-z0-9]+", "-", t.lower())[:60], "title": t, "author": (m.get("author") or "").strip(),
+                    "year": str(m["year"]), "date": m.get("date") if re.fullmatch(r"\d{4}-\d\d-\d\d", str(m.get("date") or "")) else "",
+                    "source": (m.get("source") or host).strip(), "url": url, "found_by": "search",
+                    "evidence_quote": m["evidence_quote"].strip(), "line": m["line"].strip(), "about": m["about"].strip()})
+    return out[:need], notes
 
 
 # --- web search, for the trend line ------------------------------------------------------------
@@ -159,7 +220,7 @@ def call_search(api_key, model, prompt, max_tokens=3000):
     # tool on); between_tools is its thinking-off mode, as in build_pairings.call_claude.
     body = {"model": model, "max_tokens": max_tokens,
             "thinking": {"type": "between_tools" if "sonnet" in model else "disabled"},
-            "tools": [{"type": "web_search_20250305", "name": "web_search", "max_uses": 5}],
+            "tools": [{"type": "web_search_20250305", "name": "web_search", "max_uses": 8 if max_tokens >= 4000 else 5}],
             "messages": [{"role": "user", "content": prompt}]}
     req = urllib.request.Request("https://api.anthropic.com/v1/messages", data=json.dumps(body).encode(),
                                  headers={"Content-Type": "application/json", "x-api-key": api_key,
@@ -264,8 +325,16 @@ Write JSON only: {{"title":"the category name, 1 to 4 words","contest":"...","st
     lenses = [x for x in (r1.get("lenses") or []) if x in supported]
     subgenres = [x for x in (r1.get("subgenres") or []) if x in vocab_names][:2]
     picked = choose_objects(api_key, model, story, title, r1.get("contest"), objs, lenses, subgenres, caller, notes)
-    if not picked:
-        return None, [f"no lens or sub-genre with sources matched ({lenses}, {subgenres}); the story keeps its row"]
+    found = []
+    if len(picked) < 4:
+        try:
+            found, fnotes = find_milestones(api_key, model, story, title, r1.get("contest"), picked, 6 - len(picked), searcher)
+            notes += fnotes
+            notes.append(f"{len(found)} milestone(s) found by search")
+        except Exception as e:  # noqa: BLE001
+            notes.append(f"milestone search skipped ({type(e).__name__}: {str(e)[:100]})")
+    if not picked and not found:
+        return None, notes + ["nothing in the pool connects and no milestone was found; the story keeps its row"]
     approved_auto = [o["id"] for o in picked if o["pool"] == "candidate" and not o.get("approved")]
     need = [o for o in picked if not (o.get("line") and o.get("about"))]
     texts = {}
@@ -310,15 +379,18 @@ JSON only: {"<id>":{"line":"...","about":"..."}, ...}"""
     rec = {
         "id": slug(title), "title": title, "status": "approved", "auto": True,
         "contest": (r1.get("contest") or "").strip(), "stakes": (r1.get("stakes") or "").strip(),
-        "lenses": lenses, "subgenres": subgenres, "custom_objects": [], "indicator": None,
+        "lenses": lenses, "subgenres": subgenres, "indicator": None,
         "objects": [{"object_id": o["id"], "about": o.get("about") or (texts.get(o["id"]) or {}).get("about") or "", "by": "model"} for o in picked],
         "beginnings": [{"object_id": o["id"], "line": o.get("line") or (texts.get(o["id"]) or {}).get("line") or "", "by": "model"} for o in picked],
         "by": {"contest": "model", "stakes": "model", "lenses": "model"},
-        "approved_objects": approved_auto, "auto_approved": approved_auto,
+        "approved_objects": approved_auto, "auto_approved": approved_auto + [f["id"] for f in found],
+        "custom_objects": [{k: v for k, v in f.items() if k not in ("line", "about")} for f in found],
         "revisions": [{"at": datetime.now(timezone.utc).isoformat(timespec="seconds"), "request": "(made automatically)",
                        "summary": r1.get("note") or ""}],
         "created": today or datetime.now(timezone.utc).date().isoformat(),
     }
+    rec["objects"] += [{"object_id": f["id"], "about": f["about"], "by": "model"} for f in found]
+    rec["beginnings"] += [{"object_id": f["id"], "line": f["line"], "by": "model"} for f in found]
     if r1.get("note"):
         notes.append(r1["note"])
     try:
