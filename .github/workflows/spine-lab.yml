@@ -29,7 +29,7 @@ jobs:
       - name: Build spines and threads
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: python editorial/spine_lab.py
+        run: python editorial/spine_lab.py $(grep -q threads-only editorial/spine-lab-run.txt 2>/dev/null && echo --threads-only)
       - name: Commit
         run: |
           git config user.name "spine-lab"

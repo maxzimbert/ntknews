@@ -25,7 +25,7 @@ import sys
 import time
 import urllib.error
 import urllib.request
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -276,8 +276,9 @@ If no such page exists, answer {{"none":"why"}}."""
 
 # --- 3. the thread ---------------------------------------------------------------------------------
 
-def thread(story, cat, spine):
+def thread(story, cat, spine, today):
     usable = [m for m in spine if m["source"]["check"] in USABLE]
+    cutoff = (datetime.fromisoformat(today) - timedelta(days=45)).strftime("%Y-%m-%d")
     lst = "\n".join(f"- {m['id']} | {m['event_date']} | {m['line']}" for m in usable)
     o = story["prod_origin"]
     p = f"""You build one story's Backstory thread at NTK from a category's spine: a chronology of vetted milestones, each with a primary source. You choose; you do not invent.
@@ -291,17 +292,32 @@ CATEGORY: {cat['title']}: {cat.get('contest') or ''}
 SPINE:
 {lst}
 
-1. START ("It starts in YYYY"): choose the ONE milestone that set today's story in motion: the specific turn without which this story would not exist. Prefer a specific, consequential decision or event close enough to explain today over a distant root. Name two runner-ups and say in a few words why each is weaker.
-2. BEGINNINGS: 3 to 5 milestones dated before the start, oldest to newest, that a reader needs to see how we got to the start. Each must connect to this story's subject, actors or action, not only to the category.
+TODAY: {today}
+
+1. START ("It starts in YYYY"): choose the ONE milestone that set today's story in motion: the specific, consequential turn without which this story would not exist. It is never today's news itself or the trigger of the last few weeks: it is the earlier decision or event that made today possible, usually months or years back. Only milestones dated before {cutoff} may be the start. Prefer it close enough to explain today over a distant root. Name two runner-ups (also before {cutoff}) and say in a few words why each is weaker.
+2. BEGINNINGS: 3 to 5 milestones dated before the start, oldest to newest, that a reader needs in order to see how we got to the start: earlier steps in this story, or earlier cases of the same kind of event that show the pattern. Each must connect to this story's subject, actors or action.
 3. SINCE: 0 to 2 milestones after the start and before today: the most recent turns that bring us to today.
 4. START LINE: one sentence beginning "When" that says what happened at the start, 12 to 28 words.
 {STYLE}
 JSON only: {{"start":"m#","start_line":"When ...","runner_ups":[{{"id":"m#","why_weaker":"..."}}],"beginnings":[{{"id":"m#","why":"one sentence naming what in this story it connects to"}}],"since":[{{"id":"m#","why":"..."}}]}}"""
     r = ask(p, 3000)
     ids = {m["id"] for m in usable}
+    early = {m["id"] for m in usable if m["event_date"] < cutoff}
     clean = lambda xs: [x for x in xs or [] if isinstance(x, dict) and x.get("id") in ids]
-    return {"start": r.get("start") if r.get("start") in ids else None, "start_line": r.get("start_line", ""),
-            "runner_ups": clean(r.get("runner_ups")), "beginnings": clean(r.get("beginnings")), "since": clean(r.get("since"))}
+    out = {"start": r.get("start") if r.get("start") in ids else None, "start_line": r.get("start_line", ""),
+           "runner_ups": clean(r.get("runner_ups")), "beginnings": clean(r.get("beginnings")), "since": clean(r.get("since"))}
+    # the rule, in code: the start is never the last 45 days. A late pick falls back to the first runner-up that qualifies.
+    if out["start"] not in early:
+        late = out["start"]
+        alt = next((x["id"] for x in out["runner_ups"] if x["id"] in early), None)
+        out["start_note"] = f"the model chose {late}, inside the last 45 days; " + (f"the runner-up {alt} is used" if alt else "no runner-up qualifies")
+        if late:
+            out["since"] = [{"id": late, "why": "the model's choice of start, moved to since: it is inside the last 45 days"}] + out["since"]
+        by = {m["id"]: m for m in usable}
+        out["start"] = alt
+        out["start_line"] = ("When " + by[alt]["line"][0].lower() + by[alt]["line"][1:]) if alt else ""
+        out["runner_ups"] = [x for x in out["runner_ups"] if x["id"] != alt]
+    return out
 
 
 def judge(story, cat, spine, th):
@@ -316,7 +332,7 @@ STORY: {story['headline']}
 THE THREAD (oldest first; "start" is shown to the reader as "It starts in YYYY"):
 {items}
 
-For each item: keep it only if a reader of this story would see it as part of this story's own history (the same subject, an earlier instance of the same action, or the origin of a background the story names). Drop analogies and items that share only a theme. For the start, also say whether it is the right "It starts in": the specific turn that set this story in motion.
+These items come from a category spine the editor reviews; your job is to catch what does not belong in THIS story. Keep an item if a reader would understand this story better for it: a step in the story's own history, an earlier case of the same kind of event that shows the pattern, or the origin of a background the story names. Drop it only if it would mislead or distract: an analogy from another field, or something that shares only a broad theme (a decade, a branch of government, "regulation"). For the start, say whether it is the right "It starts in": the earlier, specific turn that set this story in motion (never today's news itself).
 JSON only: {{"items":{{"m#":{{"keep":true,"why":"one sentence"}}}},"start_ok":true,"start_note":"one sentence"}}"""
     try:
         return ask(p, 2000)
@@ -326,8 +342,29 @@ JSON only: {{"items":{{"m#":{{"keep":true,"why":"one sentence"}}}},"start_ok":tr
 
 # --- main ------------------------------------------------------------------------------------------
 
+def rethread(today):
+    """Redo only the per-story step against the spines already built (no web search)."""
+    doc = json.loads(OUT.read_text())
+    cats = {c["id"]: c for c in doc["categories"]}
+    before = dict(doc.get("usage") or {})
+    for s in doc["stories"]:
+        c = cats[s["placement"]["category"]]
+        th = thread(s, c, c["spine"], today)
+        th["judge"] = judge(s, c, c["spine"], th) if th.get("start") else {}
+        s["thread"] = th
+        log(f"thread {s['headline'][:50]!r}: start {th.get('start')} | beginnings {[b['id'] for b in th['beginnings']]} | since {[x['id'] for x in th['since']]}"
+            + (f" | {th['start_note']}" if th.get("start_note") else ""))
+    doc["usage"] = {k: before.get(k, 0) + USAGE[k] for k in USAGE}
+    doc["threads_generated"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    doc["log"] = (doc.get("log") or []) + ["--- threads redone ---"] + LOG
+    OUT.write_text(json.dumps(doc, indent=1, ensure_ascii=False) + "\n")
+    log(f"rethreaded; this pass {USAGE}")
+
+
 def main():
     today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    if "--threads-only" in sys.argv:
+        return rethread(today)
     stories, rows, pool, spec, pool_doc = load_inputs()
     log(f"{len(stories)} stories, {len(rows)} categories, model {MODEL}")
     placed = place(stories, rows)
@@ -358,7 +395,7 @@ def main():
     for s in stories:
         c = cats[s["placement"]["category"]]
         try:
-            th = thread(s, c, c["spine"])
+            th = thread(s, c, c["spine"], today)
         except Exception as e:  # noqa: BLE001
             log(f"  thread failed for {s['id']}: {e}")
             th = {"start": None, "start_line": "", "runner_ups": [], "beginnings": [], "since": [], "error": str(e)}

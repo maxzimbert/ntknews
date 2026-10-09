@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Backstory Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,600&family=Overpass:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --dark:#261F23; --ink:#1d1a1c; --cream:#F6F0E6; --paper:#fffdf9; --rule:#e2d9cb; --dim:#7b7268;
+  --accent:#C8553D; --ok:#2f7d4f; --warn:#b7791f; --bad:#b03a2e; --chip:#efe7da;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.45 Overpass,system-ui,sans-serif}
+header{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap;padding:13px 20px;border-bottom:1px solid var(--rule);background:#fff}
+header h1{font:600 20px Newsreader,serif;margin:0}
+header .meta{color:var(--dim);font-size:13px}
+header .sp{flex:1}
+button{font:600 13px Overpass,sans-serif;border:1px solid var(--rule);background:#fff;border-radius:4px;padding:5px 10px;cursor:pointer;color:var(--ink)}
+button.on{background:var(--dark);color:#fff;border-color:var(--dark)}
+.tabs{display:flex;gap:6px}
+main{display:grid;grid-template-columns:280px minmax(0,1fr) 400px;min-height:calc(100vh - 54px)}
+@media (max-width:1100px){main{grid-template-columns:1fr}}
+.col{padding:16px 20px;border-right:1px solid var(--rule);overflow:auto}
+.col:last-child{border-right:0;background:#fbf8f2}
+.lbl{font:700 10px Overpass,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:0 0 6px}
+.story{padding:10px 10px;border:1px solid transparent;border-radius:6px;cursor:pointer;margin-bottom:6px}
+.story:hover{background:#f6f1e8}
+.story.sel{border-color:var(--dark);background:#fff}
+.story h3{font:600 16px/1.25 Newsreader,serif;margin:0 0 4px}
+.chip{display:inline-block;font:600 10px Overpass,sans-serif;letter-spacing:.04em;text-transform:uppercase;background:var(--chip);border-radius:3px;padding:2px 6px;margin:2px 4px 2px 0;color:var(--ink)}
+.chip.ok{background:#dcefe2;color:var(--ok)} .chip.warn{background:#f6e7c8;color:var(--warn)} .chip.bad{background:#f4d9d5;color:var(--bad)}
+.small{font-size:13px;color:var(--dim)}
+/* reader preview */
+.reader{background:var(--dark);color:#f3ece2;border-radius:8px;overflow:hidden}
+.reader .hero{padding:26px 28px 18px}
+.reader .kicker{font:700 10px Overpass,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#d8a48f}
+.reader h2{font:600 34px/1.1 Newsreader,serif;margin:6px 0 8px}
+.reader .contest{font:400 20px/1.35 Newsreader,serif;color:#e8dfd2;margin:0}
+.reader .body{background:var(--cream);color:var(--ink);padding:20px 28px 28px}
+.starts{font:400 20px/1.35 Newsreader,serif;margin:0 0 18px}
+.starts b{font-weight:600}
+.tl{position:relative;margin:8px 0 0 8px;padding-left:22px;border-left:2px solid #cdbfa9}
+.ms{position:relative;margin:0 0 16px}
+.ms:before{content:"";position:absolute;left:-29px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--cream);border:2px solid #9c8b74}
+.ms.start:before{background:var(--accent);border-color:var(--accent)}
+.ms.here:before{background:var(--dark);border-color:var(--dark)}
+.ms .yr{font:700 13px Overpass,sans-serif;color:var(--dim)}
+.ms.start .yr{color:var(--accent)}
+.ms .ln{font:400 16px/1.4 Newsreader,serif}
+.ms .src{font-size:13px;margin-top:3px}
+.ms .src a{color:var(--ink)}
+.ms .q{font:italic 13px/1.4 Newsreader,serif;color:#5d544b;margin-top:3px;display:none}
+.ms.open .q{display:block}
+.trend{background:#fff;border:1px solid var(--rule);border-radius:6px;padding:12px 14px;margin:0 0 20px}
+.trend .t{font:600 16px Newsreader,serif}
+svg text{font:600 10px Overpass,sans-serif;fill:#7b7268}
+/* editor */
+.ed h4{font:600 16px Newsreader,serif;margin:16px 0 6px}
+.ed select{font:13px Overpass,sans-serif;padding:4px;max-width:100%}
+.row{display:flex;gap:8px;align-items:flex-start;padding:7px 0;border-top:1px solid #eee5d7;font-size:13px}
+.row .y{font-weight:700;min-width:42px}
+.row .x{flex:1}
+.row.drop .x{opacity:.55}
+.row .why{color:var(--dim);margin-top:2px}
+.row input{margin-top:3px}
+.howto{max-width:880px;margin:0 auto;padding:24px 20px 60px;font:400 16px/1.55 Newsreader,serif}
+.howto h2{font:600 26px Newsreader,serif}
+.howto h3{font:600 20px Newsreader,serif;margin-top:26px}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13px}
+.cmp div{background:#fff;border:1px solid var(--rule);border-radius:6px;padding:8px}
+.empty{padding:30px;color:var(--dim)}
+</style>
+</head>
+<body>
+<header>
+  <h1>Backstory Lab</h1>
+  <span class="meta" id="meta">loading…</span>
+  <span class="sp"></span>
+  <div class="tabs">
+    <button data-tab="threads" class="on">Stories</button>
+    <button data-tab="spines">Category spines</button>
+    <button data-tab="how">How it works</button>
+  </div>
+  <button id="export" title="Download your choices as JSON">Export choices</button>
+  <button id="reset" title="Forget your choices on this device">Reset</button>
+</header>
+<div id="app"></div>
+<script>
+const KEY='ntk-spinelab-v1';
+let D=null, TAB='threads', SEL=null;
+let ED=(()=>{ try{ return JSON.parse(localStorage.getItem(KEY))||{}; }catch(e){ return {}; } })();
+ED.threads=ED.threads||{}; ED.spine=ED.spine||{};
+const save=()=>{ try{ localStorage.setItem(KEY, JSON.stringify(ED)); }catch(e){} };
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const CHECK={verified:['ok','source checked'],matrix:['ok','matrix'],loads:['warn','loads, quote untested'],unchecked:['warn','site refused checker'],failed:['bad','failed']};
+// who hosts the copy: the document's own issuer or an official body, a library or law archive, or a news site
+const ARCHIVE=['law.cornell.edu','justia.com','oyez.org','loc.gov','presidency.ucsb.edu','avalon.law.yale.edu','govinfo.gov','securitycouncilreport.org','jus.uio.no','archives.gov','courtlistener.com','history.state.gov'];
+const NEWS=['abcnews','pbs.org','lawfaremedia','rollcall','foreignpolicy','aljazeera','newsonair','ms.now','courthousenews','reuters','apnews','nytimes','washingtonpost','cnn','bbc','theguardian','politico','axios','npr.org','cbsnews','nbcnews','foxnews','bloomberg'];
+function hostKind(url){
+  const h=String(url||'').replace(/^https?:\/\/([^\/]+).*$/,'$1').toLowerCase();
+  if (!h) return '';
+  if (ARCHIVE.some(a=>h.endsWith(a))) return '<span class="chip">archive copy</span>';
+  if (NEWS.some(n=>h.includes(n))) return '<span class="chip warn" title="The document is quoted or reproduced on a news site. Prefer the issuer\'s own copy.">news-hosted copy</span>';
+  if (/\.(gov|mil|int)$|\.gov\.|un\.org$|unmissions\.org$|who\.int$|europa\.eu$|senate\.gov|house\.gov|supremecourt\.gov|spa\.gov\.sa|presidentalalimi\.net|bouldercounty\.gov|le\.utah\.gov|leginfo/.test(h)) return '<span class="chip ok">official</span>';
+  return '<span class="chip" title="Not on the official or archive list: check who published it">'+h+'</span>';
+}
+const badge=c=>{ const k=CHECK[c]||['', c||'no check']; return `<span class="chip ${k[0]}">${esc(k[1])}</span>`; };
+
+const cats=()=>D.categories;
+const catById=id=>cats().find(c=>c.id===id);
+const msState=(cid,mid)=>(ED.spine[cid]||{})[mid];          // 'approved' | 'rejected' | undefined
+function usable(cid, m){
+  const st=msState(cid,m.id);
+  if (st==='rejected') return false;
+  if (st==='approved') return true;
+  return ['verified','matrix','loads','unchecked'].includes(m.source.check);
+}
+// the thread the reader would see: the model's choice, the judge's drops, then the editor's overrides
+function threadFor(s){
+  const o=ED.threads[s.id]||{};
+  const cid=o.category||s.placement.category, c=catById(cid);
+  if (!c) return null;
+  const t=s.thread||{}, sameCat=cid===s.placement.category;
+  const j=(sameCat && t.judge && t.judge.items)||{};
+  const by=Object.fromEntries(c.spine.map(m=>[m.id,m]));
+  const start=o.start!==undefined ? o.start : (sameCat ? t.start : null);
+  let incl;
+  if (o.include) incl=new Set(o.include);
+  else if (sameCat) incl=new Set([...(t.beginnings||[]),...(t.since||[])].map(x=>x.id).filter(id=>!(j[id] && j[id].keep===false)));
+  else incl=new Set();
+  const why={}; [...(t.beginnings||[]),...(t.since||[])].forEach(x=>{ if (sameCat) why[x.id]=x.why; });
+  const startM=by[start];
+  const items=c.spine.filter(m=>incl.has(m.id) && m.id!==start && usable(cid,m));
+  return {c, cid, start, startM, startLine: (o.start===undefined && sameCat) ? t.start_line : (startM? 'When '+lc(startM.line):''),
+          before: items.filter(m=>!startM || m.event_date<startM.event_date),
+          since: items.filter(m=>startM && m.event_date>startM.event_date),
+          incl, why, judge:j, t, sameCat};
+}
+const lc=s=>s? s.charAt(0).toLowerCase()+s.slice(1):'';
+
+function trendSvg(tr){
+  const pts=(tr.points||[]).map(p=>({d:String(p.date), v:parseFloat(String(p.value).replace(/[^0-9.\-]/g,''))})).filter(p=>!isNaN(p.v));
+  if (pts.length<2) return '';
+  const W=520,H=150,P=34, lo=Math.min(...pts.map(p=>p.v)), hi=Math.max(...pts.map(p=>p.v)), span=(hi-lo)||1;
+  const x=i=>P+i*(W-2*P)/(pts.length-1), y=v=>H-P+8-(v-lo)/span*(H-2*P);
+  const path=pts.map((p,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(p.v).toFixed(1)).join(' ');
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="${esc(tr.label)}">
+    <line x1="${P}" x2="${W-P}" y1="${H-P+12}" y2="${H-P+12}" stroke="#e2d9cb"/>
+    <path d="${path}" fill="none" stroke="#C8553D" stroke-width="2.5"/>
+    ${pts.map((p,i)=>`<circle cx="${x(i)}" cy="${y(p.v)}" r="3.5" fill="#C8553D"/><text x="${x(i)}" y="${y(p.v)-8}" text-anchor="middle">${esc((tr.points[i]||{}).value)}</text><text x="${x(i)}" y="${H-4}" text-anchor="middle">${esc(p.d)}</text>`).join('')}
+  </svg>`;
+}
+function trendHtml(c){
+  const tr=c.trend||{};
+  if (!tr.points) return `<div class="trend"><div class="t">No trend line</div><div class="small">${esc(tr.none||'none found')}</div></div>`;
+  return `<div class="trend"><div class="t">${esc(tr.label)}${tr.unit?` <span class="small">(${esc(tr.unit)})</span>`:''}</div>
+    ${trendSvg(tr)}
+    <div class="small">Source: <a href="${esc(tr.source_url)}" target="_blank" rel="noopener">${esc(tr.source)}</a> ${badge(tr.check)} <span title="${esc(tr.check_note)}">${esc(tr.check_note||'')}</span></div>
+    ${tr.why?`<div class="small">${esc(tr.why)}</div>`:''}</div>`;
+}
+function msHtml(m, cls, why){
+  const s=m.source||{};
+  return `<div class="ms ${cls}" onclick="this.classList.toggle('open')">
+    <div class="yr">${esc(m.event_date.slice(0,4))}${cls==='start'?' · IT STARTS HERE':''}</div>
+    <div class="ln">${esc(m.line)}</div>
+    <div class="src">${s.url?`<a href="${esc(s.url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${esc(s.title||'source')}</a>`:esc(s.title||'')}${s.author?` · ${esc(s.author)}`:''}${s.doc_date&&String(s.doc_date).slice(0,4)!==m.event_date.slice(0,4)?` · document ${esc(String(s.doc_date).slice(0,10))}`:''} ${badge(s.check)} ${hostKind(s.url)}</div>
+    <div class="q">${s.quote?'“'+esc(s.quote)+'”':''}${why?`<br><span style="font-style:normal">Why it is here: ${esc(why)}</span>`:''}<br><span style="font-style:normal">${esc(s.check_note||'')}</span></div>
+  </div>`;
+}
+
+function readerHtml(s, th){
+  if (!th) return `<div class="empty">No category.</div>`;
+  const c=th.c;
+  if (!c.spine.length) return `<div class="empty">The category “${esc(c.title)}” has no spine yet. In this design the story would publish with its line and origin only, and a spine draft would be queued for review.</div>`;
+  const yr=th.startM? th.startM.event_date.slice(0,4):'—';
+  return `<div class="reader">
+    <div class="hero"><div class="kicker">Backstory · ${esc(c.title)}</div>
+      <h2>${esc(s.headline)}</h2>
+      <p class="contest">${esc(c.contest||'')}</p></div>
+    <div class="body">
+      ${trendHtml(c)}
+      <p class="starts">It starts in <b>${esc(yr)}</b>. ${esc(th.startLine||'')}</p>
+      <div class="lbl">Beginnings</div>
+      <div class="tl">
+        ${th.before.map(m=>msHtml(m,'',th.why[m.id])).join('')}
+        ${th.startM?msHtml(th.startM,'start',''):''}
+        ${th.since.map(m=>msHtml(m,'',th.why[m.id])).join('')}
+        <div class="ms here"><div class="yr">TODAY · WE ARE HERE</div><div class="ln">${esc(s.line||s.headline)}</div></div>
+      </div>
+      <div class="small" style="margin-top:6px">Click a milestone to see its quoted sentence and why it is here.</div>
+    </div></div>`;
+}
+
+function editorHtml(s, th){
+  const o=ED.threads[s.id]||{}, c=th&&th.c;
+  const opts=cats().map(x=>`<option value="${esc(x.id)}" ${th&&x.id===th.cid?'selected':''}>${esc(x.title)}${x.id===s.placement.category?' (model)':''}${x.spine.length?'':' · no spine'}</option>`).join('');
+  let h=`<div class="ed"><div class="lbl">Editor</div>
+    <h4>Category</h4><select id="selCat">${opts}</select>
+    <div class="small" style="margin-top:4px">Model: ${esc(s.placement.why||'')}</div>`;
+  if (!c || !c.spine.length) return h+'</div>';
+  const t=th.t, ru=Object.fromEntries((t.runner_ups||[]).map(r=>[r.id,r.why_weaker]));
+  const j=th.judge||{};
+  h+=`<h4>It starts in</h4><select id="selStart"><option value="">(none)</option>${c.spine.map(m=>`<option value="${m.id}" ${m.id===th.start?'selected':''} ${usable(th.cid,m)?'':'disabled'}>${esc(m.event_date.slice(0,4))} · ${esc(m.line.slice(0,70))}${m.id===t.start&&th.sameCat?' (model)':ru[m.id]?' (runner-up)':''}</option>`).join('')}</select>`;
+  if (th.sameCat){
+    h+=(t.runner_ups||[]).map(r=>`<div class="small">Runner-up ${esc((c.spine.find(m=>m.id===r.id)||{}).event_date||'').slice(0,4)}: ${esc(r.why_weaker)}</div>`).join('');
+    if (t.start_note) h+=`<div class="small" style="margin-top:4px"><span class="chip warn">rule</span> ${esc(t.start_note)}</div>`;
+    if (t.judge && t.judge.start_note) h+=`<div class="small" style="margin-top:4px">Judge on the start: ${t.judge.start_ok===false?'<span class="chip bad">doubts it</span>':'<span class="chip ok">agrees</span>'} ${esc(t.judge.start_note)}</div>`;
+  }
+  h+=`<h4>The spine <span class="small">(tick to show in this story)</span></h4>`;
+  h+=c.spine.map(m=>{
+    const jd=j[m.id], st=msState(th.cid,m.id), ok=usable(th.cid,m);
+    const isStart=m.id===th.start;
+    return `<div class="row ${jd&&jd.keep===false?'drop':''}">
+      <input type="checkbox" data-mid="${m.id}" ${th.incl.has(m.id)||isStart?'checked':''} ${isStart||!ok?'disabled':''}>
+      <div class="y">${esc(m.event_date.slice(0,4))}</div>
+      <div class="x">${esc(m.line)} ${badge(m.source.check)} ${hostKind(m.source.url)} ${st?`<span class="chip ${st==='approved'?'ok':'bad'}">${st}</span>`:''}
+        ${isStart?'<span class="chip" style="background:#C8553D;color:#fff">start</span>':''}
+        ${th.why[m.id]?`<div class="why">Why: ${esc(th.why[m.id])}</div>`:''}
+        ${jd?`<div class="why">Judge: ${jd.keep===false?'<b style="color:var(--bad)">drop</b>':'keep'} · ${esc(jd.why)}</div>`:''}
+      </div></div>`;
+  }).join('');
+  const po=s.prod_origin||{};
+  h+=`<h4>Compared with what prod did today</h4><div class="cmp">
+    <div><div class="lbl">Prod</div>Row: <b>${esc(s.prod_row||'')}</b><br>It starts in <b>${esc(po.year||'—')}</b>: ${esc(po.line||'')}</div>
+    <div><div class="lbl">This design</div>Category: <b>${esc(c.title)}</b><br>It starts in <b>${esc(th.startM?th.startM.event_date.slice(0,4):'—')}</b>: ${esc(th.startLine||'')}</div></div>`;
+  return h+'</div>';
+}
+
+function storiesView(){
+  const s=D.stories.find(x=>x.id===SEL)||D.stories[0]; SEL=s.id;
+  const th=threadFor(s);
+  const list=D.stories.map(x=>{ const t=threadFor(x);
+    return `<div class="story ${x.id===SEL?'sel':''}" data-sid="${x.id}"><h3>${esc(x.headline)}</h3>
+      <span class="chip">${esc(t?t.c.title:'—')}</span><span class="chip">${esc(t&&t.startM?t.startM.event_date.slice(0,4):'—')}</span>
+      ${t?`<span class="small">${t.before.length+t.since.length+(t.startM?1:0)} milestones</span>`:''}</div>`; }).join('');
+  return `<main><div class="col"><div class="lbl">Today's lineup</div>${list}</div>
+    <div class="col">${readerHtml(s,th)}</div>
+    <div class="col">${editorHtml(s,th)}</div></main>`;
+}
+
+function spinesView(){
+  return `<div class="howto" style="max-width:1000px;font-family:Overpass,sans-serif;font-size:14px">${cats().filter(c=>c.spine.length||c.stories.length).map(c=>`
+    <h2 style="margin-bottom:2px">${esc(c.title)}</h2>
+    <div class="small">${esc(c.contest||'')} · filed today: ${c.stories.length} · lenses: ${esc((c.lenses||[]).join(', ')||'none')} · ${esc(c.stratum||'')}</div>
+    ${trendHtml(c)}
+    ${c.spine.map(m=>{ const st=msState(c.id,m.id);
+      return `<div class="row"><div class="y">${esc(m.event_date)}</div><div class="x"><b>${esc(m.line)}</b>
+        <div class="why">${esc(m.how)}</div>
+        <div class="why">${m.source.url?`<a href="${esc(m.source.url)}" target="_blank" rel="noopener">${esc(m.source.title)}</a>`:esc(m.source.title)} · ${esc(m.source.author||'')} ${badge(m.source.check)} ${hostKind(m.source.url)} ${esc(m.source.check_note||'')}</div>
+        ${m.source.quote?`<div class="why" style="font-style:italic">“${esc(m.source.quote)}”</div>`:''}</div>
+        <div><button data-appr="${c.id}|${m.id}" class="${st==='approved'?'on':''}">approve</button> <button data-rej="${c.id}|${m.id}" class="${st==='rejected'?'on':''}">reject</button></div></div>`; }).join('') || '<div class="empty">No spine.</div>'}`).join('')}</div>`;
+}
+
+function howView(){
+  const u=D.usage||{};
+  return `<div class="howto">
+  <h2>Two clocks</h2>
+  <p>The publish-time system asked a model to research a whole category from nothing every time a story did not fit a row, then cut whatever failed the checks. The same six stories gave five Beginnings on one run and none on the next, and there was nothing stable for you to review. This prototype splits the work by how often it changes.</p>
+  <h3>The slow clock: a spine per category</h3>
+  <p>A category is a chronology: 10 to 14 milestones, dated by when the event happened, from the root of the argument to the most recent turn. Each milestone is defended by one primary source that was fetched and checked: the link loads and the quoted sentence is on the page (green), the page could not be read as text (amber), or it failed (red, and never shown to a reader unless you approve it). Each category also carries one trend line from a publisher's own page, with every value checked against that page. A spine is built once, reviewed by you once (approve or reject each milestone on the Category spines tab), and reused by every later story. When a story needs a milestone the spine lacks, the research adds a draft milestone to the spine; it does not rebuild the category.</p>
+  <h3>The fast clock: a thread per story</h3>
+  <p>For each story at publish time: place it in a category (live conflicts and named subjects first, long arguments when the story is really about one), choose its <b>It starts in</b> from the spine (the specific turn that set this story in motion, with two runner-ups you can switch to), select 3 to 5 Beginnings before it and up to 2 steps since, and end at <b>We are here</b>, the line the pairing step already writes. A second call that did not make the choices judges the chain and drops analogies. Choosing among vetted milestones is a smaller and more checkable task than researching from nothing, so it should vary less from run to run.</p>
+  <h3>Where you come in</h3>
+  <p>Once per category: read the spine, approve or reject milestones, accept the trend line. Once per story, only when you want: change the category, switch the start to a runner-up, tick milestones in or out. Everything here saves in this browser only; Export choices downloads them. Nothing on this page publishes.</p>
+  <h3>Gaps</h3>
+  <p>A story whose category has no approved spine publishes with its line and its retrieved origin only, and a spine draft is queued for you. A category page never publishes unreviewed.</p>
+  <h3>This run</h3>
+  <p class="small" style="font-family:Overpass">Built ${esc(D.generated)} with ${esc(D.model)}: ${u.calls||0} model calls, ${u.web_searches||0} web searches, ${(u.input_tokens||0).toLocaleString()} input and ${(u.output_tokens||0).toLocaleString()} output tokens.</p>
+  <details><summary class="small">Run log</summary><pre style="white-space:pre-wrap;font-size:12px">${esc((D.log||[]).join('\n'))}</pre></details>
+  </div>`;
+}
+
+function render(){
+  document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('on', b.dataset.tab===TAB));
+  const app=document.getElementById('app');
+  app.innerHTML = TAB==='threads'?storiesView() : TAB==='spines'?spinesView() : howView();
+  app.querySelectorAll('[data-sid]').forEach(el=>el.onclick=()=>{ SEL=el.dataset.sid; render(); });
+  const sc=document.getElementById('selCat');
+  if (sc) sc.onchange=()=>{ ED.threads[SEL]={category:sc.value}; save(); render(); };
+  const ss=document.getElementById('selStart');
+  if (ss) ss.onchange=()=>{ const s=D.stories.find(x=>x.id===SEL), th=threadFor(s); ED.threads[SEL]=Object.assign({category:th.cid, include:[...th.incl]}, ED.threads[SEL]||{}, {start:ss.value||null}); save(); render(); };
+  app.querySelectorAll('input[data-mid]').forEach(cb=>cb.onchange=()=>{
+    const s=D.stories.find(x=>x.id===SEL), th=threadFor(s), inc=new Set(th.incl);
+    cb.checked?inc.add(cb.dataset.mid):inc.delete(cb.dataset.mid);
+    ED.threads[SEL]=Object.assign({}, ED.threads[SEL]||{}, {category:th.cid, include:[...inc], start:th.start}); save(); render(); });
+  app.querySelectorAll('[data-appr],[data-rej]').forEach(b=>b.onclick=()=>{
+    const [cid,mid]=(b.dataset.appr||b.dataset.rej).split('|'), v=b.dataset.appr?'approved':'rejected';
+    ED.spine[cid]=ED.spine[cid]||{}; ED.spine[cid][mid]= ED.spine[cid][mid]===v? undefined : v; save(); render(); });
+}
+document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{ TAB=b.dataset.tab; render(); });
+document.getElementById('export').onclick=()=>{
+  const blob=new Blob([JSON.stringify({exported:new Date().toISOString(), generated:D.generated, choices:ED},null,1)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='spine-lab-choices.json'; a.click(); };
+document.getElementById('reset').onclick=()=>{ if (confirm('Forget your choices on this device?')){ ED={threads:{},spine:{}}; save(); render(); } };
+fetch('data/spine-lab.json?v='+Date.now()).then(r=>r.json()).then(d=>{
+  D=d; const u=d.usage||{};
+  document.getElementById('meta').textContent=`built ${d.generated.slice(0,16).replace('T',' ')} UTC · ${d.model} · ${d.categories.length} categories · ${u.web_searches||0} searches`;
+  render();
+}).catch(e=>{ document.getElementById('app').innerHTML='<div class="empty">Could not load data/spine-lab.json: '+esc(e.message)+'</div>'; });
+</script>
+</body>
+</html>
