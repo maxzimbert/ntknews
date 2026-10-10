@@ -1,5 +1,5 @@
 {
- "assembled_at": "2026-10-10T04:43:33.540455+00:00",
+ "assembled_at": "2026-10-10T14:18:34.244975+00:00",
  "slot_plan": "A",
  "displacement": "MANUAL",
  "daytype": "weekend",
@@ -9,230 +9,211 @@
  ],
  "actual_size": 6,
  "lint_failures": [
-  "under 3 fully self-contained items"
+  "under 3 fully self-contained items",
+  "no item answers 'what do I do with this'"
  ],
- "slots_unfilled": [],
+ "slots_unfilled": [
+  "Money & me",
+  "The group chat"
+ ],
  "stories": [
   {
    "slot": "unavoidable",
    "slot_label": "Unavoidable",
-   "key": "50c38b06fc650a09",
-   "title": "Hurricane Isaias makes landfall in Florida, bringing flood risk to several states",
-   "beat": "national",
+   "key": "146f2c9cb8c754a0",
+   "title": "Trump's Russian diesel deal draws Ukraine's warning and a US intelligence threat",
+   "beat": "international",
    "publisher_count": 10,
    "publishers": [
     "BBC",
     "Financial Times",
-    "The Guardian",
-    "ABC News",
+    "Al Jazeera",
     "CBS News",
+    "CNBC",
     "Deutsche Welle",
-    "NBC News",
-    "NBC Washington",
+    "France 24",
+    "ABC Australia",
     "Daily Mail",
-    "Fox 5 Atlanta"
+    "Memeorandum"
    ],
    "scores": {
     "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 2,
+    "conversational_currency": 3
+   },
+   "politician_led": true,
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "Trump says Russia will release diesel to ease costs, as Kyiv is warned its strikes on Russia could jeopardize US intelligence-sharing.",
+   "assembly_score": 8.34
+  },
+  {
+   "slot": "body_mind",
+   "slot_label": "Body & mind",
+   "key": "f66e61db97085b86",
+   "title": "Visible planets and night sky guide for October",
+   "beat": "science",
+   "publisher_count": 1,
+   "publishers": [
+    "EarthSky"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": 2.1
+  },
+  {
+   "slot": "work_machines",
+   "slot_label": "Work & machines",
+   "key": "30aa1cf96e27af72",
+   "title": "Will Warner Bros. kill Skydance \u2014 or will David Ellison kill Warner Bros?",
+   "beat": "tech",
+   "publisher_count": 1,
+   "publishers": [
+    "The Verge"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": 4.22
+  },
+  {
+   "slot": "close",
+   "slot_label": "The close",
+   "key": "526f040fa65b2846",
+   "title": "Abbas delays Palestinian elections to 2027, extending 20 years without a vote",
+   "beat": "international",
+   "publisher_count": 2,
+   "publishers": [
+    "CBS News",
+    "France 24"
+   ],
+   "scores": {
+    "emotional_load": 2,
     "explainability": 4,
-    "actionability": 4,
+    "actionability": 1,
+    "conversational_currency": 3
+   },
+   "politician_led": true,
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "Palestinian President Mahmoud Abbas has postponed legislative elections, with a presidential vote now set for September 2027, extending a 20-year gap without a national ballot.",
+   "assembly_score": 4.24
+  },
+  {
+   "slot": "unavoidable",
+   "slot_label": "Unavoidable",
+   "key": "599d6abe5b83bd20",
+   "title": "Hurricane Isaias kills at least one, knocks out power for 700,000 across Southeast",
+   "beat": "national",
+   "publisher_count": 5,
+   "publishers": [
+    "The Guardian",
+    "Yahoo News",
+    "Al Jazeera",
+    "CBS News",
+    "Daily Mail"
+   ],
+   "scores": {
+    "emotional_load": 4,
+    "explainability": 5,
+    "actionability": 3,
     "conversational_currency": 4
    },
    "politician_led": false,
    "ledger_class": null,
    "new_facts": [],
-   "line": "Hurricane Isaias hit Florida and is pushing rain and wind across the Southeast; flood risk is the main concern.",
-   "assembly_score": 8.7
+   "line": "Hurricane Isaias has killed people and left hundreds of thousands without power as it moves through the Southeast.",
+   "assembly_score": 7.56
   },
   {
-   "slot": "money_me",
-   "slot_label": "Money & me",
-   "key": "c1e2fb98094768e5",
-   "title": "Taxes are due tomorrow; here's how to file for an extension",
-   "beat": "business",
-   "publisher_count": 1,
-   "publishers": [
-    "CNN"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 5,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Federal tax returns are due tomorrow, and filers who need more time can request an extension.",
-   "assembly_score": 5.53
-  },
-  {
-   "slot": "body_mind",
-   "slot_label": "Body & mind",
-   "key": "ba0e69a3f4f74ddf",
-   "title": "Report says private clinics' quick ADHD and autism assessments are driving diagnoses up",
-   "beat": "health",
-   "publisher_count": 1,
-   "publishers": [
-    "Daily Mail"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 3,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A landmark report says private clinics are making superficial ADHD and autism assessments, and regulators are moving to crack down.",
-   "assembly_score": -0.09
-  },
-  {
-   "slot": "work_machines",
-   "slot_label": "Work & machines",
-   "key": "49613d9671dbeef3",
-   "title": "Anthropic says it is barring live internet access for internal evals until monitoring is reliable, after its agents exploited websites and bypassed restrictions (Tim Fernholz/TechCrunch)",
-   "beat": "tech",
-   "publisher_count": 1,
-   "publishers": [
-    "Techmeme"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 2.93
-  },
-  {
-   "slot": "group_chat",
-   "slot_label": "The group chat",
-   "key": "de8f75e739226536",
-   "title": "Year 2, Week 41",
-   "beat": "education",
-   "publisher_count": 1,
-   "publishers": [
-    "Liz Neeley (Meeting the Moment)"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.29
-  },
-  {
-   "slot": "close",
-   "slot_label": "The close",
-   "key": "9165d624ff9af2fd",
-   "title": "Delhi locks down ahead of youth protest demanding election chief's resignation",
+   "slot": "unavoidable",
+   "slot_label": "Unavoidable",
+   "key": "a703ac68fcb48620",
+   "title": "Gunman kills Philadelphia police officer, wounds second in West Philadelphia ambush",
    "beat": "national",
    "publisher_count": 4,
    "publishers": [
     "BBC",
-    "New York Times",
-    "Al Jazeera",
-    "Deutsche Welle"
+    "CBS News",
+    "Fox News",
+    "Fox 5 DC"
    ],
    "scores": {
-    "emotional_load": 2,
+    "emotional_load": 5,
     "explainability": 4,
-    "actionability": 2,
-    "conversational_currency": 3
+    "actionability": 1,
+    "conversational_currency": 4
    },
    "politician_led": false,
    "ledger_class": null,
    "new_facts": [],
-   "line": "Indian police and paramilitary forces are deployed across central Delhi, with transport and internet curbs, ahead of a youth protest demanding the election chief's resignation.",
-   "assembly_score": 4.21
+   "line": "A gunman ambushed Philadelphia police, killing one officer and critically wounding another; a suspect was found hiding in a tree.",
+   "assembly_score": 5.7
   }
  ],
  "excluded_sample": [
   {
-   "title": "Podcast: One country musician is calling for other artists to oppose assault rifles",
+   "title": "Verstappen wins, McLarens collide and Russell crashes out of Singapore GP sprint",
    "why": "triage verdict NO"
   },
   {
-   "title": "Bidets save you money and reduce waste \u2014 we tested the best options out there",
+   "title": "Portugal hits Ronaldo with provisional suspension for walking out on national team",
    "why": "triage verdict NO"
   },
   {
-   "title": "50+ products to make your life easier and our planet cleaner",
+   "title": "Manchester United vs Tottenham LIVE: Premier League",
    "why": "triage verdict NO"
   },
   {
-   "title": "Mother's Day is around the corner. Here are 50+ thoughtful gifts she'll love",
+   "title": "Down for the cause: IOP LENS, community partners celebrate Firefighter Appreciation Night",
    "why": "triage verdict NO"
   },
   {
-   "title": "A head-to-toe guide of how men should dress this spring, and where they should shop",
+   "title": "Bruno Guimar\u00e3es completes Arsenal comeback to end Leeds\u2019 unbeaten run",
    "why": "triage verdict NO"
   },
   {
-   "title": "42 of the most useful travel products you can buy on Amazon",
+   "title": "British double gold Olympian is questioned by police over fatal crash that Paris Saint-Germain manager Luis Enrique's daughter survived",
    "why": "triage verdict NO"
   },
   {
-   "title": "The 7 best high-yield savings accounts of April 2023",
+   "title": "Chelsea v Bournemouth, Sunderland v Brighton, and more: football \u2013 live",
    "why": "triage verdict NO"
   },
   {
-   "title": "Composting is an easy way to reduce food waste. Here's how to do it",
+   "title": "Middlesbrough-born Renshaw's epic 190 lifts Australia",
    "why": "triage verdict NO"
   },
   {
-   "title": "We stopped using aluminum foil for cooking and you should too. Here's what to use instead",
+   "title": "Singapore Formula One Grand Prix \u2013 qualifying updates after Verstappen wins sprint",
    "why": "triage verdict NO"
   },
   {
-   "title": "The beloved Dyson Supersonic hair dryer is at its lowest price ever",
+   "title": "George Clooney says family is still processing Presley Gerber's tragic death",
    "why": "triage verdict NO"
   },
   {
-   "title": "Everything you need to know about Way Day 2023, Wayfair's biggest sale of the year",
+   "title": "Cheryl makes a surprise early return to The Voice alongside Will.i.am after she was confirmed as a coach for the 2027 series - while Sir Tom Jones was given the boot",
    "why": "triage verdict NO"
   },
   {
-   "title": "The 2024 presidential alternative many voters will want",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "02) IOP LENS event 2026",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "2026 ACC Tipoff",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Country star Ella Langley cancels Tulsa, Oklahoma, show due to \u2018serious security threat\u2019",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "David Koma Spring 2027 Ready-to-Wear",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Queen guitarist Brian May pours cold water on prospect of band doing Abba Voyage-style virtual show because it would require AI driven by the 'massive evil' of data centres",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "The best in show from the 2026 Dog Photography Awards",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Watch: Bodycam footage shows Virginia police's heroic response to house fire as man trapped",
+   "title": "Rare coin bearing face of king with infamous nickname unearthed after 1,000 years",
    "why": "triage verdict NO"
   }
  ]
