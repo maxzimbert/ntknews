@@ -71,7 +71,12 @@ row = B.row_for(dict(cat, id="c", trend={"label": "L", "unit": "%", "points": [{
 check("the row marks the start, ends at We are here, and carries the trend line",
       [b.get("mark") for b in row["beginnings"]] == [None, "start", None] and row["here"] == ["Today's line."]
       and row["indicator"]["then_value"] == "10%" and row["indicator"]["now_value"] == "30%" and row["stratum"] == "held", row)
-check("each Beginning shown has its Object in the case", [o["id"] for o in row["objects"]] == [b["object_id"] for b in row["beginnings"]], row["objects"])
+check("each Beginning shown has its Object in the case", [o["object_id"] for o in row["objects"]] == [b["object_id"] for b in row["beginnings"]] and all(o["about"] and o["source_url"] for o in row["objects"]), row["objects"])
+
+# a page shows at least three Beginnings: too few chosen today are topped up from the category, never with a dropped one
+thin = dict(cat, id="t", beginnings=[beg("p", "1990-01-01"), beg("q", "1995-01-01"), beg("r", "2000-01-01"), beg("s", "2010-01-01")])
+row2 = B.row_for(thin, [{"start": "s", "before": [], "since": [], "dropped": ["r"]}], ["l"])
+check("a page with one chosen Beginning is topped up to three, skipping the dropped one", [b["object_id"] for b in row2["beginnings"]] == ["p", "q", "s"], row2["beginnings"])
 
 # the upgrade: a waiting news-site copy is replaced by the issuer's own, which then publishes
 up = {"title": "U", "beginnings": [dict(beg("n", "2026-02-28", "news-copy", "pending"), object={"title": "PBS", "host": "pbs.org", "url": "https://www.pbs.org/x", "quote": "q", "check": "news-copy"})]}

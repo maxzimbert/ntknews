@@ -429,6 +429,26 @@ JSON only: {{"<id>":{{"title":"the document's exact title","author":"who issued 
     return n
 
 
+def write_stakes(cat, filed):
+    """Two sentences framing the open questions the category turns on (T-0059: every page has them).
+    Written once per category; a draft that breaks the text rules is retried once, then left empty."""
+    st = "; ".join(s["headline"] for s in filed)
+    for _ in range(2):
+        p = f"""Write the stakes paragraph for a Backstory category page at NTK: TWO sentences, 25 to 55 words in all, framing the open questions this category turns on (whether, when, by whom, who benefits). Do not write about "risks" in the abstract. No numbers.
+CATEGORY: {cat['title']}
+ITS ARGUMENT: {cat.get('contest') or ''}
+TODAY'S STORIES: {st}
+{STYLE}
+JSON only: {{"stakes":"..."}}"""
+        try:
+            t = " ".join(str(ask(p, 800).get("stakes") or "").split())
+        except Exception:  # noqa: BLE001
+            return ""
+        if t and not C.text_problems("stakes", t, 25, 55, sentences=2):
+            return t
+    return ""
+
+
 def research_trend(cat, filed):
     st = "; ".join(s["headline"] for s in filed)
     p = f"""Find ONE trend line for a Backstory category page at NTK: a measure a reader can check, from the agency, statistical office or pollster that publishes it, showing how something at the heart of this category has moved over time.
@@ -573,15 +593,25 @@ def row_for(cat, picks, lines):
         ids |= {x["id"] for x in ch["before"] + ch["since"]}
     if not ids:                                    # no story today: the most recent six it can publish
         ids = {b["id"] for b in [b for b in cat["beginnings"] if publishable(b)][-6:]}
+    # a page shows 3 to 8 Beginnings (T-0069). Fewer chosen today: the nearest publishable ones before the
+    # start are added, never one the judge dropped. More (several stories): the starts and the latest stay.
+    dropped = set().union(*[set(ch.get("dropped") or []) for ch in picks]) if picks else set()
+    first = min((by[i]["event_date"] for i in starts if i in by), default="9999")
+    spare = [b for b in cat["beginnings"] if publishable(b) and b["id"] not in ids and b["id"] not in dropped and b["event_date"] < first]
+    while len(ids) < 3 and spare:
+        ids.add(spare.pop()["id"])
     chosen = sorted((by[i] for i in ids if i in by), key=lambda b: b["event_date"])
+    if len(chosen) > 8:
+        keep = {b["id"] for b in chosen if b["id"] in starts} | {b["id"] for b in chosen[-(8 - len(starts)):]}
+        chosen = [b for b in chosen if b["id"] in keep][-8:]
     begs = [{"year": b["year"], "line": b["line"], "object_id": b["id"], **({"mark": "start"} if b["id"] in starts else {})} for b in chosen]
-    objs = [{"id": b["id"], "title": b["object"].get("title", ""), "author": b["object"].get("author", ""),
+    objs = [{"object_id": b["id"], "title": b["object"].get("title", ""), "author": b["object"].get("author", ""),
              "year": str(b["object"].get("doc_date") or b["year"])[:4], "source": b["object"].get("host") or "",
              "source_url": b["object"].get("url", ""), "evidence_quote": b["object"].get("quote", ""),
-             "about": b.get("how", ""), "check": b["object"].get("check")} for b in chosen]
+             "about": b.get("how") or b["line"], "check": b["object"].get("check")} for b in chosen]
     r = cat.get("_row") or {}
     return {"id": cat["id"], "stratum": "held", "kind": cat.get("kind", "subject"), "title": cat["title"],
-            "milestone": cat.get("contest", ""), "stakes": r.get("stakes", ""), "subgenres": r.get("subgenres", []),
+            "milestone": cat.get("contest", ""), "stakes": cat.get("stakes") or r.get("stakes", ""), "subgenres": r.get("subgenres", []),
             "subjects": cat.get("subjects", []), "start_date": None, "start_line": None, "close_condition": r.get("close_condition"),
             "roots": r.get("roots", []), "indicator": trend_to_indicator(cat.get("trend")) or r.get("indicator"),
             "beginnings": begs, "objects": objs, "here": [l for l in lines if l], "narrative": [], "instances": [], "photo": None,
@@ -681,6 +711,8 @@ def main():
             except Exception as e:  # noqa: BLE001
                 log(f"  research failed for {c['title']}: {e}")
         upgrade(c, pool, today)
+        if not c.get("stakes") and not (c.get("_row") or {}).get("stakes"):
+            c["stakes"] = write_stakes(c, filed)
         has_row_indicator = bool((c.get("_row") or {}).get("indicator"))
         if not has_row_indicator and (not c.get("trend") or (c["trend"].get("none") and c.get("trend_tried") != today)):
             c["trend"] = research_trend(c, filed)
@@ -726,11 +758,24 @@ def main():
         log(f"  {s['headline'][:50]!r}: starts {ch.get('start')} | before {[x['id'][2:12] for x in ch['before']]} | since {[x['id'][2:12] for x in ch['since']]}"
             + (f" | {ch['note']}" if ch.get("note") else ""))
 
-    # 5. write
+    # 5. write. If no story could be given a Backstory (the API down, the credit spent), the previous
+    # backstory.json stays: an empty Backstory is worse than yesterday's. What research found is kept.
+    if stories and all(p.get("note", "").startswith("claude-") or "HTTP" in p.get("note", "") for p in picks.values()):
+        store["categories"] = [{k: v for k, v in c.items() if k != "_row"} for c in cats.values() if c.get("beginnings") or c.get("stories")]
+        store["generated"] = now_iso()
+        STORE.write_text(json.dumps(store, indent=1, ensure_ascii=False) + "\n")
+        sys.exit(f"every story's Backstory failed ({next(iter(picks.values())).get('note', '')[:120]}); the previous backstory.json is kept")
     by_cat = {}
     for s in stories:
         by_cat.setdefault(s["category"], []).append(s)
     new_rows = {cid: row_for(cats[cid], [picks[s["story_id"]] for s in ss], [s["line"] for s in ss]) for cid, ss in by_cat.items()}
+    # a category whose page cannot show three Beginnings is held back (T-0069; the editor: no Objects, no
+    # category). A long argument or live conflict keeps its old page; a subject category has none yet, so
+    # its stories publish with their "It starts in" and no link. The editor sees why in Pulse.
+    held = {cid for cid, r in new_rows.items() if len(r["beginnings"]) < 3}
+    for cid in held:
+        new_rows.pop(cid)
+        log(f"  held back {cats[cid]['title']}: fewer than three Beginnings can publish")
     bs["rows"] = [new_rows.pop(r["id"], r) for r in bs["rows"] if r.get("stratum") != "provisional"] + list(new_rows.values())
     out = []
     for s in stories:
@@ -748,7 +793,7 @@ def main():
                     "start": ch.get("start"), "before": [x["id"] for x in ch["before"]], "since": [x["id"] for x in ch["since"]],
                     "runner_ups": ch.get("runner_ups", []), "why": {x["id"]: x.get("why", "") for x in ch["before"] + ch["since"]},
                     "judge": ch.get("judge", {}), "dropped": ch.get("dropped", []), "by_editor": ch.get("by_editor", False),
-                    "note": ch.get("note", "")})
+                    "note": ch.get("note", ""), "held_back": s["category"] in held})
     bs["todays_pairings"] = out
     bs["pairings_generated"] = now_iso()
     BACKSTORY.write_text(json.dumps(bs, indent=2, ensure_ascii=False) + "\n")
