@@ -362,6 +362,26 @@ Every story has a past. Rules, in code (`editorial/build_origins.py`, `build_pai
   Beginning) should carry the evidence a reader or critic could check.
 The classifier never reaches a provisional row (no sub-genres); only an editor tag does.
 
+**One Backstory vocabulary.** Decided 2026-10-12 with the editor, after the spine lab showed that
+researching a category once beats composing one per story, and the words had multiplied (row,
+stratum, provisional category, lens, spine, thread). The words, and nothing else:
+- *Category*: the history a story pairs with. One list in three kinds: long American arguments
+  (the old held rows), live conflicts (the old fire rows), and subjects created when nothing fits
+  ("Outbreak secrecy", "Yemen war"). "Row" survives only as a field name in old code and data.
+- *Beginnings*: a category's dated milestones, dated by when the event happened.
+- *Objects*: the primary sources that defend the Beginnings, one per Beginning; "the case". The
+  Object Matrix is the library research draws on first.
+- *Trend line*: one series per category, every value checked on the publisher's page.
+- *Subjects*: tags (Israel, tech, weapons, Russia) from `editorial/lenses.json`. Lenses retire as
+  something the editor manages; their materials make placement and research precise, and can
+  combine (a story on an Israeli AI weapon can pair with "Israel's arms and tech boom").
+- Per story: *It starts in YYYY* (one Beginning, never the last 45 days), the Beginnings before it
+  and since, and *We are here* (the pairing line).
+Publishing rule (the editor): a Beginning publishes without review when its Object is verified
+(the link loads, the quoted sentence is on the page, and it is not a news site's copy) or comes
+from the matrix. Everything else waits for the editor; the editor's rejections stick. The editor
+can also ask for Beginnings by prompt in Pulse; what that finds is checked the same way.
+
 **A category needs objects; Backstory is AP-level.** Decided 2026-10-09 with the editor. A category with no
 objects is never published, whoever made it; an automatic one needs two that survive the checks; the story
 keeps its row. Backstory is written for an AP-level reader (/today middle school, /digest high school); the
