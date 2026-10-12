@@ -73,5 +73,15 @@ check("the row marks the start, ends at We are here, and carries the trend line"
       and row["indicator"]["then_value"] == "10%" and row["indicator"]["now_value"] == "30%" and row["stratum"] == "held", row)
 check("each Beginning shown has its Object in the case", [o["id"] for o in row["objects"]] == [b["object_id"] for b in row["beginnings"]], row["objects"])
 
+# the upgrade: a waiting news-site copy is replaced by the issuer's own, which then publishes
+up = {"title": "U", "beginnings": [dict(beg("n", "2026-02-28", "news-copy", "pending"), object={"title": "PBS", "host": "pbs.org", "url": "https://www.pbs.org/x", "quote": "q", "check": "news-copy"})]}
+B.search = lambda p, mt=14000, uses=12: ({"n": {"title": "Remarks", "url": "https://www.whitehouse.gov/r", "quote": "the quoted sentence is here on the page"}}, {"https://www.whitehouse.gov/r"})
+B._fetch_text = lambda url: (200, "the quoted sentence is here on the page for anyone")
+B.upgrade(up, {}, "2026-10-12")
+check("a news-site copy is upgraded to the issuer's own copy and publishes",
+      up["beginnings"][0]["object"]["host"] == "whitehouse.gov" and B.publishable(up["beginnings"][0]) and up["beginnings"][0]["replaced_object"]["host"] == "pbs.org", up)
+B.upgrade(up, {}, "2026-10-12")
+check("an upgrade is tried once", up["beginnings"][0].get("upgrade_tried") == "2026-10-12")
+
 print(f"\n{len(fails)} failed")
 sys.exit(1 if fails else 0)

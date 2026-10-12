@@ -393,6 +393,42 @@ JSON only:
     return added
 
 
+def upgrade(cat, pool, today, limit=10):
+    """A Beginning waits when its Object is a news site's copy, untested, or failed. One search asks for
+    the issuer's own copy of each (the White House transcript, not PBS's reprint). A copy that checks
+    out replaces the old Object and the Beginning publishes under the rule. Tried once per Beginning."""
+    todo = [b for b in cat.get("beginnings") or [] if b.get("status") == "pending" and not b.get("upgrade_tried")
+            and b["object"].get("check") in ("news-copy", "failed", "unchecked", "loads")][-limit:]
+    if not todo:
+        return 0
+    lst = "\n".join(f"- {b['id']} | {b['event_date']} | {b['line']} | current source: {b['object'].get('title', '')} ({b['object'].get('host', '')})" for b in todo)
+    p = f"""For each event below, find the primary source on the issuer's own site or an official archive: the government, court, legislature, agency, international body or organisation that issued it (whitehouse.gov, congress.gov, a court's site, un.org, who.int, an agency's site, the company's own newsroom, govinfo.gov, the American Presidency Project). Not a news site's reprint, not Wikipedia. Use web search, give the exact URL you found, and quote one sentence from that page word for word. If you cannot find an official copy, leave the event out.
+
+EVENTS:
+{lst}
+
+JSON only: {{"<id>":{{"title":"the document's exact title","author":"who issued it","doc_date":"YYYY-MM-DD or YYYY","url":"https://...","quote":"one sentence copied word for word from that page"}}}}"""
+    try:
+        r, urls = search(p, 9000, 10)
+    except Exception as e:  # noqa: BLE001
+        log(f"  upgrade search failed for {cat['title']}: {e}")
+        return 0
+    n = 0
+    for b in todo:
+        b["upgrade_tried"] = today
+        o = r.get(b["id"]) if isinstance(r, dict) else None
+        if not isinstance(o, dict) or not o.get("url"):
+            continue
+        new = check_object(o, urls, pool)
+        if new.get("check") in ("verified", "matrix"):
+            b["replaced_object"] = b["object"]
+            b["object"] = new
+            b["status"] = "auto"
+            n += 1
+    log(f"  upgraded {n} of {len(todo)} waiting Beginnings in {cat['title']} to the issuer's own copy")
+    return n
+
+
 def research_trend(cat, filed):
     st = "; ".join(s["headline"] for s in filed)
     p = f"""Find ONE trend line for a Backstory category page at NTK: a measure a reader can check, from the agency, statistical office or pollster that publishes it, showing how something at the heart of this category has moved over time.
@@ -644,6 +680,7 @@ def main():
                 research(c, filed, pool, today)
             except Exception as e:  # noqa: BLE001
                 log(f"  research failed for {c['title']}: {e}")
+        upgrade(c, pool, today)
         has_row_indicator = bool((c.get("_row") or {}).get("indicator"))
         if not has_row_indicator and (not c.get("trend") or (c["trend"].get("none") and c.get("trend_tried") != today)):
             c["trend"] = research_trend(c, filed)
@@ -677,6 +714,13 @@ def main():
         ch["dropped"] = sorted(drop)
         ch["before"] = [x for x in ch["before"] if x["id"] not in drop]
         ch["since"] = [x for x in ch["since"] if x["id"] not in drop]
+        if ch.get("start") and (ch["judge"] or {}).get("start_ok") is False:
+            # the judge says the start is wrong: no start from the category; build_origins retrieves one
+            ch["doubted_start"] = ch["start"]
+            ch["note"] = (ch.get("note", "") + " the judge doubted the start, so it is retrieved instead: " + str(ch["judge"].get("start_note", ""))).strip()
+            by_ = {b["id"]: b for b in c["beginnings"]}
+            ch["since"] = sorted(ch["since"] + [{"id": ch["start"], "why": "the start the judge doubted"}], key=lambda x: by_[x["id"]]["event_date"])
+            ch["start"] = None
         ch = apply_overrides(ch, (ov.get("stories") or {}).get(s["story_id"]) or {}, c)
         picks[s["story_id"]] = ch
         log(f"  {s['headline'][:50]!r}: starts {ch.get('start')} | before {[x['id'][2:12] for x in ch['before']]} | since {[x['id'][2:12] for x in ch['since']]}"
