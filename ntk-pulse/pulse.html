@@ -2131,7 +2131,7 @@ STYLE: precise, concrete, plain. Name the actor and the act. No em dashes or en 
 JSON only: {${isNew ? '"contest":"Whether X, or Y: 12 to 30 words, two positions a reasonable person holds",' : ''}"beginnings":[{"event_date":"YYYY-MM-DD or YYYY","line":"one sentence of 12 to 30 words, actor first","how":"one sentence: why it belongs","object":{"title":"exact title","author":"who issued it","doc_date":"YYYY-MM-DD or YYYY","media_type":"document | video | dataset","url":"https://...","quote":"one sentence copied word for word from that page"}}]}`;
   BS2_BUSY = 'Searching…'; BS2_MSG = ''; render();
   try {
-    const r = await aiSearch(p, 9000, 10);
+    const r = await aiSearch(p, 9000, 6);
     const j = catJson(r.text);
     const got = [], refused = [];
     (j.beginnings || []).forEach(m => {

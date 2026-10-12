@@ -106,7 +106,7 @@ def ask(prompt, max_tokens=4000):
     return parse_json_loose("".join(b.get("text", "") for b in d.get("content", []) if b.get("type") == "text"), MODEL)
 
 
-def search(prompt, max_tokens=14000, uses=12):
+def search(prompt, max_tokens=14000, uses=6):
     """(parsed JSON, the set of urls the search returned or cited)."""
     d = _post({"model": MODEL, "max_tokens": max_tokens, "thinking": {"type": "between_tools"},
                "tools": [{"type": "web_search_20250305", "name": "web_search", "max_uses": uses}],
@@ -370,7 +370,7 @@ Add up to {need} Beginnings, oldest to newest. First think: what are the events,
 
 JSON only:
 {{"beginnings":[{{"event_date":"YYYY-MM-DD, or YYYY when the day is not known","line":"one sentence of 12 to 30 words saying what happened, actor first","how":"one sentence: what in today's stories this explains","object":{{"matrix_id":null,"title":"the document's exact title","author":"who issued it","doc_date":"YYYY-MM-DD or YYYY","media_type":"document | video | dataset","url":"https://...","quote":"one sentence copied word for word from that page"}}}}]}}"""
-    r, urls = search(p, 14000, 12)
+    r, urls = search(p, 14000, 6)        # 6 searches, not 12: research was the bulk of the 2026-10-09 and 10-12 spend
     items = r.get("beginnings") if isinstance(r, dict) else r
     added, seen = [], {b["id"] for b in cat.get("beginnings") or []}
     for m in items or []:
@@ -409,7 +409,7 @@ EVENTS:
 
 JSON only: {{"<id>":{{"title":"the document's exact title","author":"who issued it","doc_date":"YYYY-MM-DD or YYYY","url":"https://...","quote":"one sentence copied word for word from that page"}}}}"""
     try:
-        r, urls = search(p, 9000, 10)
+        r, urls = search(p, 9000, 6)
     except Exception as e:  # noqa: BLE001
         log(f"  upgrade search failed for {cat['title']}: {e}")
         return 0
