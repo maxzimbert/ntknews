@@ -247,8 +247,14 @@ def render_held(row):
   {verified_badge}
 </section>""")
 
-    begs = [f'<div class="tr"><span class="ty">{html_esc(b["year"])}</span><span class="td"><i></i></span><div class="tt">{html_esc(b["line"])}</div></div>'
+    # T-0083: the Beginning that set today's story in motion is marked; "We are here" is today's line
+    begs = [(f'<div class="tr here"><span class="ty">{html_esc(b["year"])}</span><span class="td"><i></i></span><div class="tt"><span class="here-lab">It starts here</span>{html_esc(b["line"])}</div></div>'
+             if b.get("mark") == "start" else
+             f'<div class="tr"><span class="ty">{html_esc(b["year"])}</span><span class="td"><i></i></span><div class="tt">{html_esc(b["line"])}</div></div>')
             for b in (row.get("beginnings") or [])]
+    for line in row.get("here") or []:
+        begs.append(f'<div class="tr here"><span class="ty">Today</span><span class="td"><i></i></span>'
+                    f'<div class="tt"><span class="here-lab">We are here</span>{html_esc(line)}</div></div>')
     if row.get("start_line"):
         # First-letter capitalize only: str.capitalize() also lowercases every
         # other letter, which mangles a proper noun like "Washington".
@@ -319,6 +325,8 @@ def build_object_page(row, i):
         body.append("".join(f'<p class="ctx">{html_esc(c)}</p>' for c in ctx))
     if o.get("quote"):
         body.append(f'<p class="pull">{html_esc(o["quote"])}</p>')
+    elif o.get("evidence_quote"):
+        body.append(f'<p class="pull">{html_esc(o["evidence_quote"])}</p>')
     if o.get("where_now"):
         body.append(f'<div class="lab">Where it stands now</div><p class="ctx">{html_esc(o["where_now"])}</p>')
     body.append(f'<div class="src">Source &middot; {html_esc(o["source"])}</div>')

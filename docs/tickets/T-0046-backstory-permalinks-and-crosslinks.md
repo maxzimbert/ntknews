@@ -139,9 +139,11 @@ wf = open(".github/workflows/pulse-publish.yml").read()
 # Only the real `run:` command lines count — a step's own prose comment is
 # free to mention the other script by name without affecting order.
 di = wf.find("run: python build_digest.py")
-pa = wf.find("run: python editorial/build_pairings.py")
+# T-0083 replaced the pairing step with editorial/backstory_build.py, which writes the same
+# todays_pairings; the requirement (pairings exist before the digest is built) is unchanged.
+pa = wf.find("python editorial/backstory_build.py")
 if not (0 < pa < di):
-    sys.exit("OPEN: 'run: python editorial/build_pairings.py' must appear before "
+    sys.exit("OPEN: 'python editorial/backstory_build.py' must appear before "
              "'run: python build_digest.py' in pulse-publish.yml")
 commit_step = wf[wf.find("name: Commit"):]
 if "backstory/" not in commit_step.split("git push")[0]:

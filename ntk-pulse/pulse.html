@@ -1559,13 +1559,13 @@ function catPick(lenses, subgenres){
   const pools=(lenses||[]).map(l=>catPoolFor([l],[])).concat((subgenres||[]).map(g=>catPoolFor([],[g])));
   return pickForSubjects(pools, 6, 4);
 }
-async function aiSearch(prompt, maxTok){
+async function aiSearch(prompt, maxTok, uses){
   if (!SETTINGS.antKey) throw new Error('No Anthropic key — set it in ⚙');
   const r = await fetch('https://api.anthropic.com/v1/messages', {
     method:'POST',
     headers:{'Content-Type':'application/json','x-api-key':SETTINGS.antKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
     body:JSON.stringify({model:'claude-sonnet-5-5',max_tokens:maxTok||2500,thinking:{type:'between_tools'},
-      tools:[{type:'web_search_20250305',name:'web_search',max_uses:5}],messages:[{role:'user',content:prompt}]})});
+      tools:[{type:'web_search_20250305',name:'web_search',max_uses:uses||5}],messages:[{role:'user',content:prompt}]})});
   const d = await r.json();
   if (d.error) throw new Error(d.error.message);
   const urls=[], citations=[]; let text='';
@@ -2037,7 +2037,257 @@ function catRestoreInputs(st){
   });
   window.scrollTo(0, st.y);
 }
+/* ─── Backstory (T-0083): categories researched once ─────────────────────────────────────────
+   One vocabulary (docs/decisions.md, 2026-10-12): a Category is the history a story pairs with; its
+   Beginnings are dated milestones, each defended by one Object (a primary source); a Trend line is
+   one checked series; Subjects are tags that make placement and research precise. On publish,
+   editorial/backstory_build.py places each story, researches a category once when it is thin,
+   chooses each story's "It starts in" and Beginnings, and checks every Object. This tab is where the
+   editor reviews that: approve or reject a Beginning, change a story's start or its Beginnings, and
+   ask for Beginnings by prompt. Everything here rides in the next Publish as backstory_overrides.
+   Rule: a Beginning publishes without review when its Object is verified or from the matrix. */
+let BS2 = null;                     // ntk-pulse/data/categories.json, as published
+let BS2_SEL = {cat: null, story: null};
+let BS2_BUSY = '', BS2_MSG = '', BS2_LOADING = false;
+const BS2_KEY = 'ntk_bs_overrides_v1';
+let BS2_OV = (() => { try { return JSON.parse(localStorage.getItem(BS2_KEY)) || {}; } catch(e){ return {}; } })();
+['beginnings','stories','additions'].forEach(k => { BS2_OV[k] = BS2_OV[k] || {}; });
+BS2_OV.newcats = BS2_OV.newcats || [];
+function bs2Save(){ try { localStorage.setItem(BS2_KEY, JSON.stringify(BS2_OV)); } catch(e){} }
+function bs2Load(){
+  return fetch('data/categories.json?t='+Date.now()).then(r => r.ok ? r.json() : null)
+    .then(d => { BS2 = d || {categories: []}; }).catch(() => { BS2 = {categories: []}; });
+}
+/* CATS2:BEGIN pure, tested in scripts/test_pulse_backstory.js */
+const BS2_CHECK = {verified:['ok','checked'], matrix:['ok','matrix'], 'news-copy':['warn','news site copy'], loads:['warn','loads, quote untested'],
+                   unchecked:['warn','not checked yet'], failed:['bad','failed']};
+// the editor's rule; a decision made in Pulse and not yet published counts already
+function bs2Publishable(b, decision){
+  const st = decision || b.status;
+  if (st === 'approved') return true;
+  if (st === 'rejected') return false;
+  return ['verified','matrix'].includes((b.object || {}).check);
+}
+function bs2Cutoff(today, days){ const d = new Date(today + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() - (days || 45)); return d.toISOString().slice(0, 10); }
+// the Beginnings a story shows: its start, the ones before it and since, after the editor's choices
+function bs2StoryView(pairing, cat, ov, decisions){
+  const by = Object.fromEntries((cat.beginnings || []).map(b => [b.id, b]));
+  const ok = id => by[id] && bs2Publishable(by[id], (decisions || {})[id]);
+  const start = ov && ov.start !== undefined ? ov.start : pairing.start;
+  let ids = ov && Array.isArray(ov.include) ? ov.include : (pairing.before || []).concat(pairing.since || []);
+  ids = ids.filter(id => ok(id) && id !== start);
+  const sd = by[start] ? by[start].event_date : null;
+  return {start: ok(start) ? start : null,
+          before: ids.filter(id => !sd || by[id].event_date < sd).sort((a, b) => by[a].event_date < by[b].event_date ? -1 : 1),
+          since: ids.filter(id => sd && by[id].event_date > sd).sort((a, b) => by[a].event_date < by[b].event_date ? -1 : 1)};
+}
+// a Beginning found by asking in Pulse: what the browser can check before publish does the rest
+function bs2CheckFound(m, urls, deny){
+  const o = m.object || {}, url = String(o.url || '').trim(), host = url.replace(/^https?:\/\/([^\/]+).*$/, '$1').toLowerCase();
+  if (!/^\d{3,4}/.test(String(m.event_date || ''))) return 'no date';
+  if (!String(m.line || '').trim()) return 'no line';
+  if (!url.startsWith('https://')) return 'the link is not https';
+  if ((deny || []).some(d => host.includes(d))) return host + ' is not a primary source';
+  if (!(urls || []).includes(url)) return 'the link is not one the search returned';
+  if (!String(o.quote || '').trim()) return 'no quoted sentence from the page';
+  return null;
+}
+/* CATS2:END */
+const BS2_DENY = ['wikipedia.org','amazon.','abebooks.','ebay.','goodreads.','scribd.','studocu.','coursehero.','quizlet.','unz.com'];
+function bs2Chip(check){ const k = BS2_CHECK[check] || ['', check || '—']; return `<span class="chip" style="${k[0]==='ok'?'background:#dcefe2;color:#2f7d4f':k[0]==='warn'?'background:#f6e7c8;color:#8a5a12':k[0]==='bad'?'background:#f4d9d5;color:#b03a2e':''}">${esc(k[1])}</span>`; }
+function bs2Cats(){
+  const list = ((BS2 && BS2.categories) || []).map(c => Object.assign({}, c));
+  BS2_OV.newcats.forEach(n => { if (!list.some(c => c.id === n.id)) list.push(Object.assign({beginnings: [], kind: 'subject', made_in_pulse: true}, n)); });
+  BSR_ROWS.filter(r => !r.provisional && !list.some(c => c.id === r.id)).forEach(r => list.push({id: r.id, title: r.title, kind: 'library', beginnings: []}));
+  list.forEach(c => {
+    const add = (BS2_OV.additions[c.id] || []).filter(a => !(c.beginnings || []).some(b => b.id === a.id));
+    c.beginnings = (c.beginnings || []).concat(add).sort((a, b) => a.event_date < b.event_date ? -1 : 1);
+  });
+  return list;
+}
+function bs2Cat(id){ return bs2Cats().find(c => c.id === id); }
+function bs2Slug(t){ return String(t).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40); }
+function bs2Bid(d, line){ return 'b-' + String(d).slice(0, 10) + '-' + bs2Slug(line).slice(0, 36); }
+function bs2Export(){
+  const ov = JSON.parse(JSON.stringify(BS2_OV));
+  return (Object.keys(ov.beginnings).length || Object.keys(ov.stories).length || Object.keys(ov.additions).length || ov.newcats.length) ? ov : null;
+}
+
+async function bs2Ask(cid, directive, isNew){
+  const c = bs2Cat(cid); if (!c) return;
+  const have = (c.beginnings || []).map(b => '- ' + b.event_date + ' | ' + b.line).join('\n') || '(none)';
+  const stories = ((BSR_PUBLISHED && BSR_PUBLISHED.todays_pairings) || []).filter(p => p.row === cid).map(p => p.headline).join(' | ');
+  const p = `You are the researcher for NTK's Backstory, written for college-educated adults at the standard of an Advanced Placement history class. You add Beginnings to one category: dated milestones, each defended by one primary source (its Object).
+
+CATEGORY: ${c.title}
+ITS ARGUMENT: ${c.contest || '(not written yet)'}
+${stories ? "TODAY'S STORIES IN IT: " + stories + '\n' : ''}THE EDITOR ASKS: ${directive}
+
+BEGINNINGS IT ALREADY HAS (do not repeat):
+${have}
+
+Do what the editor asks. Each Beginning is an event (a law, ruling, order, treaty, attack, outbreak, filing, election, report, death, decision), dated when it happened, and defended by ONE primary source: the document itself, the official statement or transcript, the dataset, the agency report, the public record, or an official video, from the issuer's own site or an archive's, court's, legislature's or government's copy. Not Wikipedia, not a news article, not a news site's reprint when the issuer's copy exists. Use web search and give the exact URL you found, with one sentence quoted word for word from that page. If you cannot source one, leave it out.
+STYLE: precise, concrete, plain. Name the actor and the act. No em dashes or en dashes. Never use: pivotal, landmark, groundbreaking, seminal, watershed, underscores, highlights. Take no side.
+JSON only: {${isNew ? '"contest":"Whether X, or Y: 12 to 30 words, two positions a reasonable person holds",' : ''}"beginnings":[{"event_date":"YYYY-MM-DD or YYYY","line":"one sentence of 12 to 30 words, actor first","how":"one sentence: why it belongs","object":{"title":"exact title","author":"who issued it","doc_date":"YYYY-MM-DD or YYYY","media_type":"document | video | dataset","url":"https://...","quote":"one sentence copied word for word from that page"}}]}`;
+  BS2_BUSY = 'Searching…'; BS2_MSG = ''; render();
+  try {
+    const r = await aiSearch(p, 9000, 10);
+    const j = catJson(r.text);
+    const got = [], refused = [];
+    (j.beginnings || []).forEach(m => {
+      const why = bs2CheckFound(m, r.urls, BS2_DENY);
+      if (why) { refused.push((String(m.line || '').slice(0, 50) || '?') + ': ' + why); return; }
+      got.push({id: bs2Bid(m.event_date, m.line), event_date: String(m.event_date), year: String(m.event_date).slice(0, 4), line: String(m.line).trim(), how: m.how || '',
+                object: Object.assign({}, m.object, {check: 'unchecked', check_note: 'found in Pulse; checked when you publish'}), status: 'pending', asked: directive});
+    });
+    BS2_OV.additions[cid] = (BS2_OV.additions[cid] || []).filter(a => !got.some(g => g.id === a.id)).concat(got);
+    if (isNew && j.contest) { const n = BS2_OV.newcats.find(x => x.id === cid); if (n && !n.contest) n.contest = j.contest; }
+    bs2Save();
+    BS2_MSG = got.length + ' Beginning' + (got.length === 1 ? '' : 's') + ' found. They are checked when you publish: a verified one publishes, the rest wait for you.' + (refused.length ? ' Not kept: ' + refused.join('; ') + '.' : '');
+  } catch(e) { BS2_MSG = 'The search failed: ' + e.message; }
+  BS2_BUSY = ''; render();
+}
+
+function bs2BeginningRow(c, b, opts){
+  const dec = (BS2_OV.beginnings[c.id] || {})[b.id];
+  const st = dec || b.status, o = b.object || {}, pub = bs2Publishable(b, dec);
+  const added = (BS2_OV.additions[c.id] || []).some(a => a.id === b.id);
+  return `<div class="story" data-bid="${esc(b.id)}" style="padding:7px 9px;${pub?'':'opacity:.78'}">
+    <div style="display:flex;gap:8px;align-items:baseline;flex-wrap:wrap">
+      ${opts && opts.tick ? `<input type="checkbox" class="bs2-inc" ${opts.checked?'checked':''} ${pub?'':'disabled'}>` : ''}
+      <b style="font-size:12px">${esc(b.event_date.slice(0, 4))}</b>
+      <span style="font-size:12.5px;flex:1;min-width:240px">${esc(b.line)}</span>
+      ${opts && opts.isStart ? '<span class="chip" style="background:#C8553D;color:#fff">it starts here</span>' : ''}
+    </div>
+    <div style="font-size:11px;color:var(--dim);margin-top:3px">
+      ${o.url ? `<a href="${esc(o.url)}" target="_blank" rel="noopener">${esc(o.title || 'source')}</a>` : esc(o.title || '')}${o.author ? ' · ' + esc(o.author) : ''}${o.host ? ' · ' + esc(o.host) : ''}
+      ${bs2Chip(o.check)} ${added ? '<span class="chip">asked for in Pulse</span>' : ''}
+      ${st === 'approved' ? '<span class="chip" style="background:#dcefe2;color:#2f7d4f">approved by you</span>' : st === 'rejected' ? '<span class="chip" style="background:#f4d9d5;color:#b03a2e">rejected by you</span>' : pub ? '<span class="chip">publishes</span>' : '<span class="chip" style="background:#f6e7c8;color:#8a5a12">waits for you</span>'}
+      <button class="mini bs2-appr">${st === 'approved' ? 'undo approve' : 'approve'}</button>
+      <button class="mini bs2-rej">${st === 'rejected' ? 'undo reject' : 'reject'}</button>
+    </div>
+    ${o.quote ? `<div style="font-size:11px;font-style:italic;margin-top:2px">“${esc(o.quote)}”</div>` : ''}
+    <div style="font-size:11px;color:var(--dim);margin-top:2px">${esc(o.check_note || '')}${b.how ? ' · Why: ' + esc(b.how) : ''}${opts && opts.why ? ' · For this story: ' + esc(opts.why) : ''}${opts && opts.judge ? ' · Judge: ' + esc(opts.judge) : ''}</div>
+  </div>`;
+}
+
 function renderBackstory(root){
+  if (!BS2) {
+    root.innerHTML = '<i style="color:var(--dim)">Loading categories…</i>';
+    if (!BS2_LOADING) { BS2_LOADING = true; Promise.all([bs2Load(), fetchPublishedBackstory()]).then(() => { BS2_LOADING = false; render(); }); }
+    return;
+  }
+  const pub = BSR_PUBLISHED || {todays_pairings: []};
+  const pairs = pub.todays_pairings || [];
+  const cats = bs2Cats();
+  if (!BS2_SEL.cat && !BS2_SEL.story && pairs.length) BS2_SEL.story = pairs[0].story_id;
+  const sp = BS2_SEL.story && pairs.find(p => p.story_id === BS2_SEL.story);
+  const cid = sp ? sp.row : BS2_SEL.cat;
+  const c = cid && cats.find(x => x.id === cid);
+  const pending = Object.keys(BS2_OV.beginnings).reduce((n, k) => n + Object.keys(BS2_OV.beginnings[k]).length, 0)
+    + Object.keys(BS2_OV.stories).length + Object.values(BS2_OV.additions).reduce((n, a) => n + a.length, 0) + BS2_OV.newcats.length;
+  let main = '';
+  if (c) {
+    const dec = BS2_OV.beginnings[c.id] || {};
+    const tr = c.trend || {};
+    main += `<div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap"><h2 style="margin:0;font:600 22px Newsreader,serif">${esc(c.title)}</h2>
+      <span class="chip">${esc(c.kind === 'live' ? 'live conflict' : c.kind === 'long' || c.kind === 'library' ? 'long argument' : 'subject')}</span>
+      ${(c.subjects || []).map(s => `<span class="chip">${esc(s)}</span>`).join('')}</div>
+      <div style="font:400 15px Newsreader,serif;margin:4px 0 10px">${esc(c.contest || '')}</div>`;
+    main += tr.points ? `<div class="story" style="padding:8px 10px"><b style="font-size:12px">Trend line: ${esc(tr.label)}</b> ${bs2Chip(tr.check)}
+        <div style="font-size:12px;margin-top:3px">${tr.points.map(p => esc(p.date) + ': <b>' + esc(p.value) + '</b>').join(' · ')} ${esc(tr.unit || '')}</div>
+        <div style="font-size:11px;color:var(--dim)"><a href="${esc(tr.source_url)}" target="_blank" rel="noopener">${esc(tr.source)}</a> · ${esc(tr.check_note || '')}</div></div>`
+      : `<div style="font-size:11px;color:var(--dim);margin-bottom:8px">No trend line${tr.none ? ': ' + esc(tr.none) : ' yet; one is searched for when a story is next filed here'}.</div>`;
+    if (sp) {
+      const sov = BS2_OV.stories[sp.story_id] || {};
+      const v = bs2StoryView(sp, c, sov, dec);
+      const usable = (c.beginnings || []).filter(b => bs2Publishable(b, dec[b.id]));
+      const cutoff = bs2Cutoff(String(pub.pairings_generated || new Date().toISOString()).slice(0, 10));
+      const ju = (sp.judge && sp.judge.items) || {};
+      main += `<div class="story" style="padding:9px 10px;border-color:var(--ink)">
+        <div style="font-size:11px;color:var(--dim)">THIS STORY</div>
+        <div style="font:600 15px Newsreader,serif">${esc(sp.headline)}</div>
+        <div style="font-size:12px;margin-top:3px">We are here: ${esc(sp.line || '')}</div>
+        <div style="font-size:12px;margin-top:6px">It starts in
+          <select class="bs2-start">${usable.filter(b => b.event_date < cutoff).map(b => `<option value="${esc(b.id)}" ${b.id === v.start ? 'selected' : ''}>${esc(b.event_date.slice(0, 4))} · ${esc(b.line.slice(0, 80))}${b.id === sp.start ? ' (chosen)' : (sp.runner_ups || []).some(r => r.id === b.id) ? ' (runner-up)' : ''}</option>`).join('')}</select></div>
+        ${(sp.runner_ups || []).map(r => { const b = (c.beginnings || []).find(x => x.id === r.id); return b ? `<div style="font-size:11px;color:var(--dim)">Runner-up ${esc(b.year)}: ${esc(r.why_weaker || '')}</div>` : ''; }).join('')}
+        ${sp.judge && sp.judge.start_note ? `<div style="font-size:11px;margin-top:3px">${sp.judge.start_ok === false ? '<span class="chip" style="background:#f4d9d5;color:#b03a2e">judge doubts the start</span>' : '<span class="chip">judge agrees</span>'} ${esc(sp.judge.start_note)}</div>` : ''}
+        ${sp.note ? `<div style="font-size:11px;color:var(--warn);margin-top:3px">${esc(sp.note)}</div>` : ''}
+        ${BS2_OV.stories[sp.story_id] ? '<div style="font-size:11px;margin-top:4px"><span class="chip">your changes apply on the next publish</span> <button class="mini bs2-story-reset">undo my changes</button></div>' : ''}
+        <div style="font-size:11px;color:var(--dim);margin-top:6px">Tick the Beginnings this story shows. The category is changed in the Lineup tab.</div>
+      </div>`;
+      main += (c.beginnings || []).map(b => bs2BeginningRow(c, b, {tick: true, checked: v.before.includes(b.id) || v.since.includes(b.id), isStart: b.id === v.start,
+        why: (sp.why || {})[b.id], judge: ju[b.id] && ju[b.id].keep === false ? 'drop: ' + ju[b.id].why : ''})).join('');
+    } else {
+      main += (c.beginnings || []).map(b => bs2BeginningRow(c, b)).join('') || '<i style="color:var(--dim)">No Beginnings yet. Ask for some below, or file a story here and publish: the category is researched once.</i>';
+    }
+    main += `<div class="story" style="padding:9px 10px;margin-top:10px">
+      <div style="font-size:11px;color:var(--dim);margin-bottom:4px">ASK FOR BEGINNINGS: say what you want; the search finds the events and their primary sources, and every one is checked when you publish</div>
+      <textarea id="bs2-ask" rows="2" style="width:100%" placeholder="e.g. the history of radiological security at US ports since 9/11, with the laws, GAO reports and incidents"></textarea>
+      <button class="mini primary" id="bs2-ask-go" ${BS2_BUSY ? 'disabled' : ''}>${BS2_BUSY || 'Ask'}</button>
+    </div>`;
+  } else {
+    main = '<i style="color:var(--dim)">Pick a story or a category on the left.</i>';
+  }
+  root.innerHTML = `<div style="display:grid;grid-template-columns:260px 1fr;gap:16px;align-items:start">
+    <div>
+      <div style="font-size:11px;color:var(--dim);margin-bottom:6px">TODAY'S STORIES (last publish${pub.pairings_generated ? ', ' + rel(pub.pairings_generated) + ' ago' : ''})</div>
+      ${pairs.map(p => { const cc = cats.find(x => x.id === p.row) || {title: p.row};
+        return `<div class="story bs2-story" data-sid="${esc(p.story_id)}" style="padding:7px 9px;cursor:pointer;${p.story_id === BS2_SEL.story ? 'border-color:var(--ink)' : ''}">
+          <b style="font-size:12px">${esc(String(p.headline || '').slice(0, 80))}</b><br>
+          <span style="font-size:10.5px;color:var(--dim)">${esc(cc.title)} · ${p.origin && p.origin.year ? 'starts ' + esc(p.origin.year) : 'no start'}${p.by_editor ? ' · your choice' : ''}</span></div>`; }).join('') || '<i style="font-size:11px;color:var(--dim)">No pairings yet.</i>'}
+      <div style="font-size:11px;color:var(--dim);margin:12px 0 6px">CATEGORIES</div>
+      ${cats.filter(x => x.kind !== 'library').map(x => `<div class="story bs2-cat" data-cid="${esc(x.id)}" style="padding:6px 9px;cursor:pointer;${!sp && x.id === BS2_SEL.cat ? 'border-color:var(--ink)' : ''}">
+          <b style="font-size:12px">${esc(x.title)}</b> <span style="font-size:10.5px;color:var(--dim)">${(x.beginnings || []).filter(b => bs2Publishable(b, (BS2_OV.beginnings[x.id] || {})[b.id])).length}/${(x.beginnings || []).length} publish${x.made_in_pulse ? ' · new' : ''}</span></div>`).join('')}
+      <details style="margin-top:6px"><summary style="font-size:11px;color:var(--dim);cursor:pointer">long arguments and live conflicts not yet researched</summary>
+        ${cats.filter(x => x.kind === 'library').map(x => `<div class="story bs2-cat" data-cid="${esc(x.id)}" style="padding:5px 9px;cursor:pointer;font-size:12px">${esc(x.title)}</div>`).join('')}</details>
+      <button class="mini primary" id="bs2-new" style="margin-top:8px">+ new category</button>
+      <div style="font-size:11px;color:var(--dim);margin-top:10px;line-height:1.5">${pending ? '<b>' + pending + ' change' + (pending === 1 ? '' : 's') + '</b> ride with your next Publish. ' : ''}A Beginning publishes on its own when its source is checked or from the matrix; the rest wait for you. Your rejections stick.</div>
+    </div>
+    <div>${BS2_MSG ? `<div class="promoted-box" style="border-style:solid;margin-bottom:8px">${esc(BS2_MSG)}</div>` : ''}${main}</div>
+  </div>`;
+  root.querySelectorAll('.bs2-story').forEach(el => el.addEventListener('click', () => { BS2_SEL = {story: el.dataset.sid, cat: null}; BS2_MSG = ''; render(); }));
+  root.querySelectorAll('.bs2-cat').forEach(el => el.addEventListener('click', () => { BS2_SEL = {story: null, cat: el.dataset.cid}; BS2_MSG = ''; render(); }));
+  const nb = document.getElementById('bs2-new');
+  if (nb) nb.addEventListener('click', () => {
+    const t = prompt('Name the category, for its subject (for example "Outbreak secrecy" or "Israel\'s arms and tech boom").', '');
+    if (!t || !t.trim()) return;
+    const id = 'p-' + bs2Slug(t);
+    if (!bs2Cat(id)) { BS2_OV.newcats.push({id: id, title: t.trim().slice(0, 60), contest: '', subjects: []}); bs2Save(); }
+    BS2_SEL = {story: null, cat: id};
+    BS2_MSG = 'Category made. Ask for its Beginnings below, then file stories under it in the Lineup tab.'; render();
+  });
+  if (!c) return;
+  const dec = BS2_OV.beginnings[c.id] || {};
+  const decide = (id, v) => { const d = BS2_OV.beginnings[c.id] = BS2_OV.beginnings[c.id] || {}; if (d[id] === v) delete d[id]; else d[id] = v; if (!Object.keys(d).length) delete BS2_OV.beginnings[c.id]; bs2Save(); render(); };
+  root.querySelectorAll('[data-bid]').forEach(el => {
+    const id = el.dataset.bid;
+    el.querySelector('.bs2-appr').addEventListener('click', () => decide(id, 'approved'));
+    el.querySelector('.bs2-rej').addEventListener('click', () => decide(id, 'rejected'));
+    const inc = el.querySelector('.bs2-inc');
+    if (inc && sp) inc.addEventListener('change', () => {
+      const v = bs2StoryView(sp, c, BS2_OV.stories[sp.story_id], dec);
+      const set = new Set(v.before.concat(v.since));
+      inc.checked ? set.add(id) : set.delete(id);
+      BS2_OV.stories[sp.story_id] = Object.assign({}, BS2_OV.stories[sp.story_id] || {}, {start: v.start, include: Array.from(set)}); bs2Save(); render();
+    });
+  });
+  const ss = root.querySelector('.bs2-start');
+  if (ss && sp) ss.addEventListener('change', () => {
+    const v = bs2StoryView(sp, c, BS2_OV.stories[sp.story_id], dec);
+    BS2_OV.stories[sp.story_id] = Object.assign({}, BS2_OV.stories[sp.story_id] || {}, {start: ss.value, include: v.before.concat(v.since)}); bs2Save(); render();
+  });
+  const rs = root.querySelector('.bs2-story-reset');
+  if (rs && sp) rs.addEventListener('click', () => { delete BS2_OV.stories[sp.story_id]; bs2Save(); render(); });
+  const ag = document.getElementById('bs2-ask-go');
+  if (ag) ag.addEventListener('click', () => {
+    const d = document.getElementById('bs2-ask').value.trim(); if (!d) return;
+    bs2Ask(c.id, d, !!c.made_in_pulse && !c.contest);
+  });
+}
+
+// T-0079's category editor, replaced by the tab above (T-0083). Kept until the replacement is merged.
+function renderBackstoryLegacy(root){
   const _kept=catCaptureInputs();
   const list=catListAll();
   if (CAT_SEL && !catRecord(CAT_SEL)) CAT_SEL=null;
@@ -2710,7 +2960,9 @@ function storyDataExport(stories){
   return JSON.stringify({
     stories: stories || buildStoryPayload(),
     // T-0079: every category the editor approved in the Backstory tab, as left. CI validates them again.
-    backstory_categories: catsForPublish(),
+    // T-0083: the editor's Backstory choices (decisions on Beginnings, a story's start and Beginnings,
+    // Beginnings asked for, new categories). editorial/backstory_build.py applies and checks them.
+    backstory_overrides: bs2Export(),
     today: TODAY_OV.text ? { text: TODAY_OV.text, generatedAt: TODAY_OV.generatedAt } : null,
   }, null, 1);
 }
@@ -2817,7 +3069,7 @@ async function publishToDigest(){
 
   const pf = publishPreflight(all);
   pf.warn.push(...tp.warn);
-  pf.warn.push(...rowPreflight(all, catsForPublish()));
+  pf.warn.push(...rowPreflight(all, bs2Cats()));
   if ((pf.drop.length || pf.warn.length) && !confirm(preflightDialogText(pf))) return;
   if (!pf.shipping){ alert('Every story in the lineup is missing a headline — nothing to publish.'); return; }
   const stories = all.filter(s => (s.headline || '').trim());
@@ -3693,36 +3945,31 @@ function bsrPublishedFor(s){
 function bsrPublishedChip(s){
   const p = bsrPublishedFor(s);
   if (!p) return '';
-  const title = (BSR_ROWS.find(r => r.id === p.row) || {title: p.row}).title;
+  const title = (bs2Cats().find(r => r.id === p.row) || BSR_ROWS.find(r => r.id === p.row) || {title: p.row}).title;
   const poor = p.origin && p.origin.row_fit === 'poor';
-  const who = p.source === 'editor' ? 'you' : 'classifier ' + (p.confidence != null ? Number(p.confidence).toFixed(2) : '');
+  const who = p.source === 'editor' ? 'you' : p.source === 'category' ? 'placed by the system' : 'classifier ' + (p.confidence != null ? Number(p.confidence).toFixed(2) : '');
   const changed = s.backstoryRow && s.backstoryRow !== p.row;
   return `<span class="chip" title="what the last publish did with this story"`+
     (poor ? ' style="background:var(--warn);color:#fff"' : '')+`>`+
     `published: ${esc(title)} \u00b7 ${esc(who)}${poor ? ' \u00b7 poor fit' : ''}${changed ? ' \u00b7 will change' : ''}</span>`;
 }
 function bsrTagControl(s){
-  if (!BSR_ROWS.length) return '';
+  // T-0083: one list of categories (the long arguments, the live conflicts, and subject categories).
+  // Left unset, the system places the story and makes a category when none fits.
+  const cats = bs2Cats();
+  if (!cats.length) return '';
   const counts = bsrCollisionCounts();
   const dup = s.backstoryRow && counts[s.backstoryRow] > 1;
-  const unset = !s.backstoryRow;
-  const style = dup ? ' style="border-color:var(--warn)"' : unset ? ' style="border-color:var(--warn);color:var(--warn)"' : '';
-  const cat = s.backstoryRow && catRecord(s.backstoryRow);
-  const own = Object.values(CATS).filter(c => !BSR_ROWS.some(r => r.id === c.id));
-  return `<select class="bsr-tag" title="Row for this story's Backstory. Left unset, the classifier chooses and can pick a poor fit."`+
-    style+`>`+
-    `<option value=""${unset?' selected':''}>row: not set (classifier picks)</option>`+
-    BSR_ROWS.map(r=>`<option value="${esc(r.id)}"${s.backstoryRow===r.id?' selected':''}>`+
-      `row: ${esc(r.title)}${r.provisional ? ' (category)' : ''}</option>`).join('')+
-    own.map(c=>`<option value="${esc(c.id)}"${s.backstoryRow===c.id?' selected':''}>row: ${esc(c.title)} (${esc(c.status)})</option>`).join('')+
+  const opt = c => `<option value="${esc(c.id)}"${s.backstoryRow===c.id?' selected':''}>category: ${esc(c.title)}</option>`;
+  const researched = cats.filter(c => c.kind !== 'library'), library = cats.filter(c => c.kind === 'library');
+  return `<select class="bsr-tag" title="Category for this story's Backstory. Left unset, the system places it.">`+
+    `<option value=""${!s.backstoryRow?' selected':''}>category: the system places it</option>`+
+    (researched.length ? `<optgroup label="Researched">${researched.map(opt).join('')}</optgroup>` : '')+
+    (library.length ? `<optgroup label="Not yet researched">${library.map(opt).join('')}</optgroup>` : '')+
     `</select>`+
-    `<button class="mini bsr-gap" title="No row fits this story. Make a category: the system drafts its page for you to review in the Backstory tab."`+
-      (cat ? ' style="background:var(--ink);color:#fff"' : '')+`>`+
-      (cat ? 'category: '+esc(cat.title)+' \u2192' : '+ new category')+`</button>`+
+    `<button class="mini bsr-gap" title="Open this story's Backstory">Backstory \u2192</button>`+
     bsrPublishedChip(s)+
-    (dup ? `<span class="chip" style="background:var(--warn);color:#fff" `+
-           `title="another story in this lineup is tagged to the same row">`+
-           `${counts[s.backstoryRow]}\u00d7 same row</span>` : '');
+    (dup ? `<span class="chip" title="another story in this lineup is in the same category">${counts[s.backstoryRow]}\u00d7 same category</span>` : '');
 }
 
 // Publish check for rows. A warning, not a block: the digest is the product
@@ -3732,7 +3979,7 @@ function rowPreflight(stories, cats){
   const unset = stories.filter(s => !s.backstory_row);
   if (unset.length)
     warn.push(unset.length + ' stor' + (unset.length === 1 ? 'y has' : 'ies have') +
-      ' no row set, so the classifier will pick: ' +
+      ' no category set, so the system will place '+(unset.length === 1 ? 'it' : 'them')+': ' +
       unset.map(s => '"' + String(s.headline || s.key).slice(0, 40) + '"').join(', '));
   const sent = new Set((cats || []).map(c => c.id));
   const known = new Set((typeof BSR_ROWS !== 'undefined' ? BSR_ROWS : []).map(r => r.id));
@@ -4106,14 +4353,9 @@ function renderLineup(root){
     });
     const gapBtn = el.querySelector('.bsr-gap');
     if (gapBtn) gapBtn.addEventListener('click',()=>{
-      const cur = s.backstoryRow && catRecord(s.backstoryRow);
-      if (cur){ CAT_SEL = cur.id; TAB='backstory'; render(); return; }      // already filed: open it
-      const v = prompt('No row fits this story. Name the new category, a short noun phrase readers could build expertise in (for example "AI"). To use a category that exists, pick it in the row list instead.', '');
-      if (v === null || !v.trim()) return;
-      const id = newCategory(v.trim(), [s.key]);
-      if (!id) return;
-      CAT_SEL = id; TAB = 'backstory'; render();
-      composeCat(id);                                                         // the system drafts it; you review it there
+      const p = bsrPublishedFor(s);
+      BS2_SEL = p ? {story: p.story_id, cat: null} : {story: null, cat: s.backstoryRow || null};
+      TAB = 'backstory'; render();
     });
     el.querySelector('.ord').addEventListener('keydown',e=>{
       if (e.key==='Enter'){ e.preventDefault(); reorderStory(s.id, parseInt(e.target.value)||1); }
@@ -4632,6 +4874,7 @@ fetchLastPublished();
 // control lives in Lineup and would otherwise be invisible until the editor
 // happened to open a different tab.
 loadBsrRows();
+bs2Load().then(() => render());        // T-0083: the Lineup category list and the Backstory tab read it
 </script>
 </body>
 </html>

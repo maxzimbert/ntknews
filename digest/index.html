@@ -3283,7 +3283,12 @@ function bpRowHtml(r){
     if (r.stakes) h += '<section class="bp-sec"><p class="bp-stakes">' + escBsr(r.stakes) + '</p></section>';
     if (r.indicator) h += bpIndicator(r.indicator);
     var begs = (r.beginnings || []).map(function(b){
+      // T-0083: the Beginning that set today's story in motion is marked
+      if (b.mark === 'start') return '<div class="bp-tr here"><span class="bp-ty">' + escBsr(b.year) + '</span><span class="bp-td"><i></i></span><div class="bp-tt"><span class="bp-here">It starts here</span>' + escBsr(b.line) + '</div></div>';
       return '<div class="bp-tr"><span class="bp-ty">' + escBsr(b.year) + '</span><span class="bp-td"><i></i></span><div class="bp-tt">' + escBsr(b.line) + '</div></div>';
+    });
+    (r.here || []).forEach(function(line){
+      begs.push('<div class="bp-tr here"><span class="bp-ty">Today</span><span class="bp-td"><i></i></span><div class="bp-tt"><span class="bp-here">We are here</span>' + escBsr(line) + '</div></div>');
     });
     // The row's own "since ..." line closes the timeline: it is where the clock starts, so it is marked.
     if (r.start_line) begs.push('<div class="bp-tr here"><span class="bp-ty">' + escBsr(String(r.start_date || '').slice(0, 4)) + '</span><span class="bp-td"><i></i></span><div class="bp-tt"><span class="bp-here">We are here</span>' + escBsr(bsrCapitalize(r.start_line)) + '.</div></div>');
@@ -3313,7 +3318,7 @@ function bpObjectHtml(r, oi){
   var b = '';
   if (o.about) b += '<p class="bp-ctx" style="margin-bottom:14px">' + escBsr(o.about) + '</p>';
   (o.context || []).forEach(function(c){ b += '<p class="bp-ctx" style="margin-bottom:14px">' + escBsr(c) + '</p>'; });
-  if (o.quote) b += '<p class="bp-pull">' + escBsr(o.quote) + '</p>';
+  if (o.quote || o.evidence_quote) b += '<p class="bp-pull">' + escBsr(o.quote || o.evidence_quote) + '</p>';
   if (o.where_now) b += '<div class="bp-lab">Where it stands now</div><p class="bp-ctx">' + escBsr(o.where_now) + '</p>';
   b += '<div class="bp-src">SOURCE · ' + escBsr(o.source) + '</div>';
   if (o.source_url) {

@@ -303,6 +303,9 @@ def load_stories(lineup_path, pairings_path):
         p = pairs.get(st["key"])
         if not p:
             continue
+        o = p.get("origin") or {}
+        if o.get("source") == "category" and o.get("status") == "retrieved":
+            continue          # T-0083: its "It starts in" was chosen from its category's Beginnings; retrieval is the fallback
         stories.append({"story_id": st["key"], "headline": st["headline"],
                         "row": p["row"], "subgenre": p.get("subgenre"),
                         "truths": strip_html(st.get("truth")),
@@ -336,7 +339,8 @@ def main():
 
     stories, rows = load_stories(args.lineup, args.pairings)
     if not stories:
-        sys.exit("no stories with a pairing")
+        log("every story has its start from its category; nothing to retrieve")
+        return
     key = os.environ.get("ANTHROPIC_API_KEY")
     log(f"{len(stories)} stories")
 
