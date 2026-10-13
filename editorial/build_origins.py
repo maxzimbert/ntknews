@@ -425,7 +425,7 @@ def main():
                                  "line": (ch or {}).get("line")}
         out.append(entry)
         o = entry["origin"]
-        log(f"  {o['status'].upper():9} {s['story_id']} {o['year']}  {o.get('line') or ''}"
+        log(f"  {o['status'].upper():9} {s['story_id']} {o.get('year', '-')}  {o.get('line') or ''}"
             + (f"   [{o.get('why_fallback')}]" if o["status"] == "fallback" else ""))
 
     # 5 RETRY. The first real run (2026-10-07) showed the weak link is retrieval: a query that does not
