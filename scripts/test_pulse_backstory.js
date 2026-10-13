@@ -1,0 +1,30 @@
+// T-0083: the pure Backstory rules inside ntk-pulse/pulse.html (between CATS2:BEGIN and CATS2:END).
+const fs = require('fs');
+const html = fs.readFileSync(__dirname + '/../ntk-pulse/pulse.html', 'utf8');
+const m = html.match(/\/\* CATS2:BEGIN[^\n]*\n([\s\S]*?)\/\* CATS2:END \*\//);
+if (!m) { console.log('FAIL the CATS2 block is missing'); process.exit(1); }
+const L = new Function(m[1] + '; return {bs2Publishable, bs2StoryView, bs2CheckFound, bs2Cutoff};')();
+let fails = 0;
+const check = (name, ok, detail) => { console.log((ok ? 'ok   ' : 'FAIL ') + name + (ok ? '' : '  ' + JSON.stringify(detail))); if (!ok) fails++; };
+const B = (id, d, check, status) => ({id, event_date: d, line: 'l ' + id, object: {check}, status: status || 'auto'});
+check('a verified Object publishes', L.bs2Publishable(B('a', '2000', 'verified')));
+check('a matrix Object publishes', L.bs2Publishable(B('a', '2000', 'matrix')));
+check('a news-site copy waits', !L.bs2Publishable(B('a', '2000', 'news-copy')));
+check('an untested PDF waits', !L.bs2Publishable(B('a', '2000', 'loads')));
+check("the editor's approval publishes a waiting one", L.bs2Publishable(B('a', '2000', 'loads'), 'approved'));
+check("the editor's rejection holds a verified one back", !L.bs2Publishable(B('a', '2000', 'verified'), 'rejected'));
+check('a stored rejection sticks', !L.bs2Publishable(B('a', '2000', 'verified', 'rejected')));
+const cat = {beginnings: [B('a', '1990', 'verified'), B('b', '2000', 'verified'), B('c', '2010', 'verified'), B('d', '2020', 'verified'), B('w', '1995', 'loads')]};
+const pair = {start: 'c', before: ['a', 'b', 'w'], since: ['d']};
+let v = L.bs2StoryView(pair, cat, null, {});
+check('the story view drops what cannot publish and splits before and since', v.start === 'c' && v.before.join() === 'a,b' && v.since.join() === 'd', v);
+v = L.bs2StoryView(pair, cat, {start: 'b', include: ['a', 'c', 'd']}, {});
+check("the editor's start re-sorts the rest around it", v.start === 'b' && v.before.join() === 'a' && v.since.join() === 'c,d', v);
+v = L.bs2StoryView(pair, cat, null, {a: 'rejected'});
+check('a rejection made in Pulse leaves the story at once', !v.before.includes('a'), v);
+const found = {event_date: '2003', line: 'x', object: {url: 'https://www.gao.gov/r.pdf', quote: 'q'}};
+check('a found Beginning from a returned link passes', L.bs2CheckFound(found, ['https://www.gao.gov/r.pdf'], []) === null);
+check('a link the search did not return is refused', L.bs2CheckFound(found, ['https://x.gov'], []) !== null);
+check('Wikipedia is refused', L.bs2CheckFound({event_date: '2003', line: 'x', object: {url: 'https://en.wikipedia.org/wiki/X', quote: 'q'}}, ['https://en.wikipedia.org/wiki/X'], ['wikipedia.org']) !== null);
+check('the start cutoff is 45 days back', L.bs2Cutoff('2026-10-12') === '2026-08-28', L.bs2Cutoff('2026-10-12'));
+console.log(`\n${fails} failed`); process.exit(fails ? 1 : 0);

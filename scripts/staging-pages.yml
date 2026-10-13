@@ -1,0 +1,58 @@
+# Runs in maxzimbert/ntknews-staging, copied there by scripts/stage_build.sh. Do not run it here.
+#
+# Deploys the staging site. On a push (scripts/stage.sh from the laptop) it deploys what was pushed.
+# Every five minutes it also checks whether ntknews's `staging` branch has moved (a staging run started
+# from Pulse commits there) and, if so, rebuilds from it with the same script and deploys. Both repos
+# are public, so no token is needed to read ntknews; this repo's own token commits the rebuilt copy.
+name: Deploy staging
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+    steps:
+      - uses: actions/checkout@v5
+      - name: Rebuild from ntknews's staging branch if it moved
+        id: sync
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then echo "deploy=yes" >> "$GITHUB_OUTPUT"; exit 0; fi
+          want=$(git ls-remote https://github.com/maxzimbert/ntknews.git refs/heads/staging | cut -f1)
+          have=$(cat .staged-sha 2>/dev/null || true)
+          if [ -z "$want" ] || [ "$want" = "$have" ]; then
+            echo "staging branch unchanged (${want:0:7})"
+            [ "${{ github.event_name }}" = "workflow_dispatch" ] && echo "deploy=yes" >> "$GITHUB_OUTPUT" || echo "deploy=no" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git clone -q --depth 1 -b staging https://github.com/maxzimbert/ntknews.git /tmp/src
+          OUT=$(mktemp -d)
+          bash /tmp/src/scripts/stage_build.sh /tmp/src "$OUT" "$want"
+          rsync -a --delete --exclude .git "$OUT"/ ./
+          git config user.name "staging-sync"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          git commit -q -m "staging @ ${want:0:7} (synced $(date -u +%Y-%m-%dT%H:%MZ))"
+          git push -q origin HEAD:main
+          echo "deploy=yes" >> "$GITHUB_OUTPUT"
+      - if: steps.sync.outputs.deploy == 'yes'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - if: steps.sync.outputs.deploy == 'yes'
+        uses: actions/deploy-pages@v4

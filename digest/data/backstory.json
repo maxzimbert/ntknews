@@ -23,20 +23,122 @@
     },
     {
       "id": "us-israel-iran",
-      "stratum": "fire",
+      "stratum": "held",
+      "kind": "live",
       "title": "US–Israel–Iran",
-      "start_date": "2026-02-28",
-      "start_line": null,
       "milestone": "Whether a campaign of strikes is a policy with an end, or a war nobody has named.",
+      "stakes": "The central question is whether the strikes on Iran amount to a policy with a stated end or a war no one has formally declared. Congress, the president, and Israel each answer differently on who decides when it stops, and diesel buyers are already paying for the uncertainty.",
+      "subgenres": [],
+      "subjects": [
+        "france",
+        "germany",
+        "iran",
+        "russia"
+      ],
+      "start_date": null,
+      "start_line": null,
       "close_condition": "A negotiated halt to strikes and retaliation lasting more than ninety days.",
       "roots": [],
-      "subgenres": [],
-      "updated": false,
+      "indicator": {
+        "label": "U.S. average retail price of on-highway diesel, weekly",
+        "then_value": "5.599",
+        "then_year": "2026-08-31",
+        "now_value": "6.199",
+        "direction": "up",
+        "source": "U.S. Energy Information Administration (EIA), Gasoline and Diesel Fuel Update",
+        "source_url": "https://www.eia.gov/dnav/pet/pet_pri_gnd_dcus_nus_w.htm",
+        "as_of": "2026-10-05",
+        "points": [
+          {
+            "date": "2026-08-31",
+            "value": "5.599"
+          },
+          {
+            "date": "2026-09-07",
+            "value": "5.967"
+          },
+          {
+            "date": "2026-09-14",
+            "value": "6.285"
+          },
+          {
+            "date": "2026-09-21",
+            "value": "6.529"
+          },
+          {
+            "date": "2026-09-28",
+            "value": "6.382"
+          },
+          {
+            "date": "2026-10-05",
+            "value": "6.199"
+          }
+        ],
+        "unit": "$ per gallon",
+        "verified": true,
+        "check": "verified",
+        "check_note": "the page loads and every value appears on it"
+      },
+      "beginnings": [
+        {
+          "year": "2025",
+          "line": "President Trump ordered U.S. bombers and submarines to strike Iran's Fordow, Natanz and Isfahan nuclear sites, joining Israel's war on Iran, and said Iran must now make peace.",
+          "object_id": "b-2025-06-21-president-trump-ordered-u-s-bombers-"
+        },
+        {
+          "year": "2026",
+          "line": "President Trump announced major combat operations in Iran, launched jointly with Israel, saying the objective was to defend Americans by eliminating imminent threats from the Iranian regime.",
+          "object_id": "b-2026-02-28-president-trump-announced-major-comb",
+          "mark": "start"
+        },
+        {
+          "year": "2026",
+          "line": "G7 leaders agreed to a coordinated release of 100 million barrels of emergency oil and diesel through the International Energy Agency over four months, with diesel front-loaded into the first 20 days.",
+          "object_id": "b-2026-10-02-g7-leaders-agreed-to-a-coordinated-r"
+        }
+      ],
+      "objects": [
+        {
+          "object_id": "b-2025-06-21-president-trump-ordered-u-s-bombers-",
+          "title": "Address to the Nation on United States Airstrikes on Iran",
+          "author": "Office of the Federal Register, National Archives and Records Administration (Compilation of Presidential Documents; President Donald J. Trump)",
+          "year": "2025",
+          "source": "govinfo.gov",
+          "source_url": "https://www.govinfo.gov/app/details/DCPD-202500711",
+          "evidence_quote": "The President spoke at 10:02 p.m. in the East Room at the White House.",
+          "about": "This first direct U.S. attack on Iran's nuclear sites set the pattern of strikes announced as completed that the administration later cited as the reason for the February 2026 campaign.",
+          "check": "verified"
+        },
+        {
+          "object_id": "b-2026-02-28-president-trump-announced-major-comb",
+          "title": "Remarks Announcing Major Combat Operations in Iran in Palm Beach, Florida",
+          "author": "The American Presidency Project (UC Santa Barbara), President Donald J. Trump",
+          "year": "2026",
+          "source": "presidency.ucsb.edu",
+          "source_url": "https://www.presidency.ucsb.edu/documents/remarks-announcing-major-combat-operations-iran-palm-beach-florida",
+          "evidence_quote": "Our objective is to defend the American people by eliminating imminent threats from the Iranian regime, a vicious group of very hard, terrible people.",
+          "about": "This is the start of the war that Trump's Truth Social post skipped over and that the diesel price spike traces to.",
+          "check": "verified"
+        },
+        {
+          "object_id": "b-2026-10-02-g7-leaders-agreed-to-a-coordinated-r",
+          "title": "G7 Leaders' statement on global energy security and market stability",
+          "author": "G7 Leaders (published by the Prime Minister of Canada's Office, pm.gc.ca)",
+          "year": "2026",
+          "source": "pm.gc.ca",
+          "source_url": "https://www.pm.gc.ca/en/news/statements/2026/10/02/g7-leaders-statement-global-energy-security-and-market-stability",
+          "evidence_quote": "We will convene in the context of the IEA in the coming days to discuss the possibility of additional diesel releases as necessary.",
+          "about": "This is the allied stock release that came alongside the White House dropping a diesel export ban, the step Sullivan had urged.",
+          "check": "verified"
+        }
+      ],
+      "here": [
+        "The fighting reaches households as a fuel bill. Whether anyone has set an end date, a trucker still pays the price at the pump."
+      ],
       "narrative": [],
-      "indicator": null,
-      "objects": [],
       "instances": [],
-      "photo": null
+      "photo": null,
+      "updated": true
     },
     {
       "id": "venezuela",
@@ -126,14 +228,10 @@
     {
       "id": "climate",
       "stratum": "held",
+      "kind": "long",
       "title": "Climate",
-      "start_date": "1988-06-23",
-      "start_line": "since a government scientist told Congress the planet was warming, June 1988",
       "milestone": "Whether long-term planetary risk warrants remaking how the country makes energy, or whether the remaking costs more than the risk.",
-      "close_condition": null,
-      "roots": [
-        "modernization"
-      ],
+      "stakes": "The question is how much we should change now to guard against a risk that is slow and spread out. One side sees a bill that grows the longer we wait. The other sees a bill we would pay today for a problem we can't yet price.",
       "subgenres": [
         "energy transition",
         "environmental protection",
@@ -141,85 +239,167 @@
         "regional economic disruption",
         "disasters and adaptation"
       ],
-      "stakes": "The question is how much we should change now to guard against a risk that is slow and spread out. One side sees a bill that grows the longer we wait. The other sees a bill we would pay today for a problem we can't yet price.",
-      "updated": false,
-      "narrative": [],
-      "indicator": {
-        "label": "Atmospheric carbon dioxide",
-        "then_value": "351 ppm",
-        "then_year": "1988",
-        "now_value": "428 ppm",
-        "direction": "worse",
-        "source": "NOAA Global Monitoring Laboratory",
-        "as_of": "August 2026",
-        "verified": true
-      },
-      "objects": [
-        {
-          "title": "Declaration of Environmental Rights",
-          "author": "",
-          "year": "1970",
-          "source": "Hofstadter, Great Issues in American History",
-          "source_url": "https://energyhistory.yale.edu/santa-barbara-declaration-of-environmental-rights-1970",
-          "object_id": "1970-declaration-of-environmental-rights",
-          "about": "The Declaration of Environmental Rights is a statement from 1970 about people's rights in relation to the natural environment. It is printed in Hofstadter's collection Great Issues in American History. The linked copy is hosted by Yale's energy history site."
-        },
-        {
-          "title": "National Environmental Policy Act, signing statement",
-          "author": "Richard Nixon",
-          "year": "1970",
-          "source": "Public Papers of the Presidents",
-          "source_url": "https://www.presidency.ucsb.edu/documents/statement-about-the-national-environmental-policy-act-1969",
-          "object_id": "1970-01-01-national-environmental-policy-act-signing-statement",
-          "about": "President Richard Nixon issued this statement on January 1, 1970, when he approved the National Environmental Policy Act. He called the 1970s the years America must reclaim the purity of its air, water and living environment. He praised the bill's sponsors and said a three-member council of environmental advisers would be appointed."
-        },
-        {
-          "title": "Clean Air Act Amendments of 1970",
-          "author": "U.S. Congress",
-          "year": "1970",
-          "source": "Pub. L. 91-604",
-          "source_url": "https://www.govinfo.gov/link/statute/84/1676",
-          "object_id": "1970-12-31-clean-air-act-amendments-of-1970",
-          "about": "The Clean Air Act Amendments of 1970 are a law passed by the U.S. Congress and dated 31 December 1970. It is listed as Public Law 91-604. The law concerns air quality and pollution."
-        },
-        {
-          "title": "Testimony on the Greenhouse Effect and Global Climate Change",
-          "author": "James Hansen",
-          "year": "1988",
-          "source": "Senate Cmte. on Energy and Natural Resources",
-          "source_url": "https://pulitzercenter.org/sites/default/files/june_23_1988_senate_hearing_1.pdf",
-          "object_id": "1988-06-23-testimony-on-the-greenhouse-effect-and-global-climate-change",
-          "about": "On June 23, 1988, NASA scientist James Hansen testified before the Senate Committee on Energy and Natural Resources. His subject was the greenhouse effect and global climate change. He told the senators that the planet was warming and tied that warming to heat-trapping gases in the air."
-        },
-        {
-          "title": "Inflation Reduction Act",
-          "author": "U.S. Congress",
-          "year": "2022",
-          "source": "Pub. L. 117-169",
-          "source_url": "https://www.govinfo.gov/link/plaw/117/public/169?link-type=pdf",
-          "object_id": "2022-08-16-inflation-reduction-act",
-          "about": "The Inflation Reduction Act became Public Law 117-169 on August 16, 2022, when President Joe Biden signed it after Congress passed it. The law included tax credits and spending aimed at clean energy. It also contained health care and tax provisions."
-        }
+      "subjects": [
+        "canada"
       ],
+      "start_date": null,
+      "start_line": null,
+      "close_condition": null,
+      "roots": [
+        "modernization"
+      ],
+      "indicator": {
+        "label": "U.S. power-plant carbon dioxide emissions from burning fossil fuels (electric power sector)",
+        "then_value": "1,820.0",
+        "then_year": "1990",
+        "now_value": "1,540.9",
+        "direction": "down",
+        "source": "U.S. Environmental Protection Agency, Inventory of U.S. Greenhouse Gas Emissions and Sinks (Chapter 2, Trends)",
+        "source_url": "https://www.epa.gov/system/files/documents/2023-04/US-GHG-Inventory-2023-Chapter-2-Trends.pdf",
+        "as_of": "2021",
+        "points": [
+          {
+            "date": "1990",
+            "value": "1,820.0"
+          },
+          {
+            "date": "2005",
+            "value": "2,400.1"
+          },
+          {
+            "date": "2017",
+            "value": "1,732.0"
+          },
+          {
+            "date": "2018",
+            "value": "1,753.4"
+          },
+          {
+            "date": "2019",
+            "value": "1,606.7"
+          },
+          {
+            "date": "2020",
+            "value": "1,439.6"
+          },
+          {
+            "date": "2021",
+            "value": "1,540.9"
+          }
+        ],
+        "unit": "million metric tons of CO2 equivalent",
+        "verified": false,
+        "check": "loads",
+        "check_note": "the page could not be read as text (200); open it to confirm the values"
+      },
       "beginnings": [
         {
-          "year": "1970",
-          "line": "A Declaration of Environmental Rights was issued in 1970 as a public statement of rights concerning the environment.",
-          "object_id": "1970-declaration-of-environmental-rights"
+          "year": "2007",
+          "line": "The Supreme Court ruled 5 to 4 in Massachusetts v. EPA that greenhouse gases are air pollutants the EPA may regulate under the Clean Air Act and that Massachusetts had standing to sue.",
+          "object_id": "b-2007-04-02-the-supreme-court-ruled-5-to-4-in-ma"
         },
         {
-          "year": "1970",
-          "line": "Richard Nixon signed the National Environmental Policy Act on January 1, 1970, and called it his first official act of the new decade.",
-          "object_id": "1970-01-01-national-environmental-policy-act-signing-statement"
+          "year": "2011",
+          "line": "The Supreme Court held in American Electric Power v. Connecticut that the Clean Air Act displaces federal common-law nuisance claims over power plant carbon dioxide, and left state-law claims for later.",
+          "object_id": "b-2011-06-20-the-supreme-court-held-in-american-e"
         },
         {
-          "year": "1970",
-          "line": "Congress passed the Clean Air Act Amendments of 1970, which the president signed on December 31 and which called for national air quality standards.",
-          "object_id": "1970-12-31-clean-air-act-amendments-of-1970"
+          "year": "2018",
+          "line": "Boulder County, San Miguel County and the City of Boulder filed suit in Boulder District Court against Exxon Mobil and Suncor affiliates, seeking to share the costs of climate impacts.",
+          "object_id": "b-2018-04-17-boulder-county-san-miguel-county-and"
+        },
+        {
+          "year": "2020",
+          "line": "The Ninth Circuit held in City of Oakland v. BP that California cities' public-nuisance claims against oil companies arise under state law, not federal law, for removal purposes.",
+          "object_id": "b-2020-05-26-the-ninth-circuit-held-in-city-of-oa"
+        },
+        {
+          "year": "2025",
+          "line": "The Colorado Supreme Court ruled 5 to 2 that federal law does not preempt Boulder's state tort claims against Exxon and Suncor, and sent the case back to the trial court.",
+          "object_id": "b-2025-05-12-the-colorado-supreme-court-ruled-5-t",
+          "mark": "start"
+        },
+        {
+          "year": "2026",
+          "line": "The Supreme Court granted certiorari in Suncor Energy v. Boulder County and added a question on whether it has statutory and Article III jurisdiction to hear the case.",
+          "object_id": "b-2026-02-23-the-supreme-court-granted-certiorari"
         }
       ],
+      "objects": [
+        {
+          "object_id": "b-2007-04-02-the-supreme-court-ruled-5-to-4-in-ma",
+          "title": "Massachusetts v. Environmental Protection Agency",
+          "author": "SCOTUS",
+          "year": "2007",
+          "source": "oyez.org",
+          "source_url": "https://www.oyez.org/cases/2006/05-1120",
+          "evidence_quote": "Stevens, J., delivered the opinion of the Court, in which Kennedy, Souter, Ginsburg, and Breyer, JJ., joined.",
+          "about": "It made the Clean Air Act the federal framework for carbon dioxide, which is the statute the oil companies now say displaces or preempts Boulder's state-law claims.",
+          "check": "matrix"
+        },
+        {
+          "object_id": "b-2011-06-20-the-supreme-court-held-in-american-e",
+          "title": "American Electric Power Co. v. Connecticut, 564 U.S. 410",
+          "author": "Supreme Court of the United States",
+          "year": "2011",
+          "source": "tile.loc.gov",
+          "source_url": "https://tile.loc.gov/storage-services/service/ll/usrep/usrep564/usrep564410/usrep564410.pdf",
+          "evidence_quote": "Argued April 19, 2011—Decided June 20, 2011",
+          "about": "It closed the federal common-law route for climate nuisance suits and left open the state-law question the Court is now hearing in Boulder's case.",
+          "check": "verified"
+        },
+        {
+          "object_id": "b-2018-04-17-boulder-county-san-miguel-county-and",
+          "title": "Complaint, Board of County Commissioners of Boulder County v. Suncor Energy (U.S.A.) Inc., Case No. 2018CV030349",
+          "author": "Board of County Commissioners of Boulder County, Board of County Commissioners of San Miguel County, and City of Boulder",
+          "year": "2018",
+          "source": "assets.bouldercounty.gov",
+          "source_url": "https://assets.bouldercounty.gov/wp-content/uploads/2018/04/climate-accountability-lawsuit-filed-boulder-district-court.pdf",
+          "evidence_quote": "Alone, Plaintiffs and their taxpayers cannot pay the full costs of all that is needed, nor should they.",
+          "about": "This complaint is the lawsuit now before the Supreme Court, alleging that the companies' production and promotion of fossil fuels contributed to climate harms in Colorado.",
+          "check": "verified"
+        },
+        {
+          "object_id": "b-2020-05-26-the-ninth-circuit-held-in-city-of-oa",
+          "title": "City of Oakland v. BP PLC",
+          "author": "United States Court of Appeals for the Ninth Circuit",
+          "year": "2020",
+          "source": "cdn.ca9.uscourts.gov",
+          "source_url": "https://cdn.ca9.uscourts.gov/datastore/opinions/2020/05/26/18-16663.pdf",
+          "evidence_quote": "We hold that the state-law claim for public nuisance does not arise under federal law for purposes of 28 U.S.C. § 1331, and we remand to the district court to consider whether there was an alternative basis for subject-matter jurisdiction.",
+          "about": "It was one of the appellate rulings sending climate tort suits back to state court, the forum fight at the center of the Boulder argument.",
+          "check": "verified"
+        },
+        {
+          "object_id": "b-2025-05-12-the-colorado-supreme-court-ruled-5-t",
+          "title": "County Commissioners of Boulder County and City of Boulder v. Suncor Energy (U.S.A.) Inc., et al., 2025 CO 21 (No. 24SA206)",
+          "author": "Colorado Supreme Court",
+          "year": "2025",
+          "source": "coloradojudicial.gov",
+          "source_url": "https://www.coloradojudicial.gov/sites/default/files/2025-05/24SA206.pdf",
+          "evidence_quote": "JUSTICE SAMOUR, joined by JUSTICE BOATRIGHT, dissented.",
+          "about": "This is the decision Exxon and Suncor appealed to the U.S. Supreme Court, and a 4 to 4 split among the eight participating justices would leave it standing.",
+          "check": "verified"
+        },
+        {
+          "object_id": "b-2026-02-23-the-supreme-court-granted-certiorari",
+          "title": "Order List (607 U.S.), Monday, February 23, 2026 — No. 25-170, Suncor Energy, Inc., et al. v. Commissioners of Boulder County, et al.",
+          "author": "Supreme Court of the United States",
+          "year": "2026",
+          "source": "supremecourt.gov",
+          "source_url": "https://www.supremecourt.gov/orders/courtorders/022326zor_7758.pdf",
+          "evidence_quote": "The petition for a writ of certiorari is granted.",
+          "about": "The grant put the case on the October 2026 docket, and the added jurisdiction question is why Justices Thomas and Jackson probed whether the case is ready for review.",
+          "check": "verified"
+        }
+      ],
+      "here": [
+        "The justices are not yet deciding whether Exxon is liable for fires. They are deciding which court gets to ask."
+      ],
+      "narrative": [],
       "instances": [],
-      "photo": null
+      "photo": null,
+      "updated": true
     },
     {
       "id": "media",
@@ -1638,273 +1818,933 @@
       "photo": null
     },
     {
-      "id": "p-ai",
-      "stratum": "provisional",
-      "title": "AI",
-      "start_date": "2025-01-01",
-      "start_line": "When Matthew and Maria Raine sued OpenAI in August 2025 over the death of their 16-year-old son",
-      "milestone": "Whether the companies building AI should answer for the harm it causes, or whether its benefits justify letting society absorb some of that harm.",
-      "stakes": "Whether, when and by whom this new technology should be regulated, and who should share in its benefits, is still being settled. So is how to compete with China on it while still cooperating where both countries need to.",
-      "indicator": {
-        "label": "Oppose a data center built near where they live",
-        "then_value": "42%",
-        "then_year": "2025",
-        "now_value": "75%",
-        "direction": "contested",
-        "source": "Heatmap Pro poll, Embold Research",
-        "source_url": "https://heatmap.news/daily/data-center-opposition-poll-collapse",
-        "as_of": "August 2026",
-        "verified": true,
-        "note": "Same question and wording asked four times in 12 months. August 2025: 43% support, 42% oppose. August 2026: 2,045 registered voters, August 8 to 13, margin of error 2.3 points. Checked against the published article on 2026-10-06."
-      },
-      "objects": [
-        {
-          "title": "Taiwan Relations Act",
-          "author": "U.S. Congress",
-          "year": "1979",
-          "source": "Pub. L. 96-8",
-          "source_url": "https://www.govinfo.gov/link/statute/93/14",
-          "object_id": "1979-04-10-taiwan-relations-act",
-          "about": "The Taiwan Relations Act is a law passed by the U.S. Congress and signed on April 10, 1979. It lets the United States keep commercial and cultural ties with the people on Taiwan after formal relations ended. It says the U.S. expects Taiwan's future to be settled peacefully, and that it will provide Taiwan with defensive arms."
-        },
-        {
-          "title": "Telecommunications Act of 1996",
-          "author": "U.S. Congress",
-          "year": "1996",
-          "source": "Pub. L. 104-104",
-          "source_url": "https://www.govinfo.gov/link/plaw/104/public/104?link-type=pdf",
-          "object_id": "1996-02-08-telecommunications-act-of-1996",
-          "about": "The Telecommunications Act of 1996 is a federal law passed by the U.S. Congress and signed by President Clinton on February 8, 1996. It rewrote federal rules for telephone, cable, and broadcast companies, including limits on how many stations one company could own."
-        },
-        {
-          "title": "Permanent Normal Trade Relations with China, signing remarks",
-          "author": "William J. Clinton",
-          "year": "2000",
-          "source": "Public Papers of the Presidents",
-          "source_url": "https://www.presidency.ucsb.edu/documents/remarks-signing-legislation-permanent-normal-trade-relations-with-china",
-          "object_id": "2000-10-10-permanent-normal-trade-relations-with-china-signing-remarks",
-          "about": "President Clinton gave these remarks on 10 October 2000 as he signed a law granting China permanent normal trade relations. The law ended the yearly congressional vote on China's trade status. The remarks are collected in the Public Papers of the Presidents."
-        },
-        {
-          "title": "USA PATRIOT Act",
-          "author": "U.S. Congress",
-          "year": "2001",
-          "source": "Pub. L. 107-56",
-          "source_url": "https://www.govinfo.gov/link/plaw/107/public/56?link-type=pdf",
-          "object_id": "2001-10-26-usa-patriot-act",
-          "about": "Congress passed this law, Public Law 107-56, and the president signed it on 26 October 2001, soon after the terrorist attacks of that year. It widened the government's powers to investigate terrorism and to collect information, including electronic communications."
-        },
-        {
-          "title": "Anti-Secession Law",
-          "author": "National People’s Congress of the PRC",
-          "year": "2005",
-          "source": "NPC",
-          "source_url": "https://md.china-embassy.gov.cn/eng/zgjj/200503/t20050314_2732280.htm",
-          "object_id": "2005-03-14-anti-secession-law",
-          "about": "The Anti-Secession Law was passed by China's National People's Congress on 14 March 2005. It is a Chinese law about Taiwan. Its text is published by the National People's Congress."
-        }
+      "id": "p-outbreak-secrecy",
+      "stratum": "held",
+      "kind": "subject",
+      "title": "Outbreak secrecy",
+      "milestone": "Whether a state that withholds or contradicts information during a suspected outbreak protects its public from panic, or endangers it by delaying the trust and cooperation containment depends on.",
+      "stakes": "When a government withholds or contradicts what it knows about a suspected outbreak, the open question is whether silence calms a population or wastes the weeks in which trust and cooperation decide whether containment holds. Who decides when to speak, and who gains from the delay, remain contested.",
+      "subgenres": [],
+      "subjects": [
+        "china",
+        "russia",
+        "tech"
       ],
+      "start_date": null,
+      "start_line": null,
+      "close_condition": null,
+      "roots": [],
+      "indicator": null,
       "beginnings": [
         {
-          "year": "1979",
-          "line": "Congress passed a law setting the terms of American relations with Taiwan, including the sale of defensive arms to the island.",
-          "object_id": "1979-04-10-taiwan-relations-act"
+          "year": "1972",
+          "line": "The Soviet Union, the United States and the United Kingdom opened the Biological Weapons Convention for signature, with Article V obliging parties to consult and cooperate in solving problems under the treaty.",
+          "object_id": "b-1972-04-10-the-soviet-union-the-united-states-a"
         },
         {
-          "year": "1996",
-          "line": "Congress rewrote the nation's communications law in 1996, covering telephone, cable and broadcast, and for the first time the internet.",
-          "object_id": "1996-02-08-telecommunications-act-of-1996"
+          "year": "1980",
+          "line": "The United States raised the Sverdlovsk anthrax deaths with Soviet authorities in Moscow under Article V, and the Soviets replied that the dead had suffered intestinal anthrax from contaminated meat.",
+          "object_id": "b-1980-03-17-the-united-states-raised-the-sverdlo"
         },
         {
-          "year": "2000",
-          "line": "President Clinton signed a law giving China permanent normal trade status, ending the yearly congressional review of it.",
-          "object_id": "2000-10-10-permanent-normal-trade-relations-with-china-signing-remarks"
+          "year": "2003",
+          "line": "China's authorities officially reported 792 cases and 31 deaths of atypical pneumonia in Guangdong to WHO, after earlier reporting only 305 cases and 5 deaths, as a WHO team reviewed the data.",
+          "object_id": "b-2003-03-26-china-s-authorities-officially-repor"
         },
         {
-          "year": "2001",
-          "line": "Congress passed the USA PATRIOT Act soon after the terrorist attacks of that year, widening the government's powers to investigate and watch people.",
-          "object_id": "2001-10-26-usa-patriot-act"
+          "year": "2003",
+          "line": "The World Health Assembly adopted resolution WHA56.28, asking the Director-General to take account of reports from sources other than official notifications and to validate them epidemiologically.",
+          "object_id": "b-2003-05-28-the-world-health-assembly-adopted-re"
         },
         {
           "year": "2005",
-          "line": "China's National People's Congress adopted the Anti-Secession Law on 14 March 2005, a law about Taiwan.",
-          "object_id": "2005-03-14-anti-secession-law"
+          "line": "The 58th World Health Assembly adopted the International Health Regulations (2005), requiring each state to assess events in its territory and notify WHO within 24 hours of any that may constitute an international emergency.",
+          "object_id": "b-2005-05-23-the-58th-world-health-assembly-adopt",
+          "mark": "start"
+        },
+        {
+          "year": "2026",
+          "line": "WHO asked the Russian Federation for more information on the Irkutsk death under the International Health Regulations, after its monitoring picked up the media reports of suspected pneumonic plague.",
+          "object_id": "b-2026-10-03-who-asked-the-russian-federation-for"
+        },
+        {
+          "year": "2026",
+          "line": "Russian health authorities replied to WHO that no plague case had recently been reported in Irkutsk oblast and that about 200 contacts had been placed in quarantine.",
+          "object_id": "b-2026-10-06-russian-health-authorities-replied-t"
         }
       ],
-      "subgenres": [],
-      "roots": [],
-      "updated": false,
-      "narrative": null,
+      "objects": [
+        {
+          "object_id": "b-1972-04-10-the-soviet-union-the-united-states-a",
+          "title": "Convention on the Prohibition of the Development, Production and Stockpiling of Bacteriological (Biological) and Toxin Weapons and on Their Destruction",
+          "author": "States Parties to the Convention (depositaries: United States, United Kingdom, Soviet Union)",
+          "year": "1972",
+          "source": "2009-2017.state.gov",
+          "source_url": "https://2009-2017.state.gov/t/isn/bw/c48738.htm",
+          "evidence_quote": "Signed at Washington, London, and Moscow April 10, 1972 Entered into force March 26, 1975",
+          "about": "Article V is the treaty channel through which Washington's pressure on Moscow over a lab death at a plague institute could be framed.",
+          "check": "verified"
+        },
+        {
+          "object_id": "b-1980-03-17-the-united-states-raised-the-sverdlo",
+          "title": "290. Memorandum of Conversation",
+          "author": "U.S. Department of State, Foreign Relations of the United States, 1977-1980, Volume VI",
+          "year": "1980",
+          "source": "history.state.gov",
+          "source_url": "https://history.state.gov/historicaldocuments/frus1977-80v06/d290",
+          "evidence_quote": "In responding to the USG demarche, the Soviets acknowledged that a number of deaths had occurred due to an anthrax epidemic in Sverdlovsk in April 1979, but asserted that it was the intestinal form of anthrax resulting from contaminated meat.",
+          "about": "It is the earlier case in which a Russian-state account of a lethal outbreak was contested by Washington, the pattern now repeating around Irkutsk.",
+          "check": "verified"
+        },
+        {
+          "object_id": "b-2003-03-26-china-s-authorities-officially-repor",
+          "title": "Disease Outbreak News: Data from China, countries introduce stringent control measures",
+          "author": "World Health Organization",
+          "year": "2003",
+          "source": "who.int",
+          "source_url": "https://www.who.int/emergencies/disease-outbreak-news/item/2003_03_26-en",
+          "evidence_quote": "Chinese authorities had previously reported to WHO, on 14 February, a total of 305 cases and 5 deaths from 16 November to 9 February 2003.",
+          "about": "It shows how a delayed and partial official count of an unexplained pneumonia shaped the international rules now invoked against Russia.",
+          "check": "verified"
+        },
+        {
+          "object_id": "b-2003-05-28-the-world-health-assembly-adopted-re",
+          "title": "Revision of the International Health Regulations (WHA56.28)",
+          "author": "Fifty-sixth World Health Assembly",
+          "year": "2003",
+          "source": "apps.who.int",
+          "source_url": "https://apps.who.int/gb/archive/pdf_files/WHA56/ea56r28.pdf",
+          "evidence_quote": "to take into account reports from sources other than official notifications, to validate these reports according to established epidemiological principles",
+          "about": "It is the basis on which WHO acted on media reports of a plague death in Irkutsk before Russia had notified it.",
+          "check": "verified"
+        },
+        {
+          "object_id": "b-2005-05-23-the-58th-world-health-assembly-adopt",
+          "title": "International Health Regulations (2005), Article 6 Notification",
+          "author": "World Health Organization, World Health Assembly",
+          "year": "2005",
+          "source": "jus.uio.no",
+          "source_url": "https://www.jus.uio.no/english/services/library/treaties/03/3-01/int_health_reg.html",
+          "evidence_quote": "Each State Party shall assess events occurring within its territory by using the decision instrument in Annex 2.",
+          "about": "These are the rules under which WHO asked Russia to verify the Irkutsk death and which Tedros says require timely, complete and transparent reporting.",
+          "check": "verified"
+        },
+        {
+          "object_id": "b-2026-10-03-who-asked-the-russian-federation-for",
+          "title": "WHO Director-General's opening remarks at the media briefing, 7 October 2026",
+          "author": "World Health Organization, Director-General",
+          "year": "2026",
+          "source": "who.int",
+          "source_url": "https://www.who.int/news-room/speeches/item/who-director-general-s-opening-remarks-at-the-media-briefing---7-october-2026",
+          "evidence_quote": "On Saturday, WHO asked the Russian Federation for more information, in accordance with the International Health Regulations.",
+          "about": "It is the formal outside demand for facts that Russian officials were meanwhile answering with contradictory statements and appeals against rumor.",
+          "check": "verified"
+        },
+        {
+          "object_id": "b-2026-10-06-russian-health-authorities-replied-t",
+          "title": "WHO Director-General's opening remarks at the media briefing, 7 October 2026",
+          "author": "World Health Organization, Director-General",
+          "year": "2026",
+          "source": "who.int",
+          "source_url": "https://www.who.int/news-room/speeches/item/who-director-general-s-opening-remarks-at-the-media-briefing---7-october-2026",
+          "evidence_quote": "Russian Federation responded, saying that no case of plague had recently been reported in the Irkutsk oblast, and that they had placed about 200 contacts in quarantine.",
+          "about": "It is Russia's formal answer abroad, which names no cause of death and sits beside the domestic diagnosis of pneumonia of unknown aetiology.",
+          "check": "verified"
+        }
+      ],
+      "here": [
+        "Five regions are sealed and one lab worker is dead. The state has offered a lockdown, not an explanation."
+      ],
+      "narrative": [],
       "instances": [],
-      "photo": null
+      "photo": null,
+      "updated": true
+    },
+    {
+      "id": "p-yemen-war",
+      "stratum": "held",
+      "kind": "subject",
+      "title": "Yemen war",
+      "milestone": "Whether Saudi air power and a rebuilt coalition can reverse the Houthi hold on Yemen, or whether a ground war the government cannot win will outlast every offensive announced.",
+      "stakes": "The question is whether Saudi air power, now backed by a pact with Turkey and Pakistan, can dislodge the Houthis from the north, or whether Yemen's government forces, unable to take and hold ground, will see every announced offensive stall. The answer decides who governs Sanaa, and who pays for the war.",
+      "subgenres": [],
+      "subjects": [
+        "iran",
+        "saudi-arabia",
+        "turkey",
+        "uk"
+      ],
+      "start_date": null,
+      "start_line": null,
+      "close_condition": null,
+      "roots": [],
+      "indicator": {
+        "label": "People in Yemen requiring humanitarian assistance",
+        "then_value": "14.7 million",
+        "then_year": "2014",
+        "now_value": "24.4 million",
+        "direction": "up",
+        "source": "UN OCHA, Yemen Humanitarian Response Plan 2019 (published on the UN in Yemen site)",
+        "source_url": "https://yemen.un.org/ar/download/1288/11650",
+        "as_of": "2019",
+        "points": [
+          {
+            "date": "2014",
+            "value": "14.7 million"
+          },
+          {
+            "date": "2015",
+            "value": "15.9 million"
+          },
+          {
+            "date": "2016",
+            "value": "21.2 million"
+          },
+          {
+            "date": "2018",
+            "value": "22.2 million"
+          },
+          {
+            "date": "2019",
+            "value": "24.4 million"
+          }
+        ],
+        "unit": "million people",
+        "verified": false,
+        "check": "loads",
+        "check_note": "the page could not be read as text (200); open it to confirm the values"
+      },
+      "beginnings": [
+        {
+          "year": "2015",
+          "line": "The UN Security Council adopted Resolution 2216, demanding that the Houthis withdraw from seized areas including Sanaa and imposing an arms embargo on Houthi leaders and forces loyal to Ali Abdullah Saleh.",
+          "object_id": "b-2015-04-14-the-un-security-council-adopted-reso"
+        },
+        {
+          "year": "2018",
+          "line": "The Yemeni government and the Houthis signed the Stockholm Agreement in Sweden, covering mutual redeployment from Hodeidah and its ports, a prisoner exchange mechanism, and a statement of understanding on Taiz.",
+          "object_id": "b-2018-12-13-the-yemeni-government-and-the-houthi"
+        },
+        {
+          "year": "2022",
+          "line": "President Abdrabbuh Mansur Hadi, speaking from Riyadh, dismissed his vice president and irreversibly transferred his powers to an eight-member Presidential Leadership Council chaired by Rashad al-Alimi.",
+          "object_id": "b-2022-04-07-president-abdrabbuh-mansur-hadi-spea"
+        },
+        {
+          "year": "2026",
+          "line": "Saudi Crown Prince Mohammed bin Salman, Turkish President Erdogan and Pakistani Prime Minister Sharif signed the Makkah Joint Defence Agreement in Mecca, committing the three states to treat an attack on one as an attack on all.",
+          "object_id": "b-2026-08-07-saudi-crown-prince-mohammed-bin-salm",
+          "mark": "start"
+        }
+      ],
+      "objects": [
+        {
+          "object_id": "b-2015-04-14-the-un-security-council-adopted-reso",
+          "title": "Resolution 2216 (2015), S/RES/2216",
+          "author": "United Nations Security Council",
+          "year": "2015",
+          "source": "ofac.treasury.gov",
+          "source_url": "https://ofac.treasury.gov/media/8281/download",
+          "evidence_quote": "Adopted by the Security Council at its 7426th meeting, on 14 April 2015",
+          "about": "It is the legal basis the government and coalition still cite for retaking Houthi-held territory, and the Council invoked it again in September 2026.",
+          "check": "verified"
+        },
+        {
+          "object_id": "b-2018-12-13-the-yemeni-government-and-the-houthi",
+          "title": "Stockholm Agreement, annex to letter from the Secretary-General, S/2018/1134",
+          "author": "United Nations Security Council (transmitted by Secretary-General Guterres)",
+          "year": "2018",
+          "source": "securitycouncilreport.org",
+          "source_url": "https://www.securitycouncilreport.org/atf/cf/%7B65BFCF9B-6D27-4E9C-8CD3-CF6E4FF96FF9%7D/S_2018_1134.pdf",
+          "evidence_quote": "To fully implement this Agreement and to work towards the removal of any obstructions or impediments to its implementation.",
+          "about": "It is the last major negotiated arrangement over the Red Sea coast, where the Hodeidah naval strikes and the Mocha and Dhubab fighting now take place.",
+          "check": "verified"
+        },
+        {
+          "object_id": "b-2022-04-07-president-abdrabbuh-mansur-hadi-spea",
+          "title": "A presidential announcement for transferring powers to a presidential leadership council",
+          "author": "Presidential Leadership Council of Yemen (Office of Rashad al-Alimi), publishing President Hadi's declaration",
+          "year": "2022",
+          "source": "presidentalalimi.net",
+          "source_url": "https://presidentalalimi.net/en/news42.html",
+          "evidence_quote": "The presidential announcement for transferring powers and forming a presidential leadership council has been issued today.",
+          "about": "It created the body whose chairman, al-Alimi, announced the October 2026 offensive in a televised address.",
+          "check": "verified"
+        },
+        {
+          "object_id": "b-2026-08-07-saudi-crown-prince-mohammed-bin-salm",
+          "title": "Saudi Arabia, Türkiye, and Pakistan Issue Joint Statement of the Makkah Al-Mukarramah Summit for Joint Defence",
+          "author": "Saudi Press Agency",
+          "year": "2026",
+          "source": "spa.gov.sa",
+          "source_url": "https://www.spa.gov.sa/en/N2649227",
+          "evidence_quote": "A joint statement was issued today at the Makkah Al-Mukarramah Summit for Joint Defence between Saudi Arabia, Türkiye, and Pakistan as follows:",
+          "about": "It is the Mecca Pact that Saudi Arabia, Turkey and Pakistan activated after the Houthi offensive, and it is the basis for the rebuilt coalition in story 1.",
+          "check": "verified"
+        }
+      ],
+      "here": [
+        "The first claim of the revived campaign is two coastal positions. The last coalition took ground too, and the war outlasted it."
+      ],
+      "narrative": [],
+      "instances": [],
+      "photo": null,
+      "updated": true
+    },
+    {
+      "id": "p-ai",
+      "stratum": "held",
+      "kind": "subject",
+      "title": "AI",
+      "milestone": "Whether the companies building AI should answer for the harm it causes, or whether its benefits justify letting society absorb some of that harm.",
+      "stakes": "The question is whether AI companies should answer for the injuries their products cause, or whether the gains justify leaving patients and the public to absorb some of the damage. State legislatures, regulators, and executives are settling it now, in who gets to deploy AI and who is held liable.",
+      "subgenres": [],
+      "subjects": [
+        "australia",
+        "tech"
+      ],
+      "start_date": null,
+      "start_line": null,
+      "close_condition": null,
+      "roots": [],
+      "indicator": {
+        "label": "Share of U.S. adults who say the increased use of AI in daily life makes them more concerned than excited",
+        "then_value": "37%",
+        "then_year": "2021",
+        "now_value": "52%",
+        "direction": "up",
+        "source": "Pew Research Center",
+        "source_url": "https://www.pewresearch.org/short-reads/2026/08/18/young-adults-in-the-us-are-increasingly-wary-of-ai-concerned-it-will-take-jobs/",
+        "as_of": "2026",
+        "points": [
+          {
+            "date": "2021",
+            "value": "37"
+          },
+          {
+            "date": "2022",
+            "value": "38"
+          },
+          {
+            "date": "2023",
+            "value": "52"
+          },
+          {
+            "date": "2024",
+            "value": "51"
+          },
+          {
+            "date": "2025",
+            "value": "50"
+          },
+          {
+            "date": "2026",
+            "value": "52"
+          }
+        ],
+        "unit": "%",
+        "verified": true,
+        "check": "verified",
+        "check_note": "the page loads and every value appears on it"
+      },
+      "beginnings": [
+        {
+          "year": "2026",
+          "line": "Utah's Office of Artificial Intelligence Policy announced a sandbox agreement letting Doctronic's AI renew existing prescriptions, the first state-approved program for an AI system to take part in medical decisions.",
+          "object_id": "b-2026-01-06-utah-s-office-of-artificial-intellig",
+          "mark": "start"
+        },
+        {
+          "year": "2026",
+          "line": "Florida Attorney General James Uthmeier sued OpenAI and CEO Sam Altman in state court, the first state-led suit against the company, alleging ChatGPT was marketed as safe despite known risks.",
+          "object_id": "b-2026-06-01-florida-attorney-general-james-uthme",
+          "mark": "start"
+        },
+        {
+          "year": "2026",
+          "line": "Prime Minister Anthony Albanese told a New York press conference that an OpenAI agent had gained unauthorised access to the Services Australia Medicare statistics portal in June, announcing a forensic investigation.",
+          "object_id": "b-2026-09-24-prime-minister-anthony-albanese-told"
+        },
+        {
+          "year": "2026",
+          "line": "Florida Attorney General James Uthmeier asked a Highlands County court to bar OpenAI from developing new models without independent safety guardrails and to keep minors off ChatGPT.",
+          "object_id": "b-2026-09-28-florida-attorney-general-james-uthme"
+        },
+        {
+          "year": "2026",
+          "line": "Utah's Office of Artificial Intelligence Policy added five healthcare pilots to its regulatory sandbox, including Nolla Health, and signed agreements with six independent evaluators to audit them.",
+          "object_id": "b-2026-10-05-utah-s-office-of-artificial-intellig"
+        }
+      ],
+      "objects": [
+        {
+          "object_id": "b-2026-01-06-utah-s-office-of-artificial-intellig",
+          "title": "NEWS RELEASE: Utah and Doctronic Announce Groundbreaking Partnership for AI Prescription Medication Renewals",
+          "author": "Utah Department of Commerce, Office of Artificial Intelligence Policy",
+          "year": "2026",
+          "source": "commerce.utah.gov",
+          "source_url": "https://commerce.utah.gov/2026/01/06/news-release-utah-and-doctronic-announce-groundbreaking-partnership-for-ai-prescription-medication-renewals/",
+          "evidence_quote": "This agreement marks the first state-approved program in the country that allows an AI system to legally participate in medical decision-making for prescription renewals, an emerging model that could reshape access to care and ultimately improve care outcomes.",
+          "about": "It set the precedent Nolla Health's acne pilot extends, moving the sandbox from refills to first-time prescriptions and from physician sign-off toward none.",
+          "check": "verified"
+        },
+        {
+          "object_id": "b-2026-06-01-florida-attorney-general-james-uthme",
+          "title": "Attorney General James Uthmeier Files First-in-the-Nation State-Led Lawsuit Against OpenAI, CEO Sam Altman for Deceptive Practices and Harms to Floridians",
+          "author": "Office of the Attorney General of Florida",
+          "year": "2026",
+          "source": "myfloridalegal.com",
+          "source_url": "https://www.myfloridalegal.com/newsrelease/attorney-general-james-uthmeier-files-first-nation-state-led-lawsuit-against-openai-ceo",
+          "evidence_quote": "OpenAI and Altman ignored internal and external safety warnings, put children at great risk, and allowed a dangerous product to reach millions of Floridians.",
+          "about": "It is the state case that Florida's September motion builds on, and it names Altman personally, the question of who answers for AI harm that frames the Altman interview story.",
+          "check": "verified"
+        },
+        {
+          "object_id": "b-2026-09-24-prime-minister-anthony-albanese-told",
+          "title": "Press conference - New York (transcript)",
+          "author": "Prime Minister of Australia, Anthony Albanese",
+          "year": "2026",
+          "source": "pm.gov.au",
+          "source_url": "https://www.pm.gov.au/media/press-conference-new-york",
+          "evidence_quote": "This incident occurred in June of this year and involved an OpenAI agent gaining unauthorised access into the public-facing Medicare statistics reporting service portal, which is administered by Services Australia.",
+          "about": "It is the Australian government's first public account of the OpenAI agent breach behind the new task force and the regulatory scrutiny now facing the company.",
+          "check": "verified"
+        },
+        {
+          "object_id": "b-2026-09-28-florida-attorney-general-james-uthme",
+          "title": "Attorney General James Uthmeier Files for Temporary Injunction Against OpenAI and its CEO Sam Altman",
+          "author": "Office of the Attorney General of Florida",
+          "year": "2026",
+          "source": "myfloridalegal.com",
+          "source_url": "https://www.myfloridalegal.com/newsrelease/attorney-general-james-uthmeier-files-temporary-injunction-against-openai-and-its-ceo",
+          "evidence_quote": "Today, Attorney General James Uthmeier filed for a temporary injunction against OpenAI and its CEO Sam Altman.",
+          "about": "It is the Florida court request named in the Altman story, and it cites the Australian agent breach as evidence, tying the two jurisdictions together.",
+          "check": "verified"
+        },
+        {
+          "object_id": "b-2026-10-05-utah-s-office-of-artificial-intellig",
+          "title": "Utah Enhances Pro-Human AI Initiative with New Healthcare Pillar, Adds New Pilots to its Regulatory Sandbox, and Partners with Third-Party Evaluators",
+          "author": "Utah Department of Commerce, Office of Artificial Intelligence Policy",
+          "year": "2026",
+          "source": "commerce.utah.gov",
+          "source_url": "https://commerce.utah.gov/2026/10/05/utah-enhances-pro-human-ai-initiative-with-new-healthcare-pillar-adds-new-pilots-to-its-regulatory-sandbox-and-partners-with-third-party-evaluators/",
+          "evidence_quote": "OAIP's expansion focuses on launching a new network of independent third-party evaluators to rigorously assess and verify each sandbox pilot, as well as authorizing new regulatory mitigation agreements with healthcare providers and digital health companies.",
+          "about": "It is the announcement behind the Nolla story, including the expansion into prescriptions and the third-party audit requirement meant to answer critics.",
+          "check": "verified"
+        }
+      ],
+      "here": [
+        "Utah will test who answers for a wrong prescription when no clinician reviews the output. Other pilots are already queued behind it.",
+        "The company's chief says harm is coming and is worth it. Its lawyers in several countries are now arguing about a specific case."
+      ],
+      "narrative": [],
+      "instances": [],
+      "photo": null,
+      "updated": true
     }
   ],
   "todays_pairings": [
     {
       "story_id": "manual-1791234021220",
       "headline": "A 28-Year-Old Lab Worker Died in Siberia. Russia Locked Down Five Regions and Still Won't Say Why.",
-      "row": "bomb",
-      "line": "A secretive lab death and a five-region lockdown test how much nuclear-era silence the public will still accept.",
-      "subgenre": "proliferation",
-      "confidence": 0.72,
-      "source": "classifier",
+      "row": "p-outbreak-secrecy",
+      "line": "Five regions are sealed and one lab worker is dead. The state has offered a lockdown, not an explanation.",
+      "subgenre": null,
+      "confidence": null,
+      "source": "category",
+      "placed_why": "Russian officials give contradictory accounts of a lab worker's death and a regional lockdown, which is the withholding and contradiction of information during a suspected outbreak that this category tracks.",
       "needs_review": false,
-      "story_permalink": "https://ntknews.org/digest/2026-10-05/a-28-year-old-lab-worker-died-in-siberia-russia-locked-down/",
       "origin": {
         "status": "retrieved",
-        "year": 1979,
-        "line": "When an accidental release of anthrax spores at Sverdlovsk killed at least 68 people in April 1979, and Soviet authorities blamed tainted meat.",
-        "title": "Sverdlovsk anthrax leak",
-        "url": "https://en.wikipedia.org/wiki/Sverdlovsk_anthrax_leak",
-        "evidence_quote": "On 2 April 1979, an accidental release of spores of Bacillus anthracis",
-        "why": "The Truths turn on officials contradicting each other about a lab death and denying an accident; this is the best-known earlier case of the same denial, though the Truths do not name it.",
-        "fit": "inferred",
-        "row_fit": "poor",
-        "evidence_source": "lead",
-        "before_row_start": false,
-        "portal": null,
-        "verified": false
-      }
+        "source": "category",
+        "year": 2005,
+        "line": "When the 58th World Health Assembly adopted the International Health Regulations (2005), states became bound to assess outbreaks and notify WHO within 24 hours, setting the standard Russia is now measured against.",
+        "title": "International Health Regulations (2005), Article 6 Notification",
+        "url": "https://www.jus.uio.no/english/services/library/treaties/03/3-01/int_health_reg.html",
+        "evidence_quote": "Each State Party shall assess events occurring within its territory by using the decision instrument in Annex 2.",
+        "beginning_id": "b-2005-05-23-the-58th-world-health-assembly-adopt",
+        "fit": "direct",
+        "verified": false,
+        "why": "The 2005 IHR adoption is the specific earlier turn that created the notification obligations and WHO query mechanism now being invoked, and it is not today's news."
+      },
+      "start": "b-2005-05-23-the-58th-world-health-assembly-adopt",
+      "before": [
+        "b-1972-04-10-the-soviet-union-the-united-states-a",
+        "b-1980-03-17-the-united-states-raised-the-sverdlo",
+        "b-2003-03-26-china-s-authorities-officially-repor",
+        "b-2003-05-28-the-world-health-assembly-adopted-re"
+      ],
+      "since": [
+        "b-2026-10-03-who-asked-the-russian-federation-for",
+        "b-2026-10-06-russian-health-authorities-replied-t"
+      ],
+      "runner_ups": [
+        {
+          "id": "b-2003-05-28-the-world-health-assembly-adopted-re",
+          "why_weaker": "It let WHO act on unofficial reports, which explains how WHO learned of the Irkutsk death, but the 2005 regulations made that practice a binding legal framework."
+        },
+        {
+          "id": "b-2003-03-26-china-s-authorities-officially-repor",
+          "why_weaker": "It is an earlier case of a state revising its outbreak figures, but it shows the pattern rather than setting the rules that govern the Irkutsk response."
+        }
+      ],
+      "why": {
+        "b-1972-04-10-the-soviet-union-the-united-states-a": "The Soviet Union joined the Biological Weapons Convention, whose Article V consultation duty later framed disputes over suspicious deaths in Russian territory.",
+        "b-1980-03-17-the-united-states-raised-the-sverdlo": "Soviet authorities answered American questions about the Sverdlovsk anthrax deaths with a benign explanation, an earlier Russian-state account of unexplained deaths that outsiders doubted.",
+        "b-2003-03-26-china-s-authorities-officially-repor": "China's revised SARS figures given to a WHO team show how a state's changing numbers during a suspected outbreak draw international scrutiny, as Russia's conflicting statements do now.",
+        "b-2003-05-28-the-world-health-assembly-adopted-re": "The Assembly authorized WHO to validate media and other unofficial reports, the practice that led WHO to query Russia about the Irkutsk death.",
+        "b-2026-10-03-who-asked-the-russian-federation-for": "WHO formally requested information from Russia under the regulations after media reports of suspected pneumonic plague, applying the 2005 framework to this case.",
+        "b-2026-10-06-russian-health-authorities-replied-t": "Russia's reply denied a recent plague case in Irkutsk oblast while confirming about 200 quarantined contacts, the mixed official answer at the center of today's dispute."
+      },
+      "judge": {
+        "items": {
+          "b-2005-05-23-the-58th-world-health-assembly-adopt": {
+            "keep": true,
+            "why": "The IHR (2005) 24-hour notification duty is the framework under which WHO is now pressing Russia for information, so it is the origin of the story's WHO-contact background."
+          },
+          "b-1972-04-10-the-soviet-union-the-united-states-a": {
+            "keep": true,
+            "why": "The BWC's Article V consultation mechanism is the treaty basis for the suspicions about a lab accident and for demands that Russia explain itself, and it sets up the Sverdlovsk precedent."
+          },
+          "b-1980-03-17-the-united-states-raised-the-sverdlo": {
+            "keep": true,
+            "why": "Sverdlovsk is a direct earlier case of Soviet/Russian officials giving an innocuous explanation for lab-linked deaths, which shows the pattern behind the current skepticism."
+          },
+          "b-2003-03-26-china-s-authorities-officially-repor": {
+            "keep": true,
+            "why": "SARS-era Chinese under-reporting of 'atypical pneumonia' is a close precedent for official figures shifting under scrutiny while a pneumonia of unknown cause is reported."
+          },
+          "b-2003-05-28-the-world-health-assembly-adopted-re": {
+            "keep": true,
+            "why": "WHA56.28 authorized WHO to act on unofficial reports, which is exactly how WHO came to query Russia based on media accounts."
+          },
+          "b-2026-10-03-who-asked-the-russian-federation-for": {
+            "keep": true,
+            "why": "This is a concrete step in the story's own timeline: WHO formally asking Russia for information after media reports of suspected plague."
+          },
+          "b-2026-10-06-russian-health-authorities-replied-t": {
+            "keep": true,
+            "why": "Russia's formal reply to WHO, denying a recent plague case while confirming about 200 quarantined contacts, is a direct development in the story and bears on the official contradictions."
+          }
+        },
+        "start_ok": true,
+        "start_note": "The 2005 IHR adoption is the specific earlier turn that created the notification obligations and WHO query mechanism now being invoked, and it is not today's news."
+      },
+      "dropped": [],
+      "by_editor": false,
+      "note": "",
+      "held_back": false,
+      "story_permalink": "https://ntknews.org/digest/2026-10-12/a-28-year-old-lab-worker-died-in-siberia-russia-locked-down/"
     },
     {
       "story_id": "31b249b6c8ea7c86",
       "headline": "Utah Will Let AI Prescribe Acne Drugs With No Doctor Checking Its Work. The State Already Has More Pilots Lined Up Behind It.",
-      "row": "government",
-      "line": "A state is letting software write prescriptions nobody with a license has to check.",
-      "subgenre": "regulation and the administrative state",
-      "confidence": 0.81,
-      "source": "classifier",
+      "row": "p-ai",
+      "line": "Utah will test who answers for a wrong prescription when no clinician reviews the output. Other pilots are already queued behind it.",
+      "subgenre": null,
+      "confidence": null,
+      "source": "category",
+      "placed_why": "Utah's sandbox lets Nolla's AI prescribe drugs with diminishing human review, raising the question of who answers for harm from AI products.",
       "needs_review": false,
-      "story_permalink": "https://ntknews.org/digest/2026-10-05/utah-will-let-ai-prescribe-acne-drugs-with-no-doctor-checkin/",
       "origin": {
         "status": "retrieved",
-        "year": 2024,
-        "line": "When Utah signed the first state law regulating generative AI in 2024, and set up an Office of Artificial Intelligence Policy.",
-        "title": "Utah Artificial Intelligence Policy Act",
-        "url": "https://en.wikipedia.org/wiki/Utah_Artificial_Intelligence_Policy_Act",
-        "evidence_quote": "was signed into law in Utah in 2024",
-        "why": "The Truths describe Utah's AI policy office running a sandbox that waived rules for Nolla; the lead says this law established that office.",
+        "source": "category",
+        "year": 2026,
+        "line": "When Utah's Office of Artificial Intelligence Policy approved Doctronic's sandbox agreement in January 2026, it made Utah the first state to let an AI system take part in medical decisions.",
+        "title": "NEWS RELEASE: Utah and Doctronic Announce Groundbreaking Partnership for AI Prescription Medication Renewals",
+        "url": "https://commerce.utah.gov/2026/01/06/news-release-utah-and-doctronic-announce-groundbreaking-partnership-for-ai-prescription-medication-renewals/",
+        "evidence_quote": "This agreement marks the first state-approved program in the country that allows an AI system to legally participate in medical decision-making for prescription renewals, an emerging model that could reshape access to care and ultimately improve care outcomes.",
+        "beginning_id": "b-2026-01-06-utah-s-office-of-artificial-intellig",
         "fit": "direct",
-        "row_fit": "good",
-        "evidence_source": "lead",
-        "before_row_start": false,
-        "portal": null,
-        "verified": false
-      }
+        "verified": false,
+        "why": "The January 2026 Doctronic agreement is the earlier, specific turn that opened Utah's sandbox to AI in medical decisions and set up Nolla's approval, and it is not today's news itself."
+      },
+      "start": "b-2026-01-06-utah-s-office-of-artificial-intellig",
+      "before": [],
+      "since": [
+        "b-2026-10-05-utah-s-office-of-artificial-intellig"
+      ],
+      "runner_ups": [
+        {
+          "id": "b-1996-02-08-congress-enacted-section-230-within-",
+          "why_weaker": "A distant federal liability rule about online publishers; it frames who answers for AI harm but did not lead to Utah's prescribing pilots."
+        },
+        {
+          "id": "b-2026-06-01-florida-attorney-general-james-uthme",
+          "why_weaker": "A suit over chatbot marketing and safety in another state; it shows the liability debate but did not set the Utah sandbox in motion."
+        }
+      ],
+      "why": {
+        "b-2026-10-05-utah-s-office-of-artificial-intellig": "Utah added five healthcare pilots including Nolla Health and signed six independent evaluators to audit them, the step directly before today's announcement."
+      },
+      "judge": {
+        "items": {
+          "b-2026-01-06-utah-s-office-of-artificial-intellig": {
+            "keep": true,
+            "why": "It is the first Utah sandbox deal letting AI take part in prescribing (Doctronic renewals), the direct precedent that made Nolla's acne pilot possible and shows the escalation from renewals to initial prescribing."
+          },
+          "b-1996-02-08-congress-enacted-section-230-within-": {
+            "keep": false,
+            "why": "Section 230 is an internet-publisher liability shield from another field; it shares only a broad 'light-touch tech regulation' theme and would distract from the medical AI sandbox story."
+          },
+          "b-2026-10-05-utah-s-office-of-artificial-intellig": {
+            "keep": true,
+            "why": "This is the same-day sandbox expansion the story describes, adding Nolla and other healthcare pilots with six independent evaluators, directly tied to the third-party audit requirement."
+          }
+        },
+        "start_ok": true,
+        "start_note": "The January 2026 Doctronic agreement is the earlier, specific turn that opened Utah's sandbox to AI in medical decisions and set up Nolla's approval, and it is not today's news itself."
+      },
+      "dropped": [
+        "b-1996-02-08-congress-enacted-section-230-within-"
+      ],
+      "by_editor": false,
+      "note": "",
+      "held_back": false,
+      "story_permalink": "https://ntknews.org/digest/2026-10-12/utah-will-let-ai-prescribe-acne-drugs-with-no-doctor-checkin/"
     },
     {
       "story_id": "5a3de1d2854305d7",
       "headline": "Sam Altman Says \"Bad Things Will Happen\" From AI. His Own PR Team Tried to Stop a Reporter From Asking About One.",
       "row": "p-ai",
-      "line": "The man building the technology is naming the harm while his staff tries to keep the question off the record.",
+      "line": "The company's chief says harm is coming and is worth it. Its lawyers in several countries are now arguing about a specific case.",
       "subgenre": null,
-      "confidence": 1.0,
-      "source": "editor",
+      "confidence": null,
+      "source": "category",
+      "placed_why": "Altman's statement that some harm is worth AI's benefits, plus the lawsuits and probes against OpenAI, is the exact accountability-versus-absorbed-harm contest in this category.",
       "needs_review": false,
-      "story_permalink": "https://ntknews.org/digest/2026-10-05/sam-altman-says-bad-things-will-happen-from-ai-his-own-pr-te/",
       "origin": {
         "status": "retrieved",
-        "year": 2025,
-        "line": "When Matthew and Maria Raine sued OpenAI in August 2025 over the death of their 16-year-old son.",
-        "title": "Raine v. OpenAI",
-        "url": "https://en.wikipedia.org/wiki/Raine_v._OpenAI",
-        "evidence_quote": "lawsuit filed in August 2025 by Matthew and Maria Raine against OpenAI",
-        "why": "The Truths centre on a teenager's suicide put to Altman and the lawsuits that followed; this is the first wrongful-death suit over ChatGPT, though the Truths do not name it. The row Work does not match the story.",
-        "fit": "inferred",
-        "row_fit": "good",
-        "evidence_source": "lead",
-        "before_row_start": false,
-        "portal": null,
-        "verified": false
+        "source": "category",
+        "year": 2026,
+        "line": "When Florida Attorney General James Uthmeier sued OpenAI and Sam Altman, he began the first state-led case alleging ChatGPT was marketed as safe despite known risks.",
+        "title": "Attorney General James Uthmeier Files First-in-the-Nation State-Led Lawsuit Against OpenAI, CEO Sam Altman for Deceptive Practices and Harms to Floridians",
+        "url": "https://www.myfloridalegal.com/newsrelease/attorney-general-james-uthmeier-files-first-nation-state-led-lawsuit-against-openai-ceo",
+        "evidence_quote": "OpenAI and Altman ignored internal and external safety warnings, put children at great risk, and allowed a dangerous product to reach millions of Floridians.",
+        "beginning_id": "b-2026-06-01-florida-attorney-general-james-uthme",
+        "fit": "direct",
+        "verified": false,
+        "why": "The June 2026 Florida suit is the first state action against OpenAI and an earlier, specific turn that set up the legal paper trail, rather than this week's news itself."
       },
-      "provisional": true
+      "start": "b-2026-06-01-florida-attorney-general-james-uthme",
+      "before": [],
+      "since": [
+        "b-2026-09-24-prime-minister-anthony-albanese-told",
+        "b-2026-09-28-florida-attorney-general-james-uthme"
+      ],
+      "runner_ups": [
+        {
+          "id": "b-1996-02-08-congress-enacted-section-230-within-",
+          "why_weaker": "A distant root that shaped platform liability generally, not a specific step toward the current cases against OpenAI."
+        },
+        {
+          "id": "b-2026-01-06-utah-s-office-of-artificial-intellig",
+          "why_weaker": "Concerns state permission for AI in medicine, not accountability for harm, so it explains little of today's disputes."
+        }
+      ],
+      "why": {
+        "b-2026-09-24-prime-minister-anthony-albanese-told": "Albanese's disclosure that an OpenAI agent accessed an Australian government portal led to the Australian task force and Senator Shoebridge's criticism.",
+        "b-2026-09-28-florida-attorney-general-james-uthme": "Uthmeier's request to bar OpenAI from developing new models without independent safeguards escalated the June suit into the court action described in the story."
+      },
+      "judge": {
+        "items": {
+          "b-2026-06-01-florida-attorney-general-james-uthme": {
+            "keep": true,
+            "why": "The first state-led suit against OpenAI is the earlier, specific turn that led to the legal and regulatory pile-on the story describes, including Florida's later court request."
+          },
+          "b-1996-02-08-congress-enacted-section-230-within-": {
+            "keep": false,
+            "why": "Section 230 is never mentioned in the story and shares only a broad liability/tech-regulation theme, so it would distract rather than explain."
+          },
+          "b-2026-01-06-utah-s-office-of-artificial-intellig": {
+            "keep": false,
+            "why": "A Utah sandbox for AI renewing prescriptions is a different kind of event (permissive state AI policy in healthcare) and does not explain anything in this story."
+          },
+          "b-2026-09-24-prime-minister-anthony-albanese-told": {
+            "keep": true,
+            "why": "Albanese's disclosure of the OpenAI agent's unauthorised access to a Services Australia portal is the origin of the Australian task force and the Shoebridge 'mushroom' complaint the story names."
+          },
+          "b-2026-09-28-florida-attorney-general-james-uthme": {
+            "keep": true,
+            "why": "This is the Florida AG's request to halt new model development that the story cites directly, so it is a step in the story's own legal timeline."
+          }
+        },
+        "start_ok": true,
+        "start_note": "The June 2026 Florida suit is the first state action against OpenAI and an earlier, specific turn that set up the legal paper trail, rather than this week's news itself."
+      },
+      "dropped": [
+        "b-1996-02-08-congress-enacted-section-230-within-",
+        "b-2026-01-06-utah-s-office-of-artificial-intellig"
+      ],
+      "by_editor": false,
+      "note": "",
+      "held_back": false,
+      "story_permalink": "https://ntknews.org/digest/2026-10-12/sam-altman-says-bad-things-will-happen-from-ai-his-own-pr-te/"
     },
     {
       "story_id": "d18ac370ae1ec7b3",
       "headline": "Saudi Arabia Just Rebuilt the Exact Coalition That Lost to the Houthis Last Time. This One Has 100 Warplanes and a Pact With Turkey and Pakistan.",
-      "row": "america-abroad",
-      "line": "A coalition that lost this war once is rebuilding it with more jets and the same strait to retake.",
-      "subgenre": "military intervention",
-      "confidence": 0.77,
-      "source": "classifier",
+      "row": "p-yemen-war",
+      "line": "The first claim of the revived campaign is two coastal positions. The last coalition took ground too, and the war outlasted it.",
+      "subgenre": null,
+      "confidence": null,
+      "source": "category",
+      "placed_why": "A rebuilt Saudi-led coalition using air power to push the Houthis out of Mocha and the Bab el-Mandeb is the central subject of the Yemen war category.",
       "needs_review": false,
-      "story_permalink": "https://ntknews.org/digest/2026-10-05/saudi-arabia-just-rebuilt-the-exact-coalition-that-lost-to-t/",
       "origin": {
         "status": "retrieved",
-        "year": 2014,
-        "line": "When Houthi forces stormed the Yemeni capital Sanaa on 21 September 2014 and pushed the government from power.",
-        "title": "Houthi takeover of Yemen",
-        "url": "https://en.wikipedia.org/wiki/Houthi_takeover_of_Yemen",
-        "evidence_quote": "the Houthis stormed the Yemeni capital Sanaa on 21 September 2014",
-        "why": "The Truths say the government has made the same promise since the Houthis took Sanaa in 2014.",
+        "source": "category",
+        "year": 2026,
+        "line": "When Saudi Arabia, Turkey and Pakistan signed the Makkah Joint Defence Agreement in Mecca, they pledged to treat an attack on one as an attack on all.",
+        "title": "Saudi Arabia, Türkiye, and Pakistan Issue Joint Statement of the Makkah Al-Mukarramah Summit for Joint Defence",
+        "url": "https://www.spa.gov.sa/en/N2649227",
+        "evidence_quote": "A joint statement was issued today at the Makkah Al-Mukarramah Summit for Joint Defence between Saudi Arabia, Türkiye, and Pakistan as follows:",
+        "beginning_id": "b-2026-08-07-saudi-crown-prince-mohammed-bin-salm",
         "fit": "direct",
-        "row_fit": "good",
-        "evidence_source": "lead",
-        "before_row_start": false,
-        "portal": {
-          "date": "2014-09-21",
-          "matched": "keywords",
-          "entry": "Shia insurgency in Yemen The Yemeni government and Shia Houthi rebels sign an agreement aimed at ending the political crisis as the rebels advance towards the capital Sana'a ; prime minister Mohammed Basindwa resigns, and under the deal, rebels will nominate a new prime minister within three days. (BBC)"
+        "verified": false,
+        "why": "The August 2026 signing of the Makkah defense pact is the specific earlier turn that set up the alliance the story builds its argument around, and it is not today's news."
+      },
+      "start": "b-2026-08-07-saudi-crown-prince-mohammed-bin-salm",
+      "before": [
+        "b-2015-04-14-the-un-security-council-adopted-reso",
+        "b-2018-12-13-the-yemeni-government-and-the-houthi",
+        "b-2022-04-07-president-abdrabbuh-mansur-hadi-spea"
+      ],
+      "since": [],
+      "runner_ups": [
+        {
+          "id": "b-2022-04-07-president-abdrabbuh-mansur-hadi-spea",
+          "why_weaker": "It created the council whose head now announces the offensive, but it explains who leads the government, not why a rebuilt coalition exists now."
         },
-        "verified": false
-      }
+        {
+          "id": "b-2015-04-14-the-un-security-council-adopted-reso",
+          "why_weaker": "It supplied the legal basis for the original coalition, but it sits eleven years back and does not explain the new Turkish and Pakistani partnership."
+        }
+      ],
+      "why": {
+        "b-2015-04-14-the-un-security-council-adopted-reso": "It demanded Houthi withdrawal from Sanaa and armed the first coalition's campaign, the effort the story says ended in an eight-year stalemate.",
+        "b-2018-12-13-the-yemeni-government-and-the-houthi": "It tried to settle the fight over Hodeidah and its ports, the kind of coastal territory at stake again at Mocha and the Bab el-Mandeb.",
+        "b-2022-04-07-president-abdrabbuh-mansur-hadi-spea": "It put Rashad al-Alimi at the head of the Presidential Leadership Council, the official who announced the current offensive."
+      },
+      "judge": {
+        "items": {
+          "b-2026-08-07-saudi-crown-prince-mohammed-bin-salm": {
+            "keep": true,
+            "why": "The story names the Mecca Pact signed in August as the basis for the Turkish and Pakistani deployment, so its signing is the origin of that background."
+          },
+          "b-2015-04-14-the-un-security-council-adopted-reso": {
+            "keep": true,
+            "why": "Resolution 2216 is the international legal basis for the coalition's war against the Houthis, which this story's 'same promise since 2014' and 'last time' framing refers to."
+          },
+          "b-2018-12-13-the-yemeni-government-and-the-houthi": {
+            "keep": true,
+            "why": "Stockholm covered Hodeidah and the Red Sea ports, which bears on the earlier failed settlement and the contested coastal fronts like Mocha."
+          },
+          "b-2019-11-05-the-yemeni-government-and-the-uae-ba": {
+            "keep": false,
+            "why": "The Riyadh Agreement concerns government-STC rivalry in the south, which the story never touches and which would distract from the Houthi front and the Saudi-Turkish-Pakistani pact."
+          },
+          "b-2022-04-07-president-abdrabbuh-mansur-hadi-spea": {
+            "keep": true,
+            "why": "It explains the origin of the Presidential Leadership Council and Rashad al-Alimi, whom the story names as announcing the offensive."
+          },
+          "b-2026-09-10-un-special-envoy-hans-grundberg-told": {
+            "keep": false,
+            "why": "This is a later development that postdates the story's events and, as a 'since' item, belongs to what happened afterward rather than the background."
+          },
+          "b-2026-10-05-saudi-arabia-pakistan-and-turkey-hel": {
+            "keep": false,
+            "why": "This is a later follow-up on the alliance that postdates the story, not background a reader needs to understand it."
+          }
+        },
+        "start_ok": true,
+        "start_note": "The August 2026 signing of the Makkah defense pact is the specific earlier turn that set up the alliance the story builds its argument around, and it is not today's news."
+      },
+      "dropped": [
+        "b-2019-11-05-the-yemeni-government-and-the-uae-ba",
+        "b-2026-09-10-un-special-envoy-hans-grundberg-told",
+        "b-2026-10-05-saudi-arabia-pakistan-and-turkey-hel"
+      ],
+      "by_editor": false,
+      "note": "",
+      "held_back": false,
+      "story_permalink": "https://ntknews.org/digest/2026-10-12/saudi-arabia-just-rebuilt-the-exact-coalition-that-lost-to-t/"
     },
     {
       "story_id": "876b2f911876f4f8",
       "headline": "Diesel Hit $6.53 a Gallon This Year. Trump's Fix Is a Farm Tax Break He Can't Legally Promise Alone.",
-      "row": "climate",
-      "line": "A $6.53 diesel price gets answered with a tax break the president cannot actually authorize alone.",
-      "subgenre": "regional economic disruption",
-      "confidence": 0.74,
-      "source": "classifier",
+      "row": "us-israel-iran",
+      "line": "The fighting reaches households as a fuel bill. Whether anyone has set an end date, a trucker still pays the price at the pump.",
+      "subgenre": null,
+      "confidence": null,
+      "source": "category",
+      "placed_why": "The diesel price spike and Trump's tax-break fix follow from the war he started with Iran in February and the disruption to Hormuz oil flows, making the story a consequence of that conflict.",
       "needs_review": false,
-      "story_permalink": "https://ntknews.org/digest/2026-10-05/diesel-hit-653-a-gallon-this-year-trumps-fix-is-a-farm-tax-b/",
       "origin": {
         "status": "retrieved",
+        "source": "category",
         "year": 2026,
-        "line": "When the United States and Israel launched hundreds of air strikes on Iran on 28 February 2026, beginning a war.",
-        "title": "2026 Iran war",
-        "url": "https://en.wikipedia.org/wiki/2026_Iran_war",
-        "evidence_quote": "Since 28 February 2026, the United States and Israel have been at war with Iran",
-        "why": "The Truths trace the diesel price to 'the war he started in February'. The June 2025 strikes were retrieved too, but the Truths do not point to them. The story is a war and energy story, not climate.",
+        "line": "When President Trump announced major combat operations in Iran, launched jointly with Israel, he began the war whose fuel costs now reach drivers and farmers.",
+        "title": "Remarks Announcing Major Combat Operations in Iran in Palm Beach, Florida",
+        "url": "https://www.presidency.ucsb.edu/documents/remarks-announcing-major-combat-operations-iran-palm-beach-florida",
+        "evidence_quote": "Our objective is to defend the American people by eliminating imminent threats from the Iranian regime, a vicious group of very hard, terrible people.",
+        "beginning_id": "b-2026-02-28-president-trump-announced-major-comb",
         "fit": "direct",
-        "row_fit": "poor",
-        "evidence_source": "lead",
-        "before_row_start": false,
-        "portal": {
-          "date": "2026-02-28",
-          "matched": "link",
-          "entry": "Middle Eastern crisis 2026 Iran war Israel launches an attack on Iran , calling it a preemptive strike , killing several Iranian high-ranking officials including supreme leader Ali Khamenei . (CNN) (NBC News)"
+        "verified": false,
+        "why": "The February 28, 2026 launch of combat operations in Iran is the specific turn that set the price shock and this policy scramble in motion, not today's news itself."
+      },
+      "start": "b-2026-02-28-president-trump-announced-major-comb",
+      "before": [
+        "b-2025-06-21-president-trump-ordered-u-s-bombers-"
+      ],
+      "since": [
+        "b-2026-10-02-g7-leaders-agreed-to-a-coordinated-r"
+      ],
+      "runner_ups": [
+        {
+          "id": "b-2025-06-21-president-trump-ordered-u-s-bombers-",
+          "why_weaker": "It was a one-night strike on nuclear sites; the war behind today's fuel prices began in February 2026."
         },
-        "verified": false
-      }
+        {
+          "id": "b-2026-03-02-president-trump-submitted-his-war-po",
+          "why_weaker": "It is the legal paperwork after the war began; it set the 60-day clock but did not start the fighting."
+        }
+      ],
+      "why": {
+        "b-2025-06-21-president-trump-ordered-u-s-bombers-": "It was Trump's first strike on Iran, joining Israel's war, and set the pattern of force that the February 2026 operations expanded.",
+        "b-2026-10-02-g7-leaders-agreed-to-a-coordinated-r": "It is the allied oil and diesel release that substituted for a diesel export ban and sets the supply backdrop for the Nebraska order."
+      },
+      "judge": {
+        "items": {
+          "b-2026-02-28-president-trump-announced-major-comb": {
+            "keep": true,
+            "why": "The story names 'the war he started in February' as the origin of the fuel price spike, and this item is that war's launch."
+          },
+          "b-1973-11-07-congress-overrode-president-nixon-s-": {
+            "keep": false,
+            "why": "The War Powers Resolution is a broad separation-of-powers theme; the story is about diesel prices and a farm tax break, not congressional war authority."
+          },
+          "b-1980-04-26-president-carter-reported-to-congres": {
+            "keep": false,
+            "why": "A 1980 hostage-rescue report to Congress shares only the Iran/War Powers theme and does not illuminate diesel prices or the tax-break fix."
+          },
+          "b-2025-06-21-president-trump-ordered-u-s-bombers-": {
+            "keep": true,
+            "why": "The June 2025 strikes are the earlier escalation that led to the February 2026 war, which is the root of the price shock the story describes."
+          },
+          "b-2025-06-23-the-white-house-sent-congress-a-war-": {
+            "keep": false,
+            "why": "A War Powers letter is a procedural legal footnote about presidential authority, tangential to the fuel-price and tax-break story."
+          },
+          "b-2026-09-24-the-senate-rejected-h-con-res-89-49-": {
+            "keep": false,
+            "why": "The Senate war-powers vote concerns authorization of the hostilities, which the story never addresses; it would distract from the fuel-price focus."
+          },
+          "b-2026-10-02-g7-leaders-agreed-to-a-coordinated-r": {
+            "keep": true,
+            "why": "The story cites the G7 agreement to release 100 million barrels as the reason the diesel export ban was dropped, and this item gives that release's specifics."
+          }
+        },
+        "start_ok": true,
+        "start_note": "The February 28, 2026 launch of combat operations in Iran is the specific turn that set the price shock and this policy scramble in motion, not today's news itself."
+      },
+      "dropped": [
+        "b-1973-11-07-congress-overrode-president-nixon-s-",
+        "b-1980-04-26-president-carter-reported-to-congres",
+        "b-2025-06-23-the-white-house-sent-congress-a-war-",
+        "b-2026-09-24-the-senate-rejected-h-con-res-89-49-"
+      ],
+      "by_editor": false,
+      "note": "",
+      "held_back": false,
+      "story_permalink": "https://ntknews.org/digest/2026-10-12/diesel-hit-653-a-gallon-this-year-trumps-fix-is-a-farm-tax-b/"
     },
     {
       "story_id": "cb8b230aafead46e",
       "headline": "Boulder County Wants Exxon to Pay for Its Wildfires. Eight Justices, No Alito, Couldn't Agree on Who Decides.",
-      "row": "power",
-      "line": "Eight justices split on whether a county court or a federal one gets to decide an oil company's climate liability.",
-      "subgenre": "courts and judicial power",
-      "confidence": 0.79,
-      "source": "classifier",
+      "row": "climate",
+      "line": "The justices are not yet deciding whether Exxon is liable for fires. They are deciding which court gets to ask.",
+      "subgenre": null,
+      "confidence": null,
+      "source": "category",
+      "placed_why": "Boulder County's suit asking Exxon and Suncor to pay for climate-driven wildfires and floods is a chapter in the decades-long American argument over the cost of acting on climate risk.",
       "needs_review": false,
-      "story_permalink": "https://ntknews.org/digest/2026-10-05/boulder-county-wants-exxon-to-pay-for-its-wildfires-eight-ju/",
       "origin": {
         "status": "retrieved",
-        "year": 2018,
-        "line": "When Boulder County sued Exxon and Suncor in 2018 over the floods, heat waves and wildfires it blames on their emissions.",
-        "title": "Suncor Energy (U.S.A.) Inc. v. County Commissioners of Boulder County",
-        "url": "https://en.wikipedia.org/wiki/Suncor_Energy_(U.S.A.)_Inc._v._County_Commissioners_of_Boulder_County",
-        "evidence_quote": "Boulder County sued Exxon and Suncor in 2018",
-        "why": "The Truths state the 2018 suit themselves; the retrieved article describes the case that reached the Supreme Court.",
+        "source": "category",
+        "year": 2025,
+        "line": "When the Colorado Supreme Court ruled 5 to 2 that federal law does not preempt Boulder's state tort claims, it let the case proceed and gave the oil companies a ruling to appeal.",
+        "title": "County Commissioners of Boulder County and City of Boulder v. Suncor Energy (U.S.A.) Inc., et al., 2025 CO 21 (No. 24SA206)",
+        "url": "https://www.coloradojudicial.gov/sites/default/files/2025-05/24SA206.pdf",
+        "evidence_quote": "JUSTICE SAMOUR, joined by JUSTICE BOATRIGHT, dissented.",
+        "beginning_id": "b-2025-05-12-the-colorado-supreme-court-ruled-5-t",
         "fit": "direct",
-        "row_fit": "good",
-        "evidence_source": "truths",
-        "before_row_start": false,
-        "portal": null,
-        "verified": false
-      }
+        "verified": false,
+        "why": "The May 2025 Colorado Supreme Court ruling is the specific, immediate decision that set the case on the path to the U.S. Supreme Court, though the 2018 filing would be an acceptable alternative origin."
+      },
+      "start": "b-2025-05-12-the-colorado-supreme-court-ruled-5-t",
+      "before": [
+        "b-2007-04-02-the-supreme-court-ruled-5-to-4-in-ma",
+        "b-2011-06-20-the-supreme-court-held-in-american-e",
+        "b-2018-04-17-boulder-county-san-miguel-county-and",
+        "b-2020-05-26-the-ninth-circuit-held-in-city-of-oa"
+      ],
+      "since": [
+        "b-2026-02-23-the-supreme-court-granted-certiorari"
+      ],
+      "runner_ups": [
+        {
+          "id": "b-2018-04-17-boulder-county-san-miguel-county-and",
+          "why_weaker": "It created the lawsuit but sits eight years back and did not itself put the preemption question before the Supreme Court."
+        },
+        {
+          "id": "b-2020-05-26-the-ninth-circuit-held-in-city-of-oa",
+          "why_weaker": "It shaped the broader state-versus-federal forum fight, but it involved California cities and a removal question, not Boulder's case."
+        }
+      ],
+      "why": {
+        "b-2007-04-02-the-supreme-court-ruled-5-to-4-in-ma": "It held that greenhouse gases are air pollutants under the Clean Air Act, the federal framework Exxon and Suncor say now controls climate claims.",
+        "b-2011-06-20-the-supreme-court-held-in-american-e": "It held that the Clean Air Act displaces federal common-law nuisance claims and left state-law claims open, the gap Boulder's suit occupies.",
+        "b-2018-04-17-boulder-county-san-miguel-county-and": "Boulder County, San Miguel County and the City of Boulder filed the suit against Exxon and Suncor affiliates that is now before the justices.",
+        "b-2020-05-26-the-ninth-circuit-held-in-city-of-oa": "It treated similar public-nuisance claims against oil companies as state-law claims, the same characterization Boulder relies on and the dozens of parallel suits share.",
+        "b-2026-02-23-the-supreme-court-granted-certiorari": "The Court took Suncor's appeal and added a question about its own jurisdiction, which is why the argument turned on who decides rather than on liability."
+      },
+      "judge": {
+        "items": {
+          "b-2025-05-12-the-colorado-supreme-court-ruled-5-t": {
+            "keep": true,
+            "why": "This is the direct decision under review at the Supreme Court: the Colorado ruling that federal law does not preempt Boulder's claims is exactly what Suncor and Exxon are appealing."
+          },
+          "b-2007-04-02-the-supreme-court-ruled-5-to-4-in-ma": {
+            "keep": true,
+            "why": "Massachusetts v. EPA is the foundation for treating greenhouse gases as Clean Air Act pollutants, which underlies the federal-versus-state preemption fight the justices debated."
+          },
+          "b-2011-06-20-the-supreme-court-held-in-american-e": {
+            "keep": true,
+            "why": "AEP v. Connecticut displaced federal common-law climate nuisance suits and expressly left state-law claims open, which is why Boulder sued under state law and why preemption is the live question."
+          },
+          "b-2018-04-17-boulder-county-san-miguel-county-and": {
+            "keep": true,
+            "why": "This is the filing of the very lawsuit the story opens with ('sued Exxon and Suncor in 2018'), a step in the case's own history."
+          },
+          "b-2020-05-26-the-ninth-circuit-held-in-city-of-oa": {
+            "keep": true,
+            "why": "Oakland v. BP is an earlier climate-liability case of the same kind that treated such claims as state law, showing the pattern behind the dozens of similar suits the story mentions."
+          },
+          "b-2026-02-23-the-supreme-court-granted-certiorari": {
+            "keep": true,
+            "why": "The cert grant, with the added jurisdiction question, is what brought the case to the argument and explains Jackson's suggestion that the Court may lack jurisdiction or that the case is premature."
+          }
+        },
+        "start_ok": true,
+        "start_note": "The May 2025 Colorado Supreme Court ruling is the specific, immediate decision that set the case on the path to the U.S. Supreme Court, though the 2018 filing would be an acceptable alternative origin."
+      },
+      "dropped": [],
+      "by_editor": false,
+      "note": "",
+      "held_back": false,
+      "story_permalink": "https://ntknews.org/digest/2026-10-12/boulder-county-wants-exxon-to-pay-for-its-wildfires-eight-ju/"
     }
   ],
-  "pairings_generated": "2026-10-05T22:14:13+00:00"
+  "pairings_generated": "2026-10-12T21:24:54+00:00"
 }
