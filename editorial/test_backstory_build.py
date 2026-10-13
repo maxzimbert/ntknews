@@ -88,5 +88,27 @@ check("a news-site copy is upgraded to the issuer's own copy and publishes",
 B.upgrade(up, {}, "2026-10-12")
 check("an upgrade is tried once", up["beginnings"][0].get("upgrade_tried") == "2026-10-12")
 
+# a story left thin gets one targeted research call for its own angle, then is chosen again
+calls = {"research": 0, "choose": 0}
+def fake_choose(st, cat_, today):
+    calls["choose"] += 1
+    if calls["choose"] == 1:
+        return {"start": None, "start_line": "", "runner_ups": [], "before": [], "since": [], "note": "no publishable Beginnings"}
+    return {"start": "x2", "start_line": "When x2.", "runner_ups": [], "before": [{"id": "x1", "why": "w"}], "since": [{"id": "x3", "why": "w"}]}
+def fake_research(cat_, filed, pool, today, focus=False):
+    calls["research"] += 1
+    calls["focus"] = focus
+    new = [beg("x1", "2022-01-01"), beg("x2", "2023-01-01"), beg("x3", "2024-01-01")]
+    cat_["beginnings"] += new
+    return new
+B.choose, B.research = fake_choose, fake_research
+B.judge = lambda st, cat_, ch: {"items": {}, "start_ok": True}
+thin_cat = {"id": "u", "title": "U", "beginnings": []}
+first = B.pick_for({"story_id": "s"}, thin_cat, "2026-10-13")
+check("pick_for leaves a thin story thin before the targeted research", first["start"] is None)
+B.research(thin_cat, [{}], {}, "2026-10-13", focus=True)
+second = B.pick_for({"story_id": "s"}, thin_cat, "2026-10-13")
+check("after targeted research the story is chosen again from what was added", second["start"] == "x2" and calls["focus"] is True, second)
+
 print(f"\n{len(fails)} failed")
 sys.exit(1 if fails else 0)
