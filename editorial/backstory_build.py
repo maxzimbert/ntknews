@@ -30,6 +30,7 @@ comes from the matrix. Everything else waits for the editor. The editor's reject
     python3 editorial/backstory_build.py --seed-from F   # import categories built by the spine lab
 """
 import argparse
+import http.client
 import io
 import json
 import os
@@ -92,6 +93,13 @@ def _post(body, timeout):
                 time.sleep(20 * (attempt + 1))
                 continue
             raise RuntimeError(f"{body['model']} HTTP {e.code}: {msg}") from None
+        except (urllib.error.URLError, http.client.IncompleteRead, ConnectionError, TimeoutError) as e:
+            # a long search answer cut off mid-read (the 2026-10-13 staging run lost a whole category's
+            # research to IncompleteRead) is retried, not given up on
+            if attempt < 2:
+                time.sleep(15 * (attempt + 1))
+                continue
+            raise RuntimeError(f"{body['model']}: the connection failed ({type(e).__name__})") from None
     u = d.get("usage") or {}
     USAGE["calls"] += 1
     USAGE["input_tokens"] += u.get("input_tokens", 0)

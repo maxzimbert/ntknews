@@ -1180,9 +1180,21 @@ function loadBsrRows(){
   }).catch(() => BSR_ROWS);
 }
 
+// On staging, Backstory data is read from the staging branch itself (GitHub's API), not from the staged
+// site: a staging run lands on the branch minutes before the site redeploys, and the site's own refresh
+// is a five-minute schedule that GitHub may start late. Reload Pulse after a run to see it.
+function bsDataFetch(repoPath, sitePath){
+  if (typeof pulseIsStaging === 'function' && pulseIsStaging(location)){
+    const h = {'Accept': 'application/vnd.github.raw+json'};
+    if (SETTINGS.ghToken) h['Authorization'] = 'Bearer ' + SETTINGS.ghToken;
+    return fetch('https://api.github.com/repos/' + GH_REPO + '/contents/' + repoPath + '?ref=staging&t=' + Date.now(), {headers: h})
+      .then(r => r.ok ? r : fetch(sitePath + '?t=' + Date.now()));
+  }
+  return fetch(sitePath + '?t=' + Date.now());
+}
 function fetchPublishedBackstory(){
   if (BSR_PUBLISHED) return Promise.resolve(BSR_PUBLISHED);
-  return fetch('../digest/data/backstory.json?t='+Date.now())
+  return bsDataFetch('digest/data/backstory.json', '../digest/data/backstory.json')
     .then(r => r.ok ? r.json() : null)
     .then(d => { BSR_PUBLISHED = d || {rows:[],todays_pairings:[]}; return BSR_PUBLISHED; })
     .catch(() => { BSR_PUBLISHED = {rows:[],todays_pairings:[]}; return BSR_PUBLISHED; });
@@ -2055,7 +2067,7 @@ let BS2_OV = (() => { try { return JSON.parse(localStorage.getItem(BS2_KEY)) || 
 BS2_OV.newcats = BS2_OV.newcats || [];
 function bs2Save(){ try { localStorage.setItem(BS2_KEY, JSON.stringify(BS2_OV)); } catch(e){} }
 function bs2Load(){
-  return fetch('data/categories.json?t='+Date.now()).then(r => r.ok ? r.json() : null)
+  return bsDataFetch('ntk-pulse/data/categories.json', 'data/categories.json').then(r => r.ok ? r.json() : null)
     .then(d => { BS2 = d || {categories: []}; }).catch(() => { BS2 = {categories: []}; });
 }
 /* CATS2:BEGIN pure, tested in scripts/test_pulse_backstory.js */

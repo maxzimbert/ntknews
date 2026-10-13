@@ -182,7 +182,7 @@ def lineage(row):
 def story_block(s, row):
     return (f"STORY {s['story_id']}: {s['headline']}\n"
             f"TRUTHS:\n{s['truths']}\n\n"
-            f"ROW HINT (may be wrong): {row['title']}, starts {str(row['start_date'])[:4]}. "
+            f"ROW HINT (may be wrong): {row['title']}" + (f", starts {str(row['start_date'])[:4]}" if row.get("start_date") else "") + ". "
             f"CONTEST: {row.get('milestone')}\n"
             f"SUB-GENRE: {s.get('subgenre') or '(editor-tagged row, no sub-genre)'}\n"
             f"ROW LINEAGE (context only): {lineage(row)}")
@@ -246,8 +246,18 @@ def validate(s, row, cands, ch):
     return not p, p, cand
 
 
+def row_starts_after(row, year):
+    """True when the origin is older than the row's own start. A category (T-0083) has no fixed start."""
+    y = str(row.get("start_date") or "")[:4]
+    return y.isdigit() and year < int(y)
+
+
 def fallback(row, why):
-    return {"status": "fallback", "year": int(str(row["start_date"])[:4]),
+    # T-0083: a category has no fixed start of its own, so there may be nothing to fall back to
+    y = str(row.get("start_date") or "")[:4]
+    if not y.isdigit():
+        return {"status": "none", "why_fallback": why, "verified": False}
+    return {"status": "fallback", "year": int(y),
             "line": row.get("start_line"), "why_fallback": why, "verified": False}
 
 
@@ -310,7 +320,10 @@ def load_stories(lineup_path, pairings_path):
                         "row": p["row"], "subgenre": p.get("subgenre"),
                         "truths": strip_html(st.get("truth")),
                         "story_year": (bs.get("pairings_generated") or "")[:4] or None})
-    return stories, {r["id"]: r for r in bs["rows"]}
+    rows = {r["id"]: r for r in bs["rows"]}
+    for s in stories:          # T-0083: a category held back has no row in backstory.json; a stub keeps the story
+        rows.setdefault(s["row"], {"id": s["row"], "title": s["row"], "start_date": None, "milestone": "", "objects": []})
+    return stories, rows
 
 
 def safe(fn, default, story_id, step):
@@ -403,7 +416,7 @@ def main():
                                "evidence_quote": ch["evidence_quote"], "why": ch.get("why"),
                                "fit": ch["fit"], "row_fit": ch.get("row_fit"),
                                "evidence_source": ch.get("_evidence_source"),
-                               "before_row_start": ch["year"] < int(str(row["start_date"])[:4]),
+                               "before_row_start": row_starts_after(row, ch["year"]),
                                "portal": portal_check(iso, cand["title"]),
                                "verified": False}
         else:
@@ -446,7 +459,7 @@ def main():
                 new = {"status": "retrieved", "year": ch2["year"], "line": ch2["line"], "title": cand2["title"],
                        "url": cand2["url"], "evidence_quote": ch2["evidence_quote"], "why": ch2.get("why"),
                        "fit": ch2["fit"], "row_fit": ch2.get("row_fit"), "evidence_source": ch2.get("_evidence_source"),
-                       "before_row_start": ch2["year"] < int(str(row["start_date"])[:4]),
+                       "before_row_start": row_starts_after(row, ch2["year"]),
                        "portal": portal_check(cand2["wikidata_date"], cand2["title"]), "verified": False, "round": 2}
                 if rank(new) > rank(e["origin"]):
                     e["origin"] = new

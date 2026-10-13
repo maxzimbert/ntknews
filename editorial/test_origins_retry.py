@@ -14,6 +14,9 @@ lp["stories"] = st
 json.dump(lp, open(T / "lineup.json", "w"))
 bs = json.load(open(ROOT / "digest/data/backstory.json"))
 bs["todays_pairings"] = [p for p in bs["todays_pairings"] if p["story_id"] == "31b249b6c8ea7c86"]
+for p in bs["todays_pairings"]:
+    p.pop("origin", None)       # T-0083: a story with its start from its category is skipped; this one needs retrieval
+bs["rows"] = [r for r in bs["rows"] if r["id"] != bs["todays_pairings"][0]["row"]]   # and its category is held back: no row
 json.dump(bs, open(T / "bs.json", "w"))
 
 def cand(title, year, lead):
