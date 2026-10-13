@@ -56,6 +56,7 @@ API = "https://api.anthropic.com/v1/messages"
 MODEL = os.environ.get("BACKSTORY_MODEL", "claude-sonnet-5-5")
 MIN_BEGINNINGS = 6           # fewer publishable Beginnings than this and the category is researched
 MAX_RESEARCH = 4             # categories researched per publish: a bound on spend (about $1.50 each)
+MAX_FOCUSED = 3              # stories given their own targeted research per publish (about $0.50 to $1 each)
 START_GAP_DAYS = 45          # "It starts in" is never inside this window: it is not today's news
 USAGE = {"calls": 0, "input_tokens": 0, "output_tokens": 0, "web_searches": 0}
 NEWS_HOSTS = ("abcnews", "pbs.org", "lawfaremedia", "rollcall", "foreignpolicy", "aljazeera", "newsonair", "ms.now",
@@ -344,7 +345,7 @@ def matrix_seeds(cat, pool):
     return sorted(out, key=lambda o: o.get("sort") or o.get("year") or "")[-45:]
 
 
-def research(cat, filed, pool, today):
+def research(cat, filed, pool, today, focus=False):
     """Beginnings and Objects for one category, every Object checked. Merged into what the category
     already holds; nothing the editor has decided is touched."""
     seeds = matrix_seeds(cat, pool)
@@ -352,7 +353,7 @@ def research(cat, filed, pool, today):
     seed_txt = "\n".join(f"- {o['id']} | {o.get('year')} | {o['title'][:110]}" for o in seeds) or "(none)"
     have_txt = "\n".join(f"- {b['event_date']} | {b['line']}" for b in have) or "(none)"
     st = "\n\n".join(f"[{i + 1}] {s['headline']}\n{s['truths'][:1800]}" for i, s in enumerate(filed))
-    need = max(6, 12 - len(have))
+    need = 6 if focus else max(6, 12 - len(have))
     p = f"""You are the researcher for NTK's Backstory, written for college-educated adults at the standard of an Advanced Placement history class. You are building the Beginnings of one category: the dated milestones a reader needs in order to understand today's stories filed under it, each defended by one primary source (its Object). The category is researched once and reused by every later story in it, so it must be accurate and defensible.
 
 CATEGORY: {cat['title']}
@@ -362,7 +363,7 @@ TODAY: {today}
 STORIES FILED UNDER IT TODAY:
 {st}
 
-BEGINNINGS IT ALREADY HAS (do not repeat):
+{FOCUS if focus else ""}BEGINNINGS IT ALREADY HAS (do not repeat):
 {have_txt}
 
 MATRIX DOCUMENTS (primary sources already verified in NTK's library; adopt one by its id when it is the primary source for a milestone you choose):
@@ -455,6 +456,11 @@ JSON only: {{"stakes":"..."}}"""
         if t and not C.text_problems("stakes", t, 25, 55, sentences=2):
             return t
     return ""
+
+
+FOCUS = """FOCUS: the story above sits in a corner of this category that its Beginnings do not cover yet: they are about the category in general, and the judge found none that explain this story. Add the Beginnings of this story's own thread inside the category's history: its actors, its action, the policy, market or institution it turns on. For example, a deal over Russian diesel needs the history of sanctions on Russian oil and fuel, not the history of the war. Every other rule below holds.
+
+"""
 
 
 def research_trend(cat, filed):
@@ -556,6 +562,28 @@ JSON only: {{"items":{{"<id>":{{"keep":true,"why":"one sentence"}}}},"start_ok":
         return ask(p, 2000)
     except Exception as e:  # noqa: BLE001
         return {"items": {}, "start_ok": None, "start_note": f"the judge call failed: {e}"}
+
+
+def pick_for(s, c, today):
+    """Choose one story's start and Beginnings from its category, then judge them."""
+    try:
+        ch = choose(s, c, today)
+    except Exception as e:  # noqa: BLE001
+        log(f"  choosing failed for {s['story_id']}: {e}")
+        ch = {"start": None, "start_line": "", "runner_ups": [], "before": [], "since": [], "note": str(e)}
+    ch["judge"] = judge(s, c, ch) if ch.get("start") else {}
+    drop = {k for k, v in (ch["judge"].get("items") or {}).items() if isinstance(v, dict) and v.get("keep") is False and k != ch.get("start")}
+    ch["dropped"] = sorted(drop)
+    ch["before"] = [x for x in ch["before"] if x["id"] not in drop]
+    ch["since"] = [x for x in ch["since"] if x["id"] not in drop]
+    if ch.get("start") and (ch["judge"] or {}).get("start_ok") is False:
+        # the judge says the start is wrong: no start from the category; build_origins retrieves one
+        ch["doubted_start"] = ch["start"]
+        ch["note"] = (ch.get("note", "") + " the judge doubted the start, so it is retrieved instead: " + str(ch["judge"].get("start_note", ""))).strip()
+        by_ = {b["id"]: b for b in c["beginnings"]}
+        ch["since"] = sorted(ch["since"] + [{"id": ch["start"], "why": "the start the judge doubted"}], key=lambda x: by_[x["id"]]["event_date"])
+        ch["start"] = None
+    return ch
 
 
 def apply_overrides(ch, ov, cat):
@@ -739,32 +767,29 @@ def main():
         log(f"pairing lines failed ({e}); stories keep their summaries")
         lines = {}
 
-    # 4. each story's Backstory
+    # 4. each story's Backstory. A story left with fewer than three Beginnings (its category is about
+    # something broader than its angle) gets one targeted research call for its own thread, then is chosen
+    # again. Found on the 2026-10-13 staging run: a Russian diesel deal filed under Ukraine-Russia had only
+    # war history to draw on, and the judge rightly dropped all of it.
     picks = {}
+    focused = 0
     for s in stories:
         s["line"] = lines.get(s["story_id"], "")
         c = cats[s["category"]]
-        try:
-            ch = choose(s, c, today)
-        except Exception as e:  # noqa: BLE001
-            log(f"  choosing failed for {s['story_id']}: {e}")
-            ch = {"start": None, "start_line": "", "runner_ups": [], "before": [], "since": [], "note": str(e)}
-        ch["judge"] = judge(s, c, ch) if ch.get("start") else {}
-        drop = {k for k, v in (ch["judge"].get("items") or {}).items() if isinstance(v, dict) and v.get("keep") is False and k != ch.get("start")}
-        ch["dropped"] = sorted(drop)
-        ch["before"] = [x for x in ch["before"] if x["id"] not in drop]
-        ch["since"] = [x for x in ch["since"] if x["id"] not in drop]
-        if ch.get("start") and (ch["judge"] or {}).get("start_ok") is False:
-            # the judge says the start is wrong: no start from the category; build_origins retrieves one
-            ch["doubted_start"] = ch["start"]
-            ch["note"] = (ch.get("note", "") + " the judge doubted the start, so it is retrieved instead: " + str(ch["judge"].get("start_note", ""))).strip()
-            by_ = {b["id"]: b for b in c["beginnings"]}
-            ch["since"] = sorted(ch["since"] + [{"id": ch["start"], "why": "the start the judge doubted"}], key=lambda x: by_[x["id"]]["event_date"])
-            ch["start"] = None
+        ch = pick_for(s, c, today)
+        if (not ch.get("start") or len(ch["before"]) + len(ch["since"]) < 2) and focused < MAX_FOCUSED:
+            focused += 1
+            try:
+                added = research(c, [s], pool, today, focus=True)
+                if any(publishable(b) for b in added):
+                    ch = pick_for(s, c, today)
+                    ch["focused"] = True
+            except Exception as e:  # noqa: BLE001
+                log(f"  focused research failed for {s['story_id']}: {e}")
         ch = apply_overrides(ch, (ov.get("stories") or {}).get(s["story_id"]) or {}, c)
         picks[s["story_id"]] = ch
         log(f"  {s['headline'][:50]!r}: starts {ch.get('start')} | before {[x['id'][2:12] for x in ch['before']]} | since {[x['id'][2:12] for x in ch['since']]}"
-            + (f" | {ch['note']}" if ch.get("note") else ""))
+            + (" | focused research" if ch.get("focused") else "") + (f" | {ch['note']}" if ch.get("note") else ""))
 
     # 5. write. If no story could be given a Backstory (the API down, the credit spent), the previous
     # backstory.json stays: an empty Backstory is worse than yesterday's. What research found is kept.
