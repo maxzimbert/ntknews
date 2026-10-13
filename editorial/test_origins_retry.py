@@ -59,4 +59,16 @@ none_ch = {"choice": "none", "year": 2024, "line": "When something happened in 2
 ok3, p3, _ = bo.validate(story, row, [yem], none_ch)
 c2 = ok2 and "no origin chosen" in " ".join(p3) and not ok3
 print(("ok   " if c2 else "FAIL ") + "a quote that does not repeat the year is accepted; the string \"none\" is no choice", p2, p3)
-sys.exit(0 if (ok and c2) else 1)
+# T-0083: a story whose category has no fixed start and no page, when nothing is retrieved, gets no
+# origin, and the step finishes (it crashed twice on the 2026-10-13 staging runs)
+bo.retrieve = lambda queries: []
+bo.call_claude = lambda key, model, system, user, mt: ({"story_id": "31b249b6c8ea7c86", "row_fit": "good", "queries": ["q"]} if model == bo.QUERY_MODEL
+                                                     else {"story_id": "31b249b6c8ea7c86", "choice": "none", "fit": "none", "why": "nothing"})
+T.mkdir(exist_ok=True); json.dump(lp, open(T / "lineup.json", "w")); json.dump(bs, open(T / "bs.json", "w"))
+sys.argv = ["x", "--lineup", str(T / "lineup.json"), "--pairings", str(T / "bs.json"), "--out", str(T / "o3.json"), "--apply"]
+try:
+    bo.main(); c3 = json.load(open(T / "o3.json"))["origins"][0]["origin"]["status"] == "none"
+except Exception as e:  # noqa: BLE001
+    c3 = False; print("   ", type(e).__name__, e)
+print(("ok   " if c3 else "FAIL ") + "nothing retrieved and no fixed start: no origin, and the step finishes")
+sys.exit(0 if (ok and c2 and c3) else 1)
