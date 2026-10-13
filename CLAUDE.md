@@ -151,7 +151,8 @@ change someone's behaviour.
    cost was real debugging time. "I haven't checked this" is a useful sentence.
 
 8. **A matrix link is a primary source, and a link you doubt does not go in.** No Wikipedia,
-   retail pages or lending copies. Run `python3 editorial/check_links.py` after changing links;
+   retail pages or lending copies. (Objects the editor adds to a category from Pulse search may be
+   labelled news reports when no primary source will do: `docs/decisions.md`, 2026-10-13.) Run `python3 editorial/check_links.py` after changing links;
    an agent's "verified" is a claim until the page has been fetched and read.
 9. **Generated Backstory text is unverified until the editor has checked it.** It lives in
    `editorial/object-notes.json` with `verified: false`.

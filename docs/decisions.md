@@ -390,6 +390,16 @@ fourth "comparable case elsewhere" relation, and not cutting Beginnings by the o
 gave thinner pages (3 Beginnings against 4 and 5) and cannot separate the change from run-to-run variance;
 revisit with several runs. The event-year idea itself stands (the editor: a milestone is dated by its event).
 
+**News may carry an object when no primary source will, and it is always labelled.** Decided
+2026-10-13 by the editor. The matrix rule above is unchanged: a matrix link is a primary source. This
+covers objects found by search for a category in Pulse. A news report may be an object's source when the
+search found no adequate primary source to carry the text; the search must say why, the object carries
+`source_kind: "news"` through publish, and Pulse labels it. It enters only through the editor's tray
+(T-0085), never through Compose's automatic milestone search, which includes what it finds without
+review. Wikipedia, retail and homework pages stay refused everywhere. Why: a strict primary-only rule
+threw away usable history (the Bonwit Teller demolition is documented in contemporary reporting, not in
+an online primary record), and the editor would rather show a labelled report than nothing.
+
 **Lenses stay a separate list from the matrix, for now.** Decided 2026-10-06 with the editor.
 A lens (a country, an alliance, a technology) is a tag on an object like Column E's Issue (Theme),
 but on a different axis: Column E says which American argument an object belongs to; a lens says
