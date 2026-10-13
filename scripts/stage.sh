@@ -7,7 +7,8 @@
 # together. This script refreshes it from main (so Pulse's bot-committed data
 # in ntk-pulse/data/ is current), then force-pushes a single-commit copy of it
 # to the staging repo with .github/ removed, so no bots, crons or publish
-# workflow ever run there. Pulse's Publish button is separately disabled on
+# workflow ever run there except its own deploy (scripts/staging-pages.yml). Pulse's Publish button
+# becomes "Send to a staging run" there, which commits to the staging branch only, and is disabled on
 # any host but the live one (T-0051).
 #
 # Adding a PR to staging:  git checkout staging && git merge origin/<branch>
@@ -35,27 +36,7 @@ if ! git -C "$WT" merge --no-edit -q origin/main; then
 fi
 git -C "$WT" push -q origin HEAD:staging
 
-git -C "$WT" archive HEAD | tar -x -C "$OUT"
-rm -rf "$OUT/.github"
-
-# GitHub Pages serves this copy from a subpath (/ntknews-staging/) with none
-# of Netlify's rewrites, so root-absolute links and fetches and production's
-# absolute permalinks would all leave the staged site. Point them back at it,
-# in the staged copy only. /backstory, /today and /me are Netlify rewrites of
-# the app shell, so they become the shell itself.
-BASE=/ntknews-staging
-find "$OUT/digest" "$OUT/backstory" "$OUT/index.html" \( -name '*.html' -o -name '*.json' \) -print0 \
-  | xargs -0 perl -pi -e '
-      s#https://ntknews\.org/#https://maxzimbert.github.io/ntknews-staging/#g;
-      s#href="/(?:backstory|today|me)"#href="'$BASE'/digest/index.html"#g;
-      s#href="/(?!/|ntknews-staging/)#href="'$BASE'/#g;
-      s#fetch\(\x27/digest/#fetch(\x27'$BASE'/digest/#g;
-    '
-
-# Pages runs Jekyll unless told not to. Any .md with front matter and a stray
-# "{{" (a ticket quoting CSS, say) fails the whole build, and nothing here needs
-# Jekyll. Found 2026-10-06: T-0078 broke every staging build.
-touch "$OUT/.nojekyll"
+bash "$ROOT/scripts/stage_build.sh" "$WT" "$OUT" "$(git -C "$WT" rev-parse HEAD)"
 
 SHA=$(git -C "$WT" rev-parse --short HEAD)
 cd "$OUT"

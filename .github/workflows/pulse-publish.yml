@@ -6,7 +6,9 @@ name: NTK Pulse — Publish to Digest
 # "start this workflow" call needed — the file landing IS the signal.
 on:
   push:
-    branches: [main]
+    # staging: Pulse's "Send to a staging run" commits the lineup to the staging branch. The run uses the
+    # staging branch's code and commits only to it; the staging site redeploys itself from that branch.
+    branches: [main, staging]
     paths:
       - 'ntk-pulse/data/lineup-publish.json'
   workflow_dispatch: {}   # manual re-run, e.g. if a build needs retrying
@@ -21,7 +23,7 @@ permissions:
 # and a scan/full-pipeline run genuinely don't touch the same files, so
 # there's no git-race reason to block one on the other.
 concurrency:
-  group: ntk-publish
+  group: ntk-publish-${{ github.ref_name }}     # a staging run never queues behind, or ahead of, a real publish
   cancel-in-progress: false
 
 jobs:

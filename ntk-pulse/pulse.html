@@ -3056,11 +3056,19 @@ function pulseMayPublish(loc){
   if (loc.hostname === 'ntknews.org' || loc.hostname === 'www.ntknews.org') return true;
   return loc.hostname === 'maxzimbert.github.io' && loc.pathname.indexOf('/ntknews/') === 0;
 }
+// Staging Pulse cannot publish, but it can send its lineup to a staging run: the lineup is committed to
+// the repo's `staging` branch (never main), which runs the publish pipeline on the staging code, and the
+// staging site redeploys itself when that branch moves (scripts/staging-pages.yml). Production is not touched.
+function pulseIsStaging(loc){
+  return loc.hostname === 'maxzimbert.github.io' && loc.pathname.indexOf('/ntknews-staging/') === 0;
+}
 async function publishToDigest(){
-  if (!pulseMayPublish(location)){
+  const target = pulseMayPublish(location) ? 'main' : pulseIsStaging(location) ? 'staging' : null;
+  if (!target){
     publishStatus = 'Publish is disabled on this copy of Pulse (not the live Pulse).';
     renderPublishStatus(); alert(publishStatus); return;
   }
+  if (target === 'staging' && !confirm('Send this lineup to a staging run?\n\nThe publish pipeline runs on the staging copy only (about 5 minutes), then the staging site refreshes itself (up to 10 minutes more). Production is not touched. It spends from the same Anthropic key as production.')) return;
   if (!SETTINGS.ghToken){ alert('Add a GitHub token in ⚙ first — scoped to contents:write on this repo only.'); return; }
   const tp = todayPreflight();
   if (tp.block.length){ alert('Not published.\n\n' + tp.block.join('\n')); return; }
@@ -3079,25 +3087,27 @@ async function publishToDigest(){
     const content = storyDataExport(stories);
     const b64 = btoa(unescape(encodeURIComponent(content)));
     const apiUrl = `https://api.github.com/repos/${GH_REPO}/contents/${GH_PUBLISH_PATH}`;
+    const refQ = target === 'main' ? '' : '?ref=' + target;
     const headers = { 'Authorization': 'Bearer '+SETTINGS.ghToken, 'Accept': 'application/vnd.github+json' };
 
     // The Contents API needs the current file's sha to UPDATE it — a 404
     // on this GET means it's never been published before, which is fine,
     // just means this PUT will CREATE the file instead.
     let sha = null;
-    const getResp = await fetch(apiUrl, {headers});
+    const getResp = await fetch(apiUrl + refQ, {headers});
     if (getResp.ok){ sha = (await getResp.json()).sha; }
     else if (getResp.status !== 404){ throw new Error('GitHub GET failed: '+getResp.status); }
 
     const putResp = await fetch(apiUrl, {
       method:'PUT', headers:{...headers,'Content-Type':'application/json'},
       body: JSON.stringify({
-        message: 'publish: '+stories.length+(stories.length===1?' story':' stories')+' from Pulse',
-        content: b64, branch:'main', ...(sha?{sha}:{}),
+        message: (target === 'main' ? 'publish: ' : 'staging run: ')+stories.length+(stories.length===1?' story':' stories')+' from Pulse',
+        content: b64, branch: target, ...(sha?{sha}:{}),
       }),
     });
     if (!putResp.ok){ const t=await putResp.text(); throw new Error('GitHub PUT failed: '+putResp.status+' '+t.slice(0,200)); }
-    publishStatus = 'Published — build running now, usually a minute or two.';
+    publishStatus = target === 'main' ? 'Published — build running now, usually a minute or two.'
+      : 'Sent to a staging run. The pipeline takes about 5 minutes; the staging site refreshes within 10 minutes after that. Reload then.';
   } catch(e){ publishStatus = 'Publish failed: '+e.message; }
   renderPublishStatus();
   setTimeout(fetchLastPublished, 45000);   // one check after the build's had time to land
@@ -4093,7 +4103,7 @@ function renderLineup(root){
     <button class="mini" id="clear-lineup" style="border-color:var(--stale);color:var(--stale)">clear all stories</button>
     <span class="spacer"></span>
     <button class="mini" id="gen-today-lineup" ${TODAY_OV.busy?'disabled':''}>${TODAY_OV.busy?'Generating…':'Generate Today'}</button>
-    <button class="mini go" id="publish-btn" ${nGen?'':'disabled'}>Publish to digest v2</button>
+    <button class="mini go" id="publish-btn" ${nGen?'':'disabled'}>${pulseIsStaging(location)?'Send to a staging run':'Publish to digest v2'}</button>
     <span class="copied">${copiedFlag==='all'?'copied':copiedFlag==='site'?'copied':''}</span>
     <span id="publish-status" style="font-size:10.5px;color:var(--warn)"></span>
     <span id="last-pub" style="font-size:10.5px;color:var(--dim)"></span>
