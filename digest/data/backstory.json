@@ -226,20 +226,126 @@
     },
     {
       "id": "ukraine-russia",
-      "stratum": "fire",
+      "stratum": "held",
+      "kind": "live",
       "title": "Ukraine–Russia",
-      "start_date": "2022-02-24",
-      "start_line": null,
       "milestone": "Whether borders can still be changed by force.",
+      "stakes": "The category turns on whether Russia can keep territory taken from Ukraine by force, and whether sanctions relief is a price Washington will pay for a settlement. It also asks who decides: a president offering diesel access, Republican senators resisting, or Germany and other European governments holding their own line.",
+      "subgenres": [],
+      "subjects": [],
+      "start_date": null,
+      "start_line": null,
       "close_condition": "A ceasefire or settlement recognised by both governments.",
       "roots": [],
-      "subgenres": [],
-      "updated": false,
+      "indicator": {
+        "label": "Ukrainians who say Ukraine should not give up any territory under any circumstances, even if the war lasts longer (KIIS survey)",
+        "then_value": "85%",
+        "then_year": "2022-12",
+        "now_value": "51%",
+        "direction": "down",
+        "source": "Kyiv International Institute of Sociology (KIIS), as reported by the Kyiv Independent",
+        "source_url": "https://kyivindependent.com/38-percent-ukrainians-territorial-concessions/",
+        "as_of": "2024-12",
+        "points": [
+          {
+            "date": "2022-12",
+            "value": "85%"
+          },
+          {
+            "date": "2023-12",
+            "value": "74%"
+          },
+          {
+            "date": "2024-10",
+            "value": "58%"
+          },
+          {
+            "date": "2024-12",
+            "value": "51%"
+          }
+        ],
+        "unit": "% of respondents",
+        "verified": true,
+        "check": "verified",
+        "check_note": "the page loads and every value appears on it"
+      },
+      "beginnings": [
+        {
+          "year": "2022",
+          "line": "President Biden signed Executive Order 14066, banning imports of Russian crude oil, petroleum fuels and products of their distillation into the United States and barring new U.S. investment in Russian energy.",
+          "object_id": "b-2022-03-08-president-biden-signed-executive-ord"
+        },
+        {
+          "year": "2025",
+          "line": "The Treasury's Office of Foreign Assets Control designated Rosneft and Lukoil, Russia's two largest oil companies, as blocked persons, the first major Russia sanctions action of Trump's second term.",
+          "object_id": "b-2025-10-22-the-treasury-s-office-of-foreign-ass"
+        },
+        {
+          "year": "2026",
+          "line": "The U.S. Treasury's Office of Foreign Assets Control issued General License 133, temporarily authorizing sales of already-loaded Russian oil and petroleum products to India despite sanctions.",
+          "object_id": "b-2026-03-05-the-u-s-treasury-s-office-of-foreign",
+          "mark": "start"
+        },
+        {
+          "year": "2026",
+          "line": "The Treasury's Office of Foreign Assets Control issued Russia-related General License 135, authorizing sale, delivery and importation of Russian-origin diesel, including into the United States, through April 7, 2027.",
+          "object_id": "b-2026-10-09-the-treasury-s-office-of-foreign-ass"
+        }
+      ],
+      "objects": [
+        {
+          "object_id": "b-2022-03-08-president-biden-signed-executive-ord",
+          "title": "Executive Order 14066: Prohibiting Certain Imports and New Investments With Respect to Continued Russian Federation Efforts To Undermine the Sovereignty and Territorial Integrity of Ukraine",
+          "author": "President of the United States (Joseph R. Biden Jr.)",
+          "year": "2022",
+          "source": "ofac.treasury.gov",
+          "source_url": "https://ofac.treasury.gov/media/919031/download",
+          "evidence_quote": "Prohibiting Certain Imports and New Investments With Respect to Continued Russian Federation Efforts To Undermine the Sovereignty and Territorial Integrity of Ukraine",
+          "about": "It is the U.S. ban on Russian petroleum products, including diesel, that General License 135 now suspends for diesel.",
+          "check": "verified"
+        },
+        {
+          "object_id": "b-2025-10-22-the-treasury-s-office-of-foreign-ass",
+          "title": "Treasury Sanctions Major Russian Oil Companies, Calls on Moscow to Immediately Agree to Ceasefire",
+          "author": "U.S. Department of the Treasury",
+          "year": "2025",
+          "source": "home.treasury.gov",
+          "source_url": "https://home.treasury.gov/news/press-releases/sb0290",
+          "evidence_quote": "Given President Putin's refusal to end this senseless war, Treasury is sanctioning Russia's two largest oil companies that fund the Kremlin's war machine.",
+          "about": "It is the Trump administration's own most severe energy sanction, which the diesel authorization of October 2026 partly walks back and which Republican critics cite.",
+          "check": "verified"
+        },
+        {
+          "object_id": "b-2026-03-05-the-u-s-treasury-s-office-of-foreign",
+          "title": "Issuance of Russia-related General License; Issuance of Amended Venezuela-related Frequently Asked Question",
+          "author": "U.S. Department of the Treasury, Office of Foreign Assets Control",
+          "year": "2026",
+          "source": "ofac.treasury.gov",
+          "source_url": "https://ofac.treasury.gov/recent-actions/20260305_33",
+          "evidence_quote": "The Department of the Treasury's Office of Foreign Assets Control (OFAC) is issuing Russia-related General License 133, \"Authorizing the Delivery and Sale of Crude Oil and Petroleum Products of Russian Federation Origin Loaded on Vessels as of March 5, 2026 to India.\"",
+          "about": "It began the series of U.S. waivers easing sanctions on Russian fuel, the policy track from which the proposed Russian diesel deal grew and which Berlin and Republican senators resisted.",
+          "check": "verified"
+        },
+        {
+          "object_id": "b-2026-10-09-the-treasury-s-office-of-foreign-ass",
+          "title": "Issuance of Russia-related General License",
+          "author": "U.S. Department of the Treasury, Office of Foreign Assets Control",
+          "year": "2026",
+          "source": "ofac.treasury.gov",
+          "source_url": "https://ofac.treasury.gov/recent-actions/20261009_33",
+          "evidence_quote": "The Department of the Treasury's Office of Foreign Assets Control (OFAC) is issuing Russia-related General License 135, \"Authorizing Transactions Related to the Sale, Delivery, Offloading, and Importation of Diesel Fuel of Russian Federation Origin.\"",
+          "about": "This license is the legal instrument behind the diesel deal that Republican lawmakers, GOP candidates and Chancellor Merz each publicly rejected or distanced themselves from.",
+          "check": "verified"
+        }
+      ],
+      "here": [
+        "A fuel-for-concessions offer met refusal from Republicans and Berlin before the day ended. The question was what Russia could be paid for.",
+        "Four Republican senators broke with the president on the plan. Four years in, the disagreement runs through Washington itself."
+      ],
       "narrative": [],
-      "indicator": null,
-      "objects": [],
       "instances": [],
-      "photo": null
+      "photo": null,
+      "updated": true
     },
     {
       "id": "climate",
@@ -1204,17 +1310,13 @@
         {
           "year": "2006",
           "line": "The Justice Department applied for, and the FBI executed, the first search warrant on a sitting member's congressional office, that of Rep. William Jefferson, prompting a separation of powers challenge.",
-          "object_id": "b-2006-05-18-the-justice-department-applied-for-a"
+          "object_id": "b-2006-05-18-the-justice-department-applied-for-a",
+          "mark": "start"
         },
         {
           "year": "2007",
           "line": "The D.C. Circuit held that the Justice Department's search of Rep. Jefferson's office violated the Speech or Debate privilege by exposing privileged legislative material to executive agents, while allowing the investigation to continue.",
           "object_id": "b-2007-08-03-the-d-c-circuit-held-that-the-justic"
-        },
-        {
-          "year": "2022",
-          "line": "The Justice Department adopted Justice Manual section 9-85.500, barring prosecutors and agents from timing investigative steps to affect an election and requiring Public Integrity Section consultation for actions that may raise the issue.",
-          "object_id": "b-2022-08-01-the-justice-department-adopted-justi"
         }
       ],
       "objects": [
@@ -1261,21 +1363,10 @@
           "evidence_quote": "Argued May 15, 2007 Decided August 3, 2007",
           "about": "It established that a court may let an investigation of a member proceed while policing the line between legislative material and ordinary evidence, relevant to any challenge to the Omar warrant.",
           "check": "verified"
-        },
-        {
-          "object_id": "b-2022-08-01-the-justice-department-adopted-justi",
-          "title": "Justice Manual 9-85.500, Actions that May Have an Impact on an Election",
-          "author": "U.S. Department of Justice",
-          "year": "2022",
-          "source": "justice.gov",
-          "source_url": "https://www.justice.gov/jm/jm-9-85000-protection-government-integrity",
-          "evidence_quote": "Federal prosecutors and agents may never select the timing of any action, including investigative steps, criminal charges, or statements, for the purpose of affecting any election, or for the purpose of giving an advantage or disadvantage to any candidate or political party.",
-          "about": "It is the written internal rule against the timing of a search of a candidate three weeks before the midterms, and the reported Public Integrity consultation refers to it.",
-          "check": "verified"
         }
       ],
       "here": [
-        "A judge signed off and the Justice Department approved. The target was a member of the body that funds both."
+        "A judge-approved warrant reached a sitting member of Congress. The Justice Department decided that, and no voter did."
       ],
       "narrative": [],
       "instances": [],
@@ -2349,7 +2440,8 @@
         {
           "year": "2021",
           "line": "Holy See Press Office director Matteo Bruni announced by Telegram that Pope Francis had gone to Gemelli for scheduled surgery on his colon, then reported only that he had reacted well.",
-          "object_id": "b-2021-07-04-holy-see-press-office-director-matte"
+          "object_id": "b-2021-07-04-holy-see-press-office-director-matte",
+          "mark": "start"
         },
         {
           "year": "2025",
@@ -2360,17 +2452,6 @@
           "year": "2025",
           "line": "The Holy See Press Office, through director Matteo Bruni, published the announcement that Cardinal Kevin Farrell, Camerlengo, had declared the death of Pope Francis after a hospitalization for bilateral pneumonia that the Vatican had reported in bulletins.",
           "object_id": "b-2025-04-21-the-holy-see-press-office-through-di"
-        },
-        {
-          "year": "2025",
-          "line": "The conclave elected Cardinal Robert Francis Prevost on its fourth ballot, and Cardinal Protodeacon Dominique Mamberti announced from the loggia of St. Peter's that he had taken the name Leo XIV.",
-          "object_id": "b-2025-05-08-the-conclave-elected-cardinal-robert",
-          "mark": "start"
-        },
-        {
-          "year": "2026",
-          "line": "Pope Leo XIV disclosed at the Sunday Angelus that doctors had found a localized lung nodule and that he had decided to have it surgically removed.",
-          "object_id": "b-2026-10-11-pope-leo-xiv-disclosed-at-the-sunday"
         }
       ],
       "objects": [
@@ -2406,32 +2487,132 @@
           "evidence_quote": "At 9.47 this morning, His Eminence Cardinal Kevin Joseph Farrell, Camerlengo of the Holy Roman Church, announced with sorrow the death of Pope Francis",
           "about": "It is the most recent papal death and the end of a illness the Vatican disclosed in stages, the immediate precedent for how the Holy See handled Leo XIV's diagnosis.",
           "check": "verified"
+        }
+      ],
+      "here": [
+        "The Vatican reported the nodule after the surgery, not before. That is the timing a church sets for itself."
+      ],
+      "narrative": [],
+      "instances": [],
+      "photo": null,
+      "updated": true
+    },
+    {
+      "id": "p-infrastructure-cyberattacks",
+      "stratum": "held",
+      "kind": "subject",
+      "title": "Infrastructure cyberattacks",
+      "milestone": "Whether firms that run critical systems for many customers should be held responsible for attacks through their networks, or whether the victims and attackers alone should bear the loss.",
+      "stakes": "When hackers reach many customers through one provider's network, the law has not settled whether the provider answers for the damage or whether the loss stays with the attacked store and the criminal who cannot be found. Courts, insurers, and legislators must decide who pays, and when, and who gains from the answer.",
+      "subgenres": [],
+      "subjects": [
+        "tech",
+        "france",
+        "germany"
+      ],
+      "start_date": null,
+      "start_line": null,
+      "close_condition": null,
+      "roots": [],
+      "indicator": {
+        "label": "Ransomware complaints received by the FBI's Internet Crime Complaint Center (IC3)",
+        "then_value": "2,825",
+        "then_year": "2023",
+        "now_value": "3,611",
+        "direction": "up",
+        "source": "FBI Internet Crime Complaint Center (IC3), 2025 IC3 Annual Report",
+        "source_url": "https://www.ic3.gov/AnnualReport/Reports/2025_IC3Report.pdf",
+        "as_of": "2025",
+        "points": [
+          {
+            "date": "2023",
+            "value": "2,825"
+          },
+          {
+            "date": "2024",
+            "value": "3,156"
+          },
+          {
+            "date": "2025",
+            "value": "3,611"
+          }
+        ],
+        "unit": "complaints per year",
+        "verified": false,
+        "check": "failed",
+        "check_note": "values not found on the page: 2,825, 3,156, 3,611"
+      },
+      "beginnings": [
+        {
+          "year": "2014",
+          "line": "The Senate Commerce Committee majority staff published a kill chain analysis of the 2013 Target breach, tracing the intrusion to stolen credentials of Fazio Mechanical, a refrigeration contractor with remote access.",
+          "object_id": "b-2014-03-26-the-senate-commerce-committee-majori"
         },
         {
-          "object_id": "b-2025-05-08-the-conclave-elected-cardinal-robert",
-          "title": "Leo XIV is the new Pope",
-          "author": "Vatican News (Dicastery for Communication)",
-          "year": "2025",
-          "source": "vaticannews.va",
-          "source_url": "https://www.vaticannews.va/en/pope/news/2025-05/cardinal-elected-pope-papal-name.html",
-          "evidence_quote": "The Conclave has elected Robert Francis Cardinal Prevost as the 267th Bishop of Rome.",
-          "about": "It made Leo XIV the pope whose lung surgery is now reported, and the successor chosen under the rules that govern any further vacancy.",
+          "year": "2017",
+          "line": "Attorneys general of 47 states and the District of Columbia settled with Target for $18.5 million over a 2013 breach that began with a third-party vendor's stolen credentials.",
+          "object_id": "b-2017-05-23-attorneys-general-of-47-states-and-t"
+        },
+        {
+          "year": "2026",
+          "line": "Claroty's Team82 published research on the Danfoss AK-SM 800A controller, reporting a hidden login mechanism, remote code execution flaws and thousands of management interfaces reachable from the public internet.",
+          "object_id": "b-2026-08-09-claroty-s-team82-published-research-",
+          "mark": "start"
+        },
+        {
+          "year": "2026",
+          "line": "France's national computer emergency response team, CERT-FR, issued alert CERTFR-2026-ALE-012 on numerous compromises of Danfoss AK-SM and AK-SC refrigeration controllers, advising operators to disconnect them or filter access.",
+          "object_id": "b-2026-10-12-france-s-national-computer-emergency"
+        }
+      ],
+      "objects": [
+        {
+          "object_id": "b-2014-03-26-the-senate-commerce-committee-majori",
+          "title": "A \"Kill Chain\" Analysis of the 2013 Target Data Breach",
+          "author": "U.S. Senate Committee on Commerce, Science, and Transportation (Majority Staff)",
+          "year": "2014",
+          "source": "commerce.senate.gov",
+          "source_url": "https://www.commerce.senate.gov/wp-content/uploads/media/doc/2014%200325%20Target%20Kill%20Chain%20Analysis.pdf",
+          "evidence_quote": "The attackers reportedly first gained access to Target's system by stealing credentials from an HVAC and refrigeration company, Fazio Mechanical Services, based in Sharpsburg, Pennsylvania.",
+          "about": "It is an earlier case of attackers entering a retailer through a refrigeration vendor's access, and it framed the question of who answers for the contractor's link.",
           "check": "verified"
         },
         {
-          "object_id": "b-2026-10-11-pope-leo-xiv-disclosed-at-the-sunday",
-          "title": "Pope Leo: I will undergo surgery soon to remove nodule in my lung",
-          "author": "Vatican News (Dicastery for Communication)",
+          "object_id": "b-2017-05-23-attorneys-general-of-47-states-and-t",
+          "title": "A.G. Schneiderman Announces $18.5 Million Multi-State Settlement With Target Corporation Over 2013 Data Breach",
+          "author": "New York State Attorney General Eric T. Schneiderman",
+          "year": "2017",
+          "source": "ag.ny.gov",
+          "source_url": "https://ag.ny.gov/press-release/2017/ag-schneiderman-announces-185-million-multi-state-settlement-target-corporation",
+          "evidence_quote": "The agreement represents the largest multistate data breach settlement achieved to date and will bring $635,224.33 to New York State.",
+          "about": "It is an earlier case of attackers entering a retailer through a contractor, where the settlement bound the retailer to security duties rather than the vendor.",
+          "check": "verified"
+        },
+        {
+          "object_id": "b-2026-08-09-claroty-s-team82-published-research-",
+          "title": "Freeze the Controller, Defrost the Food: Uncovering Vulnerabilities in Danfoss Refrigeration Controllers",
+          "author": "Claroty Team82 (Amir Zaltzman)",
           "year": "2026",
-          "source": "vaticannews.va",
-          "source_url": "https://www.vaticannews.va/en/pope/news/2026-10/pope-leo-xiv-to-undergo-surgery-remove-nodule-lung.html",
-          "evidence_quote": "He added that the nodule was “detected at a very early stage and is well localized.”",
-          "about": "The pope himself, not a press office bulletin, first made his condition public, two days before the operation.",
+          "source": "fr.claroty.com",
+          "source_url": "https://fr.claroty.com/team82/research/freeze-the-controller-defrost-the-food-uncovering-vulnerabilities-in-danfoss-refrigeration-controllers",
+          "evidence_quote": "Danfoss AK-SM 800A controllers are widely deployed to manage refrigeration infrastructure in supermarkets, cold-storage facilities, warehouses, and other commercial environments.",
+          "about": "It documented two months before the attack how a shared vendor controller platform could turn a web login into spoiled food, and how many units were exposed.",
+          "check": "verified"
+        },
+        {
+          "object_id": "b-2026-10-12-france-s-national-computer-emergency",
+          "title": "Incident de sécurité ciblant les Danfoss série AK-SM et AK-SC",
+          "author": "CERT-FR (ANSSI)",
+          "year": "2026",
+          "source": "cert.ssi.gouv.fr",
+          "source_url": "https://www.cert.ssi.gouv.fr/alerte/CERTFR-2026-ALE-012/",
+          "evidence_quote": "Le CERT-FR a connaissance de nombreuses compromissions de Danfoss série AK-SM et AK-SC.",
+          "about": "It is the first official French statement on the supermarket attack, and it treats an internet-exposed management interface as contrary to good practice, which bears on who carries the blame.",
           "check": "verified"
         }
       ],
       "here": [
-        "The Vatican told the world about the lump only once it could also report the surgery had succeeded."
+        "The freezers belonged to the supermarkets. The software that cooked the food ran through someone else's network."
       ],
       "narrative": [],
       "instances": [],
@@ -2441,86 +2622,398 @@
   ],
   "todays_pairings": [
     {
-      "story_id": "2743ea2faa76edb1",
-      "headline": "A Routine Checkup Found a Lump on the Pope's Lung. The Vatican Says the Surgery Worked.",
-      "row": "p-papal-health-and-succession",
-      "line": "The Vatican told the world about the lump only once it could also report the surgery had succeeded.",
+      "story_id": "84c7d516ed662741",
+      "headline": "Trump Offered Russia a Diesel Deal. Republicans and Europe's Biggest Economy Said No Within Hours.",
+      "row": "ukraine-russia",
+      "line": "A fuel-for-concessions offer met refusal from Republicans and Berlin before the day ended. The question was what Russia could be paid for.",
       "subgenre": null,
       "confidence": null,
       "source": "category",
-      "placed_why": "The story centers on Pope Leo's lung nodule surgery and the Vatican's control over what medical detail is disclosed, which is exactly the question of papal health transparency.",
+      "placed_why": "Trump's offer to Russia on diesel exports, and the objections from Republicans and Germany, is a consequence of the sanctions pressure at the center of the Ukraine–Russia war.",
       "needs_review": false,
       "origin": {
         "status": "retrieved",
         "source": "category",
-        "year": 2025,
-        "line": "When the conclave elected Cardinal Robert Prevost on its fourth ballot, he became Leo XIV, the pope whose health the Holy See would now report.",
-        "title": "Leo XIV is the new Pope",
-        "url": "https://www.vaticannews.va/en/pope/news/2025-05/cardinal-elected-pope-papal-name.html",
-        "evidence_quote": "The Conclave has elected Robert Francis Cardinal Prevost as the 267th Bishop of Rome.",
-        "beginning_id": "b-2025-05-08-the-conclave-elected-cardinal-robert",
+        "year": 2026,
+        "line": "When the U.S. Treasury's Office of Foreign Assets Control issued General License 133, temporarily authorizing sales of already-loaded Russian oil and petroleum products to India despite sanctions.",
+        "title": "Issuance of Russia-related General License; Issuance of Amended Venezuela-related Frequently Asked Question",
+        "url": "https://ofac.treasury.gov/recent-actions/20260305_33",
+        "evidence_quote": "The Department of the Treasury's Office of Foreign Assets Control (OFAC) is issuing Russia-related General License 133, \"Authorizing the Delivery and Sale of Crude Oil and Petroleum Products of Russian Federation Origin Loaded on Vessels as of March 5, 2026 to India.\"",
+        "beginning_id": "b-2026-03-05-the-u-s-treasury-s-office-of-foreign",
         "fit": "direct",
         "verified": false,
-        "why": "The May 2025 election of Leo XIV is a reasonable origin for a story about this pope's health, though the 2026-10-11 Angelus disclosure is the more specific turn that set the story in motion and is already included separately."
+        "why": "The Oct 2025 Rosneft/Lukoil sanctions are the specific earlier turn that set the policy baseline the diesel deal reverses, though GL 135 is arguably the more direct trigger and the start is a reasonable, not perfect, choice."
       },
-      "start": "b-2025-05-08-the-conclave-elected-cardinal-robert",
-      "before": [
-        "b-2021-07-04-holy-see-press-office-director-matte",
-        "b-2025-02-14-the-holy-see-press-office-announced-",
-        "b-2025-04-21-the-holy-see-press-office-through-di"
-      ],
-      "since": [
-        "b-2026-10-11-pope-leo-xiv-disclosed-at-the-sunday"
-      ],
+      "start": "b-2026-03-05-the-u-s-treasury-s-office-of-foreign",
+      "before": [],
+      "since": [],
       "runner_ups": [
         {
-          "id": "b-2021-07-04-holy-see-press-office-director-matte",
-          "why_weaker": "It sets a disclosure precedent for a different pope but does not bring Leo's papacy or his nodule into being."
+          "id": "b-2022-03-08-president-biden-signed-executive-ord",
+          "why_weaker": "It first barred Russian fuel from the U.S., but it is a Biden-era ban four years back and does not explain a Trump-era offer."
         },
         {
-          "id": "b-2025-04-21-the-holy-see-press-office-through-di",
-          "why_weaker": "Francis's death opened the vacancy but is one step removed from Leo becoming the pope whose health is at issue."
+          "id": "b-2026-03-05-the-u-s-treasury-s-office-of-foreign",
+          "why_weaker": "It shows sanctions being loosened for already-loaded oil sold to India, but it is a narrow, temporary license rather than the sanctions structure the diesel offer bargains over."
         }
       ],
-      "why": {
-        "b-2021-07-04-holy-see-press-office-director-matte": "Matteo Bruni announced Francis's scheduled surgery and then reported only that he had reacted well, the same limited-detail pattern seen with Leo's lung operation.",
-        "b-2025-02-14-the-holy-see-press-office-announced-": "The Holy See Press Office announced Francis's Gemelli admission, showing the Vatican disclosing a pope's hospital stay on its own terms.",
-        "b-2025-04-21-the-holy-see-press-office-through-di": "Francis's death after a hospitalization the Vatican reported in bulletins created the vacancy that led to Leo's election.",
-        "b-2026-10-11-pope-leo-xiv-disclosed-at-the-sunday": "Leo himself disclosed the lung nodule and his decision to have it removed at the Sunday Angelus, two days before the surgery."
-      },
+      "why": {},
       "judge": {
         "items": {
-          "b-2025-05-08-the-conclave-elected-cardinal-robert": {
+          "b-2025-10-22-the-treasury-s-office-of-foreign-ass": {
             "keep": true,
-            "why": "It explains how Prevost became Pope Leo XIV, the person whose health disclosure this story covers, and anchors the start of his papacy."
+            "why": "The Rosneft/Lukoil blocking was the first major Russia sanctions action of Trump's second term, the baseline a diesel deal now reverses and the reason Republicans and Europe object."
           },
-          "b-1996-02-22-pope-john-paul-ii-issued-the-apostol": {
+          "b-1994-12-05-ukraine-russia-the-united-kingdom-an": {
             "keep": false,
-            "why": "Conclave and vacancy rules concern electing or replacing a pope, not how the Vatican discloses a sitting pope's medical information, so it only shares the broad theme of the papacy."
+            "why": "A 1994 security-guarantee memorandum shares only the broad Russia-Ukraine theme and does nothing to explain a diesel deal or the reactions to it."
           },
-          "b-2013-02-11-benedict-xvi-told-the-assembled-card": {
+          "b-2022-03-02-the-un-general-assembly-voted-141-to": {
             "keep": false,
-            "why": "A resignation citing declining health is a different kind of event from a nodule surgery and says nothing about the Vatican's pattern of releasing medical details."
+            "why": "A symbolic UN vote on the invasion is diplomatic background, not about energy trade or this deal."
           },
-          "b-2021-07-04-holy-see-press-office-director-matte": {
+          "b-2022-03-08-president-biden-signed-executive-ord": {
             "keep": true,
-            "why": "An earlier scheduled papal surgery announced tersely by the press office, with only 'reacted well' afterward, shows the same pattern of sparse disclosure the story describes."
+            "why": "EO 14066 created the U.S. ban on Russian petroleum products including diesel, the specific prohibition a deal would unwind."
           },
-          "b-2025-02-14-the-holy-see-press-office-announced-": {
+          "b-2022-12-05-the-g7-the-european-union-and-austra": {
             "keep": true,
-            "why": "It shows the Vatican releasing a pope's hospitalization in small pieces, directly supporting the story's point about the institution's habit with medical news."
+            "why": "The price cap is the origin of the coordinated Western restrictions on Russian oil that explain why Europe, and Merz, reject any carve-out."
           },
-          "b-2025-04-21-the-holy-see-press-office-through-di": {
+          "b-2026-03-05-the-u-s-treasury-s-office-of-foreign": {
             "keep": true,
-            "why": "It shows how Vatican bulletins on a pope's lung illness culminated in his death, giving context for why disclosure of Leo's lung nodule matters."
+            "why": "GL 133 is an earlier case of Treasury temporarily loosening sanctions on Russian oil, showing the pattern leading up to the diesel license."
           },
-          "b-2026-10-11-pope-leo-xiv-disclosed-at-the-sunday": {
+          "b-2026-10-09-the-treasury-s-office-of-foreign-ass": {
             "keep": true,
-            "why": "It is the direct prior step in this story: the pope's own Angelus disclosure of the nodule and his decision for surgery, which preceded the Oct. 13 operation."
+            "why": "GL 135 authorizing Russian diesel imports into the U.S. is the concrete action that triggered the backlash, three days before the story."
           }
         },
         "start_ok": true,
-        "start_note": "The May 2025 election of Leo XIV is a reasonable origin for a story about this pope's health, though the 2026-10-11 Angelus disclosure is the more specific turn that set the story in motion and is already included separately."
+        "start_note": "The Oct 2025 Rosneft/Lukoil sanctions are the specific earlier turn that set the policy baseline the diesel deal reverses, though GL 135 is arguably the more direct trigger and the start is a reasonable, not perfect, choice."
+      },
+      "dropped": [
+        "b-1994-12-05-ukraine-russia-the-united-kingdom-an",
+        "b-2022-03-02-the-un-general-assembly-voted-141-to"
+      ],
+      "by_editor": true,
+      "note": "",
+      "held_back": false,
+      "story_permalink": "https://ntknews.org/digest/2026-10-13/trump-offered-russia-a-diesel-deal-republicans-and-europes-b/"
+    },
+    {
+      "story_id": "ddac46342f50db5c",
+      "headline": "A GOP Ad Buyer Sent Maine Senate Money to Portland, Oregon. Four Republican Senators Also Broke With Trump on Russian Diesel.",
+      "row": "ukraine-russia",
+      "line": "Four Republican senators broke with the president on the plan. Four years in, the disagreement runs through Washington itself.",
+      "subgenre": null,
+      "confidence": null,
+      "source": "category",
+      "placed_why": "The story pairs a campaign ad-buying error with four GOP senators opposing Trump's plan to allow Russian diesel exports, and the Russia sanctions dispute is the part with a followable history within the Ukraine–Russia conflict.",
+      "needs_review": false,
+      "origin": {
+        "status": "retrieved",
+        "source": "category",
+        "year": 2026,
+        "line": "When Treasury issued General License 133, it let already-loaded Russian oil and petroleum products be sold to India despite sanctions, opening the first U.S. exception to its own Russia energy penalties.",
+        "title": "Issuance of Russia-related General License; Issuance of Amended Venezuela-related Frequently Asked Question",
+        "url": "https://ofac.treasury.gov/recent-actions/20260305_33",
+        "evidence_quote": "The Department of the Treasury's Office of Foreign Assets Control (OFAC) is issuing Russia-related General License 133, \"Authorizing the Delivery and Sale of Crude Oil and Petroleum Products of Russian Federation Origin Loaded on Vessels as of March 5, 2026 to India.\"",
+        "beginning_id": "b-2026-03-05-the-u-s-treasury-s-office-of-foreign",
+        "fit": "direct",
+        "verified": false,
+        "why": "The March 2026 General License 133 is the earlier, specific turn when Treasury began easing Russian oil sanctions under Trump, setting up the diesel plan, and it is not today's news itself."
+      },
+      "start": "b-2026-03-05-the-u-s-treasury-s-office-of-foreign",
+      "before": [
+        "b-2022-03-08-president-biden-signed-executive-ord",
+        "b-2025-10-22-the-treasury-s-office-of-foreign-ass"
+      ],
+      "since": [
+        "b-2026-10-09-the-treasury-s-office-of-foreign-ass"
+      ],
+      "runner_ups": [
+        {
+          "id": "b-2025-10-22-the-treasury-s-office-of-foreign-ass",
+          "why_weaker": "It tightened sanctions rather than loosening them, so it set the stakes but not the turn toward easing."
+        },
+        {
+          "id": "b-2022-03-08-president-biden-signed-executive-ord",
+          "why_weaker": "It created the import ban on Russian fuel, but it is four years back and does not explain why a diesel exemption is now proposed."
+        }
+      ],
+      "why": {
+        "b-2022-03-08-president-biden-signed-executive-ord": "It barred imports of Russian petroleum fuels into the United States, the restriction a diesel plan would now relax.",
+        "b-2025-10-22-the-treasury-s-office-of-foreign-ass": "It blocked Rosneft and Lukoil, the Russian oil majors whose exports any diesel arrangement would involve.",
+        "b-2026-10-09-the-treasury-s-office-of-foreign-ass": "General License 135 authorized sale and importation of Russian-origin diesel, including into the United States, the action the four senators opposed."
+      },
+      "judge": {
+        "items": {
+          "b-2026-03-05-the-u-s-treasury-s-office-of-foreign": {
+            "keep": true,
+            "why": "This is the first loosening of sanctions on Russian oil products under Trump, the specific turn that set up the later diesel plan the four senators opposed."
+          },
+          "b-2022-03-02-the-un-general-assembly-voted-141-to": {
+            "keep": false,
+            "why": "A UN condemnation of the invasion is broad diplomatic context and does not explain the diesel plan or the senators' break with Trump."
+          },
+          "b-2022-03-08-president-biden-signed-executive-ord": {
+            "keep": true,
+            "why": "It is the origin of the U.S. ban on Russian petroleum fuels, the very restriction the diesel plan would loosen, so it grounds the sanctions background the story names."
+          },
+          "b-2022-12-05-the-g7-the-european-union-and-austra": {
+            "keep": false,
+            "why": "The crude oil price cap is a related but separate mechanism on seaborne crude, and the story is about diesel imports and Senate opposition, so it adds little."
+          },
+          "b-2025-10-22-the-treasury-s-office-of-foreign-ass": {
+            "keep": true,
+            "why": "Sanctioning Rosneft and Lukoil was the Trump administration's own tightening, which makes the later easing on diesel a visible reversal that explains why Republican senators balked."
+          },
+          "b-2026-10-09-the-treasury-s-office-of-foreign-ass": {
+            "keep": true,
+            "why": "General License 135 authorizing Russian diesel imports into the U.S. looks like the concrete action behind the plan the four senators opposed, and it directly follows the story's subject."
+          }
+        },
+        "start_ok": true,
+        "start_note": "The March 2026 General License 133 is the earlier, specific turn when Treasury began easing Russian oil sanctions under Trump, setting up the diesel plan, and it is not today's news itself."
+      },
+      "dropped": [
+        "b-2022-03-02-the-un-general-assembly-voted-141-to",
+        "b-2022-12-05-the-g7-the-european-union-and-austra"
+      ],
+      "by_editor": false,
+      "note": "",
+      "held_back": false,
+      "story_permalink": "https://ntknews.org/digest/2026-10-13/a-gop-ad-buyer-sent-maine-senate-money-to-portland-oregon-fo/"
+    },
+    {
+      "story_id": "1fae22144c3f9a88",
+      "headline": "Hackers Heated Refrigeration Systems in Hundreds of French Supermarkets to 50°C. A Freezer Aisle Became an Oven.",
+      "row": "p-infrastructure-cyberattacks",
+      "line": "The freezers belonged to the supermarkets. The software that cooked the food ran through someone else's network.",
+      "subgenre": null,
+      "confidence": null,
+      "source": "category",
+      "placed_why": "A single vendor's compromised network, Danfoss, let attackers destroy stock across hundreds of French supermarkets, which matches the category of firms running critical systems for many customers.",
+      "needs_review": false,
+      "origin": {
+        "status": "retrieved",
+        "source": "category",
+        "year": 2026,
+        "line": "When Claroty's Team82 published research on the Danfoss AK-SM 800A controller, it reported a hidden login mechanism, remote code execution flaws and thousands of internet-reachable management interfaces.",
+        "title": "Freeze the Controller, Defrost the Food: Uncovering Vulnerabilities in Danfoss Refrigeration Controllers",
+        "url": "https://fr.claroty.com/team82/research/freeze-the-controller-defrost-the-food-uncovering-vulnerabilities-in-danfoss-refrigeration-controllers",
+        "evidence_quote": "Danfoss AK-SM 800A controllers are widely deployed to manage refrigeration infrastructure in supermarkets, cold-storage facilities, warehouses, and other commercial environments.",
+        "beginning_id": "b-2026-08-09-claroty-s-team82-published-research-",
+        "fit": "direct",
+        "verified": false,
+        "why": "The Team82 research on the Danfoss AK-SM 800A controller is the earlier, specific turn that exposed the flaws and internet exposure later exploited, and it is not today's news itself."
+      },
+      "start": "b-2026-08-09-claroty-s-team82-published-research-",
+      "before": [
+        "b-2014-03-26-the-senate-commerce-committee-majori",
+        "b-2017-05-23-attorneys-general-of-47-states-and-t"
+      ],
+      "since": [
+        "b-2026-10-12-france-s-national-computer-emergency"
+      ],
+      "runner_ups": [
+        {
+          "id": "b-2014-03-26-the-senate-commerce-committee-majori",
+          "why_weaker": "It documents the same refrigeration-contractor pattern, but a 2014 retail breach is a distant precedent, not the cause of the Danfoss attack."
+        },
+        {
+          "id": "b-2021-05-12-president-joe-biden-signed-executive",
+          "why_weaker": "It sets federal supply chain expectations, but it targets government networks and has no direct link to the Danfoss controllers."
+        }
+      ],
+      "why": {
+        "b-2014-03-26-the-senate-commerce-committee-majori": "It traced the 2013 Target intrusion to stolen credentials of Fazio Mechanical, a refrigeration contractor, the earlier case of a supermarket exposed through a refrigeration vendor's access.",
+        "b-2017-05-23-attorneys-general-of-47-states-and-t": "It shows the retailer, Target, paying $18.5 million to 47 states and the District of Columbia for a breach that began with a third-party vendor, bearing the loss for a link outside its own stores.",
+        "b-2026-10-12-france-s-national-computer-emergency": "CERT-FR's alert on numerous compromises of Danfoss AK-SM and AK-SC controllers, advising operators to disconnect them or filter access, came the day before today and tied the French attack to these devices."
+      },
+      "judge": {
+        "items": {
+          "b-2026-08-09-claroty-s-team82-published-research-": {
+            "keep": true,
+            "why": "Research on the exact Danfoss controller line, showing hidden login, RCE flaws and thousands of internet-exposed interfaces, is a direct precursor that explains how the attack became possible."
+          },
+          "b-2014-03-26-the-senate-commerce-committee-majori": {
+            "keep": true,
+            "why": "The Target breach via a refrigeration contractor's credentials is an earlier case of the same pattern the story highlights: a shared vendor as the weak point."
+          },
+          "b-2017-05-23-attorneys-general-of-47-states-and-t": {
+            "keep": true,
+            "why": "The settlement shows who ultimately paid and answered for a vendor-origin retail breach, speaking to the story's open question of accountability."
+          },
+          "b-2021-05-12-president-joe-biden-signed-executive": {
+            "keep": false,
+            "why": "A US federal executive order on software supply chains for government networks shares only a broad supply-chain theme and has no link to French supermarket refrigeration controllers."
+          },
+          "b-2026-10-12-france-s-national-computer-emergency": {
+            "keep": true,
+            "why": "CERT-FR's alert on compromised Danfoss AK-SM and AK-SC controllers is the official follow-up on the same attack and fills the gap about how it happened."
+          }
+        },
+        "start_ok": true,
+        "start_note": "The Team82 research on the Danfoss AK-SM 800A controller is the earlier, specific turn that exposed the flaws and internet exposure later exploited, and it is not today's news itself."
+      },
+      "dropped": [
+        "b-2021-05-12-president-joe-biden-signed-executive"
+      ],
+      "by_editor": false,
+      "note": "",
+      "held_back": false,
+      "story_permalink": "https://ntknews.org/digest/2026-10-13/hackers-heated-refrigeration-systems-in-hundreds-of-french-s/"
+    },
+    {
+      "story_id": "d0b8eca4d9acc76d",
+      "headline": "Federal Agents Searched a Sitting Congresswoman's Home. The Justice Department Says It Approved the Warrant.",
+      "row": "power",
+      "line": "A judge-approved warrant reached a sitting member of Congress. The Justice Department decided that, and no voter did.",
+      "subgenre": null,
+      "confidence": null,
+      "source": "category",
+      "placed_why": "A Justice Department-approved search of a sitting congresswoman and leading Trump critic raises the question of how far institutions may act against elected officials, which is the long argument over power and its constraints.",
+      "needs_review": false,
+      "origin": {
+        "status": "retrieved",
+        "source": "category",
+        "year": 2006,
+        "line": "When the Justice Department sought and the FBI executed a search warrant on Rep. William Jefferson's congressional office, the executive branch first searched a sitting member's workspace.",
+        "title": "United States v. Rayburn House Office Building, Room 2113, Washington, D.C. 20515, No. 06-3105",
+        "url": "https://www.justice.gov/criminal/fraud/fcpa/cases/jeffersonw/08-03-07jefferson-opinion.pdf",
+        "evidence_quote": "On May 18, 2006, the Department of Justice filed an application for a search warrant for Room 2113 of the Rayburn House Office Building, the congressional office of Congressman William J. Jefferson.",
+        "beginning_id": "b-2006-05-18-the-justice-department-applied-for-a",
+        "fit": "direct",
+        "verified": false,
+        "why": "The 2006 Jefferson search is the first and most specific precedent of the same kind of event, so it works as 'It starts in 2006,' though it is an earlier analogous event rather than a direct cause of this search."
+      },
+      "start": "b-2006-05-18-the-justice-department-applied-for-a",
+      "before": [
+        "b-1787-09-17-the-constitutional-convention-signed",
+        "b-1972-06-29-the-supreme-court-in-gravel-v-united"
+      ],
+      "since": [
+        "b-2007-08-03-the-d-c-circuit-held-that-the-justic"
+      ],
+      "runner_ups": [
+        {
+          "id": "b-2007-08-03-the-d-c-circuit-held-that-the-justic",
+          "why_weaker": "It limited the 2006 search and set a rule, but the first warrant on a member is the turn that made later searches thinkable."
+        },
+        {
+          "id": "b-2022-08-01-the-justice-department-adopted-justi",
+          "why_weaker": "It is an internal election-timing rule that governs how this search is judged, not the event that made searching a member possible."
+        }
+      ],
+      "why": {
+        "b-1787-09-17-the-constitutional-convention-signed": "Article I, Section 6 is the source of the shield that members of Congress claim against executive questioning and arrest.",
+        "b-1972-06-29-the-supreme-court-in-gravel-v-united": "Gravel drew the line between protected legislative acts and unprotected outside conduct, the line that decides whether a search of Omar's home can stand.",
+        "b-2007-08-03-the-d-c-circuit-held-that-the-justic": "The D.C. Circuit let the Jefferson investigation continue while requiring protection of privileged legislative material, a template for how courts treat searches of lawmakers."
+      },
+      "judge": {
+        "items": {
+          "b-2006-05-18-the-justice-department-applied-for-a": {
+            "keep": true,
+            "why": "The Jefferson office search is the closest precedent for a search of a sitting member's premises and the origin of the separation-of-powers fight that frames this story."
+          },
+          "b-1787-09-17-the-constitutional-convention-signed": {
+            "keep": true,
+            "why": "Article I, Section 6 is the constitutional source of the legislative protections that make searching a member's home contentious."
+          },
+          "b-1972-06-29-the-supreme-court-in-gravel-v-united": {
+            "keep": true,
+            "why": "Gravel defines the scope and limits of Speech or Debate protection, explaining why a warrant for a member's property can proceed or be challenged."
+          },
+          "b-2007-08-03-the-d-c-circuit-held-that-the-justic": {
+            "keep": true,
+            "why": "The Jefferson ruling set the rule that searches must not expose privileged legislative material to executive agents, which bears directly on how this search will be judged."
+          },
+          "b-2022-08-01-the-justice-department-adopted-justi": {
+            "keep": false,
+            "why": "The election-timing policy matters only if the story raises election timing or political motive, and the story's 'why now' question is a loose fit; it risks distracting from the core warrant issue."
+          }
+        },
+        "start_ok": true,
+        "start_note": "The 2006 Jefferson search is the first and most specific precedent of the same kind of event, so it works as 'It starts in 2006,' though it is an earlier analogous event rather than a direct cause of this search."
+      },
+      "dropped": [
+        "b-2022-08-01-the-justice-department-adopted-justi"
+      ],
+      "by_editor": false,
+      "note": "",
+      "held_back": false,
+      "story_permalink": "https://ntknews.org/digest/2026-10-13/federal-agents-searched-a-sitting-congresswomans-home-the-ju/"
+    },
+    {
+      "story_id": "2743ea2faa76edb1",
+      "headline": "A Routine Checkup Found a Lump on the Pope's Lung. The Vatican Says the Surgery Worked.",
+      "row": "p-papal-health-and-succession",
+      "line": "The Vatican reported the nodule after the surgery, not before. That is the timing a church sets for itself.",
+      "subgenre": null,
+      "confidence": null,
+      "source": "category",
+      "placed_why": "The pope's lung nodule surgery and the Vatican's controlled disclosure of the medical details fit this category directly.",
+      "needs_review": false,
+      "origin": {
+        "status": "retrieved",
+        "source": "category",
+        "year": 2021,
+        "line": "When Press Office director Matteo Bruni announced Pope Francis's colon surgery at Gemelli and reported only that he had reacted well, he set the Vatican's template for papal surgery disclosure.",
+        "title": "Pope undergoes scheduled colon surgery",
+        "url": "https://www.vaticannews.va/en/pope/news/2021-07/pope-surgery-colon-gemelli-policlinic-sergio-alfieri.html",
+        "evidence_quote": "This afternoon, His Holiness Pope Francis was taken to A. Gemelli Policlinic in Rome where he will undergo a scheduled surgery for a symptomatic diverticular stenosis of the colon.",
+        "beginning_id": "b-2021-07-04-holy-see-press-office-director-matte",
+        "fit": "direct",
+        "verified": false,
+        "why": "The 2021 Francis surgery announcement is a specific earlier case of the same kind of event (scheduled papal surgery, spare Vatican statement), and it is not today's news, so it works as the 'It starts in' anchor."
+      },
+      "start": "b-2021-07-04-holy-see-press-office-director-matte",
+      "before": [],
+      "since": [
+        "b-2025-02-14-the-holy-see-press-office-announced-",
+        "b-2025-04-21-the-holy-see-press-office-through-di"
+      ],
+      "runner_ups": [
+        {
+          "id": "b-2025-02-14-the-holy-see-press-office-announced-",
+          "why_weaker": "It concerns a hospitalization for bronchitis and tests, not a scheduled surgery, and it is a different pope's illness."
+        },
+        {
+          "id": "b-2013-02-11-benedict-xvi-told-the-assembled-card",
+          "why_weaker": "It concerns resignation over declining health, a distant root that does not explain how a surgery is announced."
+        }
+      ],
+      "why": {
+        "b-2025-02-14-the-holy-see-press-office-announced-": "It shows the Press Office again announcing a papal hospital stay in limited terms, opening a 38-day hospitalization.",
+        "b-2025-04-21-the-holy-see-press-office-through-di": "It records the death of Pope Francis after a hospitalization the Vatican had reported only through bulletins, the outcome that sharpens attention to papal health disclosure."
+      },
+      "judge": {
+        "items": {
+          "b-2021-07-04-holy-see-press-office-director-matte": {
+            "keep": true,
+            "why": "An earlier papal scheduled surgery announced tersely with only 'reacted well' is a direct precedent for the Vatican's minimal-disclosure pattern this story describes."
+          },
+          "b-1996-02-22-pope-john-paul-ii-issued-the-apostol": {
+            "keep": false,
+            "why": "Rules for papal vacancy and conclave election concern succession, not the disclosure of a pope's medical procedures, so it shares only a broad papal theme and would distract."
+          },
+          "b-2013-02-11-benedict-xvi-told-the-assembled-card": {
+            "keep": false,
+            "why": "A resignation citing declining health is a different kind of event from a routine-found nodule and successful surgery, and the story never raises resignation or succession."
+          },
+          "b-2025-02-14-the-holy-see-press-office-announced-": {
+            "keep": true,
+            "why": "A recent Holy See announcement of a papal hospitalization shows how the Vatican issues medical facts in small pieces, supporting the story's central point about who controls the timeline."
+          },
+          "b-2025-04-21-the-holy-see-press-office-through-di": {
+            "keep": true,
+            "why": "The Vatican's bulletin-by-bulletin reporting of Francis's final illness is a direct example of the controlled, piecemeal disclosure habit the story invokes, and it is recent context for the current papacy."
+          }
+        },
+        "start_ok": true,
+        "start_note": "The 2021 Francis surgery announcement is a specific earlier case of the same kind of event (scheduled papal surgery, spare Vatican statement), and it is not today's news, so it works as the 'It starts in' anchor."
       },
       "dropped": [
         "b-1996-02-22-pope-john-paul-ii-issued-the-apostol",
@@ -2532,5 +3025,5 @@
       "story_permalink": "https://ntknews.org/digest/2026-10-13/a-routine-checkup-found-a-lump-on-the-popes-lung-the-vatican/"
     }
   ],
-  "pairings_generated": "2026-10-13T21:11:47+00:00"
+  "pairings_generated": "2026-10-13T21:15:46+00:00"
 }
