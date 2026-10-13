@@ -36,6 +36,16 @@ category's lenses (unless the editor put it there) and be dated before the origi
 import re
 
 DENY_HOSTS = ("wikipedia.org", "amazon.", "abebooks.", "ebay.", "goodreads.", "scribd.", "studocu.", "coursehero.", "quizlet.", "unz.com")
+NEWS_HOSTS = ("nytimes.com","washingtonpost.com","wsj.com","apnews.com","reuters.com","bloomberg.com","politico.com","cnn.com","nbcnews.com","abcnews.","cbsnews.com","foxnews.com","theguardian.com","bbc.co","bbc.com","npr.org","latimes.com","usatoday.com","theatlantic.com","newyorker.com","time.com","newsweek.com","axios.com","vox.com","businessinsider.com","forbes.com","huffpost.com","thedailybeast.com","nypost.com","nydailynews.com","chicagotribune.com","bostonglobe.com","propublica.org","motherjones.com","slate.com","salon.com","vanityfair.com","rollingstone.com","villagevoice.com","newsday.com","inquirer.com","seattletimes.com","sfchronicle.com","miamiherald.com","pressofatlanticcity.com","nj.com","thehill.com","cnbc.com","msnbc.com","ft.com","economist.com","theintercept.com","buzzfeednews.com","yahoo.com")        # mirrors CAT_NEWS in pulse.html (T-0085)
+
+
+def source_kind(url):
+    """"news" for a news outlet's page, else "document". News is allowed as an object's source only when no
+    adequate primary source was found, and it is always labelled (docs/decisions.md, T-0085)."""
+    host = re.sub(r"^https?://([^/]+).*$", r"\1", url or "").lower()
+    return "news" if any((d in host) if d.endswith(".") else (host == d or host.endswith("." + d)) for d in NEWS_HOSTS) else "document"
+
+
 BANNED = ["this document", "this reflects", "underscores", "highlights", "serves as",
           "a reminder that", "pivotal", "landmark", "groundbreaking", "seminal"]
 SENT = re.compile(r"[.!?](?:[\"')\]]*)(?:\s|$)")
@@ -174,7 +184,8 @@ def validate(cat, pool, spec, story_texts, origin_year=None, vocab=None):
                      "source": cu.get("source") or host, "url": url, "lenses": [], "subgenre": "",
                      "link_status": "unchecked", "about": "", "line": "",
                      "found_by": cu.get("found_by"), "evidence": (cu.get("evidence_quote") or "").strip(),
-                     "date": cu.get("date") or ""}
+                     "date": cu.get("date") or "",
+                     "source_kind": "news" if cu.get("source_kind") == "news" or source_kind(url) == "news" else ""}
         if cu.get("found_by") == "search" and not pool[cid]["evidence"]:
             problems.append(f"found object {cu['title']!r}: no evidence quote from the page")
             del pool[cid]
@@ -204,7 +215,8 @@ def validate(cat, pool, spec, story_texts, origin_year=None, vocab=None):
         objs.append({"object_id": e["id"], "title": e["title"], "author": e["author"], "year": e["year"],
                      "source": e["source"], "source_url": e["url"], "about": about,
                      "pool": e["pool"], "lenses": e["lenses"], "by": o.get("by", "model"),
-                     "sort": e.get("sort") or f"{e['year']}-01-01"})
+                     "sort": e.get("sort") or f"{e['year']}-01-01",
+                     **({"source_kind": "news"} if e.get("source_kind") == "news" else {})})
     if not objs:
         return None, problems + ["no objects: a category needs at least one primary source, so it is not published"]
     ids = {o["object_id"] for o in objs}
@@ -255,6 +267,7 @@ def validate(cat, pool, spec, story_texts, origin_year=None, vocab=None):
             nums = [re.sub(r"[^0-9.]", "", str(ind[k])) for k in ("then_value", "now_value")]
             if not ev or any(n and n not in ev for n in nums):
                 problems.append("indicator: the system's evidence does not contain both figures"); c["indicator"] = None
+    c.pop("tray", None)                     # search candidates are Pulse working state too (T-0085)
     c.pop("indicator_proposal", None)       # a proposal is Pulse working state, never published
     c["by"] = by
     return c, problems
