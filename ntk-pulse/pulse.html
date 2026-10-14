@@ -1349,7 +1349,7 @@ function validateCat(cat, poolBy0, spec, storyTexts, originYear, vocab){
     if (why){ problems.push('added object '+cu.title+': '+why); return; }
     const cid=cu.id||('custom-'+cu.title.toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,60));
     poolBy[cid]={id:cid,pool:'custom',approved:true,title:cu.title.trim(),author:cu.author||'',year:String(cu.year),sort:/^\d{4}-\d\d-\d\d$/.test(cu.date||'')?cu.date:String(cu.year)+'-01-01',source:cu.source||host,url:url,lenses:[],subgenre:'',link_status:'unchecked',about:'',line:'',
-      found_by:cu.found_by||null,evidence:String(cu.evidence_quote||'').trim(),date:cu.date||''};
+      found_by:cu.found_by||null,evidence:String(cu.evidence_quote||'').trim(),date:cu.date||'',source_kind:cu.source_kind==='news'||catSourceKind(url)==='news'?'news':''};
     if (cu.found_by==='search' && !poolBy[cid].evidence){ problems.push('found object '+cu.title+': no evidence quote from the page'); delete poolBy[cid]; }
   });
   const approved=new Set(c.approved_objects||[]); const objs=[]; const abouts=new Set(), linesSeen=new Set();
@@ -1361,7 +1361,7 @@ function validateCat(cat, poolBy0, spec, storyTexts, originYear, vocab){
     let about=(o.about||e.about||'').trim();
     if (about && o.by!=='editor'){ const ap=catTextProblems('about',about,1,70); if (abouts.has(about.toLowerCase())) ap.push('about is the same text as another object\u2019s'); if (e.found_by==='search' && !catNumbersOk(about,e.title,e.year,e.date,e.evidence)) ap.push('about states a number that the page quote does not'); if (ap.length){ ap.forEach(x=>problems.push(e.title+': '+x)); about=''; } }
     if (about) abouts.add(about.toLowerCase());
-    objs.push({object_id:e.id,title:e.title,author:e.author,year:e.year,source:e.source,source_url:e.url,about:about,pool:e.pool,lenses:e.lenses,by:o.by||'model',sort:e.sort||(e.year+'-01-01')});
+    objs.push({object_id:e.id,title:e.title,author:e.author,year:e.year,source:e.source,source_url:e.url,about:about,pool:e.pool,lenses:e.lenses,by:o.by||'model',sort:e.sort||(e.year+'-01-01'),...(e.source_kind==='news'?{source_kind:'news'}:{})});
   });
   objs.sort((a,b)=> a.sort<b.sort?-1:a.sort>b.sort?1:(a.title<b.title?-1:1));     // oldest to newest, always
   if (!objs.length) return {clean:null, problems:problems.concat(['no objects: a category needs at least one primary source, so it is not published'])};
@@ -1483,6 +1483,39 @@ function verifyMilestone(m, urls, storyText){
   if (!catNumbersOk(m.line+' '+m.about,t,m.year,m.date,m.evidence_quote)) return {ok:false, reason:'a number is not in the quote'};
   return {ok:true};
 }
+// News is accepted as an object's source only when no adequate primary source turned up, and it is always
+// labelled (T-0085). The model's own label is not trusted: a news host is news whatever the model called it.
+const CAT_NEWS=['nytimes.com','washingtonpost.com','wsj.com','apnews.com','reuters.com','bloomberg.com','politico.com','cnn.com','nbcnews.com','abcnews.','cbsnews.com','foxnews.com','theguardian.com','bbc.co','bbc.com','npr.org','latimes.com','usatoday.com','theatlantic.com','newyorker.com','time.com','newsweek.com','axios.com','vox.com','businessinsider.com','forbes.com','huffpost.com','thedailybeast.com','nypost.com','nydailynews.com','chicagotribune.com','bostonglobe.com','propublica.org','motherjones.com','slate.com','salon.com','vanityfair.com','rollingstone.com','villagevoice.com','newsday.com','inquirer.com','seattletimes.com','sfchronicle.com','miamiherald.com','pressofatlanticcity.com','nj.com','thehill.com','cnbc.com','msnbc.com','ft.com','economist.com','theintercept.com','buzzfeednews.com','yahoo.com'];
+function catSourceKind(url){
+  const host=String(url||'').replace(/^https?:\/\/([^\/]+).*$/,'$1').toLowerCase();
+  if (CAT_DENY.some(d=>host.includes(d))) return 'deny';
+  return CAT_NEWS.some(d=>d.endsWith('.') ? host.includes(d) : (host===d||host.endsWith('.'+d))) ? 'news' : 'document';
+}
+// One candidate from a per-topic search. kind: "located" (the document, readable at the link), "news" (a news
+// report carrying the facts, only when no primary copy was found) or "lead" (a document a page names, with no
+// readable copy found: kept so the editor can see it and look for it). Returns the cleaned candidate or a reason.
+function verifyCandidate(m, urls){
+  const kind=String(m.kind||'').trim(), t=String(m.title||'').trim();
+  if (!t) return {ok:false, reason:'no title'};
+  if (kind==='lead'){
+    const cb=String(m.cited_by_url||'').trim();
+    if (!cb.startsWith('https://') || !(urls||[]).includes(cb)) return {ok:false, reason:'a lead needs the link of the page that names it, from the search'};
+    return {ok:true, cand:{kind:'lead', title:t, year:/^\d{3,4}$/.test(String(m.year||''))?String(m.year):'', author:String(m.author||'').trim(), source:String(m.source||'').trim(),
+      cited_by_url:cb, cited_by:String(m.cited_by||'').trim(), note:String(m.note||'').trim()}};
+  }
+  if (kind!=='located' && kind!=='news') return {ok:false, reason:'kind must be located, news or lead'};
+  const url=String(m.source_url||'').trim(), sk=catSourceKind(url);
+  if (!url.startsWith('https://')) return {ok:false, reason:'link is not https'};
+  if (!(urls||[]).includes(url)) return {ok:false, reason:'the link is not one the search returned'};
+  if (sk==='deny') return {ok:false, reason:url.replace(/^https?:\/\/([^\/]+).*$/,'$1')+' is not accepted as a source'};
+  if (!/^\d{3,4}$/.test(String(m.year||''))) return {ok:false, reason:'no year'};
+  if (!String(m.evidence_quote||'').trim()) return {ok:false, reason:'no quote from the page'};
+  const isNews = kind==='news' || sk==='news';
+  const why=String(m.why_no_primary||'').trim();
+  if (isNews && !why) return {ok:false, reason:'a news source needs a reason no primary source would do'};
+  return {ok:true, cand:{kind:isNews?'news':'located', title:t, year:String(m.year), date:/^\d{4}-\d\d-\d\d$/.test(m.date||'')?m.date:'', author:String(m.author||'').trim(),
+    source:String(m.source||'').trim(), url:url, evidence_quote:String(m.evidence_quote).trim(), why_no_primary:isNews?why:'', note:String(m.note||'').trim()}};
+}
 /* CATS:END */
 
 const CAT_MAXTOK = 2400;
@@ -1500,7 +1533,7 @@ function catRecord(id){ return CATS[id] || PUBCATS.find(r=>r.id===id) || null; }
 function catEntry(c, oid){
   if (POOL_BY[oid]) return POOL_BY[oid];
   const cu=(c.custom_objects||[]).find(x=>(x.id||'')===oid);
-  return cu ? {id:oid,pool:'custom',approved:true,title:cu.title,author:cu.author||'',year:String(cu.year),sort:/^\d{4}-\d\d-\d\d$/.test(cu.date||'')?cu.date:String(cu.year)+'-01-01',source:cu.source||'',url:cu.url,lenses:[],subgenre:'',link_status:'unchecked',about:'',line:''} : null;
+  return cu ? {id:oid,pool:'custom',approved:true,title:cu.title,author:cu.author||'',year:String(cu.year),sort:/^\d{4}-\d\d-\d\d$/.test(cu.date||'')?cu.date:String(cu.year)+'-01-01',source:cu.source||'',url:cu.url,lenses:[],subgenre:'',link_status:'unchecked',about:'',line:'',source_kind:cu.source_kind||'',why_no_primary:cu.why_no_primary||''} : null;
 }
 function catListAll(){
   const out=Object.values(CATS).map(r=>({rec:r, where:'local'}));
@@ -1787,7 +1820,7 @@ ${CAT_STYLE_RULES}`;
     if (r1.note) msgs.push(r1.note);
     if (c.by.indicator!=='editor'){
       CAT_BUSY[id]='Finding a trend line…'; render();
-      try { msgs.push(await proposeIndicator(c,'')); } catch(e){ msgs.push('Trend line: '+e.message+' (web search may not be enabled for this key). Tell me what to track in the revision box.'); }
+      try { msgs.push(await proposeIndicator(c,'')); } catch(e){ msgs.push('Trend line: '+e.message+' (web search may not be enabled for this key). Say what to track in the trend line box.'); }
     }
   } catch(e){ msgs.push('Compose failed: '+e.message); }
   CAT_MSG[id]=msgs.join(' ');
@@ -1816,37 +1849,85 @@ JSON only: {"<id>":{"line":"...","about":"..."}, ...}`;
     if (bg && !bg.line && t.line) bg.line=String(t.line).trim();
   });
 }
-async function proposeObject(c, desc){
-  const p=`You find ONE primary-source document for a Backstory category page at NTK.
+// One search per topic the editor names (T-0085). It returns up to four candidates to a tray; nothing is added
+// to the page until the editor ticks it. A document named by a secondary page but not found readable comes back
+// as a lead rather than being thrown away, because a lead is often exactly what the editor wanted.
+async function findCandidates(c, topic){
+  const p=`You are the researcher for a Backstory category page at NTK, written for college-educated adults at the standard of an Advanced Placement history reader. The page is a dated chronology; each milestone is carried by a source the reader can open.
 
 CATEGORY: ${c.title}
-THE EDITOR WANTS: ${desc}
+THE EDITOR WANTS SOURCES FOR THIS MILESTONE: ${topic}
 
-Use web search to find the document itself, or the copy held by an archive, court, legislature, government agency or the original publisher. Not Wikipedia, not a news article or summary about it, not a retail or study-guide page. Then answer with JSON only:
-{"title":"the document's exact title","author":"who issued or wrote it","year":"YYYY","date":"YYYY-MM-DD if you know the exact date, else null","source":"the publishing body or archive","source_url":"the exact page or PDF where the document can be read","note":"one sentence"}
-If you cannot find one, answer {"none":"why"}.`;
-  const r=await aiSearch(p,1500), j=catJson(r.text);
-  if (j.none) return 'Could not find "'+desc+'": '+j.none+'.';
-  const v=verifyFoundObject(j,{urls:r.urls});
-  if (!v.ok) return 'Found "'+(j.title||desc)+'" but could not use it: '+v.reason+'.';
-  const cid='custom-'+String(j.title).toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,60);
-  if ((c.objects||[]).some(o=>o.object_id===cid)) return '"'+j.title+'" is already here.';
-  const cu={id:cid,title:String(j.title).trim(),author:j.author||'',year:String(j.year),date:/^\d{4}-\d\d-\d\d$/.test(j.date||'')?j.date:'',source:j.source||'',url:j.source_url,found_by:'search'};
+Use web search. Return up to FOUR candidates, best first, each one of three kinds:
+- "located": the document itself, or the copy held by an archive, library, court, legislature, government agency or the original publisher, readable at the link. A period newspaper page scanned in an archive counts.
+- "lead": a specific primary document that a page you read NAMES (an ad, a letter, a filing, a directory entry, a report), where you did not find a readable copy. Give the page that names it.
+- "news": a news report that carries the facts of this milestone. Only when you found no adequate primary source for it, and say why in why_no_primary.
+Never Wikipedia, retail, homework or study-guide pages as a source (a Wikipedia page may be the cited_by page of a lead).
+
+JSON only: {"candidates":[{"kind":"located|lead|news","title":"exact title of the document or article","author":"who issued or wrote it","year":"YYYY","date":"YYYY-MM-DD or null","source":"archive, publisher or outlet","source_url":"the exact page (located, news)","evidence_quote":"one sentence copied word for word from that page (located, news)","why_no_primary":"news only: why no primary source would do","cited_by_url":"lead only: the page that names it","cited_by":"lead only: who that page is","note":"one sentence for the editor"}]}
+If you find nothing at all, answer {"candidates":[]}.`;
+  const r=await aiSearch(p,3000), j=catJson(r.text), out=[], refused=[];
+  (j.candidates||[]).slice(0,4).forEach(m=>{ const v=verifyCandidate(m, r.urls); if (v.ok) out.push(v.cand); else refused.push(String(m.title||'?').slice(0,50)+': '+v.reason); });
+  return {cands:out, refused:refused};
+}
+// A ticked candidate becomes an object of the category's own. A located or news one carries its quote (CI
+// drops a found object without one); a lead with a link the editor supplied is the editor's own source.
+function addCandidate(c, t, url){
+  const lead=t.kind==='lead', link=lead?String(url||'').trim():t.url;
+  if (!link) return 'no link';
+  const cid='custom-'+String(t.title).toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,60);
+  if ((c.objects||[]).some(o=>o.object_id===cid)) return 'already on the page';
+  const cu={id:cid,title:t.title,author:t.author||'',year:t.year,date:t.date||'',source:t.source||link.replace(/^https?:\/\/([^\/]+).*$/,'$1'),url:link};
+  if (lead) cu.edited_by='editor';
+  else { cu.found_by='search'; cu.evidence_quote=t.evidence_quote; if (t.kind==='news'){ cu.source_kind='news'; cu.why_no_primary=t.why_no_primary; } }
   c.custom_objects=(c.custom_objects||[]).filter(x=>x.id!==cid).concat([cu]);
-  c.objects.push({object_id:cid,about:'',by:'model'}); c.beginnings.push({object_id:cid,line:'',by:'model'});
-  return 'Added '+cu.title+' ('+cu.year+') from '+String(cu.url).replace(/^https?:\/\/([^\/]+).*$/,'$1')+'.';
+  c.objects.push({object_id:cid,about:'',by:'editor'}); c.beginnings.push({object_id:cid,line:'',by:'editor'});
+  return '';
+}
+async function searchTopics(c, topics){
+  const tray=c.tray=(c.tray||[]), out=[];
+  for (let i=0;i<topics.length;i+=3){                 // three searches at a time
+    CAT_BUSY[c.id]='Searching '+Math.min(i+3,topics.length)+' of '+topics.length+'…'; render();
+    const batch=topics.slice(i,i+3);
+    const res=await Promise.all(batch.map(t=>findCandidates(c,t).catch(e=>({cands:[],refused:[],err:e.message}))));
+    res.forEach((r,k)=>{
+      const topic=batch[k];
+      const kept=r.cands.filter(x=>!tray.some(y=>y.title===x.title&&y.topic===topic));
+      kept.forEach(x=>tray.push(Object.assign({tid:'t'+Date.now().toString(36)+Math.random().toString(36).slice(2,6), topic:topic}, x)));
+      if (!r.cands.length) tray.push({tid:'t'+Date.now().toString(36)+Math.random().toString(36).slice(2,6), topic:topic, kind:'empty', title:'', note:r.err?'search failed: '+r.err:(r.refused.length?'nothing usable: '+r.refused.join('; '):'nothing found')});
+      out.push(topic.slice(0,40)+': '+(r.err?'search failed':r.cands.length+' found'));
+    });
+    saveCats();
+  }
+  return out;
+}
+// Zone boxes (T-0085): each goes straight to its job, with no model deciding what the editor meant.
+async function reviseIndicator(id, request){
+  const c=catEnsureLocal(id); if (!c || !request.trim()) return;
+  if (c.status==='approved') c.status='draft';
+  CAT_BUSY[id]='Finding a trend line…'; CAT_MSG[id]=''; render();
+  try {
+    CAT_MSG[id]=await proposeIndicator(c, request);
+    c.revisions=(c.revisions||[]).concat([{at:new Date().toISOString(),request:'(trend line) '+request,summary:CAT_MSG[id]}]);
+  } catch(e){ CAT_MSG[id]='Trend line search failed: '+e.message; }
+  delete CAT_BUSY[id]; saveCats(); render();
+}
+async function findSources(id, text){
+  const c=catEnsureLocal(id); if (!c) return;
+  const topics=String(text||'').split(/\n+/).map(x=>x.replace(/^\s*(?:[-*\u2022]|\d+[.)])\s*/,'').trim()).filter(Boolean).slice(0,12);
+  if (!topics.length) return;
+  CAT_MSG[id]='';
+  try {
+    const res=await searchTopics(c, topics);
+    CAT_MSG[id]='Searched '+topics.length+' topic'+(topics.length===1?'':'s')+' ('+res.join('; ')+'). Choose from the candidates under FOUND BY SEARCH.';
+    c.revisions=(c.revisions||[]).concat([{at:new Date().toISOString(),request:'(find sources) '+topics.join(' | '),summary:CAT_MSG[id]}]);
+  } catch(e){ CAT_MSG[id]='Search failed: '+e.message; }
+  delete CAT_BUSY[id]; saveCats(); render();
 }
 async function reviseCat(id, request){
   const c=catEnsureLocal(id); if (!c || !request.trim()) return;
   if (c.status==='approved') c.status='draft';
   CAT_BUSY[id]='Revising…'; CAT_MSG[id]=''; render();
-  if (/trend\s*-?\s*line|trendline|\btrend\b|\bchart|\bgraph|indicator|\bpoll|survey|statistic|measure|\bfigure|data point|think tank/i.test(request)){
-    try {
-      CAT_MSG[id]=await proposeIndicator(c, request);
-      c.revisions=(c.revisions||[]).concat([{at:new Date().toISOString(),request:request,summary:CAT_MSG[id]}]);
-    } catch(e){ CAT_MSG[id]='Trend line search failed: '+e.message; }
-    delete CAT_BUSY[id]; saveCats(); render(); return;
-  }
   try {
     const avail=catPoolFor(c.lenses,c.subgenres).filter(o=>!c.objects.some(x=>x.object_id===o.id));
     const cur=c.beginnings.map(b=>{ const o=catEntry(c,b.object_id)||{}; return '- '+b.object_id+' | '+o.year+' | '+o.title+' | line: '+b.line; }).join('\n');
@@ -1867,7 +1948,7 @@ THE EDITOR'S REQUEST: ${request}
 Change only what the request asks for. Return JSON with only the keys that change:
 {"contest":"...","stakes":"...","lines":{"<id>":"..."},"abouts":{"<id>":"..."},"add":["<id from the available list>"],"drop":["<id>"],"find":["a short description of a document to look up"],"note":"one sentence saying what you changed"}
 contest: "Whether X, or Y", 12 to 30 words. stakes: two short sentences, 25 to 55 words. A line is one sentence of 12 to 25 words. An about is two to four sentences, at most 70 words.
-If the editor asks for a document that is not in the available list, NEVER refuse and never say it does not exist: put a short description of it in "find" (for example "the Mueller report on Russian interference in the 2016 election") and a web search will look for the original. Up to three.
+If the editor asks for documents or milestones that are not in the available list, NEVER refuse and never say they do not exist: put one entry in "find" for EACH topic the editor names, in the editor's order, keeping every specific they gave (names, places, years). For example "Friedrich Trump's restaurants and hotels in the Klondike and Seattle, 1890s". A web search runs for each one and its results go to the editor to choose from. Up to twelve.
 ${CAT_STYLE_RULES}`;
     const r=catJson(await ai(p,CAT_MAXTOK));
     if (r.contest){ c.contest=String(r.contest).trim(); c.by.contest='model'; }
@@ -1879,9 +1960,10 @@ ${CAT_STYLE_RULES}`;
     });
     Object.entries(r.lines||{}).forEach(([oid,t])=>{ const b=c.beginnings.find(x=>x.object_id===oid); if (b){ b.line=String(t).trim(); b.by='model'; } });
     Object.entries(r.abouts||{}).forEach(([oid,t])=>{ const o=c.objects.find(x=>x.object_id===oid); if (o){ o.about=String(t).trim(); o.by='model'; } });
-    const found=[];
-    for (const d of (r.find||[]).slice(0,3)){
-      try { found.push(await proposeObject(c, d)); } catch(e){ found.push('Could not search for "'+d+'": '+e.message+' (web search may not be enabled for this key).'); }
+    const found=[], topics=(r.find||[]).map(x=>String(x).trim()).filter(Boolean).slice(0,12);
+    if (topics.length){
+      const res=await searchTopics(c, topics);
+      found.push('Searched '+topics.length+' topic'+(topics.length===1?'':'s')+' ('+res.join('; ')+'). Choose from the candidates under FOUND BY SEARCH.');
     }
     const need=c.beginnings.filter(b=>!b.line).map(b=>catEntry(c,b.object_id)).filter(Boolean);
     if (need.length) await writeObjectText(c, need);
@@ -1898,7 +1980,7 @@ function catCheck(c){
 }
 // what the Lineup publish carries: every approved category, as the editor left it
 function catsForPublish(){
-  return Object.values(CATS).filter(c=>c.status==='approved').map(c=>JSON.parse(JSON.stringify(c)));
+  return Object.values(CATS).filter(c=>c.status==='approved').map(c=>{ const x=JSON.parse(JSON.stringify(c)); delete x.tray; return x; });
 }
 function catIndicatorSvg(i){
   const num=v=>parseFloat(String(v).replace(/[^0-9.\-]/g,'')), a=num(i.then_value), b=num(i.now_value);
@@ -1924,6 +2006,61 @@ function catPreviewHtml(c){
     <div style="display:flex;gap:10px;margin:6px 0;color:var(--stale)"><b style="min-width:42px">…</b><span style="font:700 10px sans-serif;letter-spacing:.1em">WE ARE HERE</span> <span style="font-size:12px">(the year and line are set when the digest publishes)</span></div>
   </div>`;
 }
+function catTrayHtml(c, busy){
+  const tray=c.tray||[]; if (!tray.length) return '';
+  const topics=[]; tray.forEach(t=>{ if (!topics.includes(t.topic)) topics.push(t.topic); });
+  const KIND={located:['found','background:#dcefe2;color:#2f7d4f'],news:['news report','background:#f6e7c8;color:#8a5a12'],lead:['named, not found','background:#e6e1f2;color:#4b3c80']};
+  const row=t=>{
+    if (t.kind==='empty') return `<div style="font-size:11px;color:var(--dim);margin:2px 0 2px 4px">${esc(t.note||'nothing found')}</div>`;
+    const k=KIND[t.kind]||['',''], host=String(t.url||t.cited_by_url||'').replace(/^https?:\/\/([^\/]+).*$/,'$1');
+    return `<div class="story" style="padding:6px 9px;margin:4px 0" data-tid="${esc(t.tid)}">
+      <div style="display:flex;gap:8px;align-items:baseline;flex-wrap:wrap">
+        <span class="chip" style="${k[1]}">${esc(k[0])}</span><b>${esc(t.year||'')}</b> <span style="flex:1;min-width:220px">${esc(t.title)}</span>
+        <a href="${esc(t.url||t.cited_by_url||'#')}" target="_blank" rel="noopener" style="font-size:11px">${t.kind==='lead'?'page that names it':'open'} ↗ ${esc(host)}</a>
+        ${t.kind==='lead'?'':'<button class="mini go tray-add" '+(busy?'disabled':'')+'>Add to page</button>'}
+        <button class="mini tray-x">dismiss</button>
+      </div>
+      ${t.evidence_quote?`<div style="font-size:11px;color:var(--dim);margin-top:2px">\u201c${esc(t.evidence_quote.slice(0,240))}\u201d</div>`:''}
+      ${t.kind==='news'?`<div style="font-size:11px;color:#8a5a12;margin-top:2px">No primary source used because: ${esc(t.why_no_primary)}</div>`:''}
+      ${t.kind==='lead'?`<div style="font-size:11px;margin-top:3px;display:flex;gap:6px;flex-wrap:wrap;align-items:center"><span style="color:var(--dim)">${esc(t.cited_by||'')}${t.note?' \u00b7 '+esc(t.note):''}</span>
+        <button class="mini tray-hunt" ${busy?'disabled':''}>search for a copy</button>
+        <input class="tray-url" placeholder="or paste a link to it: https://" style="width:240px"><input class="tray-year" placeholder="year" value="${esc(t.year||'')}" style="width:52px"><button class="mini tray-uselink">Add with this link</button></div>`:(t.note?`<div style="font-size:11px;color:var(--dim);margin-top:2px">${esc(t.note)}</div>`:'')}
+    </div>`;
+  };
+  return `<div style="margin:10px 0;padding:8px 10px;border:1px solid var(--rule);background:#faf8f3">
+    <div style="display:flex;gap:8px;align-items:baseline"><b style="font-size:11px">FOUND BY SEARCH</b><span style="font-size:11px;color:var(--dim);flex:1">Nothing here is on the page until you add it. Open each link first. A news report publishes labelled as news.</span><button class="mini" id="tray-clear">clear all</button></div>
+    ${topics.map((tp,i)=>`<div style="margin-top:8px"><div style="font-size:12px;display:flex;gap:6px;align-items:baseline"><b>${i+1}.</b><span style="flex:1">${esc(tp)}</span><button class="mini tray-again" data-topic="${esc(tp)}" ${busy?'disabled':''}>search again</button></div>${tray.filter(t=>t.topic===tp).map(row).join('')}</div>`).join('')}
+  </div>`;
+}
+function catTrayWire(c, ed, touch){
+  const find=tid=>(c.tray||[]).find(t=>t.tid===tid);
+  const drop=tid=>{ c.tray=(c.tray||[]).filter(t=>t.tid!==tid); };
+  const textFor=oid=>{ const o=catEntry(c,oid); if (o) writeObjectText(c,[o]).then(()=>{ saveCats(); render(); }).catch(err=>{ CAT_MSG[c.id]='Could not write its text: '+err.message; render(); }); };
+  ed.querySelectorAll('[data-tid]').forEach(el=>{
+    const t=find(el.dataset.tid); if (!t) return;
+    const q=s=>el.querySelector(s);
+    if (q('.tray-x')) q('.tray-x').addEventListener('click',()=>{ drop(t.tid); saveCats(); render(); });
+    if (q('.tray-add')) q('.tray-add').addEventListener('click',()=>{
+      const why=addCandidate(c,t); if (why){ CAT_MSG[c.id]='Not added: '+why+'.'; render(); return; }
+      drop(t.tid); touch(); render(); textFor(c.objects[c.objects.length-1].object_id); });
+    if (q('.tray-uselink')) q('.tray-uselink').addEventListener('click',()=>{
+      const url=q('.tray-url').value.trim(), yr=q('.tray-year').value.trim();
+      if (!url.startsWith('https://')){ CAT_MSG[c.id]='The link must start with https://'; render(); return; }
+      if (catSourceKind(url)==='deny'){ CAT_MSG[c.id]='That host is not accepted as a source.'; render(); return; }
+      if (!/^\d{3,4}$/.test(yr)){ CAT_MSG[c.id]='Give the year of the document.'; render(); return; }
+      const why=addCandidate(c,Object.assign({},t,{year:yr}),url); if (why){ CAT_MSG[c.id]='Not added: '+why+'.'; render(); return; }
+      drop(t.tid); touch(); render(); textFor(c.objects[c.objects.length-1].object_id); });
+    if (q('.tray-hunt')) q('.tray-hunt').addEventListener('click',async()=>{
+      const topic=t.title+(t.year?' ('+t.year+')':'')+(t.source?', '+t.source:'')+': find a readable copy in an archive, library or newspaper archive';
+      try { await searchTopics(c,[topic]); CAT_MSG[c.id]='Searched for a copy of '+t.title+'.'; } catch(e){ CAT_MSG[c.id]='Search failed: '+e.message; }
+      delete CAT_BUSY[c.id]; saveCats(); render(); });
+  });
+  ed.querySelectorAll('.tray-again').forEach(b=>b.addEventListener('click',async()=>{
+    const tp=b.dataset.topic; c.tray=(c.tray||[]).filter(t=>!(t.topic===tp&&t.kind==='empty'));
+    try { await searchTopics(c,[tp]); } catch(e){ CAT_MSG[c.id]='Search failed: '+e.message; }
+    delete CAT_BUSY[c.id]; saveCats(); render(); }));
+  const cl=document.getElementById('tray-clear'); if (cl) cl.addEventListener('click',()=>{ if (confirm('Clear every candidate in the tray?')){ c.tray=[]; saveCats(); render(); } });
+}
 function catEditorHtml(c){
   const busy=CAT_BUSY[c.id], stories=catStories(c.id), texts=stories.map(catStoryText), joined=texts.join(' ');
   const chk=catCheck(c), probs=chk.problems;
@@ -1941,6 +2078,7 @@ function catEditorHtml(c){
         <b>${esc(e.year||'')}</b> <span>${esc(e.title||o.object_id)}</span>
         <a href="${esc(e.url||'#')}" target="_blank" rel="noopener" style="font-size:11px">open source ↗</a>
         <span class="chip">${esc(e.link_status||'')}</span>
+        ${e.source_kind==='news'?'<span class="chip" style="background:#f6e7c8;color:#8a5a12" title="'+esc(e.why_no_primary||'no primary source found')+'">news report</span>':''}
         ${(c.auto_approved||[]).includes(o.object_id)?'<span class="chip" style="background:var(--warn);color:#fff" title="included automatically; you have not reviewed it">'+(e.pool==='custom'?'found by search':'auto-included')+'</span> <button class="mini cat-reviewed">mark reviewed</button>':''}
         ${cand?`<label style="font-size:11px;${ok?'':'color:var(--warn)'}"><input type="checkbox" class="cat-approve" ${ok?'checked':''} ${e.approved?'disabled':''}> ${ok?'approved':'candidate, needs your approval'}</label>`:'<span class="chip">'+esc(e.pool==='custom'?'added':'matrix')+'</span>'}
         <button class="mini cat-rm" style="margin-left:auto">remove</button>
@@ -1991,8 +2129,9 @@ function catEditorHtml(c){
         Source: ${c.indicator.source_url?`<a href="${esc(c.indicator.source_url)}" target="_blank" rel="noopener">${esc(c.indicator.source||'source')} \u2197</a>`:esc(c.indicator.source||'')}, ${esc(c.indicator.as_of||'')}<br>
         <span style="color:${c.indicator.verified?'var(--certified)':'var(--stale)'}">${c.indicator.verified?'Checked'+(c.indicator.verified_by==='system'?' by the system':' by you')+': '+esc(c.indicator.how_checked||''):'Proposed, not verified: '+esc(c.indicator.unverified_reason||'it needs a source link and a check')+'. It will not publish.'}</span>
         ${(c.indicator.evidence||[]).length?`<br><span style="color:var(--dim)">Cited passage: \u201c${esc((c.indicator.evidence||[])[0].slice(0,220))}\u201d</span>`:''}</div>`
-        :`<div style="font-size:12px;color:var(--dim);margin:4px 0">None yet. Compose finds one by web search, or tell me what to track in the revision box ("use a measure of local opposition").</div>`}
+        :`<div style="font-size:12px;color:var(--dim);margin:4px 0">None yet. Compose finds one by web search, or say what to track in the box below ("use a measure of local opposition").</div>`}
       ${c.indicator_proposal?`<div style="font-size:12px;margin:6px 0;padding:6px 8px;border:1px dashed var(--warn)"><b>Proposal, not verified:</b> ${esc(c.indicator_proposal.label||'')}: ${esc(c.indicator_proposal.then_value||'')} (${esc(c.indicator_proposal.then_year||'')}) to ${esc(c.indicator_proposal.now_value||'')} \u00b7 <a href="${esc(c.indicator_proposal.source_url||'#')}" target="_blank" rel="noopener">${esc(c.indicator_proposal.source||'source')} \u2197</a><br><span style="color:var(--stale)">${esc(c.indicator_proposal.unverified_reason||'')}</span><br><button class="mini" id="cat-use-prop">Use it (I looked at the source)</button> <button class="mini" id="cat-drop-prop">Drop it</button></div>`:''}
+      <div style="display:flex;gap:6px;margin:4px 0"><input id="cat-ind-ask" placeholder="What should the trend line track? e.g. 'share of Americans who trust the press, Gallup'" style="flex:1"><button class="mini go" id="cat-ind-go" ${busy?'disabled':''}>Find trend line</button></div>
       <details><summary style="cursor:pointer;font-size:11px;color:var(--dim)">edit by hand</summary>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">${f('label',260)}${f('then_value',70)}${f('then_year',60)}${f('now_value',70)}${f('direction',90)}${f('source',170)}${f('source_url',260)}${f('as_of',100)}
         <input class="cat-ind" data-k="how_checked" value="${esc(ind.how_checked||'')}" placeholder="how you checked it" style="width:100%">
@@ -2000,6 +2139,10 @@ function catEditorHtml(c){
     <div style="margin:10px 0 4px"><b style="font-size:11px">BEGINNINGS AND OBJECTS</b> <span style="font-size:11px;color:var(--dim)">${(c.beginnings||[]).length} Beginnings, ${(c.objects||[]).length} objects. The reader sees them in date order.</span></div>
     ${(()=>{ const un=(c.objects||[]).filter(o=>{ const e=catEntry(c,o.object_id)||{}; return e.pool==='candidate' && !e.approved && !(c.approved_objects||[]).includes(o.object_id); }); return un.length?`<button class="mini" id="cat-approve-all" style="margin:4px 0">Approve all ${un.length} candidate${un.length===1?'':'s'} (I have opened the links)</button>`:''; })()}
     ${objRows||'<i style="font-size:12px;color:var(--dim)">none yet. Compose, or add from the pool below.</i>'}
+    <div style="margin:10px 0 4px"><b style="font-size:11px">FIND SOURCES</b> <span style="font-size:11px;color:var(--dim)">One milestone per line, in order. Each line is searched as written, and what is found waits below for you to add.</span></div>
+    <textarea id="cat-find-src" rows="4" style="width:100%" placeholder="Friedrich Trump's restaurants and hotels in the Klondike and Seattle, 1890s&#10;Fred Trump and the Trump Organization's early expansion&#10;Donald Trump and the Bonwit Teller demolition, 1980"></textarea>
+    <button class="mini go" id="cat-find-go" ${busy?'disabled':''}>Search each line</button>
+    ${catTrayHtml(c, busy)}
     <details style="margin-top:8px"><summary style="cursor:pointer;font-size:12px"><b>+ Add an object</b></summary>
       <div style="margin:6px 0"><div style="font-size:11px;color:var(--dim)">From the pool (matrix and candidates, ${POOL?POOL.objects.length:0} objects). Search by title, author, year or lens.</div>
         <input id="cat-find" placeholder="search the pool\u2026" style="width:280px"><div id="cat-find-out" style="margin-top:4px"></div></div>
@@ -2008,7 +2151,7 @@ function catEditorHtml(c){
       <div style="font-size:11px;color:var(--dim);margin-top:3px">Not accepted as sources: Wikipedia, retail pages, flashcard and homework sites. The link is checked when you publish.</div>
     </details>
     ${probs.length?`<div style="margin-top:8px;font-size:11px;color:var(--stale)"><b>Will be dropped at publish:</b><br>${probs.map(esc).join('<br>')}</div>`:''}
-    <div style="margin:12px 0 4px"><b style="font-size:11px">SEND A REVISION</b></div>
+    <div style="margin:12px 0 4px"><b style="font-size:11px">SEND A REVISION</b> <span style="font-size:11px;color:var(--dim)">For wording and anything across the page. To find sources or a trend line, use their own boxes above.</span></div>
     <textarea id="cat-rev" rows="2" style="width:100%" placeholder="Tell me what to change: 'make the stakes plainer', 'drop the 1974 entry', 'add the Section 230 object'…"></textarea>
     <button class="mini go" id="cat-revise" ${busy?'disabled':''}>Send revision</button>
     ${(c.revisions||[]).length?`<div style="font-size:11px;color:var(--dim);margin-top:6px">${(c.revisions||[]).slice(-5).map(r=>esc((r.at||'').slice(5,16).replace('T',' '))+' — '+esc(r.request)+(r.summary?' → '+esc(r.summary):'')).join('<br>')}</div>`:''}
@@ -2136,6 +2279,9 @@ function renderBackstory(root){
     if (!confirm('Delete the draft "'+c.title+'"? Stories filed under it go back to the classifier.')) return;
     delete CATS[c.id]; LINEUP.forEach(s=>{ if (s.backstoryRow===c.id) s.backstoryRow=''; }); saveLineup(); saveCats(); CAT_SEL=null; render(); });
   document.getElementById('cat-revise').addEventListener('click',()=>{ const t=document.getElementById('cat-rev').value; if (t.trim()) reviseCat(c.id,t); });
+  catTrayWire(c, ed, touch);
+  document.getElementById('cat-find-go').addEventListener('click',()=>{ const el=document.getElementById('cat-find-src'); if (el.value.trim()) findSources(c.id,el.value); });
+  document.getElementById('cat-ind-go').addEventListener('click',()=>{ const t=document.getElementById('cat-ind-ask').value; if (t.trim()) reviseIndicator(c.id,t); });
 }
 loadCatData();
 

@@ -159,6 +159,15 @@ def main():
     c, p = run(x, texts=())
     check("with no story filed yet, a model-chosen lens is kept (nothing to check it against)", c["lenses"] == ["tech"], c["lenses"])
 
+    x = good(); x["tray"] = [{"tid": "t1", "topic": "Bonwit Teller", "kind": "lead", "title": "X"}]
+    x["custom_objects"] = [{"id": "custom-news", "title": "Trump Destroys Bonwit Sculptures", "author": "Washington Post", "year": "1980", "source": "Washington Post",
+                            "url": "https://www.washingtonpost.com/archive/1980/06/06/bonwit/", "found_by": "search", "evidence_quote": "The sculptures were destroyed."}]
+    x["objects"].append({"object_id": "custom-news", "by": "editor", "about": ""})
+    c, p = run(x)
+    news = next((o for o in c["objects"] if o["object_id"] == "custom-news"), {})
+    check("a news object is kept and labelled news even when Pulse did not label it (T-0085)", news.get("source_kind") == "news", p)
+    check("the search tray never publishes (T-0085)", "tray" not in c, list(c))
+
     print(f"\n{len(fails)} failed")
     return 1 if fails else 0
 

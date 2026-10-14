@@ -7,7 +7,7 @@ const root = path.resolve(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'ntk-pulse/pulse.html'), 'utf8');
 const m = html.match(/\/\* CATS:BEGIN \*\/([\s\S]*?)\/\* CATS:END \*\//);
 if (!m) { console.error('FAIL: CATS block not found'); process.exit(1); }
-const L = new Function(m[1] + '; return {validateCat, selectBeginnings, pickBeginnings, lensSupported, catTextProblems, verifyIndicator, catSentences, verifyFoundObject, applySourceEdit, catFieldKey, pickForSubjects, verifyMilestone, catNumbersOk, catTiesOk};')();
+const L = new Function(m[1] + '; return {validateCat, selectBeginnings, pickBeginnings, lensSupported, catTextProblems, verifyIndicator, catSentences, verifyFoundObject, applySourceEdit, catFieldKey, pickForSubjects, verifyMilestone, catNumbersOk, catTiesOk, verifyCandidate, catSourceKind};')();
 const poolDoc = JSON.parse(fs.readFileSync(path.join(root, 'ntk-pulse/data/backstory-pool.json'), 'utf8'));
 const poolBy = Object.fromEntries(poolDoc.objects.map(o => [o.id, o]));
 const spec = JSON.parse(fs.readFileSync(path.join(root, 'editorial/lenses.json'), 'utf8'));
@@ -142,5 +142,22 @@ x.beginnings.push({ object_id: 'custom-ms', by: 'model', line: 'Dozens of states
 check('a found milestone validates', r.clean.beginnings.some(b => b.object_id === 'custom-ms') && r.clean.objects.some(o => o.object_id === 'custom-ms'), r.problems);
 x.beginnings[x.beginnings.length - 1].line = 'A total of 150 states signed a treaty banning the development and stockpiling of biological weapons in April 1972.'; r = run(x);
 check('a found milestone whose line states a number the quote lacks is dropped as a Beginning', !r.clean.beginnings.some(b => b.object_id === 'custom-ms') && r.problems.some(p => p.includes('number')), r.problems);
+// T-0085: per-topic search candidates
+const NEWSU = 'https://www.washingtonpost.com/archive/1980/06/06/bonwit/';
+const cv = (o) => Object.assign({ kind: 'located', title: 'Diduck v. Kaszycki & Sons Contractors', year: '1992', source_url: 'https://law.justia.com/cases/x', evidence_quote: 'The workers demolished the Bonwit Teller building.' }, o || {});
+check('verifyCandidate: a located document from a returned link passes', L.verifyCandidate(cv(), ['https://law.justia.com/cases/x']).ok, L.verifyCandidate(cv(), ['https://law.justia.com/cases/x']));
+check('verifyCandidate: a news host called "located" is relabelled news, and needs a reason', !L.verifyCandidate(cv({ source_url: NEWSU }), [NEWSU]).ok && L.verifyCandidate(cv({ source_url: NEWSU, why_no_primary: 'no court record of the sculptures exists online' }), [NEWSU]).cand.kind === 'news', null);
+check('verifyCandidate: news with a reason passes, labelled news', L.verifyCandidate(cv({ kind: 'news', source_url: NEWSU, why_no_primary: 'x' }), [NEWSU]).cand.kind === 'news', null);
+check('verifyCandidate: a lead keeps the page that names it, with no source link of its own', L.verifyCandidate({ kind: 'lead', title: 'Bennett Sun advertisement for the Arctic Restaurant', year: '1899', cited_by_url: 'https://en.wikipedia.org/wiki/Friedrich_Trump' }, ['https://en.wikipedia.org/wiki/Friedrich_Trump']).cand.kind === 'lead', null);
+check('verifyCandidate: a lead whose naming page the search never returned fails', !L.verifyCandidate({ kind: 'lead', title: 'X', cited_by_url: 'https://made.up/x' }, []).ok, null);
+check('verifyCandidate: a link the search did not return fails', !L.verifyCandidate(cv(), ['https://other.org']).ok, null);
+check('verifyCandidate: Wikipedia as a located source fails', !L.verifyCandidate(cv({ source_url: 'https://en.wikipedia.org/wiki/X' }), ['https://en.wikipedia.org/wiki/X']).ok, null);
+check('verifyCandidate: no quote fails', !L.verifyCandidate(cv({ evidence_quote: '' }), ['https://law.justia.com/cases/x']).ok, null);
+check('catSourceKind: subdomains of a news host are news; a lookalike host is not', L.catSourceKind('https://abcnews.go.com/x') === 'news' && L.catSourceKind('https://www.nytimes.com/1973/x') === 'news' && L.catSourceKind('https://mytime.com/x') === 'document' && L.catSourceKind('https://www.archives.gov/x') === 'document', null);
+x = good(); x.custom_objects = [{ id: 'custom-news', title: 'Trump Destroys Bonwit Sculptures', author: 'Washington Post', year: '1980', source: 'Washington Post', url: NEWSU, found_by: 'search', source_kind: 'news', evidence_quote: 'The sculptures were destroyed.' }];
+x.objects.push({ object_id: 'custom-news', by: 'editor', about: '' }); r = run(x);
+check('a news object validates and carries its news label to publish', (r.clean.objects.find(o => o.object_id === 'custom-news') || {}).source_kind === 'news', r.problems);
+x.custom_objects[0].evidence_quote = ''; r = run(x);
+check('a found object without its page quote is dropped (the quote is what CI checks against the page)', !r.clean.objects.some(o => o.object_id === 'custom-news'), r.problems);
 check('lensSupported reads whole words only', L.lensSupported('tech', spec, ALTMAN) && !L.lensSupported('china', spec, ALTMAN) && !L.lensSupported('tech', spec, 'The mail arrived said the senator'), null);
 console.log('\n' + fails + ' failed'); process.exit(fails ? 1 : 0);
