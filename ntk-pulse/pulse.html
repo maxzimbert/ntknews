@@ -2138,6 +2138,7 @@ function catEditorHtml(c){
         <label style="font-size:11px"><input type="checkbox" class="cat-ind-ok" ${ind.verified?'checked':''}> I checked it against the source</label></div></details></div>
     <div style="margin:10px 0 4px"><b style="font-size:11px">BEGINNINGS AND OBJECTS</b> <span style="font-size:11px;color:var(--dim)">${(c.beginnings||[]).length} Beginnings, ${(c.objects||[]).length} objects. The reader sees them in date order.</span></div>
     ${(()=>{ const un=(c.objects||[]).filter(o=>{ const e=catEntry(c,o.object_id)||{}; return e.pool==='candidate' && !e.approved && !(c.approved_objects||[]).includes(o.object_id); }); return un.length?`<button class="mini" id="cat-approve-all" style="margin:4px 0">Approve all ${un.length} candidate${un.length===1?'':'s'} (I have opened the links)</button>`:''; })()}
+    ${(()=>{ const nq=(c.custom_objects||[]).filter(x=>x.found_by==='search'&&!String(x.evidence_quote||'').trim()); return nq.length?`<div style="font-size:12px;margin:4px 0;padding:6px 8px;border:1px solid var(--warn)">${nq.length} source${nq.length===1?' was':'s were'} found by search before Pulse kept a quote from the page, so publish drops ${nq.length===1?'it':'them'}. Open each link; if ${nq.length===1?'it is':'they are'} right, <button class="mini" id="cat-own-noquote">Keep ${nq.length===1?'it':'them'} as my sources</button> <span style="color:var(--dim)">(publish still checks each link loads)</span></div>`:''; })()}
     ${objRows||'<i style="font-size:12px;color:var(--dim)">none yet. Compose, or add from the pool below.</i>'}
     <div style="margin:10px 0 4px"><b style="font-size:11px">FIND SOURCES</b> <span style="font-size:11px;color:var(--dim)">One milestone per line, in order. Each line is searched as written, and what is found waits below for you to add.</span></div>
     <textarea id="cat-find-src" rows="4" style="width:100%" placeholder="Friedrich Trump's restaurants and hotels in the Klondike and Seattle, 1890s&#10;Fred Trump and the Trump Organization's early expansion&#10;Donald Trump and the Bonwit Teller demolition, 1980"></textarea>
@@ -2280,6 +2281,9 @@ function renderBackstory(root){
     delete CATS[c.id]; LINEUP.forEach(s=>{ if (s.backstoryRow===c.id) s.backstoryRow=''; }); saveLineup(); saveCats(); CAT_SEL=null; render(); });
   document.getElementById('cat-revise').addEventListener('click',()=>{ const t=document.getElementById('cat-rev').value; if (t.trim()) reviseCat(c.id,t); });
   catTrayWire(c, ed, touch);
+  const own=document.getElementById('cat-own-noquote'); if (own) own.addEventListener('click',()=>{
+    (c.custom_objects||[]).forEach(x=>{ if (x.found_by==='search' && !String(x.evidence_quote||'').trim()){ delete x.found_by; x.edited_by='editor'; } });
+    CAT_MSG[c.id]='Kept as your sources. Approve the category again to publish it.'; touch(); render(); });
   document.getElementById('cat-find-go').addEventListener('click',()=>{ const el=document.getElementById('cat-find-src'); if (el.value.trim()) findSources(c.id,el.value); });
   document.getElementById('cat-ind-go').addEventListener('click',()=>{ const t=document.getElementById('cat-ind-ask').value; if (t.trim()) reviseIndicator(c.id,t); });
 }

@@ -299,12 +299,26 @@ def auto_categories(api_key, entries, stories, bs, store_path, today):
         if not rec:
             continue
         records.append(rec)
+        e["_before"] = (e["row"], e["subgenre"])
         for s in stories:
             if s["story_id"] == e["story_id"]:
                 s["editor_row"] = rec["id"]
         e["row"], e["subgenre"], e["auto"] = rec["id"], None, True
     if records:
         apply_categories(store_path, {"backstory_categories": records}, stories, bs, today, live=True)
+    # A composed category the checks then rejected is not a row. Its story goes back to the row it was
+    # classified to, as when composing fails (T-0087: pointing at the missing row crashed the whole
+    # pairing step, and every story lost its Backstory link for the day).
+    live = {r["id"] for r in bs["rows"]}
+    for e in flagged:
+        if e.get("auto") and e["row"] not in live:
+            log(f"5C: {e['story_id']}: category {e['row']!r} was not created; the story keeps its row {e['_before'][0]!r}")
+            for s in stories:
+                if s["story_id"] == e["story_id"]:
+                    s["editor_row"] = None
+            e["row"], e["subgenre"] = e["_before"]
+            e["auto"] = False
+        e.pop("_before", None)
 
 
 def elapsed_words(start_date):
@@ -429,6 +443,11 @@ def main():
         rows = bs["rows"]
         rows_by_id = {r["id"]: r for r in rows}
 
+    # Whatever went wrong upstream, one story pointing at a row that does not exist must not cost every
+    # other story its pairing (T-0087).
+    for e in [e for e in entries if e["row"] not in rows_by_id]:
+        log(f"  {e['story_id']}: row {e['row']!r} does not exist - story dropped from today's pairings")
+        entries.remove(e)
     pair_user, pairs = write_lines(api_key, entries, rows_by_id,
                                    args.mock or args.dry_run)
     if args.dry_run:

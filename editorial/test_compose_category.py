@@ -195,9 +195,10 @@ check("misfits: a confident good fit is left alone", BP.misfits([E()]) == [], No
 # integration: the whole pairing step with a stand-in model, one story the rows do not fit
 import shutil, tempfile
 T = Path(tempfile.mkdtemp())
-lp = json.load(open(ROOT / "ntk-pulse/data/lineup-publish.json"))
+lp = json.load(open(ROOT / "editorial/fixtures/lineup-altman.json"))     # pinned: the live file changes with every publish (T-0087)
 for s in lp["stories"]:
     s.pop("backstory_row", None)
+lp.pop("backstory_categories", None)        # the editor's own categories in the live file are not under test here
 json.dump(lp, open(T / "lineup.json", "w"))
 shutil.copy(ROOT / "digest/data/backstory.json", T / "bs.json")
 json.dump({"rows": []}, open(T / "prov.json", "w"))
@@ -230,6 +231,23 @@ alt = [p for p in bs["todays_pairings"] if p["story_id"] == ALT][0]
 check("integration: the misfit story is paired to its new category, marked as automatic", alt["row"] == "p-ai" and alt["source"] == "auto-category", (alt["row"], alt["source"]))
 check("integration: the category is stored, published as a row, and keeps its trend line", prov["rows"] and any(r["id"] == "p-ai" and r["auto"] and r.get("indicator") for r in prov["rows"]) and any(r["id"] == "p-ai" and r["stratum"] == "provisional" for r in bs["rows"]), None)
 check("integration: stories that fit keep their rows", all(p["row"] != "p-ai" for p in bs["todays_pairings"] if p["story_id"] != ALT), None)
+# T-0087: a composed category the checks reject must not crash the step; its story keeps its classified row
+json.dump({"rows": []}, open(T / "prov.json", "w"))
+b0 = json.load(open(ROOT / "digest/data/backstory.json")); b0["rows"] = [r for r in b0["rows"] if r["id"] != "p-ai"]
+json.dump(b0, open(T / "bs.json", "w"))
+_apply = BP.apply_categories; BP.apply_categories = lambda *a, **k: None       # every composed category rejected
+crashed = None
+try:
+    BP.main()
+except SystemExit as e:
+    pass
+except Exception as e:  # noqa: BLE001
+    crashed = repr(e)
+BP.apply_categories = _apply
+bs2 = json.load(open(T / "bs.json"))
+alt2 = [p for p in bs2["todays_pairings"] if p["story_id"] == ALT]
+check("a rejected automatic category does not crash the pairing step (T-0087)", crashed is None, crashed)
+check("its story keeps the row it was classified to, and every story is paired (T-0087)", alt2 and alt2[0]["row"] != "p-ai" and len(bs2["todays_pairings"]) == len(lp["stories"]), [p["row"] for p in bs2["todays_pairings"]])
 # an automatic category left with fewer than two objects by the checks is not created
 import copy
 one = copy.deepcopy(prov["rows"][0]); one["id"] = "p-lonely"; one["title"] = "Lonely"; one["status"] = "approved"; one["auto"] = True
