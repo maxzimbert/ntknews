@@ -1820,7 +1820,7 @@ ${CAT_STYLE_RULES}`;
     if (r1.note) msgs.push(r1.note);
     if (c.by.indicator!=='editor'){
       CAT_BUSY[id]='Finding a trend line…'; render();
-      try { msgs.push(await proposeIndicator(c,'')); } catch(e){ msgs.push('Trend line: '+e.message+' (web search may not be enabled for this key). Tell me what to track in the revision box.'); }
+      try { msgs.push(await proposeIndicator(c,'')); } catch(e){ msgs.push('Trend line: '+e.message+' (web search may not be enabled for this key). Say what to track in the trend line box.'); }
     }
   } catch(e){ msgs.push('Compose failed: '+e.message); }
   CAT_MSG[id]=msgs.join(' ');
@@ -1901,17 +1901,33 @@ async function searchTopics(c, topics){
   }
   return out;
 }
+// Zone boxes (T-0085): each goes straight to its job, with no model deciding what the editor meant.
+async function reviseIndicator(id, request){
+  const c=catEnsureLocal(id); if (!c || !request.trim()) return;
+  if (c.status==='approved') c.status='draft';
+  CAT_BUSY[id]='Finding a trend line…'; CAT_MSG[id]=''; render();
+  try {
+    CAT_MSG[id]=await proposeIndicator(c, request);
+    c.revisions=(c.revisions||[]).concat([{at:new Date().toISOString(),request:'(trend line) '+request,summary:CAT_MSG[id]}]);
+  } catch(e){ CAT_MSG[id]='Trend line search failed: '+e.message; }
+  delete CAT_BUSY[id]; saveCats(); render();
+}
+async function findSources(id, text){
+  const c=catEnsureLocal(id); if (!c) return;
+  const topics=String(text||'').split(/\n+/).map(x=>x.replace(/^\s*(?:[-*\u2022]|\d+[.)])\s*/,'').trim()).filter(Boolean).slice(0,12);
+  if (!topics.length) return;
+  CAT_MSG[id]='';
+  try {
+    const res=await searchTopics(c, topics);
+    CAT_MSG[id]='Searched '+topics.length+' topic'+(topics.length===1?'':'s')+' ('+res.join('; ')+'). Choose from the candidates under FOUND BY SEARCH.';
+    c.revisions=(c.revisions||[]).concat([{at:new Date().toISOString(),request:'(find sources) '+topics.join(' | '),summary:CAT_MSG[id]}]);
+  } catch(e){ CAT_MSG[id]='Search failed: '+e.message; }
+  delete CAT_BUSY[id]; saveCats(); render();
+}
 async function reviseCat(id, request){
   const c=catEnsureLocal(id); if (!c || !request.trim()) return;
   if (c.status==='approved') c.status='draft';
   CAT_BUSY[id]='Revising…'; CAT_MSG[id]=''; render();
-  if (/trend\s*-?\s*line|trendline|\btrend\b|\bchart|\bgraph|indicator|\bpoll|survey|statistic|measure|\bfigure|data point|think tank/i.test(request)){
-    try {
-      CAT_MSG[id]=await proposeIndicator(c, request);
-      c.revisions=(c.revisions||[]).concat([{at:new Date().toISOString(),request:request,summary:CAT_MSG[id]}]);
-    } catch(e){ CAT_MSG[id]='Trend line search failed: '+e.message; }
-    delete CAT_BUSY[id]; saveCats(); render(); return;
-  }
   try {
     const avail=catPoolFor(c.lenses,c.subgenres).filter(o=>!c.objects.some(x=>x.object_id===o.id));
     const cur=c.beginnings.map(b=>{ const o=catEntry(c,b.object_id)||{}; return '- '+b.object_id+' | '+o.year+' | '+o.title+' | line: '+b.line; }).join('\n');
@@ -2113,8 +2129,9 @@ function catEditorHtml(c){
         Source: ${c.indicator.source_url?`<a href="${esc(c.indicator.source_url)}" target="_blank" rel="noopener">${esc(c.indicator.source||'source')} \u2197</a>`:esc(c.indicator.source||'')}, ${esc(c.indicator.as_of||'')}<br>
         <span style="color:${c.indicator.verified?'var(--certified)':'var(--stale)'}">${c.indicator.verified?'Checked'+(c.indicator.verified_by==='system'?' by the system':' by you')+': '+esc(c.indicator.how_checked||''):'Proposed, not verified: '+esc(c.indicator.unverified_reason||'it needs a source link and a check')+'. It will not publish.'}</span>
         ${(c.indicator.evidence||[]).length?`<br><span style="color:var(--dim)">Cited passage: \u201c${esc((c.indicator.evidence||[])[0].slice(0,220))}\u201d</span>`:''}</div>`
-        :`<div style="font-size:12px;color:var(--dim);margin:4px 0">None yet. Compose finds one by web search, or tell me what to track in the revision box ("use a measure of local opposition").</div>`}
+        :`<div style="font-size:12px;color:var(--dim);margin:4px 0">None yet. Compose finds one by web search, or say what to track in the box below ("use a measure of local opposition").</div>`}
       ${c.indicator_proposal?`<div style="font-size:12px;margin:6px 0;padding:6px 8px;border:1px dashed var(--warn)"><b>Proposal, not verified:</b> ${esc(c.indicator_proposal.label||'')}: ${esc(c.indicator_proposal.then_value||'')} (${esc(c.indicator_proposal.then_year||'')}) to ${esc(c.indicator_proposal.now_value||'')} \u00b7 <a href="${esc(c.indicator_proposal.source_url||'#')}" target="_blank" rel="noopener">${esc(c.indicator_proposal.source||'source')} \u2197</a><br><span style="color:var(--stale)">${esc(c.indicator_proposal.unverified_reason||'')}</span><br><button class="mini" id="cat-use-prop">Use it (I looked at the source)</button> <button class="mini" id="cat-drop-prop">Drop it</button></div>`:''}
+      <div style="display:flex;gap:6px;margin:4px 0"><input id="cat-ind-ask" placeholder="What should the trend line track? e.g. 'share of Americans who trust the press, Gallup'" style="flex:1"><button class="mini go" id="cat-ind-go" ${busy?'disabled':''}>Find trend line</button></div>
       <details><summary style="cursor:pointer;font-size:11px;color:var(--dim)">edit by hand</summary>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">${f('label',260)}${f('then_value',70)}${f('then_year',60)}${f('now_value',70)}${f('direction',90)}${f('source',170)}${f('source_url',260)}${f('as_of',100)}
         <input class="cat-ind" data-k="how_checked" value="${esc(ind.how_checked||'')}" placeholder="how you checked it" style="width:100%">
@@ -2122,6 +2139,9 @@ function catEditorHtml(c){
     <div style="margin:10px 0 4px"><b style="font-size:11px">BEGINNINGS AND OBJECTS</b> <span style="font-size:11px;color:var(--dim)">${(c.beginnings||[]).length} Beginnings, ${(c.objects||[]).length} objects. The reader sees them in date order.</span></div>
     ${(()=>{ const un=(c.objects||[]).filter(o=>{ const e=catEntry(c,o.object_id)||{}; return e.pool==='candidate' && !e.approved && !(c.approved_objects||[]).includes(o.object_id); }); return un.length?`<button class="mini" id="cat-approve-all" style="margin:4px 0">Approve all ${un.length} candidate${un.length===1?'':'s'} (I have opened the links)</button>`:''; })()}
     ${objRows||'<i style="font-size:12px;color:var(--dim)">none yet. Compose, or add from the pool below.</i>'}
+    <div style="margin:10px 0 4px"><b style="font-size:11px">FIND SOURCES</b> <span style="font-size:11px;color:var(--dim)">One milestone per line, in order. Each line is searched as written, and what is found waits below for you to add.</span></div>
+    <textarea id="cat-find-src" rows="4" style="width:100%" placeholder="Friedrich Trump's restaurants and hotels in the Klondike and Seattle, 1890s&#10;Fred Trump and the Trump Organization's early expansion&#10;Donald Trump and the Bonwit Teller demolition, 1980"></textarea>
+    <button class="mini go" id="cat-find-go" ${busy?'disabled':''}>Search each line</button>
     ${catTrayHtml(c, busy)}
     <details style="margin-top:8px"><summary style="cursor:pointer;font-size:12px"><b>+ Add an object</b></summary>
       <div style="margin:6px 0"><div style="font-size:11px;color:var(--dim)">From the pool (matrix and candidates, ${POOL?POOL.objects.length:0} objects). Search by title, author, year or lens.</div>
@@ -2131,7 +2151,7 @@ function catEditorHtml(c){
       <div style="font-size:11px;color:var(--dim);margin-top:3px">Not accepted as sources: Wikipedia, retail pages, flashcard and homework sites. The link is checked when you publish.</div>
     </details>
     ${probs.length?`<div style="margin-top:8px;font-size:11px;color:var(--stale)"><b>Will be dropped at publish:</b><br>${probs.map(esc).join('<br>')}</div>`:''}
-    <div style="margin:12px 0 4px"><b style="font-size:11px">SEND A REVISION</b></div>
+    <div style="margin:12px 0 4px"><b style="font-size:11px">SEND A REVISION</b> <span style="font-size:11px;color:var(--dim)">For wording and anything across the page. To find sources or a trend line, use their own boxes above.</span></div>
     <textarea id="cat-rev" rows="2" style="width:100%" placeholder="Tell me what to change: 'make the stakes plainer', 'drop the 1974 entry', 'add the Section 230 object'…"></textarea>
     <button class="mini go" id="cat-revise" ${busy?'disabled':''}>Send revision</button>
     ${(c.revisions||[]).length?`<div style="font-size:11px;color:var(--dim);margin-top:6px">${(c.revisions||[]).slice(-5).map(r=>esc((r.at||'').slice(5,16).replace('T',' '))+' — '+esc(r.request)+(r.summary?' → '+esc(r.summary):'')).join('<br>')}</div>`:''}
@@ -2260,6 +2280,8 @@ function renderBackstory(root){
     delete CATS[c.id]; LINEUP.forEach(s=>{ if (s.backstoryRow===c.id) s.backstoryRow=''; }); saveLineup(); saveCats(); CAT_SEL=null; render(); });
   document.getElementById('cat-revise').addEventListener('click',()=>{ const t=document.getElementById('cat-rev').value; if (t.trim()) reviseCat(c.id,t); });
   catTrayWire(c, ed, touch);
+  document.getElementById('cat-find-go').addEventListener('click',()=>{ const el=document.getElementById('cat-find-src'); if (el.value.trim()) findSources(c.id,el.value); });
+  document.getElementById('cat-ind-go').addEventListener('click',()=>{ const t=document.getElementById('cat-ind-ask').value; if (t.trim()) reviseIndicator(c.id,t); });
 }
 loadCatData();
 

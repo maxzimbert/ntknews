@@ -37,6 +37,11 @@ Built 2026-10-13 on `T-0085-backstory-outline-candidates`:
 - candidates go to a FOUND BY SEARCH tray, grouped by topic in the editor's order. Nothing is on the page
   until the editor clicks Add. A lead offers "search for a copy" or a pasted link. "Search again" per
   topic. The tray is stripped from the publish payload in Pulse and again in CI.
+- the panel has a box per research job (2026-10-14, the editor's call): FIND SOURCES in the Beginnings
+  zone sends each line straight to a search with no model in between, and a trend-line box in its zone
+  runs only the trend-line search. The general revision box no longer routes on keywords ("poll",
+  "measure", "figure"), which sent any request containing them to the trend-line search; it handles
+  wording and changes across the page, and can still ask for searches.
 - a news object carries `source_kind: "news"` through both validators (JS and Python), so the reader page
   can label it. The reader page does not show that label yet.
 
@@ -75,7 +80,9 @@ python3 - <<'PY'
 import re, sys
 s = open('ntk-pulse/pulse.html').read()
 cap = re.search(r"const found=\[\], topics=\(r\.find\|\|\[\]\).*?\.slice\(0,(\d+)\)", s)
-sys.exit(0 if cap and int(cap.group(1)) >= 8 and 'delete x.tray' in s else 1)
+zones = 'async function findSources(' in s and 'async function reviseIndicator(' in s
+routed = re.search(r"async function reviseCat\(.*?\n\}", s, re.S)
+sys.exit(0 if cap and int(cap.group(1)) >= 8 and 'delete x.tray' in s and zones and routed and 'proposeIndicator' not in routed.group(0) else 1)
 PY
 # manual: on Pages, a revision naming eight milestones shows eight topics in FOUND BY SEARCH
 ```
