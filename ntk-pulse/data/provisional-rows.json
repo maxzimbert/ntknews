@@ -4,30 +4,10 @@
       "id": "p-ai",
       "title": "AI",
       "status": "provisional",
-      "created": "2026-10-06",
-      "contest": "Whether the companies building AI should answer for the harm it causes, or whether its benefits justify letting society absorb some of that harm.",
-      "stakes": "Whether, when and by whom this new technology should be regulated, and who should share in its benefits, is still being settled. So is how to compete with China on it while still cooperating where both countries need to.",
-      "draft_problems": [],
-      "stories": [
-        {
-          "story_id": "5a3de1d2854305d7",
-          "date": "2026-10-06",
-          "headline": "Sam Altman Says \"Bad Things Will Happen\" From AI. His Own PR Team Tried to Stop a Reporter From Asking About One."
-        }
-      ],
-      "last_story": "2026-10-06",
-      "promotion": {
-        "ready": false,
-        "missing": [
-          "needs 3 stories on 2 days (has 1 on 1)",
-          "needs 3 linked matrix objects and a sourced indicator"
-        ]
-      },
-      "start_date": "2025-01-01",
-      "start_line": "When Matthew and Maria Raine sued OpenAI in August 2025 over the death of their 16-year-old son",
+      "contest": "Whether artificial intelligence should be built and deployed as fast as possible to capture its benefits, or slowed and controlled until its risks are better understood.",
+      "stakes": "The argument turns on whether machines that mimic human judgment can be trusted with decisions that affect jobs, safety, and truth itself. It also turns on who gets to set the rules, the companies building the systems, the government, or someone else, and who benefits when those rules are written.",
       "lenses": [
-        "tech",
-        "china"
+        "tech"
       ],
       "indicator": {
         "label": "Oppose a data center built near where they live",
@@ -41,88 +21,376 @@
         "verified": true,
         "note": "Same question and wording asked four times in 12 months. August 2025: 43% support, 42% oppose. August 2026: 2,045 registered voters, August 8 to 13, margin of error 2.3 points. Checked against the published article on 2026-10-06."
       },
-      "lens_report": {
-        "tech": {
-          "eligible": 2
-        },
-        "china": {
-          "eligible": 5
-        }
-      },
-      "beginnings": [
-        {
-          "year": "1979",
-          "line": "Congress passed a law setting the terms of American relations with Taiwan, including the sale of defensive arms to the island.",
-          "object_id": "1979-04-10-taiwan-relations-act"
-        },
-        {
-          "year": "1996",
-          "line": "Congress rewrote the nation's communications law in 1996, covering telephone, cable and broadcast, and for the first time the internet.",
-          "object_id": "1996-02-08-telecommunications-act-of-1996"
-        },
-        {
-          "year": "2000",
-          "line": "President Clinton signed a law giving China permanent normal trade status, ending the yearly congressional review of it.",
-          "object_id": "2000-10-10-permanent-normal-trade-relations-with-china-signing-remarks"
-        },
-        {
-          "year": "2001",
-          "line": "Congress passed the USA PATRIOT Act soon after the terrorist attacks of that year, widening the government's powers to investigate and watch people.",
-          "object_id": "2001-10-26-usa-patriot-act"
-        },
-        {
-          "year": "2005",
-          "line": "China's National People's Congress adopted the Anti-Secession Law on 14 March 2005, a law about Taiwan.",
-          "object_id": "2005-03-14-anti-secession-law"
-        }
-      ],
       "objects": [
         {
-          "title": "Taiwan Relations Act",
+          "object_id": "1890-07-02-sherman-antitrust-act",
+          "title": "Sherman Antitrust Act",
           "author": "U.S. Congress",
-          "year": "1979",
-          "source": "Pub. L. 96-8",
-          "source_url": "https://www.govinfo.gov/link/statute/93/14",
-          "object_id": "1979-04-10-taiwan-relations-act",
-          "about": "The Taiwan Relations Act is a law passed by the U.S. Congress and signed on April 10, 1979. It lets the United States keep commercial and cultural ties with the people on Taiwan after formal relations ended. It says the U.S. expects Taiwan's future to be settled peacefully, and that it will provide Taiwan with defensive arms."
+          "year": "1890",
+          "source": "National Archives",
+          "source_url": "https://www.archives.gov/milestone-documents/sherman-anti-trust-act",
+          "about": "This is a federal law passed by the U.S. Congress in 1890. It bans contracts, combinations, and conspiracies that restrain trade, and it bans monopolization of trade or commerce. It became the legal foundation for later antitrust cases against large companies.",
+          "pool": "candidate",
+          "lenses": [
+            "tech"
+          ],
+          "by": "model",
+          "sort": "1890-07-02"
         },
         {
+          "object_id": "1996-02-08-telecommunications-act-of-1996",
           "title": "Telecommunications Act of 1996",
           "author": "U.S. Congress",
           "year": "1996",
           "source": "Pub. L. 104-104",
           "source_url": "https://www.govinfo.gov/link/plaw/104/public/104?link-type=pdf",
-          "object_id": "1996-02-08-telecommunications-act-of-1996",
-          "about": "The Telecommunications Act of 1996 is a federal law passed by the U.S. Congress and signed by President Clinton on February 8, 1996. It rewrote federal rules for telephone, cable, and broadcast companies, including limits on how many stations one company could own."
+          "about": "The Telecommunications Act of 1996 is a federal law passed by the U.S. Congress and signed by President Clinton on February 8, 1996. It rewrote federal rules for telephone, cable, and broadcast companies, including limits on how many stations one company could own.",
+          "pool": "matrix",
+          "lenses": [
+            "tech"
+          ],
+          "by": "model",
+          "sort": "1996-02-08"
         },
         {
-          "title": "Permanent Normal Trade Relations with China, signing remarks",
-          "author": "William J. Clinton",
-          "year": "2000",
-          "source": "Public Papers of the Presidents",
-          "source_url": "https://www.presidency.ucsb.edu/documents/remarks-signing-legislation-permanent-normal-trade-relations-with-china",
-          "object_id": "2000-10-10-permanent-normal-trade-relations-with-china-signing-remarks",
-          "about": "President Clinton gave these remarks on 10 October 2000 as he signed a law granting China permanent normal trade relations. The law ended the yearly congressional vote on China's trade status. The remarks are collected in the Public Papers of the Presidents."
-        },
-        {
+          "object_id": "2001-10-26-usa-patriot-act",
           "title": "USA PATRIOT Act",
           "author": "U.S. Congress",
           "year": "2001",
           "source": "Pub. L. 107-56",
           "source_url": "https://www.govinfo.gov/link/plaw/107/public/56?link-type=pdf",
-          "object_id": "2001-10-26-usa-patriot-act",
-          "about": "Congress passed this law, Public Law 107-56, and the president signed it on 26 October 2001, soon after the terrorist attacks of that year. It widened the government's powers to investigate terrorism and to collect information, including electronic communications."
+          "about": "Congress passed this law, Public Law 107-56, and the president signed it on 26 October 2001, soon after the terrorist attacks of that year. It widened the government's powers to investigate terrorism and to collect information, including electronic communications.",
+          "pool": "matrix",
+          "lenses": [
+            "tech"
+          ],
+          "by": "model",
+          "sort": "2001-10-26"
         },
         {
-          "title": "Anti-Secession Law",
-          "author": "National People’s Congress of the PRC",
-          "year": "2005",
-          "source": "NPC",
-          "source_url": "https://md.china-embassy.gov.cn/eng/zgjj/200503/t20050314_2732280.htm",
-          "object_id": "2005-03-14-anti-secession-law",
-          "about": "The Anti-Secession Law was passed by China's National People's Congress on 14 March 2005. It is a Chinese law about Taiwan. Its text is published by the National People's Congress."
+          "object_id": "2016-04-27-general-data-protection-regulation",
+          "title": "General Data Protection Regulation",
+          "author": "European Parliament and Council",
+          "year": "2016",
+          "source": "EUR-Lex",
+          "source_url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj",
+          "about": "This is a regulation passed by the European Parliament and Council in 2016. It sets rules for how organizations collect, store, and use personal data of people in the European Union. It also grants individuals rights over their own data, such as access and deletion.",
+          "pool": "candidate",
+          "lenses": [
+            "tech"
+          ],
+          "by": "model",
+          "sort": "2016-04-27"
+        },
+        {
+          "object_id": "2024-06-13-regulation-eu-2024-1689-the-ai-act",
+          "title": "Regulation (EU) 2024/1689 (the AI Act)",
+          "author": "European Parliament and Council",
+          "year": "2024",
+          "source": "EUR-Lex",
+          "source_url": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
+          "about": "This is a regulation adopted by the European Parliament and Council in 2024. It sets rules for the development and use of artificial intelligence systems across the European Union, including requirements based on risk level. It is described as the first comprehensive law on AI now in force in Europe.",
+          "pool": "candidate",
+          "lenses": [
+            "tech"
+          ],
+          "by": "model",
+          "sort": "2024-06-13"
+        },
+        {
+          "object_id": "2025-01-23-executive-order-14179-removing-barriers-to-american-leadership-in-artificial-in",
+          "title": "Executive Order 14179: Removing Barriers to American Leadership in Artificial Intelligence",
+          "author": "Donald J. Trump",
+          "year": "2025",
+          "source": "Federal Register",
+          "source_url": "https://www.federalregister.gov/documents/2025/01/31/2025-02172/removing-barriers-to-american-leadership-in-artificial-intelligence",
+          "about": "This is an executive order signed by Donald J. Trump in 2025 and published in the Federal Register. It reverses the prior administration's 2023 order on AI policy. It marks a shift in the federal government's approach to regulating artificial intelligence in the United States.",
+          "pool": "candidate",
+          "lenses": [
+            "tech"
+          ],
+          "by": "model",
+          "sort": "2025-01-23"
         }
-      ]
+      ],
+      "beginnings": [
+        {
+          "object_id": "1890-07-02-sherman-antitrust-act",
+          "year": "1890",
+          "line": "Congress passed the Sherman Antitrust Act to outlaw monopolies and restraints on trade.",
+          "by": "model"
+        },
+        {
+          "object_id": "1996-02-08-telecommunications-act-of-1996",
+          "year": "1996",
+          "line": "Congress rewrote the nation's communications law in 1996, covering telephone, cable and broadcast, and for the first time the internet.",
+          "by": "model"
+        },
+        {
+          "object_id": "2001-10-26-usa-patriot-act",
+          "year": "2001",
+          "line": "Congress passed the USA PATRIOT Act soon after the terrorist attacks of that year, widening the government's powers to investigate and watch people.",
+          "by": "model"
+        },
+        {
+          "object_id": "2016-04-27-general-data-protection-regulation",
+          "year": "2016",
+          "line": "The European Parliament and Council adopted the General Data Protection Regulation to govern personal data handling.",
+          "by": "model"
+        },
+        {
+          "object_id": "2024-06-13-regulation-eu-2024-1689-the-ai-act",
+          "year": "2024",
+          "line": "The European Parliament and Council enacted Regulation (EU) 2024/1689, known as the AI Act, to regulate artificial intelligence.",
+          "by": "model"
+        },
+        {
+          "object_id": "2025-01-23-executive-order-14179-removing-barriers-to-american-leadership-in-artificial-in",
+          "year": "2025",
+          "line": "President Trump signed an executive order removing barriers to American leadership in artificial intelligence.",
+          "by": "model"
+        }
+      ],
+      "by": {
+        "lenses": "editor",
+        "contest": "editor",
+        "stakes": "model"
+      },
+      "approved_objects": [
+        "1890-07-02-sherman-antitrust-act",
+        "2016-04-27-general-data-protection-regulation",
+        "2024-06-13-regulation-eu-2024-1689-the-ai-act",
+        "2025-01-23-executive-order-14179-removing-barriers-to-american-leadership-in-artificial-in"
+      ],
+      "revisions": [
+        {
+          "at": "2026-10-07T21:03:07.718Z",
+          "request": "(first draft)",
+          "summary": "No stories or lenses exist yet, so this opening sets the frame for whatever gets filed here first."
+        }
+      ],
+      "created": "2026-10-06",
+      "updated": "2026-10-07T21:07:14.416Z",
+      "subgenres": [],
+      "stories": [
+        {
+          "story_id": "5a3de1d2854305d7",
+          "date": "2026-10-06",
+          "headline": "Sam Altman Says \"Bad Things Will Happen\" From AI. His Own PR Team Tried to Stop a Reporter From Asking About One."
+        }
+      ],
+      "last_story": "2026-10-06",
+      "start_date": "2025-01-01",
+      "start_line": "When Matthew and Maria Raine sued OpenAI in August 2025 over the death of their 16-year-old son",
+      "draft_problems": [],
+      "promotion": {
+        "ready": false,
+        "missing": [
+          "needs 3 stories on 2 days (has 1 on 1)",
+          "needs 3 linked matrix objects and a sourced indicator"
+        ]
+      }
+    },
+    {
+      "id": "p-cost-of-living",
+      "title": "Cost of Living",
+      "status": "provisional",
+      "auto": true,
+      "contest": "Whether rising prices at the pump and the grocery store are the fault of government policy and war choices, or the result of global markets no president controls.",
+      "stakes": "Do wages, benefits and interest rates keep up when prices jump, and when do households start to treat high inflation as normal? Who answers to voters when the bills rise, and does the help offered arrive in time to matter?",
+      "lenses": [
+        "iran"
+      ],
+      "subgenres": [
+        "housing and cost of living",
+        "wages and bargaining power"
+      ],
+      "indicator": null,
+      "objects": [
+        {
+          "object_id": "custom-address-to-the-nation-about-policies-to-deal-with-the-energy",
+          "title": "Address to the Nation About Policies To Deal With the Energy Shortages.",
+          "author": "Richard Nixon",
+          "year": "1973",
+          "source": "The American Presidency Project, University of California, Santa Barbara",
+          "source_url": "https://www.presidency.ucsb.edu/documents/address-the-nation-about-policies-deal-with-the-energy-shortages",
+          "about": "This speech was given in November 1973 and dealt with policies to address energy shortages. The president called the situation a very stark fact. He said the country faced the most acute shortages of energy since World War II. The title shows the talk was about what to do in response.",
+          "pool": "custom",
+          "lenses": [],
+          "by": "model",
+          "sort": "1973-11-07"
+        },
+        {
+          "object_id": "2018-05-08-national-security-presidential-memorandum-on-ceasing-united-states-participatio",
+          "title": "National Security Presidential Memorandum on Ceasing United States Participation in the JCPOA",
+          "author": "Donald J. Trump",
+          "year": "2018",
+          "source": "Public Papers of the Presidents (American Presidency Project)",
+          "source_url": "https://www.presidency.ucsb.edu/documents/national-security-presidential-memorandum-ceasing-united-states-participation-the-joint",
+          "about": "This is a presidential memorandum signed by Donald Trump in 2018. It directs the United States to stop taking part in the Iran nuclear deal, known as the JCPOA. It also orders agencies to prepare to put back in place the sanctions that had been lifted under the agreement.",
+          "pool": "candidate",
+          "lenses": [
+            "iran"
+          ],
+          "by": "model",
+          "sort": "2018-05-08"
+        },
+        {
+          "object_id": "custom-federal-reserve-issues-fomc-statement",
+          "title": "Federal Reserve issues FOMC statement",
+          "author": "Federal Open Market Committee, Board of Governors of the Federal Reserve System",
+          "year": "2022",
+          "source": "Board of Governors of the Federal Reserve System",
+          "source_url": "https://federalreserve.gov/newsevents/pressreleases/monetary20220316a.htm",
+          "about": "The statement came out in March 2022. It said the invasion of Ukraine by Russia was causing tremendous human and economic hardship. The Federal Open Market Committee issued it as part of the Federal Reserve's regular communication about the economy.",
+          "pool": "custom",
+          "lenses": [],
+          "by": "model",
+          "sort": "2022-03-16"
+        },
+        {
+          "object_id": "custom-national-security-presidential-memorandum-on-imposing-maximu",
+          "title": "National Security Presidential Memorandum on Imposing Maximum Pressure on the Government of the Islamic Republic of Iran, Denying Iran All Paths to a Nuclear Weapon, and Countering Iran's Malign Influence",
+          "author": "Donald J. Trump",
+          "year": "2025",
+          "source": "U.S. Government Publishing Office, Daily Compilation of Presidential Documents",
+          "source_url": "https://govinfo.gov/content/pkg/DCPD-202500223/html/DCPD-202500223.htm",
+          "about": "This memorandum was issued in February 2025. Its title speaks of maximum pressure on Iran, denying Iran paths to a nuclear weapon, and countering its malign influence. The text calls for a robust and continual campaign, run in coordination with the Secretary of the Treasury and other agencies, aimed at Iran's oil exports.",
+          "pool": "custom",
+          "lenses": [],
+          "by": "model",
+          "sort": "2025-02-04"
+        }
+      ],
+      "beginnings": [
+        {
+          "object_id": "custom-address-to-the-nation-about-policies-to-deal-with-the-energy",
+          "year": "1973",
+          "line": "In an address to the nation, the president warned that the country was heading toward the most acute energy shortages since World War II.",
+          "by": "model"
+        },
+        {
+          "object_id": "2018-05-08-national-security-presidential-memorandum-on-ceasing-united-states-participatio",
+          "year": "2018",
+          "line": "President Donald Trump signed a memorandum ending United States participation in the Joint Comprehensive Plan of Action, the 2015 nuclear agreement with Iran.",
+          "by": "model"
+        },
+        {
+          "object_id": "custom-federal-reserve-issues-fomc-statement",
+          "year": "2022",
+          "line": "The Federal Reserve issued a Federal Open Market Committee statement that named Russia's invasion of Ukraine as a cause of human and economic hardship.",
+          "by": "model"
+        },
+        {
+          "object_id": "custom-national-security-presidential-memorandum-on-imposing-maximu",
+          "year": "2025",
+          "line": "A presidential memorandum ordered a campaign to drive Iran's oil exports to zero, including crude sold to the People's Republic of China.",
+          "by": "model"
+        }
+      ],
+      "by": {
+        "contest": "model",
+        "stakes": "model",
+        "lenses": "model"
+      },
+      "approved_objects": [
+        "2018-05-08-national-security-presidential-memorandum-on-ceasing-united-states-participatio"
+      ],
+      "auto_approved": [
+        "2018-05-08-national-security-presidential-memorandum-on-ceasing-united-states-participatio",
+        "custom-address-to-the-nation-about-policies-to-deal-with-the-energy",
+        "custom-federal-reserve-issues-fomc-statement",
+        "custom-national-security-presidential-memorandum-on-imposing-maximu"
+      ],
+      "custom_objects": [
+        {
+          "id": "custom-address-to-the-nation-about-policies-to-deal-with-the-energy",
+          "title": "Address to the Nation About Policies To Deal With the Energy Shortages.",
+          "author": "Richard Nixon",
+          "year": "1973",
+          "date": "1973-11-07",
+          "source": "The American Presidency Project, University of California, Santa Barbara",
+          "url": "https://www.presidency.ucsb.edu/documents/address-the-nation-about-policies-deal-with-the-energy-shortages",
+          "found_by": "search",
+          "evidence_quote": "We must, therefore, face up to a very stark fact: We are heading toward the most acute shortages of energy since World War II.",
+          "ties_to": "gasoline prices, heating oil, and the war in Iran",
+          "relation": "origin of the background",
+          "because": "It set the pattern of a president answering a Middle East oil shock with national energy goals, the same argument the 2026 price spike now raises."
+        },
+        {
+          "id": "custom-federal-reserve-issues-fomc-statement",
+          "title": "Federal Reserve issues FOMC statement",
+          "author": "Federal Open Market Committee, Board of Governors of the Federal Reserve System",
+          "year": "2022",
+          "date": "2022-03-16",
+          "source": "Board of Governors of the Federal Reserve System",
+          "url": "https://federalreserve.gov/newsevents/pressreleases/monetary20220316a.htm",
+          "found_by": "search",
+          "evidence_quote": "The invasion of Ukraine by Russia is causing tremendous human and economic hardship.",
+          "ties_to": "The Fed raised rates; core inflation; inflation expectations",
+          "relation": "earlier instance of the same action",
+          "because": "It shows the Fed treating a war-driven energy price jump as a reason to tighten, the same choice it faces after September's 0.6% rise."
+        },
+        {
+          "id": "custom-national-security-presidential-memorandum-on-imposing-maximu",
+          "title": "National Security Presidential Memorandum on Imposing Maximum Pressure on the Government of the Islamic Republic of Iran, Denying Iran All Paths to a Nuclear Weapon, and Countering Iran's Malign Influence",
+          "author": "Donald J. Trump",
+          "year": "2025",
+          "date": "2025-02-04",
+          "source": "U.S. Government Publishing Office, Daily Compilation of Presidential Documents",
+          "url": "https://govinfo.gov/content/pkg/DCPD-202500223/html/DCPD-202500223.htm",
+          "found_by": "search",
+          "evidence_quote": "implement a robust and continual campaign, in coordination with the Secretary of the Treasury and other relevant executive departments or agencies (agencies), to drive Iran's export of oil to zero, including exports of Iranian crude to the People's Republic of China;",
+          "ties_to": "the war in Iran and the jump in gasoline prices",
+          "relation": "same subject",
+          "because": "It put a U.S. policy aimed at Iran's oil into force before the war, which is why the argument over blame for prices now includes White House choices."
+        }
+      ],
+      "ties": {
+        "2018-05-08-national-security-presidential-memorandum-on-ceasing-united-states-participatio": {
+          "relation": "pool",
+          "why": "Withdrawing from the JCPOA is a direct step in the U.S.-Iran confrontation that led to the war in Iran which the story blames for the gasoline spike."
+        },
+        "custom-address-to-the-nation-about-policies-to-deal-with-the-energy": {
+          "relation": "origin of the background",
+          "phrase": "gasoline prices, heating oil, and the war in Iran",
+          "why": "Nixon's 1973 address answering a Middle East oil shock is the origin of the pattern behind the story's gasoline and heating-oil price spike tied to the war in Iran."
+        },
+        "custom-federal-reserve-issues-fomc-statement": {
+          "relation": "earlier instance of the same action",
+          "phrase": "The Fed raised rates; core inflation; inflation expectations",
+          "why": "An earlier FOMC statement is an earlier instance of the same action as the story's September rate hike amid energy-driven inflation and the October hike odds."
+        },
+        "custom-national-security-presidential-memorandum-on-imposing-maximu": {
+          "relation": "same subject",
+          "phrase": "the war in Iran and the jump in gasoline prices",
+          "why": "The 2025 maximum-pressure memorandum on Iran is the same subject as the war in Iran and bears on the story's dispute over White House responsibility for prices."
+        }
+      },
+      "revisions": [
+        {
+          "at": "2026-10-14T18:31:10+00:00",
+          "request": "(made automatically)",
+          "summary": "The story spans gas, retirees, the Fed and election politics, so I named the category for the household squeeze and kept the Iran lens because the war is the stated cause of the price spike."
+        }
+      ],
+      "created": "2026-10-14",
+      "stories": [
+        {
+          "story_id": "e04a87f8ca0d428d",
+          "date": "2026-10-14",
+          "headline": "Gas Is Up 34.2% in a Year and Hit $4 on 158 Days in 2026. A Tank Fill-Up Now Costs What a Week of Groceries Used To."
+        }
+      ],
+      "draft_problems": [],
+      "last_story": "2026-10-14",
+      "promotion": {
+        "ready": false,
+        "missing": [
+          "needs 3 stories on 2 days (has 1 on 1)",
+          "needs 3 linked matrix objects and a sourced indicator"
+        ]
+      }
     }
   ]
 }
