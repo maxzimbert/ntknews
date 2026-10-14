@@ -1,5 +1,5 @@
 {
- "assembled_at": "2026-10-14T03:52:27.350973+00:00",
+ "assembled_at": "2026-10-14T09:22:11.277199+00:00",
  "slot_plan": "A",
  "displacement": "MANUAL",
  "daytype": "weekday",
@@ -7,46 +7,55 @@
   8,
   10
  ],
- "actual_size": 33,
- "lint_failures": [],
+ "actual_size": 10,
+ "lint_failures": [
+  "under 3 fully self-contained items",
+  "no item answers 'what do I do with this'"
+ ],
  "slots_unfilled": [],
  "stories": [
   {
    "slot": "unavoidable",
    "slot_label": "Unavoidable",
-   "key": "4cb99c34f06b4de9",
-   "title": "Pope Leo XIV diagnosed with lung cancer, recovering after surgery",
-   "beat": "other",
-   "publisher_count": 6,
+   "key": "10ff9d4411d2bfd9",
+   "title": "SpaceX cuts Starlink military service for Ukraine without warning, disrupting drone missions",
+   "beat": "international",
+   "publisher_count": 11,
    "publishers": [
     "BBC",
-    "NPR",
-    "New York Times",
-    "CBS News",
-    "NBC News",
-    "Daily Mail"
+    "Financial Times",
+    "The Guardian",
+    "Yahoo News",
+    "Al Jazeera",
+    "CNBC",
+    "Fox News",
+    "Semafor",
+    "Techmeme",
+    "Daily Mail",
+    "Memeorandum"
    ],
    "scores": {
-    "emotional_load": 3,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 5
+    "emotional_load": 4,
+    "explainability": 3,
+    "actionability": 2,
+    "conversational_currency": 3
    },
    "politician_led": false,
    "ledger_class": null,
    "new_facts": [],
-   "line": "Pope Leo XIV has been diagnosed with lung cancer and underwent surgery, with the Vatican saying he is recovering.",
-   "assembly_score": 8.25
+   "line": "SpaceX restricted Starlink military-grade service for Ukrainian forces without warning, disrupting drone missions during Russian attacks on power infrastructure.",
+   "assembly_score": 6.2
   },
   {
    "slot": "money_me",
    "slot_label": "Money & me",
-   "key": "efb4d5c74655a368",
-   "title": "China's exports jump 36% in September, led by AI-related shipments",
+   "key": "b86a8c50ab7a3bdc",
+   "title": "China's September exports rise 36%, led by AI-linked chip demand",
    "beat": "business",
-   "publisher_count": 2,
+   "publisher_count": 3,
    "publishers": [
-    "Financial Times",
+    "New York Times",
+    "Al Jazeera",
     "CNBC"
    ],
    "scores": {
@@ -58,425 +67,40 @@
    "politician_led": false,
    "ledger_class": null,
    "new_facts": [],
-   "line": "China's September exports and imports rose well above forecasts, with AI-related shipments driving much of the surge.",
-   "assembly_score": 5.78
+   "line": "China's exports jumped 36.3% in September, driven by AI-related chip and computer demand, with imports up 31%.",
+   "assembly_score": 3.68
   },
   {
    "slot": "body_mind",
    "slot_label": "Body & mind",
-   "key": "b1bf5fe38450e5ea",
-   "title": "Georgia measles cases reach 22 this year, more than double 2025's total",
+   "key": "5c68d889afc5564a",
+   "title": "Pope's lung cancer surgery succeeds; he rests calmly at Gemelli hospital",
    "beat": "health",
    "publisher_count": 1,
    "publishers": [
-    "Fox 5 Atlanta"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 4,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Georgia's measles count hits 22 this year, more than double 2025, as an unvaccinated Macon County resident tests positive.",
-   "assembly_score": 4.88
-  },
-  {
-   "slot": "work_machines",
-   "slot_label": "Work & machines",
-   "key": "6c932ca250011873",
-   "title": "Microsoft releases updates fixing 1,400+ security vulnerabilities, surpassing September's record of 972, which was already ~10x the normal monthly patch load (Brian Krebs/Krebs on Security)",
-   "beat": "tech",
-   "publisher_count": 1,
-   "publishers": [
-    "Techmeme"
+    "ANSA"
    ],
    "scores": {
     "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 3.83
-  },
-  {
-   "slot": "group_chat",
-   "slot_label": "The group chat",
-   "key": "a8b6bc8e591f72c9",
-   "title": "Cornell's president admits missteps in handling rape accusations",
-   "beat": "education",
-   "publisher_count": 1,
-   "publishers": [
-    "New York Times"
-   ],
-   "scores": {
-    "emotional_load": 4,
     "explainability": 4,
-    "actionability": 2,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Cornell's president acknowledges mistakes in how the university handled rape accusations against students.",
-   "assembly_score": 4.59
-  },
-  {
-   "slot": "elsewhere",
-   "slot_label": "Elsewhere, but here",
-   "key": "01f69627c6c4a09c",
-   "title": "Houthi strikes reach Riyadh and Saudi Aramco as Saudi-Yemen fighting escalates",
-   "beat": "international",
-   "publisher_count": 7,
-   "publishers": [
-    "BBC",
-    "Financial Times",
-    "New York Times",
-    "Al Jazeera",
-    "CBS News",
-    "Deutsche Welle",
-    "France 24"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 2,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Houthi missile and drone attacks have reached Saudi Arabia, including near Riyadh and Aramco headquarters, as Saudi-Houthi fighting escalates.",
-   "assembly_score": 8.03
-  },
-  {
-   "slot": "close",
-   "slot_label": "The close",
-   "key": "aa6a7ef4daf6acb2",
-   "title": "Judge indefinitely blocks White House ban on CNN, MS NOW and Politico",
-   "beat": "national",
-   "publisher_count": 5,
-   "publishers": [
-    "New York Times",
-    "Yahoo News",
-    "CBS News",
-    "CNBC",
-    "Deutsche Welle"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 2,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A federal judge has again blocked the White House from barring CNN, MS NOW and Politico from access.",
-   "assembly_score": 10.63
-  },
-  {
-   "slot": "unavoidable",
-   "slot_label": "Unavoidable",
-   "key": "46639ab135ccb9f6",
-   "title": "Six Flags closes nine coasters after Georgia rider dies in ejection",
-   "beat": "national",
-   "publisher_count": 6,
-   "publishers": [
-    "BBC",
-    "The Guardian",
-    "CBS News",
-    "Fox News",
-    "Daily Mail",
-    "Fox 5 Atlanta"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 5,
-    "actionability": 3,
+    "actionability": 1,
     "conversational_currency": 4
    },
    "politician_led": false,
    "ledger_class": null,
    "new_facts": [],
-   "line": "A rider died after being ejected from the Goliath coaster at Six Flags Over Georgia, prompting state investigators to examine the ride and nine similar coasters closed nationwide.",
-   "assembly_score": 7.57
+   "line": "Pope Leo XIV had a successful surgery for lung cancer at Gemelli hospital and spent a calm night afterward.",
+   "assembly_score": 4.0
   },
   {
-   "slot": "flex",
-   "slot_label": "Flex",
-   "key": "0e9212d7cca67d26",
-   "title": "Kimberly Guilfoyle resigns as ambassador to Greece amid corruption allegations",
-   "beat": "national",
-   "publisher_count": 5,
-   "publishers": [
-    "New York Times",
-    "Yahoo News",
-    "CBS News",
-    "France 24",
-    "Memeorandum"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Kimberly Guilfoyle resigned as US ambassador to Greece after reported misconduct and corruption allegations, with Trump now distancing himself from her.",
-   "assembly_score": 7.18
-  },
-  {
-   "slot": "flex",
-   "slot_label": "Flex",
-   "key": "d653ec2e673e1c49",
-   "title": "Collins and Jackson clash over Iran war in tight Maine Senate debate",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "Daily Beast"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 2,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Maine Senate race tightens as Republican Susan Collins and Democrat Troy Jackson clash over the Iran war.",
-   "assembly_score": 6.06
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "5e19e4cc99969edf",
-   "title": "Fairfax schools enrollment drops thousands below plan, forcing staffing changes",
-   "beat": "education",
-   "publisher_count": 2,
-   "publishers": [
-    "NBC Washington",
-    "Fox 5 DC"
-   ],
-   "urls": [
-    "//fox5dc.com/news/loudoun-county-school-board-tightens-decades-old-out-of-zone-transfer-policy",
-    "//nbcwashington.com/news/local/northern-virginia/fairfax-county-public-schools-enrollment-declines-by-thousands/4167185"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 2,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Fairfax County schools are several thousand students short of projections, forcing staffing cuts and budget pressure as enrollment falls.",
-   "assembly_score": 1.5
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "e3503f26208399ec",
-   "title": "Trump's new press secretary debuts with brief briefing and limited questions",
-   "beat": "national",
-   "publisher_count": 4,
-   "publishers": [
-    "Daily Beast",
-    "The Atlantic",
-    "ABC Australia",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-10-14/katie-zacharia-first-white-house-press-briefing-key-moments/107265334",
-    "//memeorandum.com/261013/p155",
-    "//memeorandum.com/261014/p2",
-    "//theatlantic.com/newsletters/2026/10/press-secretary-katie-zacharia-first-briefing/688988",
-    "//thedailybeast.com/cnn-star-skewers-trumps-mouthpiece-over-his-biggest-grudge",
-    "//thedailybeast.com/one-time-trump-aide-alyssa-farah-griffin-takes-swipe-at-his-new-mouthpiece"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump's new White House press secretary held a brief first briefing, taking only three questions, all from conservative-leaning outlets.",
-   "assembly_score": 0.69
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "871d6bc47b623f35",
-   "title": "OpenAI employee charged after hidden listening device found in office",
+   "slot": "work_machines",
+   "slot_label": "Work & machines",
+   "key": "bb52b360a8a57424",
+   "title": "AI Models Can Be Easily Modified to Assist Terrorist and Extremist Activity",
    "beat": "tech",
-   "publisher_count": 6,
+   "publisher_count": 1,
    "publishers": [
-    "Al Jazeera",
-    "CBS News",
-    "CNBC",
-    "France 24",
-    "Techmeme",
-    "ABC Australia"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-10-14/open-ai-employee-charged-after-alleged-covert-recording/107263252",
-    "//aljazeera.com/news/2026/10/13/openai-engineer-charged-after-listening-device-found-in-meeting-room?traffic_source=rss",
-    "//aljazeera.com/video/newsfeed/2026/10/14/openai-employee-listening-device-spying-saudi-fozan?traffic_source=rss",
-    "//cbsnews.com/video/openai-employee-arrested-allegedly-bugging-conference-room",
-    "//cnbc.com/2026/10/13/openai-employee-arrested-recording-device.html",
-    "//france24.com/en/live-news/20261013-saudi-employee-arrested-for-allegedly-bugging-openai-office",
-    "//techmeme.com/261013/p49"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "An OpenAI engineer allegedly hid a recording device in a company office, and the company says it traced it to him using its own AI models.",
-   "assembly_score": 0.35
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "1674475a81af5df9",
-   "title": "S. Korea, U.S. reportedly delay defense talks past U.S. midterms",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "CNBC",
-    "Yonhap News"
-   ],
-   "urls": [
-    "//cnbc.com/2026/10/14/korea-india-hyundai-cars-investment.html",
-    "//en.yna.co.kr/view/AEN20261014001500320",
-    "//en.yna.co.kr/view/AEN20261014001551320",
-    "//en.yna.co.kr/view/AEN20261014001900315",
-    "//en.yna.co.kr/view/AEN20261014002000315",
-    "//en.yna.co.kr/view/AEN20261014002100320",
-    "//en.yna.co.kr/view/AEN20261014002300320",
-    "//en.yna.co.kr/view/AEN20261014002400315",
-    "//en.yna.co.kr/view/AEN20261014003500315",
-    "//en.yna.co.kr/view/AEN20261014003600315",
-    "//en.yna.co.kr/view/AEN20261014004400315",
-    "//en.yna.co.kr/view/AEN20261014004500315",
-    "//en.yna.co.kr/view/AEN20261014004700320",
-    "//en.yna.co.kr/view/AEN20261014005300320",
-    "//en.yna.co.kr/view/AEN20261014005700315"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "South Korea and the U.S. are reportedly delaying their annual defense talks past the November midterms, amid a gap over wartime command handover.",
-   "assembly_score": 0.17
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "cbe442327ef38301",
-   "title": "Israeli strikes kill one in Gaza, wound journalists in West Bank",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "Al Jazeera"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/10/14/israeli-attacks-kill-one-in-gaza-wound-journalists-in-occupied-west-bank?traffic_source=rss",
-    "//nytimes.com/2026/10/14/opinion/netanyahu-eisenkot-israel-election.html"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 2,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Israeli strikes killed one person in Gaza and wounded journalists in the occupied West Bank, while a rival to Netanyahu rises in Israeli politics.",
-   "assembly_score": 0.08
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "d8e5785bce859fcd",
-   "title": "China and North Korea to open long-stalled Yalu River bridge Thursday",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "Yonhap News"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/10/14/china-and-north-korea-to-open-new-yalu-river-bridge-state-media-reports?traffic_source=rss",
-    "//en.yna.co.kr/view/AEN20261014001400320",
-    "//en.yna.co.kr/view/AEN20261014004300315",
-    "//en.yna.co.kr/view/AEN20261014004351315",
-    "//en.yna.co.kr/view/AEN20261014004352315"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": true,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "China and North Korea open the long-delayed New Yalu River Bridge on Thursday, a trade link after years of stalled construction.",
-   "assembly_score": -0.46
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "f0f3082d3f1b6744",
-   "title": "Singapore third-quarter GDP growth softens from four-year high but beats estimates",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "CNBC"
-   ],
-   "urls": [
-    "//aljazeera.com/economy/2026/10/14/singapores-economy-grows-more-than-5-percent-amid-ai-boom?traffic_source=rss",
-    "//cnbc.com/2026/10/14/producer-prices-in-china-rise-fastest-since-june-2022-on-fuel-costs.html",
-    "//cnbc.com/2026/10/14/singapore-gdp-q3.html"
+    "Wired"
    ],
    "scores": {
     "emotional_load": 3,
@@ -485,60 +109,122 @@
     "conversational_currency": 3
    },
    "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
    "ledger_class": null,
    "new_facts": [],
    "line": "",
-   "assembly_score": -0.5
+   "assembly_score": 3.79
   },
   {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "881c1b6b773845db",
-   "title": "Ukrainian ex-officer goes on trial in Germany over Nord Stream pipeline blasts",
-   "beat": "international",
-   "publisher_count": 3,
+   "slot": "group_chat",
+   "slot_label": "The group chat",
+   "key": "5e19e4cc99969edf",
+   "title": "Fairfax County schools lose thousands of students, forcing staffing cuts",
+   "beat": "education",
+   "publisher_count": 1,
    "publishers": [
-    "BBC",
-    "Financial Times",
-    "Al Jazeera"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/10/14/ukrainian-ex-officer-goes-on-trial-in-germany-over-nord-stream-blasts?traffic_source=rss",
-    "//bbc.co.uk/news/articles/cw99zpmnxzmjo?at_campaign=rss&at_medium=RSS",
-    "//ft.com/content/8c3c631c-e37f-4209-aefd-112c4c58020c?syn-25a6b1a6=1"
+    "NBC Washington"
    ],
    "scores": {
     "emotional_load": 2,
     "explainability": 4,
+    "actionability": 2,
+    "conversational_currency": 2
+   },
+   "politician_led": false,
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "Fairfax County schools enrolled several thousand fewer students than planned, cutting state funding and forcing staffing changes.",
+   "assembly_score": 4.2
+  },
+  {
+   "slot": "elsewhere",
+   "slot_label": "Elsewhere, but here",
+   "key": "c2cf9e650dc262af",
+   "title": "Pope Leo has lung cancer; surgery removed a growth, Vatican says",
+   "beat": "international",
+   "publisher_count": 4,
+   "publishers": [
+    "NPR",
+    "New York Times",
+    "Yahoo News",
+    "Daily Mail"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 4,
     "actionability": 1,
+    "conversational_currency": 4
+   },
+   "politician_led": false,
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "Pope Leo XIV had surgery to remove a cancerous growth from his lung, the Vatican announced, and is recovering in hospital.",
+   "assembly_score": 4.36
+  },
+  {
+   "slot": "close",
+   "slot_label": "The close",
+   "key": "07215a3c9c3d2c78",
+   "title": "Kansas races show Trump's policies may cost Republicans even in a red state",
+   "beat": "national",
+   "publisher_count": 3,
+   "publishers": [
+    "NPR",
+    "Daily Beast",
+    "Semafor"
+   ],
+   "scores": {
+    "emotional_load": 2,
+    "explainability": 4,
+    "actionability": 2,
     "conversational_currency": 3
    },
    "politician_led": false,
-   "progress_coded": true,
-   "promotion_path": "corroborated",
    "ledger_class": null,
    "new_facts": [],
-   "line": "A Ukrainian ex-officer is on trial in Germany, accused of organizing the 2022 sabotage of the Nord Stream gas pipelines, with proceedings running into February.",
-   "assembly_score": -0.66
+   "line": "Kansas voters could elect a Democratic senator and a Republican governor this year, testing how far Trump's unpopular policies can drag down the GOP.",
+   "assembly_score": 4.19
   },
   {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "f536ab1ad362de2e",
-   "title": "Trump pardons two vehicle repair shop owners during Alaska rally",
+   "slot": "unavoidable",
+   "slot_label": "Unavoidable",
+   "key": "7fd0b81af4643388",
+   "title": "Russell Brand's rape and sexual assault trial opens at Southwark Crown Court",
    "beat": "national",
    "publisher_count": 2,
    "publishers": [
+    "The Guardian",
+    "Daily Mail"
+   ],
+   "scores": {
+    "emotional_load": 4,
+    "explainability": 4,
+    "actionability": 1,
+    "conversational_currency": 4
+   },
+   "politician_led": false,
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "Comedian Russell Brand faces a rape and sexual assault trial at Southwark Crown Court, with prosecutors opening the case.",
+   "assembly_score": 4.46
+  },
+  {
+   "slot": "unavoidable",
+   "slot_label": "Unavoidable",
+   "key": "76e60703ae38a736",
+   "title": "Federal Judge Again Blocks Trump\u2019s Ban on CNN, MS NOW and Politico",
+   "beat": "national",
+   "publisher_count": 8,
+   "publishers": [
+    "NPR",
+    "New York Times",
+    "The Guardian",
+    "ABC News",
     "CBS News",
+    "CNBC",
+    "Deutsche Welle",
     "NBC News"
    ],
-   "urls": [
-    "//cbsnews.com/news/trump-pardons-auto-workers-alaska-rally-clean-air-act",
-    "//cbsnews.com/video/trump-issues-pardons-2-auto-shop-owners-alaska-rally",
-    "//nbcnews.com/video/trump-pardons-two-vehicle-repair-shop-owners-during-alaska-rally-271538245765"
-   ],
    "scores": {
     "emotional_load": 3,
     "explainability": 3,
@@ -546,526 +232,76 @@
     "conversational_currency": 3
    },
    "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
    "ledger_class": null,
    "new_facts": [],
    "line": "",
-   "assembly_score": -0.69
+   "assembly_score": 3.81
   },
   {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "14def571c6969ae3",
-   "title": "What we know about the man who died falling from a Six Flags rollercoaster",
+   "slot": "flex",
+   "slot_label": "Flex",
+   "key": "1c72f7fe6bd0c03c",
+   "title": "Trump's new press secretary faces scrutiny after brief, limited debut briefing",
    "beat": "national",
-   "publisher_count": 5,
+   "publisher_count": 4,
    "publishers": [
-    "BBC",
-    "CBS News",
-    "Fox News",
+    "Daily Beast",
+    "ABC Australia",
     "Daily Mail",
-    "Fox 5 Atlanta"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/cke8r4nmy36qo?at_campaign=rss&at_medium=RSS",
-    "//cbsnews.com/news/six-flags-ride-closures-georgia-roller-coaster-death",
-    "//dailymail.com/news/article-16205847/Hassan-Kariem-Six-Flags-fall-roller-coaster-Goliath-dead.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dailymail.com/news/article-16206665/Six-Flags-roller-coaster-Goliath-restraints-clicking-Hassan-Kariem.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//fox5atlanta.com/news/six-flags-goliath-coaster-death-georgia-investigators-probe-fatal-ejection",
-    "//fox5atlanta.com/news/sunshine-our-family-family-remembers-man-killed-six-flags-georgia",
-    "//foxnews.com/us/attorney-says-fatal-six-flags-roller-coaster-accident-could-raise-broader-safety-questions-9-rides-close"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.84
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "8062c9a1f8ce2296",
-   "title": "Iranian woman handed death sentence for \u2018blasphemy\u2019 in social media post",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "Al Jazeera"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/10/14/un-human-rights-council-elects-15-members-in-uncontested-vote?traffic_source=rss",
-    "//theguardian.com/global-development/2026/oct/14/najmeh-amini-blasphemy-death-sentence-insulting-prophet"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.91
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "497730e8481e497f",
-   "title": "Trump Adds Another Giveaway to His Midterm Pitch: Pardons.",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
     "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/261013/p153",
-    "//nytimes.com/2026/10/13/us/elections/trump-pardons-midterms-payments.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.09
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "a332b603679e9452",
-   "title": "Trump advisers debate livestreaming Nidal Hasan execution over propaganda concerns",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "ABC News",
-    "CBS News",
-    "Daily Beast"
-   ],
-   "urls": [
-    "//abcnews.com/Politics/trump-advisers-debate-livestreaming-nidal-hasan-execution-officials/story?id=137244485",
-    "//cbsnews.com/video/trump-officials-leaning-against-livestreaming-fort-hood-shooter-execution-sources",
-    "//thedailybeast.com/chuck-todd-excoriates-pentagon-pete-in-f-bomb-tirade"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump officials are reconsidering whether to livestream the Fort Hood shooter's execution, amid propaganda and optics concerns.",
-   "assembly_score": -1.28
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "2710cdd2e132138a",
-   "title": "Ossoff pledges full Senate term, rules out 2028 presidential run",
-   "beat": "national",
-   "publisher_count": 5,
-   "publishers": [
-    "New York Times",
-    "Politico",
-    "CBS News",
-    "NBC News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//cbsnews.com/news/ossoff-collins-georgia-senate-debate-election-epstein-files-tariffs",
-    "//memeorandum.com/261013/p151",
-    "//nbcnews.com/politics/2026-election/heated-georgia-senate-debate-jon-ossoff-says-wont-run-president-2028-rcna603300",
-    "//nytimes.com/2026/10/13/us/politics/georgia-senate-debate-ossoff-collins.html",
-    "//politico.com/news/2026/10/13/jon-ossoff-zero-interest-2028-georgia-01117546"
    ],
    "scores": {
     "emotional_load": 1,
     "explainability": 4,
     "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "In a Georgia Senate debate, Jon Ossoff pledged to serve a full term and said he won't run for president in 2028.",
-   "assembly_score": -1.45
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "f2dbac0547a49c9e",
-   "title": "Peralta shines as Rays seize on Ram\u00edrez error to level ALCS against Guardians",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "Fox News"
-   ],
-   "urls": [
-    "//foxnews.com/outkick-sports/tampa-bay-rays-win-game-two-guardians-terrible-error-jose-ramirez-alcs-1-1",
-    "//theguardian.com/sport/2026/oct/13/rays-guardians-alcs-game-two-freddy-peralta-jose-ramirez"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.61
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "7a456f2301e279cc",
-   "title": "Jenna Bush Hager criticizes Shane Gillis's sexist SNL monologue about women's gym clothes",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "Daily Beast",
-    "American Spectator"
-   ],
-   "urls": [
-    "//spectator.org/whos-offended-by-shane-gillis",
-    "//thedailybeast.com/obsessed/jenna-bush-hager-calls-out-maga-friendly-snl-host-shane-gillis-over-misogynistic-monologue"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Comedian Shane Gillis drew criticism from TV host Jenna Bush Hager over a sexist SNL monologue joke about women's gym clothing.",
-   "assembly_score": -1.7
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "6b23da984474d8f8",
-   "title": "Kyiv power plant hit by Russian missile without warning from allies",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "France 24"
-   ],
-   "urls": [
-    "//aljazeera.com/video/newsfeed/2026/10/14/kyiv-russian-ballistic-missile-strikes-no-advance-warning?traffic_source=rss",
-    "//france24.com/en/europe/20261014-kyiv-power-plant-hit-by-russian-missile-without-warning-from-allies"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.16
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "11ba2a2e3ccea692",
-   "title": "Taiwan agrees to buy 30% of gas from Alaska LNG project, Trump says",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "CNBC",
-    "Fox News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//cnbc.com/2026/10/14/taiwan-alaska-lng-project-trump-.html",
-    "//foxnews.com/politics/president-trump-signs-pardons-alaska-diesel-mechanics-onstage-rally-touting-major-energy-deals",
-    "//memeorandum.com/261013/p152"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.44
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "aeba6a927d0210e2",
-   "title": "Bank of America hit with $1.2bn fine for money laundering failings",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Al Jazeera"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/10/14/us-fines-bank-of-america-1-2bn-for-money-laundering-sanctions-violations?traffic_source=rss",
-    "//bbc.co.uk/news/articles/cm3wvxy6n3z8o?at_campaign=rss&at_medium=RSS"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.83
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "3402a2060508277c",
-   "title": "DOJ subpoenas Rep. Ilhan Omar's relatives in immigration probe",
-   "beat": "national",
-   "publisher_count": 4,
-   "publishers": [
-    "Washington Post",
-    "Yahoo News",
-    "Fox News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//foxnews.com/politics/rep-ilhan-omars-immigration-history-faces-new-scrutiny-federal-investigators-subpoena-relatives",
-    "//memeorandum.com/261013/p145",
-    "//memeorandum.com/261013/p147",
-    "//newsmax.com/politics/DOJ-Subpoenas-Omar-Relatives-in-Escalation-of-Long-Running-Probe/2026/10/13/id/1272674",
-    "//washingtonpost.com/politics/2026/10/13/rep-omar-investigation-focuses-birthdate-citizenship-papers-people-familiar-say"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.9
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "3a1cdcb376c6376b",
-   "title": "Woman accused of stabbing husband and son to death at family resort: Complaint",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "ABC News",
-    "Fox News"
-   ],
-   "urls": [
-    "//abcnews.com/US/woman-accused-stabbing-husband-3-year-son-death/story?id=137239427",
-    "//foxnews.com/us/great-wolf-lodge-horror-mom-accused-killing-husband-toddler-hotel-room"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.29
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "e2f656da27cdae7b",
-   "title": "Duane 'Keffe D' Davis gets 40 years to life for orchestrating Tupac Shakur\u2019s killing",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Yahoo News",
-    "Al Jazeera"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/10/13/ex-gang-leader-gets-40-years-to-life-for-rapper-tupac-shakurs-1996-murder?traffic_source=rss",
-    "//yahoo.com/news/articles/ex-gang-leader-faces-maximum-090311630.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -4.94
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "2472058ed3f93ca0",
-   "title": "GOP pulls House ad money from four races as Democrats chase long shots",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "ABC News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//abcnews.com/Politics/wireStory/battle-lines-shift-house-races-republicans-retreat-front-137240769",
-    "//memeorandum.com/261013/p138"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 2,
     "conversational_currency": 3
    },
    "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
    "ledger_class": null,
    "new_facts": [],
-   "line": "Republicans are pulling back money from several House battlegrounds as Democrats rush cash to long-shot challengers before the November midterms.",
-   "assembly_score": -5.02
+   "line": "Trump's new White House press secretary gave a brief briefing with few questions, and aides privately question her readiness for the job.",
+   "assembly_score": 4.13
   }
  ],
  "excluded_sample": [
   {
-   "title": "Guardians Rays",
+   "title": "Witnesses recall moments before man's fatal fall from Six Flags roller coaster in Georgia",
    "why": "triage verdict NO"
   },
   {
-   "title": "Sen. Jon Ossoff: \u2018I\u2019m not running for president\u2019",
+   "title": "The Vogue Business SS27 Global Buyer Report",
    "why": "triage verdict NO"
   },
   {
-   "title": "Jenna Bush Hager Calls Out MAGA-Friendly SNL Host Over Monologue",
+   "title": "Today in history: October 14 (copy)",
    "why": "triage verdict NO"
   },
   {
-   "title": "Singapore third-quarter GDP growth softens from four-year high but beats estimates",
+   "title": "Are YOU a rude texter? Etiquette Queen LAURA WINDSOR reveals why 'Sorry, just seen this' is the height of bad manners - and the rules to follow",
    "why": "triage verdict NO"
   },
   {
-   "title": "Delaware-based Causa Prima, which develops an agent-to-agent AI platform for managing B2B payments, resolving billing disputes, and more, raised a $20M seed (Camila Grigera Na\u00f3n/Fortune)",
+   "title": "Fermati i due componenti della banda della minicar, hanno confessato. Sono entrambi minorenni",
    "why": "triage verdict NO"
   },
   {
-   "title": "Where are the children from The NeverEnding Story now? Cast of iconic 80s fantasy movie reveal their transformations 42 years on",
+   "title": "Fact check: Misleading graph about alleged Russian bot activity",
    "why": "triage verdict NO"
   },
   {
-   "title": "(URGENT) Seoul shares start higher amid AI concerns",
+   "title": "Apple HomeView hands-on: SHIVALI BEST is one of the first people to test the \u00a3299 home device - so, should you buy one for your family?",
    "why": "triage verdict NO"
   },
   {
-   "title": "Tuesday discussion post",
+   "title": "01) Oakland Plantation",
    "why": "triage verdict NO"
   },
   {
-   "title": "The Best Street Style Photos From the Spring 2027 Shows in Shanghai",
+   "title": "Rose to perform at LACMA's 2026 Art+Film Gala",
    "why": "triage verdict NO"
   },
   {
-   "title": "Panic in Dallas: Cowboys defense holds emergency summit as season spirals after Bucs loss",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Our memorial garden helps us grieve - a cemetery felt too far away",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Albert Invent, which launched an AI model trained on chemical patents and data about 15M molecules, raised a $55M Series B, a source says at a $340M valuation (Rashi Shrivastava/Forbes)",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Trump Insiders Are Already Trashing the New Press Secretary",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Joe Manganiello's secret seven-year health battle that nearly killed him",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Saka responds to Arteta's challenge with 'huge impact'",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Bidets save you money and reduce waste \u2014 we tested the best options out there",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "50+ products to make your life easier and our planet cleaner",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Mother's Day is around the corner. Here are 50+ thoughtful gifts she'll love",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "A head-to-toe guide of how men should dress this spring, and where they should shop",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "42 of the most useful travel products you can buy on Amazon",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "The 7 best high-yield savings accounts of April 2023",
+   "title": "Cheese tart, corn salad, squash with \u2019nduja, radicchio salad: Joe Otway\u2019s recipes for early autumn",
    "why": "triage verdict NO"
   }
  ]
