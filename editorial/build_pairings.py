@@ -272,6 +272,24 @@ def misfits(entries):
     return flagged[:MAX_AUTO_CATEGORIES]
 
 
+def match_existing(api_key, e, cands):
+    """The id of an existing category this story belongs under, or None (T-0089). One short classifier call.
+    A category fits when the story is about its subject, not when it shares a theme with it."""
+    listing = "\n".join(f"{c['id']} | {c.get('title', '')} | {c.get('contest') or ''}" for c in cands)
+    user = (f"STORY: {e.get('headline', '')}\n{e.get('summary', '')}\n\n"
+            f"EXISTING CATEGORIES (id | name | the argument it is about):\n{listing}\n\n"
+            "Does this story belong under one of these categories: is it about that category's subject, so a reader "
+            "following the category would expect it there? Sharing a broad theme (the economy, government, technology) "
+            "is not enough. Answer JSON only: {\"id\": \"<id from the list>\" or null, \"why\": \"one sentence\"}")
+    out = call_claude(api_key, CLASSIFIER_MODEL, None, user, 300)
+    cid = out.get("id") if isinstance(out, dict) else None
+    ids = {c["id"] for c in cands}
+    if cid in ids:
+        log(f"5C: {e['story_id']}: matches {cid!r}: {str(out.get('why') or '')[:160]}")
+        return cid
+    return None
+
+
 def auto_categories(api_key, entries, stories, bs, store_path, today):
     import categories
     import compose_category
@@ -283,11 +301,19 @@ def auto_categories(api_key, entries, stories, bs, store_path, today):
     spec = json.loads((ROOT / "editorial" / "lenses.json").read_text())
     store = json.loads(store_path.read_text()) if store_path.exists() else {"rows": []}
     existing = {r["id"]: r for r in store["rows"] if r.get("status") == "provisional"}
+    # T-0089: the categories already live (the editor's and earlier automatic ones) are offered first, so a
+    # story joins one by meaning before a near-duplicate is composed under a new name.
+    live_ids = {r["id"] for r in bs["rows"] if r.get("stratum") == "provisional"}
+    cands = [r for cid, r in existing.items() if cid in live_ids]
     records = []
     for e in flagged:
         name = e.get("proposed_category")
         try:
-            if name and slug(name) in existing:
+            hit = match_existing(api_key, e, cands) if cands else None
+            if hit:
+                rec = dict(existing[hit], status="approved")
+                log(f"5C: {e['story_id']} joins the existing category {rec['title']!r} (matched by subject)")
+            elif name and slug(name) in existing:
                 rec = dict(existing[slug(name)], status="approved")      # a later story joins the category
                 log(f"5C: {e['story_id']} joins the existing category {rec['title']!r}")
             else:
@@ -298,7 +324,8 @@ def auto_categories(api_key, entries, stories, bs, store_path, today):
             continue
         if not rec:
             continue
-        records.append(rec)
+        if not any(r["id"] == rec["id"] for r in records):
+            records.append(rec)
         e["_before"] = (e["row"], e["subgenre"])
         for s in stories:
             if s["story_id"] == e["story_id"]:

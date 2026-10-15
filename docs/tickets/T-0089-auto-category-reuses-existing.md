@@ -1,7 +1,7 @@
 ---
 id: T-0089
 title: Before composing a new automatic category, the publish step files the story under an existing category that fits it
-status: DECIDED
+status: BUILT
 tags: [backstory, defect]
 anchor: editorial/build_pairings.py
 ---
@@ -31,8 +31,19 @@ category but an approved category exists that it was composed from.
 Ruled out: fuzzy matching on names. "Inflation" and "Cost of Living" share no words; the match has to be by
 meaning, which means the classifier.
 
+Built 2026-10-15: before composing, `auto_categories` offers each misfit story the categories live that day
+(the editor's and earlier automatic ones) in one Haiku call, `match_existing`, which answers an id from the
+list or null; an id outside the list is ignored. A match joins the story to that category and composes
+nothing. Cost: one short Haiku call per misfit story, at most three per publish, against a composition's
+several Sonnet calls with web search. Not built: the Pulse publish warning; T-0090 now shows unfiled stories
+at the top of the Backstory tab, which covers most of it.
+
+Not verified against the real model: the editor's next publish is the test.
+
 ## Check
 
 ```sh
-manual: publish the 2026-10-15 lineup twice with the gas story unfiled; the second run logs "joins the existing category" and provisional-rows.json gains no new row
+python3 editorial/test_compose_category.py > /tmp/t0089.log 2>&1 || { grep FAIL /tmp/t0089.log; exit 1; }
+grep -q "^ok   it joins the existing category under a different proposed name" /tmp/t0089.log
+# manual: on the next live publish with a misfit story, the log reads "joins the existing category ... (matched by subject)" when one fits
 ```
