@@ -994,7 +994,7 @@
         ]
       },
       "start_date": "2025-01-01",
-      "start_line": "When Trump announced in July 2025 a new White House State Ballroom, the project whose $330 million cost the tech companies' donations now help cover"
+      "start_line": "When the White House announced a new state ballroom in July 2025, a project of about $330 million that private donors would pay for"
     },
     {
       "id": "p-military-execution-policy",
@@ -1131,7 +1131,7 @@
         }
       ],
       "draft_problems": [
-        "stakes is not 2 sentences"
+        "stakes is empty"
       ],
       "last_story": "2026-10-15",
       "promotion": {
@@ -1142,13 +1142,12 @@
         ]
       },
       "start_date": "2009-01-01",
-      "start_line": "When Nidal Hasan, an Army psychiatrist, shot and killed 13 people at Fort Hood in November 2009, leading to his death sentence"
+      "start_line": "When Army psychiatrist Nidal Hasan shot and killed 13 people at Fort Hood, Texas, in November 2009, and was later sentenced to death"
     },
     {
       "id": "p-spyware",
       "title": "Spyware",
       "status": "provisional",
-      "auto": true,
       "contest": "Whether governments should be free to buy and use commercial spyware against threats and critics at home and abroad, or whether the trade should be restricted because it enables abuse.",
       "stakes": "Who decides when a hacking tool is a security necessity and when it is a weapon turned on reporters and dissidents? Whether blacklists and platform bans can work when the delivery routes, like ads, sit in ordinary commerce, and who answers when they fail, remain open.",
       "lenses": [
@@ -1157,6 +1156,36 @@
       ],
       "subgenres": [
         "surveillance"
+      ],
+      "custom_objects": [
+        {
+          "id": "custom-the-great-ipwn-journalists-hacked-with-suspected-nso-group-i",
+          "title": "The Great iPwn: Journalists Hacked with Suspected NSO Group iMessage 'Zero-Click' Exploit",
+          "author": "Bill Marczak, John Scott-Railton, Noura Aljizawi, Siena Anstis, and Ron Deibert",
+          "year": "2020",
+          "date": "2020-12-20",
+          "source": "The Citizen Lab, University of Toronto",
+          "url": "https://citizenlab.ca/research/the-great-ipwn-journalists-hacked-with-suspected-nso-group-imessage-zero-click-exploit/",
+          "found_by": "search",
+          "evidence_quote": "In July and August 2020, government operatives used NSO Group's Pegasus spyware to hack 36 personal phones belonging to journalists, producers, anchors, and executives at Al Jazeera.",
+          "ties_to": "Citizen Lab had earlier reported that the phones of 36 Al Jazeera staff were hacked with Pegasus",
+          "relation": "earlier instance of the same action",
+          "because": "It showed Al Jazeera staff were already a documented target of commercial spyware, before Candiru's tools reached the network through ads."
+        },
+        {
+          "id": "custom-hooking-candiru-another-mercenary-spyware-vendor-comes-into-",
+          "title": "Hooking Candiru: Another Mercenary Spyware Vendor Comes into Focus",
+          "author": "Bill Marczak, John Scott-Railton, Kristin Berdan, Bahr Abdul Razzak, and Ron Deibert",
+          "year": "2021",
+          "date": "2021-07-15",
+          "source": "The Citizen Lab, University of Toronto",
+          "url": "https://citizenlab.ca/research/hooking-candiru-another-mercenary-spyware-vendor-comes-into-focus/",
+          "found_by": "search",
+          "evidence_quote": "Using Internet scanning, we identified more than 750 websites linked to Candiru's spyware infrastructure.",
+          "ties_to": "Candiru, a spyware maker",
+          "relation": "origin of the background",
+          "because": "This public exposure of Candiru led directly to the U.S. government listing the company a few months later."
+        }
       ],
       "indicator": null,
       "objects": [
@@ -1194,52 +1223,11 @@
         "lenses": "model"
       },
       "approved_objects": [],
+      "auto": true,
       "auto_approved": [
         "custom-the-great-ipwn-journalists-hacked-with-suspected-nso-group-i",
         "custom-hooking-candiru-another-mercenary-spyware-vendor-comes-into-"
       ],
-      "custom_objects": [
-        {
-          "id": "custom-the-great-ipwn-journalists-hacked-with-suspected-nso-group-i",
-          "title": "The Great iPwn: Journalists Hacked with Suspected NSO Group iMessage 'Zero-Click' Exploit",
-          "author": "Bill Marczak, John Scott-Railton, Noura Aljizawi, Siena Anstis, and Ron Deibert",
-          "year": "2020",
-          "date": "2020-12-20",
-          "source": "The Citizen Lab, University of Toronto",
-          "url": "https://citizenlab.ca/research/the-great-ipwn-journalists-hacked-with-suspected-nso-group-imessage-zero-click-exploit/",
-          "found_by": "search",
-          "evidence_quote": "In July and August 2020, government operatives used NSO Group's Pegasus spyware to hack 36 personal phones belonging to journalists, producers, anchors, and executives at Al Jazeera.",
-          "ties_to": "Citizen Lab had earlier reported that the phones of 36 Al Jazeera staff were hacked with Pegasus",
-          "relation": "earlier instance of the same action",
-          "because": "It showed Al Jazeera staff were already a documented target of commercial spyware, before Candiru's tools reached the network through ads."
-        },
-        {
-          "id": "custom-hooking-candiru-another-mercenary-spyware-vendor-comes-into-",
-          "title": "Hooking Candiru: Another Mercenary Spyware Vendor Comes into Focus",
-          "author": "Bill Marczak, John Scott-Railton, Kristin Berdan, Bahr Abdul Razzak, and Ron Deibert",
-          "year": "2021",
-          "date": "2021-07-15",
-          "source": "The Citizen Lab, University of Toronto",
-          "url": "https://citizenlab.ca/research/hooking-candiru-another-mercenary-spyware-vendor-comes-into-focus/",
-          "found_by": "search",
-          "evidence_quote": "Using Internet scanning, we identified more than 750 websites linked to Candiru's spyware infrastructure.",
-          "ties_to": "Candiru, a spyware maker",
-          "relation": "origin of the background",
-          "because": "This public exposure of Candiru led directly to the U.S. government listing the company a few months later."
-        }
-      ],
-      "ties": {
-        "custom-the-great-ipwn-journalists-hacked-with-suspected-nso-group-i": {
-          "relation": "earlier instance of the same action",
-          "phrase": "Citizen Lab had earlier reported that the phones of 36 Al Jazeera staff were hacked with Pegasus",
-          "why": "This Citizen Lab report is the earlier instance of the same action, documenting the Pegasus hacking of Al Jazeera staff that the story cites as prior commercial-spyware targeting of the same newsroom."
-        },
-        "custom-hooking-candiru-another-mercenary-spyware-vendor-comes-into-": {
-          "relation": "origin of the background",
-          "phrase": "Candiru, a spyware maker",
-          "why": "This Citizen Lab exposure of Candiru is the origin of the story's background on the spyware maker the U.S. Commerce Department blacklisted in 2021 and whose servers received the ad-routed targets."
-        }
-      },
       "revisions": [
         {
           "at": "2026-10-15T20:03:15+00:00",
@@ -1255,17 +1243,17 @@
           "headline": "An Ad Company Used the Same Ad Market That Sells You Earbuds to Hack 45 Al Jazeera Devices. Google and Comcast's Ad Arm Have Cut It Off."
         }
       ],
-      "draft_problems": [],
       "last_story": "2026-10-15",
+      "start_date": "2014-01-01",
+      "start_line": "When Candiru, a private Tel Aviv spyware company, was founded in 2014 to sell exploits, tools and infrastructure to government clients",
+      "draft_problems": [],
       "promotion": {
         "ready": false,
         "missing": [
           "needs 3 stories on 2 days (has 1 on 1)",
           "needs 3 linked matrix objects and a sourced indicator"
         ]
-      },
-      "start_date": "2014-01-01",
-      "start_line": "When Candiru, a private Tel Aviv spyware company, was founded in 2014 to sell exploits, tools and infrastructure to government clients"
+      }
     }
   ]
 }
