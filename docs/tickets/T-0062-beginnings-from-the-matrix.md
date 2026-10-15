@@ -23,7 +23,7 @@ shows, replacing T-0050's "Earlier episodes" framing:
    persist: `todays_pairings` is overwritten every publish, so past ones are
    lost today (measured 2026-09-29, reconfirm before building).
 
-Naming hazard: the in-app code (`bsrEpisodesHtml`, `bsrDetailHtml` in
+Naming hazard (that code was removed by T-0094 on 2026-10-15): the in-app code (`bsrEpisodesHtml`, `bsrDetailHtml` in
 `digest/index.html`) reads `instances[]` as episodes. If `instances[]` becomes
 Beginnings, that reader is wrong. The old modal is unreachable since T-0057,
 but the field's meaning must be changed deliberately, not by accident.

@@ -120,8 +120,10 @@ awk '/^function renderBackstoryTab/{f=1} f{print} f&&/^}/{exit}' digest/index.ht
 awk '/^function bsrCardHtml/{f=1} f{print} f&&/^}/{exit}' digest/index.html | grep -q "stratum" \
   || { echo "OPEN: the list card (bsrCardHtml) doesn't branch on stratum"; exit 1; }
 
-awk '/^function openBsrDetail/{f=1} f{print} f&&/^}/{exit}' digest/index.html | grep -q "stratum" \
-  || { echo "OPEN: openBsrDetail() doesn't branch on stratum"; exit 1; }
+# T-0094 removed the old detail modal (openBsrDetail), which only the browser's back and forward buttons
+# still reached. The detail view readers get is the Backstory page, bpRowHtml(); the assertion is unchanged.
+awk '/^function bpRowHtml/{f=1} f{print} f&&/^}/{exit}' digest/index.html | grep -q "stratum" \
+  || { echo "OPEN: the Backstory page (bpRowHtml) doesn't branch on stratum"; exit 1; }
 
 echo "stratum-aware in both the list and the detail view"
 ```
