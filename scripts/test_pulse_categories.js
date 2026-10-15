@@ -7,7 +7,7 @@ const root = path.resolve(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'ntk-pulse/pulse.html'), 'utf8');
 const m = html.match(/\/\* CATS:BEGIN \*\/([\s\S]*?)\/\* CATS:END \*\//);
 if (!m) { console.error('FAIL: CATS block not found'); process.exit(1); }
-const L = new Function(m[1] + '; return {validateCat, selectBeginnings, pickBeginnings, lensSupported, catTextProblems, verifyIndicator, catSentences, verifyFoundObject, applySourceEdit, catFieldKey, pickForSubjects, verifyMilestone, catNumbersOk, catTiesOk, verifyCandidate, catSourceKind};')();
+const L = new Function(m[1] + '; return {validateCat, selectBeginnings, pickBeginnings, lensSupported, catTextProblems, verifyIndicator, catSentences, verifyFoundObject, applySourceEdit, catFieldKey, pickForSubjects, verifyMilestone, catNumbersOk, catTiesOk, verifyCandidate, catSourceKind, matrixSearch};')();
 const poolDoc = JSON.parse(fs.readFileSync(path.join(root, 'ntk-pulse/data/backstory-pool.json'), 'utf8'));
 const poolBy = Object.fromEntries(poolDoc.objects.map(o => [o.id, o]));
 const spec = JSON.parse(fs.readFileSync(path.join(root, 'editorial/lenses.json'), 'utf8'));
@@ -160,4 +160,13 @@ check('a news object validates and carries its news label to publish', (r.clean.
 x.custom_objects[0].evidence_quote = ''; r = run(x);
 check('a found object without its page quote is dropped (the quote is what CI checks against the page)', !r.clean.objects.some(o => o.object_id === 'custom-news'), r.problems);
 check('lensSupported reads whole words only', L.lensSupported('tech', spec, ALTMAN) && !L.lensSupported('china', spec, ALTMAN) && !L.lensSupported('tech', spec, 'The mail arrived said the senator'), null);
+// T-0097: the Lineup's matrix search. Matrix only, keywords lead, the subject still finds things on its own.
+const ms = (k, sub, n) => L.matrixSearch(poolDoc.objects, k, sub, n);
+check('matrixSearch: a named document ranks first', /dred scott/i.test((ms('Dred Scott', '')[0] || { o: {} }).o.title || ''), ms('Dred Scott', '').slice(0, 2).map(h => h.o.title));
+const cand = poolDoc.objects.find(o => o.pool === 'candidate' && /taif/i.test(o.title));
+check('matrixSearch: a candidate is never returned, even by its own title', cand && !ms('Taif Agreement', '').some(h => h.o.pool !== 'matrix') && !ms('', 'Executive Power', 50).some(h => h.o.pool !== 'matrix'), null);
+check('matrixSearch: the subject alone finds objects', ms('', 'Executive Power').length >= 3, ms('', 'Executive Power').length);
+check('matrixSearch: a keyword outranks a subject-only match', /tariff/i.test((ms('tariff', 'Work and Wages')[0] || { o: {} }).o.title || ''), ms('tariff', 'Work and Wages').slice(0, 3).map(h => h.o.title));
+check('matrixSearch: two forms of one word match, two different words do not', ms('manufacturing', '').some(h => /manufactures/i.test(h.o.title)) && !ms('policing', '', 50).some(h => h.why.some(w => w.startsWith('policing') && /policy/i.test(h.o.title))), null);
+check('matrixSearch: nothing to search returns nothing', ms('', '').length === 0, null);
 console.log('\n' + fails + ' failed'); process.exit(fails ? 1 : 0);

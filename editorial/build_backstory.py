@@ -191,7 +191,8 @@ def load_objects():
                               'year': sort[:4] if g(4) else '',
                               'source': g(10), 'source_url': url, 'day_month': day_month(g(3)),
                               'object_id': oid, '_sort': sort,
-                              '_subgenre': g(12) or '', '_row': g(11) or ''})
+                              '_subgenre': g(12) or '', '_row': g(11) or '',
+                              '_theme': g(5) or ''})
     return by_row
 
 
