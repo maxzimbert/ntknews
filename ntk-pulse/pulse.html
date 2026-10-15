@@ -2187,6 +2187,7 @@ function renderBackstory(root){
   if (CAT_SEL && !catRecord(CAT_SEL)) CAT_SEL=null;
   const sel=CAT_SEL?catRecord(CAT_SEL):null;
   root.innerHTML = `
+    ${bsrLineupHtml()}
     <div id="bs-published">Loading today's pairings&hellip;</div>
     <div style="display:grid;grid-template-columns:230px 1fr;gap:16px;align-items:start">
       <div>
@@ -2201,6 +2202,11 @@ function renderBackstory(root){
   catRestoreInputs(_kept);
   fetchPublishedBackstory().then(d=>{ const el=document.getElementById('bs-published'); if (el) el.innerHTML=pairingsHtml(d); });
   root.querySelectorAll('.cat-pick').forEach(el=>el.addEventListener('click',()=>{ CAT_SEL=el.dataset.id; if (!CATS[CAT_SEL]) catEnsureLocal(CAT_SEL); render(); }));
+  root.querySelectorAll('.bsr-lu').forEach(el=>{
+    const s=LINEUP.find(x=>x.key===el.dataset.key); if (!s) return;
+    el.querySelector('.bsr-lu-tag').addEventListener('change',e=>{ s.backstoryRow=e.target.value||''; saveLineup(); render(); });
+    const op=el.querySelector('.bsr-lu-open'); if (op) op.addEventListener('click',()=>{ CAT_SEL=s.backstoryRow; if (!CATS[CAT_SEL]) catEnsureLocal(CAT_SEL); render(); });
+  });
   document.getElementById('cat-new').addEventListener('click',()=>{
     const n=prompt('Name the new category: a short noun phrase readers could build expertise in (for example "AI").','');
     if (!n||!n.trim()) return; const id=newCategory(n,[]); if (id){ CAT_SEL=id; render(); }
@@ -3851,6 +3857,31 @@ function bsrPublishedChip(s){
     (poor ? ' style="background:var(--warn);color:#fff"' : '')+`>`+
     `published: ${esc(title)} \u00b7 ${esc(who)}${poor ? ' \u00b7 poor fit' : ''}${changed ? ' \u00b7 will change' : ''}</span>`;
 }
+function bsrRowOptions(s){
+  const unset = !s.backstoryRow;
+  const own = Object.values(CATS).filter(c => !BSR_ROWS.some(r => r.id === c.id));
+  return `<option value=""${unset?' selected':''}>row: not set (classifier picks)</option>`+
+    BSR_ROWS.map(r=>`<option value="${esc(r.id)}"${s.backstoryRow===r.id?' selected':''}>`+
+      `row: ${esc(r.title)}${r.provisional ? ' (category)' : ''}</option>`).join('')+
+    own.map(c=>`<option value="${esc(c.id)}"${s.backstoryRow===c.id?' selected':''}>row: ${esc(c.title)} (${esc(c.status)})</option>`).join('');
+}
+// T-0090: the Backstory tab opens on the Lineup, in Lineup order, so the editor works story by story and an
+// unfiled story is in plain sight (the gas story went out unfiled on 2026-10-15).
+function bsrLineupHtml(){
+  if (!LINEUP.length) return '';
+  return `<div style="margin-bottom:14px">
+    <div style="font-size:11px;color:var(--dim);margin-bottom:6px">TODAY'S LINEUP &middot; ${LINEUP.length} &middot; in Lineup order. File each story here or in Lineup; a story left unfiled goes to the classifier, which may make a new category.</div>
+    ${LINEUP.map((s,i)=>{ const cat=s.backstoryRow&&catRecord(s.backstoryRow);
+      return `<div class="story bsr-lu" data-key="${esc(s.key)}" style="padding:6px 9px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;${s.backstoryRow?'':'border-color:var(--warn)'}">
+        <b style="font-size:12px;min-width:18px">${i+1}</b>
+        <span style="font-size:12.5px;flex:1;min-width:240px">${esc(s.title||'')}</span>
+        ${s.backstoryRow?'':'<span class="chip" style="background:var(--warn);color:#fff">none filed</span>'}
+        <select class="bsr-lu-tag" style="max-width:260px">${bsrRowOptions(s)}</select>
+        ${cat?`<button class="mini bsr-lu-open">open ${esc(cat.title)} →</button>`:''}
+        ${bsrPublishedChip(s)}
+      </div>`; }).join('')}
+  </div>`;
+}
 function bsrTagControl(s){
   if (!BSR_ROWS.length) return '';
   const counts = bsrCollisionCounts();
@@ -3858,14 +3889,8 @@ function bsrTagControl(s){
   const unset = !s.backstoryRow;
   const style = dup ? ' style="border-color:var(--warn)"' : unset ? ' style="border-color:var(--warn);color:var(--warn)"' : '';
   const cat = s.backstoryRow && catRecord(s.backstoryRow);
-  const own = Object.values(CATS).filter(c => !BSR_ROWS.some(r => r.id === c.id));
   return `<select class="bsr-tag" title="Row for this story's Backstory. Left unset, the classifier chooses and can pick a poor fit."`+
-    style+`>`+
-    `<option value=""${unset?' selected':''}>row: not set (classifier picks)</option>`+
-    BSR_ROWS.map(r=>`<option value="${esc(r.id)}"${s.backstoryRow===r.id?' selected':''}>`+
-      `row: ${esc(r.title)}${r.provisional ? ' (category)' : ''}</option>`).join('')+
-    own.map(c=>`<option value="${esc(c.id)}"${s.backstoryRow===c.id?' selected':''}>row: ${esc(c.title)} (${esc(c.status)})</option>`).join('')+
-    `</select>`+
+    style+`>`+bsrRowOptions(s)+`</select>`+
     `<button class="mini bsr-gap" title="No row fits this story. Make a category: the system drafts its page for you to review in the Backstory tab."`+
       (cat ? ' style="background:var(--ink);color:#fff"' : '')+`>`+
       (cat ? 'category: '+esc(cat.title)+' \u2192' : '+ new category')+`</button>`+
