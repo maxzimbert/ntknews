@@ -53,6 +53,11 @@ Related: T-0021 wants a durable reading record, and the visit log this needs
 is the smallest honest piece of it. Build it so that ticket can read it, and
 do not build the record here.
 
+Check scope narrowed 2026-10-15: it read the whole of `digest/index.html`, including the day's stories that
+the publish pastes in, and went STALE on a story quoting "the longest streak of this century". It now strips
+the two daily-content blocks with the same patterns `build_digest.py` uses to write them, and fails loudly
+if it cannot find them. The product's own code and copy are still searched for every streak word.
+
 ## Check
 
 ```sh
@@ -66,9 +71,16 @@ m = re.search(r'function visitMoment\([\s\S]*?\n\}', s)
 if not m: sys.exit('visitMoment not found')
 
 # No streak, in the code or in the copy. This is the failure the ticket exists
-# to prevent, so it is asserted rather than trusted.
+# to prevent, so it is asserted rather than trusted. The day's stories and fun
+# fact are pasted into this file on every publish (build_digest.py, the same two
+# patterns); they are the news, not the product's copy, and a story may say
+# "streak" (2026-10-15: "the longest streak of this century").
+app = re.sub(r"const stories = \[.*?\];\s*// ← END OF DAILY CONTENT\. Do not edit below this line\.", "", s, flags=re.S)
+app = re.sub(r'const funFact = "(?:[^"\\]|\\.)*";', "", app)
+if len(app) > len(s) - 200:
+    sys.exit('the daily content block was not found, so the copy cannot be told from the news')
 for bad in ('streak', 'consecutive', 'days in a row', "don't break", 'keep it up'):
-    if bad in s.lower():
+    if bad in app.lower():
         sys.exit('streak language or logic present: %r' % bad)
 
 # A returning reader is greeted; a same-session reload is not.
