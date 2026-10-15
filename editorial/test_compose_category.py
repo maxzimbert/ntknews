@@ -264,6 +264,27 @@ check("it joins the existing category under a different proposed name, and nothi
 check("no new category row is created (T-0089)", [r["id"] for r in prov3["rows"]] == [r["id"] for r in prov1["rows"]], [r["id"] for r in prov3["rows"]])
 json.dump(lp, open(T / "lineup.json", "w"))
 
+# T-0095: an archived category is offered too, and a story that joins it brings it back
+st = json.load(open(T / "prov.json"))
+for r in st["rows"]:
+    if r["id"] == "p-ai": r["status"] = "archived"
+json.dump(st, open(T / "prov.json", "w"))
+b0 = json.load(open(ROOT / "digest/data/backstory.json")); b0["rows"] = [r for r in b0["rows"] if r.get("stratum") != "provisional"]
+json.dump(b0, open(T / "bs.json", "w")); json.dump(lp2, open(T / "lineup.json", "w"))
+asked.clear(); composed.clear(); CC.compose = spy; BP.call_claude = fake2
+try:
+    BP.main()
+except SystemExit:
+    pass
+CC.compose = _compose; BP.call_claude = fake
+bs4 = json.load(open(T / "bs.json")); prov4 = json.load(open(T / "prov.json"))
+alt4 = [p for p in bs4["todays_pairings"] if p["story_id"] == ALT]
+check("an archived category is offered to a misfit story (T-0095)", len(asked) == 1 and "p-ai" in asked[0], len(asked))
+check("joining it brings it back: live again, the story paired to it, nothing composed (T-0095)",
+      not composed and alt4 and alt4[0]["row"] == "p-ai" and any(r["id"] == "p-ai" and r["status"] == "provisional" for r in prov4["rows"]),
+      (composed, [p["row"] for p in alt4], [(r["id"], r["status"]) for r in prov4["rows"]]))
+json.dump(lp, open(T / "lineup.json", "w"))
+
 # T-0087: a composed category the checks reject must not crash the step; its story keeps its classified row
 json.dump({"rows": []}, open(T / "prov.json", "w"))
 b0 = json.load(open(ROOT / "digest/data/backstory.json")); b0["rows"] = [r for r in b0["rows"] if r["id"] != "p-ai"]

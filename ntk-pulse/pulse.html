@@ -1566,8 +1566,15 @@ function catEntry(c, oid){
 }
 function catListAll(){
   const out=Object.values(CATS).map(r=>({rec:r, where:'local'}));
-  PUBCATS.forEach(r=>{ if (!CATS[r.id]) out.push({rec:r, where:'published'}); });
+  PUBCATS.forEach(r=>{ if (!CATS[r.id] && r.status!=='archived') out.push({rec:r, where:'published'}); });
+  PUBCATS.forEach(r=>{ if (!CATS[r.id] && r.status==='archived') out.push({rec:r, where:'archived'}); });   // last
   return out;
+}
+// Filing a story under an archived category brings it back: the editor's copy is sent with the next publish
+// and CI makes it live again (T-0095).
+function catReviveIfArchived(id){
+  const p=id && PUBCATS.find(r=>r.id===id && r.status==='archived');
+  if (p && !CATS[id]){ catEnsureLocal(id); CAT_MSG[id]='Brought back from the archive. It goes live with the next publish.'; }
 }
 // oldest to newest, by full date, wherever an object came from
 function catSortRecord(c){
@@ -1595,13 +1602,16 @@ function newCategory(name, storyKeys){
   saveLineup();
   return id;
 }
+let CAT_LOADED_AT = 0;
 async function loadCatData(){
+  CAT_LOADED_AT = Date.now();
   try {
     const [p,s]=await Promise.all([
       fetch('data/backstory-pool.json?t='+Date.now()).then(r=>r.ok?r.json():null).catch(()=>null),
       fetch('data/provisional-rows.json?t='+Date.now()).then(r=>r.ok?r.json():null).catch(()=>null)]);
     if (p){ POOL=p; POOL_BY=Object.fromEntries(p.objects.map(o=>[o.id,o])); CAT_VOCAB=new Set(((p.vocab||{}).subgenres||[]).map(x=>x.name)); }
-    PUBCATS=((s&&s.rows)||[]).filter(r=>r.status==='provisional');
+    // T-0095: archived categories are listed too, so one can come back when a story fits it again.
+    if (s) PUBCATS=(s.rows||[]).filter(r=>r.status==='provisional'||r.status==='archived');
   } catch(e){}
   render();
 }
@@ -2222,6 +2232,7 @@ function catRestoreInputs(st){
   window.scrollTo(0, st.y);
 }
 function renderBackstory(root){
+  if (Date.now()-CAT_LOADED_AT>60000) loadCatData();     // T-0095: a tab left open across a publish missed its new categories
   const _kept=catCaptureInputs();
   const list=catListAll();
   if (CAT_SEL && !catRecord(CAT_SEL)) CAT_SEL=null;
@@ -2233,7 +2244,7 @@ function renderBackstory(root){
       <div>
         <div style="font-size:11px;color:var(--dim);margin-bottom:6px">CATEGORIES</div>
         ${list.map(({rec,where})=>`<div class="story cat-pick" data-id="${esc(rec.id)}" style="padding:7px 9px;cursor:pointer;${rec.id===CAT_SEL?'border-color:var(--ink)':''}">
-          <b style="font-size:12px">${esc(rec.title)}</b><br><span style="font-size:10.5px;color:var(--dim)">${esc(where==='published'?'published':rec.status)}${rec.auto?' · auto':''} · ${Math.max(catStories(rec.id).length,(rec.stories||[]).length)} stor${Math.max(catStories(rec.id).length,(rec.stories||[]).length)===1?'y':'ies'} filed</span></div>`).join('')||'<i style="font-size:12px;color:var(--dim)">none yet</i>'}
+          <b style="font-size:12px;${where==='archived'?'opacity:.6':''}">${esc(rec.title)}</b><br><span style="font-size:10.5px;color:var(--dim)">${esc(where==='published'?'published':where==='archived'?'archived (no story in 30 days): file a story to bring it back':rec.status)}${rec.auto?' · auto':''} · ${Math.max(catStories(rec.id).length,(rec.stories||[]).length)} stor${Math.max(catStories(rec.id).length,(rec.stories||[]).length)===1?'y':'ies'} filed</span></div>`).join('')||'<i style="font-size:12px;color:var(--dim)">none yet</i>'}
         <button class="mini primary" id="cat-new" style="margin-top:6px">+ new category</button>
         <div style="font-size:11px;color:var(--dim);margin-top:10px;line-height:1.5">The 21 fixed rows are edited in <code>editorial/backstory-rows.json</code>. A category made here becomes a page of its own and is sent with the Lineup publish once approved.</div>
       </div>
@@ -2245,7 +2256,7 @@ function renderBackstory(root){
   root.querySelectorAll('.cat-pick').forEach(el=>el.addEventListener('click',()=>{ CAT_SEL=el.dataset.id; if (!CATS[CAT_SEL]) catEnsureLocal(CAT_SEL); render(); }));
   root.querySelectorAll('.bsr-lu').forEach(el=>{
     const s=LINEUP.find(x=>x.key===el.dataset.key); if (!s) return;
-    el.querySelector('.bsr-lu-tag').addEventListener('change',e=>{ s.backstoryRow=e.target.value||''; saveLineup(); render(); });
+    el.querySelector('.bsr-lu-tag').addEventListener('change',e=>{ s.backstoryRow=e.target.value||''; catReviveIfArchived(s.backstoryRow); saveLineup(); render(); });
     const op=el.querySelector('.bsr-lu-open'); if (op) op.addEventListener('click',()=>{ CAT_SEL=s.backstoryRow; if (!CATS[CAT_SEL]) catEnsureLocal(CAT_SEL); render(); });
   });
   document.getElementById('cat-new').addEventListener('click',()=>{
@@ -3904,7 +3915,8 @@ function bsrRowOptions(s){
   return `<option value=""${unset?' selected':''}>row: not set (classifier picks)</option>`+
     BSR_ROWS.map(r=>`<option value="${esc(r.id)}"${s.backstoryRow===r.id?' selected':''}>`+
       `row: ${esc(r.title)}${r.provisional ? ' (category)' : ''}</option>`).join('')+
-    own.map(c=>`<option value="${esc(c.id)}"${s.backstoryRow===c.id?' selected':''}>row: ${esc(c.title)} (${esc(c.status)})</option>`).join('');
+    own.map(c=>`<option value="${esc(c.id)}"${s.backstoryRow===c.id?' selected':''}>row: ${esc(c.title)} (${esc(c.status)})</option>`).join('')+
+    PUBCATS.filter(r=>r.status==='archived' && !CATS[r.id]).map(r=>`<option value="${esc(r.id)}"${s.backstoryRow===r.id?' selected':''}>row: ${esc(r.title)} (archived: filing brings it back)</option>`).join('');
 }
 // T-0090: the Backstory tab opens on the Lineup, in Lineup order, so the editor works story by story and an
 // unfiled story is in plain sight (the gas story went out unfiled on 2026-10-15).
@@ -4318,6 +4330,7 @@ function renderLineup(root){
     const bsrSel = el.querySelector('.bsr-tag');
     if (bsrSel) bsrSel.addEventListener('change',e=>{
       s.backstoryRow = e.target.value || '';   // '' means leave it to the classifier
+      catReviveIfArchived(s.backstoryRow);
       saveLineup(); render();
     });
     const gapBtn = el.querySelector('.bsr-gap');
