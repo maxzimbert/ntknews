@@ -3224,6 +3224,9 @@ function bsrCardHtml(r, href, sIdx){
       : (r.stratum !== 'fire' && r.start_line)
       ? '<div class="bt-label bt-starts">It starts in ' + escBsr(bsrYear(r.start_date)) + '</div>'
         + '<a class="bt-line bt-origin" data-rid="' + escAttr(r.id) + '" href="' + href + '">' + escBsr(bsrCapitalize(r.start_line)) + '.</a>'
+      // T-0092: a category made from the news has no start of its own (its start_date is the day it was
+      // made), so with no origin found it shows nothing here rather than "Running for 0 days".
+      : r.stratum === 'provisional' ? ''
       : '<div class="bt-label bt-starts">Running for</div>'
         + '<a class="bt-elapsed bt-line" data-rid="' + escAttr(r.id) + '" href="' + href + '">' + bsrFormatDuration(bsrDaysSince(r.start_date)) + '</a>';
     return '<div class="bt-row">' + today + origin
