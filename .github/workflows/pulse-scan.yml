@@ -72,4 +72,13 @@ jobs:
           git config user.email "pulse@ntknews.org"
           git add ntk-pulse/data/
           git diff --cached --quiet || git commit -m "pulse-scan: refresh $(date -u +%Y-%m-%dT%H:%MZ)"
-          git push
+          # T-0093: retry with a rebase, as newscast.yml does. A bare push lost the 2026-10-15 17:16Z
+          # publish to "[rejected] (fetch first)" when main moved during the run. Every other writer to
+          # main touches other files or other lines (a PR merge to digest/index.html changes code, a publish
+          # changes the pasted stories), so the rebase is clean; if it is not, stop and fail loudly.
+          for i in 1 2 3; do
+            git push && exit 0
+            echo "push rejected, rebasing onto origin/main and retrying ($i/3)"
+            git pull --rebase origin main || { git rebase --abort; echo "rebase conflicted; nothing was pushed"; exit 1; }
+          done
+          echo "push still rejected after 3 tries"; exit 1
