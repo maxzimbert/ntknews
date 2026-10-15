@@ -64,14 +64,28 @@ def markers(text):
     return [r.split('|')[0].strip()
             for r in re.findall(r'\[STORY:\s*([^\]]+)\]', text or '')]
 
+def named(text, keys):
+    """Each dead key as something a person recognises: the overview's own label, the story's title from the
+    assembled lineup when it is still there, and the key last (2026-10-15: keys alone were unreadable)."""
+    labels = {r.split('|')[0].strip(): (r.split('|', 1)[1].strip() if '|' in r else '')
+              for r in re.findall(r'\[STORY:\s*([^\]]+)\]', text or '')}
+    try:
+        lu = json.load(open('ntk-pulse/data/lineup.json'))
+        lu = lu if isinstance(lu, list) else (lu.get('stories') or lu.get('items') or lu.get('lineup') or [])
+        titles = {x.get('key'): x.get('title') or x.get('headline') for x in lu if isinstance(x, dict)}
+    except Exception:
+        titles = {}
+    return ['"%s"%s (%s)' % (labels.get(k) or '?', ': ' + titles[k] if titles.get(k) else '', k) for k in keys]
+
 bad = []
 
 # What will ship next
 d = json.load(open('ntk-pulse/data/lineup-publish.json'))
 keys = {s.get('key') for s in d.get('stories', [])}
-dead = [r for r in markers((d.get('today') or {}).get('text')) if r not in keys]
+text = (d.get('today') or {}).get('text')
+dead = [r for r in markers(text) if r not in keys]
 if dead:
-    bad.append('lineup-publish.json: %d dead onramp(s) %s' % (len(dead), dead))
+    bad.append('lineup-publish.json: %d dead onramp(s) %s' % (len(dead), '; '.join(named(text, dead))))
 
 # What readers see right now
 s = open('digest/index.html', encoding='utf-8').read()
@@ -82,7 +96,7 @@ if m:
            set(re.findall(r'key:\s*"([0-9a-f]{16}|manual-\d+)"', s))
     dead = [r for r in markers(m.group(1)) if r not in live]
     if dead:
-        bad.append('digest/index.html: %d dead onramp(s) %s' % (len(dead), dead))
+        bad.append('digest/index.html: %d dead onramp(s) %s' % (len(dead), '; '.join(named(m.group(1), dead))))
 
 if bad:
     sys.exit('\n'.join(bad))
