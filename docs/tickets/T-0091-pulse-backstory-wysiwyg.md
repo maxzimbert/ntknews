@@ -8,17 +8,26 @@ anchor: ntk-pulse/pulse.html
 
 ## What
 
-Raised by the editor 2026-10-15, with screenshots of Pulse and of ntknews.org/backstory (the screenshots did
-not reach the session that wrote this ticket; attach them here or in the PR). Measured on main that day: the
-PREVIEW in a Pulse category (`catPreviewHtml`) is a beige box in Georgia with BEGINNINGS and a WE ARE HERE
-marker. The reader's card (`renderBackstoryTab` in `digest/index.html`) has a different structure: TODAY with
-the pairing line, IT STARTS IN with the origin, a mark, the theme name and a Backstory link, and the
-category page (`showBsrPage`) has its own layout. They do not match, so the editor approves something that is
-not what readers see.
+Raised by the editor 2026-10-15 with two screenshots. The reader's card on ntknews.org/backstory
+(`renderBackstoryTab` in `digest/index.html`) reads top to bottom: TODAY, the pairing line in quotes, IT
+STARTS IN <year> in red capitals, the origin in italic serif, a small mark, and the category name in bold
+sans at the foot. The same story in Pulse's TODAY'S PAIRINGS list (`pairingsHtml` in
+`ntk-pulse/pulse.html`) reads: the category name in bold with the classifier's confidence ("1.00"), "It
+starts in 2022" in plain sans, the origin in plain sans, then the pairing line, then the headline, in a grey
+bordered box. Same data, different order, labels and type. The category PREVIEW (`catPreviewHtml`) is a third
+layout again (Georgia, BEGINNINGS, WE ARE HERE), and the reader's category page (`showBsrPage`) a fourth.
 
-Wanted: the preview renders the reader's own card and category page, from the same markup and CSS, with the
-draft category's data. The best way is to share the render code (one function both pages load), not to copy
-the look into Pulse, which would drift again.
+Wanted: Pulse renders today's pairings and each category's preview with the reader's own markup and CSS,
+fed Pulse's data. Editor-only facts (confidence, the headline, needs-review flags, draft status) sit outside
+the card, in a strip above or beside it, so the card itself is exactly what a reader will see. The way to
+get there is to share the render code (one function both pages load), not to copy the look into Pulse,
+which would drift again.
+
+Seen in the same screenshots, unverified: Pulse's Ukraine-Russia line ("A private company decided overnight
+how much of the war Kyiv could see...") is not the line live on /backstory that day ("A private company's
+pricing tier decided what Kyiv could see and strike overnight..."). Pulse caches the published
+`backstory.json` for the session (`BSR_PUBLISHED`), so a Pulse tab opened before a later publish shows the
+older pairings. The parity work should refetch after a publish or say how old the copy is.
 
 ## Why
 
