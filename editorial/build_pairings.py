@@ -300,19 +300,21 @@ def auto_categories(api_key, entries, stories, bs, store_path, today):
     pool_doc = json.loads((ROOT / "ntk-pulse" / "data" / "backstory-pool.json").read_text())
     spec = json.loads((ROOT / "editorial" / "lenses.json").read_text())
     store = json.loads(store_path.read_text()) if store_path.exists() else {"rows": []}
-    existing = {r["id"]: r for r in store["rows"] if r.get("status") == "provisional"}
+    # Archived categories are offered too: a story that fits one brings it back (T-0095).
+    existing = {r["id"]: r for r in store["rows"] if r.get("status") in ("provisional", "archived")}
     # T-0089: the categories already live (the editor's and earlier automatic ones) are offered first, so a
     # story joins one by meaning before a near-duplicate is composed under a new name.
     live_ids = {r["id"] for r in bs["rows"] if r.get("stratum") == "provisional"}
-    cands = [r for cid, r in existing.items() if cid in live_ids]
+    cands = [r for cid, r in existing.items() if cid in live_ids or r.get("status") == "archived"]
     records = []
     for e in flagged:
         name = e.get("proposed_category")
         try:
             hit = match_existing(api_key, e, cands) if cands else None
             if hit:
+                back = existing[hit].get("status") == "archived"
                 rec = dict(existing[hit], status="approved")
-                log(f"5C: {e['story_id']} joins the existing category {rec['title']!r} (matched by subject)")
+                log(f"5C: {e['story_id']} joins the existing category {rec['title']!r} (matched by subject)" + ("; it comes back from the archive" if back else ""))
             elif name and slug(name) in existing:
                 rec = dict(existing[slug(name)], status="approved")      # a later story joins the category
                 log(f"5C: {e['story_id']} joins the existing category {rec['title']!r}")
