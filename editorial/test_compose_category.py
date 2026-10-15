@@ -231,6 +231,39 @@ alt = [p for p in bs["todays_pairings"] if p["story_id"] == ALT][0]
 check("integration: the misfit story is paired to its new category, marked as automatic", alt["row"] == "p-ai" and alt["source"] == "auto-category", (alt["row"], alt["source"]))
 check("integration: the category is stored, published as a row, and keeps its trend line", prov["rows"] and any(r["id"] == "p-ai" and r["auto"] and r.get("indicator") for r in prov["rows"]) and any(r["id"] == "p-ai" and r["stratum"] == "provisional" for r in bs["rows"]), None)
 check("integration: stories that fit keep their rows", all(p["row"] != "p-ai" for p in bs["todays_pairings"] if p["story_id"] != ALT), None)
+# T-0089: the next publish offers the story to the category the last one made, and composes nothing
+prov1 = json.load(open(T / "prov.json"))
+b0 = json.load(open(ROOT / "digest/data/backstory.json")); b0["rows"] = [r for r in b0["rows"] if r.get("stratum") != "provisional"]
+json.dump(b0, open(T / "bs.json", "w"))
+lp2 = copy.deepcopy(lp) if "copy" in globals() else json.loads(json.dumps(lp))
+for o in lp2["stories"]:
+    if o["key"] == ALT: o["headline"] = o["headline"] + " (a later story, proposed under a different name)"
+json.dump(lp2, open(T / "lineup.json", "w"))
+asked, composed = [], []
+def fake2(key, model, system, user, mt):
+    if "EXISTING CATEGORIES" in user:
+        asked.append(user); return {"id": "p-ai", "why": "same subject"}
+    out = fake(key, model, system, user, mt)
+    if "ROW VOCABULARY" in user:
+        for o in out:
+            if o["story_id"] == ALT: o["category"] = "Artificial Intelligence Companies"
+    return out
+_compose = CC.compose
+def spy(*a, **k):
+    composed.append(1); return _compose(*a, **k)
+CC.compose = spy; BP.call_claude = fake2
+try:
+    BP.main()
+except SystemExit:
+    pass
+CC.compose = _compose; BP.call_claude = fake
+bs3 = json.load(open(T / "bs.json")); prov3 = json.load(open(T / "prov.json"))
+alt3 = [p for p in bs3["todays_pairings"] if p["story_id"] == ALT]
+check("a misfit story is offered the existing categories before one is composed (T-0089)", len(asked) == 1 and "p-ai" in asked[0], len(asked))
+check("it joins the existing category under a different proposed name, and nothing is composed (T-0089)", not composed and alt3 and alt3[0]["row"] == "p-ai", (composed, [p["row"] for p in alt3]))
+check("no new category row is created (T-0089)", [r["id"] for r in prov3["rows"]] == [r["id"] for r in prov1["rows"]], [r["id"] for r in prov3["rows"]])
+json.dump(lp, open(T / "lineup.json", "w"))
+
 # T-0087: a composed category the checks reject must not crash the step; its story keeps its classified row
 json.dump({"rows": []}, open(T / "prov.json", "w"))
 b0 = json.load(open(ROOT / "digest/data/backstory.json")); b0["rows"] = [r for r in b0["rows"] if r["id"] != "p-ai"]
@@ -259,4 +292,7 @@ BP.log = _log
 lone_store = json.load(open(T / "lonely.json")) if (T / "lonely.json").exists() else {"rows": []}
 check("an automatic category with one surviving object is not created", not any(r["id"] == "p-lonely" for r in lone_store["rows"]) and any("needs two" in l for l in logs), logs)
 shutil.rmtree(T)
+_cc = BP.call_claude; BP.call_claude = lambda *a, **k: {"id": "p-made-up", "why": "x"}
+check("a match outside the offered list is ignored (T-0089)", BP.match_existing("k", {"story_id": "s", "headline": "h", "summary": ""}, [{"id": "p-ai", "title": "AI"}]) is None, None)
+BP.call_claude = _cc
 print(f"\n{len(fails)} failed"); sys.exit(1 if fails else 0)
