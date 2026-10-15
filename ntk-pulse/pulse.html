@@ -2964,7 +2964,7 @@ function publishPreflight(stories){
 // publish while Generate Today was still running (or with last week's essay)
 // shipped a stale overview with fresh stories. BLOCK is a hard stop: publishing
 // would silently ship the wrong thing. WARN is the editor's call.
-function todayPreflight(now){
+function todayPreflight(now, keys){
   const block = [], warn = [];
   const t = (TODAY_OV.text || '').trim();
   if (TODAY_OV.busy)
@@ -2979,6 +2979,14 @@ function todayPreflight(now){
     if (!at) warn.push('The Today overview has no generation time, so it may not be from today.');
     else if (at.toDateString() !== today)
       warn.push('The Today overview was generated on ' + at.toDateString() + ', not today.');
+    // T-0096: an overview written before a story left the lineup still talks about it. The reader sees
+    // the paragraph with no story behind it (the 2026-10-15 edition's "Ukraine warning gap").
+    if (keys){
+      const have = new Set(keys), gone = [];
+      t.replace(/\[STORY:\s*([^|\]]+?)\s*\|\s*([^\]]+?)\s*\]/g, (m, k, label) => { if (!have.has(k.trim())) gone.push('"' + label.trim() + '"'); return m; });
+      if (gone.length)
+        warn.push('The Today overview mentions ' + (gone.length === 1 ? 'a story' : gone.length + ' stories') + ' no longer in the lineup (' + gone.join(', ') + '). Run Generate Today again.');
+    }
   }
   return { block, warn };
 }
@@ -3018,7 +3026,7 @@ async function publishToDigest(){
     renderPublishStatus(); alert(publishStatus); return;
   }
   if (!SETTINGS.ghToken){ alert('Add a GitHub token in ⚙ first — scoped to contents:write on this repo only.'); return; }
-  const tp = todayPreflight();
+  const tp = todayPreflight(undefined, LINEUP.map(x => x.key));
   if (tp.block.length){ alert('Not published.\n\n' + tp.block.join('\n')); return; }
   const all = buildStoryPayload();
   if (!all.length){ alert('Nothing generated yet — nothing to publish.'); return; }

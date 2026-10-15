@@ -125,8 +125,10 @@ test "$(grep -c 'text-transform: *uppercase' digest/index.html)" -le 22
 # The archive date line clears 4.5:1 on cream (it shipped at 1.92:1).
 ! grep -q '#01B2A7' digest/archive/index.html
 
-# Backstory direction is no longer colour-alone.
-grep -qE 'uarr|darr|harr' digest/index.html
+# Backstory direction is no longer colour-alone. Checked 2026-10-15 (T-0096) against the Backstory page
+# readers get, which prints the direction as a word beside the trend line: the old check matched arrow
+# glyphs that only the dead detail modal drew, and went STALE when T-0094 removed it.
+awk '/^function bpIndicator/{f=1} f{print} f&&/^}/{exit}' digest/index.html | grep -q 'class="bp-dir">. + escBsr(ind.direction)'
 
 # The two ornamental statistics and the four empty taxonomy tags are gone.
 ! grep -qE '>1807<|fw-card-meta' index.html
