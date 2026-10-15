@@ -1545,6 +1545,46 @@ function verifyCandidate(m, urls){
   return {ok:true, cand:{kind:isNews?'news':'located', title:t, year:String(m.year), date:/^\d{4}-\d\d-\d\d$/.test(m.date||'')?m.date:'', author:String(m.author||'').trim(),
     source:String(m.source||'').trim(), url:url, evidence_quote:String(m.evidence_quote).trim(), why_no_primary:isNews?why:'', note:String(m.note||'').trim()}};
 }
+// T-0097: rank the Object Matrix against the editor's keywords and the story's subject. Plain scoring, no
+// model, so a search costs nothing. Matrix only: the editor's rule (2026-10-15) is that a candidate stays out
+// of Backstory until it has been moved into the matrix. A keyword counts in full, a subject word at half, so a
+// subject alone ("Executive Power") still finds objects but the editor's own words lead.
+const MS_STOP=new Set('a an and the of in on for to by with from at as or is are was were be its it this that these those v vs'.split(' '));
+const MS_FIELDS=[['title',5],['about',4],['line',3],['subgenre',3],['row',2],['lenses',2],['author',2],['theme',1]];
+function msStem(w){ if (w.length>4 && w.endsWith('ies')) return w.slice(0,-3)+'y'; if (w.length>3 && /[^s]s$/.test(w)) return w.slice(0,-1); return w; }
+function msWords(t){ return String(t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').split(/[^a-z0-9]+/).filter(w=>w && !MS_STOP.has(w)).map(msStem); }
+function msSame(a, b){   // equal, or one word in two forms ("manufactures" and "manufacturing")
+  if (a===b) return true;
+  const n=Math.min(a.length,b.length); if (n<6) return false;      // six letters: "policing" and "policy" share only five
+  let p=0; while (p<n && a[p]===b[p]) p++;
+  return p>=Math.max(6, Math.ceil(0.8*n));
+}
+const MS_INDEX=new Map();
+function msIndex(o){
+  if (!MS_INDEX.has(o.id)) MS_INDEX.set(o.id, MS_FIELDS.map(([f,w])=>{ const v=f==='lenses'?(o.lenses||[]).join(' '):o[f]; return {f, w, words:msWords(v), text:' '+msWords(v).join(' ')+' '}; }));
+  return MS_INDEX.get(o.id);
+}
+function matrixSearch(objs, keywords, subject, limit){
+  const phrases=String(keywords||'').split(/[,;\n]+/).map(msWords).filter(p=>p.length);
+  const terms=[];
+  phrases.forEach(p=>p.forEach(w=>terms.push({w, k:1})));
+  msWords(subject).forEach(w=>{ if (!terms.some(t=>t.w===w)) terms.push({w, k:0.5}); });
+  if (!terms.length) return [];
+  const out=[];
+  (objs||[]).forEach(o=>{
+    if (o.pool!=='matrix' || !o.url || o.link_status==='dead') return;
+    const idx=msIndex(o); let score=0; const why=[];
+    terms.forEach(t=>{
+      const hit=idx.find(fx=>fx.words.some(x=>msSame(x,t.w)));
+      if (hit){ score+=hit.w*t.k; why.push(t.w+': '+hit.f); }
+    });
+    phrases.filter(p=>p.length>1).forEach(p=>{   // the whole phrase in the title or About counts extra
+      if (idx.some(fx=>(fx.f==='title'||fx.f==='about') && fx.text.includes(' '+p.join(' ')+' '))){ score+=4; why.push('"'+p.join(' ')+'"'); }
+    });
+    if (score>0) out.push({o, score, why});
+  });
+  return out.sort((a,b)=>b.score-a.score || String(b.o.sort).localeCompare(String(a.o.sort))).slice(0, limit||15);
+}
 /* CATS:END */
 
 const CAT_MAXTOK = 2400;
@@ -1590,6 +1630,22 @@ function catEnsureLocal(id){            // editing a published category copies i
     beginnings:(p.beginnings||[]).map(b=>({object_id:b.object_id,line:b.line,by:b.by||'model'})),
     by:p.by||{},approved_objects:p.approved_objects||[],auto:!!p.auto,auto_approved:p.auto_approved||[],revisions:p.revisions||[],created:p.created}));
   saveCats(); return CATS[id];
+}
+// Add pool objects to a category by hand (the category editor and the Lineup matrix search, T-0097). Objects
+// with no stored line or About get them written in one call.
+function catAddFromPool(c, oids){
+  const added=[];
+  (oids||[]).forEach(oid=>{
+    const o=catEntry(c,oid); if (!o || c.objects.some(x=>x.object_id===oid)) return;
+    c.objects.push({object_id:oid,about:o.about||'',by:'editor'}); c.beginnings.push({object_id:oid,line:o.line||'',by:'editor'});
+    if (o.pool==='candidate') c.approved_objects=Array.from(new Set((c.approved_objects||[]).concat([oid])));   // adding it by hand is approving it
+    added.push(o);
+  });
+  if (!added.length) return;
+  if (c.status==='approved') c.status='draft';                              // an edit after approval needs re-approval
+  saveCats(); render();
+  const need=added.filter(o=>!(o.line&&o.about));
+  if (need.length) writeObjectText(c,need).then(()=>{ saveCats(); render(); }).catch(err=>{ CAT_MSG[c.id]='Could not write its text: '+err.message; render(); });
 }
 function newCategory(name, storyKeys){
   const id=catSlug(name); if (!id || id==='p-') return null;
@@ -2258,6 +2314,7 @@ function renderBackstory(root){
     const s=LINEUP.find(x=>x.key===el.dataset.key); if (!s) return;
     el.querySelector('.bsr-lu-tag').addEventListener('change',e=>{ s.backstoryRow=e.target.value||''; catReviveIfArchived(s.backstoryRow); saveLineup(); render(); });
     const op=el.querySelector('.bsr-lu-open'); if (op) op.addEventListener('click',()=>{ CAT_SEL=s.backstoryRow; if (!CATS[CAT_SEL]) catEnsureLocal(CAT_SEL); render(); });
+    bsrKwWire(el, s);
   });
   document.getElementById('cat-new').addEventListener('click',()=>{
     const n=prompt('Name the new category: a short noun phrase readers could build expertise in (for example "AI").','');
@@ -2302,13 +2359,7 @@ function renderBackstory(root){
     c.approved_objects=Array.from(new Set((c.approved_objects||[]).concat(c.objects.map(o=>o.object_id).filter(oid=>(catEntry(c,oid)||{}).pool==='candidate')))); touch(); render(); });
   ed.querySelectorAll('.cat-sg').forEach(el=>el.addEventListener('change',()=>{ c.subgenres=el.checked?Array.from(new Set((c.subgenres||[]).concat([el.dataset.sg]))):(c.subgenres||[]).filter(x=>x!==el.dataset.sg); c.by.lenses='editor'; touch(); render(); }));
   const sgAdd=document.getElementById('cat-sg-add'); if (sgAdd) sgAdd.addEventListener('change',e=>{ if (!e.target.value) return; c.subgenres=Array.from(new Set((c.subgenres||[]).concat([e.target.value]))); c.by.lenses='editor'; touch(); render(); });
-  const addFromPool=oid=>{
-    const o=catEntry(c,oid); if (!o || c.objects.some(x=>x.object_id===oid)) return;
-    c.objects.push({object_id:oid,about:o.about||'',by:'editor'}); c.beginnings.push({object_id:oid,line:o.line||'',by:'editor'});
-    if (o.pool==='candidate') c.approved_objects=Array.from(new Set((c.approved_objects||[]).concat([oid])));   // adding it by hand is approving it
-    touch(); render();
-    if (!(o.line&&o.about)) writeObjectText(c,[o]).then(()=>{ saveCats(); render(); }).catch(err=>{ CAT_MSG[c.id]='Could not write its text: '+err.message; render(); });
-  };
+  const addFromPool=oid=>catAddFromPool(c,[oid]);
   const find=document.getElementById('cat-find'); if (find) find.addEventListener('input',()=>{
     const q=find.value.trim().toLowerCase(), out=document.getElementById('cat-find-out'); if (!q){ out.innerHTML=''; return; }
     const have=new Set((c.objects||[]).map(o=>o.object_id));
@@ -3938,10 +3989,47 @@ function bsrLineupHtml(){
         <span style="font-size:12.5px;flex:1;min-width:240px">${esc(s.title||'')}</span>
         ${s.backstoryRow?'':'<span class="chip" style="background:var(--warn);color:#fff">none filed</span>'}
         <select class="bsr-lu-tag" style="max-width:260px">${bsrRowOptions(s)}</select>
+        <input class="bsr-lu-kw" value="${esc(s.bsKeywords||'')}" placeholder="keywords${s.subject?' (+ '+esc(s.subject)+')':''}" title="Search the Object Matrix with your words and the story's subject. Separate phrases with commas. No model call." style="width:200px">
+        <button class="mini bsr-lu-kwgo">find in matrix</button>
         ${cat?`<button class="mini bsr-lu-open">open ${esc(cat.title)} →</button>`:''}
         ${bsrPublishedChip(s)}
+        ${BSR_KW_OPEN[s.key]?bsrKwResultsHtml(s):''}
       </div>`; }).join('')}
   </div>`;
+}
+// T-0097: the matrix search under a Lineup story. A hit is added to the story's category when that category
+// is one Pulse edits; under a fixed row (edited in backstory-rows.json) or no filing, the ticked hits start a
+// new category instead, with the story filed under it.
+const BSR_KW_OPEN = {};
+function bsrKwEditable(s){ return !!(s.backstoryRow && (CATS[s.backstoryRow] || PUBCATS.some(r=>r.id===s.backstoryRow))); }
+function bsrKwResultsHtml(s){
+  const hits=matrixSearch(POOL?POOL.objects:[], s.bsKeywords||'', s.subject||'', 15);
+  const editable=bsrKwEditable(s), c=editable?catRecord(s.backstoryRow):null;
+  const have=new Set(((c&&c.objects)||[]).map(o=>o.object_id));
+  const head=`<div style="font-size:11px;color:var(--dim);margin-bottom:4px">MATRIX &middot; ${hits.length} for <b>${esc(s.bsKeywords||'(no keywords)')}</b>${s.subject?' + subject <b>'+esc(s.subject)+'</b>':''} &middot; ${editable?'add what fits to '+esc(c.title):'tick what fits, then start a category from it'} <button class="mini bsr-kw-close">close</button></div>`;
+  const rows=hits.map(h=>{ const o=h.o, inCat=have.has(o.id);
+    return `<div style="font-size:12px;margin:3px 0;display:flex;gap:6px;align-items:baseline">
+      ${editable?(inCat?'<span class="chip">in category</span>':`<button class="mini bsr-kw-add" data-id="${esc(o.id)}">add</button>`):`<input type="checkbox" class="bsr-kw-pick" data-id="${esc(o.id)}">`}
+      <span><b>${esc(o.year)}</b> <a href="${esc(o.url)}" target="_blank" rel="noopener">${esc(o.title.slice(0,90))}</a>${o.author?' <span style="color:var(--dim)">'+esc(o.author.slice(0,40))+'</span>':''}
+      <br><span style="font-size:10.5px;color:var(--dim)">${esc([o.row,o.subgenre].filter(Boolean).join(' / '))} &middot; matched ${esc(h.why.join('; '))}${o.about?'':' &middot; no About text yet'}</span></span></div>`; }).join('');
+  return `<div class="bsr-kw-res" style="flex-basis:100%;margin:6px 0 2px 26px;padding:6px 8px;border-left:2px solid var(--ink)">${head}${rows||'<i style="font-size:11px;color:var(--dim)">nothing in the matrix matches. Try other words, or FIND SOURCES in the category.</i>'}
+    ${!editable&&hits.length?'<button class="mini go bsr-kw-new" style="margin-top:4px">start a category from the ticked ones</button>':''}</div>`;
+}
+function bsrKwWire(el, s){
+  const kw=el.querySelector('.bsr-lu-kw');
+  const go=()=>{ s.bsKeywords=kw.value.trim(); BSR_KW_OPEN[s.key]=true; saveLineup(); render(); };
+  kw.addEventListener('keydown',e=>{ if (e.key==='Enter') go(); });
+  el.querySelector('.bsr-lu-kwgo').addEventListener('click',go);
+  const cl=el.querySelector('.bsr-kw-close'); if (cl) cl.addEventListener('click',()=>{ delete BSR_KW_OPEN[s.key]; render(); });
+  el.querySelectorAll('.bsr-kw-add').forEach(b=>b.addEventListener('click',()=>{ const c=catEnsureLocal(s.backstoryRow); if (c) catAddFromPool(c, [b.dataset.id]); }));
+  const nw=el.querySelector('.bsr-kw-new'); if (nw) nw.addEventListener('click',()=>{
+    const ids=Array.from(el.querySelectorAll('.bsr-kw-pick:checked')).map(x=>x.dataset.id);
+    if (!ids.length){ alert('Tick the objects that fit first.'); return; }
+    const n=prompt('Name the new category: a short noun phrase readers could build expertise in.', s.subject||'');
+    if (!n||!n.trim()) return;
+    const id=newCategory(n,[s.key]); if (!id) return;
+    const c=CATS[id]||catEnsureLocal(id); CAT_SEL=id; if (c) catAddFromPool(c, ids); render();
+  });
 }
 function bsrTagControl(s){
   if (!BSR_ROWS.length) return '';
