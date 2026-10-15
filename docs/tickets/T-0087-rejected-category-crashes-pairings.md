@@ -1,7 +1,7 @@
 ---
 id: T-0087
 title: A rejected automatic category no longer crashes the pairing step and costs every story its Backstory link
-status: BUILT
+status: VERIFIED
 tags: [backstory, defect]
 anchor: editorial/build_pairings.py
 ---
@@ -48,3 +48,7 @@ ticket if it recurs: making the run visibly amber when a Backstory step fails.
 python3 editorial/test_compose_category.py > /tmp/t0087.log 2>&1 || { tail -5 /tmp/t0087.log; exit 1; }
 grep -q "^ok   a rejected automatic category does not crash the pairing step" /tmp/t0087.log
 ```
+
+Verified 2026-10-15 in production (run 38774404501): "Robots in Public" was rejected, the log reads "the
+story keeps its row 'family'", 7 pairings were written, and the digest logged "7 of 7 stories cross-link to
+Backstory today". ntknews.org/digest/data/backstory.json carries the seven stories of the 2026-10-15 edition.
