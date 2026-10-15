@@ -3165,7 +3165,11 @@ function fetchBackstory(){
         merged.pairline = p.line || '';
         return merged;
       }).filter(Boolean).sort(function(a, b){
-        return bsrDaysSince(a.start_date) - bsrDaysSince(b.start_date);
+        // T-0088: the cards follow the digest's own order, the order the editor
+        // set in Lineup. They were sorted newest thread first, which put the
+        // last story on top. A story not found in today's digest goes last.
+        var ia = findStoryIndexByKey(a.story_id), ib = findStoryIndexByKey(b.story_id);
+        return (ia < 0 ? 1e9 : ia) - (ib < 0 ? 1e9 : ib);
       });
       renderBackstoryTab();
     })
