@@ -1,7 +1,7 @@
 ---
 id: T-0091
 title: Pulse's Backstory preview looks like the reader's /backstory page
-status: DECIDED
+status: BUILT
 tags: [pulse, feature]
 anchor: ntk-pulse/pulse.html
 ---
@@ -35,8 +35,37 @@ Approving is the editor's last look. If the preview differs from the page, appro
 and every difference becomes a surprise found in production. `docs/design-system.md` governs the reader
 page's look; Pulse should borrow it, not restate it.
 
+Built 2026-10-15. The reader's card is one pure function, `bsrCardHtml`, and its CSS one block, both between
+BSR-CARD markers in `digest/index.html`. Pulse fetches `../digest/index.html`, takes the code and CSS from
+between the markers (plus the page's `:root` colours and its Google Fonts link) and draws with them, so a
+change to the reader's card shows in Pulse with no second edit. TODAY'S PAIRINGS shows each story as the
+reader's card with the editor's facts (row, confidence, review and fit flags, headline) in a strip above it;
+each category shows THE CARD, AS READERS SEE IT for every story filed under it. Pulse re-reads the published
+`backstory.json` after a minute instead of keeping the first copy for the session. If the card cannot be
+read, Pulse says so and falls back to plain text.
+
+Checked in a local preview: the reader's Backstory tab produces byte-identical HTML before and after the
+refactor (7 cards, 5,186 characters, against main's page on the same data); Pulse draws 7 reader cards in
+Newsreader on the cream ground with the terra label.
+
+Not done: the category PAGE (`showBsrPage`, designs 4C and 4D) is still a Pulse summary, labelled as such.
+That is the second half of this ticket.
+
 ## Check
 
 ```sh
-manual: open a category in Pulse and the same category on /backstory side by side; the card and the page match except for draft-only controls
+python3 - <<'PY' > /tmp/t0091.js || exit 1
+import re
+s = open('digest/index.html', encoding='utf-8').read()
+js = re.search(r'/\* BSR-CARD:BEGIN[^*]*\*/([\s\S]*?)/\* BSR-CARD:END \*/', s)
+css = re.search(r'/\* BSR-CARD-CSS:BEGIN[^*]*\*/([\s\S]*?)/\* BSR-CARD-CSS:END \*/', s)
+p = open('ntk-pulse/pulse.html', encoding='utf-8').read()
+if not js or not css or '.bt-row' not in css.group(1) or 'BSR-CARD:BEGIN' not in p or 'bsrCardHtml(' not in p: raise SystemExit(1)
+print("var document={createElement:function(){var o={set textContent(v){o.innerHTML=String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}};return o;}};")
+print(js.group(1))
+print("""var h=bsrCardHtml({id:'p-x',title:'Robots and Law',start_date:'2026-10-15',stratum:'provisional',pairline:'A robot did a thing.',origin:{status:'retrieved',year:1999,line:'It began'}},'#',0);
+if (h.indexOf('bt-row')<0 || h.indexOf('A robot did a thing.')<0 || h.indexOf('It starts in 1999')<0) { console.log(h); process.exit(1); }""")
+PY
+node /tmp/t0091.js
+# manual: the category page (showBsrPage) in Pulse matches /backstory/<id>/
 ```

@@ -1180,12 +1180,41 @@ function loadBsrRows(){
   }).catch(() => BSR_ROWS);
 }
 
+let BSR_PUBLISHED_AT = 0;
+// Re-read after a minute: a tab left open across a publish showed the last edition's lines (T-0091).
 function fetchPublishedBackstory(){
-  if (BSR_PUBLISHED) return Promise.resolve(BSR_PUBLISHED);
+  if (BSR_PUBLISHED && Date.now() - BSR_PUBLISHED_AT < 60000) return Promise.resolve(BSR_PUBLISHED);
   return fetch('../digest/data/backstory.json?t='+Date.now())
     .then(r => r.ok ? r.json() : null)
-    .then(d => { BSR_PUBLISHED = d || {rows:[],todays_pairings:[]}; return BSR_PUBLISHED; })
-    .catch(() => { BSR_PUBLISHED = {rows:[],todays_pairings:[]}; return BSR_PUBLISHED; });
+    .then(d => { BSR_PUBLISHED = d || {rows:[],todays_pairings:[]}; BSR_PUBLISHED_AT = Date.now(); return BSR_PUBLISHED; })
+    .catch(() => { BSR_PUBLISHED = BSR_PUBLISHED || {rows:[],todays_pairings:[]}; return BSR_PUBLISHED; });
+}
+// The reader's own card (T-0091). Pulse reads the card code and its CSS out of digest/index.html, between the
+// BSR-CARD markers, so the preview is the reader's markup and type, not a copy that drifts. If it cannot be
+// read, the list falls back to plain text and says so.
+let READER_CARD = null, READER_CARD_TRIED = false;
+function loadReaderCard(){
+  if (READER_CARD || READER_CARD_TRIED) return Promise.resolve(READER_CARD);
+  READER_CARD_TRIED = true;
+  return fetch('../digest/index.html?t='+Date.now()).then(r => r.ok ? r.text() : '').then(html => {
+    const js = (html.match(/\/\* BSR-CARD:BEGIN[^*]*\*\/([\s\S]*?)\/\* BSR-CARD:END \*\//) || [])[1];
+    const css = (html.match(/\/\* BSR-CARD-CSS:BEGIN[^*]*\*\/([\s\S]*?)\/\* BSR-CARD-CSS:END \*\//) || [])[1];
+    const root = (html.match(/:root\s*\{([^}]*)\}/) || [])[1] || '';
+    const fonts = (html.match(/<link href="(https:\/\/fonts\.googleapis\.com\/css2\?[^"]+)" rel="stylesheet">/) || [])[1];
+    if (!js || !css) return null;
+    READER_CARD = new Function(js + '; return {bsrCardHtml: bsrCardHtml};')();
+    const st = document.createElement('style');
+    st.textContent = '.ntk-reader{' + root + 'background:var(--cream);color:var(--dark);font-family:\'Newsreader\',Georgia,serif;max-width:430px}'
+      + '.ntk-reader a{pointer-events:none}' + css;
+    document.head.appendChild(st);
+    if (fonts){ const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = fonts; document.head.appendChild(l); }
+    return READER_CARD;
+  }).catch(() => null);
+}
+function readerCardHtml(row, p){
+  if (!READER_CARD) return '';
+  const r = Object.assign({}, row, p); r.pairline = p.line || '';
+  try { return '<div class="ntk-reader">' + READER_CARD.bsrCardHtml(r, '#', -1) + '</div>'; } catch(e){ return ''; }
 }
 
 function pairingsHtml(d){
@@ -1208,7 +1237,7 @@ function pairingsHtml(d){
 
   return `<div style="margin-bottom:14px">
     <div style="font-size:11px;color:var(--dim);margin-bottom:6px">
-      TODAY'S PAIRINGS &middot; ${pairs.length} &middot; generated ${when ? rel(when)+' ago' : 'unknown'}
+      TODAY'S PAIRINGS, AS PUBLISHED &middot; ${pairs.length} &middot; generated ${when ? rel(when)+' ago' : 'unknown'} &middot; each card is the reader's own
     </div>
     ${pairs.map(p => {
       const row = byId[p.row] || {};
@@ -1221,10 +1250,10 @@ function pairingsHtml(d){
           ${p.confidence!=null ? `<span style="font-size:10.5px;color:${low?'var(--stale)':'var(--dim)'}">${Number(p.confidence).toFixed(2)}${low?' &middot; review':''}</span>` : ''}
           ${dup ? `<span style="font-size:10px;color:var(--warn);border:1px solid var(--warn);padding:0 4px">2 stories, same row</span>` : ''}
         </div>
-        ${p.origin ? `<div style="font-size:11px;margin-top:3px;color:var(--dim)">It starts in <b>${esc(p.origin.year)}</b>${p.origin.status==='retrieved'?'':' (the row\u2019s own start, no origin found)'}${p.origin.row_fit==='poor'?` <span style="color:var(--warn);border:1px solid var(--warn);padding:0 4px">poor row fit</span>`:''}${p.origin.fit==='inferred'?' <span style="border:1px solid var(--rule);padding:0 4px">inferred</span>':''}<br>${esc(p.origin.line||'')}</div>` : ''}
+        ${p.origin ? `<div style="font-size:11px;margin-top:3px;color:var(--dim)">${p.origin.status==='retrieved'?'Origin found for this story':'No origin found: the row\u2019s own start'}${p.origin.row_fit==='poor'?` <span style="color:var(--warn);border:1px solid var(--warn);padding:0 4px">poor row fit</span>`:''}${p.origin.fit==='inferred'?' <span style="border:1px solid var(--rule);padding:0 4px">inferred</span>':''}</div>` : ''}
         ${p.provisional ? `<div style="font-size:11px;margin-top:3px;color:var(--warn)">New category, drafted from the story: no trend line yet.</div>` : ''}
-        <div style="font-size:12px;margin-top:4px">${esc(p.line||'(no line)')}</div>
-        <div style="font-size:11px;color:var(--dim);margin-top:3px">${esc(p.headline||'')}</div>
+        <div style="font-size:11px;color:var(--dim);margin:3px 0 6px">Story: ${esc(p.headline||'')}</div>
+        ${readerCardHtml(row, p) || `<div style="font-size:11px;color:var(--warn)">The reader's card could not be loaded, so this is plain text.</div><div style="font-size:12px;margin-top:4px">${esc(p.line||'(no line)')}</div>${p.origin?`<div style="font-size:11px;color:var(--dim)">It starts in ${esc(p.origin.year)}: ${esc(p.origin.line||'')}</div>`:''}`}
       </div>`;
     }).join('')}
   </div>`;
@@ -1993,6 +2022,16 @@ function catIndicatorSvg(i){
     <text x="40" y="92" font-size="10">${esc(i.then_year||'')}</text><text x="260" y="92" text-anchor="end" font-size="10">now</text></svg>
     <div style="font:600 10px sans-serif;color:var(--dim)">${esc(i.source)} \u00b7 ${esc(i.as_of)} \u00b7 <a href="${esc(i.source_url)}" target="_blank" rel="noopener">source</a></div></div>`;
 }
+// The reader's card for each story filed under this category, drawn from the draft (T-0091). The line and
+// origin come from the last publish when the story was paired here; a story not yet published under it
+// shows its headline, as the reader's page does when a pairing has no line.
+function catCardsHtml(c){
+  if (!READER_CARD) return '';
+  const filed=catStories(c.id); if (!filed.length) return '<i style="font-size:12px;color:var(--dim)">No story is filed under this category yet, so there is no card to show.</i>';
+  const today=new Date().toISOString().slice(0,10);
+  return filed.map(s=>{ const pub=bsrPublishedFor(s), same=pub&&pub.row===c.id;
+    return readerCardHtml({id:c.id,title:c.title,stratum:'provisional',start_date:c.created||today}, {story_id:s.key,line:same?pub.line:'',headline:s.title,origin:same?pub.origin:null}); }).join('');
+}
 function catPreviewHtml(c){
   const chk=catCheck(c).clean||c; const rows=(c.beginnings||[]).map(b=>{
     const o=catEntry(c,b.object_id)||{}; return `<div style="display:flex;gap:10px;margin:6px 0"><b style="min-width:42px">${esc(o.year||'')}</b><span>${esc(b.line)}</span></div>`;
@@ -2156,7 +2195,8 @@ function catEditorHtml(c){
     <textarea id="cat-rev" rows="2" style="width:100%" placeholder="Tell me what to change: 'make the stakes plainer', 'drop the 1974 entry', 'add the Section 230 object'…"></textarea>
     <button class="mini go" id="cat-revise" ${busy?'disabled':''}>Send revision</button>
     ${(c.revisions||[]).length?`<div style="font-size:11px;color:var(--dim);margin-top:6px">${(c.revisions||[]).slice(-5).map(r=>esc((r.at||'').slice(5,16).replace('T',' '))+' — '+esc(r.request)+(r.summary?' → '+esc(r.summary):'')).join('<br>')}</div>`:''}
-    <div style="margin:12px 0 4px"><b style="font-size:11px">PREVIEW</b></div>${catPreviewHtml(c)}
+    <div style="margin:12px 0 4px"><b style="font-size:11px">THE CARD, AS READERS SEE IT</b> <span style="font-size:11px;color:var(--dim)">the reader's own card. Line and origin are from the last publish; they are written again when you publish.</span></div>${catCardsHtml(c)}
+    <div style="margin:12px 0 4px"><b style="font-size:11px">CATEGORY PAGE</b> <span style="font-size:11px;color:var(--dim)">a summary, not yet the reader's layout</span></div>${catPreviewHtml(c)}
   </div>`;
 }
 // Something else in Pulse (a story generating in Lineup, say) calls render() while you are typing here.
@@ -2200,7 +2240,8 @@ function renderBackstory(root){
       <div id="cat-editor">${sel? (CATS[sel.id]||catEnsureLocal(sel.id) ? catEditorHtml(CATS[sel.id]) : '') : '<i style="color:var(--dim)">Pick a category on the left, or make a new one. A category named from a story in Lineup opens here.</i>'}</div>
     </div>`;
   catRestoreInputs(_kept);
-  fetchPublishedBackstory().then(d=>{ const el=document.getElementById('bs-published'); if (el) el.innerHTML=pairingsHtml(d); });
+  const hadCard=!!READER_CARD;
+  Promise.all([fetchPublishedBackstory(), loadReaderCard()]).then(([d])=>{ const el=document.getElementById('bs-published'); if (el) el.innerHTML=pairingsHtml(d); if (!hadCard && READER_CARD && CAT_SEL && TAB==='backstory') render(); });
   root.querySelectorAll('.cat-pick').forEach(el=>el.addEventListener('click',()=>{ CAT_SEL=el.dataset.id; if (!CATS[CAT_SEL]) catEnsureLocal(CAT_SEL); render(); }));
   root.querySelectorAll('.bsr-lu').forEach(el=>{
     const s=LINEUP.find(x=>x.key===el.dataset.key); if (!s) return;

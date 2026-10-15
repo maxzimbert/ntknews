@@ -551,6 +551,7 @@
   /* The bottom nav is fixed and 64px tall, so the last row's category and Backstory link need at
      least that much room under them to be reachable. The other tabs use 80px (T-0075). */
   .bsr-list { padding: 0 0 88px; }
+  /* BSR-CARD-CSS:BEGIN  (Pulse reads this block to preview the card exactly, T-0091) */
   .bt-row { padding: 22px 16px 16px; border-bottom: 1px solid rgba(38,31,35,.2); }
   .bt-label { font-family: 'Overpass', sans-serif; font-weight: 600; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 6px; }
   .bt-today { color: rgba(38,31,35,.6); }
@@ -564,6 +565,7 @@
   .bt-theme { font-weight: 600; color: var(--dark); }
   .bt-cta { font-weight: 600; color: var(--blue); text-decoration: none; }
   .bt-elapsed { font-family: 'Overpass', sans-serif; font-weight: 700; font-size: 20px; color: var(--dark); margin-top: 10px; }
+  /* BSR-CARD-CSS:END */
 
   /* ── Backstory pages inside the app (designs 4C and 4D) ──
      Same markup classes as the static pages, prefixed bp- here. */
@@ -3176,6 +3178,7 @@ function fetchBackstory(){
     .catch(function(){ BSR_DATA = []; renderBackstoryTab(); });
 }
 
+/* BSR-CARD:BEGIN  (Pulse extracts this block; keep it pure: no DOM lookups, no globals but Date) */
 function bsrDaysSince(dateStr){
   return Math.floor((Date.now() - new Date(dateStr + 'T00:00:00Z')) / 86400000);
 }
@@ -3194,24 +3197,12 @@ function bsrYear(dateStr){ return (dateStr || '').slice(0, 4); }
 // proper noun the moment it isn't the first word ("Washington" ->
 // "washington"). Same fix already made in build_backstory_pages.py (T-0053).
 function bsrCapitalize(s){ return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
-
-// Staged copies live under /ntknews-staging/ (GitHub Pages subpath); every
-// other host serves from the root. Row links must be real hrefs.
-var NTK_BASE = location.pathname.indexOf('/ntknews-staging/') === 0 ? '/ntknews-staging' : '';
-
-function bsrHref(r){ return NTK_BASE + '/backstory/' + encodeURIComponent(r.id) + '/'; }
-
-function renderBackstoryTab(){
-  const list = document.getElementById('bsrList');
-  if (!list) return;
-  if (!BSR_DATA || !BSR_DATA.length){
-    list.innerHTML = '<div class="bsr-empty">Backstory publishes with each digest — '
-      + 'one thread for each of today’s stories, and how far back it runs.</div>';
-    return;
-  }
-  list.innerHTML = BSR_DATA.map(function(r, i){
-    const href = escAttr(bsrHref(r));
-    const sIdx = findStoryIndexByKey(r.story_id);
+function escBsr(s){ const d = document.createElement('span'); d.textContent = s == null ? '' : s; return d.innerHTML; }
+// escBsr is for text nodes; innerHTML leaves a double quote alone, which is
+// fine between tags and not fine inside an attribute.
+function escAttr(s){ return escBsr(s).replace(/"/g, '&quot;'); }
+// One reader card. Pure: Pulse runs this same code to preview a card exactly as readers see it (T-0091).
+function bsrCardHtml(r, href, sIdx){
     // 4A: the TODAY sentence is the pairing line, tappable into the story.
     // build_pairings.py tolerates a story with no pairing line (the log says
     // "N with no line"), so fall back to the story's own headline rather than
@@ -3239,6 +3230,27 @@ function renderBackstoryTab(){
       + '<div class="bt-mark" aria-hidden="true"><i></i><b></b><i></i></div>'
       + '<div class="bt-foot"><span class="bt-theme">' + escBsr(r.title) + '</span>'
       + '<a class="bt-cta" data-rid="' + escAttr(r.id) + '" href="' + href + '">Backstory</a></div></div>';
+}
+/* BSR-CARD:END */
+
+// Staged copies live under /ntknews-staging/ (GitHub Pages subpath); every
+// other host serves from the root. Row links must be real hrefs.
+var NTK_BASE = location.pathname.indexOf('/ntknews-staging/') === 0 ? '/ntknews-staging' : '';
+
+function bsrHref(r){ return NTK_BASE + '/backstory/' + encodeURIComponent(r.id) + '/'; }
+
+function renderBackstoryTab(){
+  const list = document.getElementById('bsrList');
+  if (!list) return;
+  if (!BSR_DATA || !BSR_DATA.length){
+    list.innerHTML = '<div class="bsr-empty">Backstory publishes with each digest — '
+      + 'one thread for each of today’s stories, and how far back it runs.</div>';
+    return;
+  }
+  list.innerHTML = BSR_DATA.map(function(r, i){
+    const href = escAttr(bsrHref(r));
+    const sIdx = findStoryIndexByKey(r.story_id);
+    return bsrCardHtml(r, href, sIdx);
   }).join('');
   Array.prototype.forEach.call(list.querySelectorAll('a[data-rid]'), function(el){
     el.addEventListener('click', function(e){ e.preventDefault(); showBsrPage(el.dataset.rid, null); });
@@ -3399,10 +3411,6 @@ document.addEventListener('click', function(e){
   }
 });
 
-function escBsr(s){ const d = document.createElement('span'); d.textContent = s == null ? '' : s; return d.innerHTML; }
-// escBsr is for text nodes; innerHTML leaves a double quote alone, which is
-// fine between tags and not fine inside an attribute.
-function escAttr(s){ return escBsr(s).replace(/"/g, '&quot;'); }
 
 /* ── Detail view ─────────────────────────────────────────────────────
    Everything below the milestone is composed here and injected into the
