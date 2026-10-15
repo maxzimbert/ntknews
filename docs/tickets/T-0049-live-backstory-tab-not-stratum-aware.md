@@ -113,8 +113,12 @@ grep -q "stratum" digest/index.html || { echo "OPEN: no stratum handling in dige
 # leading element as a held row's. Weak but real — asserts the function
 # body actually references r.stratum, not just that the word appears
 # somewhere in the file.
-awk '/^function renderBackstoryTab/{f=1} f{print} f&&/^}/{exit}' digest/index.html | grep -q "stratum" \
-  || { echo "OPEN: renderBackstoryTab() doesn't branch on stratum"; exit 1; }
+# T-0091 moved the card into bsrCardHtml(), which renderBackstoryTab() draws every card through and Pulse
+# reuses. The assertion is unchanged: the function that builds a list card branches on stratum.
+awk '/^function renderBackstoryTab/{f=1} f{print} f&&/^}/{exit}' digest/index.html | grep -q "bsrCardHtml(" \
+  || { echo "OPEN: renderBackstoryTab() does not draw its cards through bsrCardHtml()"; exit 1; }
+awk '/^function bsrCardHtml/{f=1} f{print} f&&/^}/{exit}' digest/index.html | grep -q "stratum" \
+  || { echo "OPEN: the list card (bsrCardHtml) doesn't branch on stratum"; exit 1; }
 
 awk '/^function openBsrDetail/{f=1} f{print} f&&/^}/{exit}' digest/index.html | grep -q "stratum" \
   || { echo "OPEN: openBsrDetail() doesn't branch on stratum"; exit 1; }
