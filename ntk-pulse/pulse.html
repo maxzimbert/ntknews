@@ -1550,7 +1550,10 @@ function verifyCandidate(m, urls){
 // of Backstory until it has been moved into the matrix. A keyword counts in full, a subject word at half, so a
 // subject alone ("Executive Power") still finds objects but the editor's own words lead.
 const MS_STOP=new Set('a an and the of in on for to by with from at as or is are was were be its it this that these those v vs'.split(' '));
-const MS_FIELDS=[['title',5],['about',4],['line',3],['subgenre',3],['row',2],['lenses',2],['author',2],['theme',1]];
+// About is long prose, so a word there is often incidental: it counts less than the title or the Beginning
+// line, and a whole phrase found in it still earns the phrase bonus below (T-0098: "war powers" ranked a letter
+// that mentions a war and a power above the War Messages).
+const MS_FIELDS=[['title',5],['line',3],['subgenre',3],['about',2],['row',2],['lenses',2],['author',2],['theme',1]];
 function msStem(w){ if (w.length>4 && w.endsWith('ies')) return w.slice(0,-3)+'y'; if (w.length>3 && /[^s]s$/.test(w)) return w.slice(0,-1); return w; }
 function msWords(t){ return String(t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').split(/[^a-z0-9]+/).filter(w=>w && !MS_STOP.has(w)).map(msStem); }
 function msSame(a, b){   // equal, or one word in two forms ("manufactures" and "manufacturing")
@@ -1564,26 +1567,63 @@ function msIndex(o){
   if (!MS_INDEX.has(o.id)) MS_INDEX.set(o.id, MS_FIELDS.map(([f,w])=>{ const v=f==='lenses'?(o.lenses||[]).join(' '):o[f]; return {f, w, words:msWords(v), text:' '+msWords(v).join(' ')+' '}; }));
   return MS_INDEX.get(o.id);
 }
+// How rare a word is across the eligible matrix (inverse document frequency), so a common word ("national",
+// "war") counts for less than a rare one ("guard", "wiretap"). Computed once per pool.
+const MS_IDF=new WeakMap();
+function msIdf(objs){
+  if (!MS_IDF.has(objs)){
+    const df={}; let n=0;
+    objs.forEach(o=>{ if (o.pool!=='matrix' || !o.url || o.link_status==='dead') return; n++;
+      new Set([].concat(...msIndex(o).map(fx=>fx.words))).forEach(w=>{ df[w]=(df[w]||0)+1; }); });
+    MS_IDF.set(objs, w=>Math.log((n+1)/((df[w]||0)+1))+1);
+  }
+  return MS_IDF.get(objs);
+}
 function matrixSearch(objs, keywords, subject, limit){
+  objs=objs||[];
   const phrases=String(keywords||'').split(/[,;\n]+/).map(msWords).filter(p=>p.length);
   const terms=[];
   phrases.forEach(p=>p.forEach(w=>terms.push({w, k:1})));
   msWords(subject).forEach(w=>{ if (!terms.some(t=>t.w===w)) terms.push({w, k:0.5}); });
   if (!terms.length) return [];
-  const out=[];
-  (objs||[]).forEach(o=>{
+  const idf=msIdf(objs), out=[];
+  objs.forEach(o=>{
     if (o.pool!=='matrix' || !o.url || o.link_status==='dead') return;
     const idx=msIndex(o); let score=0; const why=[];
     terms.forEach(t=>{
       const hit=idx.find(fx=>fx.words.some(x=>msSame(x,t.w)));
-      if (hit){ score+=hit.w*t.k; why.push(t.w+': '+hit.f); }
+      if (hit){ score+=hit.w*t.k*idf(t.w); why.push(t.w+': '+hit.f); }
     });
     phrases.filter(p=>p.length>1).forEach(p=>{   // the whole phrase in the title or About counts extra
-      if (idx.some(fx=>(fx.f==='title'||fx.f==='about') && fx.text.includes(' '+p.join(' ')+' '))){ score+=4; why.push('"'+p.join(' ')+'"'); }
+      if (idx.some(fx=>(fx.f==='title'||fx.f==='about') && fx.text.includes(' '+p.join(' ')+' '))){ score+=2*p.reduce((a,w)=>a+idf(w),0); why.push('"'+p.join(' ')+'"'); }
     });
     if (score>0) out.push({o, score, why});
   });
   return out.sort((a,b)=>b.score-a.score || String(b.o.sort).localeCompare(String(a.o.sort))).slice(0, limit||15);
+}
+// The editor's keywords that no eligible matrix object contains at all: the matrix has nothing on them, so
+// that part of the story needs a web search (FIND SOURCES), not another matrix query.
+function matrixMissing(objs, keywords){
+  const el=(objs||[]).filter(o=>o.pool==='matrix' && o.url && o.link_status!=='dead');
+  const words=Array.from(new Set(String(keywords||'').split(/[,;\n]+/).map(msWords).reduce((a,p)=>a.concat(p),[])));
+  return words.filter(w=>!el.some(o=>msIndex(o).some(fx=>fx.words.some(x=>msSame(x,w)))));
+}
+// T-0098: the names a model offers for a new category, cleaned. Takes the model's raw text (a JSON list, or one
+// name per line if it ignored that) and the titles already in use; returns at most three distinct names, none of
+// them an existing category or row, so a suggestion never collides with a page that exists.
+function catNameChoices(raw, existing){
+  let list=[];
+  const m=String(raw||'').match(/\[[\s\S]*\]/);
+  if (m){ try { list=JSON.parse(m[0]); } catch(e){ list=[]; } }
+  if (!Array.isArray(list) || !list.length) list=String(raw||'').split('\n');
+  const used=new Set((existing||[]).map(t=>String(t).trim().toLowerCase()));
+  const out=[];
+  list.forEach(x=>{
+    const n=String(typeof x==='string'?x:(x&&x.name)||'').replace(/^[\s\-*\d.)"'“”]+|["'“”\s.]+$/g,'').replace(/\s+/g,' ').trim();
+    if (!/[a-z]/i.test(n) || n.length>60 || used.has(n.toLowerCase()) || out.some(y=>y.toLowerCase()===n.toLowerCase())) return;
+    out.push(n);
+  });
+  return out.slice(0,3);
 }
 /* CATS:END */
 
@@ -2307,8 +2347,10 @@ function renderBackstory(root){
       <div id="cat-editor">${sel? (CATS[sel.id]||catEnsureLocal(sel.id) ? catEditorHtml(CATS[sel.id]) : '') : '<i style="color:var(--dim)">Pick a category on the left, or make a new one. A category named from a story in Lineup opens here.</i>'}</div>
     </div>`;
   catRestoreInputs(_kept);
-  const hadCard=!!READER_CARD;
-  Promise.all([fetchPublishedBackstory(), loadReaderCard()]).then(([d])=>{ const el=document.getElementById('bs-published'); if (el) el.innerHTML=pairingsHtml(d); if (!hadCard && READER_CARD && CAT_SEL && TAB==='backstory') render(); });
+  const hadCard=!!READER_CARD, hadPub=!!BSR_PUBLISHED, previewing=Object.keys(BSR_PREV_OPEN).length>0;
+  Promise.all([fetchPublishedBackstory(), loadReaderCard()]).then(([d])=>{ const el=document.getElementById('bs-published'); if (el) el.innerHTML=pairingsHtml(d);
+    // redraw once the card or the published rows arrive, if something on screen needs them (T-0098 previews)
+    if (TAB==='backstory' && ((!hadCard && READER_CARD && (CAT_SEL || previewing)) || (!hadPub && previewing))) render(); });
   root.querySelectorAll('.cat-pick').forEach(el=>el.addEventListener('click',()=>{ CAT_SEL=el.dataset.id; if (!CATS[CAT_SEL]) catEnsureLocal(CAT_SEL); render(); }));
   root.querySelectorAll('.bsr-lu').forEach(el=>{
     const s=LINEUP.find(x=>x.key===el.dataset.key); if (!s) return;
@@ -3991,45 +4033,158 @@ function bsrLineupHtml(){
         <select class="bsr-lu-tag" style="max-width:260px">${bsrRowOptions(s)}</select>
         <input class="bsr-lu-kw" value="${esc(s.bsKeywords||'')}" placeholder="keywords${s.subject?' (+ '+esc(s.subject)+')':''}" title="Search the Object Matrix with your words and the story's subject. Separate phrases with commas. No model call." style="width:200px">
         <button class="mini bsr-lu-kwgo">find in matrix</button>
+        <button class="mini bsr-lu-prev"${BSR_PREV_OPEN[s.key]?' style="background:var(--ink);color:#fff"':''}>preview</button>
         ${cat?`<button class="mini bsr-lu-open">open ${esc(cat.title)} →</button>`:''}
         ${bsrPublishedChip(s)}
         ${BSR_KW_OPEN[s.key]?bsrKwResultsHtml(s):''}
+        ${(s.bsPicks||[]).length?bsrPicksHtml(s):''}
+        ${BSR_NAMING[s.key]?bsrNamingHtml(s):''}
+        ${BSR_PREV_OPEN[s.key]?bsrStoryPreviewHtml(s):''}
       </div>`; }).join('')}
   </div>`;
 }
-// T-0097: the matrix search under a Lineup story. A hit is added to the story's category when that category
-// is one Pulse edits; under a fixed row (edited in backstory-rows.json) or no filing, the ticked hits start a
-// new category instead, with the story filed under it.
-const BSR_KW_OPEN = {};
+// T-0097: the matrix search under a Lineup story. T-0098: a tick keeps the object on the story (s.bsPicks, saved
+// with the Lineup), so the editor can search again with other words and keep adding; the kept objects then go
+// into the story's category at once, or start a new category named from three suggestions.
+const BSR_KW_OPEN = {}, BSR_PREV_OPEN = {}, BSR_NAMING = {};
 function bsrKwEditable(s){ return !!(s.backstoryRow && (CATS[s.backstoryRow] || PUBCATS.some(r=>r.id===s.backstoryRow))); }
+function bsrFiledIds(s){        // objects already on the story's category or row
+  const d=bsrPreviewData(s); return new Set(((d&&d.objs)||[]).map(o=>o.id).filter(Boolean));
+}
 function bsrKwResultsHtml(s){
   const hits=matrixSearch(POOL?POOL.objects:[], s.bsKeywords||'', s.subject||'', 15);
-  const editable=bsrKwEditable(s), c=editable?catRecord(s.backstoryRow):null;
-  const have=new Set(((c&&c.objects)||[]).map(o=>o.object_id));
-  const head=`<div style="font-size:11px;color:var(--dim);margin-bottom:4px">MATRIX &middot; ${hits.length} for <b>${esc(s.bsKeywords||'(no keywords)')}</b>${s.subject?' + subject <b>'+esc(s.subject)+'</b>':''} &middot; ${editable?'add what fits to '+esc(c.title):'tick what fits, then start a category from it'} <button class="mini bsr-kw-close">close</button></div>`;
-  const rows=hits.map(h=>{ const o=h.o, inCat=have.has(o.id);
+  const have=bsrFiledIds(s), kept=new Set(s.bsPicks||[]);
+  const missing=matrixMissing(POOL?POOL.objects:[], s.bsKeywords||'');
+  const head=`<div style="font-size:11px;color:var(--dim);margin-bottom:4px">MATRIX &middot; ${hits.length} for <b>${esc(s.bsKeywords||'(no keywords)')}</b>${s.subject?' + subject <b>'+esc(s.subject)+'</b>':''} &middot; tick what fits; ticks are kept when you search again <button class="mini bsr-kw-close">close</button></div>`
+    +(missing.length?`<div style="font-size:11px;color:var(--stale);margin-bottom:4px">Nothing in the matrix mentions <b>${esc(missing.join(', '))}</b>. For that part, FIND SOURCES in the category searches the web.${bsrCandidateNote(missing)}</div>`:'');
+  const rows=hits.map(h=>{ const o=h.o;
     return `<div style="font-size:12px;margin:3px 0;display:flex;gap:6px;align-items:baseline">
-      ${editable?(inCat?'<span class="chip">in category</span>':`<button class="mini bsr-kw-add" data-id="${esc(o.id)}">add</button>`):`<input type="checkbox" class="bsr-kw-pick" data-id="${esc(o.id)}">`}
+      ${have.has(o.id)?'<span class="chip">already on it</span>':`<input type="checkbox" class="bsr-kw-pick" data-id="${esc(o.id)}"${kept.has(o.id)?' checked':''}>`}
       <span><b>${esc(o.year)}</b> <a href="${esc(o.url)}" target="_blank" rel="noopener">${esc(o.title.slice(0,90))}</a>${o.author?' <span style="color:var(--dim)">'+esc(o.author.slice(0,40))+'</span>':''}
       <br><span style="font-size:10.5px;color:var(--dim)">${esc([o.row,o.subgenre].filter(Boolean).join(' / '))} &middot; matched ${esc(h.why.join('; '))}${o.about?'':' &middot; no About text yet'}</span></span></div>`; }).join('');
-  return `<div class="bsr-kw-res" style="flex-basis:100%;margin:6px 0 2px 26px;padding:6px 8px;border-left:2px solid var(--ink)">${head}${rows||'<i style="font-size:11px;color:var(--dim)">nothing in the matrix matches. Try other words, or FIND SOURCES in the category.</i>'}
-    ${!editable&&hits.length?'<button class="mini go bsr-kw-new" style="margin-top:4px">start a category from the ticked ones</button>':''}</div>`;
+  return `<div class="bsr-kw-res" style="flex-basis:100%;margin:6px 0 2px 26px;padding:6px 8px;border-left:2px solid var(--ink)">${head}${rows||'<i style="font-size:11px;color:var(--dim)">nothing in the matrix matches. Try other words, or FIND SOURCES in the category.</i>'}</div>`;
+}
+// Candidates stay out of Backstory until they are in the matrix (the editor, 2026-10-15), but the editor should
+// know when one already covers what the matrix lacks: moving it into the matrix is cheaper than a web search.
+function bsrCandidateNote(words){
+  const c=(POOL?POOL.objects:[]).filter(o=>o.pool==='candidate' && words.some(w=>msIndex(o).some(fx=>(fx.f==='title'||fx.f==='about') && fx.words.some(x=>msSame(x,w)))));
+  return c.length?` The candidates sheet has ${c.length===1?'one':c.length} that ${c.length===1?'does':'do'}: ${c.slice(0,3).map(o=>esc(o.year+' '+o.title.slice(0,50))).join('; ')}${c.length>3?'; and more':''}. Move ${c.length===1?'it':'them'} into the matrix to use ${c.length===1?'it':'them'} here.`:'';
+}
+function bsrPicksHtml(s){
+  const picks=(s.bsPicks||[]).map(id=>POOL_BY[id]).filter(Boolean);
+  const editable=bsrKwEditable(s), c=editable?catRecord(s.backstoryRow):null;
+  return `<div class="bsr-picks" style="flex-basis:100%;margin:4px 0 2px 26px;padding:6px 8px;background:#f3efe6">
+    <div style="font-size:11px;color:var(--dim);margin-bottom:4px">KEPT FOR THIS STORY &middot; ${picks.length}</div>
+    ${picks.map(o=>`<span class="chip" style="margin:2px 4px 2px 0;display:inline-block">${esc(o.year)} ${esc(o.title.slice(0,50))} <a href="#" class="bsr-pick-x" data-id="${esc(o.id)}" title="remove" style="text-decoration:none">&times;</a></span>`).join('')}
+    <div style="margin-top:5px;display:flex;gap:6px;flex-wrap:wrap">
+      ${editable?`<button class="mini go bsr-picks-add">add ${picks.length} to ${esc(c.title)}</button>`:''}
+      <button class="mini bsr-picks-new">new category from ${picks.length===1?'it':'these'}</button>
+      <button class="mini bsr-picks-clear">clear</button>
+      ${editable?'':`<span style="font-size:11px;color:var(--dim)">${s.backstoryRow?'This story is under a fixed row, which takes its objects from backstory-rows.json, so these start a category of their own.':'This story is not filed yet.'}</span>`}
+    </div></div>`;
+}
+function bsrCategoryTitles(){
+  return Array.from(new Set(BSR_ROWS.map(r=>r.title).concat(Object.values(CATS).map(c=>c.title), PUBCATS.map(r=>r.title)).filter(Boolean)));
+}
+function bsrNamingHtml(s){
+  const n=BSR_NAMING[s.key];
+  const choices=n.state==='loading'?'<i style="font-size:12px;color:var(--dim)">Writing three names from the story&hellip;</i>'
+    : (n.names||[]).map(x=>`<button class="mini bsr-name-pick" data-name="${esc(x)}">${esc(x)}</button>`).join(' ')
+      + (n.state==='error'?`<span style="font-size:11px;color:var(--stale)">Could not suggest names: ${esc(n.err)}</span>`:'');
+  return `<div class="bsr-naming" style="flex-basis:100%;margin:4px 0 2px 26px;padding:6px 8px;border:1px solid var(--ink)">
+    <div style="font-size:11px;color:var(--dim);margin-bottom:5px">NAME THE NEW CATEGORY &middot; pick one, or write your own</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">${choices}</div>
+    <div style="margin-top:6px;display:flex;gap:6px;align-items:center"><input class="bsr-name-own" placeholder="or your own name" style="width:240px" maxlength="60"><button class="mini go bsr-name-go">create</button><button class="mini bsr-name-cancel">cancel</button></div></div>`;
+}
+async function bsrSuggestNames(s){
+  const picks=(s.bsPicks||[]).map(id=>POOL_BY[id]).filter(Boolean), taken=bsrCategoryTitles();
+  const p=`You name a Backstory category at NTK News. A category is the long history a news story belongs to: a short noun phrase a reader could build expertise in, two to five plain words, no colon, no question, no date. Examples of the style: "AI", "Outbreak secrecy", "Yemen war", "Executive power".
+
+STORY: ${s.title||''}
+${s.line?'WHAT HAPPENED: '+s.line+'\n':''}SUBJECT: ${s.subject||'(none)'}
+DOCUMENTS THE EDITOR CHOSE FOR IT:
+${picks.map(o=>'- '+o.year+' '+o.title).join('\n')||'(none)'}
+
+Names already taken, do not reuse: ${taken.join('; ')}
+
+Offer three different names: one close to the story, one a little broader, one naming the long argument the documents share. JSON only: ["...","...","..."]`;
+  try { BSR_NAMING[s.key]={state:'ready', names:catNameChoices(await ai(p,200), taken)}; }
+  catch(e){ BSR_NAMING[s.key]={state:'error', err:e.message, names:[]}; }
+  if (TAB==='backstory') render();
+}
+function bsrCreateCategory(s, name){
+  name=String(name||'').trim().slice(0,60); if (!name) return;
+  const sid=catSlug(name);
+  if ((CATS[sid]||PUBCATS.some(r=>r.id===sid)) && !confirm('A category named "'+name+'" already exists. File this story under it and add the kept objects there?')) return;
+  const id=newCategory(name,[s.key]); if (!id) return;
+  const c=CATS[id]||catEnsureLocal(id), picks=(s.bsPicks||[]).slice();
+  s.bsPicks=[]; delete BSR_NAMING[s.key]; saveLineup(); CAT_SEL=id;
+  if (c && picks.length) catAddFromPool(c, picks); else render();
+}
+// The story's Backstory as a reader would get it, before publish: the reader's own card, then the page's
+// Beginnings and objects. A Pulse category is shown as it stands in Pulse; a fixed row as it is published.
+function bsrPreviewData(s){
+  const id=s.backstoryRow; if (!id) return null;
+  const c=CATS[id]||PUBCATS.find(r=>r.id===id);
+  if (c){
+    const ent=oid=>catEntry(c,oid)||{};
+    return {kind:CATS[id]?(c.status==='approved'?'Pulse category, approved':'Pulse category, '+(c.status||'draft')):'published category',
+      rec:{id, title:c.title, stratum:'provisional', start_date:c.created||new Date().toISOString().slice(0,10)},
+      title:c.title, contest:c.contest||'', stakes:c.stakes||'',
+      begs:(c.beginnings||[]).map(b=>({year:ent(b.object_id).year||'', line:b.line||ent(b.object_id).line||''})),
+      objs:(c.objects||[]).map(x=>{ const o=ent(x.object_id); return {id:x.object_id, year:o.year||'', title:o.title||x.object_id, author:o.author||'', about:x.about||o.about||'', url:o.url||''}; })};
+  }
+  const r=((BSR_PUBLISHED&&BSR_PUBLISHED.rows)||[]).find(x=>x.id===id);
+  if (!r) return {kind:'row', missing:true, objs:[]};
+  return {kind:'fixed row, as published', rec:r, title:r.title, contest:r.milestone||'', stakes:r.stakes||'',
+    begs:(r.beginnings||[]).map(b=>({year:b.year||'', line:b.line||''})),
+    objs:(r.objects||[]).map(o=>({id:o.object_id, year:o.year||'', title:o.title||'', author:o.author||'', about:o.about||'', url:o.source_url||''}))};
+}
+function bsrStoryPreviewHtml(s){
+  const box=inner=>`<div class="bsr-prev" style="flex-basis:100%;margin:6px 0 2px 26px;padding:8px 10px;border:1px dashed var(--rule);background:#faf8f3">
+    <div style="font-size:11px;color:var(--dim);margin-bottom:6px">PREVIEW &middot; this story's Backstory as the reader gets it <button class="mini bsr-prev-close">close</button></div>${inner}</div>`;
+  const d=bsrPreviewData(s);
+  if (!d) return box('<div style="font-size:12px">Not filed. At publish the classifier picks a row, or composes a category of its own, so there is nothing to preview yet. File it above, or keep some objects and start a category from them.</div>');
+  if (d.missing) return box('<div style="font-size:12px">This row has not reached the published Backstory yet, so there is nothing to preview.</div>');
+  const pub=bsrPublishedFor(s), same=pub&&pub.row===s.backstoryRow;
+  const card=readerCardHtml(d.rec, {story_id:s.key, line:same?pub.line:'', headline:s.title, origin:same?pub.origin:null});
+  const kept=(s.bsPicks||[]).map(id=>POOL_BY[id]).filter(o=>o && !d.objs.some(x=>x.id===o.id));
+  return box(`<div style="font-size:11px;color:var(--dim);margin-bottom:6px">${esc(d.kind)}. ${same?'The Today line and "It starts in" are from the last publish, and are written again when you publish.':'The Today line and "It starts in" are written when you publish; until then the card shows the story’s headline.'}</div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">
+      <div>${card||'<i style="font-size:11px;color:var(--dim)">The reader’s card could not be loaded.</i>'}</div>
+      <div style="flex:1;min-width:280px;max-width:560px;font-family:Georgia,serif">
+        <div style="font:600 20px Georgia,serif;margin-bottom:4px">${esc(d.title)}</div>
+        ${d.contest?`<div style="font-style:italic;font-size:14px;margin-bottom:6px">${esc(d.contest)}</div>`:''}
+        ${d.stakes?`<div style="font-size:14px;margin-bottom:8px">${esc(d.stakes)}</div>`:''}
+        <div style="font:700 10.5px sans-serif;letter-spacing:.08em;margin:8px 0 4px">BEGINNINGS &middot; ${d.begs.length}</div>
+        ${d.begs.map(b=>`<div style="display:flex;gap:10px;margin:4px 0;font-size:14px"><b style="min-width:40px">${esc(b.year)}</b><span>${esc(b.line)||'<i style="color:var(--stale)">no line yet</i>'}</span></div>`).join('')||'<i style="font-size:12px;color:var(--dim)">none</i>'}
+        <div style="font:700 10.5px sans-serif;letter-spacing:.08em;margin:10px 0 4px">OBJECTS &middot; ${d.objs.length}</div>
+        ${d.objs.map(o=>`<div style="margin:5px 0;font-size:13.5px"><b>${esc(o.year)}</b> ${o.url?`<a href="${esc(o.url)}" target="_blank" rel="noopener">${esc(o.title)}</a>`:esc(o.title)}${o.author?' <span style="color:var(--dim)">'+esc(o.author)+'</span>':''}<div style="font-size:13px;margin-top:1px">${esc(o.about)||'<i style="color:var(--stale)">no About text yet</i>'}</div></div>`).join('')||'<i style="font-size:12px;color:var(--dim)">none</i>'}
+        ${kept.length?`<div style="margin-top:10px;padding:6px 8px;border:1px dashed var(--ink);font-family:sans-serif"><div style="font:700 10.5px sans-serif;letter-spacing:.08em;margin-bottom:3px">KEPT, NOT ADDED YET &middot; ${kept.length}</div>${kept.map(o=>`<div style="font-size:12px;margin:2px 0"><b>${esc(o.year)}</b> ${esc(o.title)}</div>`).join('')}</div>`:''}
+      </div></div>`);
 }
 function bsrKwWire(el, s){
   const kw=el.querySelector('.bsr-lu-kw');
   const go=()=>{ s.bsKeywords=kw.value.trim(); BSR_KW_OPEN[s.key]=true; saveLineup(); render(); };
   kw.addEventListener('keydown',e=>{ if (e.key==='Enter') go(); });
   el.querySelector('.bsr-lu-kwgo').addEventListener('click',go);
+  el.querySelector('.bsr-lu-prev').addEventListener('click',()=>{ if (BSR_PREV_OPEN[s.key]) delete BSR_PREV_OPEN[s.key]; else BSR_PREV_OPEN[s.key]=true; render(); });
+  const pc=el.querySelector('.bsr-prev-close'); if (pc) pc.addEventListener('click',()=>{ delete BSR_PREV_OPEN[s.key]; render(); });
   const cl=el.querySelector('.bsr-kw-close'); if (cl) cl.addEventListener('click',()=>{ delete BSR_KW_OPEN[s.key]; render(); });
-  el.querySelectorAll('.bsr-kw-add').forEach(b=>b.addEventListener('click',()=>{ const c=catEnsureLocal(s.backstoryRow); if (c) catAddFromPool(c, [b.dataset.id]); }));
-  const nw=el.querySelector('.bsr-kw-new'); if (nw) nw.addEventListener('click',()=>{
-    const ids=Array.from(el.querySelectorAll('.bsr-kw-pick:checked')).map(x=>x.dataset.id);
-    if (!ids.length){ alert('Tick the objects that fit first.'); return; }
-    const n=prompt('Name the new category: a short noun phrase readers could build expertise in.', s.subject||'');
-    if (!n||!n.trim()) return;
-    const id=newCategory(n,[s.key]); if (!id) return;
-    const c=CATS[id]||catEnsureLocal(id); CAT_SEL=id; if (c) catAddFromPool(c, ids); render();
-  });
+  el.querySelectorAll('.bsr-kw-pick').forEach(b=>b.addEventListener('change',()=>{
+    const set=new Set(s.bsPicks||[]); if (b.checked) set.add(b.dataset.id); else set.delete(b.dataset.id);
+    s.bsPicks=Array.from(set); saveLineup(); render(); }));
+  el.querySelectorAll('.bsr-pick-x').forEach(a=>a.addEventListener('click',e=>{ e.preventDefault(); s.bsPicks=(s.bsPicks||[]).filter(x=>x!==a.dataset.id); saveLineup(); render(); }));
+  const pa=el.querySelector('.bsr-picks-add'); if (pa) pa.addEventListener('click',()=>{
+    const c=catEnsureLocal(s.backstoryRow), picks=(s.bsPicks||[]).slice(); if (!c) return;
+    s.bsPicks=[]; saveLineup(); catAddFromPool(c, picks); });
+  const pn=el.querySelector('.bsr-picks-new'); if (pn) pn.addEventListener('click',()=>{ BSR_NAMING[s.key]={state:'loading', names:[]}; render(); bsrSuggestNames(s); });
+  const pcl=el.querySelector('.bsr-picks-clear'); if (pcl) pcl.addEventListener('click',()=>{ s.bsPicks=[]; saveLineup(); render(); });
+  el.querySelectorAll('.bsr-name-pick').forEach(b=>b.addEventListener('click',()=>bsrCreateCategory(s, b.dataset.name)));
+  const own=el.querySelector('.bsr-name-own');
+  const ng=el.querySelector('.bsr-name-go'); if (ng) ng.addEventListener('click',()=>bsrCreateCategory(s, own.value));
+  if (own) own.addEventListener('keydown',e=>{ if (e.key==='Enter') bsrCreateCategory(s, own.value); });
+  const nc=el.querySelector('.bsr-name-cancel'); if (nc) nc.addEventListener('click',()=>{ delete BSR_NAMING[s.key]; render(); });
 }
 function bsrTagControl(s){
   if (!BSR_ROWS.length) return '';
