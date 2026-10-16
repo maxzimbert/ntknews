@@ -7,7 +7,7 @@ const root = path.resolve(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'ntk-pulse/pulse.html'), 'utf8');
 const m = html.match(/\/\* CATS:BEGIN \*\/([\s\S]*?)\/\* CATS:END \*\//);
 if (!m) { console.error('FAIL: CATS block not found'); process.exit(1); }
-const L = new Function(m[1] + '; return {validateCat, selectBeginnings, pickBeginnings, lensSupported, catTextProblems, verifyIndicator, catSentences, verifyFoundObject, applySourceEdit, catFieldKey, pickForSubjects, verifyMilestone, catNumbersOk, catTiesOk, verifyCandidate, catSourceKind, matrixSearch};')();
+const L = new Function(m[1] + '; return {validateCat, selectBeginnings, pickBeginnings, lensSupported, catTextProblems, verifyIndicator, catSentences, verifyFoundObject, applySourceEdit, catFieldKey, pickForSubjects, verifyMilestone, catNumbersOk, catTiesOk, verifyCandidate, catSourceKind, matrixSearch, catNameChoices, matrixMissing};')();
 const poolDoc = JSON.parse(fs.readFileSync(path.join(root, 'ntk-pulse/data/backstory-pool.json'), 'utf8'));
 const poolBy = Object.fromEntries(poolDoc.objects.map(o => [o.id, o]));
 const spec = JSON.parse(fs.readFileSync(path.join(root, 'editorial/lenses.json'), 'utf8'));
@@ -169,4 +169,12 @@ check('matrixSearch: the subject alone finds objects', ms('', 'Executive Power')
 check('matrixSearch: a keyword outranks a subject-only match', /tariff/i.test((ms('tariff', 'Work and Wages')[0] || { o: {} }).o.title || ''), ms('tariff', 'Work and Wages').slice(0, 3).map(h => h.o.title));
 check('matrixSearch: two forms of one word match, two different words do not', ms('manufacturing', '').some(h => /manufactures/i.test(h.o.title)) && !ms('policing', '', 50).some(h => h.why.some(w => w.startsWith('policing') && /policy/i.test(h.o.title))), null);
 check('matrixSearch: nothing to search returns nothing', ms('', '').length === 0, null);
+check('matrixMissing: names the keywords the matrix has nothing on, and only those', JSON.stringify(L.matrixMissing(poolDoc.objects, 'tariff, zzqx wibble')) === JSON.stringify(['zzqx', 'wibble']), L.matrixMissing(poolDoc.objects, 'tariff, zzqx wibble'));
+check('matrixSearch: a rare keyword outranks a common one ("war powers" leads with war documents, not a letter that mentions both)', /war/i.test((ms('war powers', '')[0] || { o: {} }).o.title || ''), ms('war powers', '').slice(0, 3).map(h => h.o.title));
+// T-0098: the three names offered for a new category.
+const nc = L.catNameChoices;
+check('catNameChoices: three clean names from a JSON answer', JSON.stringify(nc('Here you go: ["War powers", "Troops at home", "Who sends the army"]', [])) === JSON.stringify(['War powers', 'Troops at home', 'Who sends the army']), nc('["War powers", "Troops at home", "Who sends the army"]', []));
+check('catNameChoices: an existing category name is dropped, whatever its case', JSON.stringify(nc('["Executive power", "War powers", "Troops at home", "Domestic deployment"]', ['executive POWER'])) === JSON.stringify(['War powers', 'Troops at home', 'Domestic deployment']), nc('["Executive power", "War powers"]', ['executive POWER']));
+check('catNameChoices: a numbered list is read when the model ignores JSON, repeats are dropped', JSON.stringify(nc('1. "War powers"\n2. war powers\n3. Troops at home', [])) === JSON.stringify(['War powers', 'Troops at home']), nc('1. "War powers"\n2. war powers\n3. Troops at home', []));
+check('catNameChoices: nothing usable gives no names', nc('', []).length === 0 && nc('[]', []).length === 0, null);
 console.log('\n' + fails + ' failed'); process.exit(fails ? 1 : 0);
