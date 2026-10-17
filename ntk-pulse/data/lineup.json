@@ -1,39 +1,41 @@
 {
- "assembled_at": "2026-10-16T22:37:38.734275+00:00",
+ "assembled_at": "2026-10-17T03:19:49.745520+00:00",
  "slot_plan": "A",
  "displacement": "MANUAL",
- "daytype": "weekday",
+ "daytype": "weekend",
  "target_size": [
-  8,
-  10
+  4,
+  6
  ],
- "actual_size": 68,
+ "actual_size": 6,
  "lint_failures": [
-  "under 3 fully self-contained items",
-  "no item answers 'what do I do with this'"
+  "under 3 fully self-contained items"
  ],
- "slots_unfilled": [
-  "The group chat"
- ],
+ "slots_unfilled": [],
  "stories": [
   {
    "slot": "unavoidable",
    "slot_label": "Unavoidable",
-   "key": "d5e52ddda939aba3",
-   "title": "Former student, 16, kills teacher at Oregon school before being tackled by staff and a parent",
+   "key": "d220dfaacc2b7b0a",
+   "title": "Teacher killed in Oregon school shooting; bystanders stopped the 16-year-old gunman",
    "beat": "national",
-   "publisher_count": 10,
+   "publisher_count": 15,
    "publishers": [
-    "The Trace",
+    "BBC",
+    "New York Times",
+    "Post and Courier",
+    "The Guardian",
     "Yahoo News",
     "ABC News",
     "Al Jazeera",
     "CBS News",
     "Fox News",
     "NBC News",
+    "ABC Australia",
     "Daily Mail",
     "Fox 5 Atlanta",
-    "Fox 5 DC"
+    "Fox 5 DC",
+    "Memeorandum"
    ],
    "scores": {
     "emotional_load": 5,
@@ -44,65 +46,89 @@
    "politician_led": false,
    "ledger_class": null,
    "new_facts": [],
-   "line": "A 16-year-old former student killed a teacher and wounded others at an Oregon school before a teacher and parent subdued him.",
-   "assembly_score": 6.83
+   "line": "A 16-year-old shot a teacher and a student at an Oregon elementary school before bystanders stopped him, police say.",
+   "assembly_score": 8.03
   },
   {
    "slot": "money_me",
    "slot_label": "Money & me",
-   "key": "f878b4f8fc00cdaf",
-   "title": "Netflix hires new content chiefs to run its programming",
-   "beat": "business",
-   "publisher_count": 1,
+   "key": "8683e3afebb019d8",
+   "title": "Southern California wildfires destroy homes as Santa Ana winds fuel spread",
+   "beat": "national",
+   "publisher_count": 3,
    "publishers": [
-    "CNBC"
+    "New York Times",
+    "The Guardian",
+    "ABC Australia"
    ],
    "scores": {
-    "emotional_load": 1,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
+    "emotional_load": 4,
+    "explainability": 5,
+    "actionability": 4,
+    "conversational_currency": 4
    },
    "politician_led": false,
    "ledger_class": null,
    "new_facts": [],
-   "line": "Netflix has named new executives to lead its content operation, a move that could shape what viewers see next.",
-   "assembly_score": 0.1
+   "line": "Fast-moving Santa Ana-fueled wildfires have destroyed or damaged homes in Southern California, prompting thousands of evacuations.",
+   "assembly_score": 5.32
   },
   {
    "slot": "body_mind",
    "slot_label": "Body & mind",
-   "key": "533fe10694b10b08",
-   "title": "Brain-infecting fungus that kills 7 in 10 patients is rising across the U.S.",
-   "beat": "health",
+   "key": "1253da0ea3636ae9",
+   "title": "Jury awards $6 million to ousted scientist David Sabatini over colleague's #MeToo claim",
+   "beat": "science",
    "publisher_count": 1,
    "publishers": [
-    "Fox News"
+    "STAT News"
    ],
    "scores": {
     "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 2,
+    "explainability": 3,
+    "actionability": 1,
     "conversational_currency": 3
    },
    "politician_led": false,
    "ledger_class": null,
    "new_facts": [],
-   "line": "A fungal brain infection that kills about 7 in 10 patients is spreading across the U.S.",
-   "assembly_score": 3.74
+   "line": "A Boston jury sided with ousted scientist David Sabatini, awarding him $6 million against the colleague who accused him of misconduct.",
+   "assembly_score": 2.67
   },
   {
    "slot": "work_machines",
    "slot_label": "Work & machines",
-   "key": "5bbe6a35842e99dc",
-   "title": "Lawsuit alleges ChatGPT contributed to a man's mental health crisis",
+   "key": "c2d5b51745bc2f6f",
+   "title": "Intel CEO Lip-Bu Tan says the Trump administration does not have \"any policy\" to use a minority stake in Intel to interfere in its business strategy (Kohei Yamada/Nikkei Asia)",
    "beat": "tech",
    "publisher_count": 1,
    "publishers": [
-    "CBS News"
+    "Techmeme"
    ],
    "scores": {
-    "emotional_load": 4,
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": 1.16
+  },
+  {
+   "slot": "group_chat",
+   "slot_label": "The group chat",
+   "key": "8c03fce084a62280",
+   "title": "U.S. 15-year-olds post lowest PISA reading and math scores in a generation",
+   "beat": "education",
+   "publisher_count": 1,
+   "publishers": [
+    "American Spectator"
+   ],
+   "scores": {
+    "emotional_load": 2,
     "explainability": 4,
     "actionability": 2,
     "conversational_currency": 3
@@ -110,1933 +136,39 @@
    "politician_led": false,
    "ledger_class": null,
    "new_facts": [],
-   "line": "A lawsuit alleges ChatGPT contributed to a man's mental health crisis, raising questions about chatbot harms to vulnerable users.",
-   "assembly_score": 4.02
-  },
-  {
-   "slot": "elsewhere",
-   "slot_label": "Elsewhere, but here",
-   "key": "fb0f2dde5602f8fd",
-   "title": "Senators demand probe after Starlink cutbacks hit Ukraine's front-line forces",
-   "beat": "international",
-   "publisher_count": 5,
-   "publishers": [
-    "ABC News",
-    "CNBC",
-    "Techmeme",
-    "The New Republic",
-    "Memeorandum"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 2,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Starlink service for Ukrainian forces was cut back during Russian attacks, with senators now demanding a Pentagon inspector general probe into who ordered it.",
-   "assembly_score": 5.21
+   "line": "Latest PISA results show U.S. 15-year-olds posting their lowest math and reading scores in over a generation despite record education spending.",
+   "assembly_score": 3.21
   },
   {
    "slot": "close",
    "slot_label": "The close",
-   "key": "557bd5e54ced4bef",
-   "title": "White House press secretary Katie Zacharia out after days in role",
+   "key": "f8c88ecee92a357b",
+   "title": "Trump fires White House press secretary Katie Zacharia after five days",
    "beat": "national",
-   "publisher_count": 21,
+   "publisher_count": 10,
    "publishers": [
     "Financial Times",
-    "NPR",
     "New York Times",
-    "Post and Courier",
-    "The Guardian",
-    "Yahoo News",
-    "ABC News",
-    "Al Jazeera",
     "CBS News",
     "CNBC",
     "Daily Beast",
-    "Deutsche Welle",
     "Fox News",
     "NBC News",
-    "The Bulwark",
-    "The New Republic",
-    "ABC Australia",
-    "Atlanta Black Star",
-    "Daily Mail",
-    "Fox 5 DC",
-    "Memeorandum"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump's newly appointed White House press secretary Katie Zacharia is leaving the role after only days on the job.",
-   "assembly_score": 6.5
-  },
-  {
-   "slot": "unavoidable",
-   "slot_label": "Unavoidable",
-   "key": "e058294445888605",
-   "title": "Zelensky turns to Europe as ties with Trump sour",
-   "beat": "international",
-   "publisher_count": 4,
-   "publishers": [
-    "CBS News",
-    "Deutsche Welle",
-    "France 24",
-    "The New Republic"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Zelensky's public feud with Trump is pushing Ukraine to seek firmer backing from European leaders at an EU summit.",
-   "assembly_score": 4.65
-  },
-  {
-   "slot": "flex",
-   "slot_label": "Flex",
-   "key": "1009a0df8ab16b49",
-   "title": "Trump ousts press secretary Katie Zacharia after five days on the job",
-   "beat": "national",
-   "publisher_count": 5,
-   "publishers": [
-    "BBC",
-    "CBS News",
-    "Daily Beast",
-    "The Atlantic",
-    "Memeorandum"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump removed his new White House press secretary, Katie Zacharia, after five days in the job, following a poorly received first briefing.",
-   "assembly_score": 4.34
-  },
-  {
-   "slot": "flex",
-   "slot_label": "Flex",
-   "key": "fb9512ef6bb66b55",
-   "title": "Early voting trends in North Carolina, Georgia and Florida",
-   "beat": "national",
-   "publisher_count": 1,
-   "publishers": [
-    "CBS News"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Early voting data from three swing states offers an early read on turnout ahead of the election.",
-   "assembly_score": 4.24
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "9dab936790ae90c6",
-   "title": "Zelensky turns to Europe as ties with Trump sour; Starlink access still not restored",
-   "beat": "international",
-   "publisher_count": 6,
-   "publishers": [
-    "The Guardian",
-    "CBS News",
-    "CNBC",
-    "Deutsche Welle",
-    "France 24",
-    "The New Republic"
-   ],
-   "urls": [
-    "//cbsnews.com/video/john-garamendi-calls-trump-just-disgraceful-zelenskyy-feud-hes-absolutely-wrong",
-    "//cnbc.com/2026/10/16/trump-denies-musk-claim-he-ordered-starlink-restrictions-in-ukraine.html",
-    "//dw.com/en/at-summit-eu-leaders-pledge-support-for-ukraine-s-zelenskyy/a-79678808?maca=en-rss-en-all-1573-xml-mrss",
-    "//dw.com/en/ukrainian-president-zelenskyy-speaks-at-eu-summit-amid-spat-with-donald-trump/a-79684340?maca=en-rss-en-all-1573-xml-mrss",
-    "//france24.com/en/europe/20261016-zelensky-turns-to-europe-for-backing-as-ties-with-trump-deteriorate",
-    "//newrepublic.com/post/216751/zelenskiy-smiles-eu-summit-laughs-trump-scapegoat",
-    "//theguardian.com/world/2026/oct/16/ukraine-military-starlink-access-starshield-volodymyr-zelenskyy"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 2,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump's feud with Zelensky has pushed Ukraine toward European backing, while Starlink access for Ukraine's military remains disrupted.",
-   "assembly_score": 1.04
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "5b2db9513038000d",
-   "title": "Southern California brush fires burn homes as evacuations expand",
-   "beat": "national",
-   "publisher_count": 4,
-   "publishers": [
-    "LAist",
-    "The Guardian",
-    "CBS News",
-    "NBC News"
-   ],
-   "urls": [
-    "//cbsnews.com/video/new-brush-fire-breaks-out-southern-california",
-    "//laist.com/news/climate-environment/la-fire-survivors-are-set-to-lose-case-managers-as-standoff-between-california-and-fema-drags-on",
-    "//laist.com/news/climate-environment/norte-fire-san-clemente",
-    "//nbcnews.com/news/us-news/malibu-wildfire-rages-triggering-evacuations-southern-california-rcna603911",
-    "//theguardian.com/us-news/2026/oct/16/southern-california-brush-fires-force-evacuations"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 3,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Brush fires in Southern California have destroyed homes and forced evacuations as hot, windy weather fuels the flames.",
-   "assembly_score": 0.61
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "b21e11466d1ed5b8",
-   "title": "Trump touts Hyundai investment at Georgia midterm rally",
-   "beat": "national",
-   "publisher_count": 5,
-   "publishers": [
-    "Fox News",
-    "Fox 5 Atlanta",
-    "Fox 5 DC",
-    "Memeorandum",
-    "Yonhap News"
-   ],
-   "urls": [
-    "//en.yna.co.kr/view/AEN20261017000800315",
-    "//fox5atlanta.com/news/trump-rallies-dalton-collins-jackson-ahead-midterms",
-    "//fox5dc.com/news/trump-rallies-dalton-collins-jackson-ahead-midterms",
-    "//foxnews.com/outkick-sports/former-nfl-all-pro-running-back-joins-president-trump-georgia-midterms-rally",
-    "//memeorandum.com/261016/p52"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump campaigned in Georgia ahead of the midterms, touting a Hyundai Transys plan to invest $560 million and create 320 jobs.",
-   "assembly_score": 0.48
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "84802c0a2f09b72c",
-   "title": "Chinese kindergarten operator and staff jailed over lead poisoning of 200 children",
-   "beat": "international",
-   "publisher_count": 3,
-   "publishers": [
-    "CNBC",
-    "Semafor",
-    "ABC Australia"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-10-17/kindergarten-staff-jailed-over-lead-poisoning-in-china/107278660",
-    "//cnbc.com/2026/10/16/us-china-mastercard-citigroup-market-access.html",
-    "//semafor.com/article/10/16/2026/state-department-warns-travelers-to-china-they-risk-wrongful-detention"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A Chinese court jailed a kindergarten operator and staff after tainted food with lead-containing pigment poisoned over 200 children.",
-   "assembly_score": 0.44
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "3395b49839809674",
-   "title": "Appeals court questions Justice Dept. claim that Trump owns White House records",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/261016/p77",
-    "//nytimes.com/2026/10/16/us/politics/appeals-court-trump-presidential-records.html"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A federal appeals court is weighing whether Trump personally owns White House records, a question that could determine who controls presidential papers.",
-   "assembly_score": 0.36
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "38741d9798a16850",
-   "title": "DHS Secretary calls Ilhan Omar probe a \"strong case\"; critics call it political",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "CBS News",
-    "The New Republic",
-    "American Spectator"
-   ],
-   "urls": [
-    "//cbsnews.com/news/dhs-markwayne-mullin-ilhan-omar-strong-case",
-    "//newrepublic.com/post/216754/donald-trump-department-homeland-security-ilhan-omar-rico",
-    "//spectator.org/the-spectacle-ep-479-kingpin-ilhan-omar-her-husband-brother-and-the-democrat-scam-shes-running-against-the-american-people"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 3,
-    "actionability": 2,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "DHS Secretary Mullin says an investigation into Rep. Ilhan Omar is a \"strong case,\" while critics call the probe politically motivated.",
-   "assembly_score": 0.31
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "a4a981c2f4cdd806",
-   "title": "Apple's $1,999 foldable iPhone Duo sells out, with delivery dates slipping",
-   "beat": "tech",
-   "publisher_count": 4,
-   "publishers": [
-    "Financial Times",
-    "CBS News",
-    "CNBC",
-    "Techmeme"
-   ],
-   "urls": [
-    "//cbsnews.com/news/iphone-duo-pre-order-sales-apple-foldable",
-    "//cnbc.com/2026/10/16/apple-iphone-duo-demand-price.html",
-    "//ft.com/content/7b236286-ca1d-4063-a728-7f968a638b8f?syn-25a6b1a6=1",
-    "//techmeme.com/261016/p22"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Apple's new $1,999 foldable iPhone Duo has sold out, with deliveries slipping to late January and some backorders reported into 2027.",
-   "assembly_score": 0.29
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "7bfae2b8edc61ac9",
-   "title": "Celebrity Traitors recap, plus fashion picks and winner predictions",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "Daily Mail",
-    "Vogue"
-   ],
-   "urls": [
-    "//dailymail.com/tvshowbiz/article-16214255/Celebrity-Traitors-winners-predicted-two-weeks-final-editing-theory-suggests-stars-getting-airtime-victorious.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dailymail.com/tvshowbiz/article-16215641/Joe-Lycett-banished-Celebrity-Traitor-recruit-King-Kenny-murder-plain-sight.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//vogue.com/article/best-celebrity-outfits"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 0.28
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "f6b0e2538b817d9b",
-   "title": "ICE says it was pursuing a man who family says died in 2017; agent put on leave",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Yahoo News",
-    "NBC News"
-   ],
-   "urls": [
-    "//abcnews.com/US/ice-officer-allegedly-struck-man-texas-vehicle-administrative/story?id=137295824",
-    "//nbcnews.com/news/us-news/immigrant-ice-was-seeking-agent-hit-man-suv-dead-2017-family-says-rcna603899"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 2,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "An ICE agent struck a man with an SUV in Houston while pursuing someone the family says has been dead since 2017.",
-   "assembly_score": 0.13
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "478212e472169907",
-   "title": "Judge tosses child sex abuse indictment against actor Timothy Busfield over prosecutorial misconduct",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "ABC News",
-    "Fox News",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//abcnews.com/GMA/Culture/judge-tosses-indictment-actor-timothy-busfield/story?id=137332942",
-    "//dailymail.com/tvshowbiz/article-16215905/Child-sex-charges-dropped-against-West-Wing-star-Timothy-Busfield-prosecutorial-misconduct.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//foxnews.com/entertainment/judge-tosses-timothy-busfields-indictment-child-sex-abuse-charges"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 2,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A judge dismissed child sex abuse charges against actor Timothy Busfield, citing prosecutorial misconduct in the case.",
-   "assembly_score": 0.06
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "446160bf3a670821",
-   "title": "Selma Blair's rep speaks out after star's arrest: 'Much more to this story'",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "CBS News",
-    "Fox News",
-    "NBC News"
-   ],
-   "urls": [
-    "//cbsnews.com/news/selma-blair-arrested-incident-on-board-flight-from-lax-to-jfk",
-    "//foxnews.com/entertainment/selma-blairs-rep-speaks-out-after-stars-arrest-much-more-story",
-    "//nbcnews.com/pop-culture/pop-culture-news/selma-blair-not-intend-harm-anyone-airplane-incident-rep-says-first-st-rcna603965"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.23
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "2575cf725e1ed906",
-   "title": "\u2018What the Hell Is Going On?\u2019: Trump\u2019s Rally Takes a Tense Turn as Secret Service Agent Suddenly Reaches for His Gun After Man Rushes Near Stage",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Atlanta Black Star",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//atlantablackstar.com/2026/10/16/trumps-rally-takes-a-tense-turn-as-secret-service-agent-suddenly-reaches-for-his-gun",
-    "//dailymail.com/news/us-politics/article-16215759/Secret-Service-deputy-director-abruptly-resigns-Trump-drone-threats.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.29
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "44a8e3b408e86aa7",
-   "title": "Houston hires former Trump aides to advise on homelessness policy",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox 5 Atlanta",
-    "Houston Public Media"
-   ],
-   "urls": [
-    "//fox5atlanta.com/news/austin-man-allegedly-houston-teen-get-her-pregnant-invited-her-trump-rally",
-    "//houstonpublicmedia.org/articles/news/city-of-houston/2026/10/16/564595/houston-officials-mayor-whitmire-tap-former-president-donald-trump-aides-for-homelessness-homeless-policy-consulting",
-    "//houstonpublicmedia.org/articles/news/weather/2026/10/16/564658/cold-front-brings-fall-temperatures-wind-advisory-to-houston-region",
-    "//houstonpublicmedia.org/articles/shows/hello-houston/2026/10/16/564563/hello-houston-october-16-2026",
-    "//houstonpublicmedia.org/articles/shows/hello-houston/2026/10/16/564565/hello-houston-the-commuter-cut-october-16-2026"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 1
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Houston's mayor hired consultants with ties to Trump's administration to advise on homelessness policy.",
-   "assembly_score": -0.32
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "8d34e6bc46848c1e",
-   "title": "Commentary: Election outreach is public service, not politics",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "Post and Courier",
-    "Houston Public Media",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//houstonpublicmedia.org/articles/news/politics/election-2026/2026/10/16/564653/15000-texas-voter-registrations-caught-up-in-backlog-after-another-state-software-error",
-    "//memeorandum.com/261016/p58",
-    "//postandcourier.com/opinion/commentary/election-outreach-public-service-not-politics/article_47b62a0e-f5c7-46e0-a07f-a07378db0920.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.34
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "4d26ae463975e8b1",
-   "title": "MAGA Secret at Heart of Bombshell Elizabeth Holmes Doc Exposed",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "CBS News",
-    "Daily Beast"
-   ],
-   "urls": [
-    "//cbsnews.com/video/nathan-fielders-elizabeth-holmes-documentary-you-can-see-everything-premieres",
-    "//thedailybeast.com/obsessed/elizabeth-holmes-partner-billy-evans-breaks-silence-on-explosive-documentary",
-    "//thedailybeast.com/obsessed/elizabeth-holmes-reaction-to-emmy-winners-spot-on-portrayal-revealed",
-    "//thedailybeast.com/obsessed/maga-secret-at-heart-of-bombshell-elizabeth-holmes-doc-exposed"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.63
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "e413340208678147",
-   "title": "Trump\u2019s Attempt to Deport Ilhan Omar Is Another Leap Toward the Abyss",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "Wired"
-   ],
-   "urls": [
-    "//nytimes.com/2026/10/16/opinion/ilhan-omar-deportation-trump.html",
-    "//wired.com/story/leap-second-is-abolished-bipm-says"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.7
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "64d8ae4f4ff81f6d",
-   "title": "US illegal border crossings from Mexico near 60-year low",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Financial Times",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//ft.com/content/e98c5079-0c9a-4747-afa7-7bc9725795cd?syn-25a6b1a6=1",
-    "//memeorandum.com/261016/p76"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.72
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "0983dd7b3a35ece4",
-   "title": "U.S. Budget Deficit Nears $2 Trillion, a Reality Check for Trump\u2019s Cost Cutting",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/261016/p75",
-    "//nytimes.com/2026/10/16/business/us-budget-deficit.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.89
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "c4548cc7612a37e2",
-   "title": "Vance calls El-Sayed a \"weasel\" as Michigan Senate race heats up",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "CBS News",
-    "Fox News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//cbsnews.com/news/jd-vance-el-sayed-mike-rogers-weasel-michigan-senate",
-    "//cbsnews.com/video/aoc-transfers-1-million-el-sayed-michigan-senate-campaign",
-    "//foxnews.com/politics/obamas-star-power-gets-reality-check-from-black-voters-crucial-senate-race-its-turn-off",
-    "//memeorandum.com/261016/p69"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.04
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "82313858f7338d61",
-   "title": "Brent hits 5-month high above $110 on continued tension in Middle East",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "Financial Times",
-    "CNBC",
-    "NBC News"
-   ],
-   "urls": [
-    "//cnbc.com/2026/10/16/oil-price-today-iran-strait-hormuz-ukraine-russia.html",
-    "//ft.com/content/8ee22d89-03eb-48dc-99a5-27555373a89c?syn-25a6b1a6=1",
-    "//nbcnews.com/business/energy/oil-prices-hormuz-iran-ukraine-rcna603919"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.05
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "03b85a95f7669c5b",
-   "title": "Feds probing suspicious letters to election officials, lawmakers",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "CBS News",
-    "NBC News"
-   ],
-   "urls": [
-    "//cbsnews.com/news/suspicious-letters-election-officials-congressional-offices-fbi-us-postal-service",
-    "//nbcnews.com/politics/congress/federal-probe-suspicious-substance-letters-widens-gop-senators-rcna603950"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.1
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "7fa1fd64daa46955",
-   "title": "Sean 'Diddy' Combs moved to low-security facility in Pennsylvania",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "The Guardian"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/cmwy4qnyjg4zo?at_campaign=rss&at_medium=RSS",
-    "//theguardian.com/music/2026/oct/16/sean-diddy-combs-moved-new-prison"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.13
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "f943eb59e377dba9",
-   "title": "Democratic Senate candidates swamp GOP rivals in fundraising",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "NBC News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/261016/p70",
-    "//nbcnews.com/politics/politics-news/democratic-senate-candidates-swamp-gop-rivals-fundraising-rcna603966"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.18
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "70c3017e09a980b7",
-   "title": "Prediction market odds on Tesla-SpaceX merger are above 50% for early 2027",
-   "beat": "national",
-   "publisher_count": 4,
-   "publishers": [
-    "CBS News",
-    "CNBC",
-    "Space.com",
-    "ANSA"
-   ],
-   "urls": [
-    "//ansa.it/canale_motori/notizie/novita_anticipazione/2026/10/16/tesla-roadster-elon-musk-svela-negli-stati-uniti-lauto-che_cfc918c6-aa08-4347-8054-a835055a720e.html",
-    "//cbsnews.com/news/tesla-roadster-debut-elon-musk-flying-cars-are-real",
-    "//cbsnews.com/news/tesla-roadster-dot-flying-car",
-    "//cnbc.com/2026/10/16/tesla-spacex-merger-odds-rise-on-kalshi.html",
-    "//space.com/technology/spacex-thrusters-just-made-a-tesla-roadster-fly-and-elon-musks-car-is-still-out-there-in-space"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.26
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "e514e7df0ee316bd",
-   "title": "Mamdani accused of betraying NYC workers as union boss blasts 'anti-labor' horse carriage ban",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//foxnews.com/media/mamdani-accused-betraying-nyc-workers-union-boss-blasts-anti-labor-horse-carriage-ban",
-    "//memeorandum.com/261016/p60"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.26
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "36e92bb80201276b",
-   "title": "Big Tech stocks suffer biggest weekly drop since \u2018liberation day\u2019",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "Financial Times",
-    "CBS News",
-    "CNBC"
-   ],
-   "urls": [
-    "//cbsnews.com/news/tech-stocks-slide-ai-debt-concerns",
-    "//cnbc.com/2026/10/16/wall-streets-fear-gauge-is-ripping-traders-see-it-going-even-higher.html",
-    "//ft.com/content/4c4f03f4-f878-4bd6-8128-5be7e3bb8ca1?syn-25a6b1a6=1"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.27
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "406564e3a3547e60",
-   "title": "Has MAGA Lost Faith in Donald Trump?",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
     "The New Yorker",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/us-politics/article-16214623/MAGA-activists-urging-Trump-impose-martial-law-Republicans-lose-midterms-rigged-election.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//newyorker.com/podcast/the-new-yorker-radio-hour/has-maga-lost-faith-in-donald-trump"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.32
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "932a36cad6e6c19b",
-   "title": "Russia Appears to Step Up Efforts to Influence U.S. Voters",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
+    "Daily Mail",
     "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/261016/p73",
-    "//nytimes.com/2026/10/16/us/politics/russian-influence-campaigns-midterms.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.39
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "352fbc4e04c9c68b",
-   "title": "US records 4,410 measles cases as outbreak grows",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "ABC News",
-    "Al Jazeera"
-   ],
-   "urls": [
-    "//abcnews.com/Health/4400-measles-cases-reported-us-cdc-plans-send/story?id=137315190",
-    "//aljazeera.com/news/2026/10/16/us-records-4410-measles-cases-as-outbreak-grows?traffic_source=rss"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.4
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "b0ececdd3ba96e05",
-   "title": "Hot flashes, night sweats, insomnia \u2013 OB-GYNS set new rules for menopause treatment",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "NPR",
-    "MedPage Today"
-   ],
-   "urls": [
-    "//medpagetoday.com/obgyn/menopause/123457",
-    "//npr.org/2026/10/16/nx-s1-6005201/health-treatment-menopause-hot-flash-night-sweats-insomnia"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.53
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "449f899bccd0b541",
-   "title": "Three CoreWeave co-founders have sold $3.3B in stock since its March 2025 IPO, including $2.4B in 2026 alone; CoreWeave stock fell 60%+ from its June 2025 peak (Dylan Sloan/Bloomberg)",
-   "beat": "tech",
-   "publisher_count": 2,
-   "publishers": [
-    "CNBC",
-    "Techmeme"
-   ],
-   "urls": [
-    "//cnbc.com/investingclub/2026/10/16/coreweave-credit-default-swaps.html",
-    "//techmeme.com/261016/p16"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.66
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "d9bf7d8abc83b5a7",
-   "title": "Kenya records third Ebola case, linked to first patient who died",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "France 24"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/10/16/kenya-reports-third-bundibugyo-strain-ebola-case?traffic_source=rss",
-    "//france24.com/en/kenya-confirms-third-ebola-case"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.8
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "2b87127ce2d4067d",
-   "title": "The week around the world in 20 pictures",
-   "beat": "international",
-   "publisher_count": 4,
-   "publishers": [
-    "Financial Times",
-    "New York Times",
-    "The Guardian",
-    "Deutsche Welle"
-   ],
-   "urls": [
-    "//dw.com/en/west-bank-us-journalist-injured-by-israeli-settlers/a-79684181?maca=en-rss-en-all-1573-xml-mrss",
-    "//ft.com/content/432c9cff-b86f-4712-8e64-56cf3895d687?syn-25a6b1a6=1",
-    "//nytimes.com/2026/10/16/world/middleeast/israeli-settlers-washington-post-palestinians.html",
-    "//theguardian.com/artanddesign/gallery/2026/oct/16/the-week-around-the-world-in-20-pictures"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.01
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "bfa998e6f2bae86e",
-   "title": "India becomes the latest country to report rogue AI agent activity",
-   "beat": "tech",
-   "publisher_count": 2,
-   "publishers": [
-    "Semafor",
-    "TechCrunch"
-   ],
-   "urls": [
-    "//semafor.com/article/10/16/2026/tariffs-pose-a-risk-to-us-india-relationship",
-    "//techcrunch.com/2026/10/16/india-becomes-the-latest-country-to-report-rogue-ai-agent-activity"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.07
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "8962419e807cb4af",
-   "title": "AOC and El-Sayed test-drive a national platform for the left",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "Semafor"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/10/16/aoc-transfers-1m-to-michigan-candidate-el-sayed-in-progressive-push?traffic_source=rss",
-    "//semafor.com/article/10/16/2026/aoc-and-el-sayed-test-drive-a-national-platform-for-the-left"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.1
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "fafff3f690640d8a",
-   "title": "\u201cTouchy\u201d: Canadian Prime Minister Drags Trump",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "The New Republic",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16142287/Andy-Burnham-vowed-end-rough-sleeping-streets-say-Prime-Minister-dreamland.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dailymail.com/news/article-16215631/Andy-Burnham-opens-door-second-independence-referendum-refusing-rule-fresh-vote.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//newrepublic.com/post/216747/canadian-prime-minister-drags-donald-trump"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.12
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "6b2d193f8639baee",
-   "title": "Noem out as Shield of the Americas envoy; DHS reports lowest border crossings",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "CBS News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//cbsnews.com/news/kristi-noem-no-longer-trump-envoy-shield-of-the-americas",
-    "//memeorandum.com/261016/p56",
-    "//memeorandum.com/261016/p65"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Kristi Noem is no longer serving as envoy to the Shield of the Americas, while DHS touts record-low border crossings.",
-   "assembly_score": -2.14
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "81ea483ee76e95ef",
-   "title": "Bill Maher Dines With Trump, Kid Rock, and Stephen A. Smith at White House",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Daily Beast",
-    "Fox News"
-   ],
-   "urls": [
-    "//foxnews.com/outkick-sports/trump-hosted-dinner-stephen-smith-kid-rock-bill-maher",
-    "//thedailybeast.com/obsessed/bill-maher-70-busted-dining-with-trump-and-kid-rock-stephen-a-smith-at-white-house"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.17
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "403110e4b74755a8",
-   "title": "Zacharia's rocky stint as press secretary ends",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Semafor",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/261016/p63",
-    "//semafor.com/article/10/16/2026/zacharias-rocky-stint-as-press-secretary-ends"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.2
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "ff5714567715f02b",
-   "title": "Why Trump and the GOP's billion-dollar midterm blitz isn\u2019t working",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "ABC News",
-    "CBS News",
-    "CNBC"
-   ],
-   "urls": [
-    "//abcnews.com/Politics/elon-musk-bankrolling-gops-hopes-texas-senate-race/story?id=137320055",
-    "//cbsnews.com/news/elon-musk-midterm-donations-texas-ken-paxton",
-    "//cnbc.com/2026/10/16/republicans-midterms-spending-trump-musk-2026.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.55
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "27dd39188851464b",
-   "title": "Former UK cheerleader sentenced to 10 years for newborn's death",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox News",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16215369/laken-snelling-kentucky-cheerleader-newborn-manslaughter.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//foxnews.com/us/former-university-kentucky-cheerleader-sentenced-10-years-prison-infants-death"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A former University of Kentucky cheerleader was sentenced to 10 years in prison for the death of her newborn, whose body was hidden in a closet.",
-   "assembly_score": -2.8
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "919da0ca97516054",
-   "title": "Pope Asks Putin for a Cease-Fire for a Ukrainian City Under Siege",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "New York Times",
-    "Al Jazeera",
-    "Fox News"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/10/16/pope-leo-to-make-public-appearance-sunday-first-since-cancer-surgery?traffic_source=rss",
-    "//foxnews.com/health/pope-leo-xiv-seen-first-time-since-lung-cancer-surgery-amid-major-recovery-milestone",
-    "//foxnews.com/opinion/lost-half-right-lung-cancer-pope-leo-diagnosis-gives-hope",
-    "//nytimes.com/2026/10/16/world/europe/pope-leo-putin-ukraine-cease-fire.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.89
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "13870feec35d35ad",
-   "title": "Police assess Palestine Action post by national security adviser's wife",
-   "beat": "international",
-   "publisher_count": 3,
-   "publishers": [
-    "BBC",
-    "Al Jazeera",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/10/16/uk-pm-advisers-wife-expresses-support-for-palestine-action?traffic_source=rss",
-    "//bbc.co.uk/news/articles/crn4el88y7p2o?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/news/article-16214595/Outrage-wife-national-security-adviser-support-Palestine-Action.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.01
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "61c2b00b9f6a9f08",
-   "title": "NBA tightens betting rules, develops AI to flag suspicious wagers",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "CNBC",
-    "Fox News"
-   ],
-   "urls": [
-    "//cnbc.com/2026/10/16/nba-tightens-betting-rules-develops-ai-to-flag-suspicious-wagers.html",
-    "//foxnews.com/outkick-sports/nba-sportsbooks-ban-multiple-types-bets-recent-betting-scandals"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -4.02
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "7447c6113fa69df9",
-   "title": "Watch: BBC follows Ukraine's Operation Vivaldi pushing Russia back on frontline",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Al Jazeera"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/10/16/ukraine-repels-russian-forces-as-us-support-wavers-energy-strikes-escalate?traffic_source=rss",
-    "//aljazeera.com/video/newsfeed/2026/10/16/ukraine-president-targets-trump-putin-at-eu-summit?traffic_source=rss",
-    "//bbc.co.uk/news/videos/cm1ex06026e8o?at_campaign=rss&at_medium=RSS"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -4.23
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "1c714f60422355df",
-   "title": "New York man charged with rape and lethal fentanyl dosing of college student",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "NBC News"
-   ],
-   "urls": [
-    "//nbcnews.com/news/us-news/new-york-city-college-student-dead-drugged-raped-dorm-room-prosecutors-rcna603897",
-    "//theguardian.com/us-news/2026/oct/16/new-york-fashion-institute-of-technology-rape-fentanyl-overdose"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -4.88
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "4834db7b7b07f9f7",
-   "title": "Starlink disruptions hit Ukraine; bipartisan senators demand answers",
-   "beat": "international",
-   "publisher_count": 3,
-   "publishers": [
-    "ABC News",
-    "The New Republic",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//abcnews.com/Politics/bipartisan-group-senators-answers-starlink-disruptions-us-support/story?id=137330556",
-    "//dailymail.com/news/article-16216039/Donald-Trump-refuses-blame-Putin-starting-Ukraine-war-US-President-says-America-did-not-throttle-Starlink-satellite-Zelenskys-forces-rely-on.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//newrepublic.com/post/216758/elon-musk-trump-ukraine-starlink-restrictions"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 2,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Starlink satellite service used by Ukrainian forces was disrupted, and senators from both parties are demanding answers about who was responsible.",
-   "assembly_score": 0.59
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "b84f2b54696ad3ec",
-   "title": "Turkish archaeologists report possible oldest shipwreck, age unconfirmed",
-   "beat": "science",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "Fox 5 DC"
-   ],
-   "urls": [
-    "//fox5dc.com/news/archaeologists-turkey-may-have-found-worlds-oldest-shipwreck",
-    "//nytimes.com/2026/10/16/world/middleeast/oldest-shipwreck-amphora-turkey.html"
    ],
    "scores": {
     "emotional_load": 1,
-    "explainability": 5,
+    "explainability": 4,
     "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Archaeologists in Turkey have found a possibly very old shipwreck, though its age is still unconfirmed.",
-   "assembly_score": -0.16
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "3e3aaf5ec1983649",
-   "title": "Trump Vs Zelensky, From the Screen to the Streets, Gen Z protests from Paris to Dehli",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "France 24",
-    "ABC Australia"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-10-17/police-detain-cockroach-party-leader-delhi-protest/107278878",
-    "//france24.com/en/tv-shows/the-world-this-week/20261016-trump-vs-zelensky-from-the-screen-to-the-streets-gen-z-protests-from-paris-to-dehli"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
     "conversational_currency": 3
    },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
+   "politician_led": true,
    "ledger_class": null,
    "new_facts": [],
-   "line": "",
-   "assembly_score": -0.36
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "57b3de24c6bbb415",
-   "title": "Brewers manager has epic quote straight from Hollywood script after sweeping vaunted Dodgers",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "CBS News",
-    "Fox News"
-   ],
-   "urls": [
-    "//cbsnews.com/video/milwaukee-brewers-reach-world-series-for-first-time-in-44-years",
-    "//foxnews.com/outkick-sports/brewers-manager-epic-quote-straight-hollywood-script-sweeping-vaunted-dodgers",
-    "//foxnews.com/outkick-sports/dodgers-elimination-ends-remarkable-streak-players-named-will-smith-winning-world-series",
-    "//foxnews.com/outkick-sports/florida-panthers-gm-bill-zito-unusual-tie-milwaukee-brewers-last-world-series-run"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.42
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "89cb380fa6fc172c",
-   "title": "Pope pictured for first time since surgery as he says Mass at makeshift altar in hospital",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "CBS News"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/cw146ej00yn7o?at_campaign=rss&at_medium=RSS",
-    "//cbsnews.com/news/photos-pope-leo-mass-hospital-recovery-surgery",
-    "//cbsnews.com/video/first-images-of-pope-leo-after-lung-surgery-give-insight-into-his-health-recovery"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.76
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "b716d0487b0fba0a",
-   "title": "JD Vance defends ICE, but says there's a responsibility to investigate when agents \"screw up\"",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "CBS News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//cbsnews.com/news/vance-ice-investigate-agents-screw-up",
-    "//cbsnews.com/video/jd-vance-defends-ice-but-says-theres-a-responsibility-to-investigate-when-agents-screw-up",
-    "//memeorandum.com/261016/p86"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.0
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "cb4458cafd2f99b5",
-   "title": "Apple s updated App Store rules go after nudify AI apps",
-   "beat": "tech",
-   "publisher_count": 2,
-   "publishers": [
-    "Techmeme",
-    "The Verge"
-   ],
-   "urls": [
-    "//techmeme.com/261016/p26",
-    "//theverge.com/tech/1013314/apple-app-store-nudify-ai-apps-harassment"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.08
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "af6d8a118aa1312b",
-   "title": "Clashes grip Tirana as Albanian PM blames 'foreign hands' for mounting unrest",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "France 24"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/10/16/albanian-pm-blames-foreign-hands-for-unrest-as-student-protests-intensify?traffic_source=rss",
-    "//france24.com/en/europe/20261016-clashes-grip-tirana-as-albanian-pm-blames-foreign-hands"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.38
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "86a12e96f7b26a61",
-   "title": "Miami Man Abducted by Men in Police Gear Appeared to Be Friends with One of the Suspects, Photos Show, Adding a Disturbing Twist to His Killing",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Atlanta Black Star",
-    "Fox 5 DC"
-   ],
-   "urls": [
-    "//atlantablackstar.com/2026/10/16/miami-man-killed-appeared-to-be-friends-with-suspect",
-    "//fox5dc.com/news/florida-alligator-attack-rescue"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.56
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "6000ec0015c65d5e",
-   "title": "DOJ warns California election officials of possible prosecution over noncitizen votes",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Yahoo News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/261016/p84",
-    "//yahoo.com/news/articles/california-officials-process-ballots-suspected-222821147.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.91
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "e3a307600df37e8f",
-   "title": "Trump's Ice Maiden Cracks a Smile at Rival's Demise",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Daily Beast",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/261016/p64",
-    "//thedailybeast.com/trumps-ice-maiden-cracks-a-smile-at-rivals-demise"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.08
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "d0f11237d1f3614e",
-   "title": "Replit is no longer working with Anthropic, CEO says",
-   "beat": "tech",
-   "publisher_count": 2,
-   "publishers": [
-    "TechCrunch",
-    "Techmeme"
-   ],
-   "urls": [
-    "//techcrunch.com/2026/10/16/replit-is-no-longer-working-with-anthropic-ceo-says",
-    "//techmeme.com/261016/p24"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.08
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "9d77ac96273dfd7f",
-   "title": "York County Sheriff's Office (copy) (copy) (Copy) (Copy)",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Post and Courier",
-    "Fox 5 DC"
-   ],
-   "urls": [
-    "//fox5dc.com/news/married-couple-convicted-murder-maryland-man",
-    "//postandcourier.com/york-county-sheriffs-office-copy-copy-copy-copy/image_b5be11aa-60b0-4be9-808b-bc781a9efc05.html",
-    "//postandcourier.com/york-county/news/york-county-deputies-shot-wounded-clover-gun/article_98397203-0cb5-4249-992a-6b2c9f66cce2.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.25
+   "line": "Trump's new White House press secretary was fired after five days, after admitting she never passed the bar despite calling herself a lawyer.",
+   "assembly_score": 5.83
   }
  ],
  "excluded_sample": [
@@ -2049,15 +181,139 @@
    "why": "triage verdict NO"
   },
   {
-   "title": "Apple blames \u2018extraordinary\u2019 demand as foldable iPhones sell out",
+   "title": "Search for Jesus' tomb leads to discovery of ancient structure marking his burial site",
    "why": "triage verdict NO"
   },
   {
-   "title": "Celebrity Traitors winners predicted two weeks before the final as editing theory suggests stars who are getting the most airtime will be victorious",
+   "title": "PrideNight1 (1).jpg",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Mark Wahlberg wants to take on the longevity-startup crowd with an affordable gym concept",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Atlanta fans are rallying for the Atlanta Dream in the WNBA Finals",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Rain forces MLB to postpone Guardians-Rays ALCS Game 4 in Cleveland",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Italian Americans, Reclaim Your Vowels!",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Remembering Iron Mike Ditka",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Survey of Anthropic staffers and US adults: 39% of US adults vs. 91% of staffers expect AI will be able to make a Nobel-level discovery by 2030, and more (Anthropic)",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "The World\u2019s Oldest Shipwreck? Maybe, but \u2018We\u2019re All Excited by Maybe.\u2019",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Grieving Kaia Gerber braves the public eye on solo LA outing just weeks after brother Presley's tragic death at 27",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Which? experts have tested 40 duvets so you don't have to! This \u00a332 budget buy will see you through winter - and the pricey version worth your money",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "'Oldest man in Wales' recommends diet of fish and chips as he nears his 107th birthday",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "The \u00a3100million hypocrite: Nick Clegg was Britain's smuggest politician, before he sold his soul to Facebook - now he's set to trouser ANOTHER \u00a330million as his wife launches a new political party in Spain",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "The grief that dare not speak its name: It's only whispered for fear of accusations of racism. But the pain and bewilderment felt by the generation who lived through war at how mass immigration has transformed the Britain they fought for is very real",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Johnny Depp is the swashbuckling star they couldn't cancel! Eight years after Disney dropped him following his vicious split with Amber Heard, the world suddenly can't get enough, finds ALISON BOSHOFF",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "ESPN allowing Troy Aikman to walk away from Joe Buck booth would make no sense | Bobby Burack",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "How a Philadelphia couple turned pigeons into one of the city's most popular tours",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Dominion still has pending lawsuits against election deniers such as Rudy Giuliani and Sidney Powell",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Bidets save you money and reduce waste \u2014 we tested the best options out there",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "50+ products to make your life easier and our planet cleaner",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Mother's Day is around the corner. Here are 50+ thoughtful gifts she'll love",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "A head-to-toe guide of how men should dress this spring, and where they should shop",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "42 of the most useful travel products you can buy on Amazon",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "The 7 best high-yield savings accounts of April 2023",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Composting is an easy way to reduce food waste. Here's how to do it",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "We stopped using aluminum foil for cooking and you should too. Here's what to use instead",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "The beloved Dyson Supersonic hair dryer is at its lowest price ever",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Everything you need to know about Way Day 2023, Wayfair's biggest sale of the year",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "The 2024 presidential alternative many voters will want",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Sharon Osbourne, 74, Shows Face \u2018Dent\u2019 Left From Botched Surgery",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Shushu/Tong Shanghai Spring 2027",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Marchesa Spring 2027 Ready-to-Wear",
    "why": "triage verdict NO"
   },
   {
    "title": "Elizabeth Hurley sparks Billy Ray Cyrus engagement rumors by flaunting massive diamond ring",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "\u2018Where\u2019s My Doctor?\u2019: Trump Spirals Into Wild Rant as Crowd Stares in Disbelief, Then He Takes His Unhinged Tirade Over the Top with Five Words",
    "why": "triage verdict NO"
   },
   {
@@ -2069,19 +325,11 @@
    "why": "triage verdict NO"
   },
   {
+   "title": "Katie Price's ex-husband Kieran Hayler claims model told him 'I'm going to make everyone think you're a paedo' - as he's accused of raping 13-year-old girl",
+   "why": "triage verdict NO"
+  },
+  {
    "title": "Mak Marie",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Former University of Kentucky cheerleader sentenced to 10 years in prison for infant's death",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Porsche\u2019s electric Macan Turbo is an automotive existential crisis",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Breakout High School Basketball Star Jazelle \u201cGG\u201d Banks on Her Next Big Move",
    "why": "triage verdict NO"
   }
  ]
