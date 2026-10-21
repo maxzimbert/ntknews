@@ -91,6 +91,7 @@ clustering — that decision is recorded in `docs/decisions.md`.
 | `docs/log.md` | Dated notes on what turned out to be wrong. Corpus material. |
 | `docs/decisions.md` | Choices that were made deliberately and should not be silently re-decided. |
 | `docs/backstory.md` | The Backstory feature and its build plan. |
+| `docs/expertise.md` | Expertise: the pitch, what prod does and does not do, how to inspect it, the open status-legibility decision. |
 | `docs/backlog.md` | What's next, roughly prioritized. A working list, not a commitment. |
 | `docs/voice.md` | Editorial rules — the register ladder, the em-dash ban, what each prompt is held to. Read before touching a prompt. |
 | `docs/design-system.md` | Visual rules — type scale, colour, the certainty ladder, dark grounds. Read before touching CSS on a consumer surface. |

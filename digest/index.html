@@ -792,13 +792,6 @@
     animation: fadeUp 0.35s ease forwards;
   }
   .beat-toast.show { display: block; }
-  .beat-toast-label {
-    font-family: 'Overpass', sans-serif;
-    font-size: 10px;
-    letter-spacing: 0;
-    color: var(--teal);
-    margin-bottom: 7px;
-  }
   .beat-toast-text {
     font-family: 'Newsreader', serif;
     font-size: 16px;
@@ -1959,6 +1952,48 @@
   .profile-view { min-height: 100vh; background: #1E181B; padding-bottom: 80px; }
   .profile-inner { padding: 24px 20px 40px; }
 
+  /* The record: reader-wide lines above the beats. Newsreader, because it is
+     written about the reader rather than labelled; no numerals in Overpass. */
+  .rec:empty { display: none; }
+  .rec { margin-bottom: 26px; padding-bottom: 20px; border-bottom: 1px solid rgba(234,217,197,0.1); }
+  .rec-kicker { font-family: 'Overpass', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0; color: var(--teal); margin-bottom: 8px; }
+  .rec-lines { display: flex; flex-wrap: wrap; gap: 4px 0; }
+  .rec-line { font-family: 'Newsreader', serif; font-size: 16px; line-height: 1.45; color: rgba(234,217,197,0.85); }
+  .rec-line + .rec-line::before { content: '·'; margin: 0 8px; color: rgba(234,217,197,0.3); }
+
+  /* Beat cards are buttons now: tapping one opens the explainer for that
+     subject. Reset only what the UA adds. */
+  .beat-domain-card { display: block; width: 100%; text-align: left; -webkit-appearance: none; appearance: none; border: 0; border-left: 3px solid transparent; color: inherit; cursor: pointer; font: inherit; }
+  .beat-domain-card:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+  .beat-rail { display: flex; gap: 3px; margin: 2px 0 8px; }
+  .beat-rail i { flex: 1; height: 3px; background: rgba(234,217,197,0.12); }
+  .beat-marks { display: flex; flex-wrap: wrap; gap: 4px 10px; margin-top: 2px; }
+  .beat-mark { font-family: 'Overpass', sans-serif; font-size: 10px; letter-spacing: 0; color: rgba(234,217,197,0.28); }
+  .beat-mark::before { content: '○ '; }
+  .beat-mark.met { color: rgba(234,217,197,0.72); }
+  .beat-mark.met::before { content: '● '; }
+
+  /* ── INSPECT MODE (editor only, ?inspect) ───────────────────────── */
+  .inspect-bar { display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 900; height: 36px; align-items: center; gap: 8px;
+    padding: 0 12px; background: #F2AE2E; color: #261F23; font-family: 'Overpass', sans-serif; font-size: 13px; font-weight: 700; }
+  .inspect-bar.show { display: flex; }
+  .inspect-tag { letter-spacing: 0.08em; font-size: 10px; }
+  .inspect-bar select, .inspect-bar button { font: inherit; font-size: 13px; color: #261F23; background: rgba(255,255,255,0.45); border: 1px solid rgba(38,31,35,0.3); border-radius: 3px; padding: 3px 8px; cursor: pointer; }
+  .inspect-bar button:last-child { margin-left: auto; }
+  html.inspect body { padding-top: 36px; }
+  html.inspect .digest-header, html.inspect .story-header { top: 36px; }
+  html.inspect #storyView, html.inspect #bsrPage { top: 36px; }
+  .inspect-sheet { display: none; position: fixed; inset: 36px 0 0 0; z-index: 950; background: var(--dark); color: var(--cream); overflow-y: auto; }
+  .inspect-sheet.open { display: block; }
+  .inspect-sheet-head { position: sticky; top: 0; display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: #1E181B; border-bottom: 1px solid rgba(234,217,197,0.12); font-family: 'Overpass', sans-serif; font-size: 13px; font-weight: 700; }
+  .inspect-sheet-head button { font: inherit; color: var(--cream); background: transparent; border: 1px solid rgba(234,217,197,0.3); border-radius: 3px; padding: 4px 10px; cursor: pointer; }
+  .inspect-sheet-body { padding: 8px 16px 48px; max-width: 640px; margin: 0 auto; }
+  .ins-sec { font-family: 'Overpass', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.06em; color: var(--teal); margin: 22px 0 8px; }
+  .ins-line { display: grid; grid-template-columns: 120px 1fr; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(234,217,197,0.08); }
+  .ins-k { font-family: 'Overpass', sans-serif; font-size: 10px; color: rgba(234,217,197,0.5); }
+  .ins-t { font-family: 'Newsreader', serif; font-size: 16px; line-height: 1.45; }
+  .ins-t strong { color: var(--amber); font-weight: 600; }
+
   /* ── STORY VIEW — fixed modal above nav ────────────────────────── */
   #storyView { position: fixed; inset: 0; z-index: 100; overflow-y: auto; -webkit-overflow-scrolling: touch; background: var(--cream); }
 
@@ -2273,6 +2308,20 @@ function stripOuterQuotes(str) {
   return str.trim();
 }
 
+// ── Inspect mode (the editor's, never a reader's) ──────────────────
+// /me?inspect=<reader> runs the whole app as a fixture reader: the chip, the
+// returning-reader line, the toasts, Today's dimming and /me all render from
+// that reader's record. Everything is written to a second set of storage
+// keys, so the editor's own record is never touched and nothing here reaches
+// analytics. The fixtures live in INSPECT_READERS below the beats code.
+var INSPECT = (function() {
+  try {
+    var m = location.search.match(/[?&]inspect(?:=([^&]*))?/);
+    return m ? (decodeURIComponent(m[1] || '') || 'week2') : '';
+  } catch(e) { return ''; }
+})();
+function nsKey(k) { return INSPECT ? k + '__inspect' : k; }
+
 // ── State ────────────────────────────────────────────────────────
 let readStories = new Set();
 var ORIENT_KEY = 'ntk_orient_v1';
@@ -2281,7 +2330,7 @@ var storyEntryIdx = -1;
 // by a two-month reader it is the Kindergarten Teacher failure mode the
 // register rules name. The toast ladder covers returning readers instead.
 let orientShown = (function() {
-  try { return localStorage.getItem(ORIENT_KEY) === '1'; } catch(e) { return false; }
+  try { return localStorage.getItem(nsKey(ORIENT_KEY)) === '1'; } catch(e) { return false; }
 })();
 let holdTimer = null;
 let currentStoryIndex = 0;
@@ -2292,6 +2341,7 @@ let currentUtterance = null;   // Listen — Web Speech API, browser-native voic
 
 // ── GA4 event helper ─────────────────────────────────────────────
 function track(eventName, params = {}) {
+  if (INSPECT) return;                    // a fixture reader is not a reader
   if (typeof gtag !== 'undefined') {
     gtag('event', eventName, params);
   }
@@ -2536,7 +2586,7 @@ function buildDigest() {
 var VISITS_KEY = 'ntk_visits_v1';
 
 function visitsLoad() {
-  try { return JSON.parse(localStorage.getItem(VISITS_KEY)) || {}; } catch(e) { return {}; }
+  try { return JSON.parse(localStorage.getItem(nsKey(VISITS_KEY))) || {}; } catch(e) { return {}; }
 }
 
 function visitMoment(last) {
@@ -2550,14 +2600,10 @@ function visitMoment(last) {
 
 // Read before the visit is recorded, so the copy describes the gap the reader
 // actually arrived after rather than one of zero hours.
+// Set by initVisits, which runs after the beats code and inspect mode below:
+// in inspect mode the fixture has to be seeded before the visit is read, and
+// the fixtures need the storage keys the beats code declares.
 var visitCopy = '';
-(function initVisits() {
-  var v = visitsLoad();
-  visitCopy = visitMoment(v.last);
-  try {
-    localStorage.setItem(VISITS_KEY, JSON.stringify({ last: Date.now(), total: (v.total || 0) + 1 }));
-  } catch(e) {}
-})();
 
 // What a beat is about. The subject is what a reader could follow for months
 // and is what the ladder scores; category is a place on the page and was the
@@ -2594,10 +2640,10 @@ var BEATS_SCALE = [
 ];
 
 function beatsLoad() {
-  try { return JSON.parse(localStorage.getItem(BEATS_KEY)) || {}; } catch(e) { return {}; }
+  try { return JSON.parse(localStorage.getItem(nsKey(BEATS_KEY))) || {}; } catch(e) { return {}; }
 }
 function beatsSave(data) {
-  try { localStorage.setItem(BEATS_KEY, JSON.stringify(data)); } catch(e) {}
+  try { localStorage.setItem(nsKey(BEATS_KEY), JSON.stringify(data)); } catch(e) {}
 }
 
 // What each rung takes, as data rather than as a chain of ifs. beatIdx scores
@@ -2614,6 +2660,12 @@ function beatsSave(data) {
 // who never shares was otherwise capped at rung 4 forever: 30 stories over 90
 // days with the ladder silent from day 13. Going back to the Lies layer on
 // separate stories costs something comparable and stays private.
+//
+// `history` is the Backstory byway, counted once per row per sitting
+// (beatsRecordHistory). Until 2026-10-21 nothing a reader did in Backstory
+// reached the ladder, and the Witness copy said "you went into the history"
+// to readers who never had. Witness now requires it; the lower rungs do not,
+// so a reader who never opens the tab still climbs to Carrying It.
 var BEAT_REQS = [
   {},                                                                  // 0 Skimmed
   { depth: 1 },                                                        // 1 Briefed
@@ -2621,7 +2673,7 @@ var BEAT_REQS = [
   { stories: 3, sessions: 2 },                                         // 3 Following It
   { stories: 5, sessions: 2, depth: 2 },                               // 4 On the Beat
   { stories: 7, sessions: 3, lies: true, carry: { shares: 1, liesStories: 3 } },   // 5 Carrying It
-  { stories: 10, sessions: 4, depth: 5, lies: true,
+  { stories: 10, sessions: 4, depth: 5, lies: true, history: 2,
     carry: { shares: 2, liesStories: 5 } },                            // 6 Witness
 ];
 
@@ -2630,6 +2682,7 @@ function beatMeets(s, req) {
   if (req.sessions && (s.sessions || 1) < req.sessions) return false;
   if (req.depth    && (s.depth    || 0) < req.depth)    return false;
   if (req.lies     && !s.liesRead)                      return false;
+  if (req.history  && (s.history  || 0) < req.history)  return false;
   if (req.carry && !((s.shares || 0) >= req.carry.shares ||
                      (s.liesStories || []).length >= req.carry.liesStories)) return false;
   return true;
@@ -2714,7 +2767,7 @@ function beatsToastCopy(cat, idx, st) {
 // appearance per session, matching the 4-hour window beatsEnsure uses.
 var BEATS_TOAST_KEY = 'ntk_beats_toast_v1';
 function beatsToastState() {
-  try { return JSON.parse(localStorage.getItem(BEATS_TOAST_KEY)) || { at: 0, idx: -1 }; }
+  try { return JSON.parse(localStorage.getItem(nsKey(BEATS_TOAST_KEY))) || { at: 0, idx: -1 }; }
   catch(e) { return { at: 0, idx: -1 }; }
 }
 function beatsShouldToast(idx) {
@@ -2728,7 +2781,7 @@ function beatsShouldToast(idx) {
   return idx >= t.idx + 2;
 }
 function beatsMarkToast(idx) {
-  try { localStorage.setItem(BEATS_TOAST_KEY, JSON.stringify({ at: Date.now(), idx: idx })); }
+  try { localStorage.setItem(nsKey(BEATS_TOAST_KEY), JSON.stringify({ at: Date.now(), idx: idx })); }
   catch(e) {}
 }
 
@@ -2740,13 +2793,47 @@ function beatsRecordDepth(cat) {
   beatsSave(data);
 }
 
-function beatsRecordShare(cat) {
+// `how` is 'share' when the system share sheet reported success, 'copy' when
+// the link went to the clipboard instead. Only the first counts toward
+// Carrying It: a copied link may never be sent, and until 2026-10-21 a share
+// was credited on the tap, before the sheet opened, cancelled or not. The web
+// cannot see which app a share went to, so iMessage, Instagram and email are
+// one count here and will stay one until the app is native.
+function beatsRecordShare(cat, how) {
   if (!cat) return;
   var data = beatsLoad();
   beatsEnsure(data, cat);
-  data[cat].shares = (data[cat].shares||0) + 1;
+  if (how === 'copy') data[cat].copies = (data[cat].copies||0) + 1;
+  else data[cat].shares = (data[cat].shares||0) + 1;
   beatsSave(data);
   updateBeatChip();
+}
+
+// The Backstory byway. A row is credited to the subject of the story it is
+// paired with today, once per row per sitting, so reopening one page ten
+// times is one trip. Objects are texture on top of that, never status.
+function beatsRecordHistory(cat, rid, oi) {
+  if (!cat || !rid) return;
+  var data = beatsLoad();
+  beatsEnsure(data, cat);
+  var d = data[cat];
+  var at = d.historyAt || (d.historyAt = {});
+  if ((Date.now() - (at[rid] || 0)) > 4 * 3600000) {
+    d.history = (d.history || 0) + 1;
+    at[rid] = Date.now();
+  }
+  if (oi != null) d.objects = (d.objects || 0) + 1;
+  beatsSave(data);
+  updateBeatChip();
+}
+
+// A source followed out of a story. Texture for the record, not a rung.
+function beatsRecordLink(cat) {
+  if (!cat) return;
+  var data = beatsLoad();
+  beatsEnsure(data, cat);
+  data[cat].links = (data[cat].links || 0) + 1;
+  beatsSave(data);
 }
 
 function beatsRecordLies(cat, key) {
@@ -2784,8 +2871,8 @@ function beatsJoin(list) {
 
 // Reads the same BEAT_REQS the scorer does and calls beatIdx for the current
 // rung, so this cannot describe a threshold that is no longer being measured.
-function beatsNextRung(cat) {
-  var d = (beatsLoad())[cat];
+function beatsNextRung(cat, d) {
+  d = d || (beatsLoad())[cat];
   var cur = beatIdx(d);
   if (cur < 0 || cur >= BEAT_REQS.length - 1) return null;
   var req = BEAT_REQS[cur + 1], next = BEATS_SCALE[cur + 1], bits = [];
@@ -2793,6 +2880,7 @@ function beatsNextRung(cat) {
   if (req.sessions) bits.push(req.sessions + ' separate sittings');
   if (req.depth)    bits.push('opening ' + req.depth + ' section' + (req.depth === 1 ? '' : 's') + ' below the summary');
   if (req.lies)     bits.push('reading the Lies layer');
+  if (req.history)  bits.push('going into the Backstory on ' + req.history + ' separate sittings');
   if (req.carry)    bits.push('either sharing one, or going back to the lies on ' +
                               req.carry.liesStories + ' separate stories');
   var st = d.stories || 0, se = d.sessions || 1;
@@ -2817,9 +2905,9 @@ function openChipInfo() {
   var top = beatsGetTop();
   if (!top) { switchTab('profile'); return; }
   var seen = false;
-  try { seen = localStorage.getItem(CHIP_SEEN_KEY) === '1'; } catch(e) {}
+  try { seen = localStorage.getItem(nsKey(CHIP_SEEN_KEY)) === '1'; } catch(e) {}
   if (!seen) {
-    try { localStorage.setItem(CHIP_SEEN_KEY, '1'); } catch(e) {}
+    try { localStorage.setItem(nsKey(CHIP_SEEN_KEY), '1'); } catch(e) {}
     showBeatInfo('What this is', BEATS_SCALE[top.idx].label,
       'NTK keeps track of what you read, on your own device and nowhere else. This is the furthest you have got on any one subject, right now on ' +
       top.category + '. ' + beatsExplain(top.idx), BEATS_SCALE[top.idx].color);
@@ -2883,6 +2971,195 @@ function updateBeatChip() {
 
 
 updateBeatChip();
+
+// ── THE RECORD ───────────────────────────────────────────────────
+// One durable, dated entry per finished edition, plus reader-wide counts that
+// have no subject to live under. This is the raw material T-0021 asked for.
+// It is keyed by edition date so finishing the same digest twice is one entry,
+// and /me shows it as a count, never as a calendar.
+var RECORD_KEY = 'ntk_record_v1';
+function recordLoad() {
+  try { return JSON.parse(localStorage.getItem(nsKey(RECORD_KEY))) || { editions: {} }; } catch(e) { return { editions: {} }; }
+}
+function recordSave(r) {
+  try { localStorage.setItem(nsKey(RECORD_KEY), JSON.stringify(r)); } catch(e) {}
+}
+function editionStamp() {
+  var m = location.pathname.match(/\/digest\/(\d{4}-\d{2}-\d{2})\//);
+  return m ? m[1] : todayDateStamp();
+}
+function recordEdition(total) {
+  var r = recordLoad();
+  r.editions = r.editions || {};
+  var key = editionStamp();
+  if (r.editions[key]) return false;
+  var subjects = [];
+  stories.forEach(function(s) { var su = storySubject(s); if (su && subjects.indexOf(su) < 0) subjects.push(su); });
+  r.editions[key] = { stories: total, subjects: subjects, at: Date.now() };
+  recordSave(r);
+  return true;
+}
+function recordBump(field) {
+  var r = recordLoad();
+  r[field] = (r[field] || 0) + 1;
+  recordSave(r);
+}
+
+// Outbound links: a source followed out of a story, a primary document opened
+// from a Backstory page, a local headline from Today. Credited to the story's
+// subject where there is one; the rest go to the reader-wide record.
+document.addEventListener('click', function(e) {
+  var a = e.target && e.target.closest && e.target.closest('a[href]');
+  if (!a || !/^https?:/i.test(a.getAttribute('href') || '')) return;
+  if (a.closest('#storyView')) {
+    beatsRecordLink(storySubject(stories[currentStoryIndex]));
+    track('outbound_click', { from: 'story', story_index: currentStoryIndex + 1 });
+  } else if (a.closest('#bsrPage')) {
+    var r = bpRow(BSR_PAGE_ROW), i = r ? findStoryIndexByKey(r.story_id) : -1;
+    if (i >= 0) beatsRecordLink(storySubject(stories[i])); else recordBump('links');
+    track('outbound_click', { from: 'backstory', row: BSR_PAGE_ROW });
+  } else if (a.closest('#todayView')) {
+    recordBump('links');
+    track('outbound_click', { from: 'today' });
+  }
+});
+
+// ── INSPECT MODE ─────────────────────────────────────────────────
+// Fixture readers. Each is a complete record at one point on the arc, so the
+// editor can open /me?inspect=month2 and see what a two-month reader sees,
+// then read a story as them and watch the ladder move. Subjects are chosen
+// to overlap today's lineup where they can, so Today's dimming and Backstory
+// crediting have something to land on; the rest is deliberately generic.
+var INS_H = 3600000, INS_D = 86400000;
+var INSPECT_READERS = {
+  'new':    { label: 'New reader', visits: null, beats: {}, editions: 0, orient: false, chip: false },
+  'day2':   { label: 'Day 2', visits: { first: -26 * INS_H, last: -26 * INS_H, total: 1 }, orient: true, chip: false, editions: 1,
+              beats: { 'Executive Power': { stories: 2, depth: 1, sessions: 1, lastActive: -26 * INS_H, entities: { 'White House ballroom': 1 } } } },
+  'week2':  { label: 'Week 2', visits: { first: -13 * INS_D, last: -2 * INS_D, total: 6 }, orient: true, chip: true, editions: 4,
+              beats: {
+                'Executive Power':   { stories: 5, depth: 3, sessions: 4, liesRead: true, liesStories: ['a', 'b'], history: 1, lastActive: -2 * INS_D,
+                                       entities: { 'White House ballroom': 2, 'Nidal Hasan': 1, 'Pete Hegseth': 2 } },
+                'Gaza':              { stories: 3, depth: 1, sessions: 2, lastActive: -3 * INS_D, entities: { 'Sally Rooney': 1, 'UNRWA': 1 } },
+                'Ukraine and Russia':{ stories: 1, depth: 0, sessions: 1, lastActive: -9 * INS_D } } },
+  'month2': { label: 'Month 2', visits: { first: -61 * INS_D, last: -10 * INS_D, total: 25 }, orient: true, chip: true, editions: 14, links: 4,
+              beats: {
+                'Executive Power':   { stories: 12, depth: 7, sessions: 9, liesRead: true, liesStories: ['a','b','c','d','e'], history: 2, objects: 2, links: 3, shares: 1, lastActive: -10 * INS_D,
+                                       entities: { 'White House ballroom': 3, 'Pete Hegseth': 4, 'Nidal Hasan': 1, 'Supreme Court': 2 } },
+                'Gaza':              { stories: 8, depth: 3, sessions: 5, liesRead: true, liesStories: ['a','b','c'], history: 1, lastActive: -12 * INS_D,
+                                       entities: { 'Sally Rooney': 1, 'UNRWA': 2, 'Rafah crossing': 2 } },
+                'Surveillance and Spyware': { stories: 5, depth: 2, sessions: 3, lastActive: -15 * INS_D, entities: { 'Citizen Lab': 2, 'NSO Group': 1 } },
+                'Ukraine and Russia':{ stories: 3, depth: 1, sessions: 2, liesRead: true, lastActive: -20 * INS_D, entities: { 'Sanctions against Russia': 2 } },
+                'Immigration':       { stories: 1, depth: 1, sessions: 1, lastActive: -40 * INS_D } } }
+};
+var INSPECT_WHO_KEY = 'ntk_inspect_reader';
+function inspectSeed() {
+  var who = INSPECT_READERS[INSPECT] ? INSPECT : 'week2';
+  var reset = /[?&]reset(?:=|&|$)/.test(location.search);
+  var current = null;
+  try { current = localStorage.getItem(INSPECT_WHO_KEY); } catch(e) {}
+  if (current === who && !reset) return;   // keep walking as this reader; a reload is not a new reader
+  var f = INSPECT_READERS[who], now = Date.now();
+  var beats = {};
+  Object.keys(f.beats).forEach(function(c) {
+    var b = Object.assign({}, f.beats[c]);
+    b.lastActive = now + (b.lastActive || 0);
+    beats[c] = b;
+  });
+  var editions = {};
+  for (var i = 0; i < (f.editions || 0); i++) {
+    var dt = new Date(now - (i * 3 + 1) * INS_D);
+    editions[dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + String(dt.getDate()).padStart(2, '0')] = { stories: 7, subjects: Object.keys(f.beats), at: dt.getTime() };
+  }
+  try {
+    localStorage.setItem(INSPECT_WHO_KEY, who);
+    localStorage.setItem(nsKey(BEATS_KEY), JSON.stringify(beats));
+    localStorage.setItem(nsKey(RECORD_KEY), JSON.stringify({ editions: editions, links: f.links || 0 }));
+    if (f.visits) localStorage.setItem(nsKey(VISITS_KEY), JSON.stringify({ first: now + f.visits.first, last: now + f.visits.last, total: f.visits.total }));
+    else localStorage.removeItem(nsKey(VISITS_KEY));
+    localStorage.setItem(nsKey(ORIENT_KEY), f.orient ? '1' : '0');
+    localStorage.setItem(nsKey(CHIP_SEEN_KEY), f.chip ? '1' : '0');
+    localStorage.removeItem(nsKey(BEATS_TOAST_KEY));
+  } catch(e) {}
+  orientShown = !!f.orient;
+}
+function inspectGo(who, reset) {
+  location.href = location.pathname + '?inspect=' + encodeURIComponent(who) + (reset ? '&reset' : '');
+}
+window.inspectGo = inspectGo;
+function inspectExit() { location.href = location.pathname; }
+window.inspectExit = inspectExit;
+
+if (INSPECT) inspectSeed();           // before the visit is read, so the fixture's gap is the one described
+(function initVisits() {
+  var v = visitsLoad();
+  visitCopy = visitMoment(v.last);
+  try {
+    // `first` is the only date the record keeps about the reader themselves:
+    // "reading since September", never how many days were missed in between.
+    localStorage.setItem(nsKey(VISITS_KEY), JSON.stringify({ first: v.first || Date.now(), last: Date.now(), total: (v.total || 0) + 1 }));
+  } catch(e) {}
+})();
+updateBeatChip();
+
+// Every line the system can say, generated from the same functions that say
+// it in the app, so this gallery cannot drift from production copy.
+function inspectMomentsHtml() {
+  var cat = 'Housing', out = '';
+  function sec(t) { out += '<div class="ins-sec">' + t + '</div>'; }
+  function line(k, html) { out += '<div class="ins-line"><div class="ins-k">' + k + '</div><div class="ins-t">' + html + '</div></div>'; }
+  sec('On the way in (visitMoment)');
+  line('Same sitting', visitMoment(Date.now() - 1 * INS_H) || '<em>says nothing</em>');
+  line('Next day', visitMoment(Date.now() - 30 * INS_H));
+  line('After five days', visitMoment(Date.now() - 5 * INS_D));
+  line('After three weeks', visitMoment(Date.now() - 21 * INS_D));
+  sec('Between stories three and four, once ever');
+  line('Orientation card', "Three stories in. You're paying attention. <strong>That's the first move.</strong>");
+  sec('On story close, when a rung is crossed (beatsToastCopy)');
+  for (var i = 0; i < BEATS_SCALE.length; i++) {
+    var st = { stories: (BEAT_REQS[i].stories || 1) };
+    line(BEATS_SCALE[i].label + (i < 1 ? ' (never spoken)' : ''), beatsToastCopy(cat, i, st) || '<em>none</em>');
+    if (i >= 5) line(BEATS_SCALE[i].label + ', having shared', beatsToastCopy(cat, i, Object.assign({ shares: 1 }, st)));
+  }
+  sec('Tapping the chip');
+  line('First time', 'NTK keeps track of what you read, on your own device and nowhere else. This is the furthest you have got on any one subject, right now on ' + cat + '. ' + beatsExplain(3));
+  for (var j = 0; j < BEATS_SCALE.length - 1; j++) {
+    var req = BEAT_REQS[j], synth = {
+      stories: req.stories || 1, sessions: req.sessions || 1, depth: req.depth || 0, liesRead: !!req.lies,
+      history: req.history || 0, liesStories: [], shares: req.carry ? req.carry.shares : 0
+    };
+    var nx = beatsNextRung(cat, synth);
+    if (nx) line('After that, from ' + BEATS_SCALE[j].label, nx.sentence);
+  }
+  sec('Tapping a rung on the scale (beatsExplain)');
+  for (var k = 0; k < BEATS_SCALE.length; k++) line(BEATS_SCALE[k].label, beatsExplain(k));
+  sec('On /me, the record (profileRecordLines, this reader)');
+  profileRecordLines().forEach(function(l) { line('', l); });
+  return out;
+}
+function openInspectMoments() {
+  var sheet = document.getElementById('inspectSheet');
+  if (!sheet) return;
+  document.getElementById('inspectSheetBody').innerHTML = inspectMomentsHtml();
+  sheet.classList.add('open');
+}
+window.openInspectMoments = openInspectMoments;
+function closeInspectMoments() { var s = document.getElementById('inspectSheet'); if (s) s.classList.remove('open'); }
+window.closeInspectMoments = closeInspectMoments;
+// Called from the route boot at the end of the body: the bar's markup sits
+// below this script, so it does not exist while this script runs.
+function initInspectBar() {
+  if (!INSPECT) return;
+  document.documentElement.classList.add('inspect');
+  var bar = document.getElementById('inspectBar');
+  if (!bar) return;
+  var who = INSPECT_READERS[INSPECT] ? INSPECT : 'week2';
+  var sel = document.getElementById('inspectReader');
+  sel.innerHTML = Object.keys(INSPECT_READERS).map(function(k) {
+    return '<option value="' + k + '"' + (k === who ? ' selected' : '') + '>' + INSPECT_READERS[k].label + '</option>';
+  }).join('');
+  sel.onchange = function() { inspectGo(sel.value, true); };
+  bar.classList.add('show');
+}
 
 // ── TAB NAVIGATION ───────────────────────────────────────────────
 var activeTab = 'today';
@@ -3237,9 +3514,20 @@ function bpObjectHtml(r, oi){
 }
 
 // opts.fromHistory: called by popstate — don't push a new entry.
+var bsrEntrySubject = null, bsrEntryIdx = -1;
 function showBsrPage(rid, oi, opts){
   var r = bpRow(rid);
   if (!r) return;
+  // The row is paired with one of today's stories; that story's subject is the
+  // beat this trip belongs to. The rung on the way in is kept so the ladder can
+  // speak on the way out, from the tab, not over a page the toast sits under.
+  var pairedIdx = findStoryIndexByKey(r.story_id);
+  var pairedSubject = pairedIdx >= 0 ? storySubject(stories[pairedIdx]) : null;
+  if (!BSR_PAGE_OPEN) {
+    bsrEntrySubject = pairedSubject;
+    bsrEntryIdx = pairedSubject ? beatIdx((beatsLoad())[pairedSubject]) : -1;
+  }
+  beatsRecordHistory(pairedSubject, rid, oi);
   var el = document.getElementById('bsrPage');
   if (oi != null && !(r.objects && r.objects[oi])) oi = null;
   el.innerHTML = '<div class="bp-wrap">' + (oi != null ? bpObjectHtml(r, oi) : bpRowHtml(r)) + '</div>';
@@ -3259,6 +3547,14 @@ function hideBsrPage(){
   document.getElementById('bsrPage').classList.remove('active');
   document.body.style.overflow = '';
   BSR_PAGE_OPEN = false;
+  if (bsrEntrySubject) {
+    var nowIdx = beatIdx((beatsLoad())[bsrEntrySubject]);
+    if (nowIdx > bsrEntryIdx && beatsShouldToast(nowIdx)) {
+      var copy = beatsToastCopy(bsrEntrySubject, nowIdx, beatsLoad()[bsrEntrySubject] || {});
+      if (copy) { showBeatToast(copy); beatsMarkToast(nowIdx); }
+    }
+    bsrEntrySubject = null; bsrEntryIdx = -1;
+  }
 }
 function bsrPageBack(){
   var st = history.state;
@@ -3599,11 +3895,82 @@ function clippingsHtml(entities) {
   }).join('') + '</div>';
 }
 
+// The record: reader-wide, and the only place the app says anything about
+// the reader rather than about a subject. Counts of things done, never of
+// days: "14 digests finished" is a record; a run of dates is the backlog-as-
+// debt mechanism this audience is avoiding (T-0021, T-0026).
+function profileRecordLines() {
+  var rec = recordLoad(), v = visitsLoad(), beats = beatsLoad();
+  var editions = Object.keys(rec.editions || {}).length;
+  var subjects = Object.keys(beats);
+  var shares = 0, history = 0, objects = 0, links = rec.links || 0, lies = 0;
+  subjects.forEach(function(c) {
+    var b = beats[c];
+    shares += b.shares || 0; history += b.history || 0; objects += b.objects || 0;
+    links += b.links || 0; lies += (b.liesStories || []).length;
+  });
+  var lines = [];
+  if (v.first) { var f = new Date(v.first); lines.push('Reading since ' + months[f.getMonth()] + ' ' + f.getDate()); }
+  if (editions) lines.push(editions + (editions === 1 ? ' digest finished' : ' digests finished'));
+  if (subjects.length) lines.push(subjects.length + (subjects.length === 1 ? ' subject' : ' subjects') + ' followed');
+  if (lies) lines.push('The Lies layer on ' + lies + (lies === 1 ? ' story' : ' stories'));
+  if (history) lines.push(history + (history === 1 ? ' trip' : ' trips') + ' into the Backstory');
+  if (objects) lines.push(objects + (objects === 1 ? ' primary document' : ' primary documents') + ' opened');
+  if (links) lines.push(links + (links === 1 ? ' source' : ' sources') + ' followed out');
+  if (shares) lines.push(shares + (shares === 1 ? ' story' : ' stories') + ' passed on');
+  return lines;
+}
+
+// What a beat is made of, said as behaviors rather than as counts toward a
+// threshold. The reader sees which of the five they have done on this
+// subject; the thresholds stay in the explainer sheet (T-0025). This is the
+// "legible, not numeric" option; see docs/expertise.md for the two others.
+function beatMarksHtml(b) {
+  var marks = [
+    ['below the summary',  (b.depth || 0) > 0],
+    ['the Lies layer',     !!b.liesRead],
+    ['came back',          (b.sessions || 1) > 1],
+    ['into the Backstory', (b.history || 0) > 0],
+    ['passed it on',       (b.shares || 0) > 0]
+  ];
+  return '<div class="beat-marks">' + marks.map(function(m) {
+    return '<span class="beat-mark' + (m[1] ? ' met' : '') + '">' + m[0] + '</span>';
+  }).join('') + '</div>';
+}
+
+// Seven segments, filled to the rung in the rung's colour. A rail, not a
+// progress bar: it has the same seven stops for every subject, so two cards
+// can be read against each other.
+function beatRailHtml(idx, color) {
+  var out = '';
+  for (var i = 0; i < BEATS_SCALE.length; i++) out += '<i' + (i <= idx ? ' style="background:' + color + '"' : '') + '></i>';
+  return '<div class="beat-rail" aria-hidden="true">' + out + '</div>';
+}
+
+function openBeatCard(cat) {
+  var d = (beatsLoad())[cat];
+  var idx = beatIdx(d);
+  if (idx < 0) return;
+  var nx = beatsNextRung(cat);
+  showBeatInfo(cat, BEATS_SCALE[idx].label,
+    beatsExplain(idx) + (nx ? ' ' + nx.sentence : ' There is nothing above this one.'),
+    BEATS_SCALE[idx].color);
+}
+window.openBeatCard = openBeatCard;
+
 function renderProfileTab() {
   var data = beatsLoad();
   var list  = document.getElementById('profileDomainList');
   var pills = document.getElementById('profileScalePills');
+  var rec   = document.getElementById('profileRecord');
   if (!list) return;
+  if (rec) {
+    var lines = profileRecordLines();
+    rec.innerHTML = lines.length
+      ? '<div class="rec-kicker">The record</div><div class="rec-lines">' +
+        lines.map(function(l) { return '<div class="rec-line">' + l + '</div>'; }).join('') + '</div>'
+      : '';
+  }
   var domains = Object.keys(data).map(function(cat) {
     return { cat: cat, stats: data[cat], idx: beatIdx(data[cat]) };
   }).sort(function(a, b) {
@@ -3613,25 +3980,24 @@ function renderProfileTab() {
   if (!domains.length) {
     list.innerHTML = '<p style="font-family:\'Newsreader\',serif;font-style:italic;font-size:13px;color:rgba(234,217,197,0.4);text-align:center;padding:32px 0;">Read your first story to start building your beats.</p>';
   } else {
-    var maxS = Math.max.apply(null, domains.map(function(d){ return d.stats.stories||0; }));
     list.innerHTML = domains.map(function(d) {
       var beat = BEATS_SCALE[Math.max(d.idx, 0)];
       var daysAgo = (Date.now() - (d.stats.lastActive||0)) / 86400000;
-      var dotColor = daysAgo <= 7 ? '#01B2A7' : daysAgo <= 30 ? '#F2AE2E' : 'rgba(234,217,197,0.2)';
-      var opacity  = daysAgo <= 7 ? 1 : daysAgo <= 30 ? 0.6 : 0.32;
-      var barPct   = maxS > 0 ? Math.round(((d.stats.stories||0) / maxS) * 100) : 0;
-      return '<div class="beat-domain-card" style="border-left-color:' + beat.color + ';background:' + beat.color + '14;opacity:' + opacity + ';">' +
+      var opacity = daysAgo <= 7 ? 1 : daysAgo <= 30 ? 0.72 : 0.45;
+      var n = d.stats.stories || 0, se = d.stats.sessions || 1;
+      return '<button type="button" class="beat-domain-card" onclick="openBeatCard(' + escAttr(JSON.stringify(d.cat)) + ')" ' +
+          'style="border-left-color:' + beat.color + ';background:' + beat.color + '14;opacity:' + opacity + ';">' +
         '<div class="beat-domain-top">' +
           '<div>' +
-            '<div class="beat-domain-name">' + d.cat + '</div>' +
+            '<div class="beat-domain-name">' + escBsr(d.cat) + '</div>' +
             '<div class="beat-domain-status" style="color:' + beat.color + ';">' + beat.label + '</div>' +
           '</div>' +
-          '<div class="beat-recency-dot" style="background:' + dotColor + ';"></div>' +
+          '<div class="beat-domain-meta">' + n + ' ' + (n === 1 ? 'story' : 'stories') + ' · ' + se + ' ' + (se === 1 ? 'sitting' : 'sittings') + '</div>' +
         '</div>' +
-        '<div class="beat-bar-track"><div class="beat-bar-fill" style="width:' + barPct + '%;background:' + beat.color + ';"></div></div>' +
-        '<div class="beat-domain-meta">' + (d.stats.stories||0) + ' ' + (d.stats.stories===1?'story':'stories') + ' · ' + (d.stats.sessions||1) + ' session' + ((d.stats.sessions||1)!==1?'s':'') + '</div>' +
+        beatRailHtml(d.idx, beat.color) +
+        beatMarksHtml(d.stats) +
         clippingsHtml(d.stats.entities) +
-      '</div>';
+      '</button>';
     }).join('');
   }
   if (pills) {
@@ -3652,7 +4018,7 @@ function updateProgress() {
 
   if (n === 3 && !orientShown) {
     orientShown = true;
-    try { localStorage.setItem(ORIENT_KEY, '1'); } catch(e) {}
+    try { localStorage.setItem(nsKey(ORIENT_KEY), '1'); } catch(e) {}
     const om = document.getElementById('orientMoment');
     if (om) om.classList.add('show');
   }
@@ -3663,6 +4029,7 @@ function updateProgress() {
 
   if (n === total) {
     track('digest_complete', { stories_count: total });
+    recordEdition(total);
     startMotAnimation();
   }
 }
@@ -3941,13 +4308,18 @@ function copyShareLink(url, title) {
 // ── Share ─────────────────────────────────────────────────────────
 function shareStory() {
   const s = stories[currentStoryIndex];
+  const subject = storySubject(s);
   track('story_share', { story_index: currentStoryIndex + 1 });
-  beatsRecordShare(storySubject(s));
   const shareUrl = s.permalink || window.location.href;
   if (navigator.share) {
-    navigator.share({ title: s.headline, text: s.lede, url: shareUrl });
+    // The promise resolves when the sheet reports the share went somewhere and
+    // rejects when it was dismissed. Only the first is a share.
+    navigator.share({ title: s.headline, text: s.lede, url: shareUrl })
+      .then(function() { beatsRecordShare(subject, 'share'); track('story_shared', { story_index: currentStoryIndex + 1 }); })
+      .catch(function() {});
   } else {
     copyShareLink(shareUrl, s.headline);
+    beatsRecordShare(subject, 'copy');
   }
 }
 
@@ -4348,6 +4720,7 @@ document.addEventListener('DOMContentLoaded', function() {
       </div>
     </header>
     <div class="profile-inner">
+      <div id="profileRecord" class="rec"></div>
       <div class="beats-sheet-kicker">Your beats</div>
       <div class="beats-sheet-title">What you've been tracking</div>
       <div id="profileDomainList"></div>
@@ -4414,8 +4787,23 @@ document.addEventListener('DOMContentLoaded', function() {
      inside #digestView, and since Today is the landing tab and closing a
      story opened from Today returns there, the most common path in the app
      fired it into a hidden container. See T-0024. -->
+<!-- Inspect mode: shown only with ?inspect in the URL; see INSPECT above. -->
+<div id="inspectBar" class="inspect-bar" role="toolbar" aria-label="Inspect mode">
+  <span class="inspect-tag">INSPECT</span>
+  <select id="inspectReader" aria-label="Fixture reader"></select>
+  <button type="button" onclick="openInspectMoments()">Every line</button>
+  <button type="button" onclick="inspectGo(document.getElementById('inspectReader').value, true)">Reset</button>
+  <button type="button" onclick="inspectExit()" aria-label="Leave inspect mode">Exit</button>
+</div>
+<div id="inspectSheet" class="inspect-sheet" role="dialog" aria-modal="true" aria-label="Every line the system can say">
+  <div class="inspect-sheet-head">
+    <span>Every line, generated from production code</span>
+    <button type="button" onclick="closeInspectMoments()">Close</button>
+  </div>
+  <div id="inspectSheetBody" class="inspect-sheet-body"></div>
+</div>
+
 <div id="beatToast" class="beat-toast">
-  <div class="beat-toast-label">Orientation</div>
   <div class="beat-toast-text" id="beatToastText"></div>
 </div>
 
@@ -4435,6 +4823,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   document.documentElement.removeAttribute('data-boot-tab');
 })();
+initInspectBar();
 </script>
 
 </body>

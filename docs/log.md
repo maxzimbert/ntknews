@@ -214,3 +214,11 @@ T-0001's check reported dead onramp keys on a good edition because it recognised
 story keys, and manual and scoop-imported stories are `manual-<timestamp>`. Widening the pattern
 was honest only because the widened check was then run against the broken edition from earlier
 the same day and still failed there.
+
+## 2026-10-21 — the simulator had been throwing for a month and its ticket check still passed
+
+`scripts/beats-sim.js` extracts the ladder out of `digest/index.html` so it cannot drift. On
+2026-09-18 T-0025 moved the thresholds into `BEAT_REQS`; the sim kept extracting `beatIdx` alone
+and died on the first call. T-0015's check extracts its own copy of the table, so it stayed green.
+A tool nobody runs rots exactly as fast as a document nobody reads; the fix is a check that runs
+it (T-0100 does).
