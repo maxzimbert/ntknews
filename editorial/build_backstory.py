@@ -304,6 +304,32 @@ def lens_select(lenses, origin_year, per_lens=3, minimum=3):
     return begin, begin, report
 
 
+FIRE_ROWS = os.path.join(ROOT, 'editorial', 'fire-rows.json')
+POOL = os.path.join(ROOT, 'ntk-pulse', 'data', 'backstory-pool.json')
+
+
+def fire_case(row, spec, pool, notes):
+    """T-0099: a live-conflict page shows the history before the clock started, under its day count.
+    The objects are chosen by hand in editorial/fire-rows.json, matrix first. One shows only if it is in
+    the matrix or the editor approved it in the candidates workbook, its link is live, and it has text.
+    Fewer than three Beginnings and the page shows its day count alone, as before."""
+    row['stakes'] = spec.get('stakes') or row.get('stakes')
+    ok = lambda i: (i in pool and pool[i].get('approved') and pool[i].get('url')
+                    and pool[i].get('link_status') in ('live', 'live-pdf')
+                    and (notes.get(i) or {}).get('line') and (notes.get(i) or {}).get('about'))
+    ids = [i for i in spec.get('beginnings') or [] if ok(i)]
+    start = spec.get('start') if ok(spec.get('start')) else None
+    if len(ids) < 3:
+        row['beginnings'], row['objects'] = [], []
+        return
+    shown = ids + ([start] if start else [])
+    row['beginnings'] = [dict({'year': pool[i]['year'], 'line': notes[i]['line'], 'object_id': i},
+                              **({'mark': 'start'} if i == start else {})) for i in shown]
+    row['objects'] = [{'title': pool[i]['title'], 'author': pool[i]['author'], 'year': pool[i]['year'],
+                       'source': pool[i]['source'], 'source_url': pool[i]['url'], 'object_id': i,
+                       'about': notes[i]['about']} for i in shown]
+
+
 def load_notes():
     return json.load(open(NOTES)) if os.path.exists(NOTES) else {}
 
@@ -330,6 +356,7 @@ def main():
         'published': prev.get('published'),
         'rows': [],
         'todays_pairings': prev.get('todays_pairings', []),
+        'pairings_generated': prev.get('pairings_generated'),   # when the pairings were made; Pulse and the origin step read it
     }
 
     def carry(row, old):
@@ -346,15 +373,19 @@ def main():
                     row['indicator'][k] = old['indicator'][k]
         return row
 
+    fire_spec = json.load(open(FIRE_ROWS))['rows'] if os.path.exists(FIRE_ROWS) else {}
+    pool = {o['id']: o for o in json.load(open(POOL))['objects']} if os.path.exists(POOL) else {}
     for rid, title, start, contest, close in FIRE:
-        out['rows'].append(carry({
+        row = carry({
             'id': rid, 'stratum': 'fire', 'title': title,
             'start_date': start, 'start_line': None,
             'milestone': contest, 'close_condition': close,
             'roots': [], 'subgenres': [], 'updated': False,
             'narrative': [], 'indicator': None,
             'objects': [], 'instances': [], 'photo': None,
-        }, prev_rows.get(rid)))
+        }, prev_rows.get(rid))
+        fire_case(row, fire_spec.get(rid) or {}, pool, notes)
+        out['rows'].append(row)
 
     for r in spec['rows']:
         ind = IND.get(r['id'])
@@ -387,7 +418,10 @@ def main():
                     d['about'] = n['about']
                 row['objects'].append(d)
 
-    out['rows'].sort(key=lambda r: r['start_date'], reverse=True)
+    # categories (provisional rows) are injected by each publish from ntk-pulse/data/provisional-rows.json;
+    # a rebuild keeps them rather than dropping them until the next publish (found 2026-10-21, T-0099)
+    out['rows'] += [r for r in prev.get('rows', []) if r.get('stratum') == 'provisional']
+    out['rows'].sort(key=lambda r: str(r['start_date']), reverse=True)
 
     json.dump(chosen, open(os.path.join(ROOT, 'editorial', 'object-selection.json'), 'w'), indent=1, ensure_ascii=False)
     need = [c for c in chosen if not (notes.get(c['object_id']) or {}).get('line' if c['role'] == 'beginning' else 'about')]
