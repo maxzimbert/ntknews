@@ -203,6 +203,10 @@ def apply_categories(path, pub, stories, bs, today, live=True):
     vocab = {x["name"] for x in pool_doc.get("vocab", {}).get("subgenres", [])} or None
     for cat in pub.get("backstory_categories") or []:
         cid = cat.get("id") or ""
+        if (by_id.get(cid) or {}).get("status") == "merged":
+            # a category merged into another (T-0099) is not brought back by an old draft still in Pulse
+            log(f"  category {cid!r} was merged into {by_id[cid].get('merged_into')!r}; not published")
+            continue
         if cat.get("status") != "approved":
             log(f"  category {cid!r} is a draft; not published")
             continue

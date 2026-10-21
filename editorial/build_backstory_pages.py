@@ -247,7 +247,10 @@ def render_held(row):
   {verified_badge}
 </section>""")
 
-    begs = [f'<div class="tr"><span class="ty">{html_esc(b["year"])}</span><span class="td"><i></i></span><div class="tt">{html_esc(b["line"])}</div></div>'
+    # T-0099: on a live-conflict page the document that started the clock is marked
+    begs = [(f'<div class="tr here"><span class="ty">{html_esc(b["year"])}</span><span class="td"><i></i></span><div class="tt"><span class="here-lab">It starts here</span>{html_esc(b["line"])}</div></div>'
+             if b.get("mark") == "start" else
+             f'<div class="tr"><span class="ty">{html_esc(b["year"])}</span><span class="td"><i></i></span><div class="tt">{html_esc(b["line"])}</div></div>')
             for b in (row.get("beginnings") or [])]
     if row.get("start_line"):
         # First-letter capitalize only: str.capitalize() also lowercases every
@@ -350,7 +353,9 @@ def build_object_page(row, i):
 
 
 def build_page(row, pairings, today):
-    body_sections = (render_fire(row, today) if row["stratum"] == "fire" else render_held(row))
+    # T-0099: a live-conflict page keeps its day count on top, and shows its history under it once it has one
+    body_sections = ((render_fire(row, today) + (render_held(row) if (row.get("beginnings") or row.get("stakes")) else ""))
+                     if row["stratum"] == "fire" else render_held(row))
     episodes = render_episodes(row["id"], pairings)
     body = body_sections + episodes + '<div class="end">— 30 —</div>'
     return PAGE_TEMPLATE.format(
@@ -384,6 +389,20 @@ def main():
             od.mkdir(parents=True, exist_ok=True)
             (od / "index.html").write_text(build_object_page(row, i))
             written += 1
+
+    # T-0099: a category merged into another keeps its address; the page forwards to the merged one
+    store_path = BACKSTORY_JSON.parent.parent.parent / "ntk-pulse" / "data" / "provisional-rows.json"
+    if store_path.exists():
+        for r in json.loads(store_path.read_text()).get("rows", []):
+            if r.get("status") == "merged" and r.get("merged_into"):
+                d = OUT_DIR / r["id"]
+                d.mkdir(parents=True, exist_ok=True)
+                to = f"/backstory/{r['merged_into']}/"
+                (d / "index.html").write_text(
+                    f'<!doctype html><meta charset="utf-8"><title>{html_esc(r["title"])}</title>'
+                    f'<link rel="canonical" href="{BASE_URL}{to}"><meta http-equiv="refresh" content="0; url={to}">'
+                    f'<p>This category is now part of <a href="{to}">{html_esc(r["merged_into"])}</a>.</p>\n')
+                written += 1
 
     log(f"{written} permalink pages written to {OUT_DIR}/")
 
