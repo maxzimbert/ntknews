@@ -356,6 +356,7 @@ def main():
         'published': prev.get('published'),
         'rows': [],
         'todays_pairings': prev.get('todays_pairings', []),
+        'pairings_generated': prev.get('pairings_generated'),   # when the pairings were made; Pulse and the origin step read it
     }
 
     def carry(row, old):
