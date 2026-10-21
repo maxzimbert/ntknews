@@ -1,7 +1,7 @@
 ---
 id: T-0099
 title: Each live-conflict page shows the history before its clock started (Beginnings and their objects) under the day count
-status: BUILT
+status: VERIFIED
 tags: [backstory, feature]
 anchor: editorial/fire-rows.json
 ---
@@ -32,6 +32,14 @@ Also in this branch: the three inflation categories merged into one, "Inflation 
 old Pulse draft, and their pages forward to the merged one. And `build_backstory.py` no longer drops the
 categories from `backstory.json` when it is rerun.
 
+Approved by the editor 2026-10-21, who also asked for NAFTA, Mark Carney's Davos address on middle
+powers (20 January 2026), Gaza's 2004 disengagement decision and 2007 "hostile territory" decision, and
+the June 2025 strikes on Iran. NAFTA was already in the matrix (Clinton's signing remarks, 1993), so it
+is used rather than a new candidate. Eight web searches in all for this ticket. Gaza shows six; Balfour
+and Israel's 1948 declaration are approved but kept off the page (`not_shown` in fire-rows.json).
+Verified the same day: the check passes, and the app and the static pages render the counter, stakes,
+Beginnings and the case for every live conflict, with the long-argument pages unchanged.
+
 ## Why
 
 The live conflicts are where the news lands most, and their pages had nothing behind the counter. The
@@ -39,9 +47,7 @@ material was already in the library: the proposal of 2026-10-15 (`docs/proposals
 listed it by country. The editor asked for few web searches and for the Object Matrix to carry the
 pages; four searches were spent, all on Sudan and Venezuela, which the library did not cover.
 
-Not done, and worth knowing: no trend lines yet; Gaza's nearest history (the 2005 disengagement, the
-2007 Hamas takeover) and the 2025 strikes on Iran are not in the library, so those pages stop at 1993 and
-2018. The candidates publish only after the editor approves them (the existing rule: a candidate is not
+Not done, and worth knowing: no trend lines on these pages yet. The candidates publish only after the editor approves them (the existing rule: a candidate is not
 published until approved), so the pages fill when the Approve column is filled.
 
 ## Check
