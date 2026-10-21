@@ -28,6 +28,11 @@ function grab(re, what) {
 const parts = [
   grab(/var BEATS_SCALE = \[[\s\S]*?\];/,        'BEATS_SCALE'),
   grab(/var BEATS_TOAST_KEY = '[^']+';/,          'BEATS_TOAST_KEY'),
+  // beatIdx became table-driven on 2026-09-18 (T-0025) and this script kept
+  // extracting beatIdx alone, so it threw on BEAT_REQS from that day until
+  // 2026-10-21. The table and its matcher come along now.
+  grab(/var BEAT_REQS = \[[\s\S]*?\n\];/,         'BEAT_REQS'),
+  grab(/function beatMeets\([\s\S]*?\n\}/,        'beatMeets'),
   grab(/function beatIdx\([\s\S]*?\n\}/,          'beatIdx'),
   grab(/function beatsToastCopy\([\s\S]*?\n\}/,   'beatsToastCopy'),
   grab(/function beatsToastState\([\s\S]*?\n\}/,  'beatsToastState'),
@@ -39,11 +44,14 @@ const parts = [
 let NOW = 0;
 const store = {};
 const sandbox = {
-  localStorage: { getItem: k => (k in store ? store[k] : null), setItem: (k, v) => { store[k] = String(v); } },
+  localStorage: { getItem: k => (k in store ? store[k] : null), setItem: (k, v) => { store[k] = String(v); }, removeItem: k => { delete store[k]; } },
   Date: { now: () => NOW },
   JSON, console,
 };
+// The storage helpers call nsKey() (inspect mode, 2026-10-21); outside the
+// app there is no inspect mode, so the key is the key.
 const fn = new Function('localStorage', 'Date', 'JSON', 'console',
+  'var INSPECT = ""; function nsKey(k) { return k; }\n' +
   parts.join('\n') + '\nreturn { BEATS_SCALE, beatIdx, beatsToastCopy, beatsShouldToast, beatsMarkToast };');
 const B = fn(sandbox.localStorage, sandbox.Date, JSON, console);
 
@@ -66,7 +74,7 @@ const REQ = [
   '3 stories, across 2 separate sittings',
   '5 stories, 2 sittings, 2 sections opened',
 '7 stories, 3 sittings, Lies read, and 1 share OR Lies on 3 stories',
-  '10 stories, 4 sittings, 5 sections, and 2 shares OR Lies on 5 stories',
+  '10 stories, 4 sittings, 5 sections, 2 Backstory trips, and 2 shares OR Lies on 5 stories',
 ];
 const WHERE = [
   'chip + Profile only, never interrupts',
@@ -90,7 +98,7 @@ console.log('Everything between gets one toast per sitting, unless the jump is 2
 console.log('A READER ON "' + CAT + '" — one story every ' + EVERY + ' day' + (EVERY === 1 ? '' : 's') +
             ', ' + DAYS + ' days' + (SHARES ? '' : ', never shares') + '\n');
 
-const d = { stories: 0, depth: 0, shares: 0, liesRead: false, liesStories: [], sessions: 0, last: -1e12 };
+const d = { stories: 0, depth: 0, shares: 0, liesRead: false, liesStories: [], history: 0, sessions: 0, last: -1e12 };
 let spoke = 0;
 for (let day = 1; day <= DAYS; day += EVERY) {
   NOW = day * 24 * 3600000;
@@ -104,6 +112,7 @@ for (let day = 1; day <= DAYS; day += EVERY) {
     if (d.liesStories.length < 8) d.liesStories.push('s' + day);
   }
   if (SHARES && (day % 21 === 1) && day > 1) d.shares++;   // shares every few weeks
+  if (day >= 10 && (day % 14 === 10)) d.history++;          // a trip into the Backstory every couple of weeks
   const after = B.beatIdx(d);
   if (after > before && B.beatsShouldToast(after)) {
     spoke++;
@@ -115,4 +124,4 @@ for (let day = 1; day <= DAYS; day += EVERY) {
 console.log('\n  ' + spoke + ' orientation moments in ' + DAYS + ' days. Ends at: ' +
             B.BEATS_SCALE[B.beatIdx(d)].label + ' (' + d.stories + ' stories, ' + d.sessions +
             ' sittings, ' + d.depth + ' sections, ' + d.liesStories.length +
-            ' lies layers, ' + d.shares + ' shares).\n');
+            ' lies layers, ' + d.history + ' backstory trips, ' + d.shares + ' shares).\n');

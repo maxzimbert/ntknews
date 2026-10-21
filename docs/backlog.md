@@ -103,10 +103,12 @@ origin) before treating it as the answer. If it does hold, that's a much
 cheaper fix than standing up a parallel data store or environment flag
 inside Pulse itself.
 
-**Expertise / beats.** A working no-account localStorage implementation is live
-(`BEATS_KEY`, progression toasts). What's missing is legibility — a reader
-can't tell what it is or how it works. It surfaces throughout the experience,
-so this is not a Profile-tab task.
+**Expertise / beats.** Live and inspectable since 2026-10-21 (T-0100,
+`docs/expertise.md`): `/me?inspect=month2` walks the app as a fixture reader.
+Backstory, links and successful shares feed the ladder; a reader-wide record
+exists. Open: the editor's choice between three ways status reads on `/me`
+(`docs/expertise.md` §5), then T-0027's editorial pass, then the Witness
+graduation moment and the Triforce from the design canvas.
 
 **Analytics and onboarding.** One epic, held. Paired deliberately
 (2026-09-17): the orientation cards are the first thing a new reader sees and

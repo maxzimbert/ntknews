@@ -61,6 +61,11 @@ ticket fixes what the ladder says and what it counts; T-0016 fixes what it
 counts it against. Doing both in one change makes the digest diff unreviewable
 against a publish-schema change.
 
+Fixtures extended 2026-10-21 (T-0100): Witness now also requires two trips into the Backstory
+(`history: 2`), because the Witness copy had been telling readers "you went into the history" when
+nothing in Backstory reached the ladder. The two Witness cases carry `history: 2`, and a new case
+asserts the full pattern without it stays below Witness. The lower rungs are unchanged.
+
 ## Check
 
 ```sh
@@ -111,11 +116,13 @@ var cases = [
    'twenty stories, no depth, no lies, no shares reaches Witness'],
   [{stories:20, sessions:9, depth:9, liesRead:true},                  'lt', 5,
    'Carrying It is reachable on volume alone, with no share and no repeated lies'],
-  [{stories:20, sessions:9, depth:9, liesRead:true, shares:2},        'eq', 6,
+  [{stories:20, sessions:9, depth:9, liesRead:true, shares:2, history:2}, 'eq', 6,
    'the full behavioral pattern does not reach Witness'],
+  [{stories:20, sessions:9, depth:9, liesRead:true, shares:2},        'lt', 6,
+   'Witness is reachable without a trip into the Backstory'],
   [{stories:20, sessions:9, depth:9, liesRead:true, liesStories:L(3)},'eq', 5,
    'the Lies-layer route to Carrying It is closed to a reader who never shares'],
-  [{stories:20, sessions:9, depth:9, liesRead:true, liesStories:L(5)},'eq', 6,
+  [{stories:20, sessions:9, depth:9, liesRead:true, liesStories:L(5), history:2},'eq', 6,
    'the Lies-layer route to Witness is closed to a reader who never shares']
 ];
 for (var i=0;i<cases.length;i++){

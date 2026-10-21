@@ -1,12 +1,17 @@
 ---
 id: T-0021
 title: Finishing a digest leaves no trace, so there is nothing for a reading record to be built from
-status: PROPOSED
+status: BUILT
 tags: [digest, feature]
 anchor: digest/index.html:3417
 ---
 
 ## What
+
+**Built 2026-10-21 by T-0100**, as the raw material only: `ntk_record_v1` holds one dated entry per
+finished edition and `/me` says it as "N digests finished". The unit question below was answered
+*count of editions, shown without dates*; the shelf of subjects is the beats list itself. The manual
+check stands until the editor has looked at `/me?inspect=month2` and agreed it reads as a record.
 
 Completing a digest fires `track('digest_complete', {stories_count: total})`
 and nothing else. Measured 2026-09-18: no local storage key records a
