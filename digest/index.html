@@ -1960,6 +1960,9 @@
   .rec-lines { display: flex; flex-wrap: wrap; gap: 4px 0; }
   .rec-line { font-family: 'Newsreader', serif; font-size: 16px; line-height: 1.45; color: rgba(234,217,197,0.85); }
   .rec-line + .rec-line::before { content: '·'; margin: 0 8px; color: rgba(234,217,197,0.3); }
+  .rec-marks { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+  .rec-mark { display: inline-flex; align-items: baseline; gap: 6px; font-family: 'Overpass', sans-serif; font-size: 10px; letter-spacing: 0.04em; padding: 3px 8px; border-radius: 3px; border: 1px solid rgba(1,178,167,0.35); color: rgba(234,217,197,0.72); }
+  .rec-mark-when { color: rgba(234,217,197,0.38); }
 
   /* Beat cards are buttons now: tapping one opens the explainer for that
      subject. Reset only what the UA adds. */
@@ -2555,7 +2558,7 @@ function buildDigest() {
         <div class="mot-reveal" id="motReveal">
           <div class="mot-beat-line" id="motBeatLine"></div>
           <div class="mot-reveal-fact" id="motFact"></div>
-          <div class="mot-reveal-congrats">Congratulations — you completed today's NTK News. More headlines and history tomorrow.</div>
+          <div class="mot-reveal-congrats" id="motRecordLine">You finished today's NTK News. More tomorrow.</div>
         </div>
       </div>
       <div class="mot-footer">
@@ -2730,32 +2733,37 @@ function updateCategoryLabel(subject) {
 
 var beatToastTimer = null;
 
+var beatToastQueue = [];
 function showBeatToast(html) {
   var toast = document.getElementById('beatToast');
   var textEl = document.getElementById('beatToastText');
-  if (!toast || !textEl) return;
-  if (beatToastTimer) clearTimeout(beatToastTimer);
+  if (!toast || !textEl || !html) return;
+  if (toast.classList.contains('show')) { beatToastQueue.push(html); return; }
   textEl.innerHTML = html;
   toast.classList.remove('show');
   void toast.offsetWidth;
   toast.classList.add('show');
-  beatToastTimer = setTimeout(function() { toast.classList.remove('show'); }, 3500);
+  if (beatToastTimer) clearTimeout(beatToastTimer);
+  beatToastTimer = setTimeout(function() {
+    toast.classList.remove('show');
+    if (beatToastQueue.length) setTimeout(function() { showBeatToast(beatToastQueue.shift()); }, 350);
+  }, 3500);
 }
 
 function beatsToastCopy(cat, idx, st) {
   var n = (st && st.stories) || 0;
   var shared = (st && st.shares || 0) > 0;
-  if (idx === 0) return 'You saw the surface on ' + cat + '. That is where everyone starts.';
-  if (idx === 1) return 'You read past the summary on ' + cat + '. <strong>You know what happened and why.</strong>';
-  if (idx === 2) return 'You opened the Lies layer on ' + cat + '. <strong>You did not take the surface at face value.</strong>';
-  if (idx === 3) return 'You came back to ' + cat + '. <strong>That is attention, not habit.</strong>';
-  if (idx === 4) return n + ' stories on ' + cat + ', and you keep going deeper. <strong>You are on the beat.</strong>';
+  if (idx === 0) return 'You opened a story on ' + cat + '. That is the surface.';
+  if (idx === 1) return 'You read past the summary on ' + cat + '. <strong>You are briefed.</strong>';
+  if (idx === 2) return 'You held open the Lies layer on ' + cat + '. <strong>Now you have read it.</strong>';
+  if (idx === 3) return 'Another ' + cat + ' story, on a different day from the last. <strong>You are following it.</strong>';
+  if (idx === 4) return n + ' stories on ' + cat + ', read below the summary. <strong>You are on the beat.</strong>';
   if (idx === 5) return shared
     ? 'You sent a ' + cat + ' story to someone. <strong>You are carrying it now.</strong>'
-    : 'Three times now you have gone after the lies on ' + cat + '. <strong>You are carrying it.</strong>';
+    : 'The Lies layer on three ' + cat + ' stories. <strong>You are carrying it.</strong>';
   if (idx === 6) return shared
-    ? n + ' stories on ' + cat + '. You went into the history, you read the lies, you passed it on. <strong>You are a witness to this one.</strong>'
-    : n + ' stories on ' + cat + ', and you kept checking what was being claimed. <strong>You are a witness to this one.</strong>';
+    ? n + ' stories on ' + cat + '. Into the history, through the lies, and passed on. <strong>You are a witness to this one.</strong>'
+    : n + ' stories on ' + cat + '. Into the history twice, through the lies on five. <strong>You are a witness to this one.</strong>';
   return null;
 }
 
@@ -2818,13 +2826,59 @@ function beatsRecordHistory(cat, rid, oi) {
   beatsEnsure(data, cat);
   var d = data[cat];
   var at = d.historyAt || (d.historyAt = {});
-  if ((Date.now() - (at[rid] || 0)) > 4 * 3600000) {
+  var fresh = (Date.now() - (at[rid] || 0)) > 4 * 3600000;
+  if (fresh) {
     d.history = (d.history || 0) + 1;
     at[rid] = Date.now();
   }
   if (oi != null) d.objects = (d.objects || 0) + 1;
   beatsSave(data);
   updateBeatChip();
+  return fresh;
+}
+
+// ── FIRSTS AND MARKS ─────────────────────────────────────────────
+// Each fires once, ever, so none can become a greeting and none can become a
+// scoreboard: they count things done, never days. The rung toasts say where a
+// subject has got to; these say that something happened for the first time.
+// Same rule for the words: the thing done, then the name for it.
+var MARKS_KEY = 'ntk_marks_v1';
+var MARKS = {
+  digest_1:              { label: 'First digest finished',   line: 'Your first digest, start to finish.' },
+  digest_5:              { label: 'Fifth digest finished',   line: 'Your fifth digest, start to finish.' },
+  digest_10:             { label: 'Tenth digest finished',   line: 'Your tenth digest, start to finish.' },
+  digest_25:             { label: '25 digests finished',     line: 'Twenty-five digests, each one finished.' },
+  digest_50:             { label: '50 digests finished',     line: 'Fifty digests, each one finished.' },
+  backstory_first:       { label: 'Into the Backstory',      line: 'Your first trip into the history, on {cat}.' },
+  object_first:          { label: 'First document read',     line: 'You read the document itself, not a story about it.' },
+  backstory_return:      { label: 'Back to the Backstory',   line: 'Back into the history on {cat}, on a different day.' },
+  share_first:           { label: 'First story passed on',   line: 'You sent an NTK story to someone for the first time.' },
+  backstory_share_first: { label: 'Backstory passed on',     line: 'You passed on the history, not the headline.' }
+};
+function marksLoad() {
+  try { return JSON.parse(localStorage.getItem(nsKey(MARKS_KEY))) || {}; } catch(e) { return {}; }
+}
+function marksHas(id) { return !!marksLoad()[id]; }
+// Records the mark and returns its line the first time; null every time after.
+function markFire(id, vars) {
+  var m = MARKS[id];
+  if (!m) return null;
+  var marks = marksLoad();
+  if (marks[id]) return null;
+  marks[id] = Date.now();
+  try { localStorage.setItem(nsKey(MARKS_KEY), JSON.stringify(marks)); } catch(e) {}
+  return markLine(id, vars);
+}
+function markLine(id, vars) {
+  var text = MARKS[id].line;
+  Object.keys(vars || {}).forEach(function(k) { text = text.split('{' + k + '}').join(escBsr(vars[k])); });
+  return text;
+}
+function ordinalWord(n) {
+  var words = ['', 'first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth', 'ninth', 'tenth'];
+  if (n <= 10) return words[n];
+  var v = n % 100, suf = ['th', 'st', 'nd', 'rd'];
+  return n + (suf[(v - 20) % 10] || suf[v] || suf[0]);
 }
 
 // A source followed out of a story. Texture for the record, not a rung.
@@ -2854,13 +2908,13 @@ function beatsRecordLies(cat, key) {
 // already happening rather than manufacturing it, so this says what a status
 // is made of and never tells a reader to go and do it.
 function beatsExplain(idx) {
-  if (idx === 0) return 'You opened a story here and saw the surface. Everyone starts here, and stopping here is a real thing to have done.';
-  if (idx === 1) return 'You went past the summary into one of the four sections. You know what happened and why it matters.';
-  if (idx === 2) return 'You opened the Lies layer, the section that names a claim and whoever is making it. Reading it means you did not take the surface at face value.';
-  if (idx === 3) return 'You came back to this subject in a later sitting. Coming back is the part that is hard to fake.';
-  if (idx === 4) return 'Several stories on one subject, and you keep going deeper into them. A reporter on a beat is not an expert; they are someone paying sustained attention.';
-  if (idx === 5) return 'You either passed a story on or kept going back to what was being claimed. Either one means you understood it well enough to do something with it.';
-  if (idx === 6) return 'Months of attention on one subject, into the history and back out again. Not a credential. You were there, and you cannot unsee it.';
+  if (idx === 0) return 'You opened a story here and saw the surface. Everyone starts here.';
+  if (idx === 1) return 'You went past the summary into one of the four sections.';
+  if (idx === 2) return 'You held open the Lies layer, the section that names a claim and who is making it.';
+  if (idx === 3) return 'You read this subject again in a later sitting.';
+  if (idx === 4) return 'Several stories on one subject, read below the summary. A reporter on a beat is someone paying sustained attention.';
+  if (idx === 5) return 'You passed a story on, or read the Lies layer on three separate stories.';
+  if (idx === 6) return 'Months on one subject, into the history and back out. Not a credential: you were there.';
   return '';
 }
 
@@ -2876,20 +2930,19 @@ function beatsNextRung(cat, d) {
   var cur = beatIdx(d);
   if (cur < 0 || cur >= BEAT_REQS.length - 1) return null;
   var req = BEAT_REQS[cur + 1], next = BEATS_SCALE[cur + 1], bits = [];
-  if (req.stories)  bits.push(req.stories + ' stories on ' + cat);
+  // Nouns, not instructions: what the rung is made of, never what to go and do.
+  if (req.stories)  bits.push(req.stories + ' stories');
   if (req.sessions) bits.push(req.sessions + ' separate sittings');
-  if (req.depth)    bits.push('opening ' + req.depth + ' section' + (req.depth === 1 ? '' : 's') + ' below the summary');
-  if (req.lies)     bits.push('reading the Lies layer');
-  if (req.history)  bits.push('going into the Backstory on ' + req.history + ' separate sittings');
-  if (req.carry)    bits.push('either sharing one, or going back to the lies on ' +
-                              req.carry.liesStories + ' separate stories');
+  if (req.depth)    bits.push(req.depth + ' section' + (req.depth === 1 ? '' : 's') + ' below the summary');
+  if (req.lies)     bits.push('the Lies layer');
+  if (req.history)  bits.push(req.history + ' trips into the Backstory');
+  if (req.carry)    bits.push('either a share or the Lies layer on ' + req.carry.liesStories + ' of them');
   var st = d.stories || 0, se = d.sessions || 1;
   return {
     label: next.label,
     color: next.color,
-    sentence: next.label + ' goes to readers with ' + beatsJoin(bits) + '. You are at ' +
-              st + (st === 1 ? ' story' : ' stories') + ' across ' +
-              se + (se === 1 ? ' sitting' : ' sittings') + ' on ' + cat + '.'
+    sentence: next.label + ' takes ' + beatsJoin(bits) + ' on one subject. So far on ' + cat + ': ' +
+              st + (st === 1 ? ' story' : ' stories') + ', ' + se + (se === 1 ? ' sitting' : ' sittings') + '.'
   };
 }
 
@@ -2909,7 +2962,7 @@ function openChipInfo() {
   if (!seen) {
     try { localStorage.setItem(nsKey(CHIP_SEEN_KEY), '1'); } catch(e) {}
     showBeatInfo('What this is', BEATS_SCALE[top.idx].label,
-      'NTK keeps track of what you read, on your own device and nowhere else. This is the furthest you have got on any one subject, right now on ' +
+      'NTK keeps your reading on this device and nowhere else. Your furthest beat is ' +
       top.category + '. ' + beatsExplain(top.idx), BEATS_SCALE[top.idx].color);
     return;
   }
@@ -3033,15 +3086,17 @@ document.addEventListener('click', function(e) {
 var INS_H = 3600000, INS_D = 86400000;
 var INSPECT_READERS = {
   'new':    { label: 'New reader', visits: null, beats: {}, editions: 0, orient: false, chip: false },
-  'day2':   { label: 'Day 2', visits: { first: -26 * INS_H, last: -26 * INS_H, total: 1 }, orient: true, chip: false, editions: 1,
+  'day2':   { label: 'Day 2', visits: { first: -26 * INS_H, last: -26 * INS_H, total: 1 }, orient: true, chip: false, editions: 1, marks: { digest_1: -26 * INS_H },
               beats: { 'Executive Power': { stories: 2, depth: 1, sessions: 1, lastActive: -26 * INS_H, entities: { 'White House ballroom': 1 } } } },
   'week2':  { label: 'Week 2', visits: { first: -13 * INS_D, last: -2 * INS_D, total: 6 }, orient: true, chip: true, editions: 4,
+              marks: { digest_1: -13 * INS_D, backstory_first: -6 * INS_D },
               beats: {
                 'Executive Power':   { stories: 5, depth: 3, sessions: 4, liesRead: true, liesStories: ['a', 'b'], history: 1, lastActive: -2 * INS_D,
                                        entities: { 'White House ballroom': 2, 'Nidal Hasan': 1, 'Pete Hegseth': 2 } },
                 'Gaza':              { stories: 3, depth: 1, sessions: 2, lastActive: -3 * INS_D, entities: { 'Sally Rooney': 1, 'UNRWA': 1 } },
                 'Ukraine and Russia':{ stories: 1, depth: 0, sessions: 1, lastActive: -9 * INS_D } } },
   'month2': { label: 'Month 2', visits: { first: -61 * INS_D, last: -10 * INS_D, total: 25 }, orient: true, chip: true, editions: 14, links: 4,
+              marks: { digest_1: -60 * INS_D, digest_5: -48 * INS_D, digest_10: -30 * INS_D, backstory_first: -50 * INS_D, backstory_return: -44 * INS_D, object_first: -44 * INS_D, share_first: -22 * INS_D },
               beats: {
                 'Executive Power':   { stories: 12, depth: 7, sessions: 9, liesRead: true, liesStories: ['a','b','c','d','e'], history: 2, objects: 2, links: 3, shares: 1, lastActive: -10 * INS_D,
                                        entities: { 'White House ballroom': 3, 'Pete Hegseth': 4, 'Nidal Hasan': 1, 'Supreme Court': 2 } },
@@ -3074,6 +3129,9 @@ function inspectSeed() {
     localStorage.setItem(INSPECT_WHO_KEY, who);
     localStorage.setItem(nsKey(BEATS_KEY), JSON.stringify(beats));
     localStorage.setItem(nsKey(RECORD_KEY), JSON.stringify({ editions: editions, links: f.links || 0 }));
+    var marks = {};
+    Object.keys(f.marks || {}).forEach(function(k) { marks[k] = now + f.marks[k]; });
+    localStorage.setItem(nsKey(MARKS_KEY), JSON.stringify(marks));
     if (f.visits) localStorage.setItem(nsKey(VISITS_KEY), JSON.stringify({ first: now + f.visits.first, last: now + f.visits.last, total: f.visits.total }));
     else localStorage.removeItem(nsKey(VISITS_KEY));
     localStorage.setItem(nsKey(ORIENT_KEY), f.orient ? '1' : '0');
@@ -3120,8 +3178,12 @@ function inspectMomentsHtml() {
     line(BEATS_SCALE[i].label + (i < 1 ? ' (never spoken)' : ''), beatsToastCopy(cat, i, st) || '<em>none</em>');
     if (i >= 5) line(BEATS_SCALE[i].label + ', having shared', beatsToastCopy(cat, i, Object.assign({ shares: 1 }, st)));
   }
+  sec('Firsts and marks (once, ever)');
+  Object.keys(MARKS).forEach(function(id) { line(MARKS[id].label, markLine(id, { cat: cat })); });
+  sec('Finishing a digest (the Moment of Then)');
+  line('Any digest', 'Your ' + ordinalWord(14) + ' digest, start to finish. More tomorrow.');
   sec('Tapping the chip');
-  line('First time', 'NTK keeps track of what you read, on your own device and nowhere else. This is the furthest you have got on any one subject, right now on ' + cat + '. ' + beatsExplain(3));
+  line('First time', 'NTK keeps your reading on this device and nowhere else. Your furthest beat is ' + cat + '. ' + beatsExplain(3));
   for (var j = 0; j < BEATS_SCALE.length - 1; j++) {
     var req = BEAT_REQS[j], synth = {
       stories: req.stories || 1, sessions: req.sessions || 1, depth: req.depth || 0, liesRead: !!req.lies,
@@ -3458,7 +3520,7 @@ function bpIndicator(ind){
 }
 
 function bpRowHtml(r){
-  var h = '<div class="bp-bar"><button type="button" data-bp="back">← Backstory</button></div>'
+  var h = '<div class="bp-bar"><button type="button" data-bp="back">← Backstory</button><button type="button" data-bp="share" aria-label="Share this backstory">Share</button></div>'
     + '<div class="bp-hd"><h1>' + escBsr(r.title) + '</h1><div class="bp-ms">' + escBsr(r.milestone || '') + '</div></div>';
   if (r.stratum === 'fire') {
     h += '<section class="bp-sec" style="text-align:center"><div style="font:700 34px Overpass,sans-serif">' + bsrFormatDuration(bsrDaysSince(r.start_date)) + '</div>'
@@ -3514,7 +3576,7 @@ function bpObjectHtml(r, oi){
 }
 
 // opts.fromHistory: called by popstate — don't push a new entry.
-var bsrEntrySubject = null, bsrEntryIdx = -1;
+var bsrEntrySubject = null, bsrEntryIdx = -1, bsrPendingMarks = [];
 function showBsrPage(rid, oi, opts){
   var r = bpRow(rid);
   if (!r) return;
@@ -3527,7 +3589,13 @@ function showBsrPage(rid, oi, opts){
     bsrEntrySubject = pairedSubject;
     bsrEntryIdx = pairedSubject ? beatIdx((beatsLoad())[pairedSubject]) : -1;
   }
-  beatsRecordHistory(pairedSubject, rid, oi);
+  var fresh = beatsRecordHistory(pairedSubject, rid, oi);
+  if (fresh) {
+    var firstAt = marksLoad().backstory_first;
+    if (!firstAt) bsrPendingMarks.push(markFire('backstory_first', { cat: pairedSubject || r.title }));
+    else if ((Date.now() - firstAt) > 4 * 3600000) bsrPendingMarks.push(markFire('backstory_return', { cat: pairedSubject || r.title }));
+  }
+  if (oi != null) bsrPendingMarks.push(markFire('object_first'));
   var el = document.getElementById('bsrPage');
   if (oi != null && !(r.objects && r.objects[oi])) oi = null;
   el.innerHTML = '<div class="bp-wrap">' + (oi != null ? bpObjectHtml(r, oi) : bpRowHtml(r)) + '</div>';
@@ -3555,6 +3623,34 @@ function hideBsrPage(){
     }
     bsrEntrySubject = null; bsrEntryIdx = -1;
   }
+  bsrPendingMarks.filter(Boolean).forEach(showBeatToast);
+  bsrPendingMarks = [];
+}
+
+// Sharing a Backstory page. The row has a permalink; until now it had no way
+// to send it. Credited to the paired story's subject like a story share.
+function shareBackstory(rid) {
+  var r = bpRow(rid);
+  if (!r) return;
+  var idx = findStoryIndexByKey(r.story_id);
+  var subject = idx >= 0 ? storySubject(stories[idx]) : null;
+  var url = location.origin + bpPath(rid, null);
+  var text = r.stakes || r.milestone || '';
+  track('backstory_share', { row: rid });
+  if (navigator.share) {
+    navigator.share({ title: r.title + ' · NTK Backstory', text: text, url: url })
+      .then(function() {
+        beatsRecordShare(subject, 'share');
+        bsrPendingMarks.push(markFire('backstory_share_first'));
+        track('backstory_shared', { row: rid });
+      })
+      .catch(function() {});
+  } else {
+    copyShareLink(url, r.title);
+    beatsRecordShare(subject, 'copy');
+    var b = document.querySelector('#bsrPage [data-bp="share"]');
+    if (b) { b.textContent = 'Copied'; setTimeout(function() { b.textContent = 'Share'; }, 1800); }
+  }
 }
 function bsrPageBack(){
   var st = history.state;
@@ -3568,6 +3664,7 @@ document.addEventListener('click', function(e){
   var cur = { rid: BSR_PAGE_ROW };
   var kind = t.dataset.bp;
   if (kind === 'back') return bsrPageBack();
+  if (kind === 'share') return shareBackstory(cur.rid);
   if (kind === 'obj') return showBsrPage(cur.rid, parseInt(t.dataset.oi, 10));
   // Up from an object is Back, not a new entry. Pushing here is what made
   // "← Backstory" on the row land on the object we had just left.
@@ -3913,10 +4010,10 @@ function profileRecordLines() {
   if (v.first) { var f = new Date(v.first); lines.push('Reading since ' + months[f.getMonth()] + ' ' + f.getDate()); }
   if (editions) lines.push(editions + (editions === 1 ? ' digest finished' : ' digests finished'));
   if (subjects.length) lines.push(subjects.length + (subjects.length === 1 ? ' subject' : ' subjects') + ' followed');
-  if (lies) lines.push('The Lies layer on ' + lies + (lies === 1 ? ' story' : ' stories'));
+  if (lies) lines.push(lies + (lies === 1 ? ' Lies layer' : ' Lies layers') + ' read');
   if (history) lines.push(history + (history === 1 ? ' trip' : ' trips') + ' into the Backstory');
-  if (objects) lines.push(objects + (objects === 1 ? ' primary document' : ' primary documents') + ' opened');
-  if (links) lines.push(links + (links === 1 ? ' source' : ' sources') + ' followed out');
+  if (objects) lines.push(objects + (objects === 1 ? ' document' : ' documents') + ' read');
+  if (links) lines.push(links + (links === 1 ? ' source' : ' sources') + ' opened');
   if (shares) lines.push(shares + (shares === 1 ? ' story' : ' stories') + ' passed on');
   return lines;
 }
@@ -3966,10 +4063,17 @@ function renderProfileTab() {
   if (!list) return;
   if (rec) {
     var lines = profileRecordLines();
-    rec.innerHTML = lines.length
+    var marks = marksLoad();
+    var firsts = Object.keys(marks).filter(function(id) { return MARKS[id]; })
+      .sort(function(a, b) { return marks[a] - marks[b]; })
+      .map(function(id) {
+        var dt = new Date(marks[id]);
+        return '<span class="rec-mark">' + MARKS[id].label + '<span class="rec-mark-when">' + months[dt.getMonth()].slice(0, 3) + ' ' + dt.getDate() + '</span></span>';
+      });
+    rec.innerHTML = (lines.length
       ? '<div class="rec-kicker">The record</div><div class="rec-lines">' +
         lines.map(function(l) { return '<div class="rec-line">' + l + '</div>'; }).join('') + '</div>'
-      : '';
+      : '') + (firsts.length ? '<div class="rec-marks">' + firsts.join('') + '</div>' : '');
   }
   var domains = Object.keys(data).map(function(cat) {
     return { cat: cat, stats: data[cat], idx: beatIdx(data[cat]) };
@@ -4147,13 +4251,16 @@ function closeStory(opts) {
   }
   updateFeedbackBtn();
 
+  var spoke = false;
   if (cat) {
     const newIdx = beatIdx((beatsLoad())[cat]);
     if (newIdx > prevIdx && beatsShouldToast(newIdx)) {
       const copy = beatsToastCopy(cat, newIdx, beatsLoad()[cat] || {});
-      if (copy) { showBeatToast(copy); beatsMarkToast(newIdx); }
+      if (copy) { showBeatToast(copy); beatsMarkToast(newIdx); spoke = true; }
     }
   }
+  if (pendingStoryMark && !spoke) showBeatToast(pendingStoryMark);
+  pendingStoryMark = null;
 }
 
 // ── Section toggle ────────────────────────────────────────────────
@@ -4306,6 +4413,7 @@ function copyShareLink(url, title) {
 }
 
 // ── Share ─────────────────────────────────────────────────────────
+var pendingStoryMark = null;
 function shareStory() {
   const s = stories[currentStoryIndex];
   const subject = storySubject(s);
@@ -4315,7 +4423,11 @@ function shareStory() {
     // The promise resolves when the sheet reports the share went somewhere and
     // rejects when it was dismissed. Only the first is a share.
     navigator.share({ title: s.headline, text: s.lede, url: shareUrl })
-      .then(function() { beatsRecordShare(subject, 'share'); track('story_shared', { story_index: currentStoryIndex + 1 }); })
+      .then(function() {
+        beatsRecordShare(subject, 'share');
+        pendingStoryMark = markFire('share_first');
+        track('story_shared', { story_index: currentStoryIndex + 1 });
+      })
       .catch(function() {});
   } else {
     copyShareLink(shareUrl, s.headline);
@@ -4389,6 +4501,18 @@ function startMotAnimation() {
   factEl.textContent = typeof funFact !== 'undefined'
     ? funFact
     : 'Did you know? History is always closer than it seems.';
+
+  // The record line: which digest this was, by count. Finishing the first, the
+  // fifth, the tenth, the 25th and the 50th is also a mark on /me. Never a
+  // calendar, never a run of days.
+  var recLineEl = document.getElementById('motRecordLine');
+  if (recLineEl) {
+    var count = Object.keys((recordLoad()).editions || {}).length;
+    if (count > 0) {
+      recLineEl.textContent = 'Your ' + ordinalWord(count) + ' digest, start to finish. More tomorrow.';
+      if (MARKS['digest_' + count]) markFire('digest_' + count);
+    }
+  }
 
   // Beat summary — categories engaged in this session
   var beatLineEl = document.getElementById('motBeatLine');

@@ -1,6 +1,6 @@
 # Expertise — the pillar, the problem, and the build
 
-**Verified against the repo 2026-10-21** (branch `T-0100-expertise-pillar`). This is the
+**Verified against the repo 2026-10-23** (T-0100 merged; T-0101 adds firsts and marks). This is the
 entry point for Expertise the way `docs/backstory.md` is for Backstory. The vision lives in
 `~/Desktop/NTK/Briefings and narratives/ntk-expertise-narrative-v1.1.html` (the briefing);
 the mechanism lives in `digest/index.html`; the open work is in `docs/tickets/`. Where this
@@ -90,6 +90,26 @@ All in `digest/index.html` unless noted.
   the explainer with the rung's meaning and what the next one takes. This is option A below.
 - `scripts/beats-sim.js` runs again and models Backstory trips.
 
+### Added by T-0101 (2026-10-23)
+
+- **Firsts and marks.** Ten one-time moments, each fired once ever (`MARKS`, `markFire`):
+  first, fifth, tenth, 25th and 50th digest finished; first trip into the Backstory; first
+  document read; back to the Backstory on a different day; first story passed on; first
+  Backstory passed on. Toasts queue instead of overwriting. Each appears on `/me` under the
+  record with the day it happened. A first-share mark yields to the Carrying It toast when
+  both land on one close.
+- **The Moment of Then carries the record line**: "Your 14th digest, start to finish. More
+  tomorrow." It replaced a cheer with an em dash in it. The digest marks fire there, silently.
+- **Backstory pages can be shared.** A Share control on the row page; credited to the paired
+  subject like a story share, with the same success-only rule.
+- **The voice rule**, applied to every line: a concrete thing the reader did, past tense, then
+  the word for it. Nothing about the reader's character. "That is attention, not habit" and
+  "you cannot unsee it" are gone. The next-rung sentence is nouns, not instructions:
+  "Carrying It takes 7 stories, 3 separate sittings, the Lies layer and either a share or the
+  Lies layer on 3 of them on one subject."
+- Deliberately not a mark: turning on location for local news and weather. A permission grant
+  is not reading, and rewarding one reads as a dark pattern.
+
 ## 4. What is mocked only
 
 The design canvas (`design_handoff_expertise/`, and the NTK Expertise artifact) shows these;
@@ -130,6 +150,7 @@ and nothing else.
 | Copied the link | `copies` | texture |
 | Finished the digest | `record.editions[date]` | record |
 | Entity on a read story | `entities{}` | clippings |
+| A first (ten kinds, see `MARKS`) | `ntk_marks_v1[id]` = when | mark on /me, one toast |
 
 Not observable from a web app, and said so rather than faked: which app a share went to.
 Not counted yet, by choice: listening to a story, time on page, scroll depth.
@@ -150,8 +171,8 @@ Netlify rule and does not exist on the preview server.
 
 ## 8. Next
 
-- Pick A, B or C (section 5). Then T-0027, the editorial pass on every line, which now has a
-  sheet to read them in.
+- Pick A, B or C (section 5). T-0027's editorial pass: the editor has read the sheet once
+  (2026-10-23) and set the voice rule; the lines were rewritten to it. A second read is still owed.
 - The Witness graduation moment and the Triforce, from the canvas.
 - Cross-story connection: "a story whose Backstory connected to one you read before" is in
   the briefing's Connection behaviours and is not recorded. The row id per subject is

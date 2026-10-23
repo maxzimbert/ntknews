@@ -29,7 +29,7 @@ in `digest/index.html` with the app's existing Newsreader/Overpass loading and C
 | `Me.dc.html` | The full `/me` page for a two-month reader, with the Triforce slot. | Prod minus the Triforce |
 | `Triforce.dc.html` | Curiosity, Persistence, Assuredness: earned in sequence after the first Witness. Thresholds are a proposal. | Mock only |
 | `Inspect.dc.html` | The founder's inspect bar and the four fixture readers. | Matches prod (`/me?inspect=month2`) |
-| `Moments.dc.html` | The "Every line" sheet: all copy the system can say. | Matches prod |
+| `Moments.dc.html` | The "Every line" sheet: all copy the system can say, firsts and marks included (T-0101). | Matches prod |
 
 ## Design system this follows
 
