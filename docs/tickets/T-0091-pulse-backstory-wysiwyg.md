@@ -1,7 +1,7 @@
 ---
 id: T-0091
 title: Pulse's Backstory preview looks like the reader's /backstory page
-status: BUILT
+status: VERIFIED
 tags: [pulse, feature]
 anchor: ntk-pulse/pulse.html
 ---
