@@ -2355,7 +2355,7 @@ function renderBackstory(root){
   root.querySelectorAll('.bsr-lu').forEach(el=>{
     const s=LINEUP.find(x=>x.key===el.dataset.key); if (!s) return;
     el.querySelector('.bsr-lu-tag').addEventListener('change',e=>{ s.backstoryRow=e.target.value||''; catReviveIfArchived(s.backstoryRow); saveLineup(); render(); });
-    const op=el.querySelector('.bsr-lu-open'); if (op) op.addEventListener('click',()=>{ CAT_SEL=s.backstoryRow; if (!CATS[CAT_SEL]) catEnsureLocal(CAT_SEL); render(); });
+    const op=el.querySelector('.bsr-lu-open'); if (op) op.addEventListener('click',()=>{ CAT_SEL=s.backstoryRow; if (!CATS[CAT_SEL]) catEnsureLocal(CAT_SEL); render(); catShowEditor(); });
     bsrKwWire(el, s);
   });
   document.getElementById('cat-new').addEventListener('click',()=>{
@@ -3030,6 +3030,18 @@ function storyDataExport(stories){
 const PUBLISH_MIN = 4, PUBLISH_MAX = 10;   // docs/decisions.md, corrected 2026-09-18
 const INSUFFICIENT = 'INSUFFICIENT SOURCE MATERIAL';
 
+// T-0102: an object ticked under a Lineup story (s.bsPicks) reaches the reader only once it is added to a
+// category. Publish never adds it (adding unapproves an approved category), so it says which stories have
+// some left behind.
+function keptPreflight(lineup, cats){
+  return (lineup||[]).map(s=>{
+    const c=cats[s.backstoryRow], on=new Set(((c&&c.objects)||[]).map(x=>x.object_id));
+    const n=(s.bsPicks||[]).filter(id=>!on.has(id)).length;
+    if (!n) return null;
+    return ((s.title||'').trim().slice(0,52)||('story '+(s.key||'?')))+' \u2014 '+n+' kept object'+(n===1?' was':'s were')+
+      ' never added to a category, so the reader will not get '+(n===1?'it':'them')+' (Backstory tab: add, or start a new category)';
+  }).filter(Boolean);
+}
 function publishPreflight(stories){
   const drop = [], warn = [];
   stories.forEach(s => {
@@ -3126,6 +3138,8 @@ async function publishToDigest(){
 
   const pf = publishPreflight(all);
   pf.warn.push(...tp.warn);
+  const keptCats={}; PUBCATS.forEach(r=>{ keptCats[r.id]=r; }); Object.assign(keptCats, CATS);
+  pf.warn.push(...keptPreflight(LINEUP, keptCats));
   pf.warn.push(...rowPreflight(all, catsForPublish()));
   if ((pf.drop.length || pf.warn.length) && !confirm(preflightDialogText(pf))) return;
   if (!pf.shipping){ alert('Every story in the lineup is missing a headline — nothing to publish.'); return; }
@@ -4083,6 +4097,11 @@ function bsrPicksHtml(s){
       ${editable?'':`<span style="font-size:11px;color:var(--dim)">${s.backstoryRow?'This story is under a fixed row, which takes its objects from backstory-rows.json, so these start a category of their own.':'This story is not filed yet.'}</span>`}
     </div></div>`;
 }
+// T-0103: the category editor sits below the whole Lineup list, so selecting one from a story changed
+// nothing the editor could see. Bring it into view after the redraw.
+function catShowEditor(){
+  requestAnimationFrame(()=>{ const ed=document.getElementById('cat-editor'); if (ed) ed.scrollIntoView({behavior:'smooth', block:'start'}); });
+}
 function bsrCategoryTitles(){
   return Array.from(new Set(BSR_ROWS.map(r=>r.title).concat(Object.values(CATS).map(c=>c.title), PUBCATS.map(r=>r.title)).filter(Boolean)));
 }
@@ -4120,6 +4139,7 @@ function bsrCreateCategory(s, name){
   const c=CATS[id]||catEnsureLocal(id), picks=(s.bsPicks||[]).slice();
   s.bsPicks=[]; delete BSR_NAMING[s.key]; saveLineup(); CAT_SEL=id;
   if (c && picks.length) catAddFromPool(c, picks); else render();
+  catShowEditor();
 }
 // The story's Backstory as a reader would get it, before publish: the reader's own card, then the page's
 // Beginnings and objects. A Pulse category is shown as it stands in Pulse; a fixed row as it is published.
