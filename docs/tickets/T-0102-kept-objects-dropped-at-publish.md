@@ -1,7 +1,7 @@
 ---
 id: T-0102
 title: Publishing drops objects the editor kept for a story but never added to a category, and says nothing
-status: DECIDED
+status: BUILT
 tags: [pulse, defect]
 anchor: ntk-pulse/pulse.html:3127
 ---
