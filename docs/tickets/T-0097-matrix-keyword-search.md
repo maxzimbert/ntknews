@@ -1,7 +1,7 @@
 ---
 id: T-0097
 title: Each Lineup story on Pulse's Backstory tab has a keyword search that ranks the Object Matrix by the story's own words and subject
-status: BUILT
+status: VERIFIED
 tags: [pulse, feature]
 anchor: ntk-pulse/pulse.html
 ---

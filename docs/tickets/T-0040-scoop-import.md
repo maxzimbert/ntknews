@@ -1,7 +1,7 @@
 ---
 id: T-0040
 title: A single-outlet scoop has no way into the lineup
-status: BUILT
+status: VERIFIED
 tags: [pulse, feature]
 anchor: ntk-pulse/pulse.html:2365
 ---

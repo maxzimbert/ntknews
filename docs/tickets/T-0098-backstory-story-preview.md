@@ -1,7 +1,7 @@
 ---
 id: T-0098
 title: Each Lineup story on Pulse's Backstory tab can be previewed as the reader will get it, built up from several matrix searches, and given a new category from three suggested names
-status: BUILT
+status: VERIFIED
 tags: [pulse, feature]
 anchor: ntk-pulse/pulse.html
 ---

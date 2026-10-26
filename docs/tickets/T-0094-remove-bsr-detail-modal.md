@@ -1,7 +1,7 @@
 ---
 id: T-0094
 title: The old Backstory detail modal (openBsrDetail) is gone from the reader app
-status: BUILT
+status: VERIFIED
 tags: [digest, chore]
 anchor: digest/index.html
 ---

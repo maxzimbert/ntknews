@@ -1,7 +1,7 @@
 ---
 id: T-0096
 title: Pulse warns before publishing a Today overview that mentions a story no longer in the lineup
-status: BUILT
+status: VERIFIED
 tags: [pulse, defect]
 anchor: ntk-pulse/pulse.html
 ---

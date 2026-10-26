@@ -1,7 +1,7 @@
 ---
 id: T-0022
 title: A story the model refused to write ships as a blank card and a crawlable permalink
-status: BUILT
+status: VERIFIED
 tags: [pulse, defect]
 anchor: ntk-pulse/data/lineup-publish.json
 ---

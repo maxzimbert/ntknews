@@ -1,7 +1,7 @@
 ---
 id: T-0092
 title: A new category with no origin found shows no "Running for 0 days" on its card
-status: BUILT
+status: VERIFIED
 tags: [digest, defect]
 anchor: digest/index.html
 ---

@@ -1,7 +1,7 @@
 ---
 id: T-0077
 title: Story pages get one LISTEN · SHARE · BACK action bar and the logo at top left
-status: BUILT
+status: VERIFIED
 tags: [digest, feature]
 anchor: digest/index.html:1810
 ---

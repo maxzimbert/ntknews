@@ -1,7 +1,7 @@
 ---
 id: T-0008
 title: A prepublish skill that integrity-checks the lineup before it ships
-status: BUILT
+status: VERIFIED
 tags: [process, feature]
 anchor: ntk-pulse/data/lineup-publish.json
 ---

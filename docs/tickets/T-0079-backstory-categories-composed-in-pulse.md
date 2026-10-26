@@ -1,7 +1,7 @@
 ---
 id: T-0079
 title: Backstory categories are composed, reviewed, revised and saved inside Pulse, and the Lineup publish carries them
-status: BUILT
+status: VERIFIED
 tags: [backstory, feature]
 anchor: ntk-pulse/pulse.html
 ---

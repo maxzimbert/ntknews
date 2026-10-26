@@ -1,7 +1,7 @@
 ---
 id: T-0093
 title: The publish and Pulse bots rebase and retry when main moved during their run, instead of losing the run
-status: BUILT
+status: VERIFIED
 tags: [infra, defect]
 anchor: .github/workflows/pulse-publish.yml
 ---

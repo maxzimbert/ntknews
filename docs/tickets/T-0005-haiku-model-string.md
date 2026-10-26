@@ -1,7 +1,7 @@
 ---
 id: T-0005
 title: The Haiku model string differs between pipeline stages
-status: DECIDED
+status: VERIFIED
 tags: [pipeline, chore]
 anchor: ntk-pulse/triage.py:27
 ---

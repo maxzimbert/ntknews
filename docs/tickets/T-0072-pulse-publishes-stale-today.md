@@ -1,7 +1,7 @@
 ---
 id: T-0072
 title: Pulse publishes the Today overview it happens to hold, even mid-generation or from weeks ago
-status: BUILT
+status: VERIFIED
 tags: [pulse, defect]
 anchor: ntk-pulse/pulse.html:2129
 ---

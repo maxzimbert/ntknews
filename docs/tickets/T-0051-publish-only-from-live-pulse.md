@@ -1,7 +1,7 @@
 ---
 id: T-0051
 title: Pulse's Publish button works from any page that holds the token, including a staging copy
-status: BUILT
+status: VERIFIED
 tags: [pulse, defect]
 anchor: ntk-pulse/pulse.html:2140
 ---

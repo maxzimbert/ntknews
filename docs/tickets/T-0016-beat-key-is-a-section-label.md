@@ -1,7 +1,7 @@
 ---
 id: T-0016
 title: Expertise is keyed to a section of the paper, not to anything a reader could be expert in
-status: DECIDED
+status: VERIFIED
 tags: [pulse, feature]
 anchor: digest/index.html:2597
 ---

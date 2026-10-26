@@ -1,7 +1,7 @@
 ---
 id: T-0088
 title: The Backstory tab lists today's stories in the digest's order, not newest thread first
-status: BUILT
+status: VERIFIED
 tags: [digest, defect]
 anchor: digest/index.html
 ---

@@ -1,7 +1,7 @@
 ---
 id: T-0090
 title: Pulse's Backstory tab shows the Lineup's stories in Lineup order, each with its category
-status: BUILT
+status: VERIFIED
 tags: [pulse, feature]
 anchor: ntk-pulse/pulse.html
 ---

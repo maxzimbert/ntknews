@@ -1,7 +1,7 @@
 ---
 id: T-0095
 title: Pulse lists the categories the last publish made, and an archived category comes back when a story fits it
-status: BUILT
+status: VERIFIED
 tags: [pulse, defect]
 anchor: ntk-pulse/pulse.html
 ---

@@ -1,7 +1,7 @@
 ---
 id: T-0048
 title: The object page is short, an 'About this' and one outbound link, and its URL is stable
-status: DECIDED
+status: VERIFIED
 tags: [backstory, feature]
 anchor: editorial/build_backstory.py:82
 ---
