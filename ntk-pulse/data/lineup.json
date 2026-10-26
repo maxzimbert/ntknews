@@ -1,13 +1,13 @@
 {
- "assembled_at": "2026-10-25T22:21:49.962678+00:00",
+ "assembled_at": "2026-10-26T03:36:55.001081+00:00",
  "slot_plan": "A",
  "displacement": "MANUAL",
- "daytype": "weekend",
+ "daytype": "weekday",
  "target_size": [
-  4,
-  6
+  8,
+  10
  ],
- "actual_size": 52,
+ "actual_size": 10,
  "lint_failures": [
   "under 3 fully self-contained items"
  ],
@@ -16,16 +16,21 @@
   {
    "slot": "unavoidable",
    "slot_label": "Unavoidable",
-   "key": "c75554b7444db218",
-   "title": "Serbia's Vu\u010di\u0107 concedes snap election to student-led protest movement",
+   "key": "3aa4f038bf0ae368",
+   "title": "Lula wins fourth term as Brazil's president, defeating Flavio Bolsonaro",
    "beat": "international",
-   "publisher_count": 8,
+   "publisher_count": 13,
    "publishers": [
     "BBC",
-    "Yahoo News",
-    "CBS News",
+    "Financial Times",
+    "NPR",
+    "ABC News",
+    "Al Jazeera",
+    "CNBC",
     "Deutsche Welle",
+    "Fox News",
     "France 24",
+    "The New Republic",
     "ABC Australia",
     "Daily Mail",
     "Memeorandum"
@@ -33,80 +38,82 @@
    "scores": {
     "emotional_load": 2,
     "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
+    "actionability": 2,
+    "conversational_currency": 4
    },
    "politician_led": true,
    "ledger_class": null,
    "new_facts": [],
-   "line": "Serbia's long-serving leader Aleksandar Vu\u010di\u0107 conceded a snap parliamentary election to a student-led protest movement that has challenged his rule.",
-   "assembly_score": 9.84
+   "line": "Lula won Brazil's presidential runoff against Flavio Bolsonaro, starting a fourth term facing a hostile Congress.",
+   "assembly_score": 10.62
   },
   {
    "slot": "money_me",
    "slot_label": "Money & me",
-   "key": "c1e2fb98094768e5",
-   "title": "Taxes are due tomorrow; here's how to request a filing extension",
-   "beat": "business",
-   "publisher_count": 1,
+   "key": "228ef7a879705933",
+   "title": "Taxes due tomorrow: how to request a filing extension",
+   "beat": "national",
+   "publisher_count": 2,
    "publishers": [
+    "Post and Courier",
     "CNN"
    ],
    "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 5,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Federal tax returns are due tomorrow, and anyone who needs more time can request an extension to file.",
-   "assembly_score": 6.69
-  },
-  {
-   "slot": "body_mind",
-   "slot_label": "Body & mind",
-   "key": "858466c542a3ff05",
-   "title": "US measles cases now more than double all of 2025, led by Pennsylvania",
-   "beat": "health",
-   "publisher_count": 1,
-   "publishers": [
-    "NPR"
-   ],
-   "scores": {
-    "emotional_load": 3,
+    "emotional_load": 1,
     "explainability": 4,
-    "actionability": 4,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "U.S. measles cases have already more than doubled 2025's total, with Pennsylvania the hardest hit, and 96% of cases unvaccinated.",
-   "assembly_score": 3.69
-  },
-  {
-   "slot": "work_machines",
-   "slot_label": "Work & machines",
-   "key": "b77e72f00b20d00e",
-   "title": "A YouTuber dissected an iPhone Duo and thinks he found the cause of crackgate",
-   "beat": "tech",
-   "publisher_count": 1,
-   "publishers": [
-    "The Verge"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
+    "actionability": 5,
     "conversational_currency": 3
    },
    "politician_led": false,
    "ledger_class": null,
    "new_facts": [],
-   "line": "",
-   "assembly_score": 4.03
+   "line": "Federal tax returns are due tomorrow, and filers who need more time can request an extension.",
+   "assembly_score": 6.33
+  },
+  {
+   "slot": "body_mind",
+   "slot_label": "Body & mind",
+   "key": "e55b53ebdec10924",
+   "title": "Daily Mail names NHS doctors it says voiced antisemitic views",
+   "beat": "health",
+   "publisher_count": 1,
+   "publishers": [
+    "Daily Mail"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 4,
+    "actionability": 2,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "A Daily Mail investigation names NHS medics it says have expressed antisemitic views, raising questions about their conduct toward patients and colleagues.",
+   "assembly_score": 4.49
+  },
+  {
+   "slot": "work_machines",
+   "slot_label": "Work & machines",
+   "key": "29280b1701cfd32c",
+   "title": "Anthropic-linked AI bot reached Georgia public voter data hub",
+   "beat": "tech",
+   "publisher_count": 2,
+   "publishers": [
+    "Fox 5 Atlanta",
+    "Memeorandum"
+   ],
+   "scores": {
+    "emotional_load": 2,
+    "explainability": 4,
+    "actionability": 2,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "An AI bot tied to Anthropic reportedly accessed Georgia public voter data, raising questions about election data security.",
+   "assembly_score": 4.37
   },
   {
    "slot": "group_chat",
@@ -128,178 +135,74 @@
    "ledger_class": null,
    "new_facts": [],
    "line": "Country musician Ketch Secor is urging fellow artists to speak out on gun violence after the Nashville school shooting, despite fears of fan backlash.",
-   "assembly_score": 3.99
+   "assembly_score": -1.81
+  },
+  {
+   "slot": "elsewhere",
+   "slot_label": "Elsewhere, but here",
+   "key": "7b3822f5e4593a70",
+   "title": "Israel tightens West Bank crossings and raids Hebron ahead of elections",
+   "beat": "international",
+   "publisher_count": 6,
+   "publishers": [
+    "Al Jazeera",
+    "CBS News",
+    "France 24",
+    "NBC News",
+    "ABC Australia",
+    "American Spectator"
+   ],
+   "scores": {
+    "emotional_load": 4,
+    "explainability": 3,
+    "actionability": 1,
+    "conversational_currency": 3
+   },
+   "politician_led": true,
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "Israel is tightening West Bank crossings and raiding Hebron before its elections while Iran war strikes remain on hold.",
+   "assembly_score": 6.06
   },
   {
    "slot": "close",
    "slot_label": "The close",
-   "key": "7a695e6a87c7ec62",
-   "title": "Brazil extends runoff voting as Lula and Fl\u00e1vio Bolsonaro race tightens",
+   "key": "cb398a1336f6daf5",
+   "title": "Venezuelan opposition leader Mar\u00eda Corina Machado returns home after months in exile",
    "beat": "international",
-   "publisher_count": 7,
-   "publishers": [
-    "Financial Times",
-    "The Guardian",
-    "Al Jazeera",
-    "CBS News",
-    "Deutsche Welle",
-    "France 24",
-    "Memeorandum"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 2,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Brazil's Supreme Court extended voting hours in a tense presidential runoff between Lula and Fl\u00e1vio Bolsonaro after transport complaints.",
-   "assembly_score": 7.79
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "c076a8c87abe35d4",
-   "title": "Antonelli wins US Grand Prix, nears F1 title",
-   "beat": "other",
-   "publisher_count": 5,
-   "publishers": [
-    "BBC",
-    "The Guardian",
-    "NBC News",
-    "ABC Australia",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-10-26/f1-live-united-states-grand-prix-kimi-antonelli-oscar-piastri/106998708",
-    "//bbc.co.uk/sport/formula1/articles/cm20w8154wn0o?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/tvshowbiz/article-16237771/Tana-Ramsay-US-Grand-Prix-F1-Gordon-children-Austin.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//nbcnews.com/sports/formula-1/kimi-antonelli-wins-us-grand-prix-texas-putting-brink-f1-championship-rcna603583",
-    "//theguardian.com/sport/2026/oct/25/kimi-antonelli-storms-to-us-f1-gp-victory-but-is-made-to-wait-for-title-glory",
-    "//theguardian.com/sport/live/2026/oct/25/united-states-grand-prix-formula-one-live"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Kimi Antonelli won the US Grand Prix and moves to the brink of the Formula One championship.",
-   "assembly_score": 3.78
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "85483960a9082bf3",
-   "title": "Barcelona vs Real Madrid: El Cl\u00e1sico live as Bar\u00e7a's home record is tested",
-   "beat": "other",
-   "publisher_count": 3,
-   "publishers": [
-    "The Guardian",
-    "Al Jazeera",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//aljazeera.com/sports/2026/10/25/real-madrid-beat-barcelona-2-1-at-camp-nou-to-halve-gap-to-la-liga-leaders?traffic_source=rss",
-    "//dailymail.com/sport/football/article-16229953/barcelona-real-madrid-el-clasico-laliga-live.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//theguardian.com/football/2026/oct/25/barcelona-real-madrid-el-clasico-la-liga-match-report",
-    "//theguardian.com/football/live/2026/oct/25/barcelona-v-real-madrid-el-clasico-live"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Barcelona and Real Madrid meet in El Cl\u00e1sico, with Barcelona's perfect LaLiga home record at stake.",
-   "assembly_score": 2.303
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "e528548a0fbd9fb3",
-   "title": "Venezuelan opposition leader Machado returns home after 10 months in exile",
-   "beat": "international",
-   "publisher_count": 12,
-   "publishers": [
-    "Financial Times",
-    "New York Times",
-    "The Guardian",
-    "Yahoo News",
-    "Al Jazeera",
-    "CBS News",
-    "Fox News",
-    "France 24",
-    "ABC Australia",
-    "ANSA",
-    "Daily Mail",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-10-26/venezuelan-opposition-leader-maria-corina-machado-returns/107307444",
-    "//aljazeera.com/news/2026/10/25/venezuelas-opposition-leader-maria-corina-machado-returns-from-exile?traffic_source=rss",
-    "//ansa.it/sito/notizie/mondo/americalatina/2026/10/25/la-premio-nobel-machado-torna-in-venezuela-dopo-dieci-mesi_5e7fe194-a6eb-407f-97d9-d5bd0891ac76.html",
-    "//bbc.com/news/articles/cq8ez592pp0eo?xtor=AL-72-%5Bpartner%5D-%5Byahoo.north.america%5D-%5Bheadline%5D-%5Bnews%5D-%5Bbizdev%5D-%5Bisapi%5D",
-    "//cbsnews.com/news/venezuela-opposition-maria-corina-machado-return",
-    "//dailymail.com/news/article-16237449/Venezuelan-opposition-leader-Maria-Corina-Machado-Donald-Trump-Nobel-Peace-Prize-returns-home-year-exile.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//foxnews.com/world/venezuelan-opposition-leader-maria-corina-machado-surprise-return-home-after-nearly-year-abroad",
-    "//france24.com/en/americas/20261025-opposition-leader-machado-returns-to-venezuela-after-10-months-in-exile",
-    "//ft.com/content/f691e41e-dd01-4ac0-ade7-5f7ca23d6135",
-    "//ft.com/content/f691e41e-dd01-4ac0-ade7-5f7ca23d6135?syn-25a6b1a6=1",
-    "//memeorandum.com/261025/p51",
-    "//nytimes.com/2026/10/25/world/americas/machado-venezuela-return.html",
-    "//nytimes.com/2026/10/25/world/americas/who-is-maria-corina-machado.html",
-    "//theguardian.com/world/2026/oct/25/exiled-venezuelan-opposition-leader-maria-corina-machado-announces-her-return"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Venezuelan opposition leader Mar\u00eda Corina Machado has returned from exile to press for a democratic transition.",
-   "assembly_score": 2.09
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "fe2d871b9314028e",
-   "title": "AG Blanche defends DOJ suit to block Alaska Senate certification",
-   "beat": "national",
    "publisher_count": 6,
    "publishers": [
-    "NPR",
+    "BBC",
+    "Financial Times",
     "New York Times",
     "Al Jazeera",
     "CBS News",
-    "CNBC",
-    "Memeorandum"
+    "Daily Mail"
    ],
-   "urls": [
-    "//aljazeera.com/news/2026/10/25/us-attorney-general-todd-blanche-defends-alaska-senate-election-lawsuit?traffic_source=rss",
-    "//cbsnews.com/news/todd-blance-alaska-senate-challenge-dan-sullivan",
-    "//cnbc.com/2026/10/25/blanche-doj-alaska-senate-certification-lawsuit.html",
-    "//memeorandum.com/261025/p50",
-    "//memeorandum.com/261025/p70",
-    "//npr.org/2026/10/25/nx-s1-6016212/blanche-defends-doj-lawsuit-blocking-alaska-senate-results-if-republican-loses",
-    "//nytimes.com/2026/10/25/us/politics/trumps-election-alaska.html"
+   "scores": {
+    "emotional_load": 2,
+    "explainability": 4,
+    "actionability": 1,
+    "conversational_currency": 3
+   },
+   "politician_led": true,
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "Venezuelan opposition leader Mar\u00eda Corina Machado has returned home after months in exile.",
+   "assembly_score": 4.76
+  },
+  {
+   "slot": "unavoidable",
+   "slot_label": "Unavoidable",
+   "key": "461f69a40c55a1e0",
+   "title": "Trump escalates anti-Muslim attacks on Michigan Democrat El-Sayed at rally",
+   "beat": "national",
+   "publisher_count": 4,
+   "publishers": [
+    "New York Times",
+    "Al Jazeera",
+    "NBC News",
+    "Memeorandum"
    ],
    "scores": {
     "emotional_load": 3,
@@ -308,211 +211,20 @@
     "conversational_currency": 4
    },
    "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
    "ledger_class": null,
    "new_facts": [],
-   "line": "The DOJ is suing to block certification of Alaska's Senate race, which could hand the seat to Republicans if they lose.",
-   "assembly_score": 2.005
+   "line": "Trump used an anti-Muslim attack on Democratic candidate El-Sayed at a Michigan rally to rally the Republican base.",
+   "assembly_score": 7.3
   },
   {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "db37df6aa9a40aa4",
-   "title": "Trump rallies in Michigan for Mike Rogers with Nicki Minaj",
+   "slot": "unavoidable",
+   "slot_label": "Unavoidable",
+   "key": "8b954572a3263cb9",
+   "title": "Eastleigh collapse exposes repeated City Hall enforcement failures in Nairobi",
    "beat": "national",
-   "publisher_count": 2,
+   "publisher_count": 1,
    "publishers": [
-    "The Guardian",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16237749/Trump-Muslim-jihadist-Abdul-El-Sayed-metal-detector-Senate.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//theguardian.com/us-news/2026/oct/25/trump-nicki-minaj-mike-rogers-michigan-rally"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump rallied in Michigan with Nicki Minaj for Republican Senate candidate Mike Rogers ahead of the November midterms.",
-   "assembly_score": 1.78
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "88bd07a5404d07dc",
-   "title": "Liverpool earn first league win at Anfield, beating Brighton",
-   "beat": "other",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "The Telegraph"
-   ],
-   "urls": [
-    "//bbc.co.uk/iplayer/live/bbcone?at_campaign=rss&at_medium=RSS",
-    "//bbc.co.uk/sport/football/articles/cmj47lq7e5e7o?at_campaign=rss&at_medium=RSS",
-    "//bbc.co.uk/sport/football/videos/cm3vq1vpv6zno?at_campaign=rss&at_medium=RSS",
-    "//telegraph.co.uk/football/2026/10/25/liverpool-vs-brighton-live-score-and-latest-premier-league"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Liverpool beat Brighton 2-0 at Anfield, earning their first home league win of the season.",
-   "assembly_score": 1.5
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "f1cf0fab438207d6",
-   "title": "Ohio governor race draws Trump, Vance and Scaramucci into attack-ad fight",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "ABC News",
-    "NBC News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//abcnews.com/Politics/amy-acton-trump-vance-facts-abuse-after-ramaswamy/story?id=137543717",
-    "//memeorandum.com/261025/p49",
-    "//memeorandum.com/261025/p72",
-    "//nbcnews.com/news/us-news/weekend-rundown-october-25-rcna605266"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 2,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 1.328
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "1ecafaded844eaea",
-   "title": "Vu\u010di\u0107 concedes Serbian election to student-led Student List",
-   "beat": "international",
-   "publisher_count": 4,
-   "publishers": [
-    "Financial Times",
-    "The Guardian",
-    "Al Jazeera",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/10/25/serbia-voter-turnout-highest-in-decades-as-students-oppose-longtime-leader?traffic_source=rss",
-    "//ft.com/content/546f21f5-22d3-4696-8371-7bef8c0410b3?syn-25a6b1a6=1",
-    "//memeorandum.com/261025/p67",
-    "//memeorandum.com/261025/p68",
-    "//theguardian.com/world/live/2026/oct/25/europe-serbia-elections-aleksander-vucic-student-list-protests-bulgaria-latest-news-updates"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Serbia's longtime leader Vu\u010di\u0107 conceded defeat to a student-led list in a parliamentary election with record turnout.",
-   "assembly_score": 1.3
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "71334093a413753d",
-   "title": "Apollo finds AI spending has paid off for almost no firms outside the Magnificent 7",
-   "beat": "business",
-   "publisher_count": 2,
-   "publishers": [
-    "Semafor",
-    "TechCrunch"
-   ],
-   "urls": [
-    "//semafor.com/article/10/25/2026/hunting-for-ai-gains-outside-magnificent-7",
-    "//techcrunch.com/2026/10/25/ai-delivers-zero-financial-payoff-to-most-companies-according-to-apollo-economist"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 2,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "An Apollo analysis found AI spending has produced no financial return for most companies outside the Magnificent 7, rattling investors.",
-   "assembly_score": 1.21
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "89c0313856b62534",
-   "title": "US to drop tariffs on some Canadian goods as midterms near",
-   "beat": "business",
-   "publisher_count": 2,
-   "publishers": [
-    "Semafor",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/261025/p62",
-    "//semafor.com/article/10/25/2026/us-to-remove-some-canadian-tariffs"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 3,
-    "actionability": 2,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "The US plans to lift tariffs on some Canadian goods, a move tied to Republican midterm races and an ongoing trade dispute.",
-   "assembly_score": 1.15
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "adc663b191baab4a",
-   "title": "US warns Iran plans attacks on American officials; Trump weighs strikes",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Semafor",
-    "ABC Australia"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-10-26/albanese-quiet-on-iran-war-as-uncertainty-grows/107306234",
-    "//semafor.com/article/10/25/2026/new-threats-push-us-and-iran-toward-war"
+    "Standard (Kenya)"
    ],
    "scores": {
     "emotional_load": 4,
@@ -521,1082 +233,96 @@
     "conversational_currency": 4
    },
    "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
    "ledger_class": null,
    "new_facts": [],
-   "line": "US intelligence warns Iran is planning attacks on American officials abroad, as Trump weighs military action and a return to full war looms.",
-   "assembly_score": 1.14
+   "line": "A Nairobi building collapse has exposed a pattern of ignored warnings, enforcement failures and irregular approvals at City Hall, with police now hunting the developer and contractor.",
+   "assembly_score": 4.8
   },
   {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "6db3ee753423a0f7",
-   "title": "Western officials say Russia is fielding post-WWII-era tanks as its equipment dwindles",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "CNN",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//cnn.com/europe/live-news/russia-ukraine-war-news-04-18-23/index.html",
-    "//memeorandum.com/261025/p58"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Western officials say Russia is running short of modern equipment and sending older Cold War-era tanks into combat.",
-   "assembly_score": 1.0
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "2e670f3935b077ad",
-   "title": "Victorian minister Paul Edbrooke finds bullet marked 'RAT' on his car; police investigate",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "ABC Australia",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-10-26/paul-edbrooke-labor-mp-threat-bullet/107307762",
-    "//dailymail.com/news/article-16237207/girl-dies-tower-block-fall-london.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A Victorian Labor minister found a bullet inscribed 'RAT' on his car, amid a dispute with firefighters' union members; police are investigating.",
-   "assembly_score": 0.9
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "793467ad5945eebb",
-   "title": "Trump-2024 voters souring on him ahead of midterms, polls show",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Daily Beast",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/261025/p56",
-    "//thedailybeast.com/trump-faces-revolt-from-voters-who-backed-him-three-times"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 2,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Roughly 8 percent of the electorate that backed Trump in 2024 now disapproves of him, a shift that could decide control of Congress in the midterms.",
-   "assembly_score": 0.8
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "75132a344741bdbb",
-   "title": "Man United lose 3-0 to Bournemouth as pressure mounts on Carrick",
-   "beat": "culture",
-   "publisher_count": 6,
-   "publishers": [
-    "BBC",
-    "The Guardian",
-    "Al Jazeera",
-    "The Telegraph",
-    "ABC Australia",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-10-26/manchester-united-humiliated-at-home-by-bournemouth/107307822",
-    "//aljazeera.com/sports/2026/10/25/can-carrick-survive-man-united-slump-and-fernandes-fallout?traffic_source=rss",
-    "//aljazeera.com/sports/2026/10/25/will-michael-carrick-be-sacked-man-united-manager-says-he-doesnt-know?traffic_source=rss",
-    "//bbc.co.uk/sport/football/articles/cm5ynpjx170zo?at_campaign=rss&at_medium=RSS",
-    "//bbc.co.uk/sport/football/articles/crgj9wnpd1lvo?at_campaign=rss&at_medium=RSS",
-    "//bbc.co.uk/sport/football/articles/cwm24jk9743yo?at_campaign=rss&at_medium=RSS",
-    "//bbc.co.uk/sport/football/videos/cq0mepm1d774o?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/sport/football/article-16229521/This-end-Michael-Carrick-gang-damned-relentlessly-dismantled-3-0-Bournemouth-walk-Man-Uniteds-endless-winter-writes-OLIVER-HOLT.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dailymail.com/sport/football/article-16237479/michael-carrick-man-united-future-bournemouth.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//telegraph.co.uk/football/2026/10/25/man-utd-vs-bournemouth-live-score-premier-league-updates",
-    "//theguardian.com/football/2026/oct/25/manchester-united-board-crisis-talks-michael-carrick-eddie-howe-bournemouth-premier-league"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Manchester United lost 3-0 at home to Bournemouth, extending a winless run to eight matches and piling pressure on manager Michael Carrick.",
-   "assembly_score": 0.31
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "791bd4355caf62e9",
-   "title": "Le Pen opens French presidential campaign as protests lead to 1,300 arrests",
-   "beat": "national",
-   "publisher_count": 4,
-   "publishers": [
-    "Financial Times",
-    "Al Jazeera",
-    "France 24",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/10/25/marine-le-pen-vows-a-french-renaissance-as-far-right-eyes-seat-of-power?traffic_source=rss",
-    "//aljazeera.com/video/newsfeed/2026/10/25/marine-le-pen-launches-french-presidential-campaign?traffic_source=rss",
-    "//dailymail.com/news/article-16237029/French-protests-Le-Pen-campaign.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//france24.com/en/france-le-pen-seeks-to-leverage-unrest-in-presidential-campaign-kick-off",
-    "//france24.com/en/tv-shows/spotlight/20261025-le-pen-s-renaissance-4th-time-lucky",
-    "//france24.com/en/video/20261025-marine-le-pen-launches-presidential-campaign-in-orl%C3%A9ans",
-    "//ft.com/content/fd1c3f30-2789-4fca-a93f-57850b1448a8?syn-25a6b1a6=1"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 2,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Marine Le Pen launched her presidential campaign in Orl\u00e9ans amid nationwide protests with over 1,300 arrests and 50 police injured.",
-   "assembly_score": 0.01
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "ef0eff5da5ec6855",
-   "title": "Storm Boelo kills man in Scotland, leaves 160,000 UK properties without power",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "BBC",
-    "The Guardian",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/cxdd8gr1vje0o?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/news/article-16236967/Storm-Boelo-Britain-85mph-winds-amber-warnings.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//theguardian.com/uk-news/2026/oct/25/storm-boelo-warnings-scotland-northern-ireland-north-of-england-high-winds-uk"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 5,
-    "actionability": 2,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Storm Boelo killed a man by falling tree and left about 160,000 UK properties without power.",
-   "assembly_score": -0.24
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "41e5cc1fd68fba85",
-   "title": "12 injured, including 6 children, in shooting near Florida A&M after homecoming game",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "Post and Courier",
-    "ABC News",
-    "CBS News"
-   ],
-   "urls": [
-    "//abcnews.com/US/12-injured-including-6-children-shooting-florida-university/story?id=137549623",
-    "//cbsnews.com/news/tallahassee-florida-shooting-a-m-university",
-    "//postandcourier.com/the-tallahassee-police-department-investigates-the-scene-of-a-shooting-that-occurred-on-perry-street/image_75881d74-a805-428a-a240-1e4b33e2a6c4.html"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 4,
-    "actionability": 2,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Twelve people, including six children, were wounded in a shooting near Florida A&M University after its homecoming game.",
-   "assembly_score": -0.33
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "6fad852892467f76",
-   "title": "Rogers and Welker clash on NBC over El-Sayed Muslim Brotherhood attack",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox News",
-    "The Bulwark"
-   ],
-   "urls": [
-    "//foxnews.com/media/rogers-fires-back-welker-over-el-sayeds-muslim-brotherhood-controversy-you-giving-him-pass",
-    "//thebulwark.com/p/mike-rogerss-interview-goes-from"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Michigan Senate candidate Mike Rogers is clashing on air with Kristen Welker over Abdul El-Sayed and a Muslim Brotherhood controversy.",
-   "assembly_score": -0.35
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "2c4fe0338c47915d",
-   "title": "Pete Hegseth Hit With Demand to Explain Military Fiasco",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "Daily Beast",
-    "Techmeme",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/261025/p54",
-    "//techmeme.com/261025/p11",
-    "//thedailybeast.com/pentagon-pete-hegseth-hit-with-demand-to-explain-military-starlink-fiasco"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.5
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "72538ca1936ef995",
-   "title": "An artilleryman of the Special Rifle Police Battalion sets up Starlink satellite internet system near the frontline in Donetsk region",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Post and Courier",
-    "CNBC"
-   ],
-   "urls": [
-    "//cnbc.com/2026/10/25/ukraine-musk-starlink-terms-dispute.html",
-    "//postandcourier.com/an-artilleryman-of-the-special-rifle-police-battalion-sets-up-starlink-satellite-internet-system-near/image_56bff096-74b6-4b04-9504-4a70d5fd5503.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.54
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "486f7378f4c390c2",
-   "title": "Appeals court to hear arguments in Trump admin's voting suit against California",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "ABC News",
-    "Al Jazeera",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//abcnews.com/Politics/federal-appeals-court-hear-arguments-trump-administrations-voting/story?id=137546706",
-    "//aljazeera.com/video/newsfeed/2026/10/25/trump-vs-california?traffic_source=rss",
-    "//memeorandum.com/261025/p55"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.6
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "fd90da602ae8dd7d",
-   "title": "In Texas Senate Race, Talarico Leans Into Growing Rivalry With Elon Musk",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/261025/p48",
-    "//nytimes.com/2026/10/25/us/politics/talarico-musk-texas-senate-paxton-midterms.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.71
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "18b0b8db6b222c16",
-   "title": "Top Catholic Issues Apology for Praying Over Trump",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Daily Beast",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/261025/p66",
-    "//thedailybeast.com/top-catholic-jeffrey-s-grob-issues-humiliating-apology-for-praying-over-trump"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.92
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "3ff4963506c0c1d1",
-   "title": "Peltola postpones campaign stops after Saturday car crash",
-   "beat": "national",
-   "publisher_count": 5,
-   "publishers": [
-    "Politico",
-    "CBS News",
-    "Daily Beast",
-    "NBC News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//cbsnews.com/news/mary-peltola-car-accident-alaska-senate-race",
-    "//memeorandum.com/261025/p63",
-    "//nbcnews.com/politics/2026-election/mary-peltola-delays-campaign-events-minor-injury-car-crash-alaska-rcna605556",
-    "//politico.com/news/2026/10/25/peltola-car-crash-postpones-campaign-stops-01134902",
-    "//thedailybeast.com/senate-hopefuls-campaign-derailed-by-car-crash"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.17
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "9e97781c23f5d062",
-   "title": "Second nationwide day of protests against the cost of living in France",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Post and Courier",
-    "Al Jazeera"
-   ],
-   "urls": [
-    "//aljazeera.com/video/the-listening-post/2026/10/25/the-narrative-battle-over-frances-unrest?traffic_source=rss",
-    "//postandcourier.com/second-nationwide-day-of-protests-against-the-cost-of-living-in-france/image_d56c2af3-75a6-4a14-a07c-b99db7cbead5.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.88
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "3343af693a21e4bf",
-   "title": "Sunderland stay bottom after goalless draw with Leeds",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "The Telegraph"
-   ],
-   "urls": [
-    "//bbc.co.uk/sport/football/videos/cj75pv5zp95po?at_campaign=rss&at_medium=RSS",
-    "//bbc.co.uk/sport/football/videos/cmlylkydwl78o?at_campaign=rss&at_medium=RSS",
-    "//telegraph.co.uk/football/2026/10/25/sunderland-vs-leeds-utd-live-score-premier-league-updates"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.34
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "ccd700de5b8f8af9",
-   "title": "Macron accused of putting France\u2019s right to protest at risk with \u2018vandal\u2019s law\u2019",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "Fox News"
-   ],
-   "urls": [
-    "//foxnews.com/media/trump-reveals-dire-warning-macron-violent-unrest-spreads-across-europe",
-    "//theguardian.com/world/2026/oct/25/macrons-vandals-pay-bill-puts-right-to-protest-at-risk"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.37
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "7526d671324773b1",
-   "title": "Dakota Johnson and Machine Gun Kelly make daytime TV debut; South Carolina plays final exhibition",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "Post and Courier",
-    "Fox News"
-   ],
-   "urls": [
-    "//foxnews.com/entertainment/country-star-cody-johnson-says-nashville-wanted-change-him-before-success",
-    "//postandcourier.com/marcus/image_3549d316-9e86-4f83-a131-6e5d2d613679.html"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 2,
-    "actionability": 1,
-    "conversational_currency": 1
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.42
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "d3990852490cd50b",
-   "title": "Anthropic sued for allegedly using 274 Elvis Presley songs to train AI models",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "NBC News"
-   ],
-   "urls": [
-    "//nbcnews.com/tech/tech-news/elvis-presleys-rights-holders-sue-anthropic-saying-trained-ai-music-rcna605551",
-    "//theguardian.com/us-news/2026/oct/25/elvis-presley-anthropic-lawsuit-ai-models-music"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.14
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "287df8b24088e67f",
-   "title": "US south-west braces for more flooding after stretch of heavy rain and storms",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "CBS News"
-   ],
-   "urls": [
-    "//cbsnews.com/news/four-corners-floods-heavy-rain",
-    "//theguardian.com/us-news/2026/oct/25/four-corners-southwest-rain-flooding-thunderstorms"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.28
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "8961e9c3e4f9ebe9",
-   "title": "Long queues after power surge at Stansted Airport",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "ABC Australia"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-10-26/passengers-praise-western-sydney-airport-first-flights/107303722",
-    "//bbc.co.uk/news/articles/c64g14481n7qo?at_campaign=rss&at_medium=RSS"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.4
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "de908d19aeddbf23",
-   "title": "Gina Hinojosa says there's \"deep disappointment\" in both parties",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "CBS News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//cbsnews.com/news/gina-hinojosa-texas-governors-race-face-the-nation",
-    "//memeorandum.com/261025/p53"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.5
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "4f028aad86e4bac7",
-   "title": "Scoop: Netanyahu presses Trump for more support ahead of tight Tuesday election (Barak Ravid/Axios)",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "ANSA",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//ansa.it/sito/notizie/mondo/2026/10/25/netanyahu-posta-la-foto-di-unatomica-su-tel-aviv-2-anni-per-finire-il-lavoro_b57751fe-5586-4c9f-87f2-638df6696482.html",
-    "//memeorandum.com/261025/p52"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.75
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "76e3625a4c183f07",
-   "title": "France: Football fans take over Paris as NFL comes to country for the first time",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "France 24",
-    "NBC News"
-   ],
-   "urls": [
-    "//france24.com/en/video/20261025-france-football-fans-take-over-paris-as-nfl-comes-to-country-for-the-first-time",
-    "//nbcnews.com/world/france/nfl-fans-visiting-paris-high-spirits-saints-vs-steelers-game-undeterre-rcna605520"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -4.08
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "4c13035c70eac348",
-   "title": "Jewish Board declares Greens a racist party over Zionism motion",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/ckx2qyd17eqvo?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/news/article-16237369/Green-Party-racist-Jewish-Board-Deputies.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 2,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "The Board of Deputies of British Jews has declared the Green Party racist over its conference motion calling Zionism racism.",
-   "assembly_score": -4.25
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "a949af602d53b62c",
-   "title": "LIV Golf faces a make-or-break deadline \u2014 and only 4 players have signed on",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Financial Times",
-    "Yahoo News"
-   ],
-   "urls": [
-    "//ft.com/content/935f19bc-bb43-4840-8a55-d8ef409c7b52?syn-25a6b1a6=1",
-    "//sports.yahoo.com/golf/article/as-liv-golf-deadline-nears-players-are-departing-demanding-payment-171817228.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -4.39
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "8c2c35699c679899",
-   "title": "Open Senate seat up for grabs in Iowa as candidates tout populism, bipartisanship",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "ABC News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//abcnews.com/Politics/open-senate-seat-grabs-iowa-candidates-tout-populism/story?id=137550408",
-    "//memeorandum.com/261025/p47"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -4.41
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "afcfa97404c922bd",
-   "title": "Who is Itamar Ben-Gvir, the Israeli firebrand rising with the populist right across the globe?",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "Fox News"
-   ],
-   "urls": [
-    "//aljazeera.com/video/newsfeed/2026/10/25/us-and-israel-elections-new-leaders-same-policies?traffic_source=rss",
-    "//foxnews.com/world/who-itamar-ben-gvir-israeli-firebrand-rising-populist-right-across-globe"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -4.45
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "ea8d716875dd31d2",
-   "title": "Can protests in Europe bring about change?",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "Vogue"
-   ],
-   "urls": [
-    "//aljazeera.com/video/inside-story/2026/10/25/can-protests-in-europe-bring-about-change?traffic_source=rss",
-    "//vogue.com/article/the-vogue-business-people-moves-tracker"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -4.67
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "7b3822f5e4593a70",
-   "title": "Israel tightens West Bank crossings and raids Hebron ahead of elections",
+   "slot": "flex",
+   "slot_label": "Flex",
+   "key": "4a8e69aa6aedc43e",
+   "title": "Storm Boelo kills two, cuts power to 160,000 in UK and Europe",
    "beat": "international",
    "publisher_count": 4,
    "publishers": [
+    "The Guardian",
     "Al Jazeera",
-    "CBS News",
-    "France 24",
-    "NBC News"
-   ],
-   "urls": [
-    "//aljazeera.com/news/liveblog/2026/10/26/iran-war-live-trump-rules-out-strikes-today-israeli-forces-raid-hebron?traffic_source=rss",
-    "//cbsnews.com/news/israel-military-operation-west-bank-elections",
-    "//cbsnews.com/video/netanyahus-party-lags-polls-ahead-first-election-since-oct-7-2023",
-    "//france24.com/en/video/20261025-report-idf-pushes-back-on-netanyahu-s-order",
-    "//nbcnews.com/nightly-news/video/crackdown-in-the-west-bank-days-ahead-of-israeli-elections-272201285820"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Israel is tightening West Bank crossings and raiding Hebron before its elections while Iran war strikes remain on hold.",
-   "assembly_score": 1.91
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "78f24a94d67e0aad",
-   "title": "Teen fatally shot in Northeast DC; 16-year-old suspect sought",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
     "Daily Mail",
-    "Fox 5 DC"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16237591/Teenage-boy-killed-three-people-hospital-car-crash.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//fox5dc.com/news/teen-killed-teen-suspect-sought-after-shooting-northeast-dc"
+    "Fox 5 Atlanta"
    ],
    "scores": {
-    "emotional_load": 5,
+    "emotional_load": 3,
     "explainability": 4,
     "actionability": 2,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A 15-year-old boy was fatally shot in Northeast DC on Sunday, and police are seeking a 16-year-old suspect believed to be armed.",
-   "assembly_score": 0.98
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "7c175fd9209808ca",
-   "title": "Multi-car crash at Talladega sends drivers flipping and sliding",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "Post and Courier",
-    "Fox News"
-   ],
-   "urls": [
-    "//foxnews.com/outkick-sports/nascars-joey-logano-rides-roof-riley-herbst-nails-wall-full-speed-dangerous-talladega-wreck",
-    "//postandcourier.com/larson-talladega/image_1403f12b-5838-4dbe-9db4-5c9182cd09ff.html"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A multi-car wreck at Talladega saw drivers flip, slide, and crash at full speed, though the headlines give no injury details.",
-   "assembly_score": 0.28
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "2c26f1b8af39700e",
-   "title": "NFL game goes ahead in Paris as protests and rioting hit the city",
-   "beat": "international",
-   "publisher_count": 3,
-   "publishers": [
-    "CBS News",
-    "Fox News",
-    "NBC News"
-   ],
-   "urls": [
-    "//cbsnews.com/video/thousands-americans-visit-paris-nfl-game-amid-rioting-violence",
-    "//foxnews.com/outkick-sports/nfl-french-national-anthem-performer-nina-tonji-alters-words-la-marseillaise-sparking-outrage-france",
-    "//nbcnews.com/nightly-news/video/nfl-game-kicks-off-in-france-after-mass-protests-272201797679"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "An NFL game in Paris went ahead amid mass protests and rioting in the city, with thousands of American fans traveling there.",
-   "assembly_score": 0.268
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "08f1eef9594241b0",
-   "title": "AI has a language gap. That could be a problem for some voters.",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Politico",
-    "Techmeme"
-   ],
-   "urls": [
-    "//politico.com/news/2026/10/25/ai-non-english-language-voters-01132772",
-    "//techmeme.com/261025/p12"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
     "conversational_currency": 3
    },
    "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
    "ledger_class": null,
    "new_facts": [],
-   "line": "",
-   "assembly_score": -0.01
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "7bfd3109ca893b4f",
-   "title": "Spotify uploads lyrics for Dolly Parton's Welsh version of Jolene in Irish",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Atlanta Black Star"
-   ],
-   "urls": [
-    "//atlantablackstar.com/2026/10/25/dolly-partons-sister-sounds-alarm-over-tennessee-voting-machine-after-claiming-her-vote-was-flipped",
-    "//bbc.co.uk/news/articles/cw33xpl5xl8mo?at_campaign=rss&at_medium=RSS"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.62
+   "line": "Storm Boelo killed two and left over 150,000 homes without power across northern Europe, with another storm, Chloe, forecast next.",
+   "assembly_score": 4.79
   }
  ],
  "excluded_sample": [
   {
-   "title": "United States Grand Prix: Formula One \u2013 live",
+   "title": "\u2018We\u2019re not doing great\u2019: Gilgeous-Alexander in tears after Williams suffers gruesome leg injury",
    "why": "triage verdict NO"
   },
   {
-   "title": "Carrick future under major threat - can he survive?",
+   "title": "Watch: Match of the Day",
    "why": "triage verdict NO"
   },
   {
-   "title": "Mike Rogers\u2019s Interview Goes From Laughable to Repulsive",
+   "title": "Report: SK Hynix gained ~$15B from selling down its Kioxia stake earlier this year, and plans to return ~$12B to shareholders via a special dividend (Bloomberg)",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "01) E&V- Leahy",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Bruce Blakeman calls Kathy Hochul Zohran Mamdani's 'puppet' during New York campaign rally",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Trump\u2019s bubble is about to burst",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Trump rallies for Mike Rogers \u2013 and Nicki Minaj\u2019s derriere \u2013 in Michigan",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "The Papers: 'Budget tax reprieve for pensioners' and 'Meghan dad net to widen'",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Tigers catcher hoping to recapture KBO postseason glory of 2024",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "TRAFFIC COLLISION : O'MALLEY RD AND LAKE OTIS PKWY (Mesa Smith/Anchorage Police Department)",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Victoria Beckham reveals her family's low-key weekend routine - with Sunday roasts laden with budget Bisto gravy a non-negotiable!",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "DWAikenStars55.JPG",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Larson Talladega",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "After yet another inexcusable loss to Wisconsin, the Lincoln Riley era at USC looks to be nearing an end",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Budget airline expands its footprint with 11 new tropical flight routes beginning in November",
    "why": "triage verdict NO"
   },
   {
@@ -1636,107 +362,19 @@
    "why": "triage verdict NO"
   },
   {
-   "title": "Barcelona v Real Madrid: El Cl\u00e1sico \u2013 live",
+   "title": "Everything you need to know about Way Day 2023, Wayfair's biggest sale of the year",
    "why": "triage verdict NO"
   },
   {
-   "title": "Kamala Harris jokes about cursing out TV in rage at Trump after 2024 loss: 'We've been depressed and angry' (Ryan King/New York Post)",
+   "title": "The 2024 presidential alternative many voters will want",
    "why": "triage verdict NO"
   },
   {
-   "title": "\u2018Read the Room\u2019: Trump Loses MAGA Crowd, People Leave As He Rants About Running a Third Time",
+   "title": "BuddyWalk70.JPG",
    "why": "triage verdict NO"
   },
   {
-   "title": "STEPHEN DAISLEY: If ministers insist on talking down to us on disaster preparedness, they should Be Ready for folk to stop listening",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Teenage boy is killed and three other people are rushed to hospital after car 'being pursued by police' crashes into Audi: Teen, 17, is arrested",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Zookeeper is fighting for her life after being mauled by a leopard at Netherlands park she had worked at since she was 17",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Why Trump\u2019s About to Get a Surprise Reckoning: Scaramucci",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Aaron Rodgers pulls back curtain on bargaining talks with NFL envisioning one week of 16 international games",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Nicki Minaj teased as new White House press secretary: Steven Cheung (Mackenzie Chase/Washington Examiner)",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "\u2018Cyberselfish\u2019 author takes aim at Silicon Valley libertarians as her book returns from the dead",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Marcus",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Gamecocks gain commitment from Charlotte defensive tackle",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Letter making claims about Meghan's father written by his ex-wife, BBC understands",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Sir Elton John performs on the piano at lavish black-tie bash for husband David Furnish's 64th birthday as he serenades guests including godson Brooklyn Beckham and Nicola Peltz",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "David Beckham, 51, shows off his ripped physique in a shirtless selfie as he enjoys a morning coffee on his balcony in New York",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "When is the 2026 Ballon d\u2019Or, who are the favourites, and how can you watch it?",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Trump Humiliated as Fox Host Tries to End Wild Phone Interview",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Una reliquia di San Carlo Acutis esposta 24 ore su 24 in Brasile",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "11 Foods To Increase Your Ferritin Levels",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Bon Secours nears $6bn takeover of Bain-backed Surgery Partners",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Trump: 'Obama presidente incompetente e ora sostiene un jihadista antisemita'",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "MAPPED: The states Trump and top Democrats are targeting before Election Day",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "WWE Hall of Famer mocks women's champion while at NFL Paris game: 'What now Chelsea?'",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "I ladri a casa di Alisson Santos, rubati orologi e gioielli",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "The food you should NEVER order at an Italian restaurant: Top chefs reveal the dishes to avoid - from pasta with chicken to garlic bread",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "The Best Dressed Stars of the Week Chose Skin-Flashing Silhouettes",
+   "title": "BuddyWalk88.JPG",
    "why": "triage verdict NO"
   }
  ]
