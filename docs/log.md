@@ -12,6 +12,24 @@ stranger.
 
 ---
 
+## 2026-10-26 — "kept, not added yet" read as "added at publish", and a working button read as dead
+
+Testing T-0091, the editor assumed objects ticked under a Lineup story would be added to their category at
+publish. Nothing in the publish path read them: they were silently dropped (T-0102 now warns). The same
+session, **open <category>** and **new category from these** were reported as doing nothing; both worked,
+but selected a category in an editor below the whole Lineup list without scrolling to it (T-0103). In Pulse,
+a pending state should name the button that ends it, and a control should show its result where the editor
+is looking. The editor also read the kept objects as giving each story its own Backstory mix. They don't:
+a category is one page shared by every story filed under it, and per-story variation is T-0074 and T-0086's
+question, not this one's.
+
+## 2026-10-26 — READY means the automated part passed, not that the ticket is done
+
+`rot.sh` reports READY when a check block exits 0, and ignores `# manual:` lines inside it. Of 24 READY
+tickets, three (T-0085, T-0089, T-0091) also carried a manual step nobody had done, and two (T-0074,
+T-0076) were an editorial decision that a green check cannot make. Read the whole check block before
+promoting. Running `rot.sh` also rewrites the elapsed counters in `backstory/*/index.html`; stage by path.
+
 ## 2026-10-08 — Netlify's usage limit took ntknews.org down, and credits did not bring the last deploys back
 
 The site returned 503 `usage_exceeded` on every route until credits were added. Builds that fired during the
