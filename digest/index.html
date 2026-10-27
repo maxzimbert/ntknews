@@ -3523,11 +3523,11 @@ function bpIndicator(ind){
     + (ind.verified ? '' : '<div class="bp-src" style="color:#DC6550;margin-top:8px">UNVERIFIED</div>') + '</section>';
 }
 
-// Right side of the sticky bar: the reader's rung for the subject this row is
+// Beat chip for the sticky bar: the reader's rung for the subject this row is
 // paired with today (ink, not rung colour: cream ground), then Share. No chip
 // when the row is unpaired or the reader has no beat for it. Read once at
 // render; it does not update while the page is open.
-function bpBarRight(r){
+function bpChipHtml(r){
   var idx = findStoryIndexByKey(r.story_id);
   var subject = idx >= 0 ? storySubject(stories[idx]) : null;
   var chip = '';
@@ -3538,10 +3538,10 @@ function bpBarRight(r){
       chip = '<button type="button" class="bp-chip" data-bp="beat" data-cat="' + escAttr(subject) + '" aria-label="Your beat: ' + escAttr(subject) + ', ' + label + '"><i></i>' + label + '</button>';
     }
   }
-  return '<div class="bp-bar-r">' + chip + '<button type="button" data-bp="share" aria-label="Share this backstory">Share</button></div>';
+  return chip;
 }
 function bpRowHtml(r){
-  var h = '<div class="bp-bar"><button type="button" data-bp="back">← Backstory</button>' + bpBarRight(r) + '</div>'
+  var h = '<div class="bp-bar"><button type="button" data-bp="back">← Backstory</button><div class="bp-bar-r">' + bpChipHtml(r) + '<button type="button" data-bp="share" aria-label="Share this backstory">Share</button></div></div>'
     + '<div class="bp-hd"><h1>' + escBsr(r.title) + '</h1><div class="bp-ms">' + escBsr(r.milestone || '') + '</div></div>';
   if (r.stratum === 'fire') {
     h += '<section class="bp-sec" style="text-align:center"><div style="font:700 34px Overpass,sans-serif">' + bsrFormatDuration(bsrDaysSince(r.start_date)) + '</div>'
