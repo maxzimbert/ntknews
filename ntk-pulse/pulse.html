@@ -3841,6 +3841,14 @@ function toggleCandSelectAll(visibleKeys, checked){
 // of a day, so candidates promoted earlier fall back to the canonical URLs
 // lineup_promote.py recorded at promotion time (no per-article title/pub
 // pairing in that case — best available, not the full picture).
+// T-0105. True when candidateArticles() would have something to show: a live
+// stream cluster with items, or URLs recorded at promotion time.
+function candidateHasSources(key){
+  const sc = (STREAM?.clusters||[]).find(c=>c.key===key);
+  if (sc && sc.items && sc.items.length) return true;
+  const s = (EDITION?._candidates||[]).find(x=>x.key===key);
+  return !!(s && s.urls && s.urls.length);
+}
 function candidateArticles(key){
   const sc = (STREAM?.clusters||[]).find(c=>c.key===key);
   if (sc && sc.items && sc.items.length){
@@ -3862,7 +3870,11 @@ function candidateArticles(key){
 function wireCandidateButtons(root){
   const keys = visibleCandidates().map(s=>s.key);
   root.querySelectorAll('.add-candidate').forEach(btn=>{
-    btn.addEventListener('click',()=>addEditionCandidate(btn.dataset.key));
+    btn.addEventListener('click',()=>{
+      if (!candidateHasSources(btn.dataset.key) &&
+          !confirm('This story has no source URLs on file, so Jefferson will have nothing to write from. Add it anyway?')) return;
+      addEditionCandidate(btn.dataset.key);
+    });
   });
   root.querySelectorAll('.cand-dismiss').forEach(btn=>{
     btn.addEventListener('click',()=>dismissCandidate(btn.dataset.key));
@@ -3908,7 +3920,9 @@ function candidatesPanel(){
         <input type="checkbox" class="cand-chk" data-key="${esc(s.key)}" data-i="${i}" ${CAND_SELECTED.has(s.key)?'checked':''}>
         <label class="cand-label" data-key="${esc(s.key)}" style="flex:1;cursor:pointer">
           <span class="slot-tag" style="background:#666">${esc(s.slot_label||'')}</span> ${esc(s.title)}
-          <span style="color:var(--dim);font-size:10.5px"> · ${s.publisher_count||0} pub${s.publisher_count===1?'':'s'}</span>
+          ${candidateHasSources(s.key)
+            ? `<span style="color:var(--dim);font-size:10.5px"> · ${s.publisher_count||0} pub${s.publisher_count===1?'':'s'}</span>`
+            : `<span class="cand-nosrc" style="color:#b3261e;font-size:10.5px"> · 0 sources on file</span>`}
         </label>
         <button class="mini add-candidate" data-key="${esc(s.key)}" ${LINEUP.length>=LINEUP_MAX?'disabled':''}>+ add</button>
         <button class="mini cand-dismiss" data-key="${esc(s.key)}">dismiss</button>
