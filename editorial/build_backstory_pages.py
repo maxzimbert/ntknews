@@ -107,9 +107,10 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
   header {{ background:{ink}; padding:13px 20px; }}
   header a {{ display:block; }}
   header img {{ height:18px; width:auto; display:block; }}
-  .bar {{ display:flex; justify-content:space-between; align-items:baseline; gap:12px;
+  .bar {{ position:sticky; top:0; z-index:2; background:{cream}; display:flex; justify-content:space-between; align-items:center; gap:12px;
     padding:14px 20px; border-bottom:1px solid {ink}; font-family:'Overpass',sans-serif; }}
   .bar a {{ white-space:nowrap; font-size:16px; font-weight:600; color:{ink}; text-decoration:none; }}
+  .bar button {{ background:none; border:0; padding:0; cursor:pointer; white-space:nowrap; font:600 16px 'Overpass',sans-serif; color:{ink}; }}
   .bar span {{ font-size:10px; font-weight:600; letter-spacing:.06em; color:rgba(38,31,35,.6); }}
   .hd {{ padding:28px 20px 22px; border-bottom:1px solid {ink}; }}
   .hd h1 {{ font-family:'Newsreader',serif; font-weight:600; font-size:clamp(26px,7vw,34px);
@@ -177,13 +178,21 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
 </head>
 <body>
 <header><a href="/backstory"><img src="{logo}" alt="NTK"></a></header>
-<div class="bar"><a href="/backstory">&larr; Backstory</a></div>
+<div class="bar"><a href="/backstory">&larr; Backstory</a><button type="button" id="share" aria-label="Share this page">Share</button></div>
 <div class="hd">
   <h1>{title_esc}</h1>
   <div class="milestone">{milestone_esc}</div>
 </div>
 {body}
 <a class="back" href="/backstory">← All of Backstory</a>
+<script>
+document.getElementById('share').addEventListener('click', function() {{
+  var b = this, url = {canonical_url!r}, title = document.title;
+  if (navigator.share) {{ navigator.share({{ title: title, url: url }}).catch(function() {{}}); return; }}
+  var done = function() {{ b.textContent = 'Copied'; setTimeout(function() {{ b.textContent = 'Share'; }}, 1800); }};
+  if (navigator.clipboard) navigator.clipboard.writeText(url).then(done, function() {{}});
+}});
+</script>
 </body>
 </html>
 """
