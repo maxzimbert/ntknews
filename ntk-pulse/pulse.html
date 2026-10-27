@@ -3294,6 +3294,7 @@ function touchManual(key){
 MANUAL.forEach(mc=>{ if (!mc.lastUsedAt) mc.lastUsedAt = new Date().toISOString(); });
 MANUAL = MANUAL.filter(mc=>!manualExpired(mc, Date.now()));
 MANUAL.forEach(mc=>MANUAL_SIG.set(mc.key, manualSig(mc)));
+localStorage.setItem(LS.manual, JSON.stringify(MANUAL));   // persist the prune and backfill now, not at the next edit
 let SELECTED = new Set();  // cluster keys currently checked for merging
 // Which organic cluster cards are expanded. Session-only (not persisted),
 // but crucially it's the ONLY thing that decides openness — previously
