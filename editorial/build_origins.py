@@ -251,7 +251,7 @@ def fallback(row, why):
             "line": row.get("start_line"), "why_fallback": why, "verified": False}
 
 
-def update_provisional(bs):
+def update_provisional(bs, store_path=None):
     """Fill a category's start from its stories' origins (T-0079).
 
     A category has no fixed start: its "It starts in" and "We are here" are its earliest
@@ -259,7 +259,7 @@ def update_provisional(bs):
     any Beginning dated after the origin is dropped. The same year is kept: a search-found chronology ends
     at the story's own origin, and dropping it left the Raine and Sverdlovsk pages with no Beginnings. Nothing is composed here.
     """
-    store_path = ROOT / "ntk-pulse" / "data" / "provisional-rows.json"
+    store_path = Path(store_path) if store_path else ROOT / "ntk-pulse" / "data" / "provisional-rows.json"
     store = json.loads(store_path.read_text()) if store_path.exists() else {"rows": []}
     by_store = {r["id"]: r for r in store["rows"]}
     for r in bs["rows"]:
@@ -332,6 +332,7 @@ def main():
                     help="reuse the retrieval saved beside --out (search results drift between runs)")
     ap.add_argument("--apply", action="store_true",
                     help="write each origin onto its pairing in digest/data/backstory.json")
+    ap.add_argument("--provisional", help="the category store --apply updates (T-0109 drafts use a copy)")
     args = ap.parse_args()
 
     stories, rows = load_stories(args.lineup, args.pairings)
@@ -466,7 +467,7 @@ def main():
             if p["story_id"] in by:
                 p["origin"] = by[p["story_id"]]
                 n += 1
-        update_provisional(bs)
+        update_provisional(bs, args.provisional)
         Path(args.pairings).write_text(json.dumps(bs, indent=2, ensure_ascii=False) + "\n")
         log(f"applied {n} origins to {args.pairings}")
 

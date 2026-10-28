@@ -1,0 +1,65 @@
+name: NTK Backstory — Draft before publish
+
+# T-0109. Pulse's "Draft Backstory" commits the Lineup to ntk-pulse/data/lineup-draft.json on the branch
+# Pulse is served from (main for the live Pulse, staging for staging Pulse), and that push is the trigger.
+# The run uses that branch's code, runs the same two Backstory steps publish runs, on COPIES of
+# backstory.json and provisional-rows.json, and commits only ntk-pulse/data/backstory-draft.json back to
+# the same branch. Nothing a reader sees changes. Publish later ships the draft if no story changed
+# (editorial/backstory_draft.py apply).
+on:
+  push:
+    branches: [main, staging]
+    paths:
+      - 'ntk-pulse/data/lineup-draft.json'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: backstory-draft-${{ github.ref_name }}
+  cancel-in-progress: true          # a newer draft replaces an older one still running
+
+jobs:
+  draft:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Draft the Backstory on copies
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          python -m pip install --quiet openpyxl
+          W=$RUNNER_TEMP/draft; mkdir -p $W
+          cp digest/data/backstory.json $W/backstory.json
+          cp ntk-pulse/data/provisional-rows.json $W/provisional-rows.json
+          python editorial/build_pairings.py --lineup ntk-pulse/data/lineup-draft.json \
+            --backstory $W/backstory.json --provisional $W/provisional-rows.json
+          python editorial/build_origins.py --apply --lineup ntk-pulse/data/lineup-draft.json \
+            --pairings $W/backstory.json --provisional $W/provisional-rows.json --out $W/origins.json
+          python editorial/backstory_draft.py make --lineup ntk-pulse/data/lineup-draft.json \
+            --backstory $W/backstory.json --provisional $W/provisional-rows.json --origins $W/origins.json \
+            --branch "${{ github.ref_name }}"
+          # the steps above must not have written a live file
+          git diff --quiet -- digest/ ntk-pulse/data/provisional-rows.json editorial/origins.json \
+            || { echo "a draft step wrote a live file"; git diff --stat; exit 1; }
+
+      - name: Commit the draft
+        run: |
+          git config user.name "ntk-draft-bot"
+          git config user.email "publish@ntknews.org"
+          git add ntk-pulse/data/backstory-draft.json
+          git diff --cached --quiet && exit 0
+          git commit -m "backstory draft: $(date -u +%Y-%m-%dT%H:%MZ)"
+          B="${{ github.ref_name }}"
+          for i in 1 2 3; do
+            git push origin HEAD:$B && exit 0
+            echo "push rejected, rebasing onto origin/$B and retrying ($i/3)"
+            git pull --rebase origin $B || { git rebase --abort; echo "rebase conflicted; nothing was pushed"; exit 1; }
+          done
+          echo "push still rejected after 3 tries"; exit 1

@@ -2348,6 +2348,10 @@ function renderBackstory(root){
       <div id="cat-editor">${sel? (CATS[sel.id]||catEnsureLocal(sel.id) ? catEditorHtml(CATS[sel.id]) : '') : '<i style="color:var(--dim)">Pick a category on the left, or make a new one. A category named from a story in Lineup opens here.</i>'}</div>
     </div>`;
   catRestoreInputs(_kept);
+  // T-0109: the draft and each story's fingerprint arrive asynchronously; each redraws once when it lands.
+  const dg=document.getElementById('bsr-draft-go'); if (dg) dg.addEventListener('click', draftBackstory);
+  if (!BSR_DRAFT_LOADED){ BSR_DRAFT_LOADED=true; loadBsrDraft().then(d=>{ if (d && TAB==='backstory') render(); }); }
+  bsrRefreshHashes();
   const hadCard=!!READER_CARD, hadPub=!!BSR_PUBLISHED, previewing=Object.keys(BSR_PREV_OPEN).length>0;
   Promise.all([fetchPublishedBackstory(), loadReaderCard()]).then(([d])=>{ const el=document.getElementById('bs-published'); if (el) el.innerHTML=pairingsHtml(d);
     // redraw once the card or the published rows arrive, if something on screen needs them (T-0098 previews)
@@ -3126,6 +3130,112 @@ function pulseMayPublish(loc){
   if (loc.hostname === 'ntknews.org' || loc.hostname === 'www.ntknews.org') return true;
   return loc.hostname === 'maxzimbert.github.io' && loc.pathname.indexOf('/ntknews/') === 0;
 }
+
+// ─── Backstory draft (T-0109) ───
+// "Draft Backstory" commits the Lineup to lineup-draft.json on the branch this Pulse is served from
+// (the live Pulse: main; staging Pulse: staging). backstory-draft.yml runs the publish-time Backstory steps
+// on copies and commits backstory-draft.json to the same branch; Pulse reads it back through the API (the
+// staging site is not redeployed by a draft). At publish, the draft ships only if every story's bs_hash
+// still matches it, so what the editor saw is what ships. Any other host cannot draft.
+const GH_DRAFT_LINEUP = 'ntk-pulse/data/lineup-draft.json';
+const GH_DRAFT_OUT = 'ntk-pulse/data/backstory-draft.json';
+function pulseBranch(loc){
+  if (pulseMayPublish(loc)) return 'main';
+  if (loc.hostname === 'maxzimbert.github.io' && loc.pathname.indexOf('/ntknews-staging/') === 0) return 'staging';
+  return null;
+}
+// The fields that decide a story's Backstory, fingerprinted here and only compared in Python
+// (editorial/backstory_draft.py), so there is one implementation.
+async function bsHash(s, cats){
+  const cat = s.backstory_row ? (cats.find(c => c.id === s.backstory_row) || null) : null;
+  const text = JSON.stringify([s.key, s.headline||'', s.lede||'', s.truth||'', s.prob||'', s.poss||'', s.lies||'', s.backstory_row||'', cat]);
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+async function bsWithHashes(stories){
+  const cats = catsForPublish();
+  for (const s of stories) s.bs_hash = await bsHash(s, cats);
+  return stories;
+}
+let BSR_DRAFT = null, BSR_DRAFT_STATE = '', BSR_DRAFT_SENT = 0, BSR_DRAFT_TIMER = null, BSR_DRAFT_LOADED = false;
+const BSR_HASH = {};                 // story key -> its current bs_hash, kept by bsrRefreshHashes
+let BSR_HASHING = false;
+async function bsrRefreshHashes(){
+  if (BSR_HASHING) return; BSR_HASHING = true;
+  try {
+    const all = await bsWithHashes(buildStoryPayload());
+    let changed = false;
+    all.forEach(s => { if (BSR_HASH[s.key] !== s.bs_hash){ BSR_HASH[s.key] = s.bs_hash; changed = true; } });
+    if (changed && TAB === 'backstory') render();
+  } finally { BSR_HASHING = false; }
+}
+function bsrDraftFor(s){
+  const d = BSR_DRAFT && (BSR_DRAFT.stories||[]).find(x => x.story_id === s.key);
+  if (!d) return null;
+  return Object.assign({fresh: !!d.bs_hash && d.bs_hash === BSR_HASH[s.key]}, d);
+}
+async function loadBsrDraft(){
+  const br = pulseBranch(location); if (!br || !SETTINGS.ghToken) return null;
+  try {
+    const r = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_DRAFT_OUT}?ref=${br}`,
+      {headers:{'Authorization':'Bearer '+SETTINGS.ghToken, 'Accept':'application/vnd.github.raw+json'}, cache:'no-store'});
+    if (!r.ok) return null;
+    BSR_DRAFT = await r.json();
+    return BSR_DRAFT;
+  } catch(e){ return null; }
+}
+function bsrDraftStatusText(){
+  if (BSR_DRAFT_STATE) return BSR_DRAFT_STATE;
+  if (!pulseBranch(location)) return 'Drafting works on the live Pulse and staging Pulse only.';
+  if (!BSR_DRAFT) return 'No Backstory draft yet.';
+  const n = LINEUP.filter(s => { const d = bsrDraftFor(s); return d && d.fresh; }).length;
+  return `Draft of ${rel(BSR_DRAFT.generated)} ago · ${n} of ${LINEUP.length} stories as drafted`
+    + (n < LINEUP.length ? ` · ${LINEUP.length - n} changed or new since: draft again before publishing to ship what you review` : ' · publish ships this');
+}
+async function draftBackstory(){
+  const br = pulseBranch(location);
+  if (!br){ alert('This copy of Pulse cannot draft (not the live Pulse or staging Pulse).'); return; }
+  if (!SETTINGS.ghToken){ alert('Add a GitHub token in ⚙ first — scoped to contents:write on this repo only.'); return; }
+  const stories = buildStoryPayload().filter(s => (s.headline || '').trim());
+  if (!stories.length){ alert('Nothing generated yet — nothing to draft.'); return; }
+  if (!confirm(`Draft the Backstory for ${stories.length} stor${stories.length===1?'y':'ies'}?\n\nRuns the publish-time Backstory steps on the ${br} branch's code, in a few minutes. Nothing readers see changes. It spends from the same Anthropic key as a publish; a publish that follows with nothing changed does not spend it again.`)) return;
+  await bsWithHashes(stories);
+  BSR_DRAFT_STATE = 'Sending the Lineup…'; render();
+  try {
+    const content = storyDataExport(stories);
+    const b64 = btoa(unescape(encodeURIComponent(content)));
+    const apiUrl = `https://api.github.com/repos/${GH_REPO}/contents/${GH_DRAFT_LINEUP}`;
+    const headers = { 'Authorization': 'Bearer '+SETTINGS.ghToken, 'Accept': 'application/vnd.github+json' };
+    let sha = null;
+    const g = await fetch(apiUrl + '?ref=' + br, {headers, cache:'no-store'});
+    if (g.ok) sha = (await g.json()).sha; else if (g.status !== 404) throw new Error('GitHub GET failed: '+g.status);
+    const p = await fetch(apiUrl, {method:'PUT', headers:{...headers,'Content-Type':'application/json'},
+      body: JSON.stringify({message:'backstory draft request: '+stories.length+' stories from Pulse', content:b64, branch:br, ...(sha?{sha}:{})})});
+    if (!p.ok){ const t = await p.text(); throw new Error('GitHub PUT failed: '+p.status+' '+t.slice(0,200)); }
+    BSR_DRAFT_SENT = Date.now();
+    BSR_DRAFT_STATE = 'Drafting on ' + br + '… usually 2 to 5 minutes. This updates by itself.';
+    render(); bsrPollDraft();
+  } catch(e){ BSR_DRAFT_STATE = 'Draft failed: ' + e.message; render(); }
+}
+function bsrPollDraft(){
+  clearTimeout(BSR_DRAFT_TIMER);
+  BSR_DRAFT_TIMER = setTimeout(async () => {
+    const d = await loadBsrDraft();
+    if (d && new Date(d.generated).getTime() > BSR_DRAFT_SENT - 30000){ BSR_DRAFT_STATE = ''; render(); return; }
+    if (Date.now() - BSR_DRAFT_SENT > 15*60000){
+      BSR_DRAFT_STATE = 'No draft after 15 minutes. Check the "Backstory — Draft before publish" run on GitHub.'; render(); return; }
+    bsrPollDraft();
+  }, 20000);
+}
+// A draft ships only whole (editorial/backstory_draft.py apply), so one changed story means publish chooses
+// again for all of them. Warned in the publish dialog; never a block.
+function draftPreflight(stories){
+  if (!BSR_DRAFT) return [];
+  const have = Object.fromEntries((BSR_DRAFT.stories||[]).map(d => [d.story_id, d.bs_hash]));
+  const off = stories.filter(s => have[s.key] !== s.bs_hash);
+  return off.length ? [`Backstory: ${off.length} stor${off.length===1?'y has':'ies have'} changed since the draft (${off.map(s=>'"'+(s.headline||s.key).slice(0,40)+'"').join(', ')}). Publish will choose the Backstory again for every story instead of shipping the draft. Cancel and draft again to ship what you review.`] : [];
+}
+
 async function publishToDigest(){
   if (!pulseMayPublish(location)){
     publishStatus = 'Publish is disabled on this copy of Pulse (not the live Pulse).';
@@ -3136,9 +3246,12 @@ async function publishToDigest(){
   if (tp.block.length){ alert('Not published.\n\n' + tp.block.join('\n')); return; }
   const all = buildStoryPayload();
   if (!all.length){ alert('Nothing generated yet — nothing to publish.'); return; }
+  await bsWithHashes(all);                   // T-0109: publish ships the draft only when these still match it
+  await loadBsrDraft();
 
   const pf = publishPreflight(all);
   pf.warn.push(...tp.warn);
+  pf.warn.push(...draftPreflight(all.filter(s => (s.headline || '').trim())));
   const keptCats={}; PUBCATS.forEach(r=>{ keptCats[r.id]=r; }); Object.assign(keptCats, CATS);
   pf.warn.push(...keptPreflight(LINEUP, keptCats));
   pf.warn.push(...rowPreflight(all, catsForPublish()));
@@ -4084,6 +4197,10 @@ function bsrLineupHtml(){
   if (!LINEUP.length) return '';
   return `<div style="margin-bottom:14px">
     <div style="font-size:11px;color:var(--dim);margin-bottom:6px">TODAY'S LINEUP &middot; ${LINEUP.length} &middot; in Lineup order. File each story here or in Lineup; a story left unfiled goes to the classifier, which may make a new category.</div>
+    <div class="bsr-draftbar" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px;padding:7px 9px;border:1px solid var(--ink)">
+      <button class="mini go" id="bsr-draft-go"${pulseBranch(location)?'':' disabled'}>Draft Backstory</button>
+      <span style="font-size:12px">${esc(bsrDraftStatusText())}</span>
+    </div>
     ${LINEUP.map((s,i)=>{ const cat=s.backstoryRow&&catRecord(s.backstoryRow);
       return `<div class="story bsr-lu" data-key="${esc(s.key)}" style="padding:6px 9px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;${s.backstoryRow?'':'border-color:var(--warn)'}">
         <b style="font-size:12px;min-width:18px">${i+1}</b>
@@ -4094,6 +4211,7 @@ function bsrLineupHtml(){
         <button class="mini bsr-lu-kwgo">find in matrix</button>
         <button class="mini bsr-lu-prev"${BSR_PREV_OPEN[s.key]?' style="background:var(--ink);color:#fff"':''}>preview</button>
         ${cat?`<button class="mini bsr-lu-open">open ${esc(cat.title)} →</button>`:''}
+        ${bsrDraftChip(s)}
         ${bsrPublishedChip(s)}
         ${BSR_KW_OPEN[s.key]?bsrKwResultsHtml(s):''}
         ${(s.bsPicks||[]).length?bsrPicksHtml(s):''}
@@ -4205,7 +4323,38 @@ function bsrPreviewData(s){
     begs:(r.beginnings||[]).map(b=>({year:b.year||'', line:b.line||''})),
     objs:(r.objects||[]).map(o=>({id:o.object_id, year:o.year||'', title:o.title||'', author:o.author||'', about:o.about||'', url:o.source_url||''}))};
 }
+// T-0109: what the draft chose for this story, beside what the last publish did.
+function bsrDraftChip(s){
+  if (!BSR_DRAFT) return '';
+  const d = bsrDraftFor(s);
+  if (!d) return '<span class="chip" title="this story was not in the last draft">not in draft</span>';
+  if (!d.fresh) return '<span class="chip" style="background:var(--warn);color:#fff" title="the story or its category changed after the draft">changed since draft</span>';
+  if (!d.pairing || !d.row) return '<span class="chip" style="background:var(--warn);color:#fff">draft: no Backstory</span>';
+  const isNew = d.row.stratum === 'provisional' && !BSR_ROWS.some(r => r.id === d.row.id);
+  const o = d.pairing.origin;
+  return `<span class="chip" style="background:var(--ink);color:#fff" title="what publish will ship for this story">draft: ${esc(d.row.title)}${isNew?' · new category':''}${o&&o.year?' · starts '+esc(o.year):''}</span>`;
+}
+function bsrDraftPreviewHtml(s, d){
+  const r = d.row, p = d.pairing;
+  const card = readerCardHtml(r, {story_id:s.key, line:p.line||'', headline:s.title, origin:p.origin||null});
+  const objs = r.objects || [], begs = r.beginnings || [];
+  return `<div class="bsr-prev" style="flex-basis:100%;margin:6px 0 2px 26px;padding:8px 10px;border:1px solid var(--ink);background:#faf8f3">
+    <div style="font-size:11px;color:var(--dim);margin-bottom:6px">PREVIEW &middot; the draft of ${esc(rel(BSR_DRAFT.generated))} ago, as publish will ship it <button class="mini bsr-prev-close">close</button></div>
+    <div style="font-size:11px;color:var(--dim);margin-bottom:6px">${esc(p.source==='auto-category'?'Category made by the draft':p.source==='editor'?'Category you filed':'Category the classifier chose')}${p.confidence!=null?' · confidence '+esc(Number(p.confidence).toFixed(2)):''}${p.origin&&p.origin.status==='fallback'?' · "It starts in" fell back to the category’s own line':''}</div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">
+      <div>${card||'<i style="font-size:11px;color:var(--dim)">The reader’s card could not be loaded.</i>'}</div>
+      <div style="flex:1;min-width:280px;max-width:560px;font-family:Georgia,serif">
+        <div style="font:600 20px Georgia,serif;margin-bottom:4px">${esc(r.title)}</div>
+        ${r.stakes?`<div style="font-size:14px;margin-bottom:8px">${esc(r.stakes)}</div>`:''}
+        <div style="font:700 10.5px sans-serif;letter-spacing:.08em;margin:8px 0 4px">BEGINNINGS &middot; ${begs.length}</div>
+        ${begs.map(b=>`<div style="display:flex;gap:10px;margin:4px 0;font-size:14px"><b style="min-width:40px">${esc(b.year)}</b><span>${esc(b.line)||'<i style="color:var(--stale)">no line yet</i>'}</span></div>`).join('')||'<i style="font-size:12px;color:var(--dim)">none</i>'}
+        <div style="font:700 10.5px sans-serif;letter-spacing:.08em;margin:10px 0 4px">OBJECTS &middot; ${objs.length}</div>
+        ${objs.map(o=>`<div style="margin:5px 0;font-size:13.5px"><b>${esc(o.year)}</b> ${o.source_url?`<a href="${esc(o.source_url)}" target="_blank" rel="noopener">${esc(o.title||o.object_id)}</a>`:esc(o.title||o.object_id)}${o.source_kind==='news'?' <span class="chip">news report</span>':''}${o.author?' <span style="color:var(--dim)">'+esc(o.author)+'</span>':''}<div style="font-size:13px;margin-top:1px">${esc(o.about)||'<i style="color:var(--stale)">no About text yet</i>'}</div></div>`).join('')||'<i style="font-size:12px;color:var(--dim)">none</i>'}
+      </div></div></div>`;
+}
 function bsrStoryPreviewHtml(s){
+  const dr=bsrDraftFor(s);
+  if (dr && dr.fresh && dr.row && dr.pairing) return bsrDraftPreviewHtml(s, dr);
   const box=inner=>`<div class="bsr-prev" style="flex-basis:100%;margin:6px 0 2px 26px;padding:8px 10px;border:1px dashed var(--rule);background:#faf8f3">
     <div style="font-size:11px;color:var(--dim);margin-bottom:6px">PREVIEW &middot; this story's Backstory as the reader gets it <button class="mini bsr-prev-close">close</button></div>${inner}</div>`;
   const d=bsrPreviewData(s);

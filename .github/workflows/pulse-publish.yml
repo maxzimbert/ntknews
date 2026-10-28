@@ -33,6 +33,14 @@ jobs:
         with:
           python-version: "3.12"
 
+      # T-0109: when Pulse drafted the Backstory and no story changed since, ship what the editor saw
+      # instead of choosing again (and paying again). Any change, or no draft, and the two Backstory
+      # steps below run as they always have.
+      - name: Use the Backstory draft
+        id: draft
+        continue-on-error: true
+        run: python editorial/backstory_draft.py apply --github-output "$GITHUB_OUTPUT"
+
       # T-0046: must run BEFORE "Build digest" now, not after. build_digest.py
       # cross-links each story to its paired Backstory row and writes the
       # real per-story permalink back into digest/data/backstory.json's
@@ -45,6 +53,7 @@ jobs:
       # never collide with today's) and just publishes without Backstory
       # links, rather than attaching a wrong one.
       - name: Build Backstory pairings
+        if: steps.draft.outputs.used != 'true'
         continue-on-error: true
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -57,6 +66,7 @@ jobs:
       # pairings step: a failure leaves each card on its row's own "since" line.
       # openpyxl is for the lens Beginnings, which read the Object Matrix.
       - name: Find origins
+        if: steps.draft.outputs.used != 'true'
         continue-on-error: true
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
