@@ -24,15 +24,25 @@ Wanted:
    to T-0111, rather than stretching an unrelated object to fill.
 3. **Section edits in Pulse.** Per section ("It starts in", Beginnings, objects, the lines): remove an
    item, edit the text, or nudge with a short note (accurate, brief, comprehensive, or the editor's own
-   words: "too narrow, include the 2019 to 2022 elections"). A nudge reruns that section only. The
-   editor's removals stick on reruns.
-4. **Tried on staging** with the two 2026-10-28 cases: the Israel election story should come out
+   words: "too narrow, include the 2019 to 2022 elections"). A nudge reruns that section only. Two
+   kinds of removal, kept apart: **not for this story** sticks on that story's reruns and leaves the
+   object available to other stories; **reject** is about the object itself (a bad source, a wrong
+   date) and removes it everywhere, as the 2026-10-12 rule on rejections already says.
+4. **One category, several paths.** Decided with the editor 2026-10-28: a category can be used by two
+   stories that take it two different ways, with distinct or overlapping Beginnings and objects. A
+   story about Ra'am's cabinet seat and one about the Nation-State Law can both draw on an Israel
+   library and start in different years. The composed page belongs to the story; the category holds
+   the library and lists its stories. An object's own text (`about`) is shared, since it describes the
+   document; a Beginning's line may be written per story, since it says why that milestone matters here.
+5. **Tried on staging** with the two 2026-10-28 cases: the Israel election story should come out
    thin and say why (no Power Beginnings); the ballroom donors story should widen to private money and
    the presidency using the emoluments clause (matrix, Power) and the existing gift-law objects.
 
-Runs inside T-0109's draft, so the editor sees it before publish. The live reader page for a story is
-per story already (`/backstory/<row>/` is shared; the per-story view needs a URL of its own, the cost
-the editor accepted 2026-10-06).
+Runs inside T-0109's draft, so the editor sees it before publish. Today the reader's category page
+(`/backstory/<row>/`) is shared by every story filed there, so a per-story page needs a URL of its own,
+the cost the editor accepted 2026-10-06. Open: what the category page shows once stories take it
+different ways (its stories, each with its own path, is the likely answer). Decide it on staging with
+two real stories in one category, not before.
 
 ## Why
 
