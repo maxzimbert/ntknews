@@ -24,7 +24,8 @@ What it does, in order:
      that file (the swipe-app shell, styling, JS) is left untouched; this
      only touches the two blocks that used to be hand-pasted.
   4. Decodes each story's base64 image into a real file.
-  5. Writes a standalone permalink page per story, real OG/Twitter tags.
+  5. Writes a standalone permalink page per story, real OG/Twitter tags,
+     with the share-cards link preview as og:image when it renders.
   6. Freezes today's edition at a permanent dated path.
   7. Rebuilds the archive index from what's actually on disk.
   8. Writes a last-published timestamp Pulse can read and show you.
@@ -33,13 +34,16 @@ Writes DIRECTLY to digest/ — no test-folder detour. That was the right
 call while this was unverified; it's a deliberate, later decision to skip
 it now that the mechanics are proven and there's no live audience yet.
 
-Stdlib only.
+Stdlib only. The share-card renderer (share-cards/, jinja2 + Playwright) runs
+as a subprocess and is optional: without it the pages use the photo.
 """
 import base64
 import json
 import os
 import re
+import subprocess
 import sys
+import tempfile
 import unicodedata
 import urllib.request
 from datetime import datetime, timezone
@@ -783,15 +787,58 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
 """
 
 
-def build_story_page(story, image_rel_url, image_abs_url, canonical_url):
+# T-0107: the designed link-preview card from share-cards/. Every app that
+# unfurls a pasted link (iMessage, WhatsApp, Facebook, X, LinkedIn, Slack,
+# email) shows the page's og:image, so this one file is what a share looks
+# like nearly everywhere. The renderer needs jinja2 and Playwright, which this
+# script does not: it runs as a subprocess, and any failure (not installed, a
+# headline that overflows the card, over the size budget) returns None and the
+# page falls back to the photo, as before. A missing card never costs a publish.
+def render_og_card(story, story_dir, repo_root):
+    pkg = repo_root / "share-cards"
+    if not (pkg / "render" / "render_cards.py").exists():
+        return None
+    sys.path.insert(0, str(pkg / "render"))
+    try:
+        from build_card_data import build_card
+        card = build_card(story, {}, False)
+        card.pop("_slug", None)
+    except Exception as e:
+        log(f"  ! og card data failed: {e}")
+        return None
+    finally:
+        sys.path.pop(0)
+    out = story_dir / "share"
+    with tempfile.TemporaryDirectory() as tmp:
+        data = Path(tmp) / "card.json"
+        data.write_text(json.dumps(card, ensure_ascii=False))
+        try:
+            r = subprocess.run([sys.executable, str(pkg / "render" / "render_cards.py"),
+                                "--data", str(data), "--out", str(out), "--only", "og"],
+                               capture_output=True, text=True, timeout=120)
+        except Exception as e:
+            log(f"  ! og card render failed: {e}")
+            return None
+    og = out / "og.jpg"
+    if r.returncode != 0:
+        last = (r.stdout + r.stderr).strip().splitlines() or ["no output"]
+        log(f"  ! og card render failed: {last[-1][:200]}")
+        og.unlink(missing_ok=True)
+        return None
+    return og if og.exists() else None
+
+
+def build_story_page(story, image_rel_url, image_abs_url, canonical_url, card_abs_url=None):
     headline = story.get("headline", "")
     description = story.get("lede") or strip_html_for_description(story.get("truth", ""))
     has_image = bool(image_abs_url)
+    # The designed card when it rendered, the photo when it did not.
+    preview_url = card_abs_url or image_abs_url
     og_image_tags = (
-        f'<meta property="og:image" content="{image_abs_url}">\n'
+        f'<meta property="og:image" content="{preview_url}">\n'
         f'<meta property="og:image:width" content="1200">\n'
-        f'<meta property="og:image:height" content="630">' if has_image else "")
-    twitter_image_tag = (f'<meta name="twitter:image" content="{image_abs_url}">' if has_image else "")
+        f'<meta property="og:image:height" content="630">' if preview_url else "")
+    twitter_image_tag = (f'<meta name="twitter:image" content="{preview_url}">' if preview_url else "")
     hero_img = (f'<div class="story-hero-image-wrap"><img src="{image_rel_url}" alt=""></div>'
                 if has_image else "")
     backstory_link = ""
@@ -804,7 +851,7 @@ def build_story_page(story, image_rel_url, image_abs_url, canonical_url):
         headline=headline.replace("<", "").replace(">", ""),
         headline_esc=html_esc(headline), description_esc=html_esc(description),
         canonical_url=canonical_url, og_image_tags=og_image_tags,
-        twitter_card_type="summary_large_image" if has_image else "summary",
+        twitter_card_type="summary_large_image" if preview_url else "summary",
         twitter_image_tag=twitter_image_tag, ink=INK, cream=CREAM,
         logo=LOGO_DATA_URI,
         category=html_esc(story.get("category", "")), lede_esc=html_esc(description),
@@ -1019,10 +1066,12 @@ def main():
                 image_rel_url = f"../../images/{img_name}"
                 image_abs_url = f"{base_url}/digest/images/{img_name}"
 
-        page = build_story_page(story, image_rel_url, image_abs_url, canonical_url)
+        card_abs_url = f"{canonical_url}share/og.jpg" if render_og_card(story, story_dir, repo_root) else None
+
+        page = build_story_page(story, image_rel_url, image_abs_url, canonical_url, card_abs_url)
         (story_dir / "index.html").write_text(page)
         headlines_meta.append({"slug": slug, "headline": story.get("headline", "")})
-        log(f"  story page: {slug}/  (image: {'yes' if image_abs_url else 'no'})")
+        log(f"  story page: {slug}/  (image: {'yes' if image_abs_url else 'no'}, card: {'yes' if card_abs_url else 'no'})")
 
     (dated_dir / "_headlines.json").write_text(json.dumps(headlines_meta, indent=1))
 

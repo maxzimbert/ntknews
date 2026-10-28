@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{{ title | default('NTK card') }}</title>
+<link rel="stylesheet" href="{{ root }}/tokens/tokens.css">
+<style>
+html, body { width: {{ W }}px; height: {{ H }}px; overflow: hidden; }
+{% block css %}{% endblock %}
+</style>
+</head>
+<body>
+<div class="card" style="width: {{ W }}px; height: {{ H }}px">
+{% block body %}{% endblock %}
+</div>
+<script>
+/* Fit-to-box: any element with data-fit="max,min" starts at max px and steps
+   down until its content fits its own box (set a height or max-height plus
+   overflow:hidden on it). Children sized in em scale with it. The renderer
+   waits for window.__fitDone and fails the card if data-overflow is set. */
+window.__fit = async function () {
+  await document.fonts.ready;
+  document.querySelectorAll('[data-fit]').forEach(function (el) {
+    var p = el.dataset.fit.split(',').map(Number), size = p[0], min = p[1];
+    var over = function () { return el.scrollHeight > el.clientHeight + 1 || el.scrollWidth > el.clientWidth + 1; };
+    el.style.fontSize = size + 'px';
+    while (over() && size > min) { size -= 1; el.style.fontSize = size + 'px'; }
+    el.dataset.fitted = size;
+    if (over()) el.dataset.overflow = '1';
+  });
+  window.__fitDone = true;
+};
+window.addEventListener('load', function () { window.__fit(); });
+</script>
+</body>
+</html>

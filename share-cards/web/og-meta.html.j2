@@ -1,0 +1,24 @@
+{# Per-story <head> tags. Rendered into each static story page by the build
+   (digest/<date>/<slug>/index.html). All image URLs must be absolute, hosted
+   files — never data URIs (crawlers fetch over HTTP). #}
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="NTK News">
+<meta property="og:url" content="{{ story.permalink }}">
+<meta property="og:title" content="{{ story.headline }}">
+<meta property="og:description" content="{{ story.lede }}">
+<meta property="og:image" content="{{ story.permalink }}share/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:alt" content="{{ story.headline }}">
+<meta property="article:published_time" content="{{ published_iso }}">
+<meta property="article:section" content="{{ story.category }}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ story.headline }}">
+<meta name="twitter:description" content="{{ story.lede }}">
+<meta name="twitter:image" content="{{ story.permalink }}share/og.jpg">
+<meta name="twitter:image:alt" content="{{ story.headline }}">
+{# Add once NTK has an X account: <meta name="twitter:site" content="@HANDLE"> #}
+{# Pinterest reads og tags too; this keeps its picker on the pin image. #}
+<link rel="image_src" href="{{ story.permalink }}share/pin.png">
+<link rel="canonical" href="{{ story.permalink }}">

@@ -64,6 +64,16 @@ jobs:
           python -m pip install --quiet openpyxl
           python editorial/build_origins.py --apply
 
+      # T-0107: what renders each story's link-preview card (share-cards/), which
+      # build_digest.py calls per story. continue-on-error for the same reason as
+      # the steps above: without the renderer the pages use the photo as og:image,
+      # exactly as before, and the digest still ships.
+      - name: Install share-card renderer
+        continue-on-error: true
+        run: |
+          python -m pip install --quiet -r share-cards/render/requirements.txt
+          python -m playwright install --with-deps chromium
+
       - name: Build digest
         working-directory: ntk-pulse
         env:

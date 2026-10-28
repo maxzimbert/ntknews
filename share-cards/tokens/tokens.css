@@ -1,0 +1,75 @@
+/* NTK share-card tokens — pulled from the live ntknews.org stylesheet (Oct 27, 2026).
+   Color variables use the site's own names. Fonts are self-hosted (OFL) so renders
+   are identical in CI with no network. Paths are relative to this file. */
+
+@font-face { font-family: "Newsreader"; font-style: normal; font-weight: 400; font-display: block;
+  src: url("../assets/fonts/newsreader-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Newsreader"; font-style: italic; font-weight: 400; font-display: block;
+  src: url("../assets/fonts/newsreader-latin-400-italic.woff2") format("woff2"); }
+@font-face { font-family: "Newsreader"; font-style: normal; font-weight: 600; font-display: block;
+  src: url("../assets/fonts/newsreader-latin-600-normal.woff2") format("woff2"); }
+@font-face { font-family: "Newsreader"; font-style: italic; font-weight: 600; font-display: block;
+  src: url("../assets/fonts/newsreader-latin-600-italic.woff2") format("woff2"); }
+@font-face { font-family: "Overpass"; font-style: normal; font-weight: 500; font-display: block;
+  src: url("../assets/fonts/overpass-latin-500-normal.woff2") format("woff2"); }
+@font-face { font-family: "Overpass"; font-style: normal; font-weight: 600; font-display: block;
+  src: url("../assets/fonts/overpass-latin-600-normal.woff2") format("woff2"); }
+@font-face { font-family: "Overpass"; font-style: normal; font-weight: 700; font-display: block;
+  src: url("../assets/fonts/overpass-latin-700-normal.woff2") format("woff2"); }
+
+:root {
+  /* Palette — identical to ntknews.org :root */
+  --ink: #261F23;
+  --cream: #EAD9C5;
+  --cream-raised: #FBF4EA;
+  --amber: #F2AE2E;
+  --coral: #DC6550;
+  --coral-deep: #A33421;
+  --blue: #0798F2;
+  --blue-deep: #045E96;
+  --teal: #01B2A7;
+
+  /* Ink at the opacities the site uses for secondary text */
+  --ink-78: rgba(38, 31, 35, 0.78);   /* card body */
+  --ink-72: rgba(38, 31, 35, 0.72);   /* long copy */
+  --ink-67: rgba(38, 31, 35, 0.67);   /* section kickers */
+  --ink-60: rgba(38, 31, 35, 0.60);   /* small-caps section labels */
+  --cream-72: rgba(234, 217, 197, 0.72); /* secondary text on ink */
+
+  /* The four questions — encoded by rule weight, exactly as the site's story rows */
+  --rule-truths: 6px solid var(--ink);
+  --rule-probabilities: 5px solid rgba(38, 31, 35, 0.60);
+  --rule-possibilities: 4px solid rgba(38, 31, 35, 0.34);
+  --rule-lies: 6px solid var(--coral-deep);
+
+  /* Type */
+  --serif: "Newsreader", Georgia, serif;     /* headlines 600, body 400, accent italic */
+  --sans: "Overpass", system-ui, sans-serif; /* eyebrows, labels, buttons, URLs */
+  --headline-tracking: -0.035em;             /* site h1: -2.66px at 76px */
+  --kicker-tracking: 0.1em;                  /* site kicker: 1px at 10px, uppercase */
+  --smallcaps-tracking: 0.05em;              /* site small-caps labels: 0.8px at 16px */
+
+  /* Shape — the site uses 3px corners and full pills, nothing in between */
+  --radius: 3px;
+  --pill: 999px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision; }
+
+/* Shared card primitives */
+.card { position: relative; overflow: hidden; font-family: var(--serif); color: var(--ink); }
+.kicker { font-family: var(--sans); font-weight: 600; text-transform: uppercase; letter-spacing: var(--kicker-tracking); }
+.smallcaps { font-family: var(--serif); font-variant-caps: small-caps; letter-spacing: var(--smallcaps-tracking); }
+.headline { font-family: var(--serif); font-weight: 600; letter-spacing: var(--headline-tracking); }
+.accent { font-style: italic; color: var(--amber); }
+.url { font-family: var(--sans); font-weight: 600; }
+.logo { display: block; height: auto; align-self: flex-start; flex-shrink: 0; }
+.sep { display: inline-block; margin: 0 0.5em; }
+
+/* Duotone photo, matching the digest: grayscale photo tinted by the story's
+   Pulse overlay color at its overlay opacity, over the deep-blue base. */
+.duo { position: relative; overflow: hidden; background: var(--blue-deep); }
+.duo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  filter: grayscale(1) contrast(1.08); mix-blend-mode: luminosity; opacity: 0.92; }
+.duo .tint { position: absolute; inset: 0; mix-blend-mode: multiply; }

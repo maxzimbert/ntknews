@@ -1,0 +1,28 @@
+{# Link preview for a story permalink — 1200x630 (1.91:1).
+   Used by every platform that unfurls a pasted link. Mirrors the site hero:
+   ink ground, duotone photo panel, amber eyebrow, cream Newsreader headline.
+   Keep anything essential inside x 64–700: some apps crop the edges. #}
+{% extends "_base.html.j2" %}
+{% import "_macros.html.j2" as m with context %}
+{% block css %}
+.card { background: var(--ink); }
+.photo { position: absolute; top: 0; right: 0; width: 470px; height: 630px; }
+.left { position: absolute; left: 64px; top: 56px; width: 600px; bottom: 52px; display: flex; flex-direction: column; }
+.eyebrow { display: flex; align-items: center; gap: 12px; margin-top: 44px; color: var(--amber); font-size: 18px; }
+.hl { margin-top: 20px; color: var(--cream); line-height: 1.06; max-height: 290px; overflow: hidden; }
+.foot { margin-top: auto; display: flex; align-items: center; gap: 20px; }
+.btn { background: var(--amber); color: var(--ink); border-radius: var(--radius); padding: 13px 22px 11px; font-size: 20px; display: flex; align-items: center; gap: 12px; }
+.addr { color: var(--cream-72); font-size: 20px; }
+{% endblock %}
+{% block body %}
+{{ m.duo(story.photo, 'position:absolute; top:0; right:0; width:470px; height:630px') }}
+<div class="left">
+  {{ m.logo('white', 44) }}
+  <div class="eyebrow kicker">{{ m.dot('var(--amber)', 9) }}<span>{{ story.category }}<span class="sep">·</span>{{ story.date_label }}</span></div>
+  <div class="hl headline" data-fit="52,34">{{ story.headline }}</div>
+  <div class="foot">
+    <div class="btn url">Read it on NTK {{ m.arrow('#261F23', 26) }}</div>
+    <div class="addr url">{{ story.short_url }}</div>
+  </div>
+</div>
+{% endblock %}

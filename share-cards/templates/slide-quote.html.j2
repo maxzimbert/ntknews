@@ -1,0 +1,28 @@
+{# Carousel — quote. Only when the story carries a quote that passed the
+   verbatim check (SPEC.md, Assembly rules). Ink ground, amber mark. #}
+{% extends "_base.html.j2" %}
+{% import "_macros.html.j2" as m with context %}
+{% set q = story.quote %}
+{% block css %}
+.card { background: var(--ink); color: var(--cream); }
+.top { position: absolute; left: 72px; right: 72px; top: 64px; display: flex; justify-content: space-between; align-items: center; }
+.kick { color: var(--cream-72); font-size: 20px; }
+.mark { font-family: var(--serif); font-weight: 600; font-size: 260px; line-height: 0.75; height: 120px; margin-left: -6px; margin-bottom: -16px; color: var(--amber); }
+.flow { position: absolute; left: 72px; right: 72px; top: 150px; height: 1020px; display: flex; flex-direction: column; justify-content: center; gap: 56px; }
+.qt { max-height: 600px; overflow: hidden; font-family: var(--serif); font-style: italic; font-weight: 400; line-height: 1.18; letter-spacing: -0.01em; color: var(--cream); }
+.who { display: flex; gap: 24px; align-items: flex-start; }
+.who .rule { width: 6px; align-self: stretch; background: var(--amber); }
+.who .nm { font-family: var(--sans); font-weight: 700; font-size: 32px; color: var(--cream); }
+.who .rl { margin-top: 8px; font-family: var(--serif); font-style: italic; font-size: 30px; color: var(--cream-72); }
+.foot { position: absolute; left: 72px; right: 72px; bottom: 64px; display: flex; justify-content: space-between; align-items: center; }
+.addr { font-size: 24px; color: var(--cream); }
+{% endblock %}
+{% block body %}
+<div class="top"><div class="kick kicker">In their words</div>{{ m.counter('var(--cream-72)') }}</div>
+<div class="flow">
+  <div class="mark" aria-hidden="true">“</div>
+  <div class="qt" data-fit="72,40">{{ q.text }}</div>
+  <div class="who"><div class="rule"></div><div><div class="nm">{{ q.speaker }}</div><div class="rl">{{ q.role }}<span class="sep">·</span>via {{ q.source }}</div></div></div>
+</div>
+<div class="foot">{{ m.logo('white', 48) }}<div class="addr url">{{ story.short_url }}</div></div>
+{% endblock %}
