@@ -413,6 +413,30 @@ works meanwhile. New lens objects arrive through the candidates workbook with a 
 they graduate by the path the editor already trusts. The workbook's `Lenses` tab records the
 definitions and how thin each lens is.
 
+**A Backstory misfit is one of two problems: the scope is wrong, or the material is missing. Research
+once, compose per story.** Decided 2026-10-28 with the editor, after composing two stories by hand.
+Israel's 2026 election was filed under Power and opened in 1764 Virginia: the library holds one Israel
+document (Camp David, a war-and-peace object), so no composition could fit it. Missing material. The
+ballroom donors category held three gift-law objects; widening the scope to private money and the
+presidency found four or five verified objects already in the matrix (the emoluments clause, Citizens
+United). Wrong scope. What follows:
+- *Scope* is fixed per story, from the shared library, with no web search (T-0110). The category stays
+  as the library and the grouping; each story's page picks its own "It starts in", Beginnings and
+  objects from it. The editor can remove, revise, or nudge a section (accurate, brief, comprehensive),
+  and only that section reruns. This changes the unit of composition in the 2026-10-12 vocabulary
+  decision (one category page shared by every story) and keeps its finding that research is done once.
+- *Material* is researched only when the library is thin for the story's subject, and what research
+  finds joins the shared library so no subject is searched twice (T-0111). Until 2026-10-28 a search
+  find stayed inside the one category that found it (21 objects across 9 categories, reused by none),
+  and `compose_category.py` searched on every new category, thin library or not.
+- Searches are budgeted and counted. The editor's constraint: do not spend on the same web searches
+  over and over.
+- Built and tried on staging first, inside the pre-publish draft (T-0109). Nothing changes on
+  ntknews.org until the editor has run both stories above, and new ones, through it there.
+- Raised by the editor and pushed back on: a category named *Trump's corruption*. A category named for
+  a verdict tells the reader the conclusion before the evidence, which is the spin the reader assumes.
+  Widening the history does that work instead. Not decided either way.
+
 ## Open questions, not defaults
 
 These are genuinely unresolved. Don't assume either way.

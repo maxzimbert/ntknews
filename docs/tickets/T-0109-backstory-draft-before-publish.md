@@ -19,9 +19,11 @@ last published ones.
 
 Wanted, three parts:
 
-1. **Draft.** A button in production Pulse sends the current Lineup to a workflow that runs the same
-   two scripts, on main's code, and writes their output to `ntk-pulse/data/backstory-draft.json`
-   (keyed to the Lineup it was run on), not to `digest/`, `backstory/` or `provisional-rows.json`.
+1. **Draft.** A button in Pulse sends the current Lineup to a workflow that runs the Backstory steps
+   on the code of the branch that Pulse is served from, and writes their output to
+   `ntk-pulse/data/backstory-draft.json` (keyed to the Lineup it was run on), not to `digest/`,
+   `backstory/` or `provisional-rows.json`. Staging Pulse drafts on the staging branch; the live
+   Pulse drafts on main. Once T-0110 and T-0111 land, the draft is where they run.
 2. **Show it.** Pulse reads the draft and shows it in the per-story preview: the category chosen or
    created, its objects, "It starts in", the Beginnings. A story whose Lineup entry changed since the
    draft says the draft is stale for it.
@@ -29,7 +31,12 @@ Wanted, three parts:
    run again; anything else runs as today. The editor's approval is of what ships, not of a sample of
    it.
 
-Prior art, measured 2026-10-28: commit `de7e91c7` (T-0083, on the `staging` branch only) added "Send
+**Staging is the test bed.** Amended 2026-10-28 with the editor. This, T-0110 and T-0111 are built
+on their own branches, merged into `staging` (reset to main on 2026-10-28) and tried in staging Pulse
+with real Lineups before anything reaches main. What is ruled out below is staging as the daily review
+step, not staging as the place the build is tried.
+
+Prior art, measured 2026-10-28: commit `de7e91c7` (T-0083, kept on branch `staging-2026-10-13`) added "Send
 to a staging run". It applies to today's main without conflicts and Pulse's script still parses, but it
 runs a whole publish onto the staging branch and shows the result on the staging site. Nothing returns
 to production Pulse, and production publish recomputes. Its way of sending the Lineup somewhere other
@@ -45,7 +52,7 @@ production. Today's category and objects went out unread.
 Ruled out:
 - **Porting the selection to Pulse's JavaScript.** Two copies of the logic drift; this is the
   `digest/v2/` duplication again, and T-0091's rule was to share the code, not copy it.
-- **Making the staging site the review surface** (`de7e91c7` as built). It runs on whatever code
+- **Making the staging site the daily review surface** (`de7e91c7` as built). It runs on whatever code
   `staging` holds (two weeks behind main on 2026-10-28, 297 commits), the result lives on another
   site, and the real publish chooses again, so what was reviewed is not what ships.
 - **A draft that publish ignores.** Two model runs per edition, and the second can choose
