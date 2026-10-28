@@ -7,6 +7,22 @@ This is a working list, not a commitment. Things move.
 
 ---
 
+## Backstory per story: open, not to solve yet (captured 2026-10-28)
+
+The build is T-0109 (draft before publish), T-0110 (compose per story), T-0111 (research once),
+T-0112 (visualization per story), all tried on staging first. Raised by the editor, parked on purpose:
+
+- **How long a category lives.** Today a category with no story in 30 days is archived and comes back
+  when a story fits it (T-0095), and promotion to a permanent row needs 3 stories on 2 days, 3 linked
+  objects, a sourced indicator and the editor (`docs/decisions.md`, 2026-10-06). Once the category is
+  only a library in Pulse (T-0110, no reader page), does archiving still mean anything, and should a
+  well-built library ever expire?
+- **Categories as subjects.** Subjects are what readers build expertise around (`docs/expertise.md`:
+  Backstory feeds the ladder, credited to the story's subject). Whether a category, or its library,
+  can become a subject a reader follows.
+
+---
+
 ## Next generation: Backstory (captured 2026-10-05)
 
 In rough order. The first two are small and the third is the big one.

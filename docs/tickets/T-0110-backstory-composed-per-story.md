@@ -22,9 +22,11 @@ Wanted:
 2. **No web search in this step.** The composer reads the library and the story's Truths. When the
    library is too thin to give the story three verified Beginnings, it says so and hands the subject
    to T-0111, rather than stretching an unrelated object to fill.
-3. **Section edits in Pulse.** Per section ("It starts in", Beginnings, objects, the lines): remove an
-   item, edit the text, or nudge with a short note (accurate, brief, comprehensive, or the editor's own
-   words: "too narrow, include the 2019 to 2022 elections"). A nudge reruns that section only. Two
+3. **Section edits in Pulse.** Per section ("We are here", "It starts in", Beginnings, objects, the
+   visualization of T-0112): remove an item, edit the text, or nudge with a short note (accurate,
+   brief, comprehensive, or the editor's own words: "too narrow, include the 2019 to 2022 elections").
+   "We are here" is one line and takes a nudge in the editor's words only. A nudge reruns that section
+   only. Two
    kinds of removal, kept apart: **not for this story** sticks on that story's reruns and leaves the
    object available to other stories; **reject** is about the object itself (a bad source, a wrong
    date) and removes it everywhere, as the 2026-10-12 rule on rejections already says.
@@ -32,17 +34,32 @@ Wanted:
    stories that take it two different ways, with distinct or overlapping Beginnings and objects. A
    story about Ra'am's cabinet seat and one about the Nation-State Law can both draw on an Israel
    library and start in different years. The composed page belongs to the story; the category holds
-   the library and lists its stories. An object's own text (`about`) is shared, since it describes the
-   document; a Beginning's line may be written per story, since it says why that milestone matters here.
-5. **Tried on staging** with the two 2026-10-28 cases: the Israel election story should come out
+   the library. An object's own text (`about`) is shared, since it describes the document; a
+   Beginning's line may be written per story, since it says why that milestone matters here.
+5. **No category page for readers** (option C of the 2026-10-28 mock, chosen by the editor). Readers
+   see each story's own page; the Backstory tab lists the stories, and two in one category sit side by
+   side there and show their differences when opened. A story's page does not point at the other
+   stories in its category (no "also in story 1" marks, no "filed under" line). The category is a
+   Pulse thing: the library, and where the editor builds it out.
+6. **The draft view replaces staging Pulse's per-story Backstory editing**, and later the live one.
+   Lineup down the left with a status per story, the story's sections in the middle (objects
+   included), the library and research state for a thin story beside it. The reader preview is the
+   real reader page drawn with the reader's own code, as T-0091 does for the card, not a separate
+   layout. "Redraft changed stories" reruns the draft only for stories whose Lineup entry changed
+   since the last draft, so an edit to one story does not pay for five.
+7. **Tried on staging** with the two 2026-10-28 cases: the Israel election story should come out
    thin and say why (no Power Beginnings); the ballroom donors story should widen to private money and
    the presidency using the emoluments clause (matrix, Power) and the existing gift-law objects.
 
 Runs inside T-0109's draft, so the editor sees it before publish. Today the reader's category page
 (`/backstory/<row>/`) is shared by every story filed there, so a per-story page needs a URL of its own,
-the cost the editor accepted 2026-10-06. Open: what the category page shows once stories take it
-different ways (its stories, each with its own path, is the likely answer). Decide it on staging with
-two real stories in one category, not before.
+the cost the editor accepted 2026-10-06. Settled 2026-10-28 from the mock
+(https://claude.ai/artifact/GoNGTmRiM7mHsgQyub6LAa): no category page for readers (item 5). Existing
+row URLs must keep resolving (`CLAUDE.md`, rule 3); what they show once no story links to them is
+decided at build.
+
+The editor on the hand-composed ballroom donors page (1787 to 2025): "SO MUCH BETTER than what came
+previously." It was put together from the matrix with no web search.
 
 ## Why
 
