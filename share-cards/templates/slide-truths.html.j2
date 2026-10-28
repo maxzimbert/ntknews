@@ -1,0 +1,25 @@
+{# Carousel — "What's true?" Up to three Truths sentences, each on the site's
+   6px ink rule (the Truths weight). Sentences carry their own parenthetical
+   citations, exactly as published. #}
+{% extends "_base.html.j2" %}
+{% import "_macros.html.j2" as m with context %}
+{% block css %}
+.card { background: var(--cream-raised); }
+.top { position: absolute; left: 72px; right: 72px; top: 64px; display: flex; justify-content: space-between; align-items: center; }
+.kick { color: var(--ink-67); font-size: 20px; }
+.q { position: absolute; left: 72px; top: 140px; font-size: 76px; line-height: 1; color: var(--ink); }
+.lbl { position: absolute; left: 74px; top: 230px; font-size: 34px; color: var(--ink-60); }
+.items { position: absolute; left: 72px; right: 72px; top: 330px; height: 820px; overflow: hidden; display: flex; flex-direction: column; gap: 1.0em; }
+.it { border-left: var(--rule-truths); padding: 0.1em 0 0.15em 0.75em; font-family: var(--serif); font-weight: 400; line-height: 1.3; color: var(--ink); }
+.foot { position: absolute; left: 72px; right: 72px; bottom: 64px; display: flex; justify-content: space-between; align-items: center; }
+.addr { font-size: 24px; color: var(--ink); }
+{% endblock %}
+{% block body %}
+<div class="top"><div class="kick kicker">The NTK Method</div>{{ m.counter('var(--ink-67)') }}</div>
+<div class="q headline">What's true?</div>
+<div class="lbl smallcaps">Truths</div>
+<div class="items" data-fit="48,28">
+  {% for t in story.truths[:3] %}<div class="it">{{ t }}</div>{% endfor %}
+</div>
+<div class="foot">{{ m.logo('ink', 48) }}<div class="addr url">{{ story.short_url }}</div></div>
+{% endblock %}

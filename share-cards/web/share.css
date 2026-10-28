@@ -1,0 +1,31 @@
+/* NTK share panel — uses the digest's existing tokens and fonts (Newsreader,
+   Overpass; --ink, --cream, --cream-raised, --amber). A bottom sheet on
+   phones, a centered card from 640px up. */
+.ntk-share { position: fixed; inset: 0; z-index: 300; display: flex; align-items: flex-end; justify-content: center; }
+.ntk-share__scrim { position: absolute; inset: 0; background: rgba(38, 31, 35, 0.55); }
+.ntk-share__sheet {
+  position: relative; width: 100%; max-width: 560px; background: var(--cream-raised, #FBF4EA);
+  border-radius: 3px 3px 0 0; padding: 20px 20px calc(20px + env(safe-area-inset-bottom));
+  box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.25); color: var(--ink, #261F23);
+}
+@media (min-width: 640px) {
+  .ntk-share { align-items: center; }
+  .ntk-share__sheet { border-radius: 3px; padding: 28px; }
+}
+.ntk-share__head { display: flex; justify-content: space-between; align-items: center; }
+.ntk-share__kicker { font-family: Overpass, sans-serif; font-weight: 600; font-size: 11px; letter-spacing: 1.1px; text-transform: uppercase; color: rgba(38, 31, 35, 0.67); }
+.ntk-share__x { min-width: 44px; min-height: 44px; border: 0; background: transparent; font-size: 28px; line-height: 1; color: var(--ink, #261F23); cursor: pointer; }
+.ntk-share__hl { margin: 4px 0 18px; font-family: Newsreader, Georgia, serif; font-size: 20px; line-height: 1.2; letter-spacing: -0.3px; }
+.ntk-share__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+@media (min-width: 420px) { .ntk-share__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.ntk-share__btn {
+  min-height: 48px; padding: 10px 12px; text-align: left; border-radius: 3px; cursor: pointer;
+  background: var(--cream, #EAD9C5); border: 1px solid rgba(38, 31, 35, 0.12); color: var(--ink, #261F23);
+  font-family: Overpass, sans-serif; display: flex; flex-direction: column; justify-content: center; gap: 2px;
+}
+.ntk-share__btn:hover { border-color: rgba(38, 31, 35, 0.4); }
+.ntk-share__btn:focus-visible { outline: 3px solid var(--blue, #0798F2); outline-offset: 2px; }
+.ntk-share__btn--image { grid-column: span 1; background: var(--amber, #F2AE2E); border-color: transparent; }
+.ntk-share__lbl { font-weight: 600; font-size: 14px; }
+.ntk-share__sub { font-weight: 500; font-size: 11px; color: rgba(38, 31, 35, 0.72); }
+.ntk-share__status { min-height: 1.4em; margin-top: 14px; font-family: Newsreader, Georgia, serif; font-size: 15px; color: rgba(38, 31, 35, 0.78); }

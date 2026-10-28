@@ -1,0 +1,40 @@
+{# Link preview for a Backstory row — 1200x630.
+   The site's Backstory timeline turned on its side: years along a rule,
+   ending in the coral "Today / You came in here" ring. Milestones are spaced
+   evenly, not to scale. Shows the last three milestones at most. #}
+{% extends "_base.html.j2" %}
+{% import "_macros.html.j2" as m with context %}
+{% set bs = story.backstory %}
+{% set ms = bs.milestones[-3:] %}
+{% block css %}
+.card { background: var(--cream-raised); }
+.top { position: absolute; left: 64px; right: 64px; top: 56px; display: flex; justify-content: space-between; align-items: flex-start; }
+.kick { color: var(--ink-67); font-size: 17px; }
+.title { position: absolute; left: 64px; top: 104px; width: 1000px; color: var(--ink); line-height: 1.0; max-height: 140px; overflow: hidden; }
+.line { position: absolute; left: 64px; top: 262px; width: 940px; height: 132px; overflow: hidden; color: var(--ink-78); line-height: 1.32; }
+.tl { position: absolute; left: 64px; right: 64px; top: 452px; height: 120px; }
+.rail { position: absolute; left: 7px; right: 10px; top: 46px; height: 2px; background: rgba(38,31,35,0.34); }
+.stop { position: absolute; top: 0; display: flex; flex-direction: column; align-items: flex-start; }
+.yr { font-family: var(--sans); font-weight: 700; font-size: 22px; color: var(--ink); height: 34px; }
+.dt { width: 14px; height: 14px; border-radius: 999px; background: var(--ink); margin-top: 6px; }
+.today { right: 0; align-items: flex-end; }
+.today .yr { color: var(--coral); }
+.ring { width: 22px; height: 22px; border-radius: 999px; border: 3px solid var(--coral); display: flex; align-items: center; justify-content: center; margin-top: 2px; background: var(--cream-raised); }
+.ring i { width: 8px; height: 8px; border-radius: 999px; background: var(--coral); }
+.here { margin-top: 12px; color: var(--coral); font-size: 16px; }
+{% endblock %}
+{% block body %}
+<div class="top">
+  <div class="kick kicker">Backstory</div>
+  {{ m.logo('ink', 44) }}
+</div>
+<div class="title headline" data-fit="66,44">{{ bs.title }}</div>
+<div class="line" data-fit="30,22">{{ bs.row_line | default(bs.pairing_line) }}</div>
+<div class="tl">
+  <div class="rail"></div>
+  {% for x in ms %}
+  <div class="stop" style="left: {{ (loop.index0 * 100 / (ms | length + 0.35)) | round(2) }}%"><div class="yr">{{ x.year }}</div><div class="dt"></div></div>
+  {% endfor %}
+  <div class="stop today"><div class="yr">Today</div><div class="ring"><i></i></div><div class="here kicker">You came in here</div></div>
+</div>
+{% endblock %}

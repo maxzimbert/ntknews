@@ -1,0 +1,33 @@
+{# Link preview for /today and the site-wide default — 1200x630.
+   A compact version of the ntknews.org hero: edition eyebrow, the brand line
+   with its amber italic accent, and the lead story card overlapping the photo. #}
+{% extends "_base.html.j2" %}
+{% import "_macros.html.j2" as m with context %}
+{% block css %}
+.card { background: var(--ink); }
+.left { position: absolute; left: 64px; top: 56px; bottom: 56px; width: 560px; display: flex; flex-direction: column; }
+.eyebrow { display: flex; align-items: center; gap: 12px; margin-top: 46px; color: var(--amber); font-size: 17px; }
+.brand { margin-top: 18px; }
+.sub { margin-top: 22px; font-size: 24px; line-height: 1.35; color: var(--cream-72); max-width: 470px; }
+.sub b { color: var(--cream); font-weight: 600; }
+.foot { margin-top: auto; color: var(--cream-72); font-size: 19px; }
+.hero-card { position: absolute; left: 640px; top: 300px; width: 330px; background: var(--cream); border-radius: var(--radius); padding: 22px 24px 20px; box-shadow: 0 18px 40px rgba(0,0,0,0.28); }
+.hero-card .eb { font-family: var(--sans); font-size: 15px; color: var(--coral-deep); }
+.hero-card .hl { margin-top: 10px; font-family: var(--serif); font-weight: 400; letter-spacing: -0.01em; line-height: 1.18; color: var(--ink); max-height: 170px; overflow: hidden; }
+.hero-card .go { margin-top: 14px; font-family: var(--sans); font-weight: 600; font-size: 15px; color: var(--ink); }
+{% endblock %}
+{% block body %}
+{{ m.duo(edition.photo, 'position:absolute; top:56px; right:64px; width:420px; height:518px; border-radius:3px') }}
+<div class="left">
+  {{ m.logo('white', 44) }}
+  <div class="eyebrow kicker">{{ m.dot('var(--amber)', 9) }}<span>{{ edition.edition_label }}<span class="sep">·</span>Today's edition</span></div>
+  <div class="brand">{{ m.brandline(76, 'var(--cream)', 'var(--amber)', true) }}</div>
+  <div class="sub">{{ edition.story_count }} stories. Three minutes, with backstory when you want. <b>The antidote to information overload.</b></div>
+  <div class="foot url">ntknews.org/today</div>
+</div>
+<div class="hero-card">
+  <div class="eb">The lead story right now</div>
+  <div class="hl" data-fit="22,16">{{ edition.lead_headline }}</div>
+  <div class="go">See how NTK reads it</div>
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{# Shared pieces. Import with: {% import '_macros.html.j2' as m with context %} #}
+
+{% macro duo(photo, style='') -%}
+<div class="duo" style="{{ style }}">
+  {# No photo (Pulse lets a story ship without one): the tinted ground alone, not a broken image. #}
+  {% if photo.src %}<img src="{{ photo.src }}" alt="">{% endif %}
+  <div class="tint" style="background: {{ photo.overlay_color or '#0798F2' }}; opacity: {{ ((photo.overlay_opacity if photo.overlay_opacity is not none else 45) / 100) | round(2) }}"></div>
+</div>
+{%- endmacro %}
+
+{% macro logo(variant, h, style='') -%}
+<img class="logo" src="{{ root }}/assets/logo/ntk-logo-{{ variant }}.svg" alt="NTK" style="height: {{ h }}px; width: auto; {{ style }}">
+{%- endmacro %}
+
+{% macro arrow(color, w=34) -%}
+<svg width="{{ w }}" height="{{ (w * 0.55) | round | int }}" viewBox="0 0 40 22" fill="none" stroke="{{ color }}" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 11h34M27 2l9 9-9 9"/></svg>
+{%- endmacro %}
+
+{% macro dot(color, size=10) -%}
+<span style="display: inline-block; width: {{ size }}px; height: {{ size }}px; border-radius: 999px; background: {{ color }}; flex-shrink: 0"></span>
+{%- endmacro %}
+
+{% macro counter(color) -%}
+<div class="kicker" style="font-size: 22px; letter-spacing: 0.08em; color: {{ color }}">{{ '%02d' % slide.index }} / {{ '%02d' % slide.total }}</div>
+{%- endmacro %}
+
+{# Brand line from the site hero: "Get clear on what's news." with the accent in italic #}
+{% macro brandline(size, color, accent, stacked=false) -%}
+<div class="headline" style="font-size: {{ size }}px; line-height: 0.98; color: {{ color }}">Get clear on{% if stacked %}<br>{% else %} {% endif %}<span style="font-style: italic; color: {{ accent }}">what's news.</span></div>
+{%- endmacro %}
