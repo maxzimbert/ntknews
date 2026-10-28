@@ -2362,6 +2362,7 @@ function renderBackstory(root){
     el.querySelector('.bsr-lu-tag').addEventListener('change',e=>{ s.backstoryRow=e.target.value||''; catReviveIfArchived(s.backstoryRow); saveLineup(); render(); });
     const op=el.querySelector('.bsr-lu-open'); if (op) op.addEventListener('click',()=>{ CAT_SEL=s.backstoryRow; if (!CATS[CAT_SEL]) catEnsureLocal(CAT_SEL); render(); catShowEditor(); });
     bsrKwWire(el, s);
+    bscWire(el, s);
   });
   document.getElementById('cat-new').addEventListener('click',()=>{
     const n=prompt('Name the new category: a short noun phrase readers could build expertise in (for example "AI").','');
@@ -3008,13 +3009,18 @@ function buildStoryPayload(){
       // entirely when blank so build_pairings.py's `or None` sees nothing and
       // classifies as before.
       ...(s.backstoryRow ? {backstory_row: s.backstoryRow} : {}),
+      // T-0110: the editor's edits to this story's own Backstory page (compose_story.py applies them).
+      ...(s.bsEdits && Object.keys(s.bsEdits).length ? {bs_edits: s.bsEdits} : {}),
     };
   });
 }
 
-function storyDataExport(stories){
+function storyDataExport(stories, extra){
   return JSON.stringify({
+    ...(extra || {}),
     stories: stories || buildStoryPayload(),
+    // T-0110: documents the editor rejected, which no story's Backstory uses again
+    bs_rejected: bsRejected(),
     // T-0079: every category the editor approved in the Backstory tab, as left. CI validates them again.
     backstory_categories: catsForPublish(),
     today: TODAY_OV.text ? { text: TODAY_OV.text, generatedAt: TODAY_OV.generatedAt } : null,
@@ -3146,34 +3152,48 @@ function pulseBranch(loc){
 }
 // The fields that decide a story's Backstory, fingerprinted here and only compared in Python
 // (editorial/backstory_draft.py), so there is one implementation.
-async function bsHash(s, cats){
-  const cat = s.backstory_row ? (cats.find(c => c.id === s.backstory_row) || null) : null;
-  const text = JSON.stringify([s.key, s.headline||'', s.lede||'', s.truth||'', s.prob||'', s.poss||'', s.lies||'', s.backstory_row||'', cat]);
+// bs_text_hash leaves out the editor's Backstory edits (T-0110): when only edits differ, applying them reruns
+// that story's page alone; when the text differs, the whole draft has to run again.
+async function sha256hex(text){
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
 }
+// A rejection reaches the hash through the stories it touches: rejecting a document also marks it "off" on
+// every story whose drafted page uses it (bsrReject), so only those stories wait on their edits.
+async function bsHash(s, cats, withEdits){
+  const cat = s.backstory_row ? (cats.find(c => c.id === s.backstory_row) || null) : null;
+  const base = [s.key, s.headline||'', s.lede||'', s.truth||'', s.prob||'', s.poss||'', s.lies||'', s.backstory_row||'', cat];
+  return sha256hex(JSON.stringify(withEdits ? base.concat([s.bs_edits||null]) : base));
+}
 async function bsWithHashes(stories){
   const cats = catsForPublish();
-  for (const s of stories) s.bs_hash = await bsHash(s, cats);
+  for (const s of stories){ s.bs_hash = await bsHash(s, cats, true); s.bs_text_hash = await bsHash(s, cats, false); }
   return stories;
 }
 let BSR_DRAFT = null, BSR_DRAFT_STATE = '', BSR_DRAFT_SENT = 0, BSR_DRAFT_TIMER = null, BSR_DRAFT_LOADED = false;
-const BSR_HASH = {};                 // story key -> its current bs_hash, kept by bsrRefreshHashes
+const BSR_HASH = {};                 // story key -> {full, text}, kept by bsrRefreshHashes
 let BSR_HASHING = false;
 async function bsrRefreshHashes(){
   if (BSR_HASHING) return; BSR_HASHING = true;
   try {
     const all = await bsWithHashes(buildStoryPayload());
     let changed = false;
-    all.forEach(s => { if (BSR_HASH[s.key] !== s.bs_hash){ BSR_HASH[s.key] = s.bs_hash; changed = true; } });
+    all.forEach(s => { const h = BSR_HASH[s.key];
+      if (!h || h.full !== s.bs_hash || h.text !== s.bs_text_hash){ BSR_HASH[s.key] = {full:s.bs_hash, text:s.bs_text_hash}; changed = true; } });
     if (changed && TAB === 'backstory') render();
   } finally { BSR_HASHING = false; }
 }
 function bsrDraftFor(s){
   const d = BSR_DRAFT && (BSR_DRAFT.stories||[]).find(x => x.story_id === s.key);
   if (!d) return null;
-  return Object.assign({fresh: !!d.bs_hash && d.bs_hash === BSR_HASH[s.key]}, d);
+  const h = BSR_HASH[s.key] || {};
+  const textFresh = !!d.bs_text_hash && d.bs_text_hash === h.text;
+  return Object.assign({fresh: !!d.bs_hash && d.bs_hash === h.full, textFresh, editsPending: textFresh && d.bs_hash !== h.full}, d);
 }
+// T-0110: documents rejected everywhere, kept in this browser and sent with every draft and publish
+const LS_BS_REJECTED = 'ntk-bs-rejected';
+function bsRejected(){ try { return JSON.parse(localStorage.getItem(LS_BS_REJECTED) || '[]'); } catch(e){ return []; } }
+function bsSetRejected(ids){ localStorage.setItem(LS_BS_REJECTED, JSON.stringify(Array.from(new Set(ids)))); }
 async function loadBsrDraft(){
   const br = pulseBranch(location); if (!br || !SETTINGS.ghToken) return null;
   try {
@@ -3189,20 +3209,25 @@ function bsrDraftStatusText(){
   if (!pulseBranch(location)) return 'Drafting works on the live Pulse and staging Pulse only.';
   if (!BSR_DRAFT) return 'No Backstory draft yet.';
   const n = LINEUP.filter(s => { const d = bsrDraftFor(s); return d && d.fresh; }).length;
+  const ed = LINEUP.filter(s => { const d = bsrDraftFor(s); return d && d.editsPending; }).length;
+  if (ed) return `Draft of ${rel(BSR_DRAFT.generated)} ago \u00b7 ${ed} stor${ed===1?'y has':'ies have'} edits not applied: open its preview and apply them, so publish ships them`;
   return `Draft of ${rel(BSR_DRAFT.generated)} ago · ${n} of ${LINEUP.length} stories as drafted`
     + (n < LINEUP.length ? ` · ${LINEUP.length - n} changed or new since: draft again before publishing to ship what you review` : ' · publish ships this');
 }
-async function draftBackstory(){
+// `only`: T-0110's apply-edits path. Those stories' pages are composed again from the last draft, with the
+// editor's edits; nothing is chosen again and no category is made, so it is one small model call per story.
+async function draftBackstory(only){
   const br = pulseBranch(location);
   if (!br){ alert('This copy of Pulse cannot draft (not the live Pulse or staging Pulse).'); return; }
   if (!SETTINGS.ghToken){ alert('Add a GitHub token in ⚙ first — scoped to contents:write on this repo only.'); return; }
   const stories = buildStoryPayload().filter(s => (s.headline || '').trim());
   if (!stories.length){ alert('Nothing generated yet — nothing to draft.'); return; }
-  if (!confirm(`Draft the Backstory for ${stories.length} stor${stories.length===1?'y':'ies'}?\n\nRuns the publish-time Backstory steps on the ${br} branch's code, in a few minutes. Nothing readers see changes. It spends from the same Anthropic key as a publish; a publish that follows with nothing changed does not spend it again.`)) return;
+  only = Array.isArray(only) && only.length ? only : null;
+  if (!only && !confirm(`Draft the Backstory for ${stories.length} stor${stories.length===1?'y':'ies'}?\n\nRuns the publish-time Backstory steps on the ${br} branch's code, in a few minutes. Nothing readers see changes. It spends from the same Anthropic key as a publish; a publish that follows with nothing changed does not spend it again.`)) return;
   await bsWithHashes(stories);
-  BSR_DRAFT_STATE = 'Sending the Lineup…'; render();
+  BSR_DRAFT_STATE = only ? 'Applying your edits…' : 'Sending the Lineup…'; render();
   try {
-    const content = storyDataExport(stories);
+    const content = storyDataExport(stories, only ? {compose_only: only} : null);
     const b64 = btoa(unescape(encodeURIComponent(content)));
     const apiUrl = `https://api.github.com/repos/${GH_REPO}/contents/${GH_DRAFT_LINEUP}`;
     const headers = { 'Authorization': 'Bearer '+SETTINGS.ghToken, 'Accept': 'application/vnd.github+json' };
@@ -3210,10 +3235,11 @@ async function draftBackstory(){
     const g = await fetch(apiUrl + '?ref=' + br, {headers, cache:'no-store'});
     if (g.ok) sha = (await g.json()).sha; else if (g.status !== 404) throw new Error('GitHub GET failed: '+g.status);
     const p = await fetch(apiUrl, {method:'PUT', headers:{...headers,'Content-Type':'application/json'},
-      body: JSON.stringify({message:'backstory draft request: '+stories.length+' stories from Pulse', content:b64, branch:br, ...(sha?{sha}:{})})});
+      body: JSON.stringify({message:(only?'backstory edits: '+only.length+' of ':'backstory draft request: ')+stories.length+' stories from Pulse', content:b64, branch:br, ...(sha?{sha}:{})})});
     if (!p.ok){ const t = await p.text(); throw new Error('GitHub PUT failed: '+p.status+' '+t.slice(0,200)); }
     BSR_DRAFT_SENT = Date.now();
-    BSR_DRAFT_STATE = 'Drafting on ' + br + '… usually 2 to 5 minutes. This updates by itself.';
+    BSR_DRAFT_STATE = only ? 'Recomposing ' + only.length + ' stor' + (only.length===1?'y':'ies') + ' with your edits… about a minute. This updates by itself.'
+      : 'Drafting on ' + br + '… usually 2 to 5 minutes. This updates by itself.';
     render(); bsrPollDraft();
   } catch(e){ BSR_DRAFT_STATE = 'Draft failed: ' + e.message; render(); }
 }
@@ -4328,13 +4354,105 @@ function bsrDraftChip(s){
   if (!BSR_DRAFT) return '';
   const d = bsrDraftFor(s);
   if (!d) return '<span class="chip" title="this story was not in the last draft">not in draft</span>';
+  if (d.editsPending) return '<span class="chip" style="background:var(--warn);color:#fff" title="your Backstory edits reach the draft when you apply them">edits not applied</span>';
   if (!d.fresh) return '<span class="chip" style="background:var(--warn);color:#fff" title="the story or its category changed after the draft">changed since draft</span>';
+  const c = d.composed;
+  if (c && !c.error) return `<span class="chip" style="background:var(--ink);color:#fff" title="what publish will ship for this story">draft: ${esc(c.scope||d.row&&d.row.title||'')} · ${c.beginnings.length} Beginnings${c.starts&&c.starts.year?' · starts '+esc(c.starts.year):''}${c.thin?' · thin':''}</span>`;
   if (!d.pairing || !d.row) return '<span class="chip" style="background:var(--warn);color:#fff">draft: no Backstory</span>';
   const isNew = d.row.stratum === 'provisional' && !BSR_ROWS.some(r => r.id === d.row.id);
   const o = d.pairing.origin;
   return `<span class="chip" style="background:var(--ink);color:#fff" title="what publish will ship for this story">draft: ${esc(d.row.title)}${isNew?' · new category':''}${o&&o.year?' · starts '+esc(o.year):''}</span>`;
 }
+// ─── T-0110: the story's own page, composed in the draft, with the editor's controls ───
+// Edits live on the Lineup story (s.bsEdits) and reach the draft when applied: "Apply" recomposes only the
+// stories with edits pending, from the last draft's pairings (backstory-draft.yml, compose_only).
+const BSC_EDITING = {};
+function bsEdits(s){ s.bsEdits = s.bsEdits || {}; return s.bsEdits; }
+function bscItem(s, o, kind, off){
+  const key = s.key + '|' + o.object_id, editing = BSC_EDITING[key];
+  const src = `<span style="font:400 11px sans-serif;color:var(--dim)">${esc(o.kind==='matrix'?'matrix':o.kind==='found'?'found by search':o.kind==='category'?'from a category':o.kind||'')}${o.source_kind==='news'?' · news report':''}${o.by==='editor'?' · your line':''}${o.source_url?' · <a href="'+esc(o.source_url)+'" target="_blank" rel="noopener">open</a>':''}</span>`;
+  if (off) return `<div style="display:flex;gap:10px;margin:5px 0;font-size:13.5px;color:var(--dim)"><b style="min-width:40px;text-decoration:line-through">${esc(o.year)}</b><span><s>${esc(o.line||o.title)}</s> <span style="font:400 11px sans-serif">not for this story · <a href="#" class="bsc-undo" data-id="${esc(o.object_id)}">undo</a></span></span></div>`;
+  return `<div style="display:flex;gap:10px;margin:6px 0;font-size:14px;align-items:flex-start"><b style="min-width:40px">${esc(o.year)}</b><span style="flex:1">
+    ${editing?`<textarea class="bsc-line-text" data-id="${esc(o.object_id)}" rows="2" style="width:100%;font:14px Georgia,serif">${esc(o.line||'')}</textarea><button class="mini go bsc-line-save" data-id="${esc(o.object_id)}">keep my line</button> <button class="mini bsc-line-cancel" data-id="${esc(o.object_id)}">cancel</button>`
+      :`${kind==='beg'?esc(o.line):'<i>'+esc(o.title)+'</i>'+(o.author?' <span style="color:var(--dim)">'+esc(o.author)+'</span>':'')}`}
+    <br>${src}
+    <span style="display:inline-flex;gap:5px;margin-left:6px">${kind==='beg'&&!editing?`<button class="mini bsc-edit" data-id="${esc(o.object_id)}">edit</button>`:''}<button class="mini bsc-off" data-id="${esc(o.object_id)}">not for this story</button><button class="mini bsc-rej" data-id="${esc(o.object_id)}" style="color:var(--stale)">reject</button></span></span></div>`;
+}
+function bscNudge(s, sec, pills){
+  const v = ((bsEdits(s).nudge)||{})[sec] || '';
+  return `<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:6px">
+    <input class="bsc-nudge" data-sec="${sec}" value="${esc(v)}" placeholder="nudge it, in your words" style="flex:1;min-width:220px">
+    ${pills?['accurate','brief','comprehensive'].map(w=>`<button class="mini bsc-pill" data-sec="${sec}" data-w="${w}">${w}</button>`).join(''):''}
+    <button class="mini bsc-rerun" data-sec="${sec}">rerun</button></div>`;
+}
+function bscComposedHtml(s, d){
+  const c = d.composed, p = d.pairing, e = bsEdits(s), off = new Set(e.off||[]);
+  const starts = c.starts || {};
+  const card = readerCardHtml(d.row || {title:c.scope}, {story_id:s.key, line:c.here||'', headline:s.title, origin:starts.year?{status:'retrieved', year:starts.year, line:starts.line}:null});
+  const offItems = [...(d.composed.beginnings||[]), ...(d.composed.case||[])].filter(o => off.has(o.object_id));
+  const seenOff = new Set();
+  const sec = (title, note, body) => `<div style="border:1px solid var(--rule);background:#fff;padding:8px 10px;margin:8px 0"><div style="display:flex;justify-content:space-between;gap:8px"><b style="font:700 11px sans-serif;letter-spacing:.06em">${title}</b><span style="font-size:11px;color:var(--dim)">${note}</span></div>${body}</div>`;
+  const page = `<div class="ntk-reader" style="padding:14px 16px;max-width:430px">
+      <div style="font:600 10px Overpass,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#DC6550">It starts in ${esc(starts.year||'?')}</div>
+      <div style="font:600 13px Overpass,sans-serif;margin:4px 0 10px">How we got here</div>
+      ${(c.beginnings||[]).filter(b=>!off.has(b.object_id)).map(b=>`<div style="display:grid;grid-template-columns:44px 1fr;gap:6px;font-size:15px;line-height:1.4;margin-bottom:10px"><b style="font:700 13px Overpass,sans-serif">${esc(b.year)}</b><span>${esc(b.line)}</span></div>`).join('')}
+      <div style="display:grid;grid-template-columns:44px 1fr;gap:6px;font-size:15px;line-height:1.4"><b style="font:700 13px Overpass,sans-serif;color:#DC6550">Now</b><span><span style="font:700 10px Overpass,sans-serif;letter-spacing:.1em;color:#DC6550">WE ARE HERE</span><br>${esc(c.here)}</span></div>
+      <div style="font:600 13px Overpass,sans-serif;margin:16px 0 6px">The case</div>
+      ${(c.case||[]).filter(o=>!off.has(o.object_id)).map(o=>`<div style="border-top:1px solid rgba(38,31,35,.2);padding:8px 0"><i>${esc(o.title)}</i><div style="font:400 12px Overpass,sans-serif;color:rgba(38,31,35,.7)">${esc(o.year)}${o.author?' · '+esc(o.author):''}</div></div>`).join('')}
+    </div>`;
+  const pend = d.editsPending;
+  return `<div class="bsr-prev bsc" data-key="${esc(s.key)}" style="flex-basis:100%;margin:6px 0 2px 26px;padding:8px 10px;border:1px solid var(--ink);background:#faf8f3">
+    <div style="font-size:11px;color:var(--dim);margin-bottom:6px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">PREVIEW &middot; this story's own Backstory, from the draft of ${esc(rel(BSR_DRAFT.generated))} ago
+      ${pend?`<span class="chip" style="background:var(--warn);color:#fff">your edits are not in the draft yet</span><button class="mini go bsc-apply">apply edits</button>`:''}
+      <button class="mini bsr-prev-close">close</button></div>
+    <div style="font-size:11px;color:var(--dim);margin-bottom:6px">Scope: <b>${esc(c.scope)}</b> · filed under ${esc((d.row&&d.row.title)||'nothing')} (${esc(p.source==='auto-category'?'made by the draft':p.source==='editor'?'you':'classifier'+(p.confidence!=null?' '+Number(p.confidence).toFixed(2):''))}) · chosen from ${esc(c.shortlist)} library documents${c.usage?' · '+esc(c.usage.input_tokens)+' tokens in, '+esc(c.usage.output_tokens)+' out':''}</div>
+    ${c.thin?`<div style="padding:6px 8px;margin-bottom:6px;background:#fbe8d0;font-size:12.5px"><b>The library is thin for this story.</b> ${esc(c.thin)}. Research that fills it once for every later story is T-0111, not built yet. Meanwhile, file the story under a fitting category, or keep documents from the matrix search above.</div>`:''}
+    <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">
+      <div style="flex:1;min-width:320px;max-width:620px">
+        ${sec('WE ARE HERE', e.here?'your line':'written for this story', `<div style="font:15px Georgia,serif;margin-top:4px">${esc(c.here)}</div>
+          <div style="display:flex;gap:6px;margin-top:6px"><input class="bsc-here" value="${esc(e.here||'')}" placeholder="or write it yourself" style="flex:1"><button class="mini bsc-here-save">keep mine</button></div>${bscNudge(s,'here',false)}`)}
+        ${sec('IT STARTS IN '+esc(starts.year||'?'), starts.from==='editor nudge'?'moved by your nudge':'found by retrieval', `<div style="font:14px Georgia,serif;margin-top:4px">${esc(starts.line||'')}</div>${bscNudge(s,'starts',true)}`)}
+        ${sec('BEGINNINGS', (c.beginnings||[]).filter(b=>!off.has(b.object_id)).length+' kept', (c.beginnings||[]).map(b=>{ const o=Object.assign({}, (c.case||[]).find(x=>x.object_id===b.object_id)||{}, b); if (off.has(b.object_id)) seenOff.add(b.object_id); return bscItem(s, o, 'beg', off.has(b.object_id)); }).join('')+bscNudge(s,'beginnings',true))}
+        ${sec('OBJECTS (THE CASE)', (c.case||[]).filter(o=>!off.has(o.object_id)).length+' kept', (c.case||[]).filter(o=>!seenOff.has(o.object_id)).map(o=>bscItem(s, o, 'obj', off.has(o.object_id))).join('')||'<i style="font-size:12px;color:var(--dim)">none</i>')}
+        ${(c.notes||[]).length?`<details style="font-size:11.5px;color:var(--dim);margin-top:4px"><summary>${c.notes.length} pick(s) the checks dropped</summary>${c.notes.map(n=>'<div>'+esc(n)+'</div>').join('')}</details>`:''}
+        <div style="font-size:11px;color:var(--dim);margin-top:6px">Not for this story: hidden here only. Reject: the document itself is wrong; it is removed from every story and never chosen again.</div>
+      </div>
+      <div><div style="font:700 11px sans-serif;letter-spacing:.06em;margin-bottom:4px">AS THE READER GETS IT</div>${card||''}<div style="margin-top:8px;border:1px solid var(--ink)">${page}</div></div>
+    </div></div>`;
+}
+function bscWire(el, s){
+  const box = el.querySelector('.bsc'); if (!box) return;
+  const e = bsEdits(s), d = bsrDraftFor(s);
+  const save = () => { saveLineup(); bsrRefreshHashes(); render(); };
+  const apply = () => {
+    const pending = LINEUP.filter(x => { const dx = bsrDraftFor(x); return dx && dx.editsPending; });
+    const keys = Array.from(new Set(pending.map(x => x.key).concat([s.key])));
+    if (LINEUP.some(x => keys.includes(x.key) && !(bsrDraftFor(x)||{}).textFresh)){
+      alert('A story changed since the draft, so its edits cannot be applied alone. Use Draft Backstory to run the whole draft again; your edits go with it.'); return; }
+    draftBackstory(keys);
+  };
+  box.querySelectorAll('.bsc-off').forEach(b => b.addEventListener('click', () => { e.off = Array.from(new Set((e.off||[]).concat([b.dataset.id]))); save(); }));
+  box.querySelectorAll('.bsc-undo').forEach(a => a.addEventListener('click', ev => { ev.preventDefault(); e.off = (e.off||[]).filter(x => x !== a.dataset.id); save(); }));
+  box.querySelectorAll('.bsc-rej').forEach(b => b.addEventListener('click', () => {
+    if (!confirm('Reject this document everywhere? It is removed from every story that uses it and never chosen again. Use "not for this story" if it is only wrong here.')) return;
+    const id = b.dataset.id; bsSetRejected(bsRejected().concat([id]));
+    LINEUP.forEach(x => { const dx = bsrDraftFor(x); const c = dx && dx.composed;
+      if (c && ((c.case||[]).some(o => o.object_id === id) || (c.beginnings||[]).some(o => o.object_id === id))){ const ex = bsEdits(x); ex.off = Array.from(new Set((ex.off||[]).concat([id]))); } });
+    save(); }));
+  box.querySelectorAll('.bsc-edit').forEach(b => b.addEventListener('click', () => { BSC_EDITING[s.key+'|'+b.dataset.id] = true; render(); }));
+  box.querySelectorAll('.bsc-line-cancel').forEach(b => b.addEventListener('click', () => { delete BSC_EDITING[s.key+'|'+b.dataset.id]; render(); }));
+  box.querySelectorAll('.bsc-line-save').forEach(b => b.addEventListener('click', () => {
+    const t = box.querySelector(`.bsc-line-text[data-id="${CSS.escape(b.dataset.id)}"]`).value.trim();
+    e.lines = Object.assign({}, e.lines); if (t) e.lines[b.dataset.id] = t; else delete e.lines[b.dataset.id];
+    delete BSC_EDITING[s.key+'|'+b.dataset.id]; save(); }));
+  const hs = box.querySelector('.bsc-here-save'); if (hs) hs.addEventListener('click', () => { const v = box.querySelector('.bsc-here').value.trim(); if (v) e.here = v; else delete e.here; save(); });
+  box.querySelectorAll('.bsc-nudge').forEach(inp => inp.addEventListener('change', () => { e.nudge = Object.assign({}, e.nudge); const v = inp.value.trim(); if (v) e.nudge[inp.dataset.sec] = v; else delete e.nudge[inp.dataset.sec]; save(); }));
+  box.querySelectorAll('.bsc-pill').forEach(b => b.addEventListener('click', () => { const inp = box.querySelector(`.bsc-nudge[data-sec="${b.dataset.sec}"]`); inp.value = (inp.value ? inp.value + '; ' : '') + 'more ' + b.dataset.w; inp.dispatchEvent(new Event('change')); }));
+  box.querySelectorAll('.bsc-rerun').forEach(b => b.addEventListener('click', () => { const inp = box.querySelector(`.bsc-nudge[data-sec="${b.dataset.sec}"]`); if (inp){ e.nudge = Object.assign({}, e.nudge); if (inp.value.trim()) e.nudge[b.dataset.sec] = inp.value.trim(); saveLineup(); } bsrRefreshHashes().then(apply); }));
+  const ap = box.querySelector('.bsc-apply'); if (ap) ap.addEventListener('click', () => bsrRefreshHashes().then(apply));
+}
 function bsrDraftPreviewHtml(s, d){
+  if (d.composed && !d.composed.error) return bscComposedHtml(s, d);
   const r = d.row, p = d.pairing;
   const card = readerCardHtml(r, {story_id:s.key, line:p.line||'', headline:s.title, origin:p.origin||null});
   const objs = r.objects || [], begs = r.beginnings || [];
@@ -4354,7 +4472,7 @@ function bsrDraftPreviewHtml(s, d){
 }
 function bsrStoryPreviewHtml(s){
   const dr=bsrDraftFor(s);
-  if (dr && dr.fresh && dr.row && dr.pairing) return bsrDraftPreviewHtml(s, dr);
+  if (dr && (dr.fresh || dr.editsPending) && dr.row && dr.pairing) return bsrDraftPreviewHtml(s, dr);
   const box=inner=>`<div class="bsr-prev" style="flex-basis:100%;margin:6px 0 2px 26px;padding:8px 10px;border:1px dashed var(--rule);background:#faf8f3">
     <div style="font-size:11px;color:var(--dim);margin-bottom:6px">PREVIEW &middot; this story's Backstory as the reader gets it <button class="mini bsr-prev-close">close</button></div>${inner}</div>`;
   const d=bsrPreviewData(s);

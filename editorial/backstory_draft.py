@@ -56,6 +56,7 @@ def make(args):
         r = rows.get(p["row"]) if p else None
         stories.append({
             "story_id": s["key"], "headline": s.get("headline", ""), "bs_hash": s.get("bs_hash"),
+            "bs_text_hash": s.get("bs_text_hash"),
             "pairing": p,
             # what the reader's page draws: the category as this run left it
             "row": {k: r.get(k) for k in ("id", "title", "stratum", "start_date", "start_line", "stakes",
@@ -111,6 +112,13 @@ def apply(args):
             ship = draft["ship"]
             bs = load(args.backstory)
             bs["rows"] = [r for r in bs["rows"] if r.get("stratum") != "provisional"] + ship["provisional_rows"]
+            # T-0110: each story's own page, as composed and edited in the draft, travels on its pairing
+            composed = {d["story_id"]: d["composed"] for d in draft["stories"]
+                        if d.get("composed") and not d["composed"].get("error")}
+            for p in ship["todays_pairings"]:
+                if p["story_id"] in composed:
+                    p["composed"] = {k: v for k, v in composed[p["story_id"]].items()
+                                     if k not in ("notes", "usage", "shortlist", "model")}
             bs["todays_pairings"] = ship["todays_pairings"]
             bs["pairings_generated"] = ship["pairings_generated"]
             dump(args.backstory, bs)
