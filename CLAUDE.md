@@ -60,7 +60,7 @@ the app and only two are.
 | `editorial/NTK_Backstory_Object_Matrix.xlsx` | The Backstory's source of truth for objects: 384 primary documents, each tagged to a row and sub-genre, 334 with a verified link in column O. Candidates are staged in `NTK_Backstory_Candidates.xlsx`, approved by the editor, then copied in. |
 | `editorial/build_backstory.py` | Builds `digest/data/backstory.json` from the matrix: eligible objects (linked, not dead), Beginnings, The case. Not run in CI. |
 | `editorial/check_links.py`, `merge_object_notes.py` | The link checker (writes `object-links-health.json`) and the validator for generated Backstory text (`object-notes.json`). |
-| `share-cards/` | Share-image templates and renderer. The publish build renders each story's link-preview card (`share/og.jpg`) with it; the rest of the package is not wired yet (T-0107). |
+| `share-cards/` | Share-image templates and renderer. The publish build renders each story's link-preview card (`share/og.jpg`, T-0107) and the app's edition card (`<date>/share/og-edition.jpg`, T-0108) with it; the rest of the package is not wired yet. |
 | `netlify.toml` | Routing. Five rules, all load-bearing. |
 | `netlify/functions/news.js` | The only server-side code in the stack. |
 

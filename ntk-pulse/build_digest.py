@@ -794,38 +794,71 @@ STORY_PAGE_TEMPLATE = """<!DOCTYPE html>
 # script does not: it runs as a subprocess, and any failure (not installed, a
 # headline that overflows the card, over the size budget) returns None and the
 # page falls back to the photo, as before. A missing card never costs a publish.
-def render_og_card(story, story_dir, repo_root):
+def render_share_card(make, out, name, repo_root):
+    """make(card_data_module) -> card data; renders <out>/<name>.jpg, or None."""
     pkg = repo_root / "share-cards"
     if not (pkg / "render" / "render_cards.py").exists():
         return None
     sys.path.insert(0, str(pkg / "render"))
     try:
-        from build_card_data import build_card
-        card = build_card(story, {}, False)
+        import build_card_data
+        card = make(build_card_data)
         card.pop("_slug", None)
     except Exception as e:
-        log(f"  ! og card data failed: {e}")
+        log(f"  ! {name} card data failed: {e}")
         return None
     finally:
         sys.path.pop(0)
-    out = story_dir / "share"
     with tempfile.TemporaryDirectory() as tmp:
         data = Path(tmp) / "card.json"
         data.write_text(json.dumps(card, ensure_ascii=False))
         try:
             r = subprocess.run([sys.executable, str(pkg / "render" / "render_cards.py"),
-                                "--data", str(data), "--out", str(out), "--only", "og"],
+                                "--data", str(data), "--out", str(out), "--only", name],
                                capture_output=True, text=True, timeout=120)
         except Exception as e:
-            log(f"  ! og card render failed: {e}")
+            log(f"  ! {name} card render failed: {e}")
             return None
-    og = out / "og.jpg"
+    img = out / f"{name}.jpg"
     if r.returncode != 0:
         last = (r.stdout + r.stderr).strip().splitlines() or ["no output"]
-        log(f"  ! og card render failed: {last[-1][:200]}")
-        og.unlink(missing_ok=True)
+        log(f"  ! {name} card render failed: {last[-1][:200]}")
+        img.unlink(missing_ok=True)
         return None
-    return og if og.exists() else None
+    return img if img.exists() else None
+
+
+def render_og_card(story, story_dir, repo_root):
+    return render_share_card(lambda m: m.build_card(story, {}, False), story_dir / "share", "og", repo_root)
+
+
+# T-0108: the same idea for the app itself. /today, /digest, /backstory and
+# /me all serve digest/index.html, and a frozen edition at /digest/<date>/ is
+# a copy of it, so whatever tags sit in its <head> are the preview for every
+# one of those links. Until now there were none. The edition card (lead
+# headline, story count, date) is rendered into digest/<date>/share/ and the
+# tags point there, so a frozen edition keeps its own day's card. Without the
+# renderer they point at the site default the landing page uses.
+OG_EDITION_RE = re.compile(r"(<!-- OG:EDITION -->\n).*?(<!-- /OG:EDITION -->)", re.S)
+OG_EDITION_FALLBACK = "https://ntknews.org/og-image.png"
+
+
+def regenerate_og_edition(html, image_url):
+    tags = (
+        '<meta property="og:type" content="website">\n'
+        '<meta property="og:site_name" content="NTK News">\n'
+        '<meta property="og:title" content="NTK News · Get clear on what\'s news.">\n'
+        '<meta property="og:description" content="What happened, why, and what\'s next. '
+        'Three minutes, with backstory when you want.">\n'
+        f'<meta property="og:image" content="{image_url}">\n'
+        '<meta property="og:image:width" content="1200">\n'
+        '<meta property="og:image:height" content="630">\n'
+        '<meta name="twitter:card" content="summary_large_image">\n'
+        f'<meta name="twitter:image" content="{image_url}">\n')
+    new_html, n = OG_EDITION_RE.subn(lambda m: m.group(1) + tags + m.group(2), html, count=1)
+    if not n:
+        log("  ! no OG:EDITION markers in digest/index.html, app preview tags left as they were")
+    return new_html
 
 
 def build_story_page(story, image_rel_url, image_abs_url, canonical_url, card_abs_url=None):
@@ -1026,9 +1059,16 @@ def main():
 
     # 3. Regenerate the LIVE homepage in place. This is the piece that
     # makes the whole chain zero-click: no more paste, ever.
+    edition_card = render_share_card(lambda m: m.build_edition(stories),
+                                     digest_dir / date_str / "share", "og-edition", repo_root)
+    edition_image_url = (f"{base_url}/digest/{date_str}/share/og-edition.jpg"
+                         if edition_card else OG_EDITION_FALLBACK)
+    log(f"  edition card: {'yes' if edition_card else 'no, using the site default'}")
+
     current_html = live_index_path.read_text()
     new_html = regenerate_homepage(current_html, stories, fun_fact)
     new_html = regenerate_today(new_html, today)
+    new_html = regenerate_og_edition(new_html, edition_image_url)
     live_index_path.write_text(new_html)
     log(f"live homepage regenerated: {live_index_path}")
 

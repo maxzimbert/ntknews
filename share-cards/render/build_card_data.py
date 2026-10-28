@@ -201,6 +201,17 @@ def build_card(story: dict, bs: dict, include_provisional: bool) -> dict:
     }, "_slug": slug}
 
 
+def build_edition(stories: list[dict]) -> dict:
+    lead = stories[0]
+    d = story_date(lead.get("permalink", ""))
+    return {"edition": {
+        "edition_label": labels(d)[1], "url": f"https://{SITE}/today", "story_count": len(stories),
+        "lead_headline": lead.get("headline", ""),
+        "photo": {"src": lead.get("featuredImage", ""), "overlay_color": lead.get("overlayColor") or "#0798F2",
+                  "overlay_opacity": opacity(lead.get("overlayOpacity"))},
+    }}
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--stories", required=True, type=Path, help="JSON list of digest stories, or {\"stories\": [...]}")
@@ -232,14 +243,7 @@ def main() -> int:
               f"false={'yes' if st['false_claim'] else 'no'} backstory={'yes' if st['backstory'] else 'no'} → {st['short_url']}")
 
     if stories:
-        lead = stories[0]
-        d = story_date(lead.get("permalink", ""))
-        (args.out / "edition.json").write_text(json.dumps({"edition": {
-            "edition_label": labels(d)[1], "url": f"https://{SITE}/today", "story_count": len(stories),
-            "lead_headline": lead.get("headline", ""),
-            "photo": {"src": lead.get("featuredImage", ""), "overlay_color": lead.get("overlayColor") or "#0798F2",
-                      "overlay_opacity": opacity(lead.get("overlayOpacity"))},
-        }}, indent=2, ensure_ascii=False))
+        (args.out / "edition.json").write_text(json.dumps(build_edition(stories), indent=2, ensure_ascii=False))
     # 302, not 301: short slugs get reused by later stories, and browsers cache 301s.
     (args.out / "_redirects.share").write_text("\n".join(redirects) + "\n")
     return 0

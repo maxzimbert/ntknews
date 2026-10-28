@@ -2,8 +2,9 @@
 
 Share images and a share panel for ntknews.org, styled from the live site.
 
-> **Wired in the repo (T-0107):** only `og.jpg`, the link preview, rendered per
-> story by `ntk-pulse/build_digest.py`. The Story, carousel and pin images, the
+> **Wired in the repo:** `og.jpg`, each story's link preview (T-0107), and
+> `og-edition.jpg`, the app's link preview (T-0108), both rendered by
+> `ntk-pulse/build_digest.py`. The Story, carousel and pin images, the
 > share panel in `web/`, and the short addresses in `netlify/` are not wired yet.
 
 - **3 link-preview cards** (1200×630), used automatically by Facebook, X,
