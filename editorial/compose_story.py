@@ -1,0 +1,355 @@
+#!/usr/bin/env python3
+"""
+Compose each story's own Backstory page from the shared library (T-0110). No web search.
+
+The category is the library and the grouping; the page belongs to the story. For each story in the draft:
+"We are here" (the pairing line), "It starts in" (the retrieved origin unless the editor nudged it), three
+to six Beginnings before it, each with a line written for this story, and the case (the Beginnings'
+objects plus up to two later ones). When the library cannot give the story three Beginnings that truly
+connect, the page says so and names what is missing, rather than stretching an unrelated document to fill.
+That is T-0111's cue to research; this script never searches.
+
+The library: every matrix object with a live link, every approved candidate, and every object a category
+already holds (including what earlier searches found and the checks kept), so a find made for one
+category serves every story.
+
+The editor's edits arrive on each story as `bs_edits` (from Pulse) and win over the model:
+  off      [object_id]   not for this story; never chosen again for it
+  lines    {object_id: text}   the editor's own line for a Beginning
+  here     text          the editor's own "We are here"
+  nudge    {here|starts|beginnings: text}   a note in the editor's words for that section's next run
+and `bs_rejected` (top level) lists objects rejected everywhere.
+
+  python3 editorial/compose_story.py --draft ntk-pulse/data/backstory-draft.json --lineup L [--only k1,k2] [--mock]
+
+Writes `composed` onto each story of the draft, in place. Stdlib only.
+"""
+import argparse
+import json
+import math
+import os
+import re
+import sys
+import urllib.error
+import urllib.request
+from collections import Counter
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import categories as C  # noqa: E402
+from build_pairings import parse_json_loose, strip_html, API_URL  # noqa: E402
+
+ROOT = Path(__file__).resolve().parent.parent
+POOL = ROOT / "ntk-pulse" / "data" / "backstory-pool.json"
+BACKSTORY = ROOT / "digest" / "data" / "backstory.json"
+PROVISIONAL = ROOT / "ntk-pulse" / "data" / "provisional-rows.json"
+MODEL = "claude-sonnet-5-5"
+LIVE = ("live", "live-pdf")
+STOP = set("the a an and or of to in on for by with from at as is was were be been are that this it its into "
+           "than then over after before about their his her they them he she we our you your not no but who "
+           "what when where which while has have had will would can could may might more most new says said "
+           "also one two three year years".split())
+
+
+def log(msg):
+    print(msg, file=sys.stderr)
+
+
+def toks(t):
+    return [w for w in re.findall(r"[a-z][a-z'-]{2,}", str(t or "").lower()) if w not in STOP]
+
+
+# --- the library -------------------------------------------------------------------------------------
+
+def load_library(pool_path, bs_path, prov_path):
+    lib = {}
+    for o in json.loads(Path(pool_path).read_text())["objects"]:
+        ok = o.get("url") and o.get("link_status") in LIVE and (o.get("pool") == "matrix" or o.get("approved"))
+        if ok:
+            lib[o["id"]] = {"id": o["id"], "title": o.get("title", ""), "author": o.get("author", ""),
+                            "year": str(o.get("year", "")), "url": o["url"], "about": o.get("about", ""),
+                            "why": o.get("why", ""), "row": o.get("row", ""), "subgenre": o.get("subgenre", ""),
+                            "lenses": o.get("lenses") or [], "kind": "matrix" if o.get("pool") == "matrix" else "candidate",
+                            "categories": set()}
+    bs = json.loads(Path(bs_path).read_text())
+    for r in bs.get("rows", []):
+        for o in r.get("objects") or []:
+            oid = o.get("object_id")
+            if not oid:
+                continue
+            e = lib.get(oid)
+            if e is None and o.get("source_url"):
+                e = lib[oid] = {"id": oid, "title": o.get("title", ""), "author": o.get("author", ""),
+                                "year": str(o.get("year", "")), "url": o["source_url"], "about": "", "why": "",
+                                "row": r.get("title", ""), "subgenre": "", "lenses": [], "kind": "category",
+                                "source_kind": o.get("source_kind"), "categories": set()}
+            if e is not None:
+                e["about"] = e["about"] or o.get("about", "")
+                e["categories"].add(r.get("title", ""))
+    if Path(prov_path).exists():
+        for r in json.loads(Path(prov_path).read_text()).get("rows", []):
+            for cu in r.get("custom_objects") or []:
+                if cu.get("id") in lib or not cu.get("url"):
+                    if cu.get("id") in lib:
+                        lib[cu["id"]]["categories"].add(r.get("title", ""))
+                    continue
+                lib[cu["id"]] = {"id": cu["id"], "title": cu.get("title", ""), "author": cu.get("author", ""),
+                                 "year": str(cu.get("year", "")), "url": cu["url"], "about": cu.get("about", ""),
+                                 "why": "", "row": r.get("title", ""), "subgenre": "", "lenses": [],
+                                 "kind": "found", "evidence": cu.get("evidence_quote", ""),
+                                 "source_kind": cu.get("source_kind") or C.source_kind(cu["url"]),
+                                 "categories": {r.get("title", "")}}
+    return lib
+
+
+def shortlist(lib, story, row_title, terms, k=45):
+    """The objects worth showing the model for this story. Mostly by `terms`, the history the story belongs
+    to as named by a small model (laws, cases, events, institutions): a story's own words alone pulled the
+    1918 Fourteen Points speech for an Ohio poll that moved six points. Then rare words shared with the
+    headline, and everything already in the story's category."""
+    fields = {i: {"title": o["title"].lower(), "about": (o["about"] + " " + o["why"]).lower(),
+                  "meta": " ".join([o["author"], o["row"], o["subgenre"], " ".join(o["lenses"]),
+                                    " ".join(o["categories"])]).lower()} for i, o in lib.items()}
+    docs = {i: toks(" ".join(f.values())) for i, f in fields.items()}
+    df = Counter(w for ws in docs.values() for w in set(ws))
+    n = len(docs) or 1
+    idf = {w: math.log(n / (1 + c)) for w, c in df.items()}
+    head = Counter(toks(story["headline"] + " " + story.get("lede", "")))
+    terms = [t.lower().strip() for t in terms if t and t.strip()]
+    scored = []
+    for i, f in fields.items():
+        s = 0.0
+        for t in terms:
+            if t in f["title"]:
+                s += 12
+            elif t in f["about"]:
+                s += 7
+            elif t in f["meta"]:
+                s += 4
+            else:
+                tw = toks(t)
+                hit = [w for w in tw if w in docs[i]]
+                if tw and len(hit) == len(tw):
+                    s += sum(idf.get(w, 0) for w in hit)
+        s += 0.5 * sum(idf.get(w, 0) * min(head[w], 2) for w in set(docs[i]) if w in toks(f["title"]))
+        if row_title and row_title in lib[i]["categories"]:
+            s += 6
+        if s > 0:
+            scored.append((s, i))
+    scored.sort(reverse=True)
+    return [i for _, i in scored[:k]]
+
+
+TERMS_MODEL = "claude-haiku-5-5"
+
+
+def terms_for(api_key, story, row_title):
+    """8 to 14 names for the history behind the story, to search the library with. Haiku, no tools."""
+    p = f"""A news story needs its history: the long argument it belongs to. Name that history as 8 to 14 short search terms for a library of primary documents (laws, court cases, treaties, speeches, reports): the specific acts, cases, institutions, events and general subjects a historian would look up. Use the common names ("Citizens United", "campaign finance", "Federal Election Campaign Act", "Knesset", "coalition government"). Not the story's own people or numbers.
+
+STORY: {story['headline']}
+SUMMARY: {story.get('lede') or ''}
+FILED UNDER: {row_title or '(none)'}
+DETAIL: {story.get('truths', '')[:1500]}
+
+JSON only: {{"terms":["..."]}}"""
+    body = {"model": TERMS_MODEL, "max_tokens": 400, "messages": [{"role": "user", "content": p}],
+            "thinking": {"type": "disabled"}}
+    req = urllib.request.Request(API_URL, data=json.dumps(body).encode("utf-8"), method="POST", headers={
+        "Content-Type": "application/json", "x-api-key": api_key, "anthropic-version": "2023-06-01"})
+    with urllib.request.urlopen(req, timeout=60) as resp:
+        data = json.loads(resp.read())
+    text = "".join(b.get("text", "") for b in data.get("content", []) if b.get("type") == "text")
+    u = data.get("usage") or {}
+    return (parse_json_loose(text, TERMS_MODEL).get("terms") or [])[:14], \
+        {"input_tokens": u.get("input_tokens", 0), "output_tokens": u.get("output_tokens", 0)}
+
+
+# --- the model ---------------------------------------------------------------------------------------
+
+def call(api_key, prompt, max_tokens=3000):
+    body = {"model": MODEL, "max_tokens": max_tokens, "messages": [{"role": "user", "content": prompt}],
+            "thinking": {"type": "between_tools"}}
+    req = urllib.request.Request(API_URL, data=json.dumps(body).encode("utf-8"), method="POST", headers={
+        "Content-Type": "application/json", "x-api-key": api_key, "anthropic-version": "2023-06-01"})
+    try:
+        with urllib.request.urlopen(req, timeout=180) as resp:
+            data = json.loads(resp.read())
+    except urllib.error.HTTPError as e:
+        raise RuntimeError(f"{MODEL} HTTP {e.code}: {e.read().decode('utf-8', 'ignore')[:300]}") from None
+    text = "".join(b.get("text", "") for b in data.get("content", []) if b.get("type") == "text")
+    u = data.get("usage") or {}
+    return parse_json_loose(text, MODEL), {"input_tokens": u.get("input_tokens", 0), "output_tokens": u.get("output_tokens", 0)}
+
+
+def prompt_for(story, origin, row_title, cands, lib, edits):
+    nudge = edits.get("nudge") or {}
+    lines = [f"- {i} | {lib[i]['year']} | {lib[i]['title'][:110]} | {lib[i]['author'][:50]}"
+             + (f" | {(lib[i]['about'] or lib[i]['why'])[:220]}" if (lib[i]['about'] or lib[i]['why']) else "")
+             for i in cands]
+    starts = f"{origin.get('year')}: {origin.get('line')}" if origin and origin.get("year") else "(none found)"
+    return f"""You compose one news story's Backstory page for NTK News. The reader is a college-educated adult at an Advanced Placement history level: precise and plain. The page shows how we got to today's story, as dated milestones, each defended by a primary document the reader can open.
+
+STORY: {story['headline']}
+SUMMARY: {story.get('lede') or ''}
+WHAT IS TRUE (from the story):
+{story.get('truths', '')[:3500]}
+
+FILED UNDER: {row_title or '(no category)'}
+"IT STARTS IN", FOUND BY RETRIEVAL: {starts}
+
+DOCUMENTS IN THE LIBRARY (id | year | title | author | what it is):
+{chr(10).join(lines) or '(none)'}
+
+Do this:
+1. Decide the SCOPE: the history this story actually belongs to, in two to six plain words. Not the category name unless it fits; not a verdict ("corruption"), a subject ("Private money and the presidency").
+2. Choose 3 to 6 BEGINNINGS from the library: documents a reader needs, in order, to see how this story came to be. Dated before "It starts in" (the same year is allowed). Spread across time. Only documents that truly connect to THIS story's scope. If fewer than 3 truly connect, choose only those, and set "thin" to the subject the library is missing and what kind of milestones would be needed. Never stretch an unrelated document to fill.
+3. For each Beginning write one sentence (12 to 26 words) saying what happened, in the past tense, using only facts in its line above. No dashes. No numbers that are not in its line. Do not say "this document".
+4. Choose up to 2 LATER documents (after "It starts in", before today) that belong in the case, if any truly connect.
+5. "starts_object": normally null, keeping the retrieved "It starts in". Only if the editor's note below asks for it, the id of the Beginning that should be the start instead.
+{('EDITOR NOTE ON BEGINNINGS: ' + nudge['beginnings']) if nudge.get('beginnings') else ''}
+{('EDITOR NOTE ON IT STARTS IN: ' + nudge['starts']) if nudge.get('starts') else ''}
+
+JSON only: {{"scope":"...","beginnings":[{{"id":"...","line":"..."}}],"later":["id"],"starts_object":null,"thin":null or "what is missing","why":"one sentence on the choices"}}"""
+
+
+def here_prompt(story, line, note):
+    return f"""Rewrite this one-line Backstory pairing for NTK News. The reader is a college-educated adult. One or two plain sentences, 12 to 30 words, no dashes, no numbers not in the story, take no side.
+
+STORY: {story['headline']}
+WHAT IS TRUE: {story.get('truths', '')[:1500]}
+CURRENT LINE: {line}
+EDITOR'S NOTE: {note}
+
+JSON only: {{"line":"..."}}"""
+
+
+# --- composing one story -----------------------------------------------------------------------------
+
+def compose(api_key, story, pairing, row, lib, edits, rejected, mock=False):
+    origin = (pairing or {}).get("origin") or {}
+    oy = int(origin["year"]) if str(origin.get("year", "")).isdigit() else 9999
+    off = set(edits.get("off") or []) | set(rejected)
+    notes, usage = [], {"input_tokens": 0, "output_tokens": 0}
+    if mock:
+        terms = toks(story["headline"])
+    else:
+        terms, u = terms_for(api_key, story, (row or {}).get("title"))
+        usage = {k: usage[k] + u[k] for k in usage}
+    cands = [i for i in shortlist(lib, story, (row or {}).get("title"), terms) if i not in off]
+    if mock:
+        early = sorted([i for i in cands if lib[i]["year"][:4].isdigit() and int(lib[i]["year"][:4]) <= oy],
+                       key=lambda i: lib[i]["year"])[-4:]
+        r = {"scope": (row or {}).get("title") or "mock scope", "later": [], "starts_object": None, "thin": None,
+             "beginnings": [{"id": i, "line": f"{lib[i]['title']} was written."} for i in early], "why": "mock"}
+    else:
+        r, u = call(api_key, prompt_for(story, origin, (row or {}).get("title"), cands, lib, edits))
+        usage = {k: usage[k] + u[k] for k in usage}
+    begs = []
+    for b in r.get("beginnings") or []:
+        i = b.get("id")
+        if i not in cands:
+            notes.append(f"{i!r} is not in the shortlist; dropped")
+            continue
+        o = lib[i]
+        y = int(o["year"][:4]) if o["year"][:4].isdigit() else None
+        if y is None or y > oy:
+            notes.append(f"{o['title'][:40]!r} ({o['year']}) is after It starts in ({oy}); dropped")
+            continue
+        line = (edits.get("lines") or {}).get(i) or b.get("line", "")
+        by = "editor" if (edits.get("lines") or {}).get(i) else "model"
+        probs = [] if by == "editor" else C.text_problems("line", line, 8, 30)
+        if by == "model" and not C.numbers_ok(line, o["title"], o["year"], o["about"], o["why"], o.get("evidence", "")):
+            probs.append("a number in the line is not in the document's record")
+        if probs:
+            notes.append(f"{o['title'][:40]!r}: {'; '.join(probs)}; dropped")
+            continue
+        begs.append({"object_id": i, "year": o["year"][:4], "line": line, "by": by})
+    begs.sort(key=lambda b: b["year"])
+    later = [i for i in (r.get("later") or [])[:2] if i in cands and i not in {b["object_id"] for b in begs}]
+    case = [{"object_id": i, "year": lib[i]["year"][:4], "title": lib[i]["title"], "author": lib[i]["author"],
+             "source_url": lib[i]["url"], "about": lib[i]["about"], "kind": lib[i]["kind"],
+             **({"source_kind": "news"} if lib[i].get("source_kind") == "news" else {})}
+            for i in [b["object_id"] for b in begs] + later]
+    starts = {"year": origin.get("year"), "line": origin.get("line"), "from": "retrieval"} if origin.get("year") else None
+    so = r.get("starts_object")
+    if so and so in {b["object_id"] for b in begs}:
+        b = next(b for b in begs if b["object_id"] == so)
+        starts = {"year": b["year"], "line": b["line"], "object_id": so, "from": "editor nudge"}
+    here = edits.get("here") or (pairing or {}).get("line") or ""
+    here_by = "editor" if edits.get("here") else "pairing"
+    note = (edits.get("nudge") or {}).get("here")
+    if note and not edits.get("here") and not mock:
+        h, u = call(api_key, here_prompt(story, here, note), 400)
+        usage = {k: usage[k] + u[k] for k in usage}
+        if h.get("line") and not C.text_problems("line", h["line"], 8, 32):
+            here, here_by = h["line"], "model, nudged"
+        else:
+            notes.append("the nudged We are here line failed the checks; kept the old one")
+    thin = r.get("thin") or (None if len(begs) >= 3 else f"only {len(begs)} Beginning(s) connect")
+    return {"scope": r.get("scope") or "", "here": here, "here_by": here_by, "starts": starts,
+            "beginnings": begs, "case": case, "thin": thin, "why": r.get("why", ""),
+            "terms": terms, "shortlist": len(cands), "notes": notes, "usage": usage, "model": None if mock else MODEL}
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--draft", required=True)
+    ap.add_argument("--lineup", required=True)
+    ap.add_argument("--only", default="", help="comma-separated story keys; others keep their page")
+    ap.add_argument("--pool", default=str(POOL))
+    ap.add_argument("--backstory", default=str(BACKSTORY), help="rows to draw category objects from")
+    ap.add_argument("--provisional", default=str(PROVISIONAL))
+    ap.add_argument("--mock", action="store_true")
+    args = ap.parse_args()
+    api_key = os.environ.get("ANTHROPIC_API_KEY")
+    if not api_key and not args.mock:
+        sys.exit("ANTHROPIC_API_KEY not set (use --mock to test the plumbing)")
+    draft = json.loads(Path(args.draft).read_text())
+    lineup = json.loads(Path(args.lineup).read_text())
+    by_key = {s["key"]: s for s in lineup.get("stories", [])}
+    rejected = lineup.get("bs_rejected") or []
+    lib = load_library(args.pool, args.backstory, args.provisional)
+    for d in draft["stories"]:                   # a category the draft itself made, for a rerun that has no copy of it
+        r = d.get("row") or {}
+        for o in r.get("objects") or []:
+            oid = o.get("object_id")
+            if oid and oid not in lib and o.get("source_url"):
+                lib[oid] = {"id": oid, "title": o.get("title", ""), "author": o.get("author", ""),
+                            "year": str(o.get("year", "")), "url": o["source_url"], "about": o.get("about", ""),
+                            "why": "", "row": r.get("title", ""), "subgenre": "", "lenses": [], "kind": "category",
+                            "source_kind": o.get("source_kind"), "categories": {r.get("title", "")}}
+            elif oid in lib:
+                lib[oid]["categories"].add(r.get("title", ""))
+    log(f"library: {len(lib)} objects")
+    only = set(filter(None, args.only.split(",")))
+    total = {"input_tokens": 0, "output_tokens": 0}
+    for d in draft["stories"]:
+        if only and d["story_id"] not in only:
+            continue
+        s = by_key.get(d["story_id"])
+        if not s or not d.get("pairing"):
+            continue
+        story = {"headline": s.get("headline", ""), "lede": strip_html(s.get("lede")), "truths": strip_html(s.get("truth"))}
+        try:
+            c = compose(api_key, story, d["pairing"], d.get("row"), lib, s.get("bs_edits") or {}, rejected, args.mock)
+        except Exception as e:  # noqa: BLE001 - one story's failure must not cost the others their page
+            log(f"  {d['story_id']}: compose failed ({e})")
+            d["composed"] = {"error": str(e)[:300]}
+            continue
+        d["composed"] = c
+        if only:
+            d["bs_hash"] = s.get("bs_hash")
+            d["bs_text_hash"] = s.get("bs_text_hash")
+        total = {k: total[k] + c["usage"][k] for k in total}
+        log(f"  {d['story_id']}: {c['scope']!r} {len(c['beginnings'])} Beginnings, {len(c['case'])} in the case"
+            + (f", thin: {c['thin']}" if c["thin"] else "") + (f"; {len(c['notes'])} dropped" if c["notes"] else ""))
+    draft["compose_usage"] = total
+    from datetime import datetime, timezone
+    draft["generated"] = datetime.now(timezone.utc).isoformat(timespec="seconds")   # Pulse waits for this to move
+    Path(args.draft).write_text(json.dumps(draft, indent=1, ensure_ascii=False) + "\n")
+    log(f"composed; tokens in {total['input_tokens']}, out {total['output_tokens']}")
+
+
+if __name__ == "__main__":
+    main()

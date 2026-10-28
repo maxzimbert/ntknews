@@ -35,16 +35,26 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           python -m pip install --quiet openpyxl
-          W=$RUNNER_TEMP/draft; mkdir -p $W
-          cp digest/data/backstory.json $W/backstory.json
-          cp ntk-pulse/data/provisional-rows.json $W/provisional-rows.json
-          python editorial/build_pairings.py --lineup ntk-pulse/data/lineup-draft.json \
-            --backstory $W/backstory.json --provisional $W/provisional-rows.json
-          python editorial/build_origins.py --apply --lineup ntk-pulse/data/lineup-draft.json \
-            --pairings $W/backstory.json --provisional $W/provisional-rows.json --out $W/origins.json
-          python editorial/backstory_draft.py make --lineup ntk-pulse/data/lineup-draft.json \
-            --backstory $W/backstory.json --provisional $W/provisional-rows.json --origins $W/origins.json \
-            --branch "${{ github.ref_name }}"
+          L=ntk-pulse/data/lineup-draft.json
+          # T-0110: a section rerun from Pulse names its stories in compose_only. Those stories are composed
+          # again from the last draft's pairings, with the editor's edits; nothing else is chosen or paid for.
+          ONLY=$(python -c "import json;print(','.join(json.load(open('$L')).get('compose_only') or []))")
+          if [ -n "$ONLY" ] && [ -f ntk-pulse/data/backstory-draft.json ]; then
+            python editorial/compose_story.py --draft ntk-pulse/data/backstory-draft.json --lineup $L --only "$ONLY"
+          else
+            W=$RUNNER_TEMP/draft; mkdir -p $W
+            cp digest/data/backstory.json $W/backstory.json
+            cp ntk-pulse/data/provisional-rows.json $W/provisional-rows.json
+            python editorial/build_pairings.py --lineup $L --backstory $W/backstory.json --provisional $W/provisional-rows.json
+            python editorial/build_origins.py --apply --lineup $L \
+              --pairings $W/backstory.json --provisional $W/provisional-rows.json --out $W/origins.json
+            python editorial/backstory_draft.py make --lineup $L \
+              --backstory $W/backstory.json --provisional $W/provisional-rows.json --origins $W/origins.json \
+              --branch "${{ github.ref_name }}"
+            # T-0110: each story's own page, from the whole library, including what this run's categories found
+            python editorial/compose_story.py --draft ntk-pulse/data/backstory-draft.json --lineup $L \
+              --backstory $W/backstory.json --provisional $W/provisional-rows.json
+          fi
           # the steps above must not have written a live file
           git diff --quiet -- digest/ ntk-pulse/data/provisional-rows.json editorial/origins.json \
             || { echo "a draft step wrote a live file"; git diff --stat; exit 1; }

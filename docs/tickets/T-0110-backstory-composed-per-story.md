@@ -1,7 +1,7 @@
 ---
 id: T-0110
 title: Each story's Backstory is composed for that story from the shared library, and the editor can edit it section by section
-status: DECIDED
+status: BUILT
 tags: [backstory, feature]
 anchor: editorial/compose_category.py
 ---
@@ -60,6 +60,28 @@ decided at build.
 
 The editor on the hand-composed ballroom donors page (1787 to 2025): "SO MUCH BETTER than what came
 previously." It was put together from the matrix with no web search.
+
+**Built 2026-10-28, on branch `T-0110-compose-per-story` (stacked on T-0109) and on staging.**
+`editorial/compose_story.py` runs inside the draft, after the pairings and origins: one Haiku call names the
+story's history as 8 to 14 search terms, the library is searched with them (a story's own words alone pulled
+the 1918 Fourteen Points speech for an Ohio poll that moved six points), and one Sonnet call, no tools, picks
+the Beginnings and later objects and writes each Beginning's line. Every line is checked (length, no dash,
+banned phrases, every number traceable to the document's record); a pick that fails is dropped and listed.
+Fewer than three Beginnings and the page is marked thin with what is missing. Token counts are recorded per
+story and per draft (`compose_usage`), so the cost is measured, not guessed. Pulse shows the composed page
+in each story's preview with: edit a line, not for this story, reject (everywhere; it also marks every story
+whose page uses it), nudge per section with accurate/brief/comprehensive, and "apply edits", which reruns
+only the stories with edits pending (`compose_only` in the draft lineup; nothing is chosen again).
+Publish carries each story's composed page on its pairing (`todays_pairings[].composed`).
+Tested: mock runs on the editor's real staging draft, a one-story rerun that removed an object and left the
+other five untouched, publish shipping the rerun draft with all six pages; Pulse's controls in a local copy;
+the fingerprint Pulse computes matched the one the editor's own browser computed for all six stories.
+Not built: the reader's app does not draw `composed` yet. Until it does, a published story still shows its
+category's page; the composed page is visible in Pulse only. Not run: a real (non-mock) compose, which
+needs the Anthropic key in Actions and so waits for the editor's next Draft Backstory on staging.
+Open, for the editor: the library includes approved candidates (35, among them the 1948 Declaration of the
+Establishment of the State of Israel and the Oslo Declaration), as `categories.validate` already does. A
+comment in Pulse (2026-10-15) says candidates stay out of Backstory until they are in the matrix. Which wins?
 
 ## Why
 
