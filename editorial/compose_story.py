@@ -39,6 +39,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import categories as C  # noqa: E402
 import visual_story as V  # noqa: E402
+import research_story as R  # noqa: E402
 from build_pairings import parse_json_loose, strip_html, API_URL  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -63,7 +64,21 @@ def toks(t):
 
 # --- the library -------------------------------------------------------------------------------------
 
-def load_library(pool_path, bs_path, prov_path):
+def add_find(lib, f, origin):
+    """A searched-and-checked document (a category's, or the research ledger's) as a library document."""
+    if f.get("id") in lib:
+        lib[f["id"]]["categories"].add(origin)
+        return
+    if not f.get("url"):
+        return
+    lib[f["id"]] = {"id": f["id"], "title": f.get("title", ""), "author": f.get("author", ""),
+                    "year": str(f.get("year", "")), "url": f["url"], "about": f.get("about", ""),
+                    "why": f.get("line", ""), "row": origin, "subgenre": "", "lenses": [],
+                    "kind": "found", "evidence": f.get("evidence_quote", ""),
+                    "source_kind": f.get("source_kind") or C.source_kind(f["url"]), "categories": {origin}}
+
+
+def load_library(pool_path, bs_path, prov_path, ledger=None):
     lib = {}
     for o in json.loads(Path(pool_path).read_text())["objects"]:
         ok = o.get("url") and o.get("link_status") in LIVE and (o.get("pool") == "matrix" or o.get("approved"))
@@ -95,12 +110,10 @@ def load_library(pool_path, bs_path, prov_path):
                     if cu.get("id") in lib:
                         lib[cu["id"]]["categories"].add(r.get("title", ""))
                     continue
-                lib[cu["id"]] = {"id": cu["id"], "title": cu.get("title", ""), "author": cu.get("author", ""),
-                                 "year": str(cu.get("year", "")), "url": cu["url"], "about": cu.get("about", ""),
-                                 "why": "", "row": r.get("title", ""), "subgenre": "", "lenses": [],
-                                 "kind": "found", "evidence": cu.get("evidence_quote", ""),
-                                 "source_kind": cu.get("source_kind") or C.source_kind(cu["url"]),
-                                 "categories": {r.get("title", "")}}
+                add_find(lib, cu, r.get("title", ""))
+    for f in (ledger or {}).get("finds", []):   # T-0111: what research found for any story serves every story
+        if f.get("id") not in set((ledger or {}).get("rejected", [])):
+            add_find(lib, f, "research: " + str(f.get("researched_for", ""))[:60])
     return lib
 
 
@@ -345,9 +358,12 @@ def main():
     lineup = json.loads(Path(args.lineup).read_text())
     by_key = {s["key"]: s for s in lineup.get("stories", [])}
     rejected = lineup.get("bs_rejected") or []
-    lib = load_library(args.pool, args.backstory, args.provisional)
     ledger = V.load_ledger(args.ledger)
-    n_series = len(ledger["series"])
+    n_series, n_finds, n_rej = len(ledger["series"]), len(ledger["finds"]), len(ledger["rejected"])
+    ledger["rejected"] = sorted(set(ledger["rejected"]) | set(rejected))   # a rejection outlives the browser that made it
+    rejected = ledger["rejected"]
+    lib = load_library(args.pool, args.backstory, args.provisional, ledger)
+    research_keys, budget = set(lineup.get("research") or []), R.BUDGET
     rows = json.loads(Path(args.backstory).read_text()).get("rows", []) + [d["row"] for d in draft["stories"] if d.get("row")]
     known = V.known_series(rows, ledger)
     search_visual = set(lineup.get("visual_search") or [])
@@ -374,12 +390,30 @@ def main():
         story = {"headline": s.get("headline", ""), "lede": strip_html(s.get("lede")), "truths": strip_html(s.get("truth"))}
         try:
             edits = dict(s.get("bs_edits") or {}, _prev_visual=(d.get("composed") or {}).get("visual"))
+            rnote = None
+            prev = d.get("composed") or {}
+            if d["story_id"] in research_keys and not args.mock:
+                if budget <= 0:
+                    rnote = f"not researched: this run's limit of {R.BUDGET} research calls is spent"
+                else:
+                    added, rnote = R.research(api_key, story, prev.get("scope") or (d.get("row") or {}).get("title", ""),
+                                              prev.get("thin"), [{"year": b["year"], "title": b.get("line", "")} for b in prev.get("beginnings") or []],
+                                              ledger, rejected)
+                    if not rnote.startswith("already"):
+                        budget -= 1
+                    for f in added:
+                        add_find(lib, f, "research: " + f.get("researched_for", "")[:60])
+                log(f"  {d['story_id']}: {rnote}")
             c = compose(api_key, story, d["pairing"], d.get("row"), lib, edits, rejected, args.mock,
                         known, ledger, d["story_id"] in search_visual)
         except Exception as e:  # noqa: BLE001 - one story's failure must not cost the others their page
             log(f"  {d['story_id']}: compose failed ({e})")
             d["composed"] = {"error": str(e)[:300]}
             continue
+        if rnote:
+            c["research"] = rnote
+        elif prev.get("research"):
+            c["research"] = prev["research"]
         d["composed"] = c
         if only:
             d["bs_hash"] = s.get("bs_hash")
@@ -388,9 +422,10 @@ def main():
         log(f"  {d['story_id']}: {c['scope']!r} {len(c['beginnings'])} Beginnings, {len(c['case'])} in the case"
             + (f", thin: {c['thin']}" if c["thin"] else "") + (f"; {len(c['notes'])} dropped" if c["notes"] else ""))
     draft["compose_usage"] = total
-    if len(ledger["series"]) != n_series:
+    if (len(ledger["series"]), len(ledger["finds"]), len(ledger["rejected"])) != (n_series, n_finds, n_rej) or research_keys:
         V.save_ledger(ledger, args.ledger)
-        log(f"ledger: {len(ledger['series']) - n_series} new checked series")
+        log(f"ledger: {len(ledger['series']) - n_series} new series, {len(ledger['finds']) - n_finds} new finds, "
+            f"{len(ledger['rejected'])} rejected in all")
     draft["generated"] = datetime.now(timezone.utc).isoformat(timespec="seconds")   # Pulse waits for this to move
     Path(args.draft).write_text(json.dumps(draft, indent=1, ensure_ascii=False) + "\n")
     log(f"composed; tokens in {total['input_tokens']}, out {total['output_tokens']}")

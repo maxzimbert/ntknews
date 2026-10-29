@@ -31,7 +31,9 @@ def load_ledger(path=LEDGER):
     p = Path(path)
     d = json.loads(p.read_text()) if p.exists() else {}
     d.setdefault("subjects", {})
+    d.setdefault("finds", [])
     d.setdefault("series", [])
+    d.setdefault("rejected", [])
     return d
 
 

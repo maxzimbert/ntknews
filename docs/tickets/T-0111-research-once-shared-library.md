@@ -1,7 +1,7 @@
 ---
 id: T-0111
 title: Backstory research runs only when the library is thin, every find joins the shared library, and no subject is searched twice
-status: DECIDED
+status: BUILT
 tags: [backstory, feature]
 anchor: editorial/compose_category.py:174
 ---
@@ -36,6 +36,22 @@ Wanted:
    politics (the 1948 declaration, which was fetched and checked 2026-10-28 on Avalon, is one find
    it should reach), then a second Israel story in a later draft uses the ledger with no new search.
 
+**Built 2026-10-29, on branch `T-0110-compose-per-story` and on staging** (`editorial/research_story.py`). Research
+runs when the editor presses "research it (1 call)" on a thin page, not on its own: the editor's cost
+constraint, and four of six stories came back thin on the first real draft. The subject is the page's scope,
+keyed so word order does not matter; a subject searched in the last 30 days is not searched again. At most 3
+research calls per draft run. The search and its checks are `compose_category.find_milestones`, unchanged.
+Finds go into `editorial/research-ledger.json` and `compose_story.load_library` reads them as library
+documents for every story; rejections (`bs_rejected`) are kept in the ledger and keep a find out for good.
+Tested with stubbed search replies: one search, the same subject reworded not searched again, a rejected find
+kept out, finds in the shared library. Not run against the live model yet.
+Not done, on purpose: `compose_category.py` still searches every time it makes a category. Readers still see
+category pages until the reader app draws per-story pages (T-0110), so thinning categories now would cost
+readers before it saves anything. Change it when the reader side ships; the check's third clause waits on it.
+The check's second clause was changed before this was built, from "a find is in backstory-pool.json" to "a
+find reaches the library stories compose from": the pool is Pulse's matrix-search index, and the composer
+reads the ledger directly.
+
 ## Why
 
 The editor's constraint, 2026-10-28: do not spend on the same web searches over and over. Today's code
@@ -59,10 +75,19 @@ import json, os, sys
 bad = []
 if not os.path.exists('editorial/research-ledger.json'):
     bad.append('no research ledger, so nothing records what was already searched')
-pool = json.load(open('ntk-pulse/data/backstory-pool.json'))
-found = [o for o in pool['objects'] if o.get('found_by') == 'search']
-if not found:
-    bad.append('no search find is in the shared pool; finds still stay inside one category')
+# A find in the ledger is a library document for every story, and a rejected one is not.
+sys.path.insert(0, 'editorial')
+try:
+    import compose_story as cs
+    led = {'finds': [{'id': 'custom-test-find', 'title': 'T', 'year': '1958', 'url': 'https://example.gov/t',
+                      'researched_for': 'test'}], 'rejected': [], 'subjects': {}, 'series': []}
+    if 'custom-test-find' not in cs.load_library(cs.POOL, cs.BACKSTORY, cs.PROVISIONAL, led):
+        bad.append('a research find does not reach the library other stories compose from')
+    led['rejected'] = ['custom-test-find']
+    if 'custom-test-find' in cs.load_library(cs.POOL, cs.BACKSTORY, cs.PROVISIONAL, led):
+        bad.append('a rejected find is still in the library')
+except Exception as e:
+    bad.append(f'the composer cannot load a ledger ({e})')
 src = open('editorial/compose_category.py', encoding='utf-8').read()
 if 'always asked, not only when the matrix is thin' in src:
     bad.append('compose_category.py still searches whether or not the library is thin')
