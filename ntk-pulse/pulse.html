@@ -4405,6 +4405,7 @@ function bscComposedHtml(s, d){
     <div style="font-size:11px;color:var(--dim);margin-bottom:6px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">PREVIEW &middot; this story's own Backstory, from the draft of ${esc(rel(BSR_DRAFT.generated))} ago
       ${pend?`<span class="chip" style="background:var(--warn);color:#fff">your edits are not in the draft yet</span><button class="mini go bsc-apply">apply edits</button>`:''}
       <button class="mini bsr-prev-close">close</button></div>
+    ${bsrStaleNote(d)}
     <div style="font-size:11px;color:var(--dim);margin-bottom:6px">Scope: <b>${esc(c.scope)}</b> · filed under ${esc((d.row&&d.row.title)||'nothing')} (${esc(p.source==='auto-category'?'made by the draft':p.source==='editor'?'you':'classifier'+(p.confidence!=null?' '+Number(p.confidence).toFixed(2):''))}) · chosen from ${esc(c.shortlist)} library documents${c.usage?' · '+esc(c.usage.input_tokens)+' tokens in, '+esc(c.usage.output_tokens)+' out':''}</div>
     ${c.thin?`<div style="padding:6px 8px;margin-bottom:6px;background:#fbe8d0;font-size:12.5px"><b>The library is thin for this story.</b> ${esc(c.thin)}. Research that fills it once for every later story is T-0111, not built yet. Meanwhile, file the story under a fitting category, or keep documents from the matrix search above.</div>`:''}
     <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">
@@ -4451,6 +4452,11 @@ function bscWire(el, s){
   box.querySelectorAll('.bsc-rerun').forEach(b => b.addEventListener('click', () => { const inp = box.querySelector(`.bsc-nudge[data-sec="${b.dataset.sec}"]`); if (inp){ e.nudge = Object.assign({}, e.nudge); if (inp.value.trim()) e.nudge[b.dataset.sec] = inp.value.trim(); saveLineup(); } bsrRefreshHashes().then(apply); }));
   const ap = box.querySelector('.bsc-apply'); if (ap) ap.addEventListener('click', () => bsrRefreshHashes().then(apply));
 }
+// A story that changed after the draft still shows what the draft chose, under a note: the old "Not filed"
+// text hid the draft's choice entirely (the editor, 2026-10-28).
+function bsrStaleNote(d){
+  return (d.fresh || d.editsPending) ? '' : `<div style="padding:6px 8px;margin-bottom:6px;background:#fbe8d0;font-size:12.5px"><b>This is the last draft, from before this story changed.</b> Click Draft Backstory to see what it gets now. Until then, publish will choose this story's Backstory again.</div>`;
+}
 function bsrDraftPreviewHtml(s, d){
   if (d.composed && !d.composed.error) return bscComposedHtml(s, d);
   const r = d.row, p = d.pairing;
@@ -4458,6 +4464,7 @@ function bsrDraftPreviewHtml(s, d){
   const objs = r.objects || [], begs = r.beginnings || [];
   return `<div class="bsr-prev" style="flex-basis:100%;margin:6px 0 2px 26px;padding:8px 10px;border:1px solid var(--ink);background:#faf8f3">
     <div style="font-size:11px;color:var(--dim);margin-bottom:6px">PREVIEW &middot; the draft of ${esc(rel(BSR_DRAFT.generated))} ago, as publish will ship it <button class="mini bsr-prev-close">close</button></div>
+    ${bsrStaleNote(d)}
     <div style="font-size:11px;color:var(--dim);margin-bottom:6px">${esc(p.source==='auto-category'?'Category made by the draft':p.source==='editor'?'Category you filed':'Category the classifier chose')}${p.confidence!=null?' · confidence '+esc(Number(p.confidence).toFixed(2)):''}${p.origin&&p.origin.status==='fallback'?' · "It starts in" fell back to the category’s own line':''}</div>
     <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">
       <div>${card||'<i style="font-size:11px;color:var(--dim)">The reader’s card could not be loaded.</i>'}</div>
@@ -4472,11 +4479,11 @@ function bsrDraftPreviewHtml(s, d){
 }
 function bsrStoryPreviewHtml(s){
   const dr=bsrDraftFor(s);
-  if (dr && (dr.fresh || dr.editsPending) && dr.row && dr.pairing) return bsrDraftPreviewHtml(s, dr);
+  if (dr && dr.row && dr.pairing) return bsrDraftPreviewHtml(s, dr);
   const box=inner=>`<div class="bsr-prev" style="flex-basis:100%;margin:6px 0 2px 26px;padding:8px 10px;border:1px dashed var(--rule);background:#faf8f3">
     <div style="font-size:11px;color:var(--dim);margin-bottom:6px">PREVIEW &middot; this story's Backstory as the reader gets it <button class="mini bsr-prev-close">close</button></div>${inner}</div>`;
   const d=bsrPreviewData(s);
-  if (!d) return box('<div style="font-size:12px">Not filed. At publish the classifier picks a row, or composes a category of its own, so there is nothing to preview yet. File it above, or keep some objects and start a category from them.</div>');
+  if (!d) return box('<div style="font-size:12px">Not filed, so the classifier picks: it chooses a row, or makes a category of its own. Click Draft Backstory above to see its choice here before you publish. To choose yourself, pick a row above.</div>');
   if (d.missing) return box('<div style="font-size:12px">This row has not reached the published Backstory yet, so there is nothing to preview.</div>');
   const pub=bsrPublishedFor(s), same=pub&&pub.row===s.backstoryRow;
   const card=readerCardHtml(d.rec, {story_id:s.key, line:same?pub.line:'', headline:s.title, origin:same?pub.origin:null});
