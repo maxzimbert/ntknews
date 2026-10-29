@@ -33,6 +33,7 @@ import sys
 import urllib.error
 import urllib.request
 from collections import Counter
+from datetime import datetime, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -182,12 +183,14 @@ def call(api_key, prompt, max_tokens=3000):
     return parse_json_loose(text, MODEL), {"input_tokens": u.get("input_tokens", 0), "output_tokens": u.get("output_tokens", 0)}
 
 
-def prompt_for(story, origin, row_title, cands, lib, edits):
+def prompt_for(story, origin, row_title, cands, lib, edits, origin_ok=True):
     nudge = edits.get("nudge") or {}
+    keep = [i for i in (edits.get("keep") or []) if i in lib]
     lines = [f"- {i} | {lib[i]['year']} | {lib[i]['title'][:110]} | {lib[i]['author'][:50]}"
              + (f" | {(lib[i]['about'] or lib[i]['why'])[:220]}" if (lib[i]['about'] or lib[i]['why']) else "")
              for i in cands]
-    starts = f"{origin.get('year')}: {origin.get('line')}" if origin and origin.get("year") else "(none found)"
+    starts = f"{origin.get('year')}: {origin.get('line')}" if origin_ok else \
+        "(none found: you choose it, see step 5)"
     return f"""You compose one news story's Backstory page for NTK News. The reader is a college-educated adult at an Advanced Placement history level: precise and plain. The page shows how we got to today's story, as dated milestones, each defended by a primary document the reader can open.
 
 STORY: {story['headline']}
@@ -203,10 +206,11 @@ DOCUMENTS IN THE LIBRARY (id | year | title | author | what it is):
 
 Do this:
 1. Decide the SCOPE: the history this story actually belongs to, in two to six plain words. Not the category name unless it fits; not a verdict ("corruption"), a subject ("Private money and the presidency").
-2. Choose 3 to 6 BEGINNINGS from the library: documents a reader needs, in order, to see how this story came to be. Dated before "It starts in" (the same year is allowed). Spread across time. Only documents that truly connect to THIS story's scope. If fewer than 3 truly connect, choose only those, and set "thin" to the subject the library is missing and what kind of milestones would be needed. Never stretch an unrelated document to fill.
+2. Choose 3 to 6 BEGINNINGS from the library: documents a reader needs, in order, to see how this story came to be. Dated before "It starts in" (the same year is allowed). Spread across time. Only documents that truly connect to THIS story's scope. A milestone is public history: a law, ruling, treaty, official act, public statement or public event. Never a private person's court file, family or personal records, even when the story mentions them. If fewer than 3 truly connect, choose only those, and set "thin" to the subject the library is missing and what kind of milestones would be needed. Never stretch an unrelated document to fill.
 3. For each Beginning write one sentence (12 to 26 words) saying what happened, in the past tense, using only facts in its line above. No dashes. No numbers that are not in its line. Do not say "this document".
 4. Choose up to 2 LATER documents (after "It starts in", before today) that belong in the case, if any truly connect.
-5. "starts_object": normally null, keeping the retrieved "It starts in". Only if the editor's note below asks for it, the id of the Beginning that should be the start instead.
+5. "starts_object": {'normally null, keeping the retrieved "It starts in". Only if the editor note below asks for it, the id of the Beginning that should be the start instead.' if origin_ok else 'no "It starts in" was found, so give the id of the Beginning where this story starts: the most recent turn that set up today, not today itself.'}
+{('EDITOR PICKS, which must be used (as Beginnings when dated before "It starts in", otherwise as LATER documents): ' + ', '.join(keep)) if keep else ''}
 {('EDITOR NOTE ON BEGINNINGS: ' + nudge['beginnings']) if nudge.get('beginnings') else ''}
 {('EDITOR NOTE ON IT STARTS IN: ' + nudge['starts']) if nudge.get('starts') else ''}
 
@@ -228,22 +232,26 @@ JSON only: {{"line":"..."}}"""
 
 def compose(api_key, story, pairing, row, lib, edits, rejected, mock=False):
     origin = (pairing or {}).get("origin") or {}
-    oy = int(origin["year"]) if str(origin.get("year", "")).isdigit() else 9999
+    # A fallback origin is the category's own start line, or a bare year with no line (the Ohio ad drew "2026"
+    # and nothing; the South Carolina race drew a 1977 line about gun owners): the composer chooses instead.
+    origin_ok = origin.get("status") == "retrieved" and bool(origin.get("line")) and str(origin.get("year", "")).isdigit()
+    oy = int(origin["year"]) if origin_ok else 9999
     off = set(edits.get("off") or []) | set(rejected)
+    keep = [i for i in (edits.get("keep") or []) if i in lib and i not in off]
     notes, usage = [], {"input_tokens": 0, "output_tokens": 0}
     if mock:
         terms = toks(story["headline"])
     else:
         terms, u = terms_for(api_key, story, (row or {}).get("title"))
         usage = {k: usage[k] + u[k] for k in usage}
-    cands = [i for i in shortlist(lib, story, (row or {}).get("title"), terms) if i not in off]
+    cands = keep + [i for i in shortlist(lib, story, (row or {}).get("title"), terms) if i not in off and i not in keep]
     if mock:
         early = sorted([i for i in cands if lib[i]["year"][:4].isdigit() and int(lib[i]["year"][:4]) <= oy],
                        key=lambda i: lib[i]["year"])[-4:]
         r = {"scope": (row or {}).get("title") or "mock scope", "later": [], "starts_object": None, "thin": None,
              "beginnings": [{"id": i, "line": f"{lib[i]['title']} was written."} for i in early], "why": "mock"}
     else:
-        r, u = call(api_key, prompt_for(story, origin, (row or {}).get("title"), cands, lib, edits))
+        r, u = call(api_key, prompt_for(story, origin, (row or {}).get("title"), cands, lib, edits, origin_ok))
         usage = {k: usage[k] + u[k] for k in usage}
     begs = []
     for b in r.get("beginnings") or []:
@@ -266,16 +274,25 @@ def compose(api_key, story, pairing, row, lib, edits, rejected, mock=False):
             continue
         begs.append({"object_id": i, "year": o["year"][:4], "line": line, "by": by})
     begs.sort(key=lambda b: b["year"])
-    later = [i for i in (r.get("later") or [])[:2] if i in cands and i not in {b["object_id"] for b in begs}]
+    chosen = {b["object_id"] for b in begs}
+    later = [i for i in (r.get("later") or [])[:2] if i in cands and i not in chosen]
+    later += [i for i in keep if i not in chosen and i not in later]   # the editor's picks always reach the case
     case = [{"object_id": i, "year": lib[i]["year"][:4], "title": lib[i]["title"], "author": lib[i]["author"],
              "source_url": lib[i]["url"], "about": lib[i]["about"], "kind": lib[i]["kind"],
              **({"source_kind": "news"} if lib[i].get("source_kind") == "news" else {})}
             for i in [b["object_id"] for b in begs] + later]
-    starts = {"year": origin.get("year"), "line": origin.get("line"), "from": "retrieval"} if origin.get("year") else None
+    starts = {"year": origin.get("year"), "line": origin.get("line"), "from": "retrieval"} if origin_ok else None
     so = r.get("starts_object")
-    if so and so in {b["object_id"] for b in begs}:
+    if so and so in chosen:
         b = next(b for b in begs if b["object_id"] == so)
-        starts = {"year": b["year"], "line": b["line"], "object_id": so, "from": "editor nudge"}
+        starts = {"year": b["year"], "line": b["line"], "object_id": so, "from": "editor nudge" if origin_ok else "composer"}
+    if starts and starts.get("from") == "composer" and str(starts["year"]) >= str(datetime.now(timezone.utc).year):
+        starts = None                            # "It starts in" is never the last 45 days; a year is all we have
+    if not starts and not origin_ok and begs:    # never an empty "It starts in": the latest Beginning before this year
+        prior = [b for b in begs if b["year"] < str(datetime.now(timezone.utc).year)]
+        if prior:
+            b = prior[-1]
+            starts = {"year": b["year"], "line": b["line"], "object_id": b["object_id"], "from": "composer"}
     here = edits.get("here") or (pairing or {}).get("line") or ""
     here_by = "editor" if edits.get("here") else "pairing"
     note = (edits.get("nudge") or {}).get("here")
@@ -345,7 +362,6 @@ def main():
         log(f"  {d['story_id']}: {c['scope']!r} {len(c['beginnings'])} Beginnings, {len(c['case'])} in the case"
             + (f", thin: {c['thin']}" if c["thin"] else "") + (f"; {len(c['notes'])} dropped" if c["notes"] else ""))
     draft["compose_usage"] = total
-    from datetime import datetime, timezone
     draft["generated"] = datetime.now(timezone.utc).isoformat(timespec="seconds")   # Pulse waits for this to move
     Path(args.draft).write_text(json.dumps(draft, indent=1, ensure_ascii=False) + "\n")
     log(f"composed; tokens in {total['input_tokens']}, out {total['output_tokens']}")
