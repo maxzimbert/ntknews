@@ -30,6 +30,20 @@ def subject_key(subject):
     return " ".join(words)
 
 
+def same_subject(key, ledger, at=0.5):
+    """A subject searched under other words. A page's scope is reworded each time it is recomposed
+    ("Federal agents' anonymity and exposure", then "Federal immigration agents' public exposure"), and a
+    second search ran on the second name (2026-10-29). Half the words shared counts as the same subject."""
+    a = set(key.split())
+    best, score = None, 0.0
+    for k, e in ledger["subjects"].items():
+        b = set(k.split())
+        j = len(a & b) / len(a | b) if a | b else 0
+        if j >= at and j > score and recent(e):
+            best, score = e, j
+    return best
+
+
 def recent(entry, now=None):
     now = now or datetime.now(timezone.utc)
     try:
@@ -44,7 +58,7 @@ def research(api_key, story, scope, thin, have, ledger, rejected, searcher=None)
     key = subject_key(scope)
     if not key:
         return [], "no subject to research"
-    e = ledger["subjects"].get(key)
+    e = ledger["subjects"].get(key) or same_subject(key, ledger)
     if e and recent(e):
         return [], f"already researched on {e['searched_at'][:10]} (for \"{e.get('for', '')[:50]}\"); its {len(e.get('finds') or [])} find(s) are in the library"
     found, notes = CC.find_milestones(api_key, MODEL, {"headline": story["headline"], "text": story.get("truths", "")},
