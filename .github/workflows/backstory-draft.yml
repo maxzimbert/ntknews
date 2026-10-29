@@ -64,6 +64,8 @@ jobs:
           git config user.name "ntk-draft-bot"
           git config user.email "publish@ntknews.org"
           git add ntk-pulse/data/backstory-draft.json
+          # T-0111, T-0112: checked series and searched subjects, kept so nothing is searched twice
+          if [ -f editorial/research-ledger.json ]; then git add editorial/research-ledger.json; fi
           git diff --cached --quiet && exit 0
           git commit -m "backstory draft: $(date -u +%Y-%m-%dT%H:%MZ)"
           B="${{ github.ref_name }}"
