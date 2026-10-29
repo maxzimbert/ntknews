@@ -34,6 +34,7 @@ def load_ledger(path=LEDGER):
     d.setdefault("finds", [])
     d.setdefault("series", [])
     d.setdefault("rejected", [])
+    d.setdefault("vetoed", [])
     return d
 
 
