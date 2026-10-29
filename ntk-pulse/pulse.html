@@ -4441,6 +4441,7 @@ function bscComposedHtml(s, d){
       ${pend?`<span class="chip" style="background:var(--warn);color:#fff">your edits are not in the draft yet</span><button class="mini go bsc-apply">apply edits</button>`:''}
       <button class="mini bsr-prev-close">close</button></div>
     ${bsrStaleNote(d)}
+    ${BSR_DRAFT_STATE?`<div style="padding:5px 8px;margin-bottom:6px;border:1px solid var(--ink);font-size:12.5px"><b>${esc(BSR_DRAFT_STATE)}</b></div>`:''}
     <div style="font-size:11px;color:var(--dim);margin-bottom:6px">Scope: <b>${esc(c.scope)}</b> · filed under ${esc((d.row&&d.row.title)||'nothing')} (${esc(p.source==='auto-category'?'made by the draft':p.source==='editor'?'you':'classifier'+(p.confidence!=null?' '+Number(p.confidence).toFixed(2):''))}) · chosen from ${esc(c.shortlist)} library documents${c.usage?' · '+esc(c.usage.input_tokens)+' tokens in, '+esc(c.usage.output_tokens)+' out':''}</div>
     ${c.thin?`<div style="padding:6px 8px;margin-bottom:6px;background:#fbe8d0;font-size:12.5px"><b>The library is thin for this story.</b> ${esc(c.thin)}
       <div style="margin-top:6px;display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button class="mini go bsc-research" title="one web-search call, up to eight searches; what passes the checks joins the library for every later story, and the subject is not searched again for 30 days">research it (1 call)</button>
@@ -4460,6 +4461,7 @@ function bscComposedHtml(s, d){
       <div><div style="font:700 11px sans-serif;letter-spacing:.06em;margin-bottom:4px">AS THE READER GETS IT</div>${card||''}<div style="margin-top:8px;border:1px solid var(--ink)">${page}</div></div>
     </div></div>`;
 }
+function bscBusy(b){ b.disabled = true; b.textContent = 'sending\u2026'; }
 function bscWire(el, s){
   const box = el.querySelector('.bsc'); if (!box) return;
   const e = bsEdits(s), d = bsrDraftFor(s);
@@ -4487,13 +4489,13 @@ function bscWire(el, s){
     delete BSC_EDITING[s.key+'|'+b.dataset.id]; save(); }));
   const hs = box.querySelector('.bsc-here-save'); if (hs) hs.addEventListener('click', () => { const v = box.querySelector('.bsc-here').value.trim(); if (v) e.here = v; else delete e.here; save(); });
   box.querySelectorAll('.bsc-nudge').forEach(inp => inp.addEventListener('change', () => { e.nudge = Object.assign({}, e.nudge); const v = inp.value.trim(); if (v) e.nudge[inp.dataset.sec] = v; else delete e.nudge[inp.dataset.sec]; save(); }));
-  box.querySelectorAll('.bsc-rerun').forEach(b => b.addEventListener('click', () => { const inp = box.querySelector(`.bsc-nudge[data-sec="${b.dataset.sec}"]`); if (inp){ e.nudge = Object.assign({}, e.nudge); if (inp.value.trim()) e.nudge[b.dataset.sec] = inp.value.trim(); saveLineup(); } bsrRefreshHashes().then(apply); }));
-  const rs = box.querySelector('.bsc-research'); if (rs) rs.addEventListener('click', () => bsrRefreshHashes().then(() => {
+  box.querySelectorAll('.bsc-rerun').forEach(b => b.addEventListener('click', () => { bscBusy(b); const inp = box.querySelector(`.bsc-nudge[data-sec="${b.dataset.sec}"]`); if (inp){ e.nudge = Object.assign({}, e.nudge); if (inp.value.trim()) e.nudge[b.dataset.sec] = inp.value.trim(); saveLineup(); } bsrRefreshHashes().then(apply); }));
+  const rs = box.querySelector('.bsc-research'); if (rs) rs.addEventListener('click', () => { bscBusy(rs); bsrRefreshHashes().then(() => {
     if (!(bsrDraftFor(s)||{}).textFresh){ alert('This story changed since the draft. Use Draft Backstory first.'); return; }
-    draftBackstory([s.key], {research:[s.key]}); }));
-  const vs = box.querySelector('.bsc-v-search'); if (vs) vs.addEventListener('click', () => bsrRefreshHashes().then(() => {
+    draftBackstory([s.key], {research:[s.key]}); }); });
+  const vs = box.querySelector('.bsc-v-search'); if (vs) vs.addEventListener('click', () => { bscBusy(vs); bsrRefreshHashes().then(() => {
     if (!(bsrDraftFor(s)||{}).textFresh){ alert('This story changed since the draft. Use Draft Backstory first.'); return; }
-    draftBackstory([s.key], {visual_search:[s.key]}); }));
+    draftBackstory([s.key], {visual_search:[s.key]}); }); });
   const vo = box.querySelector('.bsc-v-own'); if (vo) vo.addEventListener('click', () => { BSC_VFORM[s.key] = true; render(); });
   const vn = box.querySelector('.bsc-v-none'); if (vn) vn.addEventListener('click', () => { e.visual = {none:true}; save(); });
   const vc = box.querySelector('.bsc-v-cancel'); if (vc) vc.addEventListener('click', () => { delete BSC_VFORM[s.key]; render(); });
@@ -4501,7 +4503,7 @@ function bscWire(el, s){
   const vsv = box.querySelector('.bsc-v-save'); if (vsv) vsv.addEventListener('click', () => {
     const v = {}; box.querySelectorAll('.bsc-v').forEach(i => { if (i.value.trim()) v[i.dataset.k] = i.value.trim(); });
     v.verified = box.querySelector('.bsc-v-ok').checked; e.visual = v; delete BSC_VFORM[s.key]; save(); });
-  const ap = box.querySelector('.bsc-apply'); if (ap) ap.addEventListener('click', () => bsrRefreshHashes().then(apply));
+  const ap = box.querySelector('.bsc-apply'); if (ap) ap.addEventListener('click', () => { bscBusy(ap); bsrRefreshHashes().then(apply); });
 }
 // A story that changed after the draft still shows what the draft chose, under a note: the old "Not filed"
 // text hid the draft's choice entirely (the editor, 2026-10-28).
