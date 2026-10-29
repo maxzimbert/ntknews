@@ -3010,9 +3010,16 @@ function buildStoryPayload(){
       // classifies as before.
       ...(s.backstoryRow ? {backstory_row: s.backstoryRow} : {}),
       // T-0110: the editor's edits to this story's own Backstory page (compose_story.py applies them).
-      ...(s.bsEdits && Object.keys(s.bsEdits).length ? {bs_edits: s.bsEdits} : {}),
+      // T-0102: documents ticked in the matrix search ("kept for this story") are the editor's picks for its page.
+      ...(bsEditsOut(s) ? {bs_edits: bsEditsOut(s)} : {}),
     };
   });
+}
+
+function bsEditsOut(s){
+  const e = Object.assign({}, s.bsEdits || {});
+  if ((s.bsPicks || []).length) e.keep = s.bsPicks.slice(); else delete e.keep;
+  return Object.keys(e).length ? e : null;
 }
 
 function storyDataExport(stories, extra){
@@ -3047,6 +3054,9 @@ const INSUFFICIENT = 'INSUFFICIENT SOURCE MATERIAL';
 function keptPreflight(lineup, cats){
   return (lineup||[]).map(s=>{
     const c=cats[s.backstoryRow], on=new Set(((c&&c.objects)||[]).map(x=>x.object_id));
+    // T-0110: a pick already on the story's own drafted page reaches the reader with it
+    const d=typeof bsrDraftFor==='function'?bsrDraftFor(s):null;
+    if (d && d.fresh && d.composed) (d.composed.case||[]).forEach(x=>on.add(x.object_id));
     const n=(s.bsPicks||[]).filter(id=>!on.has(id)).length;
     if (!n) return null;
     return ((s.title||'').trim().slice(0,52)||('story '+(s.key||'?')))+' \u2014 '+n+' kept object'+(n===1?' was':'s were')+
@@ -4382,7 +4392,6 @@ function bscNudge(s, sec, pills){
   const v = ((bsEdits(s).nudge)||{})[sec] || '';
   return `<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:6px">
     <input class="bsc-nudge" data-sec="${sec}" value="${esc(v)}" placeholder="nudge it, in your words" style="flex:1;min-width:220px">
-    ${pills?['accurate','brief','comprehensive'].map(w=>`<button class="mini bsc-pill" data-sec="${sec}" data-w="${w}">${w}</button>`).join(''):''}
     <button class="mini bsc-rerun" data-sec="${sec}">rerun</button></div>`;
 }
 function bscComposedHtml(s, d){
@@ -4412,7 +4421,7 @@ function bscComposedHtml(s, d){
       <div style="flex:1;min-width:320px;max-width:620px">
         ${sec('WE ARE HERE', e.here?'your line':'written for this story', `<div style="font:15px Georgia,serif;margin-top:4px">${esc(c.here)}</div>
           <div style="display:flex;gap:6px;margin-top:6px"><input class="bsc-here" value="${esc(e.here||'')}" placeholder="or write it yourself" style="flex:1"><button class="mini bsc-here-save">keep mine</button></div>${bscNudge(s,'here',false)}`)}
-        ${sec('IT STARTS IN '+esc(starts.year||'?'), starts.from==='editor nudge'?'moved by your nudge':'found by retrieval', `<div style="font:14px Georgia,serif;margin-top:4px">${esc(starts.line||'')}</div>${bscNudge(s,'starts',true)}`)}
+        ${sec('IT STARTS IN '+esc(starts.year||'?'), starts.from==='editor nudge'?'moved by your nudge':starts.from==='composer'?'chosen from the Beginnings: retrieval found no start':'found by retrieval', `<div style="font:14px Georgia,serif;margin-top:4px">${esc(starts.line||'')}</div>${bscNudge(s,'starts',true)}`)}
         ${sec('BEGINNINGS', (c.beginnings||[]).filter(b=>!off.has(b.object_id)).length+' kept', (c.beginnings||[]).map(b=>{ const o=Object.assign({}, (c.case||[]).find(x=>x.object_id===b.object_id)||{}, b); if (off.has(b.object_id)) seenOff.add(b.object_id); return bscItem(s, o, 'beg', off.has(b.object_id)); }).join('')+bscNudge(s,'beginnings',true))}
         ${sec('OBJECTS (THE CASE)', (c.case||[]).filter(o=>!off.has(o.object_id)).length+' kept', (c.case||[]).filter(o=>!seenOff.has(o.object_id)).map(o=>bscItem(s, o, 'obj', off.has(o.object_id))).join('')||'<i style="font-size:12px;color:var(--dim)">none</i>')}
         ${(c.notes||[]).length?`<details style="font-size:11.5px;color:var(--dim);margin-top:4px"><summary>${c.notes.length} pick(s) the checks dropped</summary>${c.notes.map(n=>'<div>'+esc(n)+'</div>').join('')}</details>`:''}
@@ -4448,7 +4457,6 @@ function bscWire(el, s){
     delete BSC_EDITING[s.key+'|'+b.dataset.id]; save(); }));
   const hs = box.querySelector('.bsc-here-save'); if (hs) hs.addEventListener('click', () => { const v = box.querySelector('.bsc-here').value.trim(); if (v) e.here = v; else delete e.here; save(); });
   box.querySelectorAll('.bsc-nudge').forEach(inp => inp.addEventListener('change', () => { e.nudge = Object.assign({}, e.nudge); const v = inp.value.trim(); if (v) e.nudge[inp.dataset.sec] = v; else delete e.nudge[inp.dataset.sec]; save(); }));
-  box.querySelectorAll('.bsc-pill').forEach(b => b.addEventListener('click', () => { const inp = box.querySelector(`.bsc-nudge[data-sec="${b.dataset.sec}"]`); inp.value = (inp.value ? inp.value + '; ' : '') + 'more ' + b.dataset.w; inp.dispatchEvent(new Event('change')); }));
   box.querySelectorAll('.bsc-rerun').forEach(b => b.addEventListener('click', () => { const inp = box.querySelector(`.bsc-nudge[data-sec="${b.dataset.sec}"]`); if (inp){ e.nudge = Object.assign({}, e.nudge); if (inp.value.trim()) e.nudge[b.dataset.sec] = inp.value.trim(); saveLineup(); } bsrRefreshHashes().then(apply); }));
   const ap = box.querySelector('.bsc-apply'); if (ap) ap.addEventListener('click', () => bsrRefreshHashes().then(apply));
 }
