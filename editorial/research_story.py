@@ -53,16 +53,20 @@ def recent(entry, now=None):
     return now - t < timedelta(days=RECENT_DAYS)
 
 
-def research(api_key, story, scope, thin, have, ledger, rejected, searcher=None):
-    """Returns (finds_added, note). `have` is the story's Beginnings, so the search does not repeat them."""
-    key = subject_key(scope)
+def research(api_key, story, scope, thin, have, ledger, rejected, searcher=None, direction=None, story_id=None):
+    """Returns (finds_added, note). `have` is the story's Beginnings, so the search does not repeat them.
+    `direction` is the editor's own pointer for this search; it makes a subject of its own, so a directed search
+    is not refused because the page's subject was researched, but the same direction is not run twice."""
+    key = subject_key(scope + " " + direction) if direction else subject_key(scope)
     if not key:
         return [], "no subject to research"
-    e = ledger["subjects"].get(key) or same_subject(key, ledger)
+    e = ledger["subjects"].get(key) or (None if direction else same_subject(key, ledger))
     if e and recent(e):
         return [], f"already researched on {e['searched_at'][:10]} (for \"{e.get('for', '')[:50]}\"); its {len(e.get('finds') or [])} find(s) are in the library"
+    vetoed = []
     found, notes = CC.find_milestones(api_key, MODEL, {"headline": story["headline"], "text": story.get("truths", "")},
-                                      scope, thin or "", have, 4, searcher, call_claude)
+                                      scope, thin or "", have, 6 if direction else 4, searcher, call_claude,
+                                      direction=direction, vetoed=vetoed)
     rej = set(rejected)
     have_urls = {f["url"] for f in ledger["finds"]}
     added = []
@@ -74,6 +78,26 @@ def research(api_key, story, scope, thin, have, ledger, rejected, searcher=None)
         ledger["finds"].append(f)
         have_urls.add(f["url"])
         added.append(f)
-    ledger["subjects"][key] = {"subject": scope, "searched_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+    known = {f["url"] for f in ledger["finds"]} | {v["url"] for v in ledger["vetoed"]}
+    for v in vetoed:                     # shown to the editor with the reason, who can approve it (T-0111)
+        if v["id"] not in rej and v["url"] not in known:
+            ledger["vetoed"].append(dict(v, researched_for=scope, story_id=story_id, direction=direction,
+                                         researched_at=datetime.now(timezone.utc).isoformat(timespec="seconds")))
+            known.add(v["url"])
+    ledger["subjects"][key] = {"subject": scope, "direction": direction, "searched_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
                                "for": story["headline"], "finds": [f["id"] for f in added], "notes": notes[:10]}
-    return added, f"researched \"{scope}\": {len(added)} new document(s) kept, {len(notes)} rejected by the checks"
+    what = f"\"{direction}\"" if direction else f"\"{scope}\""
+    return added, f"researched {what}: {len(added)} new document(s) kept, {len(vetoed)} vetoed by the checks (shown below to approve or leave)"
+
+
+def approve(ledger, ids, story_id):
+    """The editor overrules the checks: a vetoed find becomes a library document, marked as the editor's call."""
+    moved = []
+    for v in list(ledger["vetoed"]):
+        if v["id"] in ids:
+            ledger["vetoed"].remove(v)
+            f = dict(v, approved_by="editor", approved_for=story_id, source_kind=CC.C.source_kind(v["url"]),
+                     approved_at=datetime.now(timezone.utc).isoformat(timespec="seconds"))
+            ledger["finds"].append(f)
+            moved.append(f)
+    return moved

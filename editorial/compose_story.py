@@ -226,6 +226,7 @@ Do this:
 5. "starts_object": {'normally null, keeping the retrieved "It starts in". Only if the editor note below asks for it, the id of the Beginning that should be the start instead.' if origin_ok else 'no "It starts in" was found, so give the id of the Beginning where this story starts: the most recent turn that set up today, not today itself.'}
 {('EDITOR PICKS, which must be used (as Beginnings when dated before "It starts in", otherwise as LATER documents): ' + ', '.join(keep)) if keep else ''}
 {('EDITOR NOTE ON BEGINNINGS: ' + nudge['beginnings']) if nudge.get('beginnings') else ''}
+{('THE EDITOR POINTED THIS HISTORY AT: ' + edits['research_direction'] + '. Comparable cases in the library that fit this direction belong among the Beginnings, even though they happened elsewhere.') if edits.get('research_direction') else ''}
 {('EDITOR NOTE ON IT STARTS IN: ' + nudge['starts']) if nudge.get('starts') else ''}
 
 JSON only: {{"scope":"...","beginnings":[{{"id":"...","line":"..."}}],"later":["id"],"starts_object":null,"thin":null or "what is missing","why":"one sentence on the choices"}}"""
@@ -364,6 +365,8 @@ def main():
     rejected = ledger["rejected"]
     lib = load_library(args.pool, args.backstory, args.provisional, ledger)
     research_keys, budget = set(lineup.get("research") or []), R.BUDGET
+    directions = lineup.get("research_direction") or {}
+    approved_any = False
     rows = json.loads(Path(args.backstory).read_text()).get("rows", []) + [d["row"] for d in draft["stories"] if d.get("row")]
     known = V.known_series(rows, ledger)
     search_visual = set(lineup.get("visual_search") or [])
@@ -390,6 +393,12 @@ def main():
         story = {"headline": s.get("headline", ""), "lede": strip_html(s.get("lede")), "truths": strip_html(s.get("truth"))}
         try:
             edits = dict(s.get("bs_edits") or {}, _prev_visual=(d.get("composed") or {}).get("visual"))
+            # T-0111: a vetoed find the editor approved becomes a library document and goes on this page
+            ok = list(edits.get("approved") or [])
+            for f in R.approve(ledger, set(ok), d["story_id"]):
+                add_find(lib, f, "approved by the editor")
+                approved_any = True
+            edits["keep"] = list(dict.fromkeys(list(edits.get("keep") or []) + [i for i in ok if i in lib]))
             rnote = None
             prev = d.get("composed") or {}
             if d["story_id"] in research_keys and not args.mock:
@@ -398,7 +407,8 @@ def main():
                 else:
                     added, rnote = R.research(api_key, story, prev.get("scope") or (d.get("row") or {}).get("title", ""),
                                               prev.get("thin"), [{"year": b["year"], "title": b.get("line", "")} for b in prev.get("beginnings") or []],
-                                              ledger, rejected)
+                                              ledger, rejected, direction=(directions.get(d["story_id"]) or "").strip() or None,
+                                              story_id=d["story_id"])
                     if not rnote.startswith("already"):
                         budget -= 1
                     for f in added:
@@ -410,6 +420,10 @@ def main():
             log(f"  {d['story_id']}: compose failed ({e})")
             d["composed"] = {"error": str(e)[:300]}
             continue
+        # what the checks turned down for this story, for the editor to approve or leave
+        c["vetoed"] = [{k: v.get(k) for k in ("id", "year", "title", "author", "source", "url", "line", "relation",
+                                              "vetoed_because", "direction")}
+                       for v in ledger["vetoed"] if v.get("story_id") == d["story_id"] and v["id"] not in set(rejected)]
         if rnote:
             c["research"] = rnote
         elif prev.get("research"):
@@ -422,7 +436,7 @@ def main():
         log(f"  {d['story_id']}: {c['scope']!r} {len(c['beginnings'])} Beginnings, {len(c['case'])} in the case"
             + (f", thin: {c['thin']}" if c["thin"] else "") + (f"; {len(c['notes'])} dropped" if c["notes"] else ""))
     draft["compose_usage"] = total
-    if (len(ledger["series"]), len(ledger["finds"]), len(ledger["rejected"])) != (n_series, n_finds, n_rej) or research_keys:
+    if (len(ledger["series"]), len(ledger["finds"]), len(ledger["rejected"])) != (n_series, n_finds, n_rej) or research_keys or approved_any:
         V.save_ledger(ledger, args.ledger)
         log(f"ledger: {len(ledger['series']) - n_series} new series, {len(ledger['finds']) - n_finds} new finds, "
             f"{len(ledger['rejected'])} rejected in all")

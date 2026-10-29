@@ -52,6 +52,21 @@ The check's second clause was changed before this was built, from "a find is in 
 find reaches the library stories compose from": the pool is Pulse's matrix-search index, and the composer
 reads the ledger directly.
 
+**Added 2026-10-29, from the editor's first real research runs.** Two runs on the Homeland Security names
+story kept 4 documents and the checks turned down 4 (mostly a line a word or two over 25). The editor asked
+for, and got:
+- *Vetoed finds kept and shown*, each with the check that turned it down, in the story's RESEARCH section.
+  "Approve: I checked it" overrules the checks: the find becomes a library document for every story
+  (`approved_by: "editor"` in the ledger) and goes on this page. Reject keeps it out for good.
+- *Directed research*: a box to point the search ("other hacks of government departments: OPM, FBI, and
+  intrusions by Russia, China, Iran"). Only then may a milestone be a "comparable case", labelled as one, and
+  the composer is told the editor asked for that history. This is not the "comparable case elsewhere"
+  relation reverted on 2026-10-09 (`docs/decisions.md`): that one ran on the automatic path and padded pages;
+  this one runs only on the editor's direction. A direction is a subject of its own, not refused because
+  the page's subject was researched; the same direction is not searched twice in 30 days.
+- A reworded page scope counts as the same subject (half the words shared), so recomposing no longer
+  draws a second search, and runs queue instead of cancelling one another (T-0109).
+
 ## Why
 
 The editor's constraint, 2026-10-28: do not spend on the same web searches over and over. Today's code
