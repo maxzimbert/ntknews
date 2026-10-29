@@ -3226,7 +3226,7 @@ function bsrDraftStatusText(){
 }
 // `only`: T-0110's apply-edits path. Those stories' pages are composed again from the last draft, with the
 // editor's edits; nothing is chosen again and no category is made, so it is one small model call per story.
-async function draftBackstory(only){
+async function draftBackstory(only, extra){
   const br = pulseBranch(location);
   if (!br){ alert('This copy of Pulse cannot draft (not the live Pulse or staging Pulse).'); return; }
   if (!SETTINGS.ghToken){ alert('Add a GitHub token in ⚙ first — scoped to contents:write on this repo only.'); return; }
@@ -3237,7 +3237,7 @@ async function draftBackstory(only){
   await bsWithHashes(stories);
   BSR_DRAFT_STATE = only ? 'Applying your edits…' : 'Sending the Lineup…'; render();
   try {
-    const content = storyDataExport(stories, only ? {compose_only: only} : null);
+    const content = storyDataExport(stories, only ? Object.assign({compose_only: only}, extra || {}) : null);
     const b64 = btoa(unescape(encodeURIComponent(content)));
     const apiUrl = `https://api.github.com/repos/${GH_REPO}/contents/${GH_DRAFT_LINEUP}`;
     const headers = { 'Authorization': 'Bearer '+SETTINGS.ghToken, 'Accept': 'application/vnd.github+json' };
@@ -4394,6 +4394,32 @@ function bscNudge(s, sec, pills){
     <input class="bsc-nudge" data-sec="${sec}" value="${esc(v)}" placeholder="nudge it, in your words" style="flex:1;min-width:220px">
     <button class="mini bsc-rerun" data-sec="${sec}">rerun</button></div>`;
 }
+// T-0112: the story's chart. Readers only ever get a drawn chart whose every value is checked.
+const BSC_VFORM = {};
+function bscVisualNote(v){
+  if (!v) return 'none yet';
+  if (v.status==='drawn') return v.by==='reused'?'reused, already checked':v.by==='system'?'found by search, checked':(v.values||[]).every(x=>x.checked)?'yours, checked':'yours, not checked: readers will not see it';
+  return v.status==='proposed'?'proposed, not drawn':'no chart';
+}
+function bscVisualHtml(s, v){
+  const e = bsEdits(s), mine = e.visual && !e.visual.none ? e.visual : {};
+  v = v || {status:'none', values:[]};
+  let body = '';
+  if (v.status==='drawn'){
+    const a=(v.values||[])[0]||{}, b=(v.values||[])[1]||{};
+    body = catIndicatorSvg({label:v.label, then_value:a.value, then_year:a.year, now_value:b.value, direction:v.direction, source:v.source, as_of:v.as_of, source_url:v.source_url})
+      + (v.why?`<div style="font-size:12px;color:var(--dim)">${esc(v.why)}${v.how_checked?' \u00b7 '+esc(v.how_checked):''}</div>`:'');
+  } else if (v.status==='proposed'){
+    body = `<div style="font:14px Georgia,serif;margin-top:4px">Proposed: ${esc(v.label||'')}${v.publisher?' <span style="color:var(--dim)">('+esc(v.publisher)+')</span>':''}</div><div style="font-size:12px;color:var(--dim)">${esc(v.why||'')} Not drawn until a published series is found and checked.</div>`;
+  } else body = `<div style="font-size:13px;color:var(--dim);margin-top:4px">${esc(v.why||'No chart.')}</div>`;
+  const form = BSC_VFORM[s.key] ? `<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;margin-top:6px;font-size:12px">
+      ${[['label','what is measured'],['source','publisher'],['then_year','first year'],['then_value','first figure'],['as_of','latest as of'],['now_value','latest figure'],['source_url','link to the page with both figures'],['direction','worse, better, contested or flat']].map(([k,ph])=>`<input class="bsc-v" data-k="${k}" value="${esc(mine[k]||'')}" placeholder="${ph}">`).join('')}
+      <label style="grid-column:1/-1"><input type="checkbox" class="bsc-v-ok"${mine.verified?' checked':''}> I checked both figures on that page</label>
+      <span style="grid-column:1/-1"><button class="mini go bsc-v-save">use my chart</button> <button class="mini bsc-v-cancel">cancel</button>${e.visual?' <button class="mini bsc-v-clear">remove mine</button>':''}</span></div>` : '';
+  return body + `<div class="acts" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
+      <button class="mini bsc-v-search" title="one web-search call, up to five searches; a series it finds is checked and kept for every later story">search for a source (1 call)</button>
+      <button class="mini bsc-v-own">supply my own</button><button class="mini bsc-v-none">no chart</button></div>${form}${bscNudge(s,'visual',false)}`;
+}
 function bscComposedHtml(s, d){
   const c = d.composed, p = d.pairing, e = bsEdits(s), off = new Set(e.off||[]);
   const starts = c.starts || {};
@@ -4424,6 +4450,7 @@ function bscComposedHtml(s, d){
         ${sec('IT STARTS IN '+esc(starts.year||'?'), starts.from==='editor nudge'?'moved by your nudge':starts.from==='composer'?'chosen from the Beginnings: retrieval found no start':'found by retrieval', `<div style="font:14px Georgia,serif;margin-top:4px">${esc(starts.line||'')}</div>${bscNudge(s,'starts',true)}`)}
         ${sec('BEGINNINGS', (c.beginnings||[]).filter(b=>!off.has(b.object_id)).length+' kept', (c.beginnings||[]).map(b=>{ const o=Object.assign({}, (c.case||[]).find(x=>x.object_id===b.object_id)||{}, b); if (off.has(b.object_id)) seenOff.add(b.object_id); return bscItem(s, o, 'beg', off.has(b.object_id)); }).join('')+bscNudge(s,'beginnings',true))}
         ${sec('OBJECTS (THE CASE)', (c.case||[]).filter(o=>!off.has(o.object_id)).length+' kept', (c.case||[]).filter(o=>!seenOff.has(o.object_id)).map(o=>bscItem(s, o, 'obj', off.has(o.object_id))).join('')||'<i style="font-size:12px;color:var(--dim)">none</i>')}
+        ${sec('VISUALIZATION', bscVisualNote(c.visual), bscVisualHtml(s, c.visual))}
         ${(c.notes||[]).length?`<details style="font-size:11.5px;color:var(--dim);margin-top:4px"><summary>${c.notes.length} pick(s) the checks dropped</summary>${c.notes.map(n=>'<div>'+esc(n)+'</div>').join('')}</details>`:''}
         <div style="font-size:11px;color:var(--dim);margin-top:6px">Not for this story: hidden here only. Reject: the document itself is wrong; it is removed from every story and never chosen again.</div>
       </div>
@@ -4458,6 +4485,16 @@ function bscWire(el, s){
   const hs = box.querySelector('.bsc-here-save'); if (hs) hs.addEventListener('click', () => { const v = box.querySelector('.bsc-here').value.trim(); if (v) e.here = v; else delete e.here; save(); });
   box.querySelectorAll('.bsc-nudge').forEach(inp => inp.addEventListener('change', () => { e.nudge = Object.assign({}, e.nudge); const v = inp.value.trim(); if (v) e.nudge[inp.dataset.sec] = v; else delete e.nudge[inp.dataset.sec]; save(); }));
   box.querySelectorAll('.bsc-rerun').forEach(b => b.addEventListener('click', () => { const inp = box.querySelector(`.bsc-nudge[data-sec="${b.dataset.sec}"]`); if (inp){ e.nudge = Object.assign({}, e.nudge); if (inp.value.trim()) e.nudge[b.dataset.sec] = inp.value.trim(); saveLineup(); } bsrRefreshHashes().then(apply); }));
+  const vs = box.querySelector('.bsc-v-search'); if (vs) vs.addEventListener('click', () => bsrRefreshHashes().then(() => {
+    if (!(bsrDraftFor(s)||{}).textFresh){ alert('This story changed since the draft. Use Draft Backstory first.'); return; }
+    draftBackstory([s.key], {visual_search:[s.key]}); }));
+  const vo = box.querySelector('.bsc-v-own'); if (vo) vo.addEventListener('click', () => { BSC_VFORM[s.key] = true; render(); });
+  const vn = box.querySelector('.bsc-v-none'); if (vn) vn.addEventListener('click', () => { e.visual = {none:true}; save(); });
+  const vc = box.querySelector('.bsc-v-cancel'); if (vc) vc.addEventListener('click', () => { delete BSC_VFORM[s.key]; render(); });
+  const vx = box.querySelector('.bsc-v-clear'); if (vx) vx.addEventListener('click', () => { delete e.visual; delete BSC_VFORM[s.key]; save(); });
+  const vsv = box.querySelector('.bsc-v-save'); if (vsv) vsv.addEventListener('click', () => {
+    const v = {}; box.querySelectorAll('.bsc-v').forEach(i => { if (i.value.trim()) v[i.dataset.k] = i.value.trim(); });
+    v.verified = box.querySelector('.bsc-v-ok').checked; e.visual = v; delete BSC_VFORM[s.key]; save(); });
   const ap = box.querySelector('.bsc-apply'); if (ap) ap.addEventListener('click', () => bsrRefreshHashes().then(apply));
 }
 // A story that changed after the draft still shows what the draft chose, under a note: the old "Not filed"

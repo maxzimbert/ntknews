@@ -1,7 +1,7 @@
 ---
 id: T-0112
 title: Each story's Backstory proposes the visualization that fits it, and the editor can revise, nudge, verify or supply one
-status: DECIDED
+status: BUILT
 tags: [backstory, feature]
 anchor: editorial/compose_category.py
 ---
@@ -29,6 +29,17 @@ Wanted:
 4. **Editor zone in Pulse.** Revise (pick another measure), nudge in the editor's words, verify (mark
    each value checked against the source), or supply a series and source of the editor's own. No chart
    is a valid outcome and says why.
+
+**Built 2026-10-29, on branch `T-0110-compose-per-story` and on staging** (`editorial/visual_story.py`, called
+by `compose_story.py`). Every draft proposes with one small call and no search: reuse a checked series on
+hand (the 19 category trend lines and anything earlier searches found), or name the measure that would fit,
+or say no honest chart fits. A search runs only when the editor presses "search for a source (1 call)" in the
+story's preview, uses `compose_category.propose_indicator`'s search and check unchanged, and a series that
+passes is written to `editorial/research-ledger.json` so the next story reuses it. The editor can supply a
+series (unchecked until ticked) or choose no chart, and nudge the section. Tested with stubbed model replies:
+search found and checked, reused by a second story with no search, editor's series unchecked, no chart, and a
+link the search did not return refused. Not run against the live model yet. The reader's app does not draw
+`composed.visual` yet, as for the rest of the composed page (T-0110).
 
 ## Why
 
