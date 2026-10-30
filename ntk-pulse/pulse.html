@@ -4481,6 +4481,44 @@ function bscComposedHtml(s, d){
     </div></div>`;
 }
 function bscBusy(b){ b.disabled = true; b.textContent = 'sending\u2026'; }
+// Text the editor writes ("keep mine", "keep my line") needs no model, so when it is the only change since the
+// draft, Pulse writes it into backstory-draft.json itself, with the story's new fingerprint, in seconds instead of
+// a workflow run (the editor, 2026-10-30). Anything that needs choosing (nudges, picks, removals) still runs.
+function bscOnlyText(a, b){
+  const strip = e => { const x = Object.assign({}, e || {}); delete x.here; delete x.lines; delete x.keep; return JSON.stringify(Object.keys(x).sort().map(k => [k, x[k]])); };
+  const keep = e => JSON.stringify((e && e.keep) || []);
+  return strip(a) === strip(b) && keep(a) === keep(b);
+}
+async function bscSaveText(s){
+  const br = pulseBranch(location);
+  if (!br || !SETTINGS.ghToken || BSR_DRAFT_STATE) return false;
+  const cur = (await bsWithHashes(buildStoryPayload().filter(x => x.key === s.key)))[0];
+  if (!cur) return false;
+  const url = `https://api.github.com/repos/${GH_REPO}/contents/${GH_DRAFT_OUT}`;
+  const headers = {'Authorization':'Bearer '+SETTINGS.ghToken, 'Accept':'application/vnd.github+json'};
+  for (let attempt = 0; attempt < 2; attempt++){
+    const g = await fetch(url + '?ref=' + br, {headers, cache:'no-store'});
+    if (!g.ok) return false;
+    const meta = await g.json();
+    const draft = JSON.parse(decodeURIComponent(escape(atob(meta.content.replace(/\n/g, '')))));
+    const d = (draft.stories || []).find(x => x.story_id === s.key);
+    if (!d || !d.composed || d.composed.error || d.bs_text_hash !== cur.bs_text_hash) return false;
+    const e = cur.bs_edits || {};
+    if (!('bs_edits_applied' in d) || !bscOnlyText(d.bs_edits_applied, e)) return false;
+    const c = d.composed, lines = e.lines || {};
+    if (e.here){ c.here = e.here; c.here_by = 'editor'; }
+    else if (c.here_by === 'editor'){ c.here = (d.pairing || {}).line || c.here; c.here_by = 'pairing'; }
+    (c.beginnings || []).forEach(b => { if (lines[b.object_id]){ b.line = lines[b.object_id]; b.by = 'editor'; } });
+    if (c.starts && c.starts.object_id && lines[c.starts.object_id]) c.starts.line = lines[c.starts.object_id];
+    d.bs_hash = cur.bs_hash; d.bs_edits_applied = e;
+    const body = btoa(unescape(encodeURIComponent(JSON.stringify(draft, null, 1) + '\n')));
+    const p = await fetch(url, {method:'PUT', headers:{...headers, 'Content-Type':'application/json'},
+      body: JSON.stringify({message:'backstory edits: your text on 1 story, from Pulse', content:body, branch:br, sha:meta.sha})});
+    if (p.ok){ BSR_DRAFT = draft; return true; }
+    if (p.status !== 409 && p.status !== 422) return false;      // the draft moved under us: read it again, once
+  }
+  return false;
+}
 function bscWire(el, s){
   const box = el.querySelector('.bsc'); if (!box) return;
   const e = bsEdits(s), d = bsrDraftFor(s);
@@ -4505,9 +4543,10 @@ function bscWire(el, s){
   box.querySelectorAll('.bsc-line-save').forEach(b => b.addEventListener('click', () => {
     const t = box.querySelector(`.bsc-line-text[data-id="${CSS.escape(b.dataset.id)}"]`).value.trim();
     e.lines = Object.assign({}, e.lines); if (t) e.lines[b.dataset.id] = t; else delete e.lines[b.dataset.id];
-    delete BSC_EDITING[s.key+'|'+b.dataset.id]; save(); }));
-  const hu = box.querySelector('.bsc-here-use'); if (hu) hu.addEventListener('click', () => { e.here = (bsrDraftFor(s).composed.here_vetoed||{}).line || ''; if (!e.here) delete e.here; save(); });
-  const hs = box.querySelector('.bsc-here-save'); if (hs) hs.addEventListener('click', () => { const v = box.querySelector('.bsc-here').value.trim(); if (v) e.here = v; else delete e.here; save(); });
+    delete BSC_EDITING[s.key+'|'+b.dataset.id]; saveText(b); }));
+  const hu = box.querySelector('.bsc-here-use'); if (hu) hu.addEventListener('click', () => { e.here = (bsrDraftFor(s).composed.here_vetoed||{}).line || ''; if (!e.here) delete e.here; saveText(hu); });
+  const saveText = b => { bscBusy(b); saveLineup(); bscSaveText(s).then(ok => { bsrRefreshHashes(); render(); if (!ok) save(); }); };
+  const hs = box.querySelector('.bsc-here-save'); if (hs) hs.addEventListener('click', () => { const v = box.querySelector('.bsc-here').value.trim(); if (v) e.here = v; else delete e.here; saveText(hs); });
   box.querySelectorAll('.bsc-nudge').forEach(inp => inp.addEventListener('change', () => { e.nudge = Object.assign({}, e.nudge); const v = inp.value.trim(); if (v) e.nudge[inp.dataset.sec] = v; else delete e.nudge[inp.dataset.sec]; save(); }));
   box.querySelectorAll('.bsc-rerun').forEach(b => b.addEventListener('click', () => { bscBusy(b); const inp = box.querySelector(`.bsc-nudge[data-sec="${b.dataset.sec}"]`); if (inp){ e.nudge = Object.assign({}, e.nudge); if (inp.value.trim()) e.nudge[b.dataset.sec] = inp.value.trim(); saveLineup(); } bsrRefreshHashes().then(apply); }));
   const rs = box.querySelector('.bsc-research'); if (rs) rs.addEventListener('click', () => { bscBusy(rs); bsrRefreshHashes().then(() => {
