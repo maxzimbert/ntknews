@@ -89,6 +89,14 @@ Open, for the editor: the library includes approved candidates (35, among them t
 Establishment of the State of Israel and the Oslo Declaration), as `categories.validate` already does. A
 comment in Pulse (2026-10-15) says candidates stay out of Backstory until they are in the matrix. Which wins?
 
+**Moved into Pulse 2026-10-30, by the editor's call:** "I am ok to call browser from pulse. I would like to keep
+github out of it." Each story's page is composed in the browser with the editor's Anthropic key (`bsxCompose`,
+`bsxRun` in `ntk-pulse/pulse.html`) and saved into `backstory-draft.json` through GitHub's API; every edit,
+nudge, approval and research runs there too, with no workflow run (a run took ~30 seconds, most of it GitHub).
+GitHub keeps only the first draft of a Lineup (`backstory-draft.yml`: classifier, new categories, origins), which
+is the code publish runs and whose link checks need a server; when it lands, Pulse composes each page.
+`editorial/compose_story.py` is retired; the prompts and checks moved unchanged.
+
 ## Why
 
 Of the two failures the editor named, one (Presidential Private Donors too narrow) is a scope error
@@ -115,8 +123,12 @@ stories = d.get('stories') or []
 bad = [s.get('story_id') for s in stories if not s.get('composed') or 'beginnings' not in s['composed']]
 if not stories or bad:
     print('stories without a composed per-story page:', bad or 'no stories'); sys.exit(1)
-src = open('editorial/compose_story.py', encoding='utf-8').read() if os.path.exists('editorial/compose_story.py') else ''
-if 'web_search' in src:
+pulse = open('ntk-pulse/pulse.html', encoding='utf-8').read()
+i = pulse.find('async function bsxCompose(')
+src = pulse[i:pulse.find('\n}\n', i)] if i >= 0 else ''
+if not src:
+    print('Pulse has no story composer'); sys.exit(1)
+if 'web_search' in src or 'bsxResearch' in src:
     print('the per-story composer can search the web; search belongs to T-0111'); sys.exit(1)
 PY
 ```
