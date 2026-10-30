@@ -4538,8 +4538,26 @@ async function bsxModel(model, prompt, maxTok, tools){
   const u=d.usage||{};
   return {text:text, urls:urls, usage:{input_tokens:u.input_tokens||0, output_tokens:u.output_tokens||0}};
 }
-function bsxJson(text){ const t=String(text).replace(/```json|```/g,'').trim(), i=t.search(/[\[{]/); if (i<0) throw new Error('the model did not return JSON');
-  const j=Math.max(t.lastIndexOf('}'), t.lastIndexOf(']')); return JSON.parse(t.slice(i, j+1)); }
+// The answer in a model's reply. Not the first bracket: a reply that quoted a story's "[Generation failed: ...]"
+// marker was parsed from there and failed (2026-10-30). Each opening brace or bracket is tried, outermost first.
+function bsxJson(text, label){
+  const t=String(text||'').replace(/```json|```/g,'').trim();
+  const starts=[]; for (let k=0; k<t.length && starts.length<40; k++) if (t[k]==='{' || t[k]==='[') starts.push(k);
+  for (const a of starts){
+    const close=t[a]==='{'?'}':']';
+    for (let b=t.lastIndexOf(close); b>a; b=t.lastIndexOf(close, b-1)){ try { return JSON.parse(t.slice(a, b+1)); } catch(e){} }
+  }
+  throw new Error((label?label+': ':'')+'the model did not return a usable answer'+(t?' (it began: "'+t.slice(0,90).replace(/\s+/g,' ')+'")':' (the reply was empty)'));
+}
+// One call whose answer must be JSON: asked again once, more firmly, when the first reply is not usable.
+async function bsxAsk(model, prompt, maxTok, label, tools){
+  const r=await bsxModel(model, prompt, maxTok, tools);
+  try { return Object.assign(r, {json:bsxJson(r.text, label)}); }
+  catch(e){
+    const r2=await bsxModel(model, prompt+'\n\nAnswer with the JSON only: no words before or after it.', maxTok, tools);
+    return Object.assign(r2, {json:bsxJson(r2.text, label), usage:{input_tokens:r.usage.input_tokens+r2.usage.input_tokens, output_tokens:r.usage.output_tokens+r2.usage.output_tokens}});
+  }
+}
 function bsxText(html){ const d=document.createElement('div'); d.innerHTML=html||''; return (d.textContent||'').replace(/\s+/g,' ').trim(); }
 function bsxToks(t){ return (String(t||'').toLowerCase().match(/[a-z][a-z'-]{2,}/g)||[]).filter(w=>!BSX_STOP.has(w)); }
 async function bsxFindId(title, year, url){
@@ -4592,8 +4610,8 @@ DETAIL: ${story.truths.slice(0,1500)}
 JSON only: {"terms":["..."]}`;
   // No row here: the history is named from the story alone. Shown "FILED UNDER: Gaza", a Binance hack was named
   // as Gaza's history and its page became "Gaza's path to blockade" (2026-10-30).
-  const r=await bsxModel(BSX_HAIKU, p, 400);
-  return {terms:((bsxJson(r.text).terms)||[]).slice(0,14), usage:r.usage};
+  const r=await bsxAsk(BSX_HAIKU, p, 400, 'naming the history');
+  return {terms:((r.json.terms)||[]).slice(0,14), usage:r.usage};
 }
 function bsxComposePrompt(story, origin, rowTitle, cands, lib, edits, originOk){
   const nudge=edits.nudge||{}, keep=(edits.keep||[]).filter(i=>lib[i]);
@@ -4656,8 +4674,8 @@ async function bsxCompose(story, pairing, row, lib, edits, rejected){
   const keep=(edits.keep||[]).filter(i=>lib[i] && !off.has(i));
   const t=await bsxTerms(story, row&&row.title); addU(t.usage);
   const cands=keep.concat(bsxShortlist(lib, story, row&&row.title, t.terms).filter(i=>!off.has(i) && !keep.includes(i)));
-  const rr=await bsxModel(BSX_SONNET, bsxComposePrompt(story, origin, row&&row.title, cands, lib, edits, originOk), 3000); addU(rr.usage);
-  const r=bsxJson(rr.text), begs=[];
+  const rr=await bsxAsk(BSX_SONNET, bsxComposePrompt(story, origin, row&&row.title, cands, lib, edits, originOk), 3000, 'composing the page'); addU(rr.usage);
+  const r=rr.json, begs=[];
   (r.beginnings||[]).forEach(b=>{
     const i=b.id; if (!cands.includes(i)){ notes.push(JSON.stringify(i)+' is not in the shortlist; dropped'); return; }
     const o=lib[i], y=/^\d{4}/.test(o.year)?parseInt(o.year,10):null;
@@ -4684,8 +4702,8 @@ async function bsxCompose(story, pairing, row, lib, edits, rejected){
   if (!here){                                    // built in Pulse: no pairing line yet, so write one
     let probs=null;
     for (let k=0; k<2 && !here; k++){
-      const h=await bsxModel(BSX_SONNET, bsxHereNewPrompt(story, row&&row.title, probs), 400); addU(h.usage);
-      const cand=String((bsxJson(h.text).line)||'').trim();
+      const h=await bsxAsk(BSX_SONNET, bsxHereNewPrompt(story, row&&row.title, probs), 400, 'writing We are here'); addU(h.usage);
+      const cand=String((h.json.line)||'').trim();
       probs=cand?catTextProblems('line', cand, 8, 32):['no line came back'];
       if (cand && !catNumbersOk(cand, story.headline, story.truths, story.lede)) probs.push('a number is not in the story');
       if (!probs.length){ here=cand; hereBy='model'; }
@@ -4696,8 +4714,8 @@ async function bsxCompose(story, pairing, row, lib, edits, rejected){
   if (note && !edits.here){
     let probs=null, cand='';
     for (let k=0; k<2; k++){
-      const h=await bsxModel(BSX_SONNET, bsxHerePrompt(story, here, note, probs), 400); addU(h.usage);
-      cand=String((bsxJson(h.text).line)||'').trim();
+      const h=await bsxAsk(BSX_SONNET, bsxHerePrompt(story, here, note, probs), 400, 'rewriting We are here'); addU(h.usage);
+      cand=String((h.json.line)||'').trim();
       probs=cand?catTextProblems('line', cand, 8, 32):['no line came back'];
       if (cand && !catNumbersOk(cand, story.headline, story.truths, story.lede)) probs.push('a number is not in the story');
       if (!probs.length){ here=cand; hereBy='model, nudged'; break; }
@@ -4751,8 +4769,8 @@ Answer with JSON only, a list in date order:
 [{"year":"YYYY","date":"YYYY-MM-DD if the document gives it, else null","title":"the document's exact title","author":"who issued or wrote it","source":"the publishing body or archive","source_url":"the exact page or PDF where it can be read","line":"ONE sentence, 12 to 25 words, saying what happened, starting with the actor or the event","about":"two to four sentences, at most 70 words: what the document is, who made it and when, what it says or did","evidence_quote":"one sentence copied word for word from that page that supports the line","ties_to":"a few words from TODAY'S STORY naming the subject, person, place or action this milestone belongs to","relation":"${rel.join(' | ')}","because":"one sentence: how this step leads to the next one, or to today's story"}]
 Rules: use only facts that the page states; the line and about may contain no number that is not in the title, the date or the evidence_quote. If you find none, answer [].
 ${CAT_STYLE_RULES}`;
-  const r=await bsxModel(BSX_SONNET, p, 4000, [{type:'web_search_20250305',name:'web_search',max_uses:8}]);
-  let items=bsxJson(r.text); if (!Array.isArray(items)) items=items.milestones||[];
+  const r=await bsxAsk(BSX_SONNET, p, 4000, 'research', [{type:'web_search_20250305',name:'web_search',max_uses:8}]);
+  let items=r.json; if (!Array.isArray(items)) items=items.milestones||[];
   const storyText=story.headline+' '+story.truths, kept=[], vetoed=[], fixable=[];
   const rec=async (m, extra)=>Object.assign({id:await bsxFindId(String(m.title||'').trim(), m.year, m.source_url), title:String(m.title||'').trim(), author:String(m.author||'').trim(),
     year:String(m.year||''), date:/^\d{4}-\d\d-\d\d$/.test(m.date||'')?m.date:'', source:String(m.source||'').trim(), url:String(m.source_url||'').trim(),
@@ -4945,10 +4963,13 @@ async function bsxRun(keys, opts){
     if (!draft) throw new Error('no draft yet: file the story under a row to build it');
     let {ledger, sha:lsha}=await bsxLedger();
     const rejected=Array.from(new Set((ledger.rejected||[]).concat(bsRejected()))); ledger.rejected=rejected;
-    const done={}, notes=[];
-    for (const key of keys){
+    const done={}, notes=[], failed=[];
+    for (const key of keys){ try {
       const s=byKey[key], d=(draft.stories||[]).find(x=>x.story_id===key);
       if (!s || !d || !d.pairing) continue;
+      // a section that failed to generate holds Pulse's own "[Generation failed: ...]" marker, not the story
+      const bad=['headline','lede','truth'].filter(k=>/\[Generation failed/.test(String(s[k]||'')));
+      if (bad.length) throw new Error('its '+bad.map(k=>k==='truth'?'Truths':k==='lede'?'description':'headline').join(' and ')+' failed to generate: regenerate the story first');
       BSR_DRAFT_STATE='Composing "'+String(s.headline||'').slice(0,50)+'"…'; render();
       const story={headline:s.headline||'', lede:bsxText(s.lede), truths:bsxText(s.truth)}, edits=Object.assign({}, s.bs_edits||{});
       const prev=d.composed||{};
@@ -4978,7 +4999,8 @@ async function bsxRun(keys, opts){
       c.found=ledger.finds.filter(f=>f.story_id===key && !rejected.includes(f.id)).map(brief);
       c.research=rnote||prev.research||null;
       done[key]={composed:c, bs_hash:s.bs_hash, bs_text_hash:s.bs_text_hash, bs_edits_applied:s.bs_edits||{}};
-    }
+    } catch(err){ failed.push('"'+String((byKey[key]||{}).headline||key).slice(0,50)+'": '+err.message); } }
+    if (!Object.keys(done).length && failed.length) throw new Error(failed.join(' | '));
     // save: the ledger first (finds the page may use), then the draft, each against the latest copy
     if (opts.research || opts.outline || keys.some(k=>((byKey[k]||{}).bs_edits||{}).approved)){
       for (let i=0; i<2; i++){ if (await bsxPut(BSX_LEDGER, ledger, lsha, 'backstory research: from Pulse')) break;
@@ -4995,7 +5017,8 @@ async function bsxRun(keys, opts){
       ok=await bsxPut(GH_DRAFT_OUT, draft, g.sha, 'backstory: '+Object.keys(done).length+' page(s) composed in Pulse');
     }
     if (!ok) throw new Error('the draft kept changing under the save; try again');
-    BSR_DRAFT=draft; BSR_DRAFT_STATE='';
+    BSR_DRAFT=draft;
+    BSR_DRAFT_STATE=failed.length ? 'Built '+Object.keys(done).length+' of '+(Object.keys(done).length+failed.length)+'. Not built: '+failed.join(' | ') : '';
   } catch(e){ BSR_DRAFT_STATE='Compose failed: '+e.message; }
   finally {
     BSX_BUSY=false; bsrRefreshHashes(); render();
