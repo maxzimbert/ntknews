@@ -45,6 +45,11 @@ draft view showed five story pages, Gaza's with its counter since 2023-10-07; `b
 the draft; `build_backstory_pages.py` wrote Gaza's story page with the counter and Order's with its chart.
 Not run against the live model.
 
+**Lineup tab, 2026-10-30** (the editor: "the row box should mimic what's on backstory"): the Lineup tab's row
+dropdown and "+ new category" prompt are replaced by the same typed box, with the same suggestions
+(`bsrEnsureRowList`, one list for both tabs) and the same filing (`bsrFileRow`), so filing a story on either tab
+builds its Backstory; "Backstory →" opens the story's preview.
+
 ## Why
 
 The classifier chose rows the editor would not have (Israel's election under Power, the Ohio ad under The
@@ -68,6 +73,9 @@ const app = require('fs').readFileSync('digest/index.html', 'utf8');
 const bad = [];
 const lu = s.slice(s.indexOf('function bsrLineupHtml'), s.indexOf('\n}\n', s.indexOf('function bsrLineupHtml')));
 if (!/class="bsr-lu-row"/.test(lu) || /bsr-lu-tag/.test(lu)) bad.push('the Backstory tab still picks a row from a list with "classifier picks"');
+const tag = s.slice(s.indexOf('function bsrTagControl'), s.indexOf('\n}\n', s.indexOf('function bsrTagControl')));
+if (!/<input class="bsr-tag" list="bsr-row-names"/.test(tag) || /<select/.test(tag)) bad.push('the Lineup tab does not type the row the way the Backstory tab does');
+if (!/bsrSel\.addEventListener\('change',e=>bsrFileRow\(s, e\.target\.value\)\)/.test(s)) bad.push('filing a row on the Lineup tab does not build the story');
 if (!/Decide the SCOPE from the story itself: its headline, its description \(SUMMARY\) and what is true/.test(s)) bad.push('the compose prompt does not scope from headline, description and Truths');
 if (!/async function bsxEnsureEntries\(/.test(s) || !/bsxRun\(\[s\.key\], \{build:true\}\)/.test(s)) bad.push('filing a row does not build the story in Pulse');
 const at = s.indexOf('function bsrRowResolve(');
