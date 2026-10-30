@@ -2365,11 +2365,7 @@ function renderBackstory(root){
   root.querySelectorAll('.cat-pick').forEach(el=>el.addEventListener('click',()=>{ CAT_SEL=el.dataset.id; if (!CATS[CAT_SEL]) catEnsureLocal(CAT_SEL); render(); }));
   root.querySelectorAll('.bsr-lu').forEach(el=>{ try {
     const s=LINEUP.find(x=>x.key===el.dataset.key); if (!s) return;
-    el.querySelector('.bsr-lu-row').addEventListener('change',e=>{
-      const id=bsrRowResolve(e.target.value); if (id===s.backstoryRow) return;
-      s.backstoryRow=id||''; if (id) catReviveIfArchived(id); saveLineup(); render();
-      if (id) bsrRefreshHashes().then(()=>bsxRun([s.key], {build:true}));    // filing builds the story's Backstory
-    });
+    el.querySelector('.bsr-lu-row').addEventListener('change',e=>bsrFileRow(s, e.target.value));
     const op=el.querySelector('.bsr-lu-open'); if (op) op.addEventListener('click',()=>{ CAT_SEL=s.backstoryRow; if (!CATS[CAT_SEL]) catEnsureLocal(CAT_SEL); render(); catShowEditor(); });
     bsrKwWire(el, s);
     bscWire(el, s);
@@ -4252,6 +4248,17 @@ function bsrRowNames(){
     .forEach(r=>{ if (r.title && !seen.has(r.id)) seen.set(r.id, r.title); });
   return Array.from(seen, ([id,title])=>({id, title}));
 }
+function bsrEnsureRowList(){
+  let dl=document.getElementById('bsr-row-names');
+  if (!dl){ dl=document.createElement('datalist'); dl.id='bsr-row-names'; document.body.appendChild(dl); }
+  dl.innerHTML=bsrRowNames().map(r=>`<option value="${esc(r.title)}"></option>`).join('');
+}
+// Filing a story under a typed row, from either tab: an existing row as it stands, or a new category; then build.
+function bsrFileRow(s, typed){
+  const id=bsrRowResolve(typed); if (id===s.backstoryRow) return;
+  s.backstoryRow=id||''; if (id) catReviveIfArchived(id); saveLineup(); render();
+  if (id) bsrRefreshHashes().then(()=>bsxRun([s.key], {build:true}));     // filing builds the story's Backstory
+}
 function bsrRowTitle(id){ if (!id) return ''; const r=bsrRowNames().find(x=>x.id===id); return r?r.title:id; }
 function bsrRowResolve(name){
   const norm=t=>String(t||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim(), n=norm(name);
@@ -4265,7 +4272,6 @@ function bsrLineupHtml(){
   if (!LINEUP.length) return '';
   return `<div style="margin-bottom:14px">
     <div style="font-size:11px;color:var(--dim);margin-bottom:6px">TODAY'S LINEUP &middot; ${LINEUP.length} &middot; in Lineup order. File each story here or in Lineup; a story left unfiled goes to the classifier, which may make a new category.</div>
-    <datalist id="bsr-row-names">${bsrRowNames().map(r=>`<option value="${esc(r.title)}"></option>`).join('')}</datalist>
     <div class="bsr-draftbar" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px;padding:7px 9px;border:1px solid var(--ink)">
       <button class="mini go" id="bsr-build-all"${pulseBranch(location)?'':' disabled'} title="Build every story that has a row, here in Pulse">Build Backstory for every story</button>
       <button class="mini" id="bsr-draft-go"${pulseBranch(location)?'':' disabled'} title="The older path: GitHub runs the classifier for stories with no row, finds origins, then Pulse composes">Draft with the classifier (GitHub)</button>
@@ -5206,22 +5212,20 @@ function bsrKwWire(el, s){
   const nc=el.querySelector('.bsr-name-cancel'); if (nc) nc.addEventListener('click',()=>{ delete BSR_NAMING[s.key]; render(); });
 }
 function bsrTagControl(s){
-  if (!BSR_ROWS.length) return '';
   const counts = bsrCollisionCounts();
   const dup = s.backstoryRow && counts[s.backstoryRow] > 1;
   const unset = !s.backstoryRow;
-  const style = dup ? ' style="border-color:var(--warn)"' : unset ? ' style="border-color:var(--warn);color:var(--warn)"' : '';
-  const cat = s.backstoryRow && catRecord(s.backstoryRow);
-  return `<select class="bsr-tag" title="Row for this story's Backstory. Left unset, the classifier chooses and can pick a poor fit."`+
-    style+`>`+bsrRowOptions(s)+`</select>`+
-    `<button class="mini bsr-gap" title="No row fits this story. Make a category: the system drafts its page for you to review in the Backstory tab."`+
-      (cat ? ' style="background:var(--ink);color:#fff"' : '')+`>`+
-      (cat ? 'category: '+esc(cat.title)+' \u2192' : '+ new category')+`</button>`+
+  return `<input class="bsr-tag" list="bsr-row-names" value="${esc(bsrRowTitle(s.backstoryRow))}" placeholder="row: type one, e.g. Crypto or Gaza"`+
+    ` title="Type a row and press Enter. An existing row (Gaza, Ukraine–Russia…) is used as it stands; a new name starts a category. Filing builds the story's Backstory."`+
+    ` style="width:200px${unset?';border-color:var(--warn)':''}">`+
+    (s.backstoryRow ? `<button class="mini bsr-gap" title="Open this story's Backstory">Backstory \u2192</button>` : '')+
+    bsrDraftChip(s)+
     bsrPublishedChip(s)+
     (dup ? `<span class="chip" style="background:var(--warn);color:#fff" `+
-           `title="another story in this lineup is tagged to the same row">`+
+           `title="another story in this lineup is filed under the same row">`+
            `${counts[s.backstoryRow]}\u00d7 same row</span>` : '');
 }
+
 
 // Publish check for rows. A warning, not a block: the digest is the product
 // and docs/decisions.md keeps Backstory additive. Pure, so it can be tested.
@@ -5598,21 +5602,11 @@ function renderLineup(root){
     el.querySelector('.cat').addEventListener('change',e=>{ s.category=e.target.value; s.categoryCustom=''; saveLineup(); render(); });
     el.querySelector('.cat-custom').addEventListener('change',e=>{ s.categoryCustom=e.target.value.trim(); saveLineup(); });
     const bsrSel = el.querySelector('.bsr-tag');
-    if (bsrSel) bsrSel.addEventListener('change',e=>{
-      s.backstoryRow = e.target.value || '';   // '' means leave it to the classifier
-      catReviveIfArchived(s.backstoryRow);
-      saveLineup(); render();
-    });
+    if (bsrSel) bsrSel.addEventListener('change',e=>bsrFileRow(s, e.target.value));
     const gapBtn = el.querySelector('.bsr-gap');
-    if (gapBtn) gapBtn.addEventListener('click',()=>{
-      const cur = s.backstoryRow && catRecord(s.backstoryRow);
-      if (cur){ CAT_SEL = cur.id; TAB='backstory'; render(); return; }      // already filed: open it
-      const v = prompt('No row fits this story. Name the new category, a short noun phrase readers could build expertise in (for example "AI"). To use a category that exists, pick it in the row list instead.', '');
-      if (v === null || !v.trim()) return;
-      const id = newCategory(v.trim(), [s.key]);
-      if (!id) return;
-      CAT_SEL = id; TAB = 'backstory'; render();
-      composeCat(id);                                                         // the system drafts it; you review it there
+    if (gapBtn) gapBtn.addEventListener('click',()=>{                         // to this story's Backstory preview
+      BSR_PREV_OPEN[s.key] = true; TAB = 'backstory'; render();
+      requestAnimationFrame(()=>{ const r=document.querySelector(`.bsr-lu[data-key="${CSS.escape(s.key)}"]`); if (r) r.scrollIntoView({behavior:'smooth', block:'start'}); });
     });
     el.querySelector('.ord').addEventListener('keydown',e=>{
       if (e.key==='Enter'){ e.preventDefault(); reorderStory(s.id, parseInt(e.target.value)||1); }
@@ -6010,6 +6004,8 @@ function renderToday(root){
 /* ─── shell ─── */
 function render(){
   const root=document.getElementById('view');
+  try { bsrEnsureRowList(); } catch(e){}                 // T-0113: the row suggestions both tabs share
+  if (!BSR_DRAFT_LOADED && TAB==='lineup'){ BSR_DRAFT_LOADED=true; loadBsrDraft().then(d=>{ if (d) render(); }); }   // its draft chips
   document.getElementById('notesBadge').textContent = NOTES.items.length ? ' '+NOTES.items.length : '';
   document.getElementById('tab-stream').classList.toggle('on', TAB==='stream');
   document.getElementById('tab-lineup').classList.toggle('on', TAB==='lineup');
