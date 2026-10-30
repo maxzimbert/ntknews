@@ -4463,7 +4463,8 @@ function bscComposedHtml(s, d){
     ${c.research?`<div style="padding:5px 8px;margin-bottom:6px;background:#eef3ec;font-size:12px">Research: ${esc(c.research)}</div>`:''}
     <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">
       <div style="flex:1;min-width:320px;max-width:620px">
-        ${sec('WE ARE HERE', e.here?'your line':'written for this story', `<div style="font:15px Georgia,serif;margin-top:4px">${esc(c.here)}</div>
+        ${sec('WE ARE HERE', e.here?'your line':c.here_by==='model, nudged'?'rewritten to your nudge':'written for this story', `<div style="font:15px Georgia,serif;margin-top:4px">${esc(c.here)}</div>
+          ${c.here_vetoed&&!e.here?`<div style="margin-top:6px;padding:6px 8px;background:#fbe8d0;font-size:12.5px">Your nudge produced: <span style="font:14px Georgia,serif">“${esc(c.here_vetoed.line)}”</span><div style="color:var(--stale);font-size:11.5px">vetoed: ${esc(c.here_vetoed.why)}</div><button class="mini bsc-here-use" style="margin-top:4px">use it anyway</button></div>`:''}
           <div style="display:flex;gap:6px;margin-top:6px"><input class="bsc-here" value="${esc(e.here||'')}" placeholder="or write it yourself" style="flex:1"><button class="mini bsc-here-save">keep mine</button></div>${bscNudge(s,'here',false)}`)}
         ${sec('IT STARTS IN '+esc(starts.year||'?'), starts.from==='editor nudge'?'moved by your nudge':starts.from==='composer'?'chosen from the Beginnings: retrieval found no start':'found by retrieval', `<div style="font:14px Georgia,serif;margin-top:4px">${esc(starts.line||'')}</div>${bscNudge(s,'starts',true)}`)}
         ${sec('BEGINNINGS', (c.beginnings||[]).filter(b=>!off.has(b.object_id)).length+' kept', (c.beginnings||[]).map(b=>{ const o=Object.assign({}, (c.case||[]).find(x=>x.object_id===b.object_id)||{}, b); if (off.has(b.object_id)) seenOff.add(b.object_id); return bscItem(s, o, 'beg', off.has(b.object_id)); }).join('')+bscNudge(s,'beginnings',true))}
@@ -4502,6 +4503,7 @@ function bscWire(el, s){
     const t = box.querySelector(`.bsc-line-text[data-id="${CSS.escape(b.dataset.id)}"]`).value.trim();
     e.lines = Object.assign({}, e.lines); if (t) e.lines[b.dataset.id] = t; else delete e.lines[b.dataset.id];
     delete BSC_EDITING[s.key+'|'+b.dataset.id]; save(); }));
+  const hu = box.querySelector('.bsc-here-use'); if (hu) hu.addEventListener('click', () => { e.here = (bsrDraftFor(s).composed.here_vetoed||{}).line || ''; if (!e.here) delete e.here; save(); });
   const hs = box.querySelector('.bsc-here-save'); if (hs) hs.addEventListener('click', () => { const v = box.querySelector('.bsc-here').value.trim(); if (v) e.here = v; else delete e.here; save(); });
   box.querySelectorAll('.bsc-nudge').forEach(inp => inp.addEventListener('change', () => { e.nudge = Object.assign({}, e.nudge); const v = inp.value.trim(); if (v) e.nudge[inp.dataset.sec] = v; else delete e.nudge[inp.dataset.sec]; save(); }));
   box.querySelectorAll('.bsc-rerun').forEach(b => b.addEventListener('click', () => { bscBusy(b); const inp = box.querySelector(`.bsc-nudge[data-sec="${b.dataset.sec}"]`); if (inp){ e.nudge = Object.assign({}, e.nudge); if (inp.value.trim()) e.nudge[b.dataset.sec] = inp.value.trim(); saveLineup(); } bsrRefreshHashes().then(apply); }));

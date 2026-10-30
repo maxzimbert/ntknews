@@ -232,8 +232,8 @@ Do this:
 JSON only: {{"scope":"...","beginnings":[{{"id":"...","line":"..."}}],"later":["id"],"starts_object":null,"thin":null or "what is missing","why":"one sentence on the choices"}}"""
 
 
-def here_prompt(story, line, note):
-    return f"""Rewrite this one-line Backstory pairing for NTK News. The reader is a college-educated adult. One or two plain sentences, 12 to 30 words, no dashes, no numbers not in the story, take no side.
+def here_prompt(story, line, note, problems=None):
+    return f"""Rewrite this one-line Backstory pairing for NTK News. The reader is a college-educated adult. One or two plain sentences, 12 to 30 words, no dashes, no numbers not in the story. Follow the editor's note: it sets the emphasis and the tone. State plainly what the story's facts establish, and claim nothing they do not.{(' YOUR LAST TRY BROKE THESE RULES, FIX THEM: ' + '; '.join(problems)) if problems else ''}
 
 STORY: {story['headline']}
 WHAT IS TRUE: {story.get('truths', '')[:1500]}
@@ -311,13 +311,24 @@ def compose(api_key, story, pairing, row, lib, edits, rejected, mock=False, know
     here = edits.get("here") or (pairing or {}).get("line") or ""
     here_by = "editor" if edits.get("here") else "pairing"
     note = (edits.get("nudge") or {}).get("here")
+    here_vetoed = None
     if note and not edits.get("here") and not mock:
-        h, u = call(api_key, here_prompt(story, here, note), 400)
-        usage = {k: usage[k] + u[k] for k in usage}
-        if h.get("line") and not C.text_problems("line", h["line"], 8, 32):
-            here, here_by = h["line"], "model, nudged"
+        # One repair round with the failed rule named, then the editor sees the line and the reason, and can
+        # use it anyway: a veto the editor cannot see is one the editor cannot overrule (2026-10-30).
+        probs = None
+        for _ in range(2):
+            h, u = call(api_key, here_prompt(story, here, note, probs), 400)
+            usage = {k: usage[k] + u[k] for k in usage}
+            cand = str(h.get("line") or "").strip()
+            probs = C.text_problems("line", cand, 8, 32) if cand else ["no line came back"]
+            if cand and not C.numbers_ok(cand, story["headline"], story.get("truths", ""), story.get("lede", "")):
+                probs.append("a number is not in the story")
+            if not probs:
+                here, here_by = cand, "model, nudged"
+                break
         else:
-            notes.append("the nudged We are here line failed the checks; kept the old one")
+            here_vetoed = {"line": cand, "why": "; ".join(probs)}
+            notes.append(f"the nudged We are here line was vetoed ({'; '.join(probs)}); kept the old one")
     thin = r.get("thin") or (None if len(begs) >= 3 else f"only {len(begs)} Beginning(s) connect")
     scope = r.get("scope") or ""
     # T-0112: the chart. The editor's own series or "no chart" wins; a search only when the editor asked for one.
@@ -336,7 +347,7 @@ def compose(api_key, story, pairing, row, lib, edits, rejected, mock=False, know
         usage = {k: usage[k] + u[k] for k in usage}
     if visual is None:
         visual = {"status": "none", "why": "mock run", "values": []}
-    return {"scope": scope, "visual": visual, "here": here, "here_by": here_by, "starts": starts,
+    return {"scope": scope, "visual": visual, "here": here, "here_by": here_by, "here_vetoed": here_vetoed, "starts": starts,
             "beginnings": begs, "case": case, "thin": thin, "why": r.get("why", ""),
             "terms": terms, "shortlist": len(cands), "notes": notes, "usage": usage, "model": None if mock else MODEL}
 
