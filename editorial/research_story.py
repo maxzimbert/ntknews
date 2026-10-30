@@ -16,13 +16,30 @@ A find the editor rejected (bs_rejected) is never added, and stays out on every 
 import re
 from datetime import datetime, timezone, timedelta
 
+import json
+from pathlib import Path
+
 import compose_category as CC
 from build_pairings import call_claude
+
+LEDGER = Path(__file__).resolve().parent / "research-ledger.json"
 
 MODEL = "claude-sonnet-5-5"
 BUDGET = 3              # research calls per draft run
 RECENT_DAYS = 30
 STOP = {"and", "the", "of", "in", "on", "a", "an", "to", "for", "its", "their", "us", "u.s"}
+
+
+def load_ledger(path=LEDGER):
+    p = Path(path)
+    d = json.loads(p.read_text()) if p.exists() else {}
+    for k, v in (("subjects", {}), ("finds", []), ("series", []), ("rejected", []), ("vetoed", [])):
+        d.setdefault(k, v)
+    return d
+
+
+def save_ledger(d, path=LEDGER):
+    Path(path).write_text(json.dumps(d, indent=1, ensure_ascii=False) + "\n")
 
 
 def subject_key(subject):

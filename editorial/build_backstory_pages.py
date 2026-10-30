@@ -371,12 +371,7 @@ def story_row(p, row, when):
     if st.get("year") and not st.get("object_id"):
         begs.append({"year": str(st["year"]), "line": str(st.get("line") or "").rstrip(".") + ".", "mark": "start"})
     begs.sort(key=lambda b: b["year"])
-    v, ind = c.get("visual") or {}, None
-    vals = v.get("values") or []
-    if v.get("status") == "drawn" and len(vals) == 2 and all(x.get("checked") for x in vals):
-        ind = {"label": v.get("label"), "then_value": vals[0]["value"], "then_year": vals[0]["year"],
-               "now_value": vals[1]["value"], "direction": v.get("direction") or "", "source": v.get("source") or "",
-               "as_of": v.get("as_of"), "verified": True}
+    ind = row.get("indicator")          # the category's trend line, as prod draws it (the editor, 2026-10-30)
 
     def host(u):
         h = urlparse(u or "").hostname or ""
