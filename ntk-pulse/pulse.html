@@ -3237,7 +3237,10 @@ async function draftBackstory(only, extra){
   await bsWithHashes(stories);
   BSR_DRAFT_STATE = only ? 'Applying your edits…' : 'Sending the Lineup…'; render();
   try {
-    const content = storyDataExport(stories, only ? Object.assign({compose_only: only}, extra || {}) : null);
+    // requested_at makes every request a change to the file: an identical request (the same nudge sent again)
+    // was saved as no change, so the workflow, which wakes on a change to this file, never ran (2026-10-30).
+    const content = storyDataExport(stories, Object.assign({requested_at: new Date().toISOString()},
+      only ? Object.assign({compose_only: only}, extra || {}) : {}));
     const b64 = btoa(unescape(encodeURIComponent(content)));
     const apiUrl = `https://api.github.com/repos/${GH_REPO}/contents/${GH_DRAFT_LINEUP}`;
     const headers = { 'Authorization': 'Bearer '+SETTINGS.ghToken, 'Accept': 'application/vnd.github+json' };
