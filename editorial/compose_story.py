@@ -38,7 +38,6 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import categories as C  # noqa: E402
-import visual_story as V  # noqa: E402
 import research_story as R  # noqa: E402
 from build_pairings import parse_json_loose, strip_html, API_URL  # noqa: E402
 
@@ -245,7 +244,7 @@ JSON only: {{"line":"..."}}"""
 
 # --- composing one story -----------------------------------------------------------------------------
 
-def compose(api_key, story, pairing, row, lib, edits, rejected, mock=False, known=(), ledger=None, search_visual=False):
+def compose(api_key, story, pairing, row, lib, edits, rejected, mock=False):
     origin = (pairing or {}).get("origin") or {}
     # A fallback origin is the category's own start line, or a bare year with no line (the Ohio ad drew "2026"
     # and nothing; the South Carolina race drew a 1977 line about gun owners): the composer chooses instead.
@@ -331,23 +330,9 @@ def compose(api_key, story, pairing, row, lib, edits, rejected, mock=False, know
             notes.append(f"the nudged We are here line was vetoed ({'; '.join(probs)}); kept the old one")
     thin = r.get("thin") or (None if len(begs) >= 3 else f"only {len(begs)} Beginning(s) connect")
     scope = r.get("scope") or ""
-    # T-0112: the chart. The editor's own series or "no chart" wins; a search only when the editor asked for one.
-    vnote = (edits.get("nudge") or {}).get("visual")
-    visual = V.from_editor(edits["visual"]) if edits.get("visual") else None
-    if edits.get("visual") and visual is None:
-        notes.append("your chart is missing a field (measure, both figures, years, source and link); not drawn")
-    if visual is None and not mock and search_visual:
-        prev = edits.get("_prev_visual") or {}
-        visual, entry, vn = V.search(api_key, story, scope, prev.get("label"), vnote)
-        notes.append("chart search: " + vn)
-        if entry is not None and ledger is not None:
-            ledger["series"].append(entry)
-    if visual is None and not mock:
-        visual, u = V.propose(lambda p: call(api_key, p, 600), story, scope, list(known), vnote)
-        usage = {k: usage[k] + u[k] for k in usage}
-    if visual is None:
-        visual = {"status": "none", "why": "mock run", "values": []}
-    return {"scope": scope, "visual": visual, "here": here, "here_by": here_by, "here_vetoed": here_vetoed, "starts": starts,
+    # No chart per story: the story's page shows its category's trend line, as prod does (the editor, 2026-10-30;
+    # T-0112 is parked).
+    return {"scope": scope, "here": here, "here_by": here_by, "here_vetoed": here_vetoed, "starts": starts,
             "beginnings": begs, "case": case, "thin": thin, "why": r.get("why", ""),
             "terms": terms, "shortlist": len(cands), "notes": notes, "usage": usage, "model": None if mock else MODEL}
 
@@ -361,7 +346,7 @@ def main():
     ap.add_argument("--backstory", default=str(BACKSTORY), help="rows to draw category objects from")
     ap.add_argument("--provisional", default=str(PROVISIONAL))
     ap.add_argument("--mock", action="store_true")
-    ap.add_argument("--ledger", default=str(V.LEDGER), help="research ledger: checked series and searched subjects (T-0111, T-0112)")
+    ap.add_argument("--ledger", default=str(R.LEDGER), help="research ledger: searched subjects, finds, vetoes (T-0111)")
     args = ap.parse_args()
     api_key = os.environ.get("ANTHROPIC_API_KEY")
     if not api_key and not args.mock:
@@ -370,7 +355,7 @@ def main():
     lineup = json.loads(Path(args.lineup).read_text())
     by_key = {s["key"]: s for s in lineup.get("stories", [])}
     rejected = lineup.get("bs_rejected") or []
-    ledger = V.load_ledger(args.ledger)
+    ledger = R.load_ledger(args.ledger)
     n_series, n_finds, n_rej = len(ledger["series"]), len(ledger["finds"]), len(ledger["rejected"])
     ledger["rejected"] = sorted(set(ledger["rejected"]) | set(rejected))   # a rejection outlives the browser that made it
     rejected = ledger["rejected"]
@@ -378,9 +363,6 @@ def main():
     research_keys, budget = set(lineup.get("research") or []), R.BUDGET
     directions = lineup.get("research_direction") or {}
     approved_any = False
-    rows = json.loads(Path(args.backstory).read_text()).get("rows", []) + [d["row"] for d in draft["stories"] if d.get("row")]
-    known = V.known_series(rows, ledger)
-    search_visual = set(lineup.get("visual_search") or [])
     for d in draft["stories"]:                   # a category the draft itself made, for a rerun that has no copy of it
         r = d.get("row") or {}
         for o in r.get("objects") or []:
@@ -403,7 +385,7 @@ def main():
             continue
         story = {"headline": s.get("headline", ""), "lede": strip_html(s.get("lede")), "truths": strip_html(s.get("truth"))}
         try:
-            edits = dict(s.get("bs_edits") or {}, _prev_visual=(d.get("composed") or {}).get("visual"))
+            edits = dict(s.get("bs_edits") or {})
             # T-0111: a vetoed find the editor approved becomes a library document and goes on this page
             ok = list(edits.get("approved") or [])
             for f in R.approve(ledger, set(ok), d["story_id"]):
@@ -425,8 +407,7 @@ def main():
                     for f in added:
                         add_find(lib, f, "research: " + f.get("researched_for", "")[:60])
                 log(f"  {d['story_id']}: {rnote}")
-            c = compose(api_key, story, d["pairing"], d.get("row"), lib, edits, rejected, args.mock,
-                        known, ledger, d["story_id"] in search_visual)
+            c = compose(api_key, story, d["pairing"], d.get("row"), lib, edits, rejected, args.mock)
         except Exception as e:  # noqa: BLE001 - one story's failure must not cost the others their page
             log(f"  {d['story_id']}: compose failed ({e})")
             d["composed"] = {"error": str(e)[:300]}
@@ -450,7 +431,7 @@ def main():
             + (f", thin: {c['thin']}" if c["thin"] else "") + (f"; {len(c['notes'])} dropped" if c["notes"] else ""))
     draft["compose_usage"] = total
     if (len(ledger["series"]), len(ledger["finds"]), len(ledger["rejected"])) != (n_series, n_finds, n_rej) or research_keys or approved_any:
-        V.save_ledger(ledger, args.ledger)
+        R.save_ledger(ledger, args.ledger)
         log(f"ledger: {len(ledger['series']) - n_series} new series, {len(ledger['finds']) - n_finds} new finds, "
             f"{len(ledger['rejected'])} rejected in all")
     draft["generated"] = datetime.now(timezone.utc).isoformat(timespec="seconds")   # Pulse waits for this to move

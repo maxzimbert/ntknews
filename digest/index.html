@@ -3428,10 +3428,6 @@ function bsrStoryRow(p, row, when){
   });
   if (st.year && !st.object_id) begs.push({ year: String(st.year), line: String(st.line || '').replace(/\.$/, '') + '.', mark: 'start' });
   begs.sort(function(a, b){ return String(a.year).localeCompare(String(b.year)); });
-  var v = c.visual, ind = null;
-  if (v && v.status === 'drawn' && (v.values || []).length === 2 && v.values.every(function(x){ return x.checked; }))
-    ind = { label: v.label, then_value: v.values[0].value, then_year: v.values[0].year, now_value: v.values[1].value,
-            direction: v.direction, source: v.source, as_of: v.as_of, verified: true };
   var host = function(u){ try { return new URL(u).hostname.replace(/^www\./, ''); } catch (e) { return ''; } };
   return {
     id: 's-' + p.story_id, story_id: p.story_id, headline: p.headline, story_permalink: p.story_permalink,
@@ -3442,7 +3438,8 @@ function bsrStoryRow(p, row, when){
     beginnings: begs, start_line: String(c.here || '').replace(/\.$/, ''), start_date: String(when || new Date().toISOString()).slice(0, 10),   // the year "We are here" is dated by: the publish
     objects: (c.case || []).map(function(o){ return { title: o.title, author: o.author, year: o.year, about: o.about,
       source: host(o.source_url), source_url: o.source_url, source_kind: o.source_kind }; }),
-    indicator: ind, stakes: ''
+    // the chart is the category's trend line, drawn as prod draws it (the editor, 2026-10-30)
+    indicator: row.indicator || null, stakes: ''
   };
 }
 
