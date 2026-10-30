@@ -30,10 +30,17 @@ jobs:
     steps:
       # The branch as it is now, not as it was at the push: a queued run builds on the draft and the ledger
       # the run before it left.
+      # Only what the run reads, with file contents fetched as needed: the full checkout took 7 of a rerun's ~24
+      # seconds (2026-10-30). History stays complete so the push can rebase.
       - uses: actions/checkout@v5
         with:
           ref: ${{ github.ref_name }}
           fetch-depth: 0
+          filter: blob:none
+          sparse-checkout: |
+            editorial
+            ntk-pulse/data
+            digest/data
 
       - uses: actions/setup-python@v6
         with:
@@ -43,7 +50,6 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
-          python -m pip install --quiet openpyxl
           # This run's own request, from the commit that started it, even when later requests have landed since.
           L=$RUNNER_TEMP/lineup-draft.json
           git show ${{ github.sha }}:ntk-pulse/data/lineup-draft.json > $L
@@ -53,6 +59,7 @@ jobs:
           if [ -n "$ONLY" ] && [ -f ntk-pulse/data/backstory-draft.json ]; then
             python editorial/compose_story.py --draft ntk-pulse/data/backstory-draft.json --lineup $L --only "$ONLY"
           else
+            python -m pip install --quiet openpyxl     # the lens Beginnings read the Object Matrix; edit-only runs do not
             W=$RUNNER_TEMP/draft; mkdir -p $W
             cp digest/data/backstory.json $W/backstory.json
             cp ntk-pulse/data/provisional-rows.json $W/provisional-rows.json
