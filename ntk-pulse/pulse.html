@@ -2351,6 +2351,11 @@ function renderBackstory(root){
   catRestoreInputs(_kept);
   // T-0109: the draft and each story's fingerprint arrive asynchronously; each redraws once when it lands.
   const dg=document.getElementById('bsr-draft-go'); if (dg) dg.addEventListener('click', draftBackstory);
+  const ba=document.getElementById('bsr-build-all'); if (ba) ba.addEventListener('click', ()=>{
+    const keys=LINEUP.filter(x=>x.backstoryRow).map(x=>x.key), none=LINEUP.length-keys.length;
+    if (!keys.length){ alert('No story has a row yet. Type one on each story first.'); return; }
+    if (none && !confirm(none+' stor'+(none===1?'y has':'ies have')+' no row and will not be built. Publish ships Backstory only when every story is built. Build the other '+keys.length+'?')) return;
+    bscBusy(ba); bsrRefreshHashes().then(()=>bsxRun(keys, {build:true})); });
   if (!BSR_DRAFT_LOADED){ BSR_DRAFT_LOADED=true; loadBsrDraft().then(d=>{ if (d && TAB==='backstory') render(); }); }
   bsrRefreshHashes();
   const hadCard=!!READER_CARD, hadPub=!!BSR_PUBLISHED, previewing=Object.keys(BSR_PREV_OPEN).length>0;
@@ -2360,7 +2365,11 @@ function renderBackstory(root){
   root.querySelectorAll('.cat-pick').forEach(el=>el.addEventListener('click',()=>{ CAT_SEL=el.dataset.id; if (!CATS[CAT_SEL]) catEnsureLocal(CAT_SEL); render(); }));
   root.querySelectorAll('.bsr-lu').forEach(el=>{
     const s=LINEUP.find(x=>x.key===el.dataset.key); if (!s) return;
-    el.querySelector('.bsr-lu-tag').addEventListener('change',e=>{ s.backstoryRow=e.target.value||''; catReviveIfArchived(s.backstoryRow); saveLineup(); render(); });
+    el.querySelector('.bsr-lu-row').addEventListener('change',e=>{
+      const id=bsrRowResolve(e.target.value); if (id===s.backstoryRow) return;
+      s.backstoryRow=id||''; if (id) catReviveIfArchived(id); saveLineup(); render();
+      if (id) bsrRefreshHashes().then(()=>bsxRun([s.key], {build:true}));    // filing builds the story's Backstory
+    });
     const op=el.querySelector('.bsr-lu-open'); if (op) op.addEventListener('click',()=>{ CAT_SEL=s.backstoryRow; if (!CATS[CAT_SEL]) catEnsureLocal(CAT_SEL); render(); catShowEditor(); });
     bsrKwWire(el, s);
     bscWire(el, s);
@@ -4234,14 +4243,31 @@ function bsrRowOptions(s){
     own.map(c=>`<option value="${esc(c.id)}"${s.backstoryRow===c.id?' selected':''}>row: ${esc(c.title)} (${esc(c.status)})</option>`).join('')+
     PUBCATS.filter(r=>r.status==='archived' && !CATS[r.id]).map(r=>`<option value="${esc(r.id)}"${s.backstoryRow===r.id?' selected':''}>row: ${esc(r.title)} (archived: filing brings it back)</option>`).join('');
 }
+// T-0113: the row is typed. Suggestions are every row and category already made; a name that matches none starts
+// a category of that name. Matching ignores case and punctuation, so "ukraine russia" finds Ukraine–Russia.
+function bsrRowNames(){
+  const seen=new Map();
+  BSR_ROWS.concat(Object.values(CATS).map(c=>({id:c.id,title:c.title})), PUBCATS.map(r=>({id:r.id,title:r.title})))
+    .forEach(r=>{ if (r.title && !seen.has(r.id)) seen.set(r.id, r.title); });
+  return Array.from(seen, ([id,title])=>({id, title}));
+}
+function bsrRowTitle(id){ if (!id) return ''; const r=bsrRowNames().find(x=>x.id===id); return r?r.title:id; }
+function bsrRowResolve(name){
+  const norm=t=>String(t||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim(), n=norm(name);
+  if (!n) return '';
+  const hit=bsrRowNames().find(r=>norm(r.title)===n || norm(r.id.replace(/^p-/,''))===n);
+  return hit ? hit.id : newCategory(String(name).trim(), []);
+}
 // T-0090: the Backstory tab opens on the Lineup, in Lineup order, so the editor works story by story and an
 // unfiled story is in plain sight (the gas story went out unfiled on 2026-10-15).
 function bsrLineupHtml(){
   if (!LINEUP.length) return '';
   return `<div style="margin-bottom:14px">
     <div style="font-size:11px;color:var(--dim);margin-bottom:6px">TODAY'S LINEUP &middot; ${LINEUP.length} &middot; in Lineup order. File each story here or in Lineup; a story left unfiled goes to the classifier, which may make a new category.</div>
+    <datalist id="bsr-row-names">${bsrRowNames().map(r=>`<option value="${esc(r.title)}"></option>`).join('')}</datalist>
     <div class="bsr-draftbar" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px;padding:7px 9px;border:1px solid var(--ink)">
-      <button class="mini go" id="bsr-draft-go"${pulseBranch(location)?'':' disabled'}>Draft Backstory</button>
+      <button class="mini go" id="bsr-build-all"${pulseBranch(location)?'':' disabled'} title="Build every story that has a row, here in Pulse">Build Backstory for every story</button>
+      <button class="mini" id="bsr-draft-go"${pulseBranch(location)?'':' disabled'} title="The older path: GitHub runs the classifier for stories with no row, finds origins, then Pulse composes">Draft with the classifier (GitHub)</button>
       <span style="font-size:12px">${esc(bsrDraftStatusText())}</span>
     </div>
     ${LINEUP.map((s,i)=>{ const cat=s.backstoryRow&&catRecord(s.backstoryRow);
@@ -4249,7 +4275,7 @@ function bsrLineupHtml(){
         <b style="font-size:12px;min-width:18px">${i+1}</b>
         <span style="font-size:12.5px;flex:1;min-width:240px">${esc(s.title||'')}</span>
         ${s.backstoryRow?'':'<span class="chip" style="background:var(--warn);color:#fff">none filed</span>'}
-        <select class="bsr-lu-tag" style="max-width:260px">${bsrRowOptions(s)}</select>
+        <input class="bsr-lu-row" list="bsr-row-names" value="${esc(bsrRowTitle(s.backstoryRow))}" placeholder="row: type one, e.g. Crypto or Gaza" title="Type a row and press Enter. An existing row (Gaza, Ukraine–Russia…) is used as it stands, with its documents and trend line; a new name starts a category. Filing builds the story's Backstory." style="width:220px">
         <input class="bsr-lu-kw" value="${esc(s.bsKeywords||'')}" placeholder="keywords${s.subject?' (+ '+esc(s.subject)+')':''}" title="Search the Object Matrix with your words and the story's subject. Separate phrases with commas. No model call." style="width:200px">
         <button class="mini bsr-lu-kwgo">find in matrix</button>
         <button class="mini bsr-lu-prev"${BSR_PREV_OPEN[s.key]?' style="background:var(--ink);color:#fff"':''}>preview</button>
@@ -4578,8 +4604,8 @@ DOCUMENTS IN THE LIBRARY (id | year | title | author | what it is):
 ${lines.join('\n')||'(none)'}
 
 Do this:
-1. Decide the SCOPE: the history this story actually belongs to, in two to six plain words. Not the category name unless it fits; not a verdict ("corruption"), a subject ("Private money and the presidency").
-2. Choose 3 to 6 BEGINNINGS from the library: documents a reader needs, in order, to see how this story came to be. Dated before "It starts in" (the same year is allowed). Spread across time. Only documents that truly connect to THIS story's scope. A milestone is public history: a law, ruling, treaty, official act, public statement or public event. Never a private person's court file, family or personal records, even when the story mentions them. If fewer than 3 truly connect, choose only those, and set "thin" to the subject the library is missing and what kind of milestones would be needed. Never stretch an unrelated document to fill.
+1. Decide the SCOPE from the story itself: its headline, its description (SUMMARY) and what is true (the Truths above). The scope is the history this story belongs to, in two to six plain words. The category it is filed under is a library to draw on, not the scope: use its name only if it fits. Not a verdict ("corruption"), a subject ("Private money and the presidency").
+2. Choose 3 to 6 BEGINNINGS from the library: documents a reader needs, in order, to see how this story came to be. Start from what the headline, description and Truths establish, then reach further back for the milestones and documents that make and defend the chronology. Dated before "It starts in" (the same year is allowed). Spread across time. Only documents that truly connect to THIS story's scope. A milestone is public history: a law, ruling, treaty, official act, public statement or public event. Never a private person's court file, family or personal records, even when the story mentions them. If fewer than 3 truly connect, choose only those, and set "thin" to the subject the library is missing and what kind of milestones would be needed. Never stretch an unrelated document to fill.
 3. For each Beginning write one sentence (12 to 26 words) saying what happened, in the past tense, using only facts in its line above. No dashes. No numbers that are not in its line. Do not say "this document".
 4. Choose up to 2 LATER documents (after "It starts in", before today) that belong in the case, if any truly connect.
 5. "starts_object": ${originOk?'normally null, keeping the retrieved "It starts in". Only if the editor note below asks for it, the id of the Beginning that should be the start instead.':'no "It starts in" was found, so give the id of the Beginning where this story starts: the most recent turn that set up today, not today itself.'}
@@ -4589,6 +4615,16 @@ ${edits.research_direction?'THE EDITOR POINTED THIS HISTORY AT: '+edits.research
 ${nudge.starts?'EDITOR NOTE ON IT STARTS IN: '+nudge.starts:''}
 
 JSON only: {"scope":"...","beginnings":[{"id":"...","line":"..."}],"later":["id"],"starts_object":null,"thin":null or "what is missing","why":"one sentence on the choices"}`;
+}
+function bsxHereNewPrompt(story, rowTitle, problems){
+  return `Write the one-line Backstory pairing for NTK News: what today's story is, set against the long history it belongs to. The reader is a college-educated adult. One or two plain sentences, 12 to 30 words, no dashes, no numbers not in the story. Draw on the headline, the description and what is true; take no side.${problems&&problems.length?' YOUR LAST TRY BROKE THESE RULES, FIX THEM: '+problems.join('; '):''}
+
+STORY: ${story.headline}
+DESCRIPTION: ${story.lede||''}
+WHAT IS TRUE: ${story.truths.slice(0,1500)}
+FILED UNDER: ${rowTitle||''}
+
+JSON only: {"line":"..."}`;
 }
 function bsxHerePrompt(story, line, note, problems){
   return `Rewrite this one-line Backstory pairing for NTK News. The reader is a college-educated adult. One or two plain sentences, 12 to 30 words, no dashes, no numbers not in the story. Follow the editor's note: it sets the emphasis and the tone. State plainly what the story's facts establish, and claim nothing they do not.${problems&&problems.length?' YOUR LAST TRY BROKE THESE RULES, FIX THEM: '+problems.join('; '):''}
@@ -4634,6 +4670,17 @@ async function bsxCompose(story, pairing, row, lib, edits, rejected){
   if (starts && starts.from==='composer' && String(starts.year)>=thisYear) starts=null;   // never the last 45 days; a year is all we have
   if (!starts && !originOk){ const prior=begs.filter(b=>b.year<thisYear); if (prior.length){ const b=prior[prior.length-1]; starts={year:b.year, line:b.line, object_id:b.object_id, from:'composer'}; } }
   let here=edits.here||(pairing&&pairing.line)||'', hereBy=edits.here?'editor':'pairing', hereVetoed=null;
+  if (!here){                                    // built in Pulse: no pairing line yet, so write one
+    let probs=null;
+    for (let k=0; k<2 && !here; k++){
+      const h=await bsxModel(BSX_SONNET, bsxHereNewPrompt(story, row&&row.title, probs), 400); addU(h.usage);
+      const cand=String((bsxJson(h.text).line)||'').trim();
+      probs=cand?catTextProblems('line', cand, 8, 32):['no line came back'];
+      if (cand && !catNumbersOk(cand, story.headline, story.truths, story.lede)) probs.push('a number is not in the story');
+      if (!probs.length){ here=cand; hereBy='model'; }
+      else if (k===1){ here=cand; hereBy='model'; notes.push('We are here was written with problems: '+probs.join('; ')+'; edit it or nudge it'); }
+    }
+  }
   const note=(edits.nudge||{}).here;
   if (note && !edits.here){
     let probs=null, cand='';
@@ -4787,6 +4834,63 @@ async function bsxLedger(){
   return {ledger:d, sha:g.sha};
 }
 
+// A story the editor filed under a row is built here, with no classifier and no GitHub run (the editor,
+// 2026-10-30: "every story should have a row ... a backstory template that gets made to fit that news category").
+// The draft gets an entry for it: the row the editor typed, no pairing line yet (the composer writes one), and
+// the row as it stands, so an existing row keeps its documents and its trend line. A draft that does not exist
+// yet starts from the published rows and categories, so nothing already standing is lost; stories no longer in
+// the Lineup are dropped, so publish can ship the draft.
+async function bsxEnsureEntries(draft, keys, byKey){
+  if (!draft){
+    const store=await fetch('data/provisional-rows.json?t='+Date.now()).then(r=>r.ok?r.json():{rows:[]}).catch(()=>({rows:[]}));
+    draft={_comment:'Started in Pulse (T-0113): stories filed under a row and built in the browser.', generated:new Date().toISOString(),
+      branch:pulseBranch(location), stories:[], ship:{todays_pairings:[], pairings_generated:new Date().toISOString(),
+      provisional_rows:((BSR_PUBLISHED&&BSR_PUBLISHED.rows)||[]).filter(r=>r.stratum==='provisional'), provisional_store:store, origins:{origins:[]}}};
+  }
+  const live=new Set(LINEUP.map(x=>x.key)), ship=draft.ship;
+  draft.stories=(draft.stories||[]).filter(d=>live.has(d.story_id));
+  ship.todays_pairings=(ship.todays_pairings||[]).filter(p=>live.has(p.story_id));
+  const rowsNow=((BSR_PUBLISHED&&BSR_PUBLISHED.rows)||[]).concat(ship.provisional_rows||[]);
+  for (const key of keys){
+    const L=LINEUP.find(x=>x.key===key), s=byKey[key]; if (!L || !s || !L.backstoryRow) continue;
+    const rid=L.backstoryRow;
+    let row=rowsNow.find(r=>r.id===rid);
+    if (!row){                                   // a category the editor just named: a name and a library, no page of its own
+      const c=catRecord(rid)||{title:rid.replace(/^p-/,'').replace(/-/g,' ')};
+      row={id:rid, title:c.title, stratum:'provisional', start_date:new Date().toISOString().slice(0,10), start_line:'', stakes:c.stakes||'',
+        milestone:'', beginnings:[], objects:[], indicator:(c.indicator&&c.indicator.verified)?c.indicator:null, auto:false};
+      ship.provisional_rows=(ship.provisional_rows||[]).filter(r=>r.id!==rid).concat([row]);
+    }
+    // the category store (provisional-rows.json, shipped as ship.provisional_store): a category the editor named is
+    // kept there, and a story filed under one keeps it from being archived after 30 days with no story
+    if (rid.startsWith('p-')){
+      const today=new Date().toISOString().slice(0,10), st=ship.provisional_store=ship.provisional_store||{rows:[]};
+      st.rows=st.rows||[];
+      let rec=st.rows.find(r=>r.id===rid);
+      if (!rec){ rec={id:rid, title:row.title, status:'provisional', created:today, stories:[], contest:'', stakes:row.stakes||'', lenses:[], subgenres:[],
+        indicator:row.indicator||null, objects:[], beginnings:[], custom_objects:[], approved_objects:[], by:{editor:true}, revisions:[], start_date:today, start_line:''};
+        st.rows.push(rec); }
+      if (rec.status==='archived') rec.status='provisional';
+      if (!(rec.stories||[]).some(x=>x.story_id===key)) (rec.stories=rec.stories||[]).push({story_id:key, date:today, headline:s.headline||''});
+      rec.last_story=today;
+    }
+    let d=draft.stories.find(x=>x.story_id===key);
+    const keepOrigin=d && d.pairing && d.pairing.row===rid ? d.pairing.origin : null;
+    const pairing={story_id:key, headline:s.headline||'', row:rid, line:(d&&d.pairing&&d.pairing.row===rid&&d.pairing.line)||'', subgenre:null,
+      confidence:1, source:'editor', needs_review:false, ...(rid.startsWith('p-')?{provisional:true}:{}), ...(keepOrigin?{origin:keepOrigin}:{})};
+    const snap={id:row.id, title:row.title, stratum:row.stratum, start_date:row.start_date, start_line:row.start_line, stakes:row.stakes,
+      milestone:row.milestone, beginnings:row.beginnings, objects:row.objects, indicator:row.indicator, auto:row.auto};
+    if (!d){ d={story_id:key, headline:s.headline||''}; draft.stories.push(d); }
+    if (!d.pairing || d.pairing.row!==rid) delete d.composed;      // a new row is a new page
+    Object.assign(d, {pairing:pairing, row:snap, status:'paired'});
+    ship.todays_pairings=ship.todays_pairings.filter(p=>p.story_id!==key).concat([pairing]);
+  }
+  const order=LINEUP.map(x=>x.key);
+  draft.stories.sort((a,b)=>order.indexOf(a.story_id)-order.indexOf(b.story_id));
+  ship.todays_pairings.sort((a,b)=>order.indexOf(a.story_id)-order.indexOf(b.story_id));
+  ship.pairings_generated=new Date().toISOString();
+  return draft;
+}
 // Compose (and research, and approve) the given stories, here, and save their pages into the draft. opts:
 // {research:{key: direction or true}}. Each story's fingerprint is taken from the Lineup as it stands, so publish
 // ships exactly these pages.
@@ -4799,7 +4903,9 @@ async function bsxRun(keys, opts){
   BSX_BUSY=true; BSR_DRAFT_STATE='Composing '+keys.length+' stor'+(keys.length===1?'y':'ies')+' here…'; render();
   try {
     const payload=await bsWithHashes(buildStoryPayload()), byKey=Object.fromEntries(payload.map(s=>[s.key,s]));
-    let {data:draft}=await bsxGet(GH_DRAFT_OUT); if (!draft) throw new Error('no draft yet: click Draft Backstory first');
+    let {data:draft}=await bsxGet(GH_DRAFT_OUT);
+    if (opts.build) draft=await bsxEnsureEntries(draft, keys, byKey);
+    if (!draft) throw new Error('no draft yet: file the story under a row to build it');
     let {ledger, sha:lsha}=await bsxLedger();
     const rejected=Array.from(new Set((ledger.rejected||[]).concat(bsRejected()))); ledger.rejected=rejected;
     const done={}, notes=[];
@@ -4846,6 +4952,7 @@ async function bsxRun(keys, opts){
     let ok=false;
     for (let i=0; i<3 && !ok; i++){
       const g=await bsxGet(GH_DRAFT_OUT); draft=g.data;
+      if (opts.build || !draft) draft=await bsxEnsureEntries(draft, keys, byKey);   // a draft this run started, or one that moved
       (draft.stories||[]).forEach(d=>{ if (done[d.story_id]) Object.assign(d, done[d.story_id]); });
       draft.generated=new Date().toISOString(); draft.composed_in='pulse';
       ok=await bsxPut(GH_DRAFT_OUT, draft, g.sha, 'backstory: '+Object.keys(done).length+' page(s) composed in Pulse');

@@ -104,6 +104,10 @@ Each story gets its own Backstory page, drafted and edited before publish. Ticke
                                                   (primary sources only); the pool is rebuilt
 ```
 
+- **The normal path since T-0113:** the editor types each story's row on the Backstory tab and Pulse builds
+  the page there (`bsxEnsureEntries`, then `bsxCompose`), writing "We are here" itself and choosing "It starts
+  in" from the page's own Beginnings. If no draft exists Pulse starts one from the published rows and the
+  category store. The GitHub first draft above remains as "Draft with the classifier".
 - **Fingerprints.** Pulse hashes each story's Backstory-relevant fields (`bs_hash`, with edits; `bs_text_hash`,
   without). Python only compares them. A story whose text changed needs a new first draft; one whose edits
   changed is recomposed in Pulse.

@@ -36,6 +36,9 @@ Read this first; the sections below describe the category-page design it replace
   bookkeeping.
 - **Charts stay prod's rule** for this stage: one trend line per category, shown on each story's page. A
   per-story chart was built and parked (T-0112).
+- **The row is typed, and filing builds the page** (T-0113). Each story's row is a text box: an existing row
+  (Gaza, Ukraine–Russia, Order…) is used as it stands, with its trend line or day counter; a new name starts a
+  category. Filing composes the page in Pulse, scoped from the story's headline, description and Truths.
 - **Not yet true:** none of the browser-side composing had run against the live model when this shipped;
   the category editor's old search tray still exists beside the per-story one; new matrix rows are not
   link-checked until `check_links.py` next runs.
