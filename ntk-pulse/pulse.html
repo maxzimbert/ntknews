@@ -2363,7 +2363,7 @@ function renderBackstory(root){
     // redraw once the card or the published rows arrive, if something on screen needs them (T-0098 previews)
     if (TAB==='backstory' && ((!hadCard && READER_CARD && (CAT_SEL || previewing)) || (!hadPub && previewing))) render(); });
   root.querySelectorAll('.cat-pick').forEach(el=>el.addEventListener('click',()=>{ CAT_SEL=el.dataset.id; if (!CATS[CAT_SEL]) catEnsureLocal(CAT_SEL); render(); }));
-  root.querySelectorAll('.bsr-lu').forEach(el=>{
+  root.querySelectorAll('.bsr-lu').forEach(el=>{ try {
     const s=LINEUP.find(x=>x.key===el.dataset.key); if (!s) return;
     el.querySelector('.bsr-lu-row').addEventListener('change',e=>{
       const id=bsrRowResolve(e.target.value); if (id===s.backstoryRow) return;
@@ -2373,6 +2373,7 @@ function renderBackstory(root){
     const op=el.querySelector('.bsr-lu-open'); if (op) op.addEventListener('click',()=>{ CAT_SEL=s.backstoryRow; if (!CATS[CAT_SEL]) catEnsureLocal(CAT_SEL); render(); catShowEditor(); });
     bsrKwWire(el, s);
     bscWire(el, s);
+  } catch(err){ bsrShowError(err, 'wiring story '+el.dataset.key); }
   });
   document.getElementById('cat-new').addEventListener('click',()=>{
     const n=prompt('Name the new category: a short noun phrase readers could build expertise in (for example "AI").','');
@@ -4400,7 +4401,8 @@ function bsrDraftChip(s){
   if (d.editsPending) return '<span class="chip" style="background:var(--warn);color:#fff" title="your Backstory edits reach the draft when you apply them">edits not applied</span>';
   if (!d.fresh) return '<span class="chip" style="background:var(--warn);color:#fff" title="the story or its category changed after the draft">changed since draft</span>';
   const c = d.composed;
-  if (c && !c.error) return `<span class="chip" style="background:var(--ink);color:#fff" title="what publish will ship for this story">draft: ${esc(c.scope||d.row&&d.row.title||'')} · ${c.beginnings.length} Beginnings${c.starts&&c.starts.year?' · starts '+esc(c.starts.year):''}${c.thin?' · thin':''}</span>`;
+  if (c && !c.error) return `<span class="chip" style="background:var(--ink);color:#fff" title="what publish will ship for this story">draft: ${esc(c.scope||d.row&&d.row.title||'')} · ${c.beginnings.length} Beginnings${c.starts&&c.starts.year?' · starts '+esc(c.starts.year):''}${c.thin?' · thin':''}</span>`
+    + (c.row_fits===false?' <span class="chip" style="background:var(--warn);color:#fff" title="the composer judged the story is not about this row; the page is scoped from the story">row may not fit</span>':'');
   if (!d.pairing || !d.row) return '<span class="chip" style="background:var(--warn);color:#fff">draft: no Backstory</span>';
   const isNew = d.row.stratum === 'provisional' && !BSR_ROWS.some(r => r.id === d.row.id);
   const o = d.pairing.origin;
@@ -4460,6 +4462,12 @@ function bscResearchHtml(s, c){
     <button class="mini go bsc-research-dir" title="one web-search call; comparable cases are allowed and labelled; the same direction is not searched twice in 30 days">research this (1 call)</button></div>`;
 }
 
+// The real reader app, showing this branch's draft as readers will get it once published (digest/index.html,
+// ?draft). Staging Pulse opens the staging app; the live Pulse opens ntknews.org.
+function bscReaderUrl(){
+  return pulseBranch(location) === 'staging' ? 'https://maxzimbert.github.io/ntknews-staging/digest/index.html?draft=1#backstory'
+    : 'https://ntknews.org/backstory?draft=1';
+}
 function bscComposedHtml(s, d){
   const c = d.composed, p = d.pairing, e = bsEdits(s), off = new Set(e.off||[]);
   const starts = c.starts || {};
@@ -4571,7 +4579,7 @@ function bsxShortlist(lib, story, rowTitle, terms, k){
     ts.forEach(t=>{ if (f[i].title.includes(t)) s+=12; else if (f[i].about.includes(t)) s+=7; else if (f[i].meta.includes(t)) s+=4;
       else { const tw=bsxToks(t); if (tw.length && tw.every(w=>docs[i].has(w))) tw.forEach(w=>{ s+=idf(w); }); } });
     bsxToks(f[i].title).forEach(w=>{ if (head[w]) s+=0.5*idf(w)*Math.min(head[w],2); });
-    if (rowTitle && lib[i].categories.has(rowTitle)) s+=6;
+    if (rowTitle && lib[i].categories.has(rowTitle)) s+=2;   // the row is a library to draw on, not the scope
     return [s,i]; }).filter(x=>x[0]>0).sort((a,b)=>b[0]-a[0]).slice(0,k).map(x=>x[1]);
 }
 async function bsxTerms(story, rowTitle){
@@ -4579,10 +4587,11 @@ async function bsxTerms(story, rowTitle){
 
 STORY: ${story.headline}
 SUMMARY: ${story.lede||''}
-FILED UNDER: ${rowTitle||'(none)'}
 DETAIL: ${story.truths.slice(0,1500)}
 
 JSON only: {"terms":["..."]}`;
+  // No row here: the history is named from the story alone. Shown "FILED UNDER: Gaza", a Binance hack was named
+  // as Gaza's history and its page became "Gaza's path to blockade" (2026-10-30).
   const r=await bsxModel(BSX_HAIKU, p, 400);
   return {terms:((bsxJson(r.text).terms)||[]).slice(0,14), usage:r.usage};
 }
@@ -4614,7 +4623,9 @@ ${nudge.beginnings?'EDITOR NOTE ON BEGINNINGS: '+nudge.beginnings:''}
 ${edits.research_direction?'THE EDITOR POINTED THIS HISTORY AT: '+edits.research_direction+'. Comparable cases in the library that fit this direction belong among the Beginnings, even though they happened elsewhere.':''}
 ${nudge.starts?'EDITOR NOTE ON IT STARTS IN: '+nudge.starts:''}
 
-JSON only: {"scope":"...","beginnings":[{"id":"...","line":"..."}],"later":["id"],"starts_object":null,"thin":null or "what is missing","why":"one sentence on the choices"}`;
+6. "row_fits": false when the story is plainly not about what it is filed under (a crypto hack filed under Gaza); then ignore the category entirely and scope from the story.
+
+JSON only: {"scope":"...","beginnings":[{"id":"...","line":"..."}],"later":["id"],"starts_object":null,"thin":null or "what is missing","row_fits":true,"why":"one sentence on the choices"}`;
 }
 function bsxHereNewPrompt(story, rowTitle, problems){
   return `Write the one-line Backstory pairing for NTK News: what today's story is, set against the long history it belongs to. The reader is a college-educated adult. One or two plain sentences, 12 to 30 words, no dashes, no numbers not in the story. Draw on the headline, the description and what is true; take no side.${problems&&problems.length?' YOUR LAST TRY BROKE THESE RULES, FIX THEM: '+problems.join('; '):''}
@@ -4693,7 +4704,7 @@ async function bsxCompose(story, pairing, row, lib, edits, rejected){
     }
     if (probs.length){ hereVetoed={line:cand, why:probs.join('; ')}; notes.push('the nudged We are here line was vetoed ('+probs.join('; ')+'); kept the old one'); }
   }
-  return {scope:r.scope||'', here:here, here_by:hereBy, here_vetoed:hereVetoed, starts:starts, beginnings:begs, case:kase,
+  return {scope:r.scope||'', row_fits:r.row_fits!==false, here:here, here_by:hereBy, here_vetoed:hereVetoed, starts:starts, beginnings:begs, case:kase,
     thin:r.thin||(begs.length>=3?null:'only '+begs.length+' Beginning(s) connect'), why:r.why||'', terms:t.terms, shortlist:cands.length,
     notes:notes, usage:usage, model:BSX_SONNET};
 }
@@ -4896,8 +4907,34 @@ async function bsxEnsureEntries(draft, keys, byKey){
 // ships exactly these pages.
 let BSX_BUSY=false, BSR_POLLING=false;
 function bsrRunning(){ return BSX_BUSY || BSR_POLLING; }
+// Errors on the Backstory tab are shown, not swallowed: "open" and "preview" once did nothing for the editor and
+// the cause could not be seen from outside (2026-10-30). A red bar names the error; dismissing it clears it.
+const BSR_ERRORS=[];
+function bsrShowError(err, where){
+  const m=(where?where+': ':'')+((err&&err.message)||String(err||'unknown error'));
+  if (!BSR_ERRORS.includes(m)) BSR_ERRORS.push(m);
+  try { console.error(err); } catch(e){}
+  let bar=document.getElementById('bsr-errbar');
+  if (!bar){ bar=document.createElement('div'); bar.id='bsr-errbar';
+    bar.style.cssText='position:fixed;left:0;right:0;bottom:0;z-index:9999;background:#9a3a25;color:#fff;font:13px sans-serif;padding:8px 12px;max-height:30vh;overflow:auto';
+    document.body.appendChild(bar); }
+  bar.innerHTML='<b>Something broke on the Backstory tab.</b> Send this to Claude: '+BSR_ERRORS.map(x=>'<div>'+esc(x)+'</div>').join('')
+    +'<button class="mini" style="margin-top:4px" onclick="BSR_ERRORS.length=0;this.parentNode.remove()">dismiss</button>';
+}
+window.addEventListener('error', e=>{ if (typeof TAB!=='undefined' && TAB==='backstory') bsrShowError(e.error||e.message, 'page'); });
+window.addEventListener('unhandledrejection', e=>{ if (typeof TAB!=='undefined' && TAB==='backstory') bsrShowError(e.reason, 'background'); });
+let BSX_NEXT=null;                       // requests made while a run is going: {keys, opts}, run next
+function bsxQueue(keys, opts){
+  const n=BSX_NEXT||{keys:[], opts:{}};
+  n.keys=Array.from(new Set(n.keys.concat(keys)));
+  ['research','outline'].forEach(k=>{ if (opts&&opts[k]) n.opts[k]=Object.assign({}, n.opts[k], opts[k]); });
+  if (opts&&opts.build) n.opts.build=true;
+  BSX_NEXT=n;
+  BSR_DRAFT_STATE=BSR_DRAFT_STATE.replace(/ \u00b7 \d+ more waiting$/, '')+' \u00b7 '+n.keys.length+' more waiting'; render();
+}
 async function bsxRun(keys, opts){
-  if (BSX_BUSY) return; opts=opts||{};
+  if (BSX_BUSY){ bsxQueue(keys, opts); return; }
+  opts=opts||{};
   if (!pulseBranch(location)){ alert('This copy of Pulse cannot draft (not the live Pulse or staging Pulse).'); return; }
   if (!SETTINGS.ghToken){ alert('Add a GitHub token in ⚙ first.'); return; }
   BSX_BUSY=true; BSR_DRAFT_STATE='Composing '+keys.length+' stor'+(keys.length===1?'y':'ies')+' here…'; render();
@@ -4960,7 +4997,10 @@ async function bsxRun(keys, opts){
     if (!ok) throw new Error('the draft kept changing under the save; try again');
     BSR_DRAFT=draft; BSR_DRAFT_STATE='';
   } catch(e){ BSR_DRAFT_STATE='Compose failed: '+e.message; }
-  finally { BSX_BUSY=false; bsrRefreshHashes(); render(); }
+  finally {
+    BSX_BUSY=false; bsrRefreshHashes(); render();
+    if (BSX_NEXT){ const n=BSX_NEXT; BSX_NEXT=null; bsrRefreshHashes().then(()=>bsxRun(n.keys, n.opts)); }
+  }
 }
 
 // Text the editor writes ("keep mine", "keep my line") needs no model, so when it is the only change since the
