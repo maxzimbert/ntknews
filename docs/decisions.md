@@ -456,6 +456,18 @@ trying the alternative on staging:
 - *Comparable cases only on the editor's direction.* Pointed research may return an event of the same kind
   elsewhere, labelled. The automatic path still may not (the 2026-10-09 revert stands).
 
+**The editor types the row; the story builds its own Backstory from itself.** Decided with the editor
+2026-10-30 (T-0113). "Every story should have a row ... a row I write such as "crypto" or "crime"." The row is
+typed in Pulse: an existing row is used as it stands, a new name starts a category. Filing builds the story's
+page in the browser; the classifier is no longer the normal path. And, in the editor's words, "Backstory is
+scoped from the digest story's headline, description, and truths. Beginnings and object gathering starts from
+there and can include more objects and milestones to make and defend the ntk chronology." The row is a library
+and a grouping, never the scope. Rows and charts already standing are kept: a fixed row's trend line and a live
+conflict's day counter (Gaza, Ukraine–Russia) appear on the pages of the stories filed under them. A category
+the editor names needs no objects of its own to exist, since readers see no category page and each story's
+page brings its own; the 2026-10-09 rule that a category with no objects is never published applied to
+category pages and does not bind these.
+
 ## Open questions, not defaults
 
 These are genuinely unresolved. Don't assume either way.
