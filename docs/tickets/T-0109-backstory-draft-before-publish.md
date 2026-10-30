@@ -1,7 +1,7 @@
 ---
 id: T-0109
 title: Pulse can run the publish-time Backstory steps as a draft, and publish ships the draft the editor saw
-status: DECIDED
+status: BUILT
 tags: [pulse, feature]
 anchor: .github/workflows/pulse-publish.yml
 ---
@@ -87,11 +87,36 @@ for p in drafters:
         bad.append(f'{p} runs the Backstory steps but does not write the draft')
 if 'backstory-draft.json' not in pulse:
     bad.append('Pulse never reads the draft')
-used = 'backstory-draft.json' in publish or any(
-    'backstory-draft' in open(f, encoding='utf-8').read()
-    for f in ('editorial/build_pairings.py', 'editorial/build_origins.py'))
-if not used:
-    bad.append('publish does not read the draft, so it chooses again')
+# Publish must consult the draft before the two Backstory steps, and skip them only when it was used.
+i = publish.find('backstory_draft.py apply')
+if i < 0 or i > publish.find('build_pairings.py') or publish.count("steps.draft.outputs.used != 'true'") < 2:
+    bad.append('publish does not ship the draft before choosing again')
+# And the ship rule itself: a matching draft ships, one changed story means nothing ships.
+import json, os, subprocess, tempfile
+if os.path.exists('editorial/backstory_draft.py'):
+    t = tempfile.mkdtemp()
+    w = lambda n, d: json.dump(d, open(os.path.join(t, n), 'w'))
+    row = {'id': 'p-x', 'stratum': 'provisional'}
+    draft = {'generated': 'now', 'stories': [{'story_id': 'a', 'bs_hash': '1'}, {'story_id': 'b', 'bs_hash': '2'}],
+             'ship': {'todays_pairings': [{'story_id': 'a', 'row': 'p-x'}], 'pairings_generated': 'now',
+                      'provisional_rows': [row], 'provisional_store': {'rows': [row]}, 'origins': {'origins': []}}}
+    w('draft.json', draft)
+    for case, h, want in (('same', '2', 'used'), ('changed', 'edited', 'not used')):
+        w('lineup.json', {'stories': [{'key': 'a', 'bs_hash': '1'}, {'key': 'b', 'bs_hash': h}]})
+        w('bs.json', {'rows': [{'id': 'fixed'}], 'todays_pairings': []})
+        out = subprocess.run(['python3', 'editorial/backstory_draft.py', 'apply'] + sum(
+            [[f'--{k}', os.path.join(t, v)] for k, v in (('draft', 'draft.json'), ('lineup', 'lineup.json'),
+             ('backstory', 'bs.json'), ('provisional', 'prov.json'), ('origins', 'origins.json'))], []),
+            capture_output=True, text=True).stdout.strip()
+        bs = json.load(open(os.path.join(t, 'bs.json')))
+        if out != want:
+            bad.append(f'a draft with {case} stories was {out!r}, expected {want!r}')
+        if want == 'used' and ([r['id'] for r in bs['rows']] != ['fixed', 'p-x'] or not bs['todays_pairings']):
+            bad.append('a shipped draft did not replace the pairings and categories, or lost a fixed row')
+        if want == 'not used' and bs['todays_pairings']:
+            bad.append('a draft that was not used still changed backstory.json')
+else:
+    bad.append('no editorial/backstory_draft.py, so publish cannot ship a draft')
 if bad:
     print('\n'.join(bad)); sys.exit(1)
 PY

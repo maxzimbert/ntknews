@@ -11,6 +11,35 @@ piece is done.
 
 ---
 
+## Update, 2026-10-28 to 2026-10-30 — each story gets its own page
+
+Read this first; the sections below describe the category-page design it replaces for readers.
+
+- **Two problems, one fix.** A Backstory that does not fit the news is either scoped wrong (the ballroom
+  donors under "Presidential Private Donors") or missing material (Israel's election under "Power", which
+  opened in 1764 Virginia). Research once, compose per story (`docs/decisions.md`, 2026-10-28).
+- **The page belongs to the story.** Each story's page has its own scope, "It starts in", Beginnings with lines
+  written for that story, and the case, chosen from the whole library: the matrix, approved candidates,
+  every category's objects and research finds. Two stories in one category can take it different ways.
+  Readers get no category page; the category is the library and lives in Pulse. Address:
+  `/backstory/s-<story id>/` (T-0110).
+- **Drafted before publish, edited in Pulse.** The first draft of a Lineup runs on GitHub (the same code publish
+  runs); Pulse then composes every page in the browser and the editor edits it there: rerun with a nudge,
+  edit a line, not for this story, reject, approve, write "We are here" outright (saved in seconds). Publish
+  ships exactly what the editor saw (T-0109).
+- **Research when the library is thin.** A thin page says what is missing. "Research it", "point the research"
+  (comparable cases allowed, labelled) and an outline (one search per milestone you name, from T-0085) all
+  put what they find, and what the checks vetoed, in front of the editor. Nothing reaches a page until
+  approved; a subject is not searched twice in 30 days (T-0111).
+- **The Object Matrix grows only by approval.** "Only things I have approved" (the editor, 2026-10-30). At
+  publish each approved primary source becomes a matrix row; news never does. The research ledger is
+  bookkeeping.
+- **Charts stay prod's rule** for this stage: one trend line per category, shown on each story's page. A
+  per-story chart was built and parked (T-0112).
+- **Not yet true:** none of the browser-side composing had run against the live model when this shipped;
+  the category editor's old search tray still exists beside the per-story one; new matrix rows are not
+  link-checked until `check_links.py` next runs.
+
 ## Update, 2026-10-05 — what changed since this file was last verified
 
 This file's build plan below is the 2026-09 plan; read this section first, then the decisions in

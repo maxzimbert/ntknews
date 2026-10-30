@@ -171,7 +171,17 @@ def ties_ok(tie, text):
 _norm = lambda t: " ".join(re.sub(r"[^a-z0-9]+", " ", str(t).lower()).split())
 
 
-def find_milestones(api_key, model, story, title, contest, have, need, searcher=None, caller=None):
+def find_id(title, year, url):
+    """A found document's id. The title alone collided: two Alphabet earnings releases, 2024 and 2025, cut to the
+    same 60 characters and became one document listed twice (2026-10-30). Year and a short hash of the link keep
+    two documents apart and the same document the same."""
+    import hashlib
+    return ("custom-" + re.sub(r"[^a-z0-9]+", "-", str(title).lower())[:48].strip("-") + f"-{year or 'n'}-"
+            + hashlib.sha1(str(url).strip().encode()).hexdigest()[:6])
+
+
+def find_milestones(api_key, model, story, title, contest, have, need, searcher=None, caller=None,
+                    direction=None, vetoed=None):
     """Milestones in the history of this subject, each with a primary document, found by web search.
 
     Used when the pool does not hold enough that connect (the matrix has almost nothing on biosecurity
@@ -180,6 +190,16 @@ def find_milestones(api_key, model, story, title, contest, have, need, searcher=
     the line and About must meet the text rules; and a number in either must come from the title, the
     date or the quoted sentence. CI then checks that the link loads (categories.live_checks)."""
     searcher = searcher or call_search
+    # T-0111: the editor can point the research ("other hacks of government departments: OPM, FBI"). Then a
+    # comparable case is allowed and labelled as one. Never on the automatic path: a "comparable case
+    # elsewhere" relation was tried there and reverted on 2026-10-09 (docs/decisions.md).
+    relations = RELATIONS + (("comparable case",) if direction else ())
+    scope_rule = ("Every milestone must be part of this story's own history: the same subject, an earlier instance of the same action, "
+                  "or the origin of a background the story names. A document that shares only a theme (secrecy, government power, "
+                  "regulation) is an analogy and does not belong.") if not direction else (
+                  f"THE EDITOR DIRECTS THIS RESEARCH: {direction}\nFollow that direction. Besides this story's own history, a "
+                  "comparable case the direction asks for belongs: an earlier event of the same kind elsewhere, marked relation "
+                  "\"comparable case\". It must still tie to something today's story names.")
     have_txt = "; ".join(f"{o['year']} {o['title']}" for o in have) or "(none)"
     model = os.environ.get("NTK_SEARCH_MODEL") or model
     p = f"""You are the researcher for NTK's Backstory, a page for college-educated adults who want to stay informed with less effort. Write for the standard of an Advanced Placement history reader: precise, plain, no hand-waving. The page is a chronology of dated milestones, oldest to newest, that leads to today's story, and each milestone is defended by a primary source the reader can open.
@@ -192,10 +212,10 @@ ALREADY ON THE PAGE (do not repeat): {have_txt}
 
 First ask yourself: what is the history of the action, the consequences, the people, the setting and the background in this story? Which events, in order, are the steps that lead to what the story reports today? Choose the {need} that matter most, spread across time, earlier than today's event, the last one the most recent turn before it. Then use web search to find, for each, a primary source that defends it from editorial scrutiny: the document itself or the copy held by an archive, court, legislature, government agency or the original publisher. Not Wikipedia, not a news article or summary about it, not a retail or study-guide page.
 
-Every milestone must be part of this story's own history: the same subject, an earlier instance of the same action, or the origin of a background the story names. A document that shares only a theme (secrecy, government power, regulation) is an analogy and does not belong. {need} is a target, not a quota: if you cannot source a milestone, leave it out. Fewer well-sourced milestones are better than padding.
+{scope_rule} {need} is a target, not a quota: if you cannot source a milestone, leave it out. Fewer well-sourced milestones are better than padding.
 
 Answer with JSON only, a list in date order:
-[{{"year":"YYYY","date":"YYYY-MM-DD if the document gives it, else null","title":"the document's exact title","author":"who issued or wrote it","source":"the publishing body or archive","source_url":"the exact page or PDF where it can be read","line":"ONE sentence, 12 to 25 words, saying what happened, starting with the actor or the event","about":"two to four sentences, at most 70 words: what the document is, who made it and when, what it says or did","evidence_quote":"one sentence copied word for word from that page that supports the line","ties_to":"a few words from TODAY'S STORY naming the subject, person, place or action this milestone belongs to","relation":"same subject | earlier instance of the same action | origin of the background","because":"one sentence: how this step leads to the next one, or to today's story"}}]
+[{{"year":"YYYY","date":"YYYY-MM-DD if the document gives it, else null","title":"the document's exact title","author":"who issued or wrote it","source":"the publishing body or archive","source_url":"the exact page or PDF where it can be read","line":"ONE sentence, 12 to 25 words, saying what happened, starting with the actor or the event","about":"two to four sentences, at most 70 words: what the document is, who made it and when, what it says or did","evidence_quote":"one sentence copied word for word from that page that supports the line","ties_to":"a few words from TODAY'S STORY naming the subject, person, place or action this milestone belongs to","relation":"{' | '.join(relations)}","because":"one sentence: how this step leads to the next one, or to today's story"}}]
 Rules: use only facts that the page states; the line and about may contain no number that is not in the title, the date or the evidence_quote. If you find none, answer [].
 {STYLE}"""
     text, urls, cites = searcher(api_key, model, p, 4000)
@@ -222,8 +242,8 @@ Rules: use only facts that the page states; the line and about may contain no nu
         tie = str(m.get("ties_to") or "").strip()
         if not ties_ok(tie, story["headline"] + " " + story["text"]):
             return "ties_to does not name anything in the story"
-        if m.get("relation") not in RELATIONS:
-            return "relation is not one of the allowed three"
+        if m.get("relation") not in relations:
+            return "relation is not one of the allowed " + str(len(relations))
         return None
 
     def text_problems(m):
@@ -234,10 +254,24 @@ Rules: use only facts that the page states; the line and about may contain no nu
             p = ["a number is not in the quote"]
         return p
 
+    def veto(m, why):
+        """What the checks turned down, kept with the reason so the editor can overrule it (T-0111)."""
+        if vetoed is None or not str(m.get("source_url") or "").startswith("http"):
+            return
+        t = str(m.get("title") or "").strip()
+        vetoed.append({"id": find_id(t, m.get("year"), m["source_url"]), "title": t,
+                       "author": str(m.get("author") or "").strip(), "year": str(m.get("year") or ""),
+                       "date": m.get("date") if re.fullmatch(r"\d{4}-\d\d-\d\d", str(m.get("date") or "")) else "",
+                       "source": str(m.get("source") or "").strip(), "url": str(m["source_url"]).strip(),
+                       "evidence_quote": str(m.get("evidence_quote") or "").strip(), "line": str(m.get("line") or "").strip(),
+                       "about": str(m.get("about") or "").strip(), "ties_to": str(m.get("ties_to") or "").strip(),
+                       "relation": m.get("relation"), "because": str(m.get("because") or "").strip()[:240],
+                       "found_by": "search", "vetoed_because": why})
+
     def accept(m):
         host = re.sub(r"^https?://([^/]+).*$", r"\1", m["source_url"]).lower()
         t = m["title"].strip()
-        out.append({"id": "custom-" + re.sub(r"[^a-z0-9]+", "-", t.lower())[:60], "title": t, "author": (m.get("author") or "").strip(),
+        out.append({"id": find_id(t, m["year"], m["source_url"]), "title": t, "author": (m.get("author") or "").strip(),
                     "year": str(m["year"]), "date": m.get("date") if re.fullmatch(r"\d{4}-\d\d-\d\d", str(m.get("date") or "")) else "",
                     "source": (m.get("source") or host).strip(), "url": m["source_url"].strip(), "found_by": "search",
                     "evidence_quote": m["evidence_quote"].strip(), "line": m["line"].strip(), "about": m["about"].strip(),
@@ -247,6 +281,7 @@ Rules: use only facts that the page states; the line and about may contain no nu
         bad = provenance(m)
         if bad:
             notes.append(f"milestone {str(m.get('title'))[:40]!r} rejected: {bad}")
+            veto(m, bad)
             continue
         tp = text_problems(m)
         if tp:
@@ -273,11 +308,16 @@ Rules: use only facts that the page states; the line and about may contain no nu
                         notes.append(f"milestone {m['title'][:40]!r} repaired")
                         continue
                 notes.append(f"milestone {m['title'][:40]!r} rejected: {'; '.join(tp)}")
+                veto(m, "; ".join(tp))
         except Exception as e:  # noqa: BLE001
             notes.append(f"milestone repair skipped ({type(e).__name__}: {str(e)[:80]})")
+            for m, tp in fixable:
+                if not any(o["url"] == str(m.get("source_url") or "").strip() for o in out):
+                    veto(m, "; ".join(tp))
     else:
         for m, tp in fixable:
             notes.append(f"milestone {m['title'][:40]!r} rejected: {'; '.join(tp)}")
+            veto(m, "; ".join(tp))
     return out[:need], notes
 
 

@@ -1,12 +1,23 @@
 ---
 id: T-0112
 title: Each story's Backstory proposes the visualization that fits it, and the editor can revise, nudge, verify or supply one
-status: DECIDED
+status: PROPOSED
 tags: [backstory, feature]
 anchor: editorial/compose_category.py
 ---
 
 ## What
+
+**Parked 2026-10-30 by the editor: "Prod's rule."** For this stage of the product the chart stays one trend line
+per category, the simple better-or-worse framing prod already has, and a story's own page (T-0110) shows its
+category's trend line. The per-story chart below was built and taken out again before it reached prod; the
+code is in the branch history at `84ed2b2d` (`editorial/visual_story.py` and the Pulse VISUALIZATION section).
+What the first live use showed, for whoever reopens this: the proposals were good, but the check (both figures
+on one original-source page, in one cited passage) refused most real series. Israel's Arab turnout runs to 2022
+at the Israel Democracy Institute and the 2026 figure exists only in news reports, so no chart could be drawn.
+A two-source chart, each figure checked on its own page, and showing a refused chart to the editor were
+proposed and not built.
+
 
 Raised by the editor 2026-10-28, looking at the hand-composed ballroom donors page in the mock
 (https://claude.ai/artifact/GoNGTmRiM7mHsgQyub6LAa): it had no visualization, the better-or-worse
@@ -29,6 +40,17 @@ Wanted:
 4. **Editor zone in Pulse.** Revise (pick another measure), nudge in the editor's words, verify (mark
    each value checked against the source), or supply a series and source of the editor's own. No chart
    is a valid outcome and says why.
+
+**Built 2026-10-29, on branch `T-0110-compose-per-story` and on staging** (`editorial/visual_story.py`, called
+by `compose_story.py`). Every draft proposes with one small call and no search: reuse a checked series on
+hand (the 19 category trend lines and anything earlier searches found), or name the measure that would fit,
+or say no honest chart fits. A search runs only when the editor presses "search for a source (1 call)" in the
+story's preview, uses `compose_category.propose_indicator`'s search and check unchanged, and a series that
+passes is written to `editorial/research-ledger.json` so the next story reuses it. The editor can supply a
+series (unchecked until ticked) or choose no chart, and nudge the section. Tested with stubbed model replies:
+search found and checked, reused by a second story with no search, editor's series unchecked, no chart, and a
+link the search did not return refused. Not run against the live model yet. The reader's app does not draw
+`composed.visual` yet, as for the rest of the composed page (T-0110).
 
 ## Why
 

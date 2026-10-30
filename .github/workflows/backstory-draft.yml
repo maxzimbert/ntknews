@@ -1,0 +1,85 @@
+name: NTK Backstory — Draft before publish
+
+# T-0109. Pulse's "Draft Backstory" commits the Lineup to ntk-pulse/data/lineup-draft.json on the branch
+# Pulse is served from (main for the live Pulse, staging for staging Pulse), and that push is the trigger.
+# The run uses that branch's code, runs the same two Backstory steps publish runs, on COPIES of
+# backstory.json and provisional-rows.json, and commits only ntk-pulse/data/backstory-draft.json back to
+# the same branch. Nothing a reader sees changes. Publish later ships the draft if no story changed
+# (editorial/backstory_draft.py apply).
+on:
+  push:
+    branches: [main, staging]
+    paths:
+      - 'ntk-pulse/data/lineup-draft.json'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+# Runs queue, one at a time per branch. Cancelling an older run lost requests: a "research it" followed by
+# "search for a source" a few seconds later cancelled the research mid-run, and the two then raced to commit
+# the same two files (2026-10-29). GitHub keeps one run going and one waiting; a third request in that time
+# replaces the waiting one.
+concurrency:
+  group: backstory-draft-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  draft:
+    runs-on: ubuntu-latest
+    steps:
+      # The branch as it is now, not as it was at the push: a queued run builds on the draft and the ledger
+      # the run before it left.
+      # Only what the run reads, with file contents fetched as needed: the full checkout took 7 of a rerun's ~24
+      # seconds (2026-10-30). History stays complete so the push can rebase.
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+          filter: blob:none
+          sparse-checkout: |
+            editorial
+            ntk-pulse/data
+            digest/data
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Draft the Backstory on copies
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          # This run's own request, from the commit that started it, even when later requests have landed since.
+          L=$RUNNER_TEMP/lineup-draft.json
+          git show ${{ github.sha }}:ntk-pulse/data/lineup-draft.json > $L
+          # The first draft only: classifier, categories, origins, the same code publish runs. Each story's own page
+          # is composed in Pulse, in the browser, and every edit after that is saved by Pulse (T-0110, 2026-10-30).
+          python -m pip install --quiet openpyxl     # the lens Beginnings read the Object Matrix
+          W=$RUNNER_TEMP/draft; mkdir -p $W
+          cp digest/data/backstory.json $W/backstory.json
+          cp ntk-pulse/data/provisional-rows.json $W/provisional-rows.json
+          python editorial/build_pairings.py --lineup $L --backstory $W/backstory.json --provisional $W/provisional-rows.json
+          python editorial/build_origins.py --apply --lineup $L \
+            --pairings $W/backstory.json --provisional $W/provisional-rows.json --out $W/origins.json
+          python editorial/backstory_draft.py make --lineup $L \
+            --backstory $W/backstory.json --provisional $W/provisional-rows.json --origins $W/origins.json \
+            --branch "${{ github.ref_name }}"
+          # the steps above must not have written a live file
+          git diff --quiet -- digest/ ntk-pulse/data/provisional-rows.json editorial/origins.json \
+            || { echo "a draft step wrote a live file"; git diff --stat; exit 1; }
+
+      - name: Commit the draft
+        run: |
+          git config user.name "ntk-draft-bot"
+          git config user.email "publish@ntknews.org"
+          git add ntk-pulse/data/backstory-draft.json
+          git diff --cached --quiet && exit 0
+          git commit -m "backstory draft: $(date -u +%Y-%m-%dT%H:%MZ)"
+          B="${{ github.ref_name }}"
+          for i in 1 2 3; do
+            git push origin HEAD:$B && exit 0
+            echo "push rejected, rebasing onto origin/$B and retrying ($i/3)"
+            git pull --rebase origin $B || { git rebase --abort; echo "rebase conflicted; nothing was pushed"; exit 1; }
+          done
+          echo "push still rejected after 3 tries"; exit 1

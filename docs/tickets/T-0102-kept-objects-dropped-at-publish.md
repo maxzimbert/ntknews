@@ -1,7 +1,7 @@
 ---
 id: T-0102
 title: Publishing drops objects the editor kept for a story but never added to a category, and says nothing
-status: BUILT
+status: VERIFIED
 tags: [pulse, defect]
 anchor: ntk-pulse/pulse.html:3127
 ---
@@ -20,6 +20,11 @@ button also never appears for a story filed under a fixed row, which takes its o
 Decided: publish warns, in the same confirm dialog as the Today overview warning (T-0096), for
 every Lineup story that has kept objects not on its category. The warning names the story and the
 count. It warns rather than blocks, because leaving a tick behind can be deliberate.
+
+**Re-checked and closed 2026-10-30.** Since T-0110 the objects ticked in the matrix search are the editor's
+picks for the story's own page: they travel as `bs_edits.keep`, always reach the case, and publish ships them
+with the drafted page. The publish warning still fires for a pick that is on no drafted page (`keptPreflight`
+counts a fresh draft's case as reaching the reader). Check run and passing on branch `T-0110-compose-per-story`.
 
 ## Why
 
