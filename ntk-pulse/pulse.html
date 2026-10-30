@@ -3180,7 +3180,7 @@ async function bsWithHashes(stories){
   for (const s of stories){ s.bs_hash = await bsHash(s, cats, true); s.bs_text_hash = await bsHash(s, cats, false); }
   return stories;
 }
-let BSR_DRAFT = null, BSR_DRAFT_STATE = '', BSR_DRAFT_SENT = 0, BSR_DRAFT_TIMER = null, BSR_DRAFT_LOADED = false;
+let BSR_DRAFT = null, BSR_DRAFT_STATE = '', BSR_DRAFT_SENT = 0, BSR_DRAFT_TIMER = null, BSR_DRAFT_LOADED = false, BSR_DRAFT_BEFORE = '';
 const BSR_HASH = {};                 // story key -> {full, text}, kept by bsrRefreshHashes
 let BSR_HASHING = false;
 async function bsrRefreshHashes(){
@@ -3251,6 +3251,7 @@ async function draftBackstory(only, extra){
       body: JSON.stringify({message:(only?'backstory edits: '+only.length+' of ':'backstory draft request: ')+stories.length+' stories from Pulse', content:b64, branch:br, ...(sha?{sha}:{})})});
     if (!p.ok){ const t = await p.text(); throw new Error('GitHub PUT failed: '+p.status+' '+t.slice(0,200)); }
     BSR_DRAFT_SENT = Date.now();
+    BSR_DRAFT_BEFORE = (BSR_DRAFT && BSR_DRAFT.generated) || '';   // the run's answer is a draft newer than this one
     BSR_DRAFT_STATE = only ? 'Recomposing ' + only.length + ' stor' + (only.length===1?'y':'ies') + ' with your edits… about a minute. This updates by itself.'
       : 'Drafting on ' + br + '… usually 2 to 5 minutes. This updates by itself.';
     render(); bsrPollDraft();
@@ -3260,11 +3261,12 @@ function bsrPollDraft(){
   clearTimeout(BSR_DRAFT_TIMER);
   BSR_DRAFT_TIMER = setTimeout(async () => {
     const d = await loadBsrDraft();
-    if (d && new Date(d.generated).getTime() > BSR_DRAFT_SENT - 30000){ BSR_DRAFT_STATE = ''; render(); return; }
+    if (d && d.generated !== BSR_DRAFT_BEFORE && new Date(d.generated).getTime() > new Date(BSR_DRAFT_BEFORE || 0).getTime()){
+      BSR_DRAFT_STATE = ''; render(); return; }
     if (Date.now() - BSR_DRAFT_SENT > 15*60000){
       BSR_DRAFT_STATE = 'No draft after 15 minutes. Check the "Backstory — Draft before publish" run on GitHub.'; render(); return; }
     bsrPollDraft();
-  }, 20000);
+  }, Date.now() - BSR_DRAFT_SENT < 180000 ? 4000 : 15000);   // a rerun lands in about 20 seconds; checking every 20 doubled the wait
 }
 // A draft ships only whole (editorial/backstory_draft.py apply), so one changed story means publish chooses
 // again for all of them. Warned in the publish dialog; never a block.
@@ -4501,6 +4503,8 @@ async function bscSaveText(s){
 }
 function bscWire(el, s){
   const box = el.querySelector('.bsc'); if (!box) return;
+  if (BSR_DRAFT_STATE) box.querySelectorAll('.bsc-rerun,.bsc-apply,.bsc-approve,.bsc-research,.bsc-research-dir').forEach(b => {
+    b.disabled = true; b.title = 'A run is going; this is ready again when it finishes'; });
   const e = bsEdits(s), d = bsrDraftFor(s);
   const save = () => { saveLineup(); bsrRefreshHashes(); render(); };
   const apply = () => {
