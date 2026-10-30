@@ -4405,22 +4405,35 @@ function bscNudge(s, sec, pills){
 // to point the next search ("other hacks of government departments: OPM, FBI, and intrusions by Russia, China, Iran").
 function bscResearchHtml(s, c){
   const e = bsEdits(s), ok = new Set(e.approved || []);
-  const vet = (c.vetoed || []).map(v => `<div style="display:flex;gap:10px;margin:6px 0;font-size:13.5px;align-items:flex-start"><b style="min-width:40px">${esc(v.year)}</b><span style="flex:1">
-      <a href="${esc(v.url)}" target="_blank" rel="noopener"><i>${esc(v.title)}</i></a>${v.source?' <span style="color:var(--dim)">'+esc(v.source)+'</span>':''}${v.relation==='comparable case'?' <span class="chip">comparable case</span>':''}
+  const KIND = {located:['found','background:#dcefe2;color:#2f7d4f'], news:['news report','background:#f6e7c8;color:#8a5a12'],
+    lead:['named, not found','background:#e6e1f2;color:#4b3c80'], vetoed:['vetoed by the checks','background:#f7dcd6;color:#9a3a25']};
+  const chip = k => { const x = KIND[k] || KIND.vetoed; return '<span class="chip" style="'+x[1]+'">'+x[0]+'</span>'; };
+  const link = v => v.url ? '<a href="'+esc(v.url)+'" target="_blank" rel="noopener"><i>'+esc(v.title)+'</i></a>' : '<i>'+esc(v.title)+'</i>';
+  const waiting = (c.vetoed || []).map(v => {
+    const lead = v.kind === 'lead' && !v.url, approved = ok.has(v.id);
+    return `<div style="margin:7px 0;font-size:13.5px"><div style="display:flex;gap:8px;align-items:baseline;flex-wrap:wrap">${chip(v.kind||'vetoed')}<b>${esc(v.year||'')}</b> ${link(v)}${v.source?' <span style="color:var(--dim)">'+esc(v.source)+'</span>':''}${v.relation==='comparable case'?' <span class="chip">comparable case</span>':''}</div>
+      ${v.topic?'<div style="font-size:11px;color:var(--dim)">for: '+esc(v.topic)+'</div>':''}
       ${v.line?'<div style="font:13px Georgia,serif;margin-top:2px">'+esc(v.line)+'</div>':''}
-      <div style="font:400 11px sans-serif;color:var(--stale)">vetoed: ${esc(v.vetoed_because||'')}</div>
-      <span style="display:inline-flex;gap:5px;margin-top:3px">${ok.has(v.id)?'<span class="chip">approved: apply edits to add it</span> <a href="#" class="bsc-unapprove" data-id="'+esc(v.id)+'">undo</a>':'<button class="mini bsc-approve" data-id="'+esc(v.id)+'">approve: I checked it</button>'}<button class="mini bsc-rej" data-id="${esc(v.id)}" style="color:var(--stale)">reject</button></span></span></div>`).join('');
-  return (vet ? `<div style="font-size:11.5px;color:var(--dim);margin:4px 0">Open each one before you approve it: approving overrules the checks, adds it to the library for every story, and puts it on this page.</div>${vet}` : '')
-    + `<div style="margin-top:8px;font-size:12px">Point the research: what kind of history this story should draw on, even comparable cases elsewhere.</div>
+      ${v.evidence_quote&&!v.line?'<div style="font-size:11.5px;color:var(--dim);margin-top:2px">“'+esc(String(v.evidence_quote).slice(0,220))+'”</div>':''}
+      ${v.vetoed_because?'<div style="font:400 11px sans-serif;color:var(--stale)">vetoed: '+esc(v.vetoed_because)+'</div>':''}
+      ${v.kind==='news'?'<div style="font-size:11px;color:#8a5a12">news report, labelled on the page; never goes into the matrix. No primary source because: '+esc(v.why_no_primary||'')+'</div>':''}
+      ${lead?'<div style="font-size:11px;color:var(--dim)">named by '+esc(v.cited_by||'a page')+(v.cited_by_url?' <a href="'+esc(v.cited_by_url)+'" target="_blank" rel="noopener">page that names it</a>':'')+(v.note?' · '+esc(v.note):'')+'</div>':''}
+      <div style="display:flex;gap:5px;margin-top:4px;flex-wrap:wrap;align-items:center">${approved?'<span class="chip">approved: running</span>'
+        : lead?'<button class="mini bsc-lead-hunt" data-id="'+esc(v.id)+'">search for a copy (1 call)</button><input class="bsc-lead-url" data-id="'+esc(v.id)+'" placeholder="or paste a link: https://" style="width:220px"><input class="bsc-lead-year" data-id="'+esc(v.id)+'" value="'+esc(v.year||'')+'" placeholder="year" style="width:52px"><button class="mini bsc-lead-use" data-id="'+esc(v.id)+'">approve with this link</button>'
+        : '<button class="mini go bsc-approve" data-id="'+esc(v.id)+'">approve: I checked it</button>'}<button class="mini bsc-rej" data-id="${esc(v.id)}" style="color:var(--stale)">reject</button></div></div>`; }).join('');
+  const found = (c.found || []).map(f => `<div style="margin:6px 0;font-size:13.5px;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap"><b>${esc(f.year||'')}</b> ${link(f)}
+      ${f.approved_by?'<span class="chip" style="background:#dcefe2;color:#2f7d4f">'+(f.source_kind==='news'?'approved; news stays out of the matrix':'approved: joins the matrix at publish')+'</span>'
+        : (ok.has(f.id)?'<span class="chip">approving…</span>':'<button class="mini bsc-approve" data-id="'+esc(f.id)+'">approve for the matrix</button>')}</div>`).join('');
+  return (waiting ? `<div style="font:700 11px sans-serif;letter-spacing:.06em;margin-top:6px">WAITING FOR YOU</div><div style="font-size:11.5px;color:var(--dim);margin:2px 0 4px">Nothing here is on the page until you approve it. Open each link first. Approving puts it on this page and, for a primary source, into the Object Matrix at publish.</div>${waiting}` : '')
+    + (found ? `<div style="font:700 11px sans-serif;letter-spacing:.06em;margin-top:10px">FROM RESEARCH, IN THE LIBRARY</div><div style="font-size:11.5px;color:var(--dim);margin:2px 0 4px">These passed the checks and can be on any story's page. Only what you approve goes into the Object Matrix.</div>${found}` : '')
+    + `<div style="margin-top:10px;font-size:12px"><b>Outline:</b> the milestones you want, one per line. Each is searched on its own and comes back here to approve.</div>
+    <div style="display:flex;gap:6px;margin-top:4px;flex-wrap:wrap;align-items:flex-start"><textarea class="bsc-outline" rows="3" placeholder="e.g.\nOPM data breach, 2015\nFBI agent data leak, 2016\nIran-linked hack of US officials" style="flex:1;min-width:260px;font:13px sans-serif">${esc(e.outline||'')}</textarea>
+    <button class="mini go bsc-outline-go" title="one search per line, three at a time; a line searched in the last 30 days is not searched again">search each line</button></div>
+    <div style="margin-top:8px;font-size:12px"><b>Or point the research:</b> one search for the kind of history this story should draw on, comparable cases allowed.</div>
     <div style="display:flex;gap:6px;margin-top:4px;flex-wrap:wrap"><input class="bsc-dir" value="${esc(e.research_direction||'')}" placeholder="e.g. other hacks of government departments: OPM, FBI, and intrusions by Russia, China, Iran" style="flex:1;min-width:260px">
     <button class="mini go bsc-research-dir" title="one web-search call; comparable cases are allowed and labelled; the same direction is not searched twice in 30 days">research this (1 call)</button></div>`;
 }
-// The real reader app, showing this branch's draft as readers will get it once published (digest/index.html,
-// ?draft). Staging Pulse opens the staging app; the live Pulse opens ntknews.org.
-function bscReaderUrl(){
-  return pulseBranch(location) === 'staging' ? 'https://maxzimbert.github.io/ntknews-staging/digest/index.html?draft=1#backstory'
-    : 'https://ntknews.org/backstory?draft=1';
-}
+
 function bscComposedHtml(s, d){
   const c = d.composed, p = d.pairing, e = bsEdits(s), off = new Set(e.off||[]);
   const starts = c.starts || {};
@@ -4457,7 +4470,7 @@ function bscComposedHtml(s, d){
         ${sec('IT STARTS IN '+esc(starts.year||'?'), starts.from==='editor nudge'?'moved by your nudge':starts.from==='composer'?'chosen from the Beginnings: retrieval found no start':'found by retrieval', `<div style="font:14px Georgia,serif;margin-top:4px">${esc(starts.line||'')}</div>${bscNudge(s,'starts',true)}`)}
         ${sec('BEGINNINGS', (c.beginnings||[]).filter(b=>!off.has(b.object_id)).length+' kept', (c.beginnings||[]).map(b=>{ const o=Object.assign({}, (c.case||[]).find(x=>x.object_id===b.object_id)||{}, b); if (off.has(b.object_id)) seenOff.add(b.object_id); return bscItem(s, o, 'beg', off.has(b.object_id)); }).join('')+bscNudge(s,'beginnings',true))}
         ${sec('OBJECTS (THE CASE)', (c.case||[]).filter(o=>!off.has(o.object_id)).length+' kept', (c.case||[]).filter(o=>!seenOff.has(o.object_id)).map(o=>bscItem(s, o, 'obj', off.has(o.object_id))).join('')||'<i style="font-size:12px;color:var(--dim)">none</i>')}
-        ${sec('RESEARCH', (c.vetoed||[]).length?(c.vetoed.length+' vetoed by the checks'):'point it yourself', bscResearchHtml(s, c))}
+        ${sec('RESEARCH', (c.vetoed||[]).length?(c.vetoed.length+' waiting for you'):'outline or point it', bscResearchHtml(s, c))}
         ${(c.notes||[]).length?`<details style="font-size:11.5px;color:var(--dim);margin-top:4px"><summary>${c.notes.length} pick(s) the checks dropped</summary>${c.notes.map(n=>'<div>'+esc(n)+'</div>').join('')}</details>`:''}
         <div style="font-size:11px;color:var(--dim);margin-top:6px">Not for this story: hidden here only. Reject: the document itself is wrong; it is removed from every story and never chosen again.</div>
       </div>
@@ -4503,8 +4516,10 @@ async function bsxFindId(title, year, url){
 // The library: every matrix document with a live link, every approved candidate, every document a category holds
 // (including what earlier searches found), and every research find, so a find made for one story serves every story.
 function bsxLibrary(draft, ledger){
-  const lib={}, rej=new Set((ledger&&ledger.rejected)||[]);
-  const add=(o, origin)=>{ if (!o.id || !o.url) return; if (lib[o.id]){ lib[o.id].categories.add(origin); return; }
+  const lib={}, rej=new Set((ledger&&ledger.rejected)||[]), byUrl={};
+  // one document, once: an approved find is in the ledger and, after publish, in the matrix too
+  const add=(o, origin)=>{ if (!o.id || !o.url) return; const same=lib[o.id]||lib[byUrl[o.url]]; if (same){ same.categories.add(origin); return; }
+    byUrl[o.url]=o.id;
     lib[o.id]=Object.assign({about:'', why:'', row:origin, subgenre:'', lenses:[], kind:'found', author:'', title:'', year:''}, o, {year:String(o.year||''), categories:new Set([origin])}); };
   ((POOL&&POOL.objects)||[]).forEach(o=>{ if (o.url && ['live','live-pdf'].includes(o.link_status) && (o.pool==='matrix' || o.approved))
     add({id:o.id, title:o.title||'', author:o.author||'', year:o.year, url:o.url, about:o.about||'', why:o.why||'', row:o.row||'', subgenre:o.subgenre||'', lenses:o.lenses||[], kind:o.pool==='matrix'?'matrix':'candidate'}, o.row||''); });
@@ -4702,17 +4717,50 @@ ${CAT_STYLE_RULES}`;
   }
   const rej=new Set(rejected||[]), known=new Set(ledger.finds.map(f=>f.url).concat(ledger.vetoed.map(v=>v.url))), now=new Date().toISOString();
   const added=[];
-  kept.forEach(f=>{ if (!rej.has(f.id) && !known.has(f.url)){ f.researched_for=scope; f.researched_at=now; ledger.finds.push(f); known.add(f.url); added.push(f); } });
+  kept.forEach(f=>{ if (!rej.has(f.id) && !known.has(f.url)){ f.researched_for=scope; f.story_id=storyId; f.researched_at=now; ledger.finds.push(f); known.add(f.url); added.push(f); } });
   vetoed.forEach(v=>{ if (!rej.has(v.id) && !known.has(v.url)){ ledger.vetoed.push(Object.assign(v, {researched_for:scope, story_id:storyId, direction:direction||null, researched_at:now})); known.add(v.url); } });
   ledger.subjects[key]={subject:scope, direction:direction||null, searched_at:now, for:story.headline, finds:added.map(f=>f.id)};
   return {added:added, note:'researched "'+(direction||scope)+'": '+added.length+' new document(s) kept, '+vetoed.length+' vetoed by the checks (shown below to approve or leave)'};
 }
+// Approving is the editor's call on a document: one waiting (vetoed by the checks, or turned up by an outline
+// search) goes into the library and onto the page; one already in the library from research is marked. Either
+// way it is marked approved_by: "editor", which is what sends a primary source into the Object Matrix at
+// publish (editorial/graduate_finds.py). A news report can be approved onto a page and never enters the matrix.
 function bsxApprove(ledger, ids, storyId){
+  const now=new Date().toISOString(), mark=f=>Object.assign(f, {approved_by:'editor', approved_for:storyId, approved_at:now});
+  ledger.finds.forEach(f=>{ if (ids.has(f.id) && !f.approved_by) mark(f); });
   const moved=[];
-  ledger.vetoed=ledger.vetoed.filter(v=>{ if (!ids.has(v.id)) return true;
-    moved.push(Object.assign({}, v, {approved_by:'editor', approved_for:storyId, approved_at:new Date().toISOString()})); return false; });
-  moved.forEach(f=>{ delete f.vetoed_because; ledger.finds.push(f); });
+  ['vetoed','candidates'].forEach(k=>{ ledger[k]=(ledger[k]||[]).filter(v=>{ if (!ids.has(v.id) || !v.url) return true;
+    const f=mark(Object.assign({}, v)); delete f.vetoed_because; delete f.kind; delete f.topic; moved.push(f); return false; }); });
+  moved.forEach(f=>{ if (!ledger.finds.some(x=>x.url===f.url)) ledger.finds.push(f); });
   return moved;
+}
+// T-0085, folded in: the editor's outline. Each line is one milestone the editor wants, searched on its own
+// (findCandidates, three at a time); each search returns up to four candidates: the document ("found"), a news
+// report when no primary source would do, or a document a page names where no copy turned up ("named, not
+// found"). They wait for the editor; nothing goes on the page until approved. A line searched in the last 30 days
+// is not searched again.
+async function bsxOutline(story, storyId, scope, topics, ledger, rejected){
+  ledger.candidates=ledger.candidates||[];
+  const rej=new Set(rejected||[]), now=new Date().toISOString(), res=[];
+  const todo=topics.filter(t=>{ const e=ledger.subjects['topic: '+bsxSubjectKey(t)]; if (e && bsxRecent(e)){ res.push(t.slice(0,40)+': already searched '+String(e.searched_at).slice(0,10)); return false; } return true; });
+  for (let i=0; i<todo.length; i+=3){
+    BSR_DRAFT_STATE='Searching '+Math.min(i+3,todo.length)+' of '+todo.length+' outline line'+(todo.length===1?'':'s')+'\u2026'; render();
+    const batch=todo.slice(i,i+3);
+    const out=await Promise.all(batch.map(t=>findCandidates({title:scope||story.headline}, t).catch(e=>({cands:[], refused:[], err:e.message}))));
+    for (let k=0; k<batch.length; k++){
+      const t=batch[k], r=out[k];
+      for (const c of r.cands){
+        const id=await bsxFindId(c.title, c.year, c.url||c.cited_by_url);
+        if (rej.has(id) || ledger.candidates.some(x=>x.id===id) || ledger.finds.some(f=>f.url && f.url===c.url)) continue;
+        ledger.candidates.push(Object.assign({id:id, story_id:storyId, topic:t, researched_for:scope, researched_at:now, found_by:'search',
+          source_kind:c.kind==='news'?'news':catSourceKind(c.url||'')}, c));
+      }
+      ledger.subjects['topic: '+bsxSubjectKey(t)]={subject:t, direction:'outline', searched_at:now, for:story.headline, finds:[]};
+      res.push(t.slice(0,40)+': '+(r.err?'search failed':r.cands.length+' found'));
+    }
+  }
+  return 'outline: '+res.join('; ');
 }
 
 // Reading and writing the branch's files through GitHub's API (no workflow). The draft and the ledger are written
@@ -4735,7 +4783,7 @@ async function bsxPut(path, data, sha, message){
 }
 async function bsxLedger(){
   const g=await bsxGet(BSX_LEDGER), d=g.data||{};
-  ['subjects','finds','series','rejected','vetoed'].forEach(k=>{ if (!(k in d)) d[k]=k==='subjects'?{}:[]; });
+  ['subjects','finds','series','rejected','vetoed','candidates'].forEach(k=>{ if (!(k in d)) d[k]=k==='subjects'?{}:[]; });
   return {ledger:d, sha:g.sha};
 }
 
@@ -4761,10 +4809,16 @@ async function bsxRun(keys, opts){
       BSR_DRAFT_STATE='Composing "'+String(s.headline||'').slice(0,50)+'"…'; render();
       const story={headline:s.headline||'', lede:bsxText(s.lede), truths:bsxText(s.truth)}, edits=Object.assign({}, s.bs_edits||{});
       const prev=d.composed||{};
-      // a vetoed find the editor approved becomes a library document and goes on this page
+      // a lead ("named, not found") the editor found a link for becomes a document of the editor's own
+      Object.entries(edits.lead_links||{}).forEach(([id, l])=>{ const c=(ledger.candidates||[]).find(x=>x.id===id);
+        if (c && !c.url){ Object.assign(c, {url:l.url, year:l.year||c.year, kind:'located', edited_by:'editor', source_kind:catSourceKind(l.url)}); } });
+      // what the editor approved goes into the library and onto this page, and is marked for the matrix
       bsxApprove(ledger, new Set(edits.approved||[]), key);
       edits.keep=Array.from(new Set((edits.keep||[]).concat(edits.approved||[])));
       let rnote=null;
+      if (opts.outline && opts.outline[key]){
+        rnote=await bsxOutline(story, key, prev.scope||(d.row||{}).title||'', opts.outline[key], ledger, rejected);
+      }
       if (opts.research && opts.research[key]){
         BSR_DRAFT_STATE='Researching for "'+String(s.headline||'').slice(0,50)+'"… web search takes a minute or two'; render();
         const dir=typeof opts.research[key]==='string'?opts.research[key]:null;
@@ -4773,15 +4827,20 @@ async function bsxRun(keys, opts){
       }
       const lib=bsxLibrary(draft, ledger);
       const c=await bsxCompose(story, d.pairing, d.row, lib, edits, rejected);
-      c.vetoed=ledger.vetoed.filter(v=>v.story_id===key && !rejected.includes(v.id)).map(v=>({id:v.id, year:v.year, title:v.title, author:v.author, source:v.source, url:v.url, line:v.line, relation:v.relation, vetoed_because:v.vetoed_because, direction:v.direction}));
+      // what waits for the editor (vetoed finds, outline candidates), and what research put in the library for this story
+      const brief=v=>({id:v.id, year:v.year, title:v.title, author:v.author, source:v.source, url:v.url, line:v.line, relation:v.relation,
+        vetoed_because:v.vetoed_because, direction:v.direction, kind:v.kind||(v.vetoed_because?'vetoed':''), topic:v.topic, evidence_quote:v.evidence_quote,
+        why_no_primary:v.why_no_primary, cited_by:v.cited_by, cited_by_url:v.cited_by_url, note:v.note, source_kind:v.source_kind, approved_by:v.approved_by});
+      c.vetoed=ledger.vetoed.concat(ledger.candidates||[]).filter(v=>v.story_id===key && !rejected.includes(v.id)).map(brief);
+      c.found=ledger.finds.filter(f=>f.story_id===key && !rejected.includes(f.id)).map(brief);
       c.research=rnote||prev.research||null;
       done[key]={composed:c, bs_hash:s.bs_hash, bs_text_hash:s.bs_text_hash, bs_edits_applied:s.bs_edits||{}};
     }
     // save: the ledger first (finds the page may use), then the draft, each against the latest copy
-    if (opts.research || keys.some(k=>((byKey[k]||{}).bs_edits||{}).approved)){
+    if (opts.research || opts.outline || keys.some(k=>((byKey[k]||{}).bs_edits||{}).approved)){
       for (let i=0; i<2; i++){ if (await bsxPut(BSX_LEDGER, ledger, lsha, 'backstory research: from Pulse')) break;
-        const fresh=await bsxLedger(); lsha=fresh.sha; ['subjects','finds','vetoed'].forEach(k=>{ if (k==='subjects') Object.assign(fresh.ledger.subjects, ledger.subjects); else {
-          const have=new Set(fresh.ledger[k].map(x=>x.url)); ledger[k].forEach(x=>{ if (!have.has(x.url)) fresh.ledger[k].push(x); }); } });
+        const fresh=await bsxLedger(); lsha=fresh.sha; ['subjects','finds','vetoed','candidates'].forEach(k=>{ if (k==='subjects') Object.assign(fresh.ledger.subjects, ledger.subjects); else {
+          fresh.ledger[k]=fresh.ledger[k]||[]; const have=new Set(fresh.ledger[k].map(x=>x.id)); (ledger[k]||[]).forEach(x=>{ if (!have.has(x.id)) fresh.ledger[k].push(x); }); } });
         fresh.ledger.rejected=rejected; ledger=fresh.ledger; }
     }
     let ok=false;
@@ -4837,7 +4896,7 @@ async function bscSaveText(s){
 }
 function bscWire(el, s){
   const box = el.querySelector('.bsc'); if (!box) return;
-  if (bsrRunning()) box.querySelectorAll('.bsc-rerun,.bsc-apply,.bsc-approve,.bsc-research,.bsc-research-dir').forEach(b => {
+  if (bsrRunning()) box.querySelectorAll('.bsc-rerun,.bsc-apply,.bsc-approve,.bsc-research,.bsc-research-dir,.bsc-outline-go,.bsc-lead-hunt,.bsc-lead-use').forEach(b => {
     b.disabled = true; b.title = 'A run is going; this is ready again when it finishes'; });
   const e = bsEdits(s), d = bsrDraftFor(s);
   const save = () => { saveLineup(); bsrRefreshHashes(); render(); };
@@ -4877,6 +4936,23 @@ function bscWire(el, s){
   box.querySelectorAll('.bsc-approve').forEach(b => b.addEventListener('click', () => {
     e.approved = Array.from(new Set((e.approved||[]).concat([b.dataset.id]))); saveLineup(); bscBusy(b); bsrRefreshHashes().then(apply); }));
   box.querySelectorAll('.bsc-unapprove').forEach(a => a.addEventListener('click', ev => { ev.preventDefault(); e.approved = (e.approved||[]).filter(x => x !== a.dataset.id); save(); }));
+  const og = box.querySelector('.bsc-outline-go'); if (og) og.addEventListener('click', () => {
+    const text = box.querySelector('.bsc-outline').value;
+    const topics = text.split(/\n+/).map(x => x.replace(/^\s*(?:[-*\u2022]|\d+[.)])\s*/, '').trim()).filter(Boolean).slice(0, 12);
+    if (!topics.length){ alert('Write the milestones you want, one per line.'); return; }
+    e.outline = text; saveLineup(); bscBusy(og);
+    bsrRefreshHashes().then(() => { if (!(bsrDraftFor(s)||{}).textFresh){ alert('This story changed since the draft. Use Draft Backstory first.'); return; }
+      bsxRun([s.key], {outline:{[s.key]: topics}}); }); });
+  box.querySelectorAll('.bsc-lead-hunt').forEach(b => b.addEventListener('click', () => {
+    const v = ((bsrDraftFor(s)||{}).composed.vetoed||[]).find(x => x.id === b.dataset.id); if (!v) return; bscBusy(b);
+    bsrRefreshHashes().then(() => bsxRun([s.key], {outline:{[s.key]: [v.title+(v.year?' ('+v.year+')':'')+(v.source?', '+v.source:'')+': find a readable copy in an archive, library or newspaper archive']}})); }));
+  box.querySelectorAll('.bsc-lead-use').forEach(b => b.addEventListener('click', () => {
+    const id = b.dataset.id, url = box.querySelector(`.bsc-lead-url[data-id="${CSS.escape(id)}"]`).value.trim(), yr = box.querySelector(`.bsc-lead-year[data-id="${CSS.escape(id)}"]`).value.trim();
+    if (!url.startsWith('https://')){ alert('The link must start with https://'); return; }
+    if (catSourceKind(url) === 'deny'){ alert('That host is not accepted as a source.'); return; }
+    if (!/^\d{3,4}$/.test(yr)){ alert('Give the year of the document.'); return; }
+    e.lead_links = Object.assign({}, e.lead_links, {[id]: {url: url, year: yr}}); e.approved = Array.from(new Set((e.approved||[]).concat([id])));
+    saveLineup(); bscBusy(b); bsrRefreshHashes().then(apply); }));
   const rd = box.querySelector('.bsc-research-dir'); if (rd) rd.addEventListener('click', () => {
     const dir = box.querySelector('.bsc-dir').value.trim();
     if (!dir){ alert('Write where the research should look first.'); return; }

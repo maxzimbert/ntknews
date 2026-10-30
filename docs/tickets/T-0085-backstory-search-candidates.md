@@ -48,6 +48,13 @@ Built 2026-10-13 on `T-0085-backstory-outline-candidates`:
 Not verified: no live run against the real API. The tray and the add buttons were exercised in a local
 Pulse with a fixture category (no key, so line and About text were not written).
 
+**Folded into each story's RESEARCH section 2026-10-30, by the editor's call** (T-0110, T-0111). The outline
+search (one search per line, three at a time, `findCandidates` unchanged) and its three kinds of candidate
+(found, news report, named-not-found with "search for a copy" or "approve with this link") now run per story
+in Pulse, beside the research vetoes, in one WAITING FOR YOU list. Nothing reaches the page until the editor
+approves it. The category editor's FOUND BY SEARCH tray is unchanged for now; retire it once the per-story
+section has been used on real editions.
+
 ## Why
 
 The editor's request was an outline: an ordered list of milestones under a category name. The revise box

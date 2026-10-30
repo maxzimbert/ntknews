@@ -177,8 +177,8 @@ def load_objects():
     seen = collections.Counter()
     for i in range(2, sh.max_row + 1):
         g = lambda c: sh.cell(row=i, column=c).value
-        if not g(11):
-            continue
+        if not g(11) and not g(15):
+            continue          # a row needs an NTK Row, or (a document approved from Pulse research, T-0111) a link
         sort = str(g(4) or '9999')
         oid = slug(sort + '-' + str(g(6)))
         seen[oid] += 1
