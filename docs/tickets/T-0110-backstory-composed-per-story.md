@@ -130,5 +130,13 @@ if not src:
     print('Pulse has no story composer'); sys.exit(1)
 if 'web_search' in src or 'bsxResearch' in src:
     print('the per-story composer can search the web; search belongs to T-0111'); sys.exit(1)
+# Every Backstory helper Pulse calls must exist: a deleted bscReaderUrl made every composed preview throw, so the
+# tab stopped drawing and its buttons did nothing (2026-10-30).
+import re
+defined = set(re.findall(r'(?:function\s+|(?:const|let|var)\s+)(bs[A-Za-z0-9_]*)\b', pulse))
+called = set(re.findall(r'(?<![.\w\'"])(bs[A-Za-z0-9_]*)\s*\(', pulse))
+missing = sorted(called - defined)
+if missing:
+    print('Pulse calls Backstory functions that do not exist: ' + ', '.join(missing)); sys.exit(1)
 PY
 ```
