@@ -437,6 +437,25 @@ United). Wrong scope. What follows:
   a verdict tells the reader the conclusion before the evidence, which is the spin the reader assumes.
   Widening the history does that work instead. Not decided either way.
 
+**How per-story Backstory runs, decided with the editor 2026-10-28 to 2026-10-30.** Each choice made after
+trying the alternative on staging:
+- *No category page for readers.* The editor chose it from a mock of three options: readers see each story's
+  page; two stories in one category sit side by side and show their differences when opened. Old row URLs
+  keep resolving.
+- *Compose and edit in Pulse; GitHub makes only the first draft.* "I am ok to call browser from pulse. I would
+  like to keep github out of it." The first draft stays on GitHub because it is the code publish runs and its
+  link checks need a server; a second browser copy of it would drift.
+- *Staging and prod never meet.* Staging tests Pulse and front-end features; only prod Pulse publishes, from
+  prod's draft.
+- *Charts: prod's rule for this stage.* One trend line per category, the simple better-or-worse framing, shown
+  on each story's page. The per-story chart (T-0112) was built, used once, and parked: its one-page check
+  refused most real series.
+- *The Object Matrix takes only what the editor approves.* Asked whether everything that ships on a page
+  should graduate, the editor said "Only things I have approved." Approved primary sources join at publish;
+  news never does. The research ledger is bookkeeping, not a second library of record.
+- *Comparable cases only on the editor's direction.* Pointed research may return an event of the same kind
+  elsewhere, labelled. The automatic path still may not (the 2026-10-09 revert stands).
+
 ## Open questions, not defaults
 
 These are genuinely unresolved. Don't assume either way.

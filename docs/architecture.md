@@ -76,6 +76,49 @@ re-enable.
 
 ---
 
+## Backstory: draft, compose, publish (2026-10-30)
+
+Each story gets its own Backstory page, drafted and edited before publish. Tickets: T-0109 (draft), T-0110
+(per-story page), T-0111 (research and the matrix). Decisions: `docs/decisions.md`, 2026-10-28 and 2026-10-30.
+
+```
+  Pulse, Backstory tab: "Draft Backstory"
+        │  commits ntk-pulse/data/lineup-draft.json to the branch Pulse is served from
+        ▼     (live Pulse → main; staging Pulse → staging)
+  backstory-draft.yml   the first draft only, on copies of the live files:
+        │   build_pairings.py (classifier, new categories) → build_origins.py ("It starts in")
+        │   → backstory_draft.py make → commits ntk-pulse/data/backstory-draft.json
+        ▼
+  Pulse composes each story's page in the browser (bsxCompose: Haiku names the history, the library is
+  searched, Sonnet picks Beginnings and the case and writes each line; every line is checked), and saves it
+  into backstory-draft.json through the Contents API. Every edit after that (rerun, apply, approve,
+  not for this story, reject, research, outline) runs in Pulse the same way: no workflow run.
+  Research writes editorial/research-ledger.json (searched subjects, finds, waiting items, rejections).
+        │
+        ▼  Publish (live Pulse only)
+  pulse-publish.yml
+     backstory_draft.py apply   ships the draft if every story's bs_hash still matches it; otherwise the
+                                pairing and origin steps run as before and nothing composed ships
+     build_digest.py → build_backstory_pages.py   one static page per composed story: /backstory/s-<story id>/
+     graduate_finds.py → export_for_pulse.py      documents the editor approved join the Object Matrix
+                                                  (primary sources only); the pool is rebuilt
+```
+
+- **Fingerprints.** Pulse hashes each story's Backstory-relevant fields (`bs_hash`, with edits; `bs_text_hash`,
+  without). Python only compares them. A story whose text changed needs a new first draft; one whose edits
+  changed is recomposed in Pulse.
+- **The reader app** (`digest/index.html`, `bsrStoryRow`) draws a pairing that carries `composed` as the story's
+  own page, with the row page, object pages and the category's trend line. `?draft` lays the branch's current
+  draft over the published file under a "not published" bar: `ntknews.org/backstory?draft=1`, or on staging
+  `…/ntknews-staging/digest/index.html?draft=1#backstory`.
+- **Staging never publishes.** Staging Pulse cannot publish; its drafts, ledger and edits live on the `staging`
+  branch, and a prod publish reads only `main`'s draft.
+- **Costs.** A first draft costs what the Backstory half of a publish costs; a publish that follows with
+  nothing changed does not spend it again. Composing is two small calls per story. Research and outline lines
+  are one web-search call each, and a subject or line is not searched twice in 30 days.
+
+---
+
 ## The pipeline scripts
 
 All in `ntk-pulse/`.
