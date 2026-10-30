@@ -79,10 +79,15 @@ def research(api_key, story, scope, thin, have, ledger, rejected, searcher=None,
     """Returns (finds_added, note). `have` is the story's Beginnings, so the search does not repeat them.
     `direction` is the editor's own pointer for this search; it makes a subject of its own, so a directed search
     is not refused because the page's subject was researched, but the same direction is not run twice."""
-    key = subject_key(scope + " " + direction) if direction else subject_key(scope)
+    # A pointed search is keyed on the editor's words alone: the page's scope is reworded on every recompose, and
+    # keyed on both, the same direction searched again on the next run (2026-10-30).
+    key = ("direction: " + subject_key(direction)) if direction else subject_key(scope)
     if not key:
         return [], "no subject to research"
-    e = ledger["subjects"].get(key) or (None if direction else same_subject(key, ledger))
+    e = ledger["subjects"].get(key) or (
+        next((v for v in ledger["subjects"].values()             # saved under the old key, with the direction
+              if v.get("direction") and subject_key(v["direction"]) == subject_key(direction) and recent(v)), None)
+        if direction else same_subject(key, ledger))
     if e and recent(e):
         return [], f"already researched on {e['searched_at'][:10]} (for \"{e.get('for', '')[:50]}\"); its {len(e.get('finds') or [])} find(s) are in the library"
     vetoed = []
