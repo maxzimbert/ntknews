@@ -76,8 +76,14 @@ Publish carries each story's composed page on its pairing (`todays_pairings[].co
 Tested: mock runs on the editor's real staging draft, a one-story rerun that removed an object and left the
 other five untouched, publish shipping the rerun draft with all six pages; Pulse's controls in a local copy;
 the fingerprint Pulse computes matched the one the editor's own browser computed for all six stories.
-Not built: the reader's app does not draw `composed` yet. Until it does, a published story still shows its
-category's page; the composed page is visible in Pulse only. Not run: a real (non-mock) compose, which
+Reader side, built 2026-10-30: the app draws a pairing that carries `composed` as the story's own page at
+`/backstory/s-<story id>/` (`bsrStoryRow` in `digest/index.html`), and `editorial/build_backstory_pages.py`
+builds its static twin and object pages from the same shape (`story_row`; keep the two in step). The card shows
+the page's scope, "It starts in" and "We are here"; the page reuses the row page, object pages and chart.
+`?draft` on the app lays the branch's current draft over the published file, read-only, under a "not
+published" bar, so the editor reads a draft as readers will get it (Pulse: "open in the reader app").
+Checked on the editor's real staging draft: seven story pages in the app, an object page, no console errors,
+and the static builder wrote all seven pages and their object pages. Not run: a real (non-mock) compose, which
 needs the Anthropic key in Actions and so waits for the editor's next Draft Backstory on staging.
 Open, for the editor: the library includes approved candidates (35, among them the 1948 Declaration of the
 Establishment of the State of Israel and the Oslo Declaration), as `categories.validate` already does. A
