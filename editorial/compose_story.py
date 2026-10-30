@@ -294,7 +294,7 @@ def compose(api_key, story, pairing, row, lib, edits, rejected, mock=False):
     case = [{"object_id": i, "year": lib[i]["year"][:4], "title": lib[i]["title"], "author": lib[i]["author"],
              "source_url": lib[i]["url"], "about": lib[i]["about"], "kind": lib[i]["kind"],
              **({"source_kind": "news"} if lib[i].get("source_kind") == "news" else {})}
-            for i in [b["object_id"] for b in begs] + later]
+            for i in dict.fromkeys([b["object_id"] for b in begs] + later)]   # once each, in order
     starts = {"year": origin.get("year"), "line": origin.get("line"), "from": "retrieval"} if origin_ok else None
     so = r.get("starts_object")
     if so and so in chosen:
