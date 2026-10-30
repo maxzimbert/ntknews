@@ -3448,7 +3448,8 @@ function bsrStoryRow(p, row, when){
 
 // The published file, or with ?draft in the address, the editor's current draft laid over it so the draft can be
 // read exactly as a reader will get it, before it is published. Read-only: nothing here writes anything.
-var BSR_DRAFT_VIEW = /[?&]draft\b/.test(location.search);
+// the staging copy rewrites its address on load and can carry ?draft after the hash, so look in both
+var BSR_DRAFT_VIEW = /[?&]draft\b/.test(location.search + location.hash);
 function bsrLoadData(){
   var pub = fetch(NTK_BASE + '/digest/data/backstory.json?t=' + Date.now()).then(function(r){ if (!r.ok) throw 0; return r.json(); });
   if (!BSR_DRAFT_VIEW) return pub;
