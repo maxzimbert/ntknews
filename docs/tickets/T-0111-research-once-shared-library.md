@@ -72,6 +72,19 @@ ledger run in the browser (`bsxResearch`, `bsxApprove`, `bsxLedger` in `ntk-puls
 existing `verifyMilestone` and text rules. `editorial/research_story.py` is retired. The ledger is still
 `editorial/research-ledger.json`, written by Pulse through GitHub's API.
 
+**The Object Matrix, 2026-10-30, the editor's rule: "Only things I have approved."** The matrix is the source of
+truth; the research ledger is bookkeeping (what was searched and when, what waits, what was rejected) plus the
+finds that passed the checks, usable on pages but not in the matrix. Approving (a vetoed find, an outline
+candidate, a lead with the editor's own link, or "approve for the matrix" on a find) marks it
+`approved_by: "editor"`. At publish `editorial/graduate_finds.py` adds each approved primary source to the
+matrix spreadsheet (NTK Row = the story's fixed category, or blank), records it in
+`editorial/matrix-additions.json` (never the ledger, which Pulse may be writing at the same moment), and
+`export_for_pulse.py` rebuilds the pool. A news report can be approved onto a page and never enters the
+matrix. `build_backstory.load_objects` now keeps a linked row with no NTK Row (none existed before), so such
+documents reach the lens Beginnings and the pool. Tested on copies: three approved documents added, a news
+report skipped, a second run added nothing, the loader read the new rows. New rows are not link-checked at
+publish; `check_links.py` covers them on its next run.
+
 ## Why
 
 The editor's constraint, 2026-10-28: do not spend on the same web searches over and over. Today's code
