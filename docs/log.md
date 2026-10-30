@@ -12,6 +12,26 @@ stranger.
 
 ---
 
+## 2026-10-30 — four ways the draft loop lost work without saying so
+
+Building the pre-publish draft on staging, each of these looked to the editor like "nothing happened":
+a repeated request saved an identical file, GitHub recorded an empty commit, and the path-filtered workflow
+never ran; `cancel-in-progress` dropped a research run when a second click arrived seconds later, and the two
+then raced to commit the same files; research keyed on the page's scope searched again after every recompose,
+because the scope is reworded each time; and two Alphabet earnings releases cut to the same 60-character id
+became one document listed twice. Each was found only by reading the run logs and the committed files. A
+request that can be identical must carry something that is not (a timestamp); a key must be what the editor
+typed, not what a model wrote; and an id needs more than a truncated title.
+
+## 2026-10-29 — a chart check that refused the honest chart
+
+The per-story chart required both figures, then and now, on one original-source page in one cited passage.
+Israel's Arab turnout runs to 2022 at the Israel Democracy Institute and the 2026 figure exists only in news
+reports, so no chart could be drawn for a story the history plainly supported. A check strict enough to keep
+out made-up numbers also kept out most real series. The editor chose prod's simpler per-category rule for now.
+
+---
+
 ## 2026-10-26 — "kept, not added yet" read as "added at publish", and a working button read as dead
 
 Testing T-0091, the editor assumed objects ticked under a Lineup story would be added to their category at

@@ -19,6 +19,20 @@ session's summary said — check `rot.sh`.
 
 ---
 
+## Session memo, 2026-10-28 to 2026-10-30 — per-story Backstory
+
+Written as the work was merged; not a full re-verification of this file. What changed, and what to watch:
+
+- **Shipped:** T-0109 (draft before publish), T-0110 (each story's own page, composed and edited in Pulse,
+  drawn by the reader app), T-0111 (research once, the vetoed list, outline search, approval into the Object
+  Matrix), T-0102 closed, T-0085 folded into the per-story section, T-0112 parked. `docs/architecture.md`,
+  "Backstory: draft, compose, publish" has the flow.
+- **Watch on the first real editions:** the browser composer had only run against stand-in replies; read the
+  previews before publishing. If a compose fails, Pulse's status line says why and the buttons work again.
+- **Staging** is `main` plus whatever branch is being tried. It never publishes; its drafts live on the
+  `staging` branch. Reset it to `main` (as on 2026-10-28) when it drifts; the old one is kept as a branch.
+- **Pre-existing, not touched:** T-0016's check fails on `main` (expertise keyed to a section).
+
 ## Session memo, 2026-10-01 to 2026-10-05 — for whoever picks this up next
 
 ### What shipped (all on main, all live)

@@ -55,10 +55,13 @@ the app and only two are.
 |---|---|
 | `digest/index.html` | **The app.** Today / Digest / Backstory / Profile, real URL routing. ~4,000 lines, one file. |
 | `index.html` | Marketing landing page at `ntknews.org/`. Its hero mirrors the current lead story. |
-| `ntk-pulse/pulse.html` | **The CMS.** Where the editor certifies stories, generates the four sections, and publishes. Browser-only, ~204KB. |
+| `ntk-pulse/pulse.html` | **The CMS.** Where the editor certifies stories, generates the four sections, and publishes. Browser-only. Also composes and edits each story's Backstory page and runs Backstory research, in the browser (T-0110, T-0111). |
 | `ntk-pulse/*.py` | The pipeline. See `docs/architecture.md`. |
-| `editorial/NTK_Backstory_Object_Matrix.xlsx` | The Backstory's source of truth for objects: 384 primary documents, each tagged to a row and sub-genre, 334 with a verified link in column O. Candidates are staged in `NTK_Backstory_Candidates.xlsx`, approved by the editor, then copied in. |
-| `editorial/build_backstory.py` | Builds `digest/data/backstory.json` from the matrix: eligible objects (linked, not dead), Beginnings, The case. Not run in CI. |
+| `editorial/NTK_Backstory_Object_Matrix.xlsx` | The Backstory's source of truth for objects: 384 primary documents (2026-10-30), each tagged to a row and sub-genre, 334 with a verified link in column O. Candidates are staged in `NTK_Backstory_Candidates.xlsx`, approved by the editor, then copied in. Documents the editor approves in Pulse join at publish (`graduate_finds.py`; NTK Row may be blank for one outside the fixed rows). |
+| `.github/workflows/backstory-draft.yml`, `editorial/backstory_draft.py` | The Backstory draft: the first draft of a Lineup, on copies (T-0109). `apply` ships it at publish when no story changed. See `docs/architecture.md`, "Backstory: draft, compose, publish". |
+| `editorial/graduate_finds.py` | At publish, adds the documents the editor approved to the Object Matrix (primary sources only) and records them in `editorial/matrix-additions.json`. |
+| `editorial/research-ledger.json` | Written by Pulse: subjects searched and when, research finds, what waits for the editor, rejections. Bookkeeping, not a library of record. |
+| `editorial/build_backstory.py` | Builds `digest/data/backstory.json` from the matrix: eligible objects (linked, not dead), Beginnings, The case. Not run in CI. `build_backstory_pages.py` writes the static pages, including one per composed story at `/backstory/s-<id>/`. |
 | `editorial/check_links.py`, `merge_object_notes.py` | The link checker (writes `object-links-health.json`) and the validator for generated Backstory text (`object-notes.json`). |
 | `share-cards/` | Share-image templates and renderer. The publish build renders each story's link-preview card (`share/og.jpg`, T-0107) and the app's edition card (`<date>/share/og-edition.jpg`, T-0108) with it; the rest of the package is not wired yet. |
 | `netlify.toml` | Routing. Five rules, all load-bearing. |
