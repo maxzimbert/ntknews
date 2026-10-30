@@ -67,6 +67,11 @@ for, and got:
 - A reworded page scope counts as the same subject (half the words shared), so recomposing no longer
   draws a second search, and runs queue instead of cancelling one another (T-0109).
 
+**Moved into Pulse 2026-10-30, by the editor's call** ("keep GitHub out of it"): research, approvals and the
+ledger run in the browser (`bsxResearch`, `bsxApprove`, `bsxLedger` in `ntk-pulse/pulse.html`), using Pulse's
+existing `verifyMilestone` and text rules. `editorial/research_story.py` is retired. The ledger is still
+`editorial/research-ledger.json`, written by Pulse through GitHub's API.
+
 ## Why
 
 The editor's constraint, 2026-10-28: do not spend on the same web searches over and over. Today's code
@@ -90,19 +95,25 @@ import json, os, sys
 bad = []
 if not os.path.exists('editorial/research-ledger.json'):
     bad.append('no research ledger, so nothing records what was already searched')
-# A find in the ledger is a library document for every story, and a rejected one is not.
-sys.path.insert(0, 'editorial')
+# A find in the ledger is a library document for every story, and a rejected one is not (Pulse's composer).
+import subprocess
+js = r"""
+const s=require('fs').readFileSync('ntk-pulse/pulse.html','utf8');
+const grab=n=>{const i=s.indexOf('function '+n+'('); return s.slice(i, s.indexOf('\n}\n', i)+2);};
+const lib=new Function('POOL','BSR_PUBLISHED','PUBCATS','catSourceKind', grab('bsxLibrary')+'; return bsxLibrary;')(
+  {objects:[]}, {rows:[]}, [], ()=>'');
+const led={finds:[{id:'custom-test-find',title:'T',year:'1958',url:'https://example.gov/t',researched_for:'test'}],rejected:[]};
+const a='custom-test-find' in lib({stories:[]}, led); led.rejected=['custom-test-find'];
+const b='custom-test-find' in lib({stories:[]}, led); console.log(JSON.stringify([a,b]));
+"""
 try:
-    import compose_story as cs
-    led = {'finds': [{'id': 'custom-test-find', 'title': 'T', 'year': '1958', 'url': 'https://example.gov/t',
-                      'researched_for': 'test'}], 'rejected': [], 'subjects': {}, 'series': []}
-    if 'custom-test-find' not in cs.load_library(cs.POOL, cs.BACKSTORY, cs.PROVISIONAL, led):
+    a, b = json.loads(subprocess.run(['node', '-e', js], capture_output=True, text=True).stdout)
+    if not a:
         bad.append('a research find does not reach the library other stories compose from')
-    led['rejected'] = ['custom-test-find']
-    if 'custom-test-find' in cs.load_library(cs.POOL, cs.BACKSTORY, cs.PROVISIONAL, led):
+    if b:
         bad.append('a rejected find is still in the library')
 except Exception as e:
-    bad.append(f'the composer cannot load a ledger ({e})')
+    bad.append(f'Pulse cannot load a ledger into its library ({e})')
 src = open('editorial/compose_category.py', encoding='utf-8').read()
 if 'always asked, not only when the matrix is thin' in src:
     bad.append('compose_category.py still searches whether or not the library is thin')

@@ -53,26 +53,18 @@ jobs:
           # This run's own request, from the commit that started it, even when later requests have landed since.
           L=$RUNNER_TEMP/lineup-draft.json
           git show ${{ github.sha }}:ntk-pulse/data/lineup-draft.json > $L
-          # T-0110: a section rerun from Pulse names its stories in compose_only. Those stories are composed
-          # again from the last draft's pairings, with the editor's edits; nothing else is chosen or paid for.
-          ONLY=$(python -c "import json;print(','.join(json.load(open('$L')).get('compose_only') or []))")
-          if [ -n "$ONLY" ] && [ -f ntk-pulse/data/backstory-draft.json ]; then
-            python editorial/compose_story.py --draft ntk-pulse/data/backstory-draft.json --lineup $L --only "$ONLY"
-          else
-            python -m pip install --quiet openpyxl     # the lens Beginnings read the Object Matrix; edit-only runs do not
-            W=$RUNNER_TEMP/draft; mkdir -p $W
-            cp digest/data/backstory.json $W/backstory.json
-            cp ntk-pulse/data/provisional-rows.json $W/provisional-rows.json
-            python editorial/build_pairings.py --lineup $L --backstory $W/backstory.json --provisional $W/provisional-rows.json
-            python editorial/build_origins.py --apply --lineup $L \
-              --pairings $W/backstory.json --provisional $W/provisional-rows.json --out $W/origins.json
-            python editorial/backstory_draft.py make --lineup $L \
-              --backstory $W/backstory.json --provisional $W/provisional-rows.json --origins $W/origins.json \
-              --branch "${{ github.ref_name }}"
-            # T-0110: each story's own page, from the whole library, including what this run's categories found
-            python editorial/compose_story.py --draft ntk-pulse/data/backstory-draft.json --lineup $L \
-              --backstory $W/backstory.json --provisional $W/provisional-rows.json
-          fi
+          # The first draft only: classifier, categories, origins, the same code publish runs. Each story's own page
+          # is composed in Pulse, in the browser, and every edit after that is saved by Pulse (T-0110, 2026-10-30).
+          python -m pip install --quiet openpyxl     # the lens Beginnings read the Object Matrix
+          W=$RUNNER_TEMP/draft; mkdir -p $W
+          cp digest/data/backstory.json $W/backstory.json
+          cp ntk-pulse/data/provisional-rows.json $W/provisional-rows.json
+          python editorial/build_pairings.py --lineup $L --backstory $W/backstory.json --provisional $W/provisional-rows.json
+          python editorial/build_origins.py --apply --lineup $L \
+            --pairings $W/backstory.json --provisional $W/provisional-rows.json --out $W/origins.json
+          python editorial/backstory_draft.py make --lineup $L \
+            --backstory $W/backstory.json --provisional $W/provisional-rows.json --origins $W/origins.json \
+            --branch "${{ github.ref_name }}"
           # the steps above must not have written a live file
           git diff --quiet -- digest/ ntk-pulse/data/provisional-rows.json editorial/origins.json \
             || { echo "a draft step wrote a live file"; git diff --stat; exit 1; }
@@ -82,8 +74,6 @@ jobs:
           git config user.name "ntk-draft-bot"
           git config user.email "publish@ntknews.org"
           git add ntk-pulse/data/backstory-draft.json
-          # T-0111, T-0112: checked series and searched subjects, kept so nothing is searched twice
-          if [ -f editorial/research-ledger.json ]; then git add editorial/research-ledger.json; fi
           git diff --cached --quiet && exit 0
           git commit -m "backstory draft: $(date -u +%Y-%m-%dT%H:%MZ)"
           B="${{ github.ref_name }}"
