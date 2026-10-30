@@ -440,6 +440,8 @@ def main():
         elif prev.get("research"):
             c["research"] = prev["research"]
         d["composed"] = c
+        # the edits this page already includes, so Pulse can tell a text-only edit it may write in place (T-0110)
+        d["bs_edits_applied"] = s.get("bs_edits") or {}
         if only:
             d["bs_hash"] = s.get("bs_hash")
             d["bs_text_hash"] = s.get("bs_text_hash")
