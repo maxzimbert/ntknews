@@ -361,6 +361,38 @@ def build_object_page(row, i):
     return page
 
 
+def story_row(p, row, when):
+    """T-0110: a story's own Backstory page (todays_pairings[].composed), shaped like a row so render_held and
+    the object pages draw it. Kept in step with bsrStoryRow in digest/index.html. Address: /backstory/s-<id>/."""
+    c, st = p["composed"], p["composed"].get("starts") or {}
+    begs = [dict(year=str(b["year"]), line=b["line"], object_id=b.get("object_id"),
+                 **({"mark": "start"} if st.get("object_id") and st["object_id"] == b.get("object_id") else {}))
+            for b in c.get("beginnings") or []]
+    if st.get("year") and not st.get("object_id"):
+        begs.append({"year": str(st["year"]), "line": str(st.get("line") or "").rstrip(".") + ".", "mark": "start"})
+    begs.sort(key=lambda b: b["year"])
+    v, ind = c.get("visual") or {}, None
+    vals = v.get("values") or []
+    if v.get("status") == "drawn" and len(vals) == 2 and all(x.get("checked") for x in vals):
+        ind = {"label": v.get("label"), "then_value": vals[0]["value"], "then_year": vals[0]["year"],
+               "now_value": vals[1]["value"], "direction": v.get("direction") or "", "source": v.get("source") or "",
+               "as_of": v.get("as_of"), "verified": True}
+
+    def host(u):
+        h = urlparse(u or "").hostname or ""
+        return h[4:] if h.startswith("www.") else h
+    return {"id": f"s-{p['story_id']}", "title": c.get("scope") or row["title"], "milestone": p.get("headline") or "",
+            "stratum": "story", "beginnings": begs, "start_line": str(c.get("here") or "").rstrip("."),
+            "start_date": str(when or date.today().isoformat())[:10], "indicator": ind, "stakes": "",
+            "objects": [{"title": o["title"], "author": o.get("author") or "", "year": o["year"], "about": o.get("about") or "",
+                         "source": host(o.get("source_url")), "source_url": o.get("source_url")} for o in c.get("case") or []]}
+
+
+def build_story_page(srow, p, today):
+    pairing = dict(p, row=srow["id"])
+    return build_page(srow, [pairing], today)
+
+
 def build_page(row, pairings, today):
     # T-0099: a live-conflict page keeps its day count on top, and shows its history under it once it has one
     body_sections = ((render_fire(row, today) + (render_held(row) if (row.get("beginnings") or row.get("stakes")) else ""))
@@ -397,6 +429,22 @@ def main():
             od = row_dir / "objects" / str(i + 1)
             od.mkdir(parents=True, exist_ok=True)
             (od / "index.html").write_text(build_object_page(row, i))
+            written += 1
+
+    # T-0110: each story with a composed page gets a page of its own, and its objects theirs
+    by_id = {r["id"]: r for r in rows}
+    for p in pairings:
+        if not (p.get("composed") and not p["composed"].get("error") and p.get("row") in by_id):
+            continue
+        srow = story_row(p, by_id[p["row"]], data.get("pairings_generated"))
+        d = OUT_DIR / srow["id"]
+        d.mkdir(parents=True, exist_ok=True)
+        (d / "index.html").write_text(build_story_page(srow, p, today))
+        written += 1
+        for i in range(len(srow["objects"])):
+            od = d / "objects" / str(i + 1)
+            od.mkdir(parents=True, exist_ok=True)
+            (od / "index.html").write_text(build_object_page(srow, i))
             written += 1
 
     # T-0099: a category merged into another keeps its address; the page forwards to the merged one

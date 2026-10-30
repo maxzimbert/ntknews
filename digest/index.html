@@ -3391,8 +3391,7 @@ function fetchBackstory(){
   // library (inventory, edited a few times a year) and todays_pairings[] is
   // what actually renders — one entry per digest story, pairing it to a row.
   // A conflict untouched by today's news does not appear, by design.
-  fetch(NTK_BASE + '/digest/data/backstory.json?t=' + Date.now())
-    .then(function(r){ if (!r.ok) throw 0; return r.json(); })
+  bsrLoadData()
     .then(function(d){
       var rows = (d && d.rows) || [];
       var byId = {};
@@ -3401,6 +3400,8 @@ function fetchBackstory(){
       BSR_DATA = pairings.map(function(p){
         var row = byId[p.row];
         if (!row) return null;               // row retired or renamed since publish
+        // T-0110: a story with its own composed page reads as that page, not as its category's
+        if (p.composed && !p.composed.error) return bsrStoryRow(p, row, d.pairings_generated);
         var merged = Object.assign({}, row, p);
         merged.pairline = p.line || '';
         return merged;
@@ -3414,6 +3415,60 @@ function fetchBackstory(){
       renderBackstoryTab();
     })
     .catch(function(){ BSR_DATA = []; renderBackstoryTab(); });
+}
+
+// T-0110: each story's own Backstory page, composed in Pulse's draft and carried on its pairing at publish
+// (todays_pairings[].composed). It is shaped like a row so the card, the page, the object pages and the
+// chart are drawn by the same code as every other Backstory page; editorial/build_backstory_pages.py
+// builds the static twin from the same shape (story_row). Address: /backstory/s-<story id>/.
+function bsrStoryRow(p, row, when){
+  var c = p.composed, st = c.starts || {};
+  var begs = (c.beginnings || []).map(function(b){
+    return { year: b.year, line: b.line, object_id: b.object_id, mark: st.object_id && st.object_id === b.object_id ? 'start' : undefined };
+  });
+  if (st.year && !st.object_id) begs.push({ year: String(st.year), line: String(st.line || '').replace(/\.$/, '') + '.', mark: 'start' });
+  begs.sort(function(a, b){ return String(a.year).localeCompare(String(b.year)); });
+  var v = c.visual, ind = null;
+  if (v && v.status === 'drawn' && (v.values || []).length === 2 && v.values.every(function(x){ return x.checked; }))
+    ind = { label: v.label, then_value: v.values[0].value, then_year: v.values[0].year, now_value: v.values[1].value,
+            direction: v.direction, source: v.source, as_of: v.as_of, verified: true };
+  var host = function(u){ try { return new URL(u).hostname.replace(/^www\./, ''); } catch (e) { return ''; } };
+  return {
+    id: 's-' + p.story_id, story_id: p.story_id, headline: p.headline, story_permalink: p.story_permalink,
+    title: c.scope || row.title, milestone: p.headline || '', stratum: 'story', category: row.title,
+    pairline: c.here || p.line || '',
+    origin: st.year ? { status: 'retrieved', year: st.year, line: st.line } : null,
+    // the page closes on "We are here", which the row page draws from start_line (adding its own full stop)
+    beginnings: begs, start_line: String(c.here || '').replace(/\.$/, ''), start_date: String(when || new Date().toISOString()).slice(0, 10),   // the year "We are here" is dated by: the publish
+    objects: (c.case || []).map(function(o){ return { title: o.title, author: o.author, year: o.year, about: o.about,
+      source: host(o.source_url), source_url: o.source_url, source_kind: o.source_kind }; }),
+    indicator: ind, stakes: ''
+  };
+}
+
+// The published file, or with ?draft in the address, the editor's current draft laid over it so the draft can be
+// read exactly as a reader will get it, before it is published. Read-only: nothing here writes anything.
+var BSR_DRAFT_VIEW = /[?&]draft\b/.test(location.search);
+function bsrLoadData(){
+  var pub = fetch(NTK_BASE + '/digest/data/backstory.json?t=' + Date.now()).then(function(r){ if (!r.ok) throw 0; return r.json(); });
+  if (!BSR_DRAFT_VIEW) return pub;
+  var branch = NTK_BASE ? 'staging' : 'main';
+  var draft = fetch('https://api.github.com/repos/maxzimbert/ntknews/contents/ntk-pulse/data/backstory-draft.json?ref=' + branch,
+                    { headers: { 'Accept': 'application/vnd.github.raw+json' }, cache: 'no-store' })
+    .then(function(r){ if (!r.ok) throw 0; return r.json(); });
+  return Promise.all([pub, draft]).then(function(x){
+    var d = x[0], dr = x[1], ship = dr.ship || {};
+    var composed = {};
+    (dr.stories || []).forEach(function(s){ if (s.composed) composed[s.story_id] = s.composed; });
+    d.rows = (d.rows || []).filter(function(r){ return r.stratum !== 'provisional'; }).concat(ship.provisional_rows || []);
+    d.todays_pairings = (ship.todays_pairings || []).map(function(p){ return Object.assign({}, p, composed[p.story_id] ? { composed: composed[p.story_id] } : {}); });
+    var bar = document.getElementById('bsrDraftBar');
+    if (!bar){ bar = document.createElement('div'); bar.id = 'bsrDraftBar';
+      bar.style.cssText = 'position:sticky;top:0;z-index:5;background:#DC6550;color:#fff;font:600 13px Overpass,sans-serif;padding:8px 16px;text-align:center';
+      var list = document.getElementById('bsrList'); if (list && list.parentNode) list.parentNode.insertBefore(bar, list); }
+    bar.textContent = 'Draft of ' + new Date(dr.generated).toLocaleString() + ', as readers will get it. Not published.';
+    return d;
+  });
 }
 
 /* BSR-CARD:BEGIN  (Pulse extracts this block; keep it pure: no DOM lookups, no globals but Date) */

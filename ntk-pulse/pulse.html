@@ -4437,6 +4437,12 @@ function bscResearchHtml(s, c){
     <div style="display:flex;gap:6px;margin-top:4px;flex-wrap:wrap"><input class="bsc-dir" value="${esc(e.research_direction||'')}" placeholder="e.g. other hacks of government departments: OPM, FBI, and intrusions by Russia, China, Iran" style="flex:1;min-width:260px">
     <button class="mini go bsc-research-dir" title="one web-search call; comparable cases are allowed and labelled; the same direction is not searched twice in 30 days">research this (1 call)</button></div>`;
 }
+// The real reader app, showing this branch's draft as readers will get it once published (digest/index.html,
+// ?draft). Staging Pulse opens the staging app; the live Pulse opens ntknews.org.
+function bscReaderUrl(){
+  return pulseBranch(location) === 'staging' ? 'https://maxzimbert.github.io/ntknews-staging/digest/index.html?draft=1#backstory'
+    : 'https://ntknews.org/backstory?draft=1';
+}
 function bscComposedHtml(s, d){
   const c = d.composed, p = d.pairing, e = bsEdits(s), off = new Set(e.off||[]);
   const starts = c.starts || {};
@@ -4456,6 +4462,7 @@ function bscComposedHtml(s, d){
   return `<div class="bsr-prev bsc" data-key="${esc(s.key)}" style="flex-basis:100%;margin:6px 0 2px 26px;padding:8px 10px;border:1px solid var(--ink);background:#faf8f3">
     <div style="font-size:11px;color:var(--dim);margin-bottom:6px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">PREVIEW &middot; this story's own Backstory, from the draft of ${esc(rel(BSR_DRAFT.generated))} ago
       ${pend?`<span class="chip" style="background:var(--warn);color:#fff">your edits are not in the draft yet</span><button class="mini go bsc-apply">apply edits</button>`:''}
+      <a class="mini" href="${esc(bscReaderUrl())}" target="_blank" rel="noopener" style="text-decoration:none;border:1px solid var(--ink);padding:2px 8px">open in the reader app</a>
       <button class="mini bsr-prev-close">close</button></div>
     ${bsrStaleNote(d)}
     ${BSR_DRAFT_STATE?`<div style="padding:5px 8px;margin-bottom:6px;border:1px solid var(--ink);font-size:12.5px"><b>${esc(BSR_DRAFT_STATE)}</b></div>`:''}
