@@ -35,6 +35,11 @@ def load_ledger(path=LEDGER):
     d = json.loads(p.read_text()) if p.exists() else {}
     for k, v in (("subjects", {}), ("finds", []), ("series", []), ("rejected", []), ("vetoed", [])):
         d.setdefault(k, v)
+    seen = {}                       # two documents saved under one title-only id before CC.find_id (2026-10-30)
+    for f in d["finds"] + d["vetoed"]:
+        if f["id"] in seen and seen[f["id"]] != f.get("url"):
+            f["id"] = CC.find_id(f.get("title", ""), f.get("year"), f.get("url", ""))
+        seen.setdefault(f["id"], f.get("url"))
     return d
 
 

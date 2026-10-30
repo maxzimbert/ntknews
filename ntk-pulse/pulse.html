@@ -4449,7 +4449,7 @@ function bscComposedHtml(s, d){
       <div style="flex:1;min-width:320px;max-width:620px">
         ${sec('WE ARE HERE', e.here?'your line':c.here_by==='model, nudged'?'rewritten to your nudge':'written for this story', `<div style="font:15px Georgia,serif;margin-top:4px">${esc(c.here)}</div>
           ${c.here_vetoed&&!e.here?`<div style="margin-top:6px;padding:6px 8px;background:#fbe8d0;font-size:12.5px">Your nudge produced: <span style="font:14px Georgia,serif">“${esc(c.here_vetoed.line)}”</span><div style="color:var(--stale);font-size:11.5px">vetoed: ${esc(c.here_vetoed.why)}</div><button class="mini bsc-here-use" style="margin-top:4px">use it anyway</button></div>`:''}
-          <div style="display:flex;gap:6px;margin-top:6px"><input class="bsc-here" value="${esc(e.here||'')}" placeholder="or write it yourself" style="flex:1"><button class="mini bsc-here-save">keep mine</button></div>${bscNudge(s,'here',false)}`)}
+          <div style="display:flex;gap:6px;margin-top:6px"><input class="bsc-here" value="${esc(e.here||'')}" placeholder="or write it yourself" style="flex:1"><button class="mini bsc-here-save">keep mine</button></div>${bscNudge(s,'here',false)}${e.here?'<div style="font-size:11px;color:var(--dim);margin-top:4px">Your own line is in place. Rerun replaces it with a rewrite to your nudge.</div>':''}`)}
         ${sec('IT STARTS IN '+esc(starts.year||'?'), starts.from==='editor nudge'?'moved by your nudge':starts.from==='composer'?'chosen from the Beginnings: retrieval found no start':'found by retrieval', `<div style="font:14px Georgia,serif;margin-top:4px">${esc(starts.line||'')}</div>${bscNudge(s,'starts',true)}`)}
         ${sec('BEGINNINGS', (c.beginnings||[]).filter(b=>!off.has(b.object_id)).length+' kept', (c.beginnings||[]).map(b=>{ const o=Object.assign({}, (c.case||[]).find(x=>x.object_id===b.object_id)||{}, b); if (off.has(b.object_id)) seenOff.add(b.object_id); return bscItem(s, o, 'beg', off.has(b.object_id)); }).join('')+bscNudge(s,'beginnings',true))}
         ${sec('OBJECTS (THE CASE)', (c.case||[]).filter(o=>!off.has(o.object_id)).length+' kept', (c.case||[]).filter(o=>!seenOff.has(o.object_id)).map(o=>bscItem(s, o, 'obj', off.has(o.object_id))).join('')||'<i style="font-size:12px;color:var(--dim)">none</i>')}
@@ -4528,11 +4528,16 @@ function bscWire(el, s){
   const saveText = b => { bscBusy(b); saveLineup(); bscSaveText(s).then(ok => { bsrRefreshHashes(); render(); if (!ok) save(); }); };
   const hs = box.querySelector('.bsc-here-save'); if (hs) hs.addEventListener('click', () => { const v = box.querySelector('.bsc-here').value.trim(); if (v) e.here = v; else delete e.here; saveText(hs); });
   box.querySelectorAll('.bsc-nudge').forEach(inp => inp.addEventListener('change', () => { e.nudge = Object.assign({}, e.nudge); const v = inp.value.trim(); if (v) e.nudge[inp.dataset.sec] = v; else delete e.nudge[inp.dataset.sec]; save(); }));
-  box.querySelectorAll('.bsc-rerun').forEach(b => b.addEventListener('click', () => { bscBusy(b); const inp = box.querySelector(`.bsc-nudge[data-sec="${b.dataset.sec}"]`); if (inp){ e.nudge = Object.assign({}, e.nudge); if (inp.value.trim()) e.nudge[b.dataset.sec] = inp.value.trim(); saveLineup(); } bsrRefreshHashes().then(apply); }));
+  box.querySelectorAll('.bsc-rerun').forEach(b => b.addEventListener('click', () => { bscBusy(b);
+    if (b.dataset.sec === 'here') delete e.here;          // the rewrite replaces your own line, which would otherwise win
+    const inp = box.querySelector(`.bsc-nudge[data-sec="${b.dataset.sec}"]`); if (inp){ e.nudge = Object.assign({}, e.nudge); if (inp.value.trim()) e.nudge[b.dataset.sec] = inp.value.trim(); saveLineup(); } bsrRefreshHashes().then(apply); }));
   const rs = box.querySelector('.bsc-research'); if (rs) rs.addEventListener('click', () => { bscBusy(rs); bsrRefreshHashes().then(() => {
     if (!(bsrDraftFor(s)||{}).textFresh){ alert('This story changed since the draft. Use Draft Backstory first.'); return; }
     draftBackstory([s.key], {research:[s.key]}); }); });
-  box.querySelectorAll('.bsc-approve').forEach(b => b.addEventListener('click', () => { e.approved = Array.from(new Set((e.approved||[]).concat([b.dataset.id]))); save(); }));
+  // Approving runs at once: queued behind a separate "apply edits" at the top of the preview, an approval looked
+  // like it did nothing (the editor, 2026-10-30).
+  box.querySelectorAll('.bsc-approve').forEach(b => b.addEventListener('click', () => {
+    e.approved = Array.from(new Set((e.approved||[]).concat([b.dataset.id]))); saveLineup(); bscBusy(b); bsrRefreshHashes().then(apply); }));
   box.querySelectorAll('.bsc-unapprove').forEach(a => a.addEventListener('click', ev => { ev.preventDefault(); e.approved = (e.approved||[]).filter(x => x !== a.dataset.id); save(); }));
   const rd = box.querySelector('.bsc-research-dir'); if (rd) rd.addEventListener('click', () => {
     const dir = box.querySelector('.bsc-dir').value.trim();

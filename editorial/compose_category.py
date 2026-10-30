@@ -171,6 +171,15 @@ def ties_ok(tie, text):
 _norm = lambda t: " ".join(re.sub(r"[^a-z0-9]+", " ", str(t).lower()).split())
 
 
+def find_id(title, year, url):
+    """A found document's id. The title alone collided: two Alphabet earnings releases, 2024 and 2025, cut to the
+    same 60 characters and became one document listed twice (2026-10-30). Year and a short hash of the link keep
+    two documents apart and the same document the same."""
+    import hashlib
+    return ("custom-" + re.sub(r"[^a-z0-9]+", "-", str(title).lower())[:48].strip("-") + f"-{year or 'n'}-"
+            + hashlib.sha1(str(url).strip().encode()).hexdigest()[:6])
+
+
 def find_milestones(api_key, model, story, title, contest, have, need, searcher=None, caller=None,
                     direction=None, vetoed=None):
     """Milestones in the history of this subject, each with a primary document, found by web search.
@@ -250,7 +259,7 @@ Rules: use only facts that the page states; the line and about may contain no nu
         if vetoed is None or not str(m.get("source_url") or "").startswith("http"):
             return
         t = str(m.get("title") or "").strip()
-        vetoed.append({"id": "custom-" + re.sub(r"[^a-z0-9]+", "-", t.lower())[:60], "title": t,
+        vetoed.append({"id": find_id(t, m.get("year"), m["source_url"]), "title": t,
                        "author": str(m.get("author") or "").strip(), "year": str(m.get("year") or ""),
                        "date": m.get("date") if re.fullmatch(r"\d{4}-\d\d-\d\d", str(m.get("date") or "")) else "",
                        "source": str(m.get("source") or "").strip(), "url": str(m["source_url"]).strip(),
@@ -262,7 +271,7 @@ Rules: use only facts that the page states; the line and about may contain no nu
     def accept(m):
         host = re.sub(r"^https?://([^/]+).*$", r"\1", m["source_url"]).lower()
         t = m["title"].strip()
-        out.append({"id": "custom-" + re.sub(r"[^a-z0-9]+", "-", t.lower())[:60], "title": t, "author": (m.get("author") or "").strip(),
+        out.append({"id": find_id(t, m["year"], m["source_url"]), "title": t, "author": (m.get("author") or "").strip(),
                     "year": str(m["year"]), "date": m.get("date") if re.fullmatch(r"\d{4}-\d\d-\d\d", str(m.get("date") or "")) else "",
                     "source": (m.get("source") or host).strip(), "url": m["source_url"].strip(), "found_by": "search",
                     "evidence_quote": m["evidence_quote"].strip(), "line": m["line"].strip(), "about": m["about"].strip(),
