@@ -20,8 +20,10 @@ them private, 4,582 blocks. Measured the same day:
   `ntk-pulse/data/arena-library.json`. On URL dates alone: 2,283 kept, 1,675 of them on a paywalled
   outlet; dropped 232 on hosts that are gone or only redirect (BuzzFeed News, apple.news, Twitter), 30
   refused hosts, 63 duplicates, 140 with no title, 1,684 with no date in the URL. `--fetch-dates`
-  reads the date from the page's own metadata for the last group and caches it in
-  `editorial/arena-dates.json`.
+  read the page's own metadata for that last group and dated 842 of them (cached in
+  `editorial/arena-dates.json`). A date later than the day the editor saved the item is wrong: 29
+  page-metadata dates were, and are dropped; a magazine issue date in the URL may run up to 45 days
+  ahead. **Result: 3,096 items, 1,842 of them paywalled.**
 - Pulse's composer chooses from `bsxLibrary()` (`ntk-pulse/pulse.html:4524`): matrix documents with a
   live link, approved candidates, objects categories hold, and research finds. `bsxShortlist()` scores
   that library against the story and sends the top 45 to Sonnet. Are.na items are not in it.
@@ -62,7 +64,7 @@ the shortlist already matches by the story's own terms), dating items by when th
 (that is when it was read, not written), and a reader-facing "from the editor's library" label (the
 editor, 2026-11-02: "they don't need something in that screen").
 
-Paywalls are the reader's cost. 1,675 of the 2,283 dated items are on metered or walled outlets. A
+Paywalls are the reader's cost. 1,842 of the 3,096 items are on metered or walled outlets. A
 reader who taps "View the primary document" on one of those may hit a wall, which cuts against the
 product's promise of closure. They are flagged rather than dropped, and the composer prefers a free
 item.
