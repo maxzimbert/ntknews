@@ -78,9 +78,10 @@ section, including what is removed.
 *Update, later 2026-11-02:* the rebuild is T-0114 (branch `T-0114-backstory-contract`, on staging, not on main).
 Done there: the composer fills all ten components from the story, with the row proposed and never shaping the
 page; the review screen (Direct the research, revise, edit words, remove, add to the Object Matrix); the chart
-sought automatically; approved-publisher news. Still to do on T-0114: counters and the retired fields off the
-reader app and static pages; publish shipping each built story (and the row trend lines) as built; removing the
-GitHub first-draft path; the ticket and its check.
+sought automatically; approved-publisher news; research results shown and addable; counters and the retired
+fields gone from the reader app and static pages; publish shipping each built story (and the row trend lines) as
+built, with nothing chosen at publish; the GitHub first-draft path removed. Ticket T-0114, status BUILT, its check
+passing on the branch. Not yet merged to main or run through a real publish.
 
 ---
 
