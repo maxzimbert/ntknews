@@ -3189,8 +3189,10 @@ async function sha256hex(text){
 // A rejection reaches the hash through the stories it touches: rejecting a document also marks it "off" on
 // every story whose drafted page uses it (bsrReject), so only those stories wait on their edits.
 async function bsHash(s, cats, withEdits){
-  const cat = s.backstory_row ? (cats.find(c => c.id === s.backstory_row) || null) : null;
-  const base = [s.key, s.headline||'', s.lede||'', s.truth||'', s.prob||'', s.poss||'', s.lies||'', s.backstory_row||'', cat];
+  // T-0114: exactly what the page is built from (headline, description, Truths), the row it is shelved on, and
+  // the editor's edits. Not the other sections and not the category's record: the row never shapes the page, and
+  // a trend line found for the row, or an edit to Lies, must not stop a built page from shipping.
+  const base = [s.key, s.headline||'', s.lede||'', s.truth||'', s.backstory_row||''];
   return sha256hex(JSON.stringify(withEdits ? base.concat([s.bs_edits||null]) : base));
 }
 async function bsWithHashes(stories){
@@ -5629,18 +5631,13 @@ function bsrTagControl(s){
 // Publish check for rows. A warning, not a block: the digest is the product
 // and docs/decisions.md keeps Backstory additive. Pure, so it can be tested.
 function rowPreflight(stories, cats){
-  const warn = [];
-  const unset = stories.filter(s => !s.backstory_row);
-  if (unset.length)
-    warn.push(unset.length + ' stor' + (unset.length === 1 ? 'y has' : 'ies have') +
-      ' no row set, so the classifier will pick: ' +
-      unset.map(s => '"' + String(s.headline || s.key).slice(0, 40) + '"').join(', '));
-  const sent = new Set((cats || []).map(c => c.id));
-  const known = new Set((typeof BSR_ROWS !== 'undefined' ? BSR_ROWS : []).map(r => r.id));
-  const orphan = stories.filter(s => s.backstory_row && s.backstory_row.indexOf('p-') === 0 && !sent.has(s.backstory_row) && !known.has(s.backstory_row));
-  if (orphan.length)
-    warn.push(orphan.length + ' stor' + (orphan.length === 1 ? 'y is' : 'ies are') + ' filed under a category that is still a draft, so the classifier will pick instead: ' +
-      orphan.map(s => '"' + String(s.headline || s.key).slice(0, 40) + '"').join(', ') + '. Approve it in the Backstory tab.');
+  // T-0114: a story ships the Backstory built for it in Pulse, or none. Say which will go without, before publish.
+  const warn = [], none = [], changed = [];
+  stories.forEach(s => { const d = (typeof bsrDraftFor === 'function') ? bsrDraftFor({key: s.key}) : null;
+    const name = '"' + String(s.headline || s.key).slice(0, 40) + '"';
+    if (!d || !d.composed || d.composed.v !== 2) none.push(name); else if (!d.fresh) changed.push(name); });
+  if (none.length) warn.push(none.length + ' stor' + (none.length === 1 ? 'y has' : 'ies have') + ' no Backstory built and will ship without one: ' + none.join(', '));
+  if (changed.length) warn.push(changed.length + ' stor' + (changed.length === 1 ? 'y' : 'ies') + ' changed after the Backstory was built and will ship without one unless rebuilt: ' + changed.join(', '));
   return warn;
 }
 

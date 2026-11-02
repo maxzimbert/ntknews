@@ -5,10 +5,9 @@ The Backstory draft (T-0109): the publish-time Backstory steps, run before publi
   make   after build_pairings.py and build_origins.py have run on COPIES of backstory.json and
          provisional-rows.json against Pulse's draft lineup, collect what they chose into
          ntk-pulse/data/backstory-draft.json. Live files are never touched.
-  apply  at publish, before those two steps. If every story in lineup-publish.json carries the same
-         bs_hash it carried in the draft, write the draft's results into the live files and report
-         used=true, so the workflow skips the two steps and nothing is chosen twice. Otherwise report
-         used=false and change nothing: publish chooses as it always has.
+  apply  at publish (T-0114, the contract): each story ships the page the editor built and reviewed in
+         Pulse, if its bs_hash still matches; a story not built, or changed since, ships no Backstory.
+         Nothing is chosen at publish.
 
 bs_hash is written by Pulse (one implementation, in JavaScript) over the fields that decide a story's
 Backstory: its text, the row the editor filed it under, and that category's record as Pulse sends it.
@@ -100,36 +99,49 @@ def matches(draft, lineup):
 
 
 def apply(args):
-    used = False
-    if not Path(args.draft).exists():
-        log("no Backstory draft; publish chooses as usual")
-    else:
-        draft, lineup = load(args.draft), load(args.lineup)
-        why = matches(draft, lineup)
-        if why:
-            log("Backstory draft not used, publish chooses again:\n  " + "\n  ".join(why))
-        else:
-            ship = draft["ship"]
-            bs = load(args.backstory)
-            bs["rows"] = [r for r in bs["rows"] if r.get("stratum") != "provisional"] + ship["provisional_rows"]
-            # T-0110: each story's own page, as composed and edited in the draft, travels on its pairing
-            composed = {d["story_id"]: d["composed"] for d in draft["stories"]
-                        if d.get("composed") and not d["composed"].get("error")}
-            for p in ship["todays_pairings"]:
-                if p["story_id"] in composed:
-                    p["composed"] = {k: v for k, v in composed[p["story_id"]].items()
-                                     if k not in ("notes", "usage", "shortlist", "model")}
-            bs["todays_pairings"] = ship["todays_pairings"]
-            bs["pairings_generated"] = ship["pairings_generated"]
-            dump(args.backstory, bs)
-            dump(args.provisional, ship["provisional_store"])
-            dump(args.origins, ship["origins"], indent=1)
-            used = True
-            log(f"Backstory draft of {draft.get('generated')} shipped: {len(ship['todays_pairings'])} pairings")
+    """T-0114, the contract: each story ships the Backstory built for it in Pulse, or none. A story ships when the
+    draft holds a page built to the contract (composed v2) and its bs_hash still matches the Lineup's; any other
+    story, unbuilt or changed since it was built, goes out with no Backstory. Nothing is chosen at publish.
+    The draft's trend lines for rows (ship.row_indicators) go onto the rows."""
+    lineup, bs = load(args.lineup), load(args.backstory)
+    draft = load(args.draft) if Path(args.draft).exists() else {"stories": [], "ship": {}}
+    ship = draft.get("ship") or {}
+    by = {d["story_id"]: d for d in draft.get("stories", [])}
+    pairs = {p["story_id"]: p for p in ship.get("todays_pairings", [])}
+    out, left = [], []
+    for st in lineup.get("stories", []):
+        k, d = st["key"], by.get(st["key"])
+        c = (d or {}).get("composed") or {}
+        if not d or c.get("v") != 2:
+            left.append(f"{k}: not built")
+            continue
+        if not st.get("bs_hash") or d.get("bs_hash") != st["bs_hash"]:
+            left.append(f"{k}: changed since it was built")
+            continue
+        p = dict(pairs.get(k) or d.get("pairing") or {})
+        if not p.get("row"):
+            left.append(f"{k}: no row")
+            continue
+        p["composed"] = {kk: v for kk, v in c.items() if kk not in ("notes", "usage", "shortlist", "model", "terms", "research_items", "problems")}
+        p["line"] = c.get("here") or p.get("line") or ""
+        out.append(p)
+    if ship.get("provisional_rows") is not None and out:
+        bs["rows"] = [r for r in bs["rows"] if r.get("stratum") != "provisional"] + ship["provisional_rows"]
+    for r in bs["rows"]:
+        ind = (ship.get("row_indicators") or {}).get(r["id"])
+        if ind:
+            r["indicator"], r["indicator_by"] = ind, "pulse"     # kept by build_backstory.py's carry()
+    bs["todays_pairings"] = out
+    bs["pairings_generated"] = ship.get("pairings_generated") or datetime.now(timezone.utc).isoformat(timespec="seconds")
+    dump(args.backstory, bs)
+    if out and ship.get("provisional_store"):
+        dump(args.provisional, ship["provisional_store"])
+    log(f"Backstory: {len(out)} of {len(lineup.get('stories', []))} stories ship a page"
+        + ("; without one:\n  " + "\n  ".join(left) if left else ""))
     if args.github_output:
         with open(args.github_output, "a") as f:
-            f.write(f"used={'true' if used else 'false'}\n")
-    print("used" if used else "not used")
+            f.write(f"shipped={len(out)}\n")
+    print(f"shipped {len(out)}")
 
 
 def main():
