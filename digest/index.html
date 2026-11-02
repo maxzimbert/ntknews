@@ -3431,7 +3431,8 @@ function bsrStoryRow(p, row, when){
   var host = function(u){ try { return new URL(u).hostname.replace(/^www\./, ''); } catch (e) { return ''; } };
   return {
     id: 's-' + p.story_id, story_id: p.story_id, headline: p.headline, story_permalink: p.story_permalink,
-    title: c.scope || row.title, milestone: p.headline || '', stratum: 'story', category: row.title,
+    // a live conflict (Gaza, Ukraine–Russia) keeps its day counter on the story's page: that is its chart (T-0113)
+    title: c.scope || row.title, milestone: p.headline || '', stratum: row.stratum === 'fire' ? 'fire' : 'story', fire_since: row.stratum === 'fire' ? row.start_date : null, category: row.title,
     pairline: c.here || p.line || '',
     origin: st.year ? { status: 'retrieved', year: st.year, line: st.line } : null,
     // the page closes on "We are here", which the row page draws from start_line (adding its own full stop)
@@ -3621,8 +3622,9 @@ function bpRowHtml(r){
   var h = '<div class="bp-bar"><button type="button" data-bp="back">← Backstory</button><div class="bp-bar-r">' + bpChipHtml(r) + '<button type="button" data-bp="share" aria-label="Share this backstory">Share</button></div></div>'
     + '<div class="bp-hd"><h1>' + escBsr(r.title) + '</h1><div class="bp-ms">' + escBsr(r.milestone || '') + '</div></div>';
   if (r.stratum === 'fire') {
-    h += '<section class="bp-sec" style="text-align:center"><div style="font:700 34px Overpass,sans-serif">' + bsrFormatDuration(bsrDaysSince(r.start_date)) + '</div>'
-      + '<div class="bp-src" style="margin-top:8px">SINCE ' + escBsr(r.start_date) + '</div></section>';
+    var since = r.fire_since || r.start_date;      // a story's page keeps its own date for "We are here" (T-0113)
+    h += '<section class="bp-sec" style="text-align:center"><div style="font:700 34px Overpass,sans-serif">' + bsrFormatDuration(bsrDaysSince(since)) + '</div>'
+      + '<div class="bp-src" style="margin-top:8px">SINCE ' + escBsr(since) + '</div></section>';
   }
   // T-0099: a live-conflict page keeps its day count on top, and shows its history under it once it has one
   if (r.stratum !== 'fire' || (r.beginnings || []).length || r.stakes) {

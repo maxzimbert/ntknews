@@ -293,10 +293,11 @@ def render_held(row):
 
 
 def render_fire(row, today):
-    y, m = elapsed(row["start_date"], today)
+    since = row.get("fire_since") or row["start_date"]     # a story's page keeps its own date for "We are here" (T-0113)
+    y, m = elapsed(since, today)
     return f"""<section class="elapsed">
   <div><span class="num">{y}</span> <span class="unit">yrs</span> <span class="num">{m}</span> <span class="unit">mo</span></div>
-  <div class="since">since {row['start_date']}</div>
+  <div class="since">since {since}</div>
 </section>"""
 
 
@@ -342,7 +343,7 @@ def build_object_page(row, i):
     sect = f'<section>{"".join(body)}</section>'
     panel = (f'<section class="digest"><a class="ep first" href="/backstory/{row["id"]}/">'
              f'<div class="kicker">In the case for {html_esc(row["title"])}</div>'
-             f'<div class="h">{html_esc(row["milestone"])}</div></a></section>')
+             f'<div class="h">{html_esc(row.get("milestone") or "")}</div></a></section>')
     page = PAGE_TEMPLATE.format(
         row_id=f'{html_esc(row["id"])}/objects/{i + 1}',
         title_esc=html_esc(o["title"]),
@@ -377,7 +378,9 @@ def story_row(p, row, when):
         h = urlparse(u or "").hostname or ""
         return h[4:] if h.startswith("www.") else h
     return {"id": f"s-{p['story_id']}", "title": c.get("scope") or row["title"], "milestone": p.get("headline") or "",
-            "stratum": "story", "beginnings": begs, "start_line": str(c.get("here") or "").rstrip("."),
+            # a live conflict keeps its day counter on the story's page: that is its chart (T-0113)
+            "stratum": "fire" if row.get("stratum") == "fire" else "story", "fire_since": row.get("start_date") if row.get("stratum") == "fire" else None,
+            "beginnings": begs, "start_line": str(c.get("here") or "").rstrip("."),
             "start_date": str(when or date.today().isoformat())[:10], "indicator": ind, "stakes": "",
             "objects": [{"title": o["title"], "author": o.get("author") or "", "year": o["year"], "about": o.get("about") or "",
                          "source": host(o.get("source_url")), "source_url": o.get("source_url")} for o in c.get("case") or []]}
@@ -397,7 +400,7 @@ def build_page(row, pairings, today):
     return PAGE_TEMPLATE.format(
         row_id=html_esc(row["id"]),
         title_esc=html_esc(row["title"]),
-        milestone_esc=html_esc(row["milestone"]),
+        milestone_esc=html_esc(row.get("milestone") or ""),
         canonical_url=f"{BASE_URL}/backstory/{row['id']}/",
         cream=CREAM, ink=INK, blue_deep=BLUE_DEEP, terra=TERRA, amber_deep=AMBER_DEEP, amber=AMBER, logo=LOGO_DATA_URI,
         body=body,
