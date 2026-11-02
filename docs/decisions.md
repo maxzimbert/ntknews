@@ -456,6 +456,14 @@ trying the alternative on staging:
 - *Comparable cases only on the editor's direction.* Pointed research may return an event of the same kind
   elsewhere, labelled. The automatic path still may not (the 2026-10-09 revert stands).
 
+**The Backstory contract.** Agreed with the editor 2026-11-02 and written at the top of `docs/backstory.md`:
+Backstory is the history that shows how the digest's news came to be the news; ten components, every one
+scoped from the story's headline, description and Truths, each proposed by the system and reviewed by the
+editor (accept by default, modify by prompt, or remove); the row shelves the story and picks its chart but never
+shapes the page. **Day counters are retired everywhere**, reversing "duration leads" (2026-09-16): the editor
+found them ineffective wherever they appear. Open: whether a document that ships by default counts as approved
+for the Object Matrix.
+
 ## Open questions, not defaults
 
 These are genuinely unresolved. Don't assume either way.
