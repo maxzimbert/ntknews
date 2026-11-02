@@ -4871,13 +4871,13 @@ function bsxSameSubject(key, ledger){
     const j=uni?inter/uni:0; if (j>=0.5 && j>score && !e.direction && bsxRecent(e)){ best=e; score=j; } });
   return best;
 }
-async function bsxResearch(story, storyId, scope, thin, have, ledger, rejected, direction){
+async function bsxResearch(story, storyId, scope, thin, have, ledger, rejected, direction, force){
   const key=direction?'direction: '+bsxSubjectKey(direction):bsxSubjectKey(scope);
   if (!key) return {added:[], note:'no subject to research'};
   const e=ledger.subjects[key] || (direction
     ? Object.values(ledger.subjects).find(v=>v.direction && bsxSubjectKey(v.direction)===bsxSubjectKey(direction) && bsxRecent(v))
     : bsxSameSubject(key, ledger));
-  if (e && bsxRecent(e)) return {added:(e.finds||[]).map(id=>(ledger.finds||[]).find(f=>f.id===id)).filter(Boolean), repeat:true, note:'already searched on '+String(e.searched_at).slice(0,10)+' (for "'+String(e.for||'').slice(0,50)+'"); its '+(e.finds||[]).length+' find(s) are offered again, with no new search'};
+  if (e && bsxRecent(e) && !force) return {added:(e.finds||[]).map(id=>(ledger.finds||[]).find(f=>f.id===id)).filter(Boolean), repeat:true, note:'already searched on '+String(e.searched_at).slice(0,10)+' (for "'+String(e.for||'').slice(0,50)+'"); its '+(e.finds||[]).length+' find(s) are offered again, with no new search'};
   const need=direction?6:4, rel=direction?CAT_RELATIONS.concat(['comparable case']):CAT_RELATIONS;
   const rule=!direction
     ? "Every milestone must be part of this story's own history: the same subject, an earlier instance of the same action, or the origin of a background the story names. A document that shares only a theme (secrecy, government power, regulation) is an analogy and does not belong."
@@ -4910,7 +4910,8 @@ ${CAT_STYLE_RULES}`;
     const isNews=String(m.source_kind||'')==='news' || catSourceKind(m.source_url)==='news';
     if (isNews && !bsxPublisher(m.source_url)){ if (/^https?:/.test(String(m.source_url||''))) vetoed.push(await rec(m, {vetoed_because:'a news report from a publisher outside NTK\u2019s approved list'})); continue; }
     if (isNews && !String(m.why_no_primary||'').trim()){ vetoed.push(await rec(m, {vetoed_because:'a news report with no reason a primary source would not do'})); continue; }
-    const v=verifyMilestone(m, r.urls, storyText, rel);
+    // on the editor's direction the subject is the editor's call: the source checks hold, the tie-to-the-story check does not
+    const v=verifyMilestone(m, r.urls, direction?null:storyText, rel);
     if (v.ok){ kept.push(await rec(m)); continue; }
     const textOnly=m.source_url && r.urls.includes(m.source_url) && /words|sentence|number|dash|banned|empty/.test(v.reason);
     if (textOnly) fixable.push({m:m, reason:v.reason}); else if (/^https?:/.test(String(m.source_url||''))) vetoed.push(await rec(m, {vetoed_because:v.reason}));
@@ -4920,13 +4921,13 @@ ${CAT_STYLE_RULES}`;
     let fx={}; try { fx=bsxJson((await bsxModel(BSX_SONNET, rp, 1500)).text)||{}; } catch(e){}
     for (let i=0; i<fixable.length; i++){
       const f=fixable[i], t=fx[String(i)], m2=t?Object.assign({}, f.m, {line:t.line||'', about:t.about||''}):null;
-      const v2=m2?verifyMilestone(m2, r.urls, storyText, rel):{ok:false, reason:f.reason};
+      const v2=m2?verifyMilestone(m2, r.urls, direction?null:storyText, rel):{ok:false, reason:f.reason};
       if (v2.ok) kept.push(await rec(m2)); else vetoed.push(await rec(f.m, {vetoed_because:f.reason}));
     }
   }
   const rej=new Set(rejected||[]), known=new Set(ledger.finds.map(f=>f.url).concat(ledger.vetoed.map(v=>v.url))), now=new Date().toISOString();
   const added=[];
-  kept.forEach(f=>{ if (!rej.has(f.id) && !known.has(f.url)){ f.researched_for=scope; f.story_id=storyId; f.researched_at=now; ledger.finds.push(f); known.add(f.url); added.push(f); } });
+  kept.forEach(f=>{ if (!rej.has(f.id) && !known.has(f.url)){ f.researched_for=scope; f.story_id=storyId; f.direction=direction||null; f.researched_at=now; ledger.finds.push(f); known.add(f.url); added.push(f); } });
   vetoed.forEach(v=>{ if (!rej.has(v.id) && !known.has(v.url)){ ledger.vetoed.push(Object.assign(v, {researched_for:scope, story_id:storyId, direction:direction||null, researched_at:now})); known.add(v.url); } });
   ledger.subjects[key]={subject:scope, direction:direction||null, searched_at:now, for:story.headline, finds:added.map(f=>f.id)};
   return {added:added, note:'researched "'+(direction||scope)+'": '+added.length+' new document(s) kept, '+vetoed.length+' vetoed by the checks (shown below to approve or leave)'};
@@ -5109,6 +5110,8 @@ async function bsxRun(keys, opts){
       const story={headline:s.headline||'', lede:bsxText(s.lede), truths:bsxText(s.truth)}, edits=Object.assign({}, s.bs_edits||{});
       const rej0=new Set(rejected); edits.pool=(ledger.finds||[]).filter(f=>f.story_id===key && !rej0.has(f.id)).map(f=>f.id).reverse();   // newest first; not saved
       const d0=draft && (draft.stories||[]).find(x=>x.story_id===key), prev=(d0&&d0.composed&&d0.composed.v===2)?d0.composed:null;
+      (edits.pins||[]).forEach(f=>{ if ((edits.approved||[]).includes(f.id) && !(ledger.finds||[]).some(x=>x.id===f.id||x.url===f.url)){
+        ledger.vetoed=(ledger.vetoed||[]).filter(v=>v.id!==f.id); ledger.finds.push(Object.assign({}, f, {story_id:key, found_by:'search', added_by:'editor'})); ledgerChanged=true; } });
       bsxApprove(ledger, new Set(edits.approved||[]), key, bsxLibrary(draft||{stories:[]}, ledger));
       if ((edits.approved||[]).length) ledgerChanged=true;
       edits.keep=Array.from(new Set((edits.keep||[]).concat(edits.approved||[])));
@@ -5118,7 +5121,7 @@ async function bsxRun(keys, opts){
       else if (m && prev){
         BSR_DRAFT_STATE='Revising '+m.comp+' on "'+story.headline.slice(0,50)+'"…'+(m.comp==='documents'?' searching first, a minute or two':''); render();
         if (m.comp==='documents'){                       // find what the note asks for, then re-choose
-          const res=await bsxResearch(story, key, prev.title||'', prev.thin, prev.beginnings.map(b=>({year:b.year, title:b.line})), ledger, rejected, m.note);
+          const res=await bsxResearch(story, key, prev.title||'', prev.thin, prev.beginnings.map(b=>({year:b.year, title:b.line})), ledger, rejected, m.note, !!m.force);
           ledgerChanged=true; prev.research=res.note;
           edits.pool=Array.from(new Set((res.added||[]).map(f=>f.id).concat(edits.pool||[])));
         }
@@ -5134,6 +5137,8 @@ async function bsxRun(keys, opts){
         const L2=bsEdits(L); L2.text=t; saveLineup(); edits.text=t; }
       // a start the editor directed may be a year no milestone has; a full build can only start at a milestone, so it keeps the editor's
       if (c && !m && prev && prev.starts && prev.starts.by==='editor' && (edits.modify||{}).starts && !(edits.removed||[]).includes('starts')) c.starts=prev.starts;
+      if (c) bsxApplyPins(c, edits.pins, edits.off);
+      if (c) c.research_items=bsxResearchItems(ledger, key, rejected);
       if (c){ bsxApplyText(c, edits.text); Object.keys(edits.modify||{}).forEach(k=>{ if (c.problems) delete c.problems[k]; }); }
       // the row: the editor's if set; otherwise the one the page proposed (an existing row when the name matches)
       if (!L.backstoryRow && c && c.row){ const id=bsrRowResolve(c.row); if (id){ L.backstoryRow=id; L.rowByEditor=false; saveLineup(); } }
@@ -5159,7 +5164,7 @@ async function bsxRun(keys, opts){
       ok=await bsxPut(GH_DRAFT_OUT, draft, g.sha, 'backstory: '+Object.keys(done).length+' page(s) from Pulse');
     }
     if (!ok) throw new Error('the draft kept changing under the save; try again');
-    BSR_DRAFT=draft;
+    BSR_DRAFT=draft; BSX_LED=ledger;
     if (!opts.modify){ const today=new Date().toISOString().slice(0,10), seen=new Set();
       for (const k of Object.keys(done)){ const L=LINEUP.find(x=>x.key===k), rid=L&&L.backstoryRow; if (!rid || seen.has(rid)) continue; seen.add(rid);
         const tried=((BSR_DRAFT.ship||{}).indicator_tried||{})[rid];
@@ -5199,6 +5204,26 @@ function bsxApplyText(c, text){
     else if (k.startsWith('about:')){ const o=(c.case||[]).find(x=>x.object_id===k.slice(6)); if (o){ o.about=v; o.about_by='editor'; } }
   });
   return c;
+}
+// A research result the editor added: a milestone (its own line) and a document (its own About), placed by year.
+// Self-contained in bs_edits.pins, so a rebuild keeps it and a vetoed result needs nothing from the library.
+function bsxApplyPins(c, pins, off){
+  const offS=new Set(off||[]);
+  (pins||[]).forEach(f=>{ if (!f || !f.id || offS.has(f.id)) return;
+    c.beginnings=c.beginnings||[]; c.case=c.case||[];
+    if (!c.beginnings.some(b=>b.object_id===f.id)) c.beginnings.push({year:String(f.year||''), line:f.line||f.title, object_id:f.id, by:'editor'});
+    if (!c.case.some(o=>o.object_id===f.id)) c.case.push(Object.assign({object_id:f.id, title:f.title, author:f.author||'', year:String(f.year||''), source_url:f.url,
+      about:f.about||'', about_by:'editor', kind:'found'}, f.source_kind==='news'?{source_kind:'news', why_no_primary:f.why_no_primary||''}:{}));
+  });
+  c.beginnings.sort((a,b)=>String(a.year).localeCompare(String(b.year)));
+  c.case.sort((a,b)=>String(a.year).localeCompare(String(b.year)));
+  if (c.problems) delete c.problems.milestones;
+  return c;
+}
+async function bsxAddResearch(s, item){
+  const e=bsEdits(s); e.pins=(e.pins||[]).filter(f=>f.id!==item.id).concat([item]);
+  e.off=(e.off||[]).filter(i=>i!==item.id); saveLineup();
+  return bsxPatch(s, c=>{ bsxApplyPins(c, [item], []); (c.research_items||[]).forEach(r=>{ if (r.id===item.id) r.on_page=true; }); });
 }
 async function bsxEditText(s, map){
   const e=bsEdits(s); e.text=Object.assign({}, e.text||{}, map); saveLineup();
@@ -5368,7 +5393,8 @@ function bsc2Html(s, d){
       <div style="font-size:12px;margin:3px 0 6px">This is how you steer the history: name the laws, cases, events or years it should reach, or what is missing. I search the library and the web for them, then choose the milestones, where it starts and the documents again. Title, contest and stakes stay as they are. The boxes on each part below are for smaller edits.</div>
       ${c.thin?`<div style="padding:5px 8px;margin-bottom:6px;background:#fbe8d0;font-size:12.5px"><b>The library is thin here:</b> ${esc(c.thin)}</div>`:''}
       <div style="display:flex;gap:6px;flex-wrap:wrap"><input class="bsc2-dir" value="${esc(dirNote)}" placeholder="e.g. reach back to the 1971 campaign finance law and the Watergate reforms" style="flex:1;min-width:280px"><button class="mini go bsc2-dir-go">research and re-choose</button></div>
-      ${c.research?`<div style="font-size:11.5px;color:var(--dim);margin-top:4px">Last search: ${esc(c.research)}</div>`:''}
+      ${c.research?`<div style="font-size:11.5px;color:var(--dim);margin-top:4px">Last search: ${esc(c.research)}${/already searched/.test(c.research)?` <button class="mini bsc2-dir-force" title="one web search">search again anyway</button>`:''}</div>`:''}
+      ${bsc2ResearchList(s, c)}
     </div>
     <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">
       <div style="flex:1;min-width:340px;max-width:660px">
@@ -5389,18 +5415,56 @@ function bsc2Html(s, d){
       <div><div style="font:700 11px sans-serif;letter-spacing:.06em;margin-bottom:4px">THE CARD READERS SEE</div>${card||''}</div>
     </div></div>`;
 }
+function bsxResearchItems(ledger, key, rejected){
+  const rej=new Set(rejected||[]), mine=x=>x.story_id===key && !rej.has(x.id);
+  return ((ledger&&ledger.finds)||[]).filter(mine).map(f=>Object.assign({status:'found'}, f)).concat(((ledger&&ledger.vetoed)||[]).filter(mine).map(v=>Object.assign({status:'vetoed'}, v)))
+    .map(r=>({id:r.id, status:r.status, reason:r.vetoed_because||'', title:r.title, author:r.author||'', year:r.year, url:r.url, source:r.source||'', source_kind:r.source_kind||'',
+      why_no_primary:r.why_no_primary||'', line:r.line||'', about:r.about||'', direction:r.direction||r.researched_for||'', at:r.researched_at||''}))
+    .sort((a,b)=>String(b.at).localeCompare(String(a.at)));
+}
+// the ledger as last read, for the review screen: read once when a review opens, and after every run
+let BSX_LED=null, BSX_LED_LOADING=false;
+function bsxLedgerForView(){
+  if (BSX_LED || BSX_LED_LOADING || !pulseBranch(location) || !SETTINGS.ghToken) return BSX_LED;
+  BSX_LED_LOADING=true; bsxLedger().then(x=>{ BSX_LED=x.ledger; render(); }).catch(()=>{}).finally(()=>{ BSX_LED_LOADING=false; });
+  return null;
+}
+// Everything research found for this story, newest search first: what it is, where it came from, whether it is
+// on the page, and why the checks vetoed it. The editor adds any of it, vetoed or not; added is on the page as found.
+function bsc2ResearchList(s, c){
+  const led=bsxLedgerForView(), items=led?bsxResearchItems(led, s.key, bsRejected()):(c.research_items||[]); if (!items.length) return '';
+  const on=new Set((c.case||[]).map(o=>o.object_id)), off=new Set(bsEdits(s).off||[]);
+  let lastDir=null;
+  return `<div style="margin-top:8px;border-top:1px solid var(--rule);padding-top:6px"><b style="font:700 11px sans-serif;letter-spacing:.06em">WHAT RESEARCH FOUND FOR THIS STORY &middot; ${items.length}</b>
+    <div style="font-size:11.5px;color:var(--dim);margin:2px 0 4px">Open each link. Add what belongs: it goes on the page as found, as a milestone and a document, and stays through rebuilds.</div>
+    ${items.map(r=>{ const head=r.direction!==lastDir?`<div style="font-size:11px;color:var(--dim);margin-top:6px">for: <i>${esc(String(r.direction||'the story').slice(0,90))}</i></div>`:''; lastDir=r.direction;
+      return head+`<div style="margin:5px 0 5px 8px;font-size:13px">
+        <div style="display:flex;gap:6px;align-items:baseline;flex-wrap:wrap"><b>${esc(r.year)}</b> ${r.url?`<a href="${esc(r.url)}" target="_blank" rel="noopener"><i>${esc(r.title)}</i></a>`:'<i>'+esc(r.title)+'</i>'} <span style="color:var(--dim)">${esc(r.source||r.author)}</span>
+          ${r.source_kind==='news'?`<span class="chip" style="background:#f6e7c8;color:#8a5a12" title="${esc(r.why_no_primary||'')}">news report</span>`:''}
+          ${r.status==='vetoed'?`<span class="chip" style="background:#f7dcd6;color:#9a3a25" title="the checks set it aside; you can still add it">vetoed: ${esc(String(r.reason).slice(0,80))}</span>`:''}</div>
+        ${r.line?`<div style="font:13px Georgia,serif;margin-top:2px">${esc(r.line)}</div>`:''}
+        <div style="margin-top:3px">${on.has(r.id)?'<span class="chip">on the page</span>':off.has(r.id)?`<span class="chip">left out</span> <button class="mini bsc2-res-add" data-id="${esc(r.id)}">add to page</button>`:`<button class="mini go bsc2-res-add" data-id="${esc(r.id)}">add to page</button>`}</div>
+      </div>`; }).join('')}
+  </div>`;
+}
 function bsc2Wire(el, s){
   const bb=el.querySelector('.bsc2-build'); if (bb) bb.addEventListener('click',()=>{ bscBusy(bb); bsrRefreshHashes().then(()=>bsxRun([s.key], {build:true})); });
   const box=el.querySelector('.bsc2'); if (!box) return;
   const running=bsrRunning();
   box.querySelectorAll('button').forEach(b=>{ if (running && !b.classList.contains('bsr-prev-close')){ b.disabled=true; b.title='A run is going; this is ready again when it finishes'; } });
   const ready=()=>{ if ((bsrDraftFor(s)||{}).textFresh===false){ alert('This story changed since its Backstory was built. Rebuild from scratch.'); return false; } return true; };
-  const revise=(comp, note, btn)=>{
+  const revise=(comp, note, btn, force)=>{
     const e=bsEdits(s); e.modify=Object.assign({}, e.modify, {[comp]:note});
     e.removed=(e.removed||[]).filter(k=>k!==comp); saveLineup(); bscBusy(btn);     // revising a removed part brings it back
     if (comp==='chart'){ bsxChart(s, note); return; }
-    bsrRefreshHashes().then(()=>{ if (ready()) bsxRun([s.key], {modify:{[s.key]:{comp, note}}}); });
+    bsrRefreshHashes().then(()=>{ if (ready()) bsxRun([s.key], {modify:{[s.key]:{comp, note, force:!!force}}}); });
   };
+  const df=box.querySelector('.bsc2-dir-force'); if (df) df.addEventListener('click',()=>{
+    const note=box.querySelector('.bsc2-dir').value.trim(); if (note) revise('documents', note, df, true); });
+  box.querySelectorAll('.bsc2-res-add').forEach(b=>b.addEventListener('click',()=>{
+    const r=(BSX_LED?bsxResearchItems(BSX_LED, s.key, bsRejected()):(((bsrDraftFor(s)||{}).composed||{}).research_items||[])).find(x=>x.id===b.dataset.id); if (!r) return;
+    bscBusy(b); bsxAddResearch(s, {id:r.id, title:r.title, author:r.author, year:r.year, url:r.url, source:r.source, source_kind:r.source_kind,
+      why_no_primary:r.why_no_primary, line:r.line, about:r.about}); }));
   box.querySelectorAll('.bsc2-mod-go').forEach(b=>b.addEventListener('click',()=>{
     const comp=b.dataset.comp, note=box.querySelector(`.bsc2-mod[data-comp="${comp}"]`).value.trim();
     if (!note){ alert('Say what to change, then revise.'); return; }
