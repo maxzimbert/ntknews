@@ -11,6 +11,67 @@ piece is done.
 
 ---
 
+## The contract, 2026-11-02 — read this first
+
+Agreed with the editor 2026-11-02, after staging showed the machinery had drifted from the product. Everything
+below this section describes how Backstory got here; this section says what it is. When code and this section
+disagree, the code is wrong. Not yet built: see "Where the build stands" at the end.
+
+**What Backstory is.** The history that shows how the news in the digest came to be the news in the digest.
+
+**The input.** The digest story's headline, description and Truths. Nothing else shapes the page.
+
+**The components.** Everything a reader sees, and nothing more. The system proposes each one after Generate
+Jefferson; the editor reviews each one.
+
+| # | Component | Where the reader sees it | Rule |
+|---|---|---|---|
+| 1 | Row | foot of the Backstory card | The category title the story is shelved under. A short noun phrase, two to five words. An existing row first; a new one only when none fits. |
+| 2 | Title (the scope) | page heading; the share title | What history this is, two to six words. From the story, never a verdict. |
+| 3 | Contest | line under the title; the share description | One sentence beginning "Whether", 12 to 35 words. |
+| 4 | Stakes | paragraph under the contest | Exactly two sentences, 25 to 55 words. |
+| 5 | Chart | the better-or-worse trend line | The row's trend line; every value checked on the publisher's page. None is a valid answer. |
+| 6 | It starts in | the card; the marked point on the timeline | A year and one sentence. Never within the last 45 days. |
+| 7 | Milestones | the dated timeline | Three to six, each one sentence of 12 to 25 words, dated by when the event happened. |
+| 8 | We are here | the card's Today line; the end of the timeline | One or two sentences, 12 to 30 words: today's story as the end of the chronology. |
+| 9 | Documents | The case | One primary source per milestone, plus up to two later ones. A link that loads; news only when no primary source will do, and labelled. |
+| 10 | About each document | the document's own page | Two to four sentences, at most 70 words: what it is, who made it, when, what it did. |
+
+All text: Advanced Placement register (precise, plain), no dashes, none of the banned phrases
+(`docs/voice.md`), and no number that is not in the story or the document's own record.
+
+Not components: the "In the digest" link (automatic). Retired: day counters, everywhere (the editor,
+2026-11-02: "wherever they're present they are ineffective"); the pull quote, the long context and "where it
+stands now" on document pages (cut 2026-10-02, still drawable in code: remove them).
+
+**The row never shapes the page.** Title, contest, stakes, It starts in, milestones, We are here and documents
+come from the story. The row decides two things only: which shelf the story sits on, and which chart it shows.
+Changing the row moves the shelf and swaps the chart; it does not rebuild the history. When the row and the
+story disagree, the page says so and the editor decides. ("A category like midterm elections can be functionally
+meaningless for a story about a specific race.") The system proposes the row; the editor can change it at any
+time, including before Generate Jefferson.
+
+**The editor's loop.** For each component: **accept** (the default: doing nothing accepts), **modify** (the
+editor writes what is wrong or wanted, and the system revises that component to it), or **remove**. There is
+also feedback for the page as a whole. Publish ships what stands.
+
+**Everything else is execution**, and the editor should not have to see it: where documents come from (the
+Object Matrix, research, search), how searches are rationed, ids, drafts, GitHub, the classifier.
+
+**Open, deliberately.** Whether a document that ships by default (accepted by not acting) counts as approved
+for the Object Matrix, or only one the editor marks. The editor's instinct (2026-11-02): what the system finds
+is reliable far more often than not. Until decided, only an explicit approval adds to the matrix.
+
+**Where the build stands, 2026-11-02.** Live on `main`: per-story pages composed and edited in Pulse (T-0110),
+research and approvals (T-0111). On staging only, PR 104 (T-0113, typed rows), frozen pending this contract.
+Gaps against the contract: Contest and Stakes are not filled on story pages (Contest shows the headline, Stakes
+is blank); counters are still drawn; the row still lifts its own documents in the search; "modify" is a nudge
+per section, not per component, and does not reach Title, Contest, Stakes or the chart; the milestone and We are
+here word limits differ between the composer (8 to 30) and this contract. The rebuild is scoped against this
+section, including what is removed.
+
+---
+
 ## Update, 2026-10-28 to 2026-10-30 — each story gets its own page
 
 Read this first; the sections below describe the category-page design it replaces for readers.
