@@ -4791,7 +4791,8 @@ async function bsxCompose(story, pairing, row, lib, edits, rejected, rowNames){
   const off=new Set((edits.off||[]).concat(rejected||[]));
   const keep=(edits.keep||[]).filter(i=>lib[i] && !off.has(i));
   const t=await bsxTerms(story); addU(t.usage);
-  const cands=keep.concat(bsxShortlist(lib, story, null, t.terms).filter(i=>!off.has(i) && !keep.includes(i)));
+  const own=(edits.pool||[]).filter(i=>lib[i] && !off.has(i) && !keep.includes(i));     // research done for this story
+  const cands=keep.concat(own, bsxShortlist(lib, story, null, t.terms).filter(i=>!off.has(i) && !keep.includes(i) && !own.includes(i)));
   const rr=await bsxAsk(BSX_SONNET, bsxComposePrompt(story, cands, lib, edits, rowNames||[]), 3500, 'composing the page'); addU(rr.usage);
   let c=bsxShape(rr.json, cands, lib, edits, notes); c._removed=edits.removed||[];
   const P=bsxCheck(c, story, lib); (edits.removed||[]).concat(Object.keys(edits.modify||{})).forEach(k=>delete P[k]);   // what the editor directed is not repaired
@@ -4810,8 +4811,10 @@ async function bsxRevise(prev, comp, note, story, lib, edits, rejected, rowNames
   let cands=[], docBlock='';
   if (comp==='milestones' || comp==='documents' || comp==='starts'){
     const t=await bsxTerms(story, note); addU(t.usage);
-    cands=Array.from(new Set(c.case.map(o=>o.object_id).concat(bsxShortlist(lib, story, null, t.terms.concat([note])).filter(i=>!off.has(i)))));
-    docBlock='\nDOCUMENTS IN THE LIBRARY (id | year | title | author | what it is):\n'+bsxDocLines(cands, lib)+'\n';
+    cands=Array.from(new Set(c.case.map(o=>o.object_id).concat((edits.pool||[]).filter(i=>lib[i] && !off.has(i)), bsxShortlist(lib, story, null, t.terms.concat([note])).filter(i=>!off.has(i)))));
+    const fresh=(edits.pool||[]).filter(i=>lib[i] && !off.has(i));
+    docBlock='\nDOCUMENTS IN THE LIBRARY (id | year | title | author | what it is):\n'+bsxDocLines(cands, lib)+'\n'
+      +(comp==='documents' && fresh.length?'FOUND BY RESEARCH FOR THIS STORY (use them where they carry the history the editor asked for): '+fresh.slice(0,12).join(', ')+'\n':'');
   }
   const fields=comp==='documents'||comp==='milestones'?['milestones','starts','later','about']:comp==='starts'?['starts']:[comp];
   // The rules guard a page nobody is watching. Here the editor is directing, so the note wins (the editor, 2026-11-02).
@@ -4874,7 +4877,7 @@ async function bsxResearch(story, storyId, scope, thin, have, ledger, rejected, 
   const e=ledger.subjects[key] || (direction
     ? Object.values(ledger.subjects).find(v=>v.direction && bsxSubjectKey(v.direction)===bsxSubjectKey(direction) && bsxRecent(v))
     : bsxSameSubject(key, ledger));
-  if (e && bsxRecent(e)) return {added:[], note:'already researched on '+String(e.searched_at).slice(0,10)+' (for "'+String(e.for||'').slice(0,50)+'"); its '+(e.finds||[]).length+' find(s) are in the library'};
+  if (e && bsxRecent(e)) return {added:(e.finds||[]).map(id=>(ledger.finds||[]).find(f=>f.id===id)).filter(Boolean), repeat:true, note:'already searched on '+String(e.searched_at).slice(0,10)+' (for "'+String(e.for||'').slice(0,50)+'"); its '+(e.finds||[]).length+' find(s) are offered again, with no new search'};
   const need=direction?6:4, rel=direction?CAT_RELATIONS.concat(['comparable case']):CAT_RELATIONS;
   const rule=!direction
     ? "Every milestone must be part of this story's own history: the same subject, an earlier instance of the same action, or the origin of a background the story names. A document that shares only a theme (secrecy, government power, regulation) is an analogy and does not belong."
@@ -5104,6 +5107,7 @@ async function bsxRun(keys, opts){
       if (bad.length) throw new Error('its '+bad.map(k=>k==='truth'?'Truths':k==='lede'?'description':'headline').join(' and ')+' failed to generate: regenerate the story first');
       if (!String(s.truth||'').trim()) throw new Error('it has no Truths yet: Generate Jefferson first');
       const story={headline:s.headline||'', lede:bsxText(s.lede), truths:bsxText(s.truth)}, edits=Object.assign({}, s.bs_edits||{});
+      const rej0=new Set(rejected); edits.pool=(ledger.finds||[]).filter(f=>f.story_id===key && !rej0.has(f.id)).map(f=>f.id).reverse();   // newest first; not saved
       const d0=draft && (draft.stories||[]).find(x=>x.story_id===key), prev=(d0&&d0.composed&&d0.composed.v===2)?d0.composed:null;
       bsxApprove(ledger, new Set(edits.approved||[]), key, bsxLibrary(draft||{stories:[]}, ledger));
       if ((edits.approved||[]).length) ledgerChanged=true;
@@ -5116,6 +5120,7 @@ async function bsxRun(keys, opts){
         if (m.comp==='documents'){                       // find what the note asks for, then re-choose
           const res=await bsxResearch(story, key, prev.title||'', prev.thin, prev.beginnings.map(b=>({year:b.year, title:b.line})), ledger, rejected, m.note);
           ledgerChanged=true; prev.research=res.note;
+          edits.pool=Array.from(new Set((res.added||[]).map(f=>f.id).concat(edits.pool||[])));
         }
         c=await bsxRevise(prev, m.comp, m.note, story, bsxLibrary(draft||{stories:[]}, ledger), edits, rejected, rowNames);
         c.research=prev.research||null;
