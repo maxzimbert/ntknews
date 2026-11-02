@@ -452,7 +452,8 @@ trying the alternative on staging:
   refused most real series.
 - *The Object Matrix takes only what the editor approves.* Asked whether everything that ships on a page
   should graduate, the editor said "Only things I have approved." Approved primary sources join at publish;
-  news never does. The research ledger is bookkeeping, not a second library of record.
+  news never does. The research ledger is bookkeeping, not a second library of record. *(The news half was
+  reversed 2026-11-02: news from the approved publishers may join, marked as news. See below.)*
 - *Comparable cases only on the editor's direction.* Pointed research may return an event of the same kind
   elsewhere, labelled. The automatic path still may not (the 2026-10-09 revert stands).
 
@@ -474,6 +475,40 @@ editor (accept by default, modify by prompt, or remove); the row shelves the sto
 shapes the page. **Day counters are retired everywhere**, reversing "duration leads" (2026-09-16): the editor
 found them ineffective wherever they appear. Open: whether a document that ships by default counts as approved
 for the Object Matrix.
+
+**News reports from NTK's approved publishers may carry Backstory milestones and documents, and join the
+Object Matrix, when no primary source will do.** Decided by the editor 2026-11-02, reversing "news never enters
+the matrix" (T-0111, 2026-10-30). The editor's reasoning: much of recent history has no other record yet (no
+archive holds what a sitting president said at a rally last year), and contemporary news accounts are good
+enough for the Congressional Record and for criminal and civil courts. The order holds: a primary source always
+comes first; a news report is a secondary source, disfavoured, used only when no primary source exists, labelled
+as news on the page with the reason, and marked "news" in a 16th matrix column, Source Kind. **Approved means
+the 91 outlets in `NTK_SOURCES` (`netlify/functions/news.js`)**, the Stream's own publisher bar; news from any
+other outlet is refused. Built on T-0114 (not live until that branch ships): Pulse keeps a copy of the list
+(`NTK_PUBLISHERS`), Python reads the original (`editorial/publishers.py`).
+
+**When the editor directs, the editor's words win.** Decided by the editor 2026-11-02, after the first test of
+the T-0114 review screen: "when I am prompting you in these boxes, you need to give me what I want. The guard
+rails are there to help you when I'm not able to supervise or direct you." So the contract's rules (word counts,
+"Whether", never this year, It starts in being a milestone) hold only for what the system writes unsupervised.
+A part the editor revised by prompt is done as asked and never "repaired" afterwards; a part the editor typed is
+kept word for word, through every rebuild. The rules still apply to everything the editor did not touch. Do not
+re-tighten this: an editor who has to fight the checks stops using the loop.
+
+**The editor's loop, as built (T-0114).** Same date, same test. Three levels, in order of reach:
+- *Direct the research*, at the top of the review: the primary way to steer a story's history and to fix a thin
+  library. The editor names what the history should reach; the system searches the library and the web, then
+  re-chooses milestones, It starts in and documents. Title, contest and stakes are left alone.
+- *Revise*, on each part: a smaller, focused change by prompt.
+- *Edit words*, on each part: the editor types the text. No model call.
+The "feedback on the whole page" box was cut as a weaker copy of Direct the research. The review happens in the
+preview under each story; the old category editor ("open") is leaving the story flow.
+
+**The chart sources itself.** Same date ("would be great to try and source it yourself"). After a build, a row
+with no trend line gets one web search for a measure tied to the story's contest, at most once per row per day;
+the editor's revise on the chart searches again with their words. A line is shown only when both values are
+checked on the publisher's page (prod's rule); one per row, shared by every story on it. Cost: one search per
+new row.
 
 ## Open questions, not defaults
 

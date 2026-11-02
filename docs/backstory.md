@@ -30,11 +30,11 @@ Jefferson; the editor reviews each one.
 | 2 | Title (the scope) | page heading; the share title | What history this is, two to six words. From the story, never a verdict. |
 | 3 | Contest | line under the title; the share description | One sentence beginning "Whether", 12 to 35 words. |
 | 4 | Stakes | paragraph under the contest | Exactly two sentences, 25 to 55 words. |
-| 5 | Chart | the better-or-worse trend line | The row's trend line; every value checked on the publisher's page. None is a valid answer. |
+| 5 | Chart | the better-or-worse trend line | The row's trend line; every value checked on the publisher's page. Sought automatically once per row per day when the row has none; the editor can ask again. None is a valid answer. |
 | 6 | It starts in | the card; the marked point on the timeline | A year and one sentence. Never within the last 45 days. |
 | 7 | Milestones | the dated timeline | Three to six, each one sentence of 12 to 25 words, dated by when the event happened. |
 | 8 | We are here | the card's Today line; the end of the timeline | One or two sentences, 12 to 30 words: today's story as the end of the chronology. |
-| 9 | Documents | The case | One primary source per milestone, plus up to two later ones. A link that loads; news only when no primary source will do, and labelled. |
+| 9 | Documents | The case | One primary source per milestone, plus up to two later ones. A link that loads. A primary source first; a news report only when no primary source will do, only from the 91 approved publishers (`NTK_SOURCES`), and labelled. |
 | 10 | About each document | the document's own page | Two to four sentences, at most 70 words: what it is, who made it, when, what it did. |
 
 All text: Advanced Placement register (precise, plain), no dashes, none of the banned phrases
@@ -52,8 +52,13 @@ meaningless for a story about a specific race.") The system proposes the row; th
 time, including before Generate Jefferson.
 
 **The editor's loop.** For each component: **accept** (the default: doing nothing accepts), **modify** (the
-editor writes what is wrong or wanted, and the system revises that component to it), or **remove**. There is
-also feedback for the page as a whole. Publish ships what stands.
+editor writes what is wrong or wanted, and the system revises that component to it; or types the words
+directly), or **remove**. Above the components, **Direct the research** is the main lever: the editor names what
+the history should reach, and the system searches, then re-chooses milestones, It starts in and documents.
+Publish ships what stands.
+
+**The rules in the table are for the unsupervised page.** When the editor directs a component, by prompt or by
+typing, the editor's words win and nothing repairs them (the editor, 2026-11-02; `docs/decisions.md`).
 
 **Everything else is execution**, and the editor should not have to see it: where documents come from (the
 Object Matrix, research, search), how searches are rationed, ids, drafts, GitHub, the classifier.
@@ -69,6 +74,14 @@ is blank); counters are still drawn; the row still lifts its own documents in th
 per section, not per component, and does not reach Title, Contest, Stakes or the chart; the milestone and We are
 here word limits differ between the composer (8 to 30) and this contract. The rebuild is scoped against this
 section, including what is removed.
+
+*Update, later 2026-11-02:* the rebuild is T-0114 (branch `T-0114-backstory-contract`, on staging, not on main).
+Done there: the composer fills all ten components from the story, with the row proposed and never shaping the
+page; the review screen (Direct the research, revise, edit words, remove, add to the Object Matrix); the chart
+sought automatically; approved-publisher news; research results shown and addable; counters and the retired
+fields gone from the reader app and static pages; publish shipping each built story (and the row trend lines) as
+built, with nothing chosen at publish; the GitHub first-draft path removed. Ticket T-0114, status BUILT, its check
+passing on the branch. Not yet merged to main or run through a real publish.
 
 ---
 
@@ -93,7 +106,8 @@ Read this first; the sections below describe the category-page design it replace
   put what they find, and what the checks vetoed, in front of the editor. Nothing reaches a page until
   approved; a subject is not searched twice in 30 days (T-0111).
 - **The Object Matrix grows only by approval.** "Only things I have approved" (the editor, 2026-10-30). At
-  publish each approved primary source becomes a matrix row; news never does. The research ledger is
+  publish each approved document becomes a matrix row; a news report does too, marked as news, only from an
+  approved publisher (the editor, 2026-11-02; built on T-0114). The research ledger is
   bookkeeping.
 - **Charts stay prod's rule** for this stage: one trend line per category, shown on each story's page. A
   per-story chart was built and parked (T-0112).
