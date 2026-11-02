@@ -86,6 +86,17 @@ not a narrative rewrite.
 
 ---
 
+### Backstory composer (T-0114, 2026-11-02)
+
+The per-story Backstory is written at an Advanced Placement level for college-educated adults, held to the
+contract in `docs/backstory.md` (`BSX_RULES` and `BSX_STYLE` in `ntk-pulse/pulse.html`). Two rules sit above
+the word counts:
+
+- **Sources, in order.** A primary source first. A contemporary news report only when no primary source exists,
+  only from the 91 approved publishers (`NTK_SOURCES`), labelled as news with the reason.
+- **The editor's direction wins.** The rules govern what the system writes on its own. A part the editor
+  revised by prompt or typed is kept as the editor wanted it, even where it breaks a rule.
+
 ## 2. Candidate / topic / story selection for digest inclusion
 
 Three stages, each with its own rule set, each paying for the next.
