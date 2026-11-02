@@ -1,12 +1,18 @@
 ---
 id: T-0046
 title: Backstory rows have no permalink, and Digest never links to Backstory
-status: VERIFIED
+status: DISCARDED
 tags: [backstory, feature]
 anchor: netlify.toml:20
 ---
 
 ## What
+
+**Superseded 2026-11-02 by T-0114** (the Backstory contract). Two of this check's assertions encode what the contract
+reversed: a day counter on a live-conflict page (counters are retired everywhere) and build_pairings.py running
+before the digest (nothing is chosen at publish now; each story ships the page built in Pulse). What still holds,
+a permalink page for every row and the digest reading backstory.json, is carried in T-0114's check. This check is
+left as it was.
 
 Confirmed 2026-09-28, both directions:
 

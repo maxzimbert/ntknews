@@ -1132,12 +1132,12 @@ BACKSTORY_JSON_DEFAULT = Path("digest/data/backstory.json")
 
 
 def load_backstory(path):
-    """T-0046: cross-link data, read best-effort. pulse-publish.yml runs
-    build_pairings.py before this script specifically so today's pairings
-    are fresh here — but that step is continue-on-error (a classifier
-    hiccup must never block a publish), so this must degrade to "no
-    cross-links today" rather than crash the whole digest build if the
-    file is missing, stale, or malformed."""
+    """T-0046: cross-link data, read best-effort. pulse-publish.yml ships
+    each story's Backstory (backstory_draft.py apply, T-0114) before this
+    script specifically so today's pairings are fresh here — but that step
+    is continue-on-error (Backstory must never block a publish), so this
+    must degrade to "no cross-links today" rather than crash the whole
+    digest build if the file is missing, stale, or malformed."""
     try:
         return json.loads(path.read_text())
     except Exception as e:
