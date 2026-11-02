@@ -4653,7 +4653,8 @@ function bsxStoryBlock(story){
 }
 function bsxComposePrompt(story, cands, lib, edits, rowNames){
   const keep=(edits.keep||[]).filter(i=>lib[i]), mod=edits.modify||{};
-  const notes=Object.entries(mod).filter(([k,v])=>v).map(([k,v])=>'EDITOR NOTE ON '+k.toUpperCase()+': '+v).join('\n');
+  const notes0=Object.entries(mod).filter(([k,v])=>v).map(([k,v])=>'EDITOR NOTE ON '+(k==='documents'?'THE RESEARCH':k.toUpperCase())+': '+v).join('\n');
+  const notes=notes0?'THE EDITOR IS DIRECTING THIS PAGE. Where a note asks for something the rules below forbid, do what the note asks.\n'+notes0:'';
   return `You compose one news story's Backstory page for NTK News: the history that shows how today's news came to be the news. The reader is a college-educated adult; write at an Advanced Placement history level. Everything on the page comes from the story itself: its headline, its description and its Truths. Start from what they establish, then reach further back for the milestones and documents that make and defend the chronology.
 
 ${bsxStoryBlock(story)}
@@ -4757,6 +4758,7 @@ JSON only, with just the parts you rewrote: {${ask.map(k=>'"'+k+'":...').join(',
 // After the repair, what still breaks a rule is left out (a milestone, an About text), or kept and noted for the
 // editor when the component cannot be empty (the title, the contest, the stakes, We are here).
 function bsxEnforce(c, story, lib, notes){
+  const keptStart=c.starts&&c.starts.by==='editor'?c.starts:null;
   const P=bsxCheck(c, story, lib);
   if (P.milestones){
     const keep=c.beginnings.filter(b=>{ const pr=b.by==='editor'?[]:catTextProblems('m', b.line, 12, 25, {sentences:1}); const o=lib[b.object_id]||{};
@@ -4770,6 +4772,7 @@ function bsxEnforce(c, story, lib, notes){
   if (P.about) c.case.forEach(o=>{ if (o.about_by==='model' && (catTextProblems('a', o.about, 1, 70).length || catSentences(o.about)<2 || catSentences(o.about)>4)){ o.about=''; o.about_by=''; } });
   // a component the editor removed stays empty, and is no problem
   const removed=c._removed||[]; removed.forEach(k=>{ if (k==='chart') c.chart_removed=true; else if (k==='starts') c.starts=null; else c[k]=''; });
+  if (keptStart && !removed.includes('starts')) c.starts=keptStart;
   const left=bsxCheck(c, story, lib); delete left.milestones; delete left.about; removed.forEach(k=>delete left[k]); delete c._removed;
   c.problems=left;                                         // shown to the editor on the component
   Object.entries(left).forEach(([k,v])=>notes.push(k+': '+v.join('; ')));
@@ -4784,7 +4787,7 @@ async function bsxCompose(story, pairing, row, lib, edits, rejected, rowNames){
   const cands=keep.concat(bsxShortlist(lib, story, null, t.terms).filter(i=>!off.has(i) && !keep.includes(i)));
   const rr=await bsxAsk(BSX_SONNET, bsxComposePrompt(story, cands, lib, edits, rowNames||[]), 3500, 'composing the page'); addU(rr.usage);
   let c=bsxShape(rr.json, cands, lib, edits, notes); c._removed=edits.removed||[];
-  const P=bsxCheck(c, story, lib); (edits.removed||[]).forEach(k=>delete P[k]);
+  const P=bsxCheck(c, story, lib); (edits.removed||[]).concat(Object.keys(edits.modify||{})).forEach(k=>delete P[k]);   // what the editor directed is not repaired
   if (Object.keys(P).length) c=await bsxRepair(c, P, story, cands, lib, addU);
   c=bsxEnforce(c, story, lib, notes);
   return Object.assign(c, {v:2, terms:t.terms, shortlist:cands.length, notes:notes, usage:usage, model:BSX_SONNET, modified:Object.assign({}, edits.modify||{})});
@@ -4804,32 +4807,40 @@ async function bsxRevise(prev, comp, note, story, lib, edits, rejected, rowNames
     docBlock='\nDOCUMENTS IN THE LIBRARY (id | year | title | author | what it is):\n'+bsxDocLines(cands, lib)+'\n';
   }
   const fields=comp==='documents'||comp==='milestones'?['milestones','starts','later','about']:comp==='starts'?['starts']:[comp];
-  const p=`Revise ONE part of a Backstory page to the editor's note. Keep every other part exactly as it is. Everything comes from the story.
+  // The rules guard a page nobody is watching. Here the editor is directing, so the note wins (the editor, 2026-11-02).
+  const startsShape=comp==='starts'?'\nFor starts answer {"starts":{"id":"a milestone id, or null","year":"the year","line":"one sentence"}}: the year and line may be anything the editor asks for, including a year or event that is not a milestone.':'';
+  const p=`Revise ONE part of a Backstory page to the editor's note. Do what the note asks, exactly: the editor is supervising and the note wins over every rule below. Keep every other part exactly as it is.
 
 ${bsxStoryBlock(story)}
 
-THE PAGE NOW: ${JSON.stringify(page)}
+THE PAGE NOW: ${JSON.stringify(comp==='about'?Object.assign({}, page, {about:Object.fromEntries(c.case.map(o=>[o.object_id, o.year+' | '+o.title+' | '+(o.about||'')]))}):page)}
 ${docBlock}
 PART TO REVISE: ${comp}
 THE EDITOR'S NOTE: ${note}
-RULES: ${fields.map(f=>f+': '+(BSX_RULES[f]||'')).join(' | ')}
-${BSX_STYLE}
+THE USUAL RULES (they hold only where the note is silent): ${fields.map(f=>f+': '+(BSX_RULES[f]||'')).join(' | ')}
+${BSX_STYLE}${startsShape}
 
 JSON only, with just: {${fields.map(f=>'"'+f+'":...').join(',')}}`;
   const rr=await bsxAsk(BSX_SONNET, p, 2500, 'revising '+comp); addU(rr.usage); const j=rr.json;
   if (['row','title','contest','stakes','here'].includes(comp) && typeof j[comp]==='string') c[comp]=j[comp].trim();
+  if (comp==='about' && j.about && typeof j.about==='object') c.case.forEach(o=>{ const t=j.about[o.object_id]; if (typeof t==='string' && t.trim()){ o.about=t.trim(); o.about_by='editor'; } });
   if (fields.includes('milestones') && Array.isArray(j.milestones)){
     const sh=bsxShape(Object.assign({}, page, j, {row:c.row, title:c.title, contest:c.contest, stakes:c.stakes, here:c.here}), cands, lib, edits, notes);
-    c.beginnings=sh.beginnings; c.case=sh.case; c.starts=sh.starts; c.thin=sh.thin;
+    c.beginnings=sh.beginnings; c.case=sh.case; c.thin=sh.thin;
+    c.starts=(prev.starts && prev.starts.by==='editor' && !(edits.removed||[]).includes('starts')) ? prev.starts : sh.starts;   // the editor's start holds
+    if (comp==='milestones') c.beginnings.forEach(b=>{ b.by='editor'; });        // written to the editor's direction
   } else if (comp==='starts'){
-    const sid=typeof j.starts==='string'?j.starts:(j.starts&&j.starts.id); const b=c.beginnings.find(x=>x.object_id===sid);
-    if (b && b.year<String(new Date().getUTCFullYear())) c.starts={year:b.year, line:b.line, object_id:b.object_id};
-    else notes.push(b?'It starts in cannot be this year; kept the old one':'the new start is not one of the milestones; kept the old one');
+    const js=typeof j.starts==='string'?{id:j.starts}:(j.starts||{}), b=c.beginnings.find(x=>x.object_id===js.id);
+    const year=String(js.year||(b&&b.year)||'').trim(), line=String(js.line||(b&&b.line)||'').trim();
+    if (year && line) c.starts={year, line, object_id:b?b.object_id:null, by:'editor'};
+    else notes.push('the revision gave no year and line for It starts in; kept the old one');
   }
   c._removed=edits.removed||[];
-  const P=bsxCheck(c, story, lib); (edits.removed||[]).forEach(k=>delete P[k]);
+  const P=bsxCheck(c, story, lib); (edits.removed||[]).concat(Object.keys(edits.modify||{})).forEach(k=>delete P[k]);   // what the editor directed is not repaired
+  delete P[comp]; if (comp==='documents' || comp==='milestones') delete P.starts;   // what the editor directed is not repaired
   let out=Object.keys(P).length?await bsxRepair(c, P, story, cands.length?cands:c.case.map(o=>o.object_id), lib, addU):c;
   out=bsxEnforce(out, story, lib, notes);
+  if (out.problems){ delete out.problems[comp]; if (comp==='milestones') delete out.problems.starts; }
   out.modified=Object.assign({}, prev.modified||{}, {[comp]:note});
   const pu=prev.usage||{};
   out.notes=notes; out.usage={input_tokens:(pu.input_tokens||0)+usage.input_tokens, output_tokens:(pu.output_tokens||0)+usage.output_tokens};
@@ -5103,6 +5114,12 @@ async function bsxRun(keys, opts){
         BSR_DRAFT_STATE='Building "'+story.headline.slice(0,50)+'"…'; render();
         c=await bsxCompose(story, null, null, bsxLibrary(draft||{stories:[]}, ledger), edits, rejected, rowNames);
       }
+      if (m){ const t=Object.assign({}, edits.text||{}), comp=m.comp;
+        Object.keys(t).forEach(k=>{ if (k===comp || k.startsWith(comp+'.') || (comp==='milestones' && k.startsWith('m:')) || (comp==='about' && k.startsWith('about:')) || (comp==='documents' && (k.startsWith('m:')||k.startsWith('about:')))) delete t[k]; });
+        const L2=bsEdits(L); L2.text=t; saveLineup(); edits.text=t; }
+      // a start the editor directed may be a year no milestone has; a full build can only start at a milestone, so it keeps the editor's
+      if (c && !m && prev && prev.starts && prev.starts.by==='editor' && (edits.modify||{}).starts && !(edits.removed||[]).includes('starts')) c.starts=prev.starts;
+      if (c){ bsxApplyText(c, edits.text); Object.keys(edits.modify||{}).forEach(k=>{ if (c.problems) delete c.problems[k]; }); }
       // the row: the editor's if set; otherwise the one the page proposed (an existing row when the name matches)
       if (!L.backstoryRow && c && c.row){ const id=bsrRowResolve(c.row); if (id){ L.backstoryRow=id; L.rowByEditor=false; saveLineup(); } }
       if (!L.backstoryRow) throw new Error('no row could be set');
@@ -5128,6 +5145,12 @@ async function bsxRun(keys, opts){
     }
     if (!ok) throw new Error('the draft kept changing under the save; try again');
     BSR_DRAFT=draft;
+    if (!opts.modify){ const today=new Date().toISOString().slice(0,10), seen=new Set();
+      for (const k of Object.keys(done)){ const L=LINEUP.find(x=>x.key===k), rid=L&&L.backstoryRow; if (!rid || seen.has(rid)) continue; seen.add(rid);
+        const tried=((BSR_DRAFT.ship||{}).indicator_tried||{})[rid];
+        if (bsxRowIndicator(BSR_DRAFT, rid) || (tried && tried.at===today) || done[k].composed.chart_removed) continue;
+        BSR_DRAFT_STATE='Looking for a trend line for '+bsrRowTitle(rid)+'\u2026 a minute or so'; render();
+        try { await bsxFindChart(L, '', true); } catch(e){ failed.push('trend line for '+bsrRowTitle(rid)+': '+e.message); } } }
     if (keys.length===1) Object.keys(done).forEach(k=>{ BSR_PREV_OPEN[k]=true; });   // one story: open it for review
     BSR_DRAFT_STATE=failed.length ? 'Done '+Object.keys(done).length+' of '+(Object.keys(done).length+failed.length)+'. Not done: '+failed.join(' | ') : '';
   } catch(e){ BSR_DRAFT_STATE='Backstory failed: '+e.message; }
@@ -5150,6 +5173,21 @@ async function bsxRemove(s, comp, itemId){
     else if (comp==='starts') c.starts=null;
     else c[comp]='';
   });
+}
+// The editor's own words, typed into the page: saved with no model call, and laid over every later build, so a
+// rebuild never takes them back. Keys: title, contest, stakes, here, starts.year, starts.line, m:<id>, about:<id>.
+function bsxApplyText(c, text){
+  Object.entries(text||{}).forEach(([k,v])=>{ v=String(v||'').trim(); if (!v) return;
+    if (['title','contest','stakes','here'].includes(k)){ c[k]=v; if (c.problems) delete c.problems[k]; }
+    else if (k==='starts.year' || k==='starts.line'){ c.starts=Object.assign({object_id:null}, c.starts||{}, {[k.slice(7)]:v, by:'editor'}); if (c.problems) delete c.problems.starts; }
+    else if (k.startsWith('m:')){ const b=(c.beginnings||[]).find(x=>x.object_id===k.slice(2)); if (b){ b.line=v; b.by='editor'; } if (c.starts && c.starts.object_id===k.slice(2) && !(text['starts.line'])) c.starts.line=v; }
+    else if (k.startsWith('about:')){ const o=(c.case||[]).find(x=>x.object_id===k.slice(6)); if (o){ o.about=v; o.about_by='editor'; } }
+  });
+  return c;
+}
+async function bsxEditText(s, map){
+  const e=bsEdits(s); e.text=Object.assign({}, e.text||{}, map); saveLineup();
+  return bsxPatch(s, c=>bsxApplyText(c, map));
 }
 // A change that needs no model, written into the draft in place with the story's new fingerprint.
 async function bsxPatch(s, mutate){
@@ -5281,47 +5319,55 @@ function bsrStaleNote(d){
 // and that component alone is revised. Remove: where a component can be absent. Plus feedback on the whole page.
 const BSC2_LABEL={row:'Row', title:'Title', contest:'Contest', stakes:'Stakes', chart:'Chart', starts:'It starts in',
   milestones:'Milestones', here:'We are here', documents:'Documents'};
+// t(): a piece of text the editor can type over. The card's "edit words" makes them editable; "save" writes them.
+const bsc2T=(k, v, tag)=>`<${tag||'span'} class="bsc2-t" data-k="${esc(k)}">${esc(v||'')}</${tag||'span'}>`;
 function bsc2Card(s, comp, body, opt){
   opt=opt||{}; const c=(bsrDraftFor(s)||{}).composed||{}, pr=(c.problems||{})[comp]||[], note=(c.modified||{})[comp];
-  return `<div class="bsc2-card" style="border:1px solid var(--rule);background:#fff;padding:8px 10px;margin:7px 0">
+  return `<div class="bsc2-card" data-comp="${comp}" style="border:1px solid var(--rule);background:#fff;padding:8px 10px;margin:7px 0">
     <div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline"><b style="font:700 11px sans-serif;letter-spacing:.06em">${esc(BSC2_LABEL[comp]||comp).toUpperCase()}</b>
       <span style="font-size:11px;color:var(--dim)">${note?'revised to: '+esc(String(note).slice(0,60)):(opt.hint||'')}</span></div>
     ${body}
-    ${pr.length?`<div style="font-size:11.5px;color:var(--stale);margin-top:4px">still breaks: ${esc(pr.join('; '))}</div>`:''}
-    ${opt.noModify?'':`<div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap"><input class="bsc2-mod" data-comp="${comp}" placeholder="modify: say what is wrong or wanted" style="flex:1;min-width:240px"><button class="mini bsc2-mod-go" data-comp="${comp}"${comp==='documents'?' title="searches the library and the web for what you ask, then re-chooses"':''}>modify</button>
+    ${pr.length?`<div style="font-size:11.5px;color:var(--dim);margin-top:4px">outside the usual rule: ${esc(pr.join('; '))}</div>`:''}
+    ${opt.noModify?'':`<div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap">
+      ${opt.words?`<button class="mini bsc2-words" title="type your own words; saved as you write them, no model">edit words</button>`:''}
+      <input class="bsc2-mod" data-comp="${comp}" placeholder="${esc(opt.ph||'or tell me what to change')}" style="flex:1;min-width:220px"><button class="mini bsc2-mod-go" data-comp="${comp}">revise</button>
       ${opt.removable?`<button class="mini bsc2-rm" data-comp="${comp}" style="color:var(--stale)">remove</button>`:''}</div>`}
   </div>`;
 }
 function bsc2Html(s, d){
-  const c=d.composed, rowT=bsrRowTitle(s.backstoryRow), row=d.row||{}, ind=c.chart_removed?null:(row.indicator||null);
+  const c=d.composed, rowT=bsrRowTitle(s.backstoryRow), row=d.row||{}, ind=c.chart_removed?null:(bsxRowIndicator(BSR_DRAFT, s.backstoryRow)||row.indicator||null);
   const p=t=>`<div style="font:15px Georgia,serif;margin-top:4px">${t}</div>`;
-  const begs=(c.beginnings||[]), docs=(c.case||[]);
+  const begs=(c.beginnings||[]), docs=(c.case||[]), e=bsEdits(s), dirNote=(e.modify||{}).documents||'';
   const card=readerCardHtml(Object.assign({}, row, {title:rowT}), {story_id:s.key, line:c.here||'', headline:s.title, origin:c.starts?{status:'retrieved', year:c.starts.year, line:c.starts.line}:null});
   const suggest=c.row && s.rowByEditor && c.row.toLowerCase()!==String(rowT).toLowerCase() ? `<div style="font-size:11.5px;color:var(--dim)">The story itself suggests: <b>${esc(c.row)}</b></div>` : '';
+  const tried=((BSR_DRAFT.ship||{}).indicator_tried||{})[s.backstoryRow];
+  const chartMsg=c.chart_removed?'Removed for this story.':tried&&tried.result!=='found'?'Searched '+esc(tried.at)+', no checked trend line: '+esc(String(tried.result).replace(/^No trend line found: /,'').slice(0,200))+'. Revise to search again, saying what to measure if you know.':'No trend line yet for this row. Revise to look for one, saying what to measure if you know.';
   return `<div class="bsr-prev bsc2" data-key="${esc(s.key)}" style="flex-basis:100%;margin:6px 0 2px 26px;padding:8px 10px;border:1px solid var(--ink);background:#faf8f3">
-    <div style="font-size:11px;color:var(--dim);margin-bottom:6px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">BACKSTORY &middot; built ${esc(rel(BSR_DRAFT.generated))} ago &middot; everything is accepted unless you modify or remove it
+    <div style="font-size:11px;color:var(--dim);margin-bottom:6px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">BACKSTORY &middot; built ${esc(rel(BSR_DRAFT.generated))} ago &middot; everything is accepted unless you change it
       <a class="mini" href="${esc(bscReaderUrl())}" target="_blank" rel="noopener" style="text-decoration:none;border:1px solid var(--ink);padding:2px 8px">open in the reader app</a>
       <button class="mini bsc2-rebuild">rebuild from scratch</button><button class="mini bsr-prev-close">close</button></div>
     ${bsrStaleNote(d)}
     ${BSR_DRAFT_STATE?`<div style="padding:5px 8px;margin-bottom:6px;border:1px solid var(--ink);font-size:12.5px"><b>${esc(BSR_DRAFT_STATE)}</b></div>`:''}
-    ${c.thin?`<div style="padding:6px 8px;margin-bottom:6px;background:#fbe8d0;font-size:12.5px"><b>Thin:</b> ${esc(c.thin)}. Modify Documents with what to look for, and it searches.</div>`:''}
+    <div style="border:2px solid var(--ink);background:#fff;padding:9px 11px;margin-bottom:8px">
+      <b style="font:700 11px sans-serif;letter-spacing:.06em">DIRECT THE RESEARCH</b>
+      <div style="font-size:12px;margin:3px 0 6px">This is how you steer the history: name the laws, cases, events or years it should reach, or what is missing. I search the library and the web for them, then choose the milestones, where it starts and the documents again. Title, contest and stakes stay as they are. The boxes on each part below are for smaller edits.</div>
+      ${c.thin?`<div style="padding:5px 8px;margin-bottom:6px;background:#fbe8d0;font-size:12.5px"><b>The library is thin here:</b> ${esc(c.thin)}</div>`:''}
+      <div style="display:flex;gap:6px;flex-wrap:wrap"><input class="bsc2-dir" value="${esc(dirNote)}" placeholder="e.g. reach back to the 1971 campaign finance law and the Watergate reforms" style="flex:1;min-width:280px"><button class="mini go bsc2-dir-go">research and re-choose</button></div>
+      ${c.research?`<div style="font-size:11.5px;color:var(--dim);margin-top:4px">Last search: ${esc(c.research)}</div>`:''}
+    </div>
     <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">
       <div style="flex:1;min-width:340px;max-width:660px">
-        ${bsc2Card(s,'row', p(esc(rowT||'(none)'))+suggest, {hint:s.rowByEditor?'set by you':'proposed from the story', noModify:true})
-}
-        <div style="font-size:11px;color:var(--dim);margin:-2px 0 4px">Change the row in the box above the preview. It moves the shelf and the chart; the history stays.</div>
-        ${bsc2Card(s,'title', p(esc(c.title||'')))}
-        ${bsc2Card(s,'contest', p('<i>'+esc(c.contest||'(removed)')+'</i>'), {removable:true})}
-        ${bsc2Card(s,'stakes', p(esc(c.stakes||'(removed)')), {removable:true})}
-        ${bsc2Card(s,'chart', ind?catIndicatorSvg(ind):`<div style="font-size:12.5px;color:var(--dim);margin-top:4px">${c.chart_removed?'Removed for this story.':'This row has no trend line.'+(String(s.backstoryRow).startsWith('p-')?' Modify to look for one.':' A fixed row\u2019s trend line is kept in editorial/backstory-rows.json.')}</div>`, {removable:!!ind, hint:'the row\u2019s trend line'})}
-        ${bsc2Card(s,'starts', c.starts?p('<b>'+esc(c.starts.year)+'</b> '+esc(c.starts.line)):p('(none)'), {hint:'one of the milestones'})}
-        ${bsc2Card(s,'milestones', begs.map(b=>`<div style="display:flex;gap:10px;margin:5px 0;font-size:14px;align-items:flex-start"><b style="min-width:40px">${esc(b.year)}</b><span style="flex:1">${esc(b.line)}</span><button class="mini bsc2-rm-item" data-id="${esc(b.object_id)}" style="color:var(--stale)">remove</button></div>`).join('')||'<i style="font-size:12px;color:var(--dim)">none</i>', {hint:begs.length+' of 3 to 6'})}
-        ${bsc2Card(s,'here', p(esc(c.here||'')))}
+        ${bsc2Card(s,'row', p(esc(rowT||'(none)'))+suggest+'<div style="font-size:11px;color:var(--dim);margin-top:3px">Change it in the row box above. It moves the shelf and the chart; the page stays.</div>', {hint:s.rowByEditor?'set by you':'proposed from the story', noModify:true})}
+        ${bsc2Card(s,'title', p(bsc2T('title', c.title)), {words:true})}
+        ${bsc2Card(s,'contest', p('<i>'+(c.contest?bsc2T('contest', c.contest):'(removed)')+'</i>'), {removable:true, words:!!c.contest})}
+        ${bsc2Card(s,'stakes', p(c.stakes?bsc2T('stakes', c.stakes):'(removed)'), {removable:true, words:!!c.stakes})}
+        ${bsc2Card(s,'chart', ind?catIndicatorSvg(ind):`<div style="font-size:12.5px;color:var(--dim);margin-top:4px">${chartMsg}</div>`, {removable:!!ind, hint:'the row’s trend line, shared by every story on it', ph:'what should it measure?'})}
+        ${bsc2Card(s,'starts', c.starts?p('<b>'+bsc2T('starts.year', c.starts.year)+'</b> '+bsc2T('starts.line', c.starts.line)):p('(none)'), {words:!!c.starts, hint:'where the history begins'})}
+        ${bsc2Card(s,'milestones', begs.map(b=>`<div style="display:flex;gap:10px;margin:5px 0;font-size:14px;align-items:flex-start"><b style="min-width:40px">${esc(b.year)}</b><span style="flex:1">${bsc2T('m:'+b.object_id, b.line)}</span><button class="mini bsc2-rm-item" data-id="${esc(b.object_id)}" style="color:var(--stale)">remove</button></div>`).join('')||'<i style="font-size:12px;color:var(--dim)">none</i>', {words:begs.length>0, hint:begs.length+' of 3 to 6', ph:'or tell me what to change in the milestones'})}
+        ${bsc2Card(s,'here', p(bsc2T('here', c.here)), {words:true})}
         ${bsc2Card(s,'documents', docs.map(o=>`<div style="margin:7px 0;font-size:13.5px"><div style="display:flex;gap:8px;align-items:baseline;flex-wrap:wrap"><b>${esc(o.year)}</b> <a href="${esc(o.source_url||'#')}" target="_blank" rel="noopener"><i>${esc(o.title)}</i></a> <span style="color:var(--dim)">${esc(o.author||'')}</span>${o.source_kind==='news'?' <span class="chip">news report</span>':''}</div>
-            <div style="font:13px Georgia,serif;margin-top:2px;color:${o.about?'inherit':'var(--stale)'}">${esc(o.about||'No About text yet.')}</div>
-            <div style="display:flex;gap:5px;margin-top:3px">${o.source_kind==='news'?'<span class="chip" title="news reports never enter the matrix">not for the matrix</span>':(bsEdits(s).approved||[]).includes(o.object_id)||o.kind==='matrix'?`<span class="chip">${o.kind==='matrix'?'in the matrix':'added to the matrix at publish'}</span>`:`<button class="mini bsc2-matrix" data-id="${esc(o.object_id)}" title="the matrix takes only what you add (docs/backstory.md, open question)">add to matrix</button>`}<button class="mini bsc2-rm-item" data-id="${esc(o.object_id)}" style="color:var(--stale)">remove</button></div></div>`).join('')||'<i style="font-size:12px;color:var(--dim)">none</i>', {hint:'with the About text for each'})}
-        <div style="border:1px dashed var(--ink);padding:8px 10px;margin:9px 0"><b style="font:700 11px sans-serif;letter-spacing:.06em">FEEDBACK ON THE WHOLE PAGE</b>
-          <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap"><input class="bsc2-page" placeholder="what is wrong with the page as a whole; it is rebuilt with your note" style="flex:1;min-width:260px"><button class="mini go bsc2-page-go">rebuild with this</button></div></div>
+            <div style="font:13px Georgia,serif;margin-top:2px">${bsc2T('about:'+o.object_id, o.about)}${o.about?'':'<span style="color:var(--stale)">No About text yet.</span>'}</div>
+            <div style="display:flex;gap:5px;margin-top:3px;align-items:center">${o.source_kind==='news'?'<span class="chip" title="news reports never enter the Object Matrix">news: not for the Object Matrix</span>':o.kind==='matrix'?'<span class="chip">already in the Object Matrix</span>':(e.approved||[]).includes(o.object_id)?'<span class="chip">joins the Object Matrix at publish</span>':`<button class="mini bsc2-matrix" data-id="${esc(o.object_id)}" title="It is on this page either way. This also adds it to the Object Matrix, the library every Backstory draws on, when you publish.">also add to the Object Matrix</button>`}<button class="mini bsc2-rm-item" data-id="${esc(o.object_id)}" style="color:var(--stale)">remove from page</button></div></div>`).join('')||'<i style="font-size:12px;color:var(--dim)">none</i>', {words:docs.length>0, noModify:false, hint:'every one is on the page; to find others, direct the research above', ph:'or tell me what to change in the About text'})}
         ${(c.notes||[]).length?`<details style="font-size:11.5px;color:var(--dim);margin-top:4px"><summary>${c.notes.length} note(s) from the build</summary>${c.notes.map(n=>'<div>'+esc(n)+'</div>').join('')}</details>`:''}
         <div style="font-size:11px;color:var(--dim);margin-top:4px">${c.usage?esc(c.usage.input_tokens)+' tokens in, '+esc(c.usage.output_tokens)+' out':''}</div>
       </div>
@@ -5334,50 +5380,78 @@ function bsc2Wire(el, s){
   const running=bsrRunning();
   box.querySelectorAll('button').forEach(b=>{ if (running && !b.classList.contains('bsr-prev-close')){ b.disabled=true; b.title='A run is going; this is ready again when it finishes'; } });
   const ready=()=>{ if ((bsrDraftFor(s)||{}).textFresh===false){ alert('This story changed since its Backstory was built. Rebuild from scratch.'); return false; } return true; };
+  const revise=(comp, note, btn)=>{
+    const e=bsEdits(s); e.modify=Object.assign({}, e.modify, {[comp]:note});
+    e.removed=(e.removed||[]).filter(k=>k!==comp); saveLineup(); bscBusy(btn);     // revising a removed part brings it back
+    if (comp==='chart'){ bsxChart(s, note); return; }
+    bsrRefreshHashes().then(()=>{ if (ready()) bsxRun([s.key], {modify:{[s.key]:{comp, note}}}); });
+  };
   box.querySelectorAll('.bsc2-mod-go').forEach(b=>b.addEventListener('click',()=>{
     const comp=b.dataset.comp, note=box.querySelector(`.bsc2-mod[data-comp="${comp}"]`).value.trim();
-    if (!note){ alert('Say what is wrong or wanted, then modify.'); return; }
-    const e=bsEdits(s); e.modify=Object.assign({}, e.modify, {[comp]:note});
-    e.removed=(e.removed||[]).filter(k=>k!==comp); saveLineup(); bscBusy(b);     // modifying a removed part brings it back
-    if (comp==='chart'){ bsxChart(s, note); return; }
-    bsrRefreshHashes().then(()=>{ if (ready()) bsxRun([s.key], {modify:{[s.key]:{comp, note}}}); }); }));
+    if (!note){ alert('Say what to change, then revise.'); return; }
+    revise(comp==='documents'?'about':comp, note, b); }));
+  const dg=box.querySelector('.bsc2-dir-go'); if (dg) dg.addEventListener('click',()=>{
+    const note=box.querySelector('.bsc2-dir').value.trim(); if (!note){ alert('Say what the history should reach or what is missing.'); return; }
+    revise('documents', note, dg); });
+  // edit words: the card's text becomes editable in place; save writes exactly what was typed
+  box.querySelectorAll('.bsc2-words').forEach(b=>b.addEventListener('click',()=>{
+    const card=b.closest('.bsc2-card'), ts=[...card.querySelectorAll('.bsc2-t')];
+    if (b.dataset.on!=='1'){ b.dataset.on='1'; b.textContent='save words'; b.classList.add('go');
+      ts.forEach(t=>{ t.contentEditable='true'; t.style.outline='1px dashed var(--ink)'; t.style.background='#fffbe8'; t.dataset.was=t.textContent; }); ts[0]&&ts[0].focus(); return; }
+    const map={}; ts.forEach(t=>{ const v=t.textContent.replace(/\s+/g,' ').trim(); if (v && v!==t.dataset.was) map[t.dataset.k]=v; });
+    if (!Object.keys(map).length){ render(); return; }
+    bscBusy(b); bsxEditText(s, map); }));
   box.querySelectorAll('.bsc2-rm').forEach(b=>b.addEventListener('click',()=>{ bscBusy(b); bsxRemove(s, b.dataset.comp); }));
   box.querySelectorAll('.bsc2-rm-item').forEach(b=>b.addEventListener('click',()=>{ bscBusy(b); bsxRemove(s, null, b.dataset.id); }));
   box.querySelectorAll('.bsc2-matrix').forEach(b=>b.addEventListener('click',()=>{
     const e=bsEdits(s); e.approved=Array.from(new Set((e.approved||[]).concat([b.dataset.id]))); saveLineup(); bscBusy(b);
     bsrRefreshHashes().then(()=>bsxRun([s.key], {refile:true})); }));
-  const pg=box.querySelector('.bsc2-page-go'); if (pg) pg.addEventListener('click',()=>{
-    const note=box.querySelector('.bsc2-page').value.trim(); if (!note){ alert('Say what is wrong with the page.'); return; }
-    const e=bsEdits(s); e.modify=Object.assign({}, e.modify, {page:note}); saveLineup(); bscBusy(pg);
-    bsrRefreshHashes().then(()=>bsxRun([s.key], {build:true})); });
   const rb=box.querySelector('.bsc2-rebuild'); if (rb) rb.addEventListener('click',()=>{
-    if (!confirm('Rebuild this story\u2019s Backstory from scratch? Your notes are kept and applied; what you removed stays removed.')) return;
+    if (!confirm('Rebuild this story’s Backstory from scratch? Your notes and your own words are kept and applied; what you removed stays removed.')) return;
     bscBusy(rb); bsrRefreshHashes().then(()=>bsxRun([s.key], {build:true})); });
 }
-// Chart: the row's trend line. Modify searches for one (one web-search call) for a category the editor or the
-// system named; a fixed row's trend line is hand-kept in editorial/backstory-rows.json. A line found and checked
-// goes on the row in the draft, so every story on that row shows it.
-async function bsxChart(s, note){
-  const rid=s.backstoryRow;
-  const was=((bsrDraftFor(s)||{}).composed||{}).chart_removed;
-  if (rid && !rid.startsWith('p-') && was){ await bsxPatch(s, c=>{ delete c.chart_removed; }); render(); return; }   // brought back
-  if (!rid || !rid.startsWith('p-')){ alert('A fixed row\u2019s trend line is kept in editorial/backstory-rows.json, not found by search.'); render(); return; }
-  if (BSX_BUSY){ alert('A run is going. Ask for the trend line again when it finishes.'); render(); return; }
-  const c=catEnsureLocal(rid); if (!c){ render(); return; }
-  BSR_DRAFT_STATE='Looking for a trend line for '+c.title+'\u2026 a minute or so'; BSX_BUSY=true; render();
-  try {
-    const ct=((bsrDraftFor(s)||{}).composed||{}).contest;
-    const msg=await proposeIndicator(c, note+(ct?' (The story this is for is about '+ct.replace(/^Whether/i,'whether')+')':'')); saveCats();
-    if (!/^Trend line found/.test(msg)){ BSR_DRAFT_STATE=msg; return; }
-    for (let i=0; i<3; i++){
-      const g=await bsxGet(GH_DRAFT_OUT); const draft=g.data; if (!draft) break;
-      (draft.stories||[]).forEach(d=>{ if (d.row && d.row.id===rid) d.row.indicator=c.indicator; if (d.story_id===s.key && d.composed) delete d.composed.chart_removed; });
-      (draft.ship.provisional_rows||[]).forEach(r=>{ if (r.id===rid) r.indicator=c.indicator; });
-      const st=(draft.ship.provisional_store||{}).rows||[]; st.forEach(r=>{ if (r.id===rid) r.indicator=c.indicator; });
-      if (await bsxPut(GH_DRAFT_OUT, draft, g.sha, 'backstory: a trend line for '+c.title)){ BSR_DRAFT=draft; break; }
+// Chart: the row's trend line, one per row (prod's rule). After a build, a row with none gets one search (one
+// web-search call) for a measure tied to the story's contest; the editor's revise searches again with their words.
+// A line found and checked goes on the row in the draft (ship.row_indicators, every story on the row), and on the
+// category record for a named category. Tried once per row per day unless the editor asks.
+function bsxRowIndicator(draft, rid){
+  const own=((draft&&draft.ship&&draft.ship.row_indicators)||{})[rid]; if (own) return own;
+  const r=((BSR_PUBLISHED&&BSR_PUBLISHED.rows)||[]).concat((draft&&draft.ship&&draft.ship.provisional_rows)||[]).find(x=>x.id===rid);
+  return (r&&r.indicator)||(CATS[rid]&&CATS[rid].indicator&&CATS[rid].indicator.verified?CATS[rid].indicator:null);
+}
+async function bsxFindChart(s, note, auto){
+  const rid=s.backstoryRow; if (!rid) return 'no row';
+  const comp=((bsrDraftFor(s)||{}).composed)||{}, title=bsrRowTitle(rid);
+  const rec=rid.startsWith('p-')?(catEnsureLocal(rid)||{id:rid, title, by:{}}):{id:rid, title, contest:'', by:{}};
+  rec.by=rec.by||{}; if (!rec.contest && comp.contest) rec.contest=comp.contest;
+  const prevInd=rec.indicator; rec.indicator=null;
+  const today=new Date().toISOString().slice(0,10);
+  let msg;
+  try { msg=await proposeIndicator(rec, (note||'')+(comp.contest?' (The story this is for: '+comp.contest+')':'')); }
+  catch(e){ msg='Trend line search failed: '+e.message; }
+  const found=/^Trend line found/.test(msg) && rec.indicator;
+  if (!found) rec.indicator=prevInd;
+  if (rid.startsWith('p-')) saveCats();
+  for (let i=0; i<3; i++){
+    const g=await bsxGet(GH_DRAFT_OUT); const draft=g.data; if (!draft) break;
+    const sh=draft.ship=draft.ship||{}; sh.row_indicators=sh.row_indicators||{}; sh.indicator_tried=sh.indicator_tried||{};
+    sh.indicator_tried[rid]={at:today, result:found?'found':msg};
+    if (found){
+      sh.row_indicators[rid]=rec.indicator;
+      (draft.stories||[]).forEach(d=>{ if (d.row && d.row.id===rid) d.row.indicator=rec.indicator;
+        if (d.story_id===s.key && d.composed) delete d.composed.chart_removed; });
+      (sh.provisional_rows||[]).forEach(r=>{ if (r.id===rid) r.indicator=rec.indicator; });
+      ((sh.provisional_store||{}).rows||[]).forEach(r=>{ if (r.id===rid) r.indicator=rec.indicator; });
     }
-    BSR_DRAFT_STATE='';
-  } catch(e){ BSR_DRAFT_STATE='Trend line search failed: '+e.message; }
+    if (await bsxPut(GH_DRAFT_OUT, draft, g.sha, 'backstory: trend line for '+title)){ BSR_DRAFT=draft; break; }
+  }
+  return found?'':msg;
+}
+async function bsxChart(s, note){
+  if (BSX_BUSY){ alert('A run is going. Ask for the trend line again when it finishes.'); render(); return; }
+  BSR_DRAFT_STATE='Looking for a trend line for '+bsrRowTitle(s.backstoryRow)+'… a minute or so'; BSX_BUSY=true; render();
+  try { BSR_DRAFT_STATE=await bsxFindChart(s, note, false); }
+  catch(e){ BSR_DRAFT_STATE='Trend line search failed: '+e.message; }
   finally {
     BSX_BUSY=false; render();
     if (BSX_NEXT && BSX_NEXT.length){ const n=BSX_NEXT.shift(); bsrRefreshHashes().then(()=>bsxRun(n.keys, n.opts)); }
