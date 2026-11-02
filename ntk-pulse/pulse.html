@@ -2352,9 +2352,10 @@ function renderBackstory(root){
   // T-0109: the draft and each story's fingerprint arrive asynchronously; each redraws once when it lands.
   const dg=document.getElementById('bsr-draft-go'); if (dg) dg.addEventListener('click', draftBackstory);
   const ba=document.getElementById('bsr-build-all'); if (ba) ba.addEventListener('click', ()=>{
-    const keys=LINEUP.filter(x=>x.backstoryRow).map(x=>x.key), none=LINEUP.length-keys.length;
-    if (!keys.length){ alert('No story has a row yet. Type one on each story first.'); return; }
-    if (none && !confirm(none+' stor'+(none===1?'y has':'ies have')+' no row and will not be built. Publish ships Backstory only when every story is built. Build the other '+keys.length+'?')) return;
+    // every story with Truths is built; the system proposes each one's row, and the editor can change it after
+    const keys=LINEUP.filter(bsxHasTruths).map(x=>x.key), none=LINEUP.length-keys.length;
+    if (!keys.length){ alert('No story has Truths yet. Generate Jefferson first.'); return; }
+    if (none && !confirm(none+' stor'+(none===1?'y has':'ies have')+' no Truths yet and will not be built; a story without a built Backstory ships without one. Build the other '+keys.length+'?')) return;
     bscBusy(ba); bsrRefreshHashes().then(()=>bsxRun(keys, {build:true})); });
   if (!BSR_DRAFT_LOADED){ BSR_DRAFT_LOADED=true; loadBsrDraft().then(d=>{ if (d && TAB==='backstory') render(); }); }
   bsrRefreshHashes();
@@ -2369,6 +2370,7 @@ function renderBackstory(root){
     const op=el.querySelector('.bsr-lu-open'); if (op) op.addEventListener('click',()=>{ CAT_SEL=s.backstoryRow; if (!CATS[CAT_SEL]) catEnsureLocal(CAT_SEL); render(); catShowEditor(); });
     bsrKwWire(el, s);
     bscWire(el, s);
+    bsc2Wire(el, s);
   } catch(err){ bsrShowError(err, 'wiring story '+el.dataset.key); }
   });
   document.getElementById('cat-new').addEventListener('click',()=>{
@@ -2945,6 +2947,8 @@ async function generateStory(story){
   story.packages = pkg; story.generatedAt = new Date().toISOString(); story.outOpen = true;
   NOTES.genCounter = (NOTES.genCounter||0) + 1; saveNotes();
   story.busy=false; setStatus(story,''); saveLineup(); render();
+  // T-0114: with Truths in hand, the story's Backstory builds itself; the editor reviews it on the Backstory tab
+  if (bsxHasTruths(story) && pulseBranch(location) && SETTINGS.ghToken) bsrRefreshHashes().then(()=>bsxRun([story.key], {build:true}));   // queues itself if a run is going
 }
 async function reviseSection(story, sectionName, note){
   const arts = activeArts(story);
@@ -4234,7 +4238,7 @@ function bsrPublishedChip(s){
 function bsrRowOptions(s){
   const unset = !s.backstoryRow;
   const own = Object.values(CATS).filter(c => !BSR_ROWS.some(r => r.id === c.id));
-  return `<option value=""${unset?' selected':''}>row: not set (classifier picks)</option>`+
+  return `<option value=""${unset?' selected':''}>row: none yet (proposed when built)</option>`+
     BSR_ROWS.map(r=>`<option value="${esc(r.id)}"${s.backstoryRow===r.id?' selected':''}>`+
       `row: ${esc(r.title)}${r.provisional ? ' (category)' : ''}</option>`).join('')+
     own.map(c=>`<option value="${esc(c.id)}"${s.backstoryRow===c.id?' selected':''}>row: ${esc(c.title)} (${esc(c.status)})</option>`).join('')+
@@ -4254,11 +4258,17 @@ function bsrEnsureRowList(){
   dl.innerHTML=bsrRowNames().map(r=>`<option value="${esc(r.title)}"></option>`).join('');
 }
 // Filing a story under a typed row, from either tab: an existing row as it stands, or a new category; then build.
+// The row is the editor's to change. Changing it moves the shelf and the chart; a built page is kept as it is,
+// because the row never shapes the page (docs/backstory.md, the contract).
 function bsrFileRow(s, typed){
   const id=bsrRowResolve(typed); if (id===s.backstoryRow) return;
-  s.backstoryRow=id||''; if (id) catReviveIfArchived(id); saveLineup(); render();
-  if (id) bsrRefreshHashes().then(()=>bsxRun([s.key], {build:true}));     // filing builds the story's Backstory
+  s.backstoryRow=id||''; s.rowByEditor=!!id; if (id) catReviveIfArchived(id); saveLineup(); render();
+  if (!id) return;
+  const c=(bsrDraftFor(s)||{}).composed;
+  if (c && c.v===2) bsrRefreshHashes().then(()=>bsxRun([s.key], {refile:true}));
+  else if (bsxHasTruths(s)) bsrRefreshHashes().then(()=>bsxRun([s.key], {build:true}));
 }
+function bsxHasTruths(s){ const t=String((s.packages||{}).truths||''); return !!t.trim() && !/\[Generation failed/.test(t); }
 function bsrRowTitle(id){ if (!id) return ''; const r=bsrRowNames().find(x=>x.id===id); return r?r.title:id; }
 function bsrRowResolve(name){
   const norm=t=>String(t||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim(), n=norm(name);
@@ -4271,18 +4281,17 @@ function bsrRowResolve(name){
 function bsrLineupHtml(){
   if (!LINEUP.length) return '';
   return `<div style="margin-bottom:14px">
-    <div style="font-size:11px;color:var(--dim);margin-bottom:6px">TODAY'S LINEUP &middot; ${LINEUP.length} &middot; in Lineup order. File each story here or in Lineup; a story left unfiled goes to the classifier, which may make a new category.</div>
+    <div style="font-size:11px;color:var(--dim);margin-bottom:6px">TODAY'S LINEUP &middot; ${LINEUP.length} &middot; in Lineup order. Each story's Backstory builds itself once it has Truths, and proposes its row; type another row to move it. Open preview to review it.</div>
     <div class="bsr-draftbar" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px;padding:7px 9px;border:1px solid var(--ink)">
-      <button class="mini go" id="bsr-build-all"${pulseBranch(location)?'':' disabled'} title="Build every story that has a row, here in Pulse">Build Backstory for every story</button>
-      <button class="mini" id="bsr-draft-go"${pulseBranch(location)?'':' disabled'} title="The older path: GitHub runs the classifier for stories with no row, finds origins, then Pulse composes">Draft with the classifier (GitHub)</button>
+      <button class="mini go" id="bsr-build-all"${pulseBranch(location)?'':' disabled'} title="Build every story that has Truths, here in Pulse. A story already built is rebuilt from scratch, with your notes applied.">Build Backstory for every story</button>
       <span style="font-size:12px">${esc(bsrDraftStatusText())}</span>
     </div>
     ${LINEUP.map((s,i)=>{ const cat=s.backstoryRow&&catRecord(s.backstoryRow);
-      return `<div class="story bsr-lu" data-key="${esc(s.key)}" style="padding:6px 9px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;${s.backstoryRow?'':'border-color:var(--warn)'}">
+      return `<div class="story bsr-lu" data-key="${esc(s.key)}" style="padding:6px 9px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;${bsxHasTruths(s)&&!((bsrDraftFor(s)||{}).composed||{}).v?'border-color:var(--warn)':''}">
         <b style="font-size:12px;min-width:18px">${i+1}</b>
         <span style="font-size:12.5px;flex:1;min-width:240px">${esc(s.title||'')}</span>
-        ${s.backstoryRow?'':'<span class="chip" style="background:var(--warn);color:#fff">none filed</span>'}
-        <input class="bsr-lu-row" list="bsr-row-names" value="${esc(bsrRowTitle(s.backstoryRow))}" placeholder="row: type one, e.g. Crypto or Gaza" title="Type a row and press Enter. An existing row (Gaza, Ukraine–Russia…) is used as it stands, with its documents and trend line; a new name starts a category. Filing builds the story's Backstory." style="width:220px">
+        ${bsxHasTruths(s)?'':'<span class="chip">no Truths yet</span>'}
+        <input class="bsr-lu-row" list="bsr-row-names" value="${esc(bsrRowTitle(s.backstoryRow))}" placeholder="row: proposed when built, or type one" title="Type a row and press Enter. The row decides the shelf and the chart only, never the page. An existing row (Gaza, Ukraine–Russia…) brings its trend line; a new name starts one." style="width:220px">
         <input class="bsr-lu-kw" value="${esc(s.bsKeywords||'')}" placeholder="keywords${s.subject?' (+ '+esc(s.subject)+')':''}" title="Search the Object Matrix with your words and the story's subject. Separate phrases with commas. No model call." style="width:200px">
         <button class="mini bsr-lu-kwgo">find in matrix</button>
         <button class="mini bsr-lu-prev"${BSR_PREV_OPEN[s.key]?' style="background:var(--ink);color:#fff"':''}>preview</button>
@@ -4401,12 +4410,13 @@ function bsrPreviewData(s){
 }
 // T-0109: what the draft chose for this story, beside what the last publish did.
 function bsrDraftChip(s){
-  if (!BSR_DRAFT) return '';
   const d = bsrDraftFor(s);
-  if (!d) return '<span class="chip" title="this story was not in the last draft">not in draft</span>';
+  // T-0114: only a page built to the contract ships; anything else is "not built"
+  if (!d || !d.composed || d.composed.v!==2) return bsxHasTruths(s) ? '<span class="chip" style="background:var(--warn);color:#fff" title="a story without a built Backstory ships without one">not built</span>' : '';
   if (d.editsPending) return '<span class="chip" style="background:var(--warn);color:#fff" title="your Backstory edits reach the draft when you apply them">edits not applied</span>';
   if (!d.fresh) return '<span class="chip" style="background:var(--warn);color:#fff" title="the story or its category changed after the draft">changed since draft</span>';
   const c = d.composed;
+  if (c && c.v===2) return `<span class="chip" style="background:var(--ink);color:#fff" title="what publish will ship for this story">backstory: ${esc(c.title||'')} \u00b7 ${(c.beginnings||[]).length} milestones${c.starts&&c.starts.year?' \u00b7 starts '+esc(c.starts.year):''}${c.thin?' \u00b7 thin':''}</span>`;
   if (c && !c.error) return `<span class="chip" style="background:var(--ink);color:#fff" title="what publish will ship for this story">draft: ${esc(c.scope||d.row&&d.row.title||'')} · ${c.beginnings.length} Beginnings${c.starts&&c.starts.year?' · starts '+esc(c.starts.year):''}${c.thin?' · thin':''}</span>`
     + (c.row_fits===false?' <span class="chip" style="background:var(--warn);color:#fff" title="the composer judged the story is not about this row; the page is scoped from the story">row may not fit</span>':'');
   if (!d.pairing || !d.row) return '<span class="chip" style="background:var(--warn);color:#fff">draft: no Backstory</span>';
@@ -4901,12 +4911,16 @@ ${CAT_STYLE_RULES}`;
 // search) goes into the library and onto the page; one already in the library from research is marked. Either
 // way it is marked approved_by: "editor", which is what sends a primary source into the Object Matrix at
 // publish (editorial/graduate_finds.py). A news report can be approved onto a page and never enters the matrix.
-function bsxApprove(ledger, ids, storyId){
+function bsxApprove(ledger, ids, storyId, lib){
   const now=new Date().toISOString(), mark=f=>Object.assign(f, {approved_by:'editor', approved_for:storyId, approved_at:now});
   ledger.finds.forEach(f=>{ if (ids.has(f.id) && !f.approved_by) mark(f); });
   const moved=[];
   ['vetoed','candidates'].forEach(k=>{ ledger[k]=(ledger[k]||[]).filter(v=>{ if (!ids.has(v.id) || !v.url) return true;
     const f=mark(Object.assign({}, v)); delete f.vetoed_because; delete f.kind; delete f.topic; moved.push(f); return false; }); });
+  // T-0114: a document that came from the library rather than research (a staged candidate, one a category named)
+  // goes into the ledger as a find too, or graduate_finds.py, which reads only finds, would never see the approval
+  if (lib) ids.forEach(id=>{ const o=lib[id]; if (!o || o.kind==='matrix' || !o.url || ledger.finds.some(x=>x.id===id || x.url===o.url) || moved.some(x=>x.id===id)) return;
+    moved.push(mark({id, title:o.title, author:o.author, year:o.year, url:o.url, about:o.about||'', why:o.why||'', source_kind:o.source_kind||'', from:'library:'+o.kind})); });
   moved.forEach(f=>{ if (!ledger.finds.some(x=>x.url===f.url)) ledger.finds.push(f); });
   return moved;
 }
@@ -5040,14 +5054,11 @@ function bsrShowError(err, where){
 }
 window.addEventListener('error', e=>{ if (typeof TAB!=='undefined' && TAB==='backstory') bsrShowError(e.error||e.message, 'page'); });
 window.addEventListener('unhandledrejection', e=>{ if (typeof TAB!=='undefined' && TAB==='backstory') bsrShowError(e.reason, 'background'); });
-let BSX_NEXT=null;                       // requests made while a run is going: {keys, opts}, run next
+let BSX_NEXT=null;                       // requests made while a run is going: [{keys, opts}], run in order
 function bsxQueue(keys, opts){
-  const n=BSX_NEXT||{keys:[], opts:{}};
-  n.keys=Array.from(new Set(n.keys.concat(keys)));
-  ['research','outline'].forEach(k=>{ if (opts&&opts[k]) n.opts[k]=Object.assign({}, n.opts[k], opts[k]); });
-  if (opts&&opts.build) n.opts.build=true;
-  BSX_NEXT=n;
-  BSR_DRAFT_STATE=BSR_DRAFT_STATE.replace(/ \u00b7 \d+ more waiting$/, '')+' \u00b7 '+n.keys.length+' more waiting'; render();
+  // each request runs as asked, in order: a modify must not be folded into a build, or a build into a refile
+  BSX_NEXT=BSX_NEXT||[]; BSX_NEXT.push({keys, opts:opts||{}});
+  BSR_DRAFT_STATE=BSR_DRAFT_STATE.replace(/ \u00b7 \d+ more waiting$/, '')+' \u00b7 '+BSX_NEXT.length+' more waiting'; render();
 }
 // The run: build (compose all ten components; file the row the story proposed, unless the editor set one),
 // modify ({key: {comp, note}}: one component revised to the editor's words; documents search first) or refile
@@ -5073,7 +5084,7 @@ async function bsxRun(keys, opts){
       if (!String(s.truth||'').trim()) throw new Error('it has no Truths yet: Generate Jefferson first');
       const story={headline:s.headline||'', lede:bsxText(s.lede), truths:bsxText(s.truth)}, edits=Object.assign({}, s.bs_edits||{});
       const d0=draft && (draft.stories||[]).find(x=>x.story_id===key), prev=(d0&&d0.composed&&d0.composed.v===2)?d0.composed:null;
-      bsxApprove(ledger, new Set(edits.approved||[]), key);
+      bsxApprove(ledger, new Set(edits.approved||[]), key, bsxLibrary(draft||{stories:[]}, ledger));
       if ((edits.approved||[]).length) ledgerChanged=true;
       edits.keep=Array.from(new Set((edits.keep||[]).concat(edits.approved||[])));
       let c=prev;
@@ -5117,11 +5128,12 @@ async function bsxRun(keys, opts){
     }
     if (!ok) throw new Error('the draft kept changing under the save; try again');
     BSR_DRAFT=draft;
+    if (keys.length===1) Object.keys(done).forEach(k=>{ BSR_PREV_OPEN[k]=true; });   // one story: open it for review
     BSR_DRAFT_STATE=failed.length ? 'Done '+Object.keys(done).length+' of '+(Object.keys(done).length+failed.length)+'. Not done: '+failed.join(' | ') : '';
   } catch(e){ BSR_DRAFT_STATE='Backstory failed: '+e.message; }
   finally {
     BSX_BUSY=false; bsrRefreshHashes(); render();
-    if (BSX_NEXT){ const n=BSX_NEXT; BSX_NEXT=null; bsrRefreshHashes().then(()=>bsxRun(n.keys, n.opts)); }
+    if (BSX_NEXT && BSX_NEXT.length){ const n=BSX_NEXT.shift(); bsrRefreshHashes().then(()=>bsxRun(n.keys, n.opts)); }
   }
 }
 // Remove (no model): an item or a component taken off the page, saved straight into the draft. Items stay off on
@@ -5264,7 +5276,115 @@ function bscWire(el, s){
 function bsrStaleNote(d){
   return (d.fresh || d.editsPending) ? '' : `<div style="padding:6px 8px;margin-bottom:6px;background:#fbe8d0;font-size:12.5px"><b>This is the last draft, from before this story changed.</b> Click Draft Backstory to see what it gets now. Until then, publish will choose this story's Backstory again.</div>`;
 }
+// ─── The review screen, to the contract (T-0114) ───────────────────────────────────────────────────────────────
+// One card per component, in the order the reader meets them. Doing nothing accepts. Modify: the editor's words,
+// and that component alone is revised. Remove: where a component can be absent. Plus feedback on the whole page.
+const BSC2_LABEL={row:'Row', title:'Title', contest:'Contest', stakes:'Stakes', chart:'Chart', starts:'It starts in',
+  milestones:'Milestones', here:'We are here', documents:'Documents'};
+function bsc2Card(s, comp, body, opt){
+  opt=opt||{}; const c=(bsrDraftFor(s)||{}).composed||{}, pr=(c.problems||{})[comp]||[], note=(c.modified||{})[comp];
+  return `<div class="bsc2-card" style="border:1px solid var(--rule);background:#fff;padding:8px 10px;margin:7px 0">
+    <div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline"><b style="font:700 11px sans-serif;letter-spacing:.06em">${esc(BSC2_LABEL[comp]||comp).toUpperCase()}</b>
+      <span style="font-size:11px;color:var(--dim)">${note?'revised to: '+esc(String(note).slice(0,60)):(opt.hint||'')}</span></div>
+    ${body}
+    ${pr.length?`<div style="font-size:11.5px;color:var(--stale);margin-top:4px">still breaks: ${esc(pr.join('; '))}</div>`:''}
+    ${opt.noModify?'':`<div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap"><input class="bsc2-mod" data-comp="${comp}" placeholder="modify: say what is wrong or wanted" style="flex:1;min-width:240px"><button class="mini bsc2-mod-go" data-comp="${comp}"${comp==='documents'?' title="searches the library and the web for what you ask, then re-chooses"':''}>modify</button>
+      ${opt.removable?`<button class="mini bsc2-rm" data-comp="${comp}" style="color:var(--stale)">remove</button>`:''}</div>`}
+  </div>`;
+}
+function bsc2Html(s, d){
+  const c=d.composed, rowT=bsrRowTitle(s.backstoryRow), row=d.row||{}, ind=c.chart_removed?null:(row.indicator||null);
+  const p=t=>`<div style="font:15px Georgia,serif;margin-top:4px">${t}</div>`;
+  const begs=(c.beginnings||[]), docs=(c.case||[]);
+  const card=readerCardHtml(Object.assign({}, row, {title:rowT}), {story_id:s.key, line:c.here||'', headline:s.title, origin:c.starts?{status:'retrieved', year:c.starts.year, line:c.starts.line}:null});
+  const suggest=c.row && s.rowByEditor && c.row.toLowerCase()!==String(rowT).toLowerCase() ? `<div style="font-size:11.5px;color:var(--dim)">The story itself suggests: <b>${esc(c.row)}</b></div>` : '';
+  return `<div class="bsr-prev bsc2" data-key="${esc(s.key)}" style="flex-basis:100%;margin:6px 0 2px 26px;padding:8px 10px;border:1px solid var(--ink);background:#faf8f3">
+    <div style="font-size:11px;color:var(--dim);margin-bottom:6px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">BACKSTORY &middot; built ${esc(rel(BSR_DRAFT.generated))} ago &middot; everything is accepted unless you modify or remove it
+      <a class="mini" href="${esc(bscReaderUrl())}" target="_blank" rel="noopener" style="text-decoration:none;border:1px solid var(--ink);padding:2px 8px">open in the reader app</a>
+      <button class="mini bsc2-rebuild">rebuild from scratch</button><button class="mini bsr-prev-close">close</button></div>
+    ${bsrStaleNote(d)}
+    ${BSR_DRAFT_STATE?`<div style="padding:5px 8px;margin-bottom:6px;border:1px solid var(--ink);font-size:12.5px"><b>${esc(BSR_DRAFT_STATE)}</b></div>`:''}
+    ${c.thin?`<div style="padding:6px 8px;margin-bottom:6px;background:#fbe8d0;font-size:12.5px"><b>Thin:</b> ${esc(c.thin)}. Modify Documents with what to look for, and it searches.</div>`:''}
+    <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">
+      <div style="flex:1;min-width:340px;max-width:660px">
+        ${bsc2Card(s,'row', p(esc(rowT||'(none)'))+suggest, {hint:s.rowByEditor?'set by you':'proposed from the story', noModify:true})
+}
+        <div style="font-size:11px;color:var(--dim);margin:-2px 0 4px">Change the row in the box above the preview. It moves the shelf and the chart; the history stays.</div>
+        ${bsc2Card(s,'title', p(esc(c.title||'')))}
+        ${bsc2Card(s,'contest', p('<i>'+esc(c.contest||'(removed)')+'</i>'), {removable:true})}
+        ${bsc2Card(s,'stakes', p(esc(c.stakes||'(removed)')), {removable:true})}
+        ${bsc2Card(s,'chart', ind?catIndicatorSvg(ind):`<div style="font-size:12.5px;color:var(--dim);margin-top:4px">${c.chart_removed?'Removed for this story.':'This row has no trend line.'+(String(s.backstoryRow).startsWith('p-')?' Modify to look for one.':' A fixed row\u2019s trend line is kept in editorial/backstory-rows.json.')}</div>`, {removable:!!ind, hint:'the row\u2019s trend line'})}
+        ${bsc2Card(s,'starts', c.starts?p('<b>'+esc(c.starts.year)+'</b> '+esc(c.starts.line)):p('(none)'), {hint:'one of the milestones'})}
+        ${bsc2Card(s,'milestones', begs.map(b=>`<div style="display:flex;gap:10px;margin:5px 0;font-size:14px;align-items:flex-start"><b style="min-width:40px">${esc(b.year)}</b><span style="flex:1">${esc(b.line)}</span><button class="mini bsc2-rm-item" data-id="${esc(b.object_id)}" style="color:var(--stale)">remove</button></div>`).join('')||'<i style="font-size:12px;color:var(--dim)">none</i>', {hint:begs.length+' of 3 to 6'})}
+        ${bsc2Card(s,'here', p(esc(c.here||'')))}
+        ${bsc2Card(s,'documents', docs.map(o=>`<div style="margin:7px 0;font-size:13.5px"><div style="display:flex;gap:8px;align-items:baseline;flex-wrap:wrap"><b>${esc(o.year)}</b> <a href="${esc(o.source_url||'#')}" target="_blank" rel="noopener"><i>${esc(o.title)}</i></a> <span style="color:var(--dim)">${esc(o.author||'')}</span>${o.source_kind==='news'?' <span class="chip">news report</span>':''}</div>
+            <div style="font:13px Georgia,serif;margin-top:2px;color:${o.about?'inherit':'var(--stale)'}">${esc(o.about||'No About text yet.')}</div>
+            <div style="display:flex;gap:5px;margin-top:3px">${o.source_kind==='news'?'<span class="chip" title="news reports never enter the matrix">not for the matrix</span>':(bsEdits(s).approved||[]).includes(o.object_id)||o.kind==='matrix'?`<span class="chip">${o.kind==='matrix'?'in the matrix':'added to the matrix at publish'}</span>`:`<button class="mini bsc2-matrix" data-id="${esc(o.object_id)}" title="the matrix takes only what you add (docs/backstory.md, open question)">add to matrix</button>`}<button class="mini bsc2-rm-item" data-id="${esc(o.object_id)}" style="color:var(--stale)">remove</button></div></div>`).join('')||'<i style="font-size:12px;color:var(--dim)">none</i>', {hint:'with the About text for each'})}
+        <div style="border:1px dashed var(--ink);padding:8px 10px;margin:9px 0"><b style="font:700 11px sans-serif;letter-spacing:.06em">FEEDBACK ON THE WHOLE PAGE</b>
+          <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap"><input class="bsc2-page" placeholder="what is wrong with the page as a whole; it is rebuilt with your note" style="flex:1;min-width:260px"><button class="mini go bsc2-page-go">rebuild with this</button></div></div>
+        ${(c.notes||[]).length?`<details style="font-size:11.5px;color:var(--dim);margin-top:4px"><summary>${c.notes.length} note(s) from the build</summary>${c.notes.map(n=>'<div>'+esc(n)+'</div>').join('')}</details>`:''}
+        <div style="font-size:11px;color:var(--dim);margin-top:4px">${c.usage?esc(c.usage.input_tokens)+' tokens in, '+esc(c.usage.output_tokens)+' out':''}</div>
+      </div>
+      <div><div style="font:700 11px sans-serif;letter-spacing:.06em;margin-bottom:4px">THE CARD READERS SEE</div>${card||''}</div>
+    </div></div>`;
+}
+function bsc2Wire(el, s){
+  const bb=el.querySelector('.bsc2-build'); if (bb) bb.addEventListener('click',()=>{ bscBusy(bb); bsrRefreshHashes().then(()=>bsxRun([s.key], {build:true})); });
+  const box=el.querySelector('.bsc2'); if (!box) return;
+  const running=bsrRunning();
+  box.querySelectorAll('button').forEach(b=>{ if (running && !b.classList.contains('bsr-prev-close')){ b.disabled=true; b.title='A run is going; this is ready again when it finishes'; } });
+  const ready=()=>{ if ((bsrDraftFor(s)||{}).textFresh===false){ alert('This story changed since its Backstory was built. Rebuild from scratch.'); return false; } return true; };
+  box.querySelectorAll('.bsc2-mod-go').forEach(b=>b.addEventListener('click',()=>{
+    const comp=b.dataset.comp, note=box.querySelector(`.bsc2-mod[data-comp="${comp}"]`).value.trim();
+    if (!note){ alert('Say what is wrong or wanted, then modify.'); return; }
+    const e=bsEdits(s); e.modify=Object.assign({}, e.modify, {[comp]:note});
+    e.removed=(e.removed||[]).filter(k=>k!==comp); saveLineup(); bscBusy(b);     // modifying a removed part brings it back
+    if (comp==='chart'){ bsxChart(s, note); return; }
+    bsrRefreshHashes().then(()=>{ if (ready()) bsxRun([s.key], {modify:{[s.key]:{comp, note}}}); }); }));
+  box.querySelectorAll('.bsc2-rm').forEach(b=>b.addEventListener('click',()=>{ bscBusy(b); bsxRemove(s, b.dataset.comp); }));
+  box.querySelectorAll('.bsc2-rm-item').forEach(b=>b.addEventListener('click',()=>{ bscBusy(b); bsxRemove(s, null, b.dataset.id); }));
+  box.querySelectorAll('.bsc2-matrix').forEach(b=>b.addEventListener('click',()=>{
+    const e=bsEdits(s); e.approved=Array.from(new Set((e.approved||[]).concat([b.dataset.id]))); saveLineup(); bscBusy(b);
+    bsrRefreshHashes().then(()=>bsxRun([s.key], {refile:true})); }));
+  const pg=box.querySelector('.bsc2-page-go'); if (pg) pg.addEventListener('click',()=>{
+    const note=box.querySelector('.bsc2-page').value.trim(); if (!note){ alert('Say what is wrong with the page.'); return; }
+    const e=bsEdits(s); e.modify=Object.assign({}, e.modify, {page:note}); saveLineup(); bscBusy(pg);
+    bsrRefreshHashes().then(()=>bsxRun([s.key], {build:true})); });
+  const rb=box.querySelector('.bsc2-rebuild'); if (rb) rb.addEventListener('click',()=>{
+    if (!confirm('Rebuild this story\u2019s Backstory from scratch? Your notes are kept and applied; what you removed stays removed.')) return;
+    bscBusy(rb); bsrRefreshHashes().then(()=>bsxRun([s.key], {build:true})); });
+}
+// Chart: the row's trend line. Modify searches for one (one web-search call) for a category the editor or the
+// system named; a fixed row's trend line is hand-kept in editorial/backstory-rows.json. A line found and checked
+// goes on the row in the draft, so every story on that row shows it.
+async function bsxChart(s, note){
+  const rid=s.backstoryRow;
+  const was=((bsrDraftFor(s)||{}).composed||{}).chart_removed;
+  if (rid && !rid.startsWith('p-') && was){ await bsxPatch(s, c=>{ delete c.chart_removed; }); render(); return; }   // brought back
+  if (!rid || !rid.startsWith('p-')){ alert('A fixed row\u2019s trend line is kept in editorial/backstory-rows.json, not found by search.'); render(); return; }
+  if (BSX_BUSY){ alert('A run is going. Ask for the trend line again when it finishes.'); render(); return; }
+  const c=catEnsureLocal(rid); if (!c){ render(); return; }
+  BSR_DRAFT_STATE='Looking for a trend line for '+c.title+'\u2026 a minute or so'; BSX_BUSY=true; render();
+  try {
+    const ct=((bsrDraftFor(s)||{}).composed||{}).contest;
+    const msg=await proposeIndicator(c, note+(ct?' (The story this is for is about '+ct.replace(/^Whether/i,'whether')+')':'')); saveCats();
+    if (!/^Trend line found/.test(msg)){ BSR_DRAFT_STATE=msg; return; }
+    for (let i=0; i<3; i++){
+      const g=await bsxGet(GH_DRAFT_OUT); const draft=g.data; if (!draft) break;
+      (draft.stories||[]).forEach(d=>{ if (d.row && d.row.id===rid) d.row.indicator=c.indicator; if (d.story_id===s.key && d.composed) delete d.composed.chart_removed; });
+      (draft.ship.provisional_rows||[]).forEach(r=>{ if (r.id===rid) r.indicator=c.indicator; });
+      const st=(draft.ship.provisional_store||{}).rows||[]; st.forEach(r=>{ if (r.id===rid) r.indicator=c.indicator; });
+      if (await bsxPut(GH_DRAFT_OUT, draft, g.sha, 'backstory: a trend line for '+c.title)){ BSR_DRAFT=draft; break; }
+    }
+    BSR_DRAFT_STATE='';
+  } catch(e){ BSR_DRAFT_STATE='Trend line search failed: '+e.message; }
+  finally {
+    BSX_BUSY=false; render();
+    if (BSX_NEXT && BSX_NEXT.length){ const n=BSX_NEXT.shift(); bsrRefreshHashes().then(()=>bsxRun(n.keys, n.opts)); }
+  }
+}
 function bsrDraftPreviewHtml(s, d){
+  if (d.composed && d.composed.v===2) return bsc2Html(s, d);
   if (d.composed && !d.composed.error) return bscComposedHtml(s, d);
   const r = d.row, p = d.pairing;
   const card = readerCardHtml(r, {story_id:s.key, line:p.line||'', headline:s.title, origin:p.origin||null});
@@ -5286,9 +5406,14 @@ function bsrDraftPreviewHtml(s, d){
 }
 function bsrStoryPreviewHtml(s){
   const dr=bsrDraftFor(s);
-  if (dr && dr.row && dr.pairing) return bsrDraftPreviewHtml(s, dr);
+  if (dr && dr.composed && dr.composed.v===2) return bsrDraftPreviewHtml(s, dr);
   const box=inner=>`<div class="bsr-prev" style="flex-basis:100%;margin:6px 0 2px 26px;padding:8px 10px;border:1px dashed var(--rule);background:#faf8f3">
     <div style="font-size:11px;color:var(--dim);margin-bottom:6px">PREVIEW &middot; this story's Backstory as the reader gets it <button class="mini bsr-prev-close">close</button></div>${inner}</div>`;
+  // T-0114: a story ships a Backstory only when one was built for it to the contract
+  if (BSR_DRAFT_STATE && bsrRunning()) return box(`<div style="font-size:12.5px"><b>${esc(BSR_DRAFT_STATE)}</b></div>`);
+  return box(`<div style="font-size:12.5px">${bsxHasTruths(s)
+    ? (dr&&dr.composed?'This story was built before the contract (2026-11-02). Build it again to review it here.':'Not built yet. A story without a built Backstory ships without one.')+` <button class="mini go bsc2-build">build this story's Backstory</button>`
+    : 'No Truths yet. Generate Jefferson first; the Backstory builds itself after.'}</div>`);
   const d=bsrPreviewData(s);
   if (!d) return box('<div style="font-size:12px">Not filed, so the classifier picks: it chooses a row, or makes a category of its own. Click Draft Backstory above to see its choice here before you publish. To choose yourself, pick a row above.</div>');
   if (d.missing) return box('<div style="font-size:12px">This row has not reached the published Backstory yet, so there is nothing to preview.</div>');
