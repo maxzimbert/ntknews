@@ -56,6 +56,7 @@ def main():
                 "line": n.get("line", ""), "about": n.get("about", ""),
                 "text_verified": bool(n.get("verified")),
                 "link_status": h.get("status", "unchecked"),
+                **({"source_kind": "news"} if o.get("source_kind") == "news" else {}),
             })
     wb = openpyxl.load_workbook(CANDS, read_only=True)
     if "Lens candidates" in wb.sheetnames:

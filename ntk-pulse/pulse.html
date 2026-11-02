@@ -1517,10 +1517,16 @@ function verifyMilestone(m, urls, storyText, relations){
 // News is accepted as an object's source only when no adequate primary source turned up, and it is always
 // labelled (T-0085). The model's own label is not trusted: a news host is news whatever the model called it.
 const CAT_NEWS=['nytimes.com','washingtonpost.com','wsj.com','apnews.com','reuters.com','bloomberg.com','politico.com','cnn.com','nbcnews.com','abcnews.','cbsnews.com','foxnews.com','theguardian.com','bbc.co','bbc.com','npr.org','latimes.com','usatoday.com','theatlantic.com','newyorker.com','time.com','newsweek.com','axios.com','vox.com','businessinsider.com','forbes.com','huffpost.com','thedailybeast.com','nypost.com','nydailynews.com','chicagotribune.com','bostonglobe.com','propublica.org','motherjones.com','slate.com','salon.com','vanityfair.com','rollingstone.com','villagevoice.com','newsday.com','inquirer.com','seattletimes.com','sfchronicle.com','miamiherald.com','pressofatlanticcity.com','nj.com','thehill.com','cnbc.com','msnbc.com','ft.com','economist.com','theintercept.com','buzzfeednews.com','yahoo.com'];
+// NTK's approved publishers: the 91 outlets the Stream reads (NTK_SOURCES in netlify/functions/news.js; the
+// T-0114 check holds this copy equal to it). A news report may carry a Backstory milestone or document only when no
+// primary source will, and only from one of these (the editor, 2026-11-02: contemporary reporting is good enough
+// for the Congressional Record and the courts, and much recent history has no other record yet).
+const NTK_PUBLISHERS=['nytimes.com','bloomberg.com','cbc.ca','bbc.com','france24.com','dw.com','wsj.com','apnews.com','reuters.com','haaretz.com','jpost.com','aljazeera.com','washingtonpost.com','postandcourier.com','miamiherald.com','latimes.com','cnn.com','nbcnews.com','abcnews.go.com','abc.net.au','theaustralian.com.au','dailymail.co.uk','thedailybeast.com','telegraph.co.uk','spectator.org','talkingpointsmemo.com','nhk.or.jp','en.yna.co.kr','koreaherald.com','tuko.co.ke','standardmedia.co.ke','elpais.com.uy','afp.com','rainews.it','ansa.it','corriere.it','independent.co.uk','ft.com','npr.org','foxnews.com','cnbc.com','ny1.com','spectrumnews1.com','spectrumlocalnews.com','ajc.com','atlantablackstar.com','pbs.org','cbsnews.com','theatlantic.com','newyorker.com','economist.com','theweek.com','thebulwark.com','heathercoxrichardson.substack.com','semafor.com','newrepublic.com','fox5dc.com','fox5atlanta.com','wgbh.org','wbur.org','wbez.org','laist.com','chicagoreader.com','houstonchronicle.com','houstonpublicmedia.org','gardenandgun.com','vogue.com','teenvogue.com','vogue.co.uk','glamour.com','glamourmagazine.co.uk','nbcwashington.com','freebeacon.com','mcclatchydc.com','washingtonian.com','usatoday.com','goodmorningamerica.com','gma.yahoo.com','chalkbeat.org','hechingerreport.org','the74million.org','chronicle.com','insidehighered.com','statnews.com','kffhealthnews.org','thetrace.org','themarshallproject.org','propublica.org','mediaite.com','hollywoodreporter.com','deadline.com'];
+function bsxPublisher(url){ const host=String(url||'').replace(/^https?:\/\/([^\/]+).*$/,'$1').toLowerCase(); return NTK_PUBLISHERS.some(d=>host===d||host.endsWith('.'+d)); }
 function catSourceKind(url){
   const host=String(url||'').replace(/^https?:\/\/([^\/]+).*$/,'$1').toLowerCase();
   if (CAT_DENY.some(d=>host.includes(d))) return 'deny';
-  return CAT_NEWS.some(d=>d.endsWith('.') ? host.includes(d) : (host===d||host.endsWith('.'+d))) ? 'news' : 'document';
+  return CAT_NEWS.some(d=>d.endsWith('.') ? host.includes(d) : (host===d||host.endsWith('.'+d))) || bsxPublisher(url) ? 'news' : 'document';
 }
 // One candidate from a per-topic search. kind: "located" (the document, readable at the link), "news" (a news
 // report carrying the facts, only when no primary copy was found) or "lead" (a document a page names, with no
@@ -1544,6 +1550,7 @@ function verifyCandidate(m, urls){
   const isNews = kind==='news' || sk==='news';
   const why=String(m.why_no_primary||'').trim();
   if (isNews && !why) return {ok:false, reason:'a news source needs a reason no primary source would do'};
+  if (isNews && !bsxPublisher(url)) return {ok:false, reason:'a news report from a publisher outside NTK\u2019s approved list'};
   return {ok:true, cand:{kind:isNews?'news':'located', title:t, year:String(m.year), date:/^\d{4}-\d\d-\d\d$/.test(m.date||'')?m.date:'', author:String(m.author||'').trim(),
     source:String(m.source||'').trim(), url:url, evidence_quote:String(m.evidence_quote).trim(), why_no_primary:isNews?why:'', note:String(m.note||'').trim()}};
 }
@@ -4460,13 +4467,13 @@ function bscResearchHtml(s, c){
       ${v.line?'<div style="font:13px Georgia,serif;margin-top:2px">'+esc(v.line)+'</div>':''}
       ${v.evidence_quote&&!v.line?'<div style="font-size:11.5px;color:var(--dim);margin-top:2px">“'+esc(String(v.evidence_quote).slice(0,220))+'”</div>':''}
       ${v.vetoed_because?'<div style="font:400 11px sans-serif;color:var(--stale)">vetoed: '+esc(v.vetoed_because)+'</div>':''}
-      ${v.kind==='news'?'<div style="font-size:11px;color:#8a5a12">news report, labelled on the page; never goes into the matrix. No primary source because: '+esc(v.why_no_primary||'')+'</div>':''}
+      ${v.kind==='news'?'<div style="font-size:11px;color:#8a5a12">news report, labelled on the page; joins the matrix, marked as news, only from an approved publisher. No primary source because: '+esc(v.why_no_primary||'')+'</div>':''}
       ${lead?'<div style="font-size:11px;color:var(--dim)">named by '+esc(v.cited_by||'a page')+(v.cited_by_url?' <a href="'+esc(v.cited_by_url)+'" target="_blank" rel="noopener">page that names it</a>':'')+(v.note?' · '+esc(v.note):'')+'</div>':''}
       <div style="display:flex;gap:5px;margin-top:4px;flex-wrap:wrap;align-items:center">${approved?'<span class="chip">approved: running</span>'
         : lead?'<button class="mini bsc-lead-hunt" data-id="'+esc(v.id)+'">search for a copy (1 call)</button><input class="bsc-lead-url" data-id="'+esc(v.id)+'" placeholder="or paste a link: https://" style="width:220px"><input class="bsc-lead-year" data-id="'+esc(v.id)+'" value="'+esc(v.year||'')+'" placeholder="year" style="width:52px"><button class="mini bsc-lead-use" data-id="'+esc(v.id)+'">approve with this link</button>'
         : '<button class="mini go bsc-approve" data-id="'+esc(v.id)+'">approve: I checked it</button>'}<button class="mini bsc-rej" data-id="${esc(v.id)}" style="color:var(--stale)">reject</button></div></div>`; }).join('');
   const found = (c.found || []).map(f => `<div style="margin:6px 0;font-size:13.5px;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap"><b>${esc(f.year||'')}</b> ${link(f)}
-      ${f.approved_by?'<span class="chip" style="background:#dcefe2;color:#2f7d4f">'+(f.source_kind==='news'?'approved; news stays out of the matrix':'approved: joins the matrix at publish')+'</span>'
+      ${f.approved_by?'<span class="chip" style="background:#dcefe2;color:#2f7d4f">'+(f.source_kind==='news'&&!bsxPublisher(f.url)?'approved; news stays out of the matrix':'approved: joins the matrix at publish')+'</span>'
         : (ok.has(f.id)?'<span class="chip">approving…</span>':'<button class="mini bsc-approve" data-id="'+esc(f.id)+'">approve for the matrix</button>')}</div>`).join('');
   return (waiting ? `<div style="font:700 11px sans-serif;letter-spacing:.06em;margin-top:6px">WAITING FOR YOU</div><div style="font-size:11.5px;color:var(--dim);margin:2px 0 4px">Nothing here is on the page until you approve it. Open each link first. Approving puts it on this page and, for a primary source, into the Object Matrix at publish.</div>${waiting}` : '')
     + (found ? `<div style="font:700 11px sans-serif;letter-spacing:.06em;margin-top:10px">FROM RESEARCH, IN THE LIBRARY</div><div style="font-size:11.5px;color:var(--dim);margin:2px 0 4px">These passed the checks and can be on any story's page. Only what you approve goes into the Object Matrix.</div>${found}` : '')
@@ -4586,16 +4593,16 @@ async function bsxFindId(title, year, url){
 function bsxLibrary(draft, ledger){
   const lib={}, rej=new Set((ledger&&ledger.rejected)||[]), byUrl={};
   // one document, once: an approved find is in the ledger and, after publish, in the matrix too
-  const add=(o, origin)=>{ if (!o.id || !o.url) return; const same=lib[o.id]||lib[byUrl[o.url]]; if (same){ same.categories.add(origin); return; }
+  const add=(o, origin)=>{ if (!o.id || !o.url) return; if ((o.source_kind||catSourceKind(o.url))==='news' && !bsxPublisher(o.url)) return; o.source_kind=o.source_kind||(catSourceKind(o.url)==='news'?'news':''); const same=lib[o.id]||lib[byUrl[o.url]]; if (same){ same.categories.add(origin); return; }
     byUrl[o.url]=o.id;
     lib[o.id]=Object.assign({about:'', why:'', row:origin, subgenre:'', lenses:[], kind:'found', author:'', title:'', year:''}, o, {year:String(o.year||''), categories:new Set([origin])}); };
   ((POOL&&POOL.objects)||[]).forEach(o=>{ if (o.url && ['live','live-pdf'].includes(o.link_status) && (o.pool==='matrix' || o.approved))
-    add({id:o.id, title:o.title||'', author:o.author||'', year:o.year, url:o.url, about:o.about||'', why:o.why||'', row:o.row||'', subgenre:o.subgenre||'', lenses:o.lenses||[], kind:o.pool==='matrix'?'matrix':'candidate'}, o.row||''); });
+    add({id:o.id, title:o.title||'', author:o.author||'', year:o.year, url:o.url, about:o.about||'', why:o.why||'', row:o.row||'', subgenre:o.subgenre||'', lenses:o.lenses||[], kind:o.pool==='matrix'?'matrix':'candidate', source_kind:o.source_kind||''}, o.row||''); });
   const rows=((BSR_PUBLISHED&&BSR_PUBLISHED.rows)||[]).concat((draft.stories||[]).map(d=>d.row).filter(Boolean));
   rows.forEach(r=>(r.objects||[]).forEach(o=>{ if (o.object_id && lib[o.object_id]){ lib[o.object_id].categories.add(r.title); if (!lib[o.object_id].about) lib[o.object_id].about=o.about||''; }
     else if (o.object_id && o.source_url) add({id:o.object_id, title:o.title||'', author:o.author||'', year:o.year, url:o.source_url, about:o.about||'', kind:'category', source_kind:o.source_kind}, r.title); }));
   (PUBCATS||[]).forEach(r=>(r.custom_objects||[]).forEach(cu=>add({id:cu.id, title:cu.title||'', author:cu.author||'', year:cu.year, url:cu.url, about:cu.about||'', evidence:cu.evidence_quote||'', source_kind:cu.source_kind||catSourceKind(cu.url)}, r.title)));
-  ((ledger&&ledger.finds)||[]).forEach(f=>{ if (!rej.has(f.id)) add({id:f.id, title:f.title||'', author:f.author||'', year:f.year, url:f.url, about:f.about||'', why:f.line||'', evidence:f.evidence_quote||'', source_kind:f.source_kind||catSourceKind(f.url)}, 'research: '+String(f.researched_for||'').slice(0,60)); });
+  ((ledger&&ledger.finds)||[]).forEach(f=>{ if (!rej.has(f.id)) add({id:f.id, title:f.title||'', author:f.author||'', year:f.year, url:f.url, about:f.about||'', why:f.line||'', evidence:f.evidence_quote||'', why_no_primary:f.why_no_primary||'', source_kind:f.source_kind||catSourceKind(f.url)}, 'research: '+String(f.researched_for||'').slice(0,60)); });
   return lib;
 }
 // The documents worth showing the model: by `terms` (the history the story belongs to, named by Haiku: a story's
@@ -4639,14 +4646,14 @@ const BSX_RULES = {
   contest:  'the argument this history is about: ONE sentence beginning "Whether", 12 to 35 words.',
   stakes:   'what is at stake and for whom: exactly TWO sentences, 25 to 55 words in all.',
   starts:   '"It starts in": the Milestone where this story\'s history begins, given by its id; never this year.',
-  milestones: '3 to 6 dated milestones from the library, in order, each ONE sentence of 12 to 25 words saying what happened, in the past tense, using only facts in its document\'s line. Public history only: laws, rulings, treaties, official acts, public statements and events, never a private person\'s records.',
+  milestones: '3 to 6 dated milestones from the library, in order, each ONE sentence of 12 to 25 words saying what happened, in the past tense, using only facts in its document\'s line. Public history only: laws, rulings, treaties, official acts, public statements and events, never a private person\'s records. Carry each milestone with a primary document where the library has one; a [NEWS REPORT] may carry a milestone only when no primary document in the library covers that event.',
   here:     '"We are here": today\'s story as the end of the chronology, one or two sentences, 12 to 30 words.',
-  later:    'up to 2 later documents (after "It starts in", before today) that belong in the case.',
+  later:    'up to 2 later documents (after "It starts in", before today) that belong in the case; a primary document over a [NEWS REPORT] on the same event.',
   about:    'for each chosen document with no "what it is" text: two to four sentences, at most 70 words: what it is, who made it and when, what it did. Only facts in its line.',
 };
 const BSX_STYLE = 'All text: plain and precise, at an Advanced Placement history level; no dashes; never "this document", "this reflects", "underscores", "highlights", "serves as", "a reminder that", "pivotal", "landmark", "groundbreaking", "seminal"; take no side; no number that is not in the story or the document\'s own line.';
 function bsxDocLines(cands, lib){
-  return cands.map(i=>{ const o=lib[i], w=o.about||o.why; return '- '+i+' | '+o.year+' | '+o.title.slice(0,110)+' | '+String(o.author).slice(0,50)+(w?' | '+w.slice(0,220):''); }).join('\n')||'(none)';
+  return cands.map(i=>{ const o=lib[i], w=o.about||o.why; return '- '+i+' | '+o.year+' | '+(o.source_kind==='news'?'[NEWS REPORT] ':'')+o.title.slice(0,110)+' | '+String(o.author).slice(0,50)+(w?' | '+w.slice(0,220):''); }).join('\n')||'(none)';
 }
 function bsxStoryBlock(story){
   return `HEADLINE: ${story.headline}\nDESCRIPTION: ${story.lede||''}\nWHAT IS TRUE (the Truths):\n${story.truths.slice(0,3500)}`;
@@ -4721,7 +4728,7 @@ function bsxShape(r, cands, lib, edits, notes){
   const kase=Array.from(new Set(begs.map(b=>b.object_id).concat(later))).map(i=>{ const o=lib[i];
     return Object.assign({object_id:i, year:o.year.slice(0,4), title:o.title, author:o.author, source_url:o.url,
       about:(edits.abouts||{})[i]||o.about||about[i]||'', about_by:o.about?'library':about[i]?'model':'', kind:o.kind},
-      o.source_kind==='news'?{source_kind:'news'}:{}); });
+      o.source_kind==='news'?{source_kind:'news', why_no_primary:o.why_no_primary||''}:{}); });
   let starts=null;
   const sid=typeof r.starts==='string'?r.starts:(r.starts&&r.starts.id);
   const now=String(new Date().getUTCFullYear());      // never this year: a pick from this year falls back to the latest earlier one
@@ -4881,12 +4888,12 @@ TODAY'S STORY: ${story.headline}
 ${story.truths.slice(0,3500)}
 ALREADY ON THE PAGE (do not repeat): ${haveTxt}
 
-First ask yourself: what is the history of the action, the consequences, the people, the setting and the background in this story? Which events, in order, are the steps that lead to what the story reports today? Choose the ${need} that matter most, spread across time, earlier than today's event, the last one the most recent turn before it. Then use web search to find, for each, a primary source that defends it from editorial scrutiny: the document itself or the copy held by an archive, court, legislature, government agency or the original publisher. Not Wikipedia, not a news article or summary about it, not a retail or study-guide page.
+First ask yourself: what is the history of the action, the consequences, the people, the setting and the background in this story? Which events, in order, are the steps that lead to what the story reports today? Choose the ${need} that matter most, spread across time, earlier than today's event, the last one the most recent turn before it. Then use web search to find, for each, a primary source that defends it from editorial scrutiny: the document itself or the copy held by an archive, court, legislature, government agency or the original publisher. Not Wikipedia, not a summary about it, not a retail or study-guide page. When no primary source exists for a milestone (it is too recent for an archive, or what happened, such as something a person said, is on record only in contemporary reporting), a news report written at the time may carry it, but only from one of NTK's approved publishers: ${NTK_PUBLISHERS.join(', ')}. Mark it "source_kind":"news" and say in why_no_primary why no primary source would do. A primary source always comes first.
 
 ${rule} ${need} is a target, not a quota: if you cannot source a milestone, leave it out. Fewer well-sourced milestones are better than padding.
 
 Answer with JSON only, a list in date order:
-[{"year":"YYYY","date":"YYYY-MM-DD if the document gives it, else null","title":"the document's exact title","author":"who issued or wrote it","source":"the publishing body or archive","source_url":"the exact page or PDF where it can be read","line":"ONE sentence, 12 to 25 words, saying what happened, starting with the actor or the event","about":"two to four sentences, at most 70 words: what the document is, who made it and when, what it says or did","evidence_quote":"one sentence copied word for word from that page that supports the line","ties_to":"a few words from TODAY'S STORY naming the subject, person, place or action this milestone belongs to","relation":"${rel.join(' | ')}","because":"one sentence: how this step leads to the next one, or to today's story"}]
+[{"year":"YYYY","date":"YYYY-MM-DD if the document gives it, else null","title":"the document's exact title","author":"who issued or wrote it","source":"the publishing body or archive","source_url":"the exact page or PDF where it can be read","line":"ONE sentence, 12 to 25 words, saying what happened, starting with the actor or the event","about":"two to four sentences, at most 70 words: what the document is, who made it and when, what it says or did","evidence_quote":"one sentence copied word for word from that page that supports the line","source_kind":"document | news","why_no_primary":"news only: why no primary source would do","ties_to":"a few words from TODAY'S STORY naming the subject, person, place or action this milestone belongs to","relation":"${rel.join(' | ')}","because":"one sentence: how this step leads to the next one, or to today's story"}]
 Rules: use only facts that the page states; the line and about may contain no number that is not in the title, the date or the evidence_quote. If you find none, answer [].
 ${CAT_STYLE_RULES}`;
   const r=await bsxAsk(BSX_SONNET, p, 4000, 'research', [{type:'web_search_20250305',name:'web_search',max_uses:8}]);
@@ -4895,8 +4902,11 @@ ${CAT_STYLE_RULES}`;
   const rec=async (m, extra)=>Object.assign({id:await bsxFindId(String(m.title||'').trim(), m.year, m.source_url), title:String(m.title||'').trim(), author:String(m.author||'').trim(),
     year:String(m.year||''), date:/^\d{4}-\d\d-\d\d$/.test(m.date||'')?m.date:'', source:String(m.source||'').trim(), url:String(m.source_url||'').trim(),
     evidence_quote:String(m.evidence_quote||'').trim(), line:String(m.line||'').trim(), about:String(m.about||'').trim(), ties_to:String(m.ties_to||'').trim(),
-    relation:m.relation, because:String(m.because||'').trim().slice(0,240), found_by:'search', source_kind:catSourceKind(m.source_url)}, extra||{});
+    relation:m.relation, because:String(m.because||'').trim().slice(0,240), found_by:'search', source_kind:(String(m.source_kind||'')==='news'||catSourceKind(m.source_url)==='news')?'news':'', why_no_primary:String(m.why_no_primary||'').trim()}, extra||{});
   for (const m of items.slice(0, need+3)){
+    const isNews=String(m.source_kind||'')==='news' || catSourceKind(m.source_url)==='news';
+    if (isNews && !bsxPublisher(m.source_url)){ if (/^https?:/.test(String(m.source_url||''))) vetoed.push(await rec(m, {vetoed_because:'a news report from a publisher outside NTK\u2019s approved list'})); continue; }
+    if (isNews && !String(m.why_no_primary||'').trim()){ vetoed.push(await rec(m, {vetoed_because:'a news report with no reason a primary source would not do'})); continue; }
     const v=verifyMilestone(m, r.urls, storyText, rel);
     if (v.ok){ kept.push(await rec(m)); continue; }
     const textOnly=m.source_url && r.urls.includes(m.source_url) && /words|sentence|number|dash|banned|empty/.test(v.reason);
@@ -4921,7 +4931,7 @@ ${CAT_STYLE_RULES}`;
 // Approving is the editor's call on a document: one waiting (vetoed by the checks, or turned up by an outline
 // search) goes into the library and onto the page; one already in the library from research is marked. Either
 // way it is marked approved_by: "editor", which is what sends a primary source into the Object Matrix at
-// publish (editorial/graduate_finds.py). A news report can be approved onto a page and never enters the matrix.
+// publish (editorial/graduate_finds.py). A news report joins it, marked as news, only from an approved publisher.
 function bsxApprove(ledger, ids, storyId, lib){
   const now=new Date().toISOString(), mark=f=>Object.assign(f, {approved_by:'editor', approved_for:storyId, approved_at:now});
   ledger.finds.forEach(f=>{ if (ids.has(f.id) && !f.approved_by) mark(f); });
@@ -5365,9 +5375,9 @@ function bsc2Html(s, d){
         ${bsc2Card(s,'starts', c.starts?p('<b>'+bsc2T('starts.year', c.starts.year)+'</b> '+bsc2T('starts.line', c.starts.line)):p('(none)'), {words:!!c.starts, hint:'where the history begins'})}
         ${bsc2Card(s,'milestones', begs.map(b=>`<div style="display:flex;gap:10px;margin:5px 0;font-size:14px;align-items:flex-start"><b style="min-width:40px">${esc(b.year)}</b><span style="flex:1">${bsc2T('m:'+b.object_id, b.line)}</span><button class="mini bsc2-rm-item" data-id="${esc(b.object_id)}" style="color:var(--stale)">remove</button></div>`).join('')||'<i style="font-size:12px;color:var(--dim)">none</i>', {words:begs.length>0, hint:begs.length+' of 3 to 6', ph:'or tell me what to change in the milestones'})}
         ${bsc2Card(s,'here', p(bsc2T('here', c.here)), {words:true})}
-        ${bsc2Card(s,'documents', docs.map(o=>`<div style="margin:7px 0;font-size:13.5px"><div style="display:flex;gap:8px;align-items:baseline;flex-wrap:wrap"><b>${esc(o.year)}</b> <a href="${esc(o.source_url||'#')}" target="_blank" rel="noopener"><i>${esc(o.title)}</i></a> <span style="color:var(--dim)">${esc(o.author||'')}</span>${o.source_kind==='news'?' <span class="chip">news report</span>':''}</div>
+        ${bsc2Card(s,'documents', docs.map(o=>`<div style="margin:7px 0;font-size:13.5px"><div style="display:flex;gap:8px;align-items:baseline;flex-wrap:wrap"><b>${esc(o.year)}</b> <a href="${esc(o.source_url||'#')}" target="_blank" rel="noopener"><i>${esc(o.title)}</i></a> <span style="color:var(--dim)">${esc(o.author||'')}</span>${o.source_kind==='news'?` <span class="chip" style="background:#f6e7c8;color:#8a5a12" title="${esc(o.why_no_primary||'a secondary source: no primary source was found for this')}">news report</span>`:''}</div>
             <div style="font:13px Georgia,serif;margin-top:2px">${bsc2T('about:'+o.object_id, o.about)}${o.about?'':'<span style="color:var(--stale)">No About text yet.</span>'}</div>
-            <div style="display:flex;gap:5px;margin-top:3px;align-items:center">${o.source_kind==='news'?'<span class="chip" title="news reports never enter the Object Matrix">news: not for the Object Matrix</span>':o.kind==='matrix'?'<span class="chip">already in the Object Matrix</span>':(e.approved||[]).includes(o.object_id)?'<span class="chip">joins the Object Matrix at publish</span>':`<button class="mini bsc2-matrix" data-id="${esc(o.object_id)}" title="It is on this page either way. This also adds it to the Object Matrix, the library every Backstory draws on, when you publish.">also add to the Object Matrix</button>`}<button class="mini bsc2-rm-item" data-id="${esc(o.object_id)}" style="color:var(--stale)">remove from page</button></div></div>`).join('')||'<i style="font-size:12px;color:var(--dim)">none</i>', {words:docs.length>0, noModify:false, hint:'every one is on the page; to find others, direct the research above', ph:'or tell me what to change in the About text'})}
+            <div style="display:flex;gap:5px;margin-top:3px;align-items:center">${o.source_kind==='news'&&!bsxPublisher(o.source_url)?'<span class="chip" title="only news from NTK\u2019s approved publishers enters the Object Matrix">news, outside the approved publishers</span>':o.kind==='matrix'?'<span class="chip">already in the Object Matrix</span>':(e.approved||[]).includes(o.object_id)?'<span class="chip">joins the Object Matrix at publish</span>':`<button class="mini bsc2-matrix" data-id="${esc(o.object_id)}" title="It is on this page either way. This also adds it to the Object Matrix, the library every Backstory draws on, when you publish.">also add to the Object Matrix</button>`}<button class="mini bsc2-rm-item" data-id="${esc(o.object_id)}" style="color:var(--stale)">remove from page</button></div></div>`).join('')||'<i style="font-size:12px;color:var(--dim)">none</i>', {words:docs.length>0, noModify:false, hint:'every one is on the page; to find others, direct the research above', ph:'or tell me what to change in the About text'})}
         ${(c.notes||[]).length?`<details style="font-size:11.5px;color:var(--dim);margin-top:4px"><summary>${c.notes.length} note(s) from the build</summary>${c.notes.map(n=>'<div>'+esc(n)+'</div>').join('')}</details>`:''}
         <div style="font-size:11px;color:var(--dim);margin-top:4px">${c.usage?esc(c.usage.input_tokens)+' tokens in, '+esc(c.usage.output_tokens)+' out':''}</div>
       </div>
