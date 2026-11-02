@@ -1,5 +1,5 @@
 {
- "assembled_at": "2026-11-02T04:49:31.502889+00:00",
+ "assembled_at": "2026-11-02T17:58:53.782593+00:00",
  "slot_plan": "A",
  "displacement": "MANUAL",
  "daytype": "weekday",
@@ -7,995 +7,359 @@
   8,
   10
  ],
- "actual_size": 29,
+ "actual_size": 10,
  "lint_failures": [
-  "under 3 fully self-contained items"
+  "under 3 fully self-contained items",
+  "no item answers 'what do I do with this'"
  ],
- "slots_unfilled": [
-  "Body & mind"
- ],
+ "slots_unfilled": [],
  "stories": [
   {
    "slot": "unavoidable",
    "slot_label": "Unavoidable",
-   "key": "0fd5d085d5d0fc17",
-   "title": "Haley Stevens endorses Republican Mike Rogers over Abdul El-Sayed in Michigan Senate race",
+   "key": "2195ed34b6208967",
+   "title": "Judge dismisses charges against two ex-FBI officials in Hunter Biden probe case",
    "beat": "national",
-   "publisher_count": 9,
+   "publisher_count": 10,
    "publishers": [
     "New York Times",
     "The Guardian",
-    "Al Jazeera",
+    "Yahoo News",
+    "ABC News",
     "CBS News",
-    "Daily Beast",
+    "CNBC",
+    "Fox News",
     "NBC News",
-    "Semafor",
-    "Talking Points Memo",
+    "The New Republic",
     "Memeorandum"
    ],
    "scores": {
     "emotional_load": 2,
     "explainability": 4,
-    "actionability": 2,
-    "conversational_currency": 4
+    "actionability": 1,
+    "conversational_currency": 3
    },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Michigan Democrat Haley Stevens endorsed Republican Mike Rogers over Democratic Senate nominee Abdul El-Sayed, sparking a bitter intraparty fight.",
-   "assembly_score": 8.45
+   "politician_led": false,
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Case dismissed against ex-FBI officials Nicole Floris and Bradley Benavides, accused of falsely suggesting to Congress they were unaware of Hunter Biden probes.",
+    "Magistrate Judge Zia Faruqui dismissed the case for failure to establish probable cause.",
+    "Faruqui called it a rushed, political prosecution ordered by the White House to affect the midterms.",
+    "Faruqui reportedly called the case \"weaponization\" and the government's arguments \"slapdash\"; Floris ran the Washington Field Office intelligence division.",
+    "At a dramatic hearing Faruqui scolded prosecutors; an FBI agent testified he feared the probe would be seen as \"political.\"",
+    "Faruqui accused Trump and FBI Director Kash Patel of directing a rush job."
+   ],
+   "line": "A federal judge dismissed charges against two former FBI officials accused of lying to Congress about the Hunter Biden probe.",
+   "assembly_score": 19.29
   },
   {
    "slot": "money_me",
    "slot_label": "Money & me",
-   "key": "989956e2bea64834",
-   "title": "Trump barnstorms Iowa and Kansas before midterms as GOP fights to hold majority",
-   "beat": "national",
-   "publisher_count": 5,
+   "key": "a2a6983e29e4c591",
+   "title": "Marvell to buy Lumentum in all-stock deal valued near $115 billion",
+   "beat": "business",
+   "publisher_count": 2,
    "publishers": [
-    "BBC",
-    "Financial Times",
-    "ABC News",
-    "CBS News",
-    "Memeorandum"
+    "CNBC",
+    "TechCrunch"
    ],
    "scores": {
-    "emotional_load": 2,
+    "emotional_load": 1,
     "explainability": 4,
-    "actionability": 4,
-    "conversational_currency": 4
+    "actionability": 1,
+    "conversational_currency": 2
    },
-   "politician_led": true,
+   "politician_led": false,
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Marvell plans to acquire Lumentum for $115B, one of tech's largest deals; Nvidia is strategic investor in both.",
+    "Deal expected to close in first half of 2028; Lumentum CEO calls the opportunity 'enormous'."
+   ],
+   "line": "Marvell agreed to buy optical chipmaker Lumentum in an all-stock deal valued at about $115 billion including debt, expected to close in 2028.",
+   "assembly_score": 7.41
+  },
+  {
+   "slot": "body_mind",
+   "slot_label": "Body & mind",
+   "key": "4f4a88ead622f4d3",
+   "title": "Newborn survival improves when families receive financial support",
+   "beat": "science",
+   "publisher_count": 1,
+   "publishers": [
+    "Science News"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
    "ledger_class": null,
    "new_facts": [],
-   "line": "Trump is campaigning hard in the final weekend before the midterms as Republicans try to keep their congressional majority.",
-   "assembly_score": 8.07
+   "line": "",
+   "assembly_score": 4.11
   },
   {
    "slot": "work_machines",
    "slot_label": "Work & machines",
-   "key": "1058965922dac19a",
-   "title": "Midstream Health, whose AI tools help 250 hospitals recover revenue from rebates and vendor and payer underpayments, raised a $20M Series A led by Valtrius (Will Maddox/Axios)",
+   "key": "993570a5e9b2d212",
+   "title": "Hackers hit supermarket fridges and freezers across seven European countries",
    "beat": "tech",
-   "publisher_count": 1,
+   "publisher_count": 9,
    "publishers": [
-    "Techmeme"
+    "BBC",
+    "The Guardian",
+    "ABC News",
+    "Al Jazeera",
+    "Deutsche Welle",
+    "France 24",
+    "NBC News",
+    "TechCrunch",
+    "Daily Mail"
    ],
    "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
+    "emotional_load": 2,
+    "explainability": 4,
     "actionability": 3,
     "conversational_currency": 3
    },
    "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 3.81
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Dozens of supermarkets in Sweden and Belgium hit; freezer temperatures rose overnight; UK retailers warned to patch vulnerabilities.",
+    "Attack spans seven European countries; freezer temperatures reportedly rose as high as 50C.",
+    "Seven countries named (BE, EE, IE, FI, LU, NL, SE); earlier French attack caused millions of euros of damage.",
+    "Earlier October French attack hit hundreds of supermarkets, causing food loss and fires; new spikes reported early Monday."
+   ],
+   "line": "Cyberattacks have disabled supermarket freezers and fridges in seven European countries, spoiling stock, and officials warn UK retailers to patch vulnerabilities.",
+   "assembly_score": 15.34
   },
   {
    "slot": "group_chat",
    "slot_label": "The group chat",
-   "key": "4fa88a80b0f3e766",
-   "title": "Country musician Ketch Secor urges artists to break silence on assault rifles",
+   "key": "9b248aa7ed19b443",
+   "title": "Russell Brand's rape trial: defense says Channel 4 documentary poisoned the well",
    "beat": "culture",
-   "publisher_count": 1,
+   "publisher_count": 3,
    "publishers": [
-    "CNN"
+    "BBC",
+    "The Guardian",
+    "Daily Mail"
    ],
    "scores": {
-    "emotional_load": 3,
+    "emotional_load": 4,
     "explainability": 4,
-    "actionability": 2,
-    "conversational_currency": 2
+    "actionability": 1,
+    "conversational_currency": 4
    },
    "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Country musician Ketch Secor urges fellow artists to speak out on gun violence despite fear of fan backlash after the Nashville school shooting.",
-   "assembly_score": 1.37
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Russell Brand is on trial for rape at Southwark Crown Court; the Daily Mail is covering it with a Trial podcast.",
+    "Defence told jurors a Channel 4 documentary and journalists 'poisoned the well'; Brand had much sex, none unlawful.",
+    "Defence barrister named as Ian Winter KC; he cited 'monstrous delays' in complainants going to police and denied Brand is a 'psychopath'."
+   ],
+   "line": "Russell Brand is on trial for rape at Southwark Crown Court, with his defense arguing that a Channel 4 documentary and reporting poisoned the case against him.",
+   "assembly_score": 10.29
   },
   {
    "slot": "elsewhere",
    "slot_label": "Elsewhere, but here",
-   "key": "6ee1498544107a5d",
-   "title": "Trump says Iran war will end soon as tankers are hit in Hormuz",
+   "key": "b98972249986cabd",
+   "title": "Hackers push fake nuclear warnings through Ukrainian and Russian emergency alert apps",
    "beat": "international",
-   "publisher_count": 2,
+   "publisher_count": 6,
    "publishers": [
-    "Al Jazeera",
-    "CBS News"
+    "BBC",
+    "CBS News",
+    "CNBC",
+    "France 24",
+    "Semafor",
+    "Daily Mail"
    ],
    "scores": {
-    "emotional_load": 4,
-    "explainability": 3,
+    "emotional_load": 3,
+    "explainability": 4,
     "actionability": 2,
-    "conversational_currency": 5
+    "conversational_currency": 4
    },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump says the Iran conflict will end soon, while tankers were reportedly hit in the Strait of Hormuz, a key global oil route.",
-   "assembly_score": 5.83
+   "politician_led": false,
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Ukrainian and Russian emergency alert apps were hacked hours apart, sending civilians false chemical and nuclear attack warnings.",
+    "Russian spies accuse Ukraine of booby-trapping goggles meant for Russian frontline drone pilots (separate story from the alert hacks).",
+    "Russian Emergency Situations Ministry's app was breached; Moscow says efforts are under way to restore it.",
+    "Attacks happened Sunday evening; neither government has confirmed who was responsible."
+   ],
+   "line": "Hackers sent fake nuclear and air-attack warnings through Ukrainian and Russian emergency alert apps, and both governments report the cyberattacks.",
+   "assembly_score": 12.2
   },
   {
    "slot": "close",
    "slot_label": "The close",
-   "key": "284edb92d3d4745a",
-   "title": "Sen. Chris Murphy hospitalized after stroke, reportedly awake and alert",
+   "key": "94f3a475eae4e9f0",
+   "title": "Haley Stevens endorses Republican Mike Rogers in Michigan Senate race, angering Democrats",
    "beat": "national",
-   "publisher_count": 3,
+   "publisher_count": 13,
    "publishers": [
-    "New York Times",
-    "CBS News",
-    "Memeorandum"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 2,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Connecticut Senator Chris Murphy was hospitalized after a stroke and is reportedly awake, alert, and recovering.",
-   "assembly_score": 5.76
-  },
-  {
-   "slot": "unavoidable",
-   "slot_label": "Unavoidable",
-   "key": "27c8c1facaf47ae5",
-   "title": "Nine killed as Learjet crashes into Palm Beach County neighborhood",
-   "beat": "national",
-   "publisher_count": 9,
-   "publishers": [
-    "BBC",
-    "Financial Times",
+    "NPR",
+    "The Guardian",
+    "Yahoo News",
+    "ABC News",
     "Al Jazeera",
     "CBS News",
+    "Daily Beast",
+    "Fox News",
     "France 24",
-    "NBC News",
-    "Daily Mail",
+    "Talking Points Memo",
+    "The New Republic",
     "Fox 5 Atlanta",
     "Fox 5 DC"
    ],
    "scores": {
-    "emotional_load": 5,
+    "emotional_load": 2,
     "explainability": 4,
     "actionability": 1,
-    "conversational_currency": 3
+    "conversational_currency": 4
    },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A private Learjet carrying nine people crashed into a Florida neighborhood Sunday; investigations into the cause are underway.",
-   "assembly_score": 6.49
+   "politician_led": true,
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "El-Sayed raised $2.4m Sunday after Stevens endorsed Rogers; final NYT/Siena poll has El-Sayed up 11 points.",
+    "Senate stakes: Democrats hold 47 seats, need 51; Peters retiring; Vance breaks a 50-50 tie.",
+    "Stevens's fianc\u00e9 Jason Turkish announced he would vote for Rogers, citing El-Sayed's Israel criticism; allies worried by his behavior.",
+    "Dingell and Ocasio-Cortez lobbied Stevens; AOC spoke with her for 25 minutes the day Turkish announced.",
+    "Schumer, Jeffries, Mamdani and Hasan Piker publicly condemned Stevens's endorsement switch.",
+    "At a Sunday Detroit event with Rogers, Stevens said 'nothing is perfect' and left after a protester called her a traitor.",
+    "Stevens and El-Sayed had feuded publicly over a campaign ad Stevens called anti-Semitic."
+   ],
+   "line": "Democrat Haley Stevens endorsed Republican Mike Rogers over fellow Democrat Abdul El-Sayed in Michigan's Senate race, drawing party backlash.",
+   "assembly_score": 19.0
   },
   {
    "slot": "unavoidable",
    "slot_label": "Unavoidable",
-   "key": "1cd78b030bf77b83",
-   "title": "Ukraine war briefing: Kyiv says air raid warning app likely hacked after users receive false alerts",
-   "beat": "international",
-   "publisher_count": 7,
-   "publishers": [
-    "The Guardian",
-    "Al Jazeera",
-    "Deutsche Welle",
-    "Fox News",
-    "France 24",
-    "Daily Mail",
-    "Memeorandum"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 3.92
-  },
-  {
-   "slot": "flex",
-   "slot_label": "Flex",
-   "key": "59480a01f2bc01c4",
-   "title": "Lee proposes record 2027 budget with $16B for AI, chips and data centers",
-   "beat": "business",
-   "publisher_count": 2,
-   "publishers": [
-    "Techmeme",
-    "Yonhap News"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "South Korea's president proposes a record 2027 budget with major AI and chips investment, aiming to share growth more widely.",
-   "assembly_score": 4.59
-  },
-  {
-   "slot": "flex",
-   "slot_label": "Flex",
-   "key": "2c92ff6bd653015d",
-   "title": "Trump leans into Islamophobia and conspiracy in last-ditch campaign rallies",
-   "beat": "international",
-   "publisher_count": 1,
-   "publishers": [
-    "Al Jazeera"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 4.38
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "db9d02b4c33074c5",
-   "title": "Midterms one day out; Democrats eye gains as key Senate races tighten",
+   "key": "81fb1bc3cd42f2cd",
+   "title": "Trump administration asks Supreme Court to stop California counting 20,000 mail ballots",
    "beat": "national",
-   "publisher_count": 9,
+   "publisher_count": 8,
    "publishers": [
+    "LAist",
     "NPR",
-    "Politico",
+    "New York Times",
     "Yahoo News",
-    "Al Jazeera",
-    "Daily Beast",
-    "Fox News",
-    "France 24",
-    "Semafor",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/11/2/us-midterms-1-day-to-go-democrats-rally-around-el-sayed-amid-attacks?traffic_source=rss",
-    "//foxnews.com/politics/how-watch-critical-2026-midterm-election-races-tx-oh-mi-wi-ga-ia-nv-me-fl",
-    "//france24.com/en/americas/20261102-michigan-democrat-stuns-party-back-republican-candidate-critical-senate-race",
-    "//france24.com/en/michigan-democrat-s-endorsement-of-republican-ruffles-critical-senate-race",
-    "//france24.com/en/video/20261102-midterms-will-trump-backlash-lead-to-democratic-landslide",
-    "//memeorandum.com/261102/p2",
-    "//npr.org/2026/11/02/nx-s1-6023084/morning-news-brief",
-    "//politico.com/video/2026/11/02/haley-stevens-caps-a-bizarre-midterm-cycle-2217279",
-    "//semafor.com/article/11/02/2026/leading-progressive-wants-democrats-to-think-big-post-midterms",
-    "//thedailybeast.com/dem-loser-haley-stevens-unravels-in-stunning-anderson-cooper-cnn-interview",
-    "//thedailybeast.com/james-carville-melts-down-at-dem-loser-for-switching-sides",
-    "//time.com/article/2026/11/02/haley-stevens-abdul-el-sayed-mike-rogers-endorsement-trump-republicans-democrats"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 3,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Midterm elections are one day away, with Democrats hoping for big gains amid backlash against Trump and tight races in key states.",
-   "assembly_score": 3.865
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "a2d38170e3fc7c82",
-   "title": "Kimi Antonelli becomes F1's youngest world champion at 20",
-   "beat": "culture",
-   "publisher_count": 5,
-   "publishers": [
-    "The Guardian",
-    "Al Jazeera",
-    "Deutsche Welle",
-    "ANSA",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//aljazeera.com/sports/2026/11/2/just-the-beginning-for-antonelli-f1s-prodigious-charismatic-new-king?traffic_source=rss",
-    "//ansa.it/sito/notizie/sport/2026/11/02/kimi-campione-a-20-anni-meloni-celebra-antonelli-orgoglio-per-la-nazione_6c835c5e-9c8c-41c8-b49d-b03e55f19ecc.html",
-    "//dailymail.com/sport/formulaone/article-16258001/george-russell-kimi-antonelli-mercedes.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dw.com/en/kimi-antonelli-makes-history-as-youngest-f1-champion/a-79825130?maca=en-rss-en-all-1573-xml-mrss",
-    "//theguardian.com/sport/2026/nov/02/how-kimi-antonelli-saw-off-the-grid-to-become-f1-youngest-world-champion-united-states-grand-prix"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Kimi Antonelli, 20, became Formula 1's youngest world champion, with George Russell reportedly walking out of celebrations.",
-   "assembly_score": 2.4
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "738685d060fe9746",
-   "title": "Trump threatens Iran as Republicans privately blame him ahead of midterms",
-   "beat": "national",
-   "publisher_count": 4,
-   "publishers": [
-    "Politico",
-    "Al Jazeera",
-    "France 24",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//aljazeera.com/video/newsfeed/2026/11/2/trump-makes-controversial-claims-at-final-republican-campaign-rallies?traffic_source=rss",
-    "//france24.com/en/tv-shows/focus/20261102-in-california-illegal-border-crossings-plummet-under-trump-administration",
-    "//france24.com/en/video/20261102-give-them-the-hammer-trump-threatens-iran-ahead-of-midterms",
-    "//memeorandum.com/261102/p5",
-    "//politico.com/news/2026/11/02/republicans-blame-trump-midterms-2026-01143980"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 2,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump is threatening Iran ahead of the midterms while Republicans privately blame him for the party's troubles, per Politico.",
-   "assembly_score": 1.96
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "3ec29a9dd9ce33de",
-   "title": "Texas Senate race and Trump's grip on GOP put Senate in play",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "France 24",
-    "Semafor",
-    "The Bulwark"
-   ],
-   "urls": [
-    "//france24.com/en/video/20261102-us-midterms-could-senate-candidate-james-talarico-turn-texas-blue",
-    "//semafor.com/article/11/02/2026/how-donald-trumps-iron-grip-on-the-republican-party-put-the-senate-in-play",
-    "//thebulwark.com/p/republicans-have-earned-a-rout-2026-midterms-blue-wave"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 2,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Democrats may have a real chance to flip Texas's Senate seat in the November midterms, as Republican control of the Senate looks shakier.",
-   "assembly_score": 1.22
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "4ac847ad97bbe90b",
-   "title": "Midterm coverage frames economy and Trump as central voting issues",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "BBC",
-    "Daily Beast",
-    "NBC News"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/videos/cjly0p753dxxo?at_campaign=rss&at_medium=RSS",
-    "//nbcnews.com/business/economy/5-charts-2026-midterm-elections-rcna606589",
-    "//thedailybeast.com/why-we-have-to-defeat-election-terrorist-trump-tomorrow"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 2,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 1.2
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "7f8f068798e3c52f",
-   "title": "US pushes for Iran deal as threats to resume fighting continue; crude drops below $100",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
     "CBS News",
-    "CNBC"
-   ],
-   "urls": [
-    "//cbsnews.com/live-updates/iran-war-us-trump-negotiations-midterms",
-    "//cnbc.com/2026/11/02/oil-prices-fall-as-iran-us-pursue-diplomacy.html"
+    "CNBC",
+    "Fox News",
+    "Memeorandum"
    ],
    "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
+    "emotional_load": 2,
+    "explainability": 4,
+    "actionability": 2,
     "conversational_currency": 4
    },
    "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "US-Iran talks are advancing alongside threats to resume fighting, with oil prices falling below $100 on deal hopes.",
-   "assembly_score": 0.82
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Trump administration filed emergency Supreme Court application asking it to order California to set aside 20,000 mail-in ballots.",
+    "DOJ is also appealing dismissal of a lawsuit over Alaska's Senate election.",
+    "Lower courts had already rejected the request to set aside ballots of people the government calls \"likely\" noncitizens; election is Nov. 3."
+   ],
+   "line": "The Justice Department asks the Supreme Court to block California from counting about 20,000 disputed mail ballots.",
+   "assembly_score": 15.15
   },
   {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "aeb80af221cfa0fc",
-   "title": "Ryanair warns of higher fares and possible pay freezes as fuel costs surge",
-   "beat": "business",
-   "publisher_count": 3,
-   "publishers": [
-    "BBC",
-    "The Guardian",
-    "CNBC"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/cr0qkve1x224o?at_campaign=rss&at_medium=RSS",
-    "//cnbc.com/2026/11/02/ryanair-h1-earnings-iran-war-fuel-costs.html",
-    "//theguardian.com/business/2026/nov/02/nine-of-world-biggest-oil-firms-95bn-profit-third-quarter-iran-war",
-    "//theguardian.com/business/2026/nov/02/ryanair-considers-pay-freezes-reducing-crew-on-flights-fuel-costs-soar-ai"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Ryanair says fuel costs from the Iran war may force higher fares and temporary pay freezes for its staff.",
-   "assembly_score": 0.698
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "32f890107f389cbf",
-   "title": "Burnham refuses to call 171,000 annual immigration too high",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16258011/Burnham-legal-immigration-high-PM-Labour.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dailymail.com/news/article-16258239/Left-MPs-pressure-Burnham-slavery-reparations-King-apology-Commonwealth-summit.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//theguardian.com/politics/live/2026/nov/02/andy-burnham-shabana-mahmood-migration-indefinite-leave-to-remain-care-workers-uk-politics-latest-news"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 3,
-    "actionability": 2,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Burnham is under pressure over migration numbers and slavery reparations as new tougher UK settlement rules are prepared.",
-   "assembly_score": 0.68
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "20638d51336ccc82",
-   "title": "Martha Stewart apologizes for homeless Halloween costume after outrage",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/c8zxle6qq4q0o?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/tvshowbiz/article-16258195/Martha-Stewart-defends-dressing-homeless-person-Halloween-claims-costume-intended-raise-awareness-sparking-outrage-controversial-look.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Martha Stewart faced backlash for a Halloween costume mimicking a homeless person and now says she 'really screwed up.'",
-   "assembly_score": 0.54
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "4f824d1d6a026620",
-   "title": "Reparations row over slavery deepens as King Charles visits Antigua",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16257919/umbrella-King-Charles-soaked-torrential-rain-antigua.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//theguardian.com/commentisfree/2026/nov/02/king-charles-slavery-apology-caribbean-tour"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Pressure on King Charles to apologise for slavery and address reparations is growing during his Caribbean visit.",
-   "assembly_score": 0.475
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "8a763b9b530f09bc",
-   "title": "Midterms Tuesday: what to watch as Congress control hangs in the balance",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "NPR",
-    "Daily Beast",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16257353/trump-finishes-midterm-rallies-democratic-tsunami.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//npr.org/2026/11/02/nx-s1-6025451/midterms-what-to-watch-election-night",
-    "//thedailybeast.com/trump-humiliated-in-final-brutal-polls-before-election-day"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 3,
-    "conversational_currency": 5
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Midterm election night is Tuesday, with control of Congress and governorships at stake and polls showing a Democratic-leaning environment.",
-   "assembly_score": 0.28
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "32152f54f9d575dc",
-   "title": "Midterm battleground election officials brace for pressure beyond Georgia and Michigan",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "KFF Health News",
-    "NPR"
-   ],
-   "urls": [
-    "//kffhealthnews.org/medicaid/medicaid-work-requirements-federal-rules-georgia-pathways-expiration",
-    "//npr.org/2026/11/02/nx-s1-5989648/midterm-voting-election-pressure"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 2,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Election officials in districts that will decide House and Senate control may face pressure and scrutiny they have never experienced before.",
-   "assembly_score": 0.2
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "f63c5509f8400704",
-   "title": "Hebron governor says Israeli forces withdraw from city after 10-day siege",
+   "slot": "unavoidable",
+   "slot_label": "Unavoidable",
+   "key": "4acccaef9caba3cd",
+   "title": "Iran and US in intensive talks to avert new war; Iran says talks could resume soon",
    "beat": "international",
    "publisher_count": 2,
    "publishers": [
     "Al Jazeera",
     "France 24"
    ],
-   "urls": [
-    "//aljazeera.com/news/2026/11/2/hebron-governor-says-israeli-forces-withdraw-from-city-after-10-day-siege?traffic_source=rss",
-    "//france24.com/en/middle-east/20261102-israeli-army-withdraws-from-hebron-after-operation-displaces-thousands-of-palestinians"
-   ],
    "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
+    "emotional_load": 4,
+    "explainability": 4,
+    "actionability": 2,
+    "conversational_currency": 4
    },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.095
+   "politician_led": true,
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Iran says it is in 'intensive' indirect talks with the US to avert new strikes, and would reopen Hormuz if its demands are met.",
+    "Qatar is facilitating the indirect talks, which are based on Iran's seven-step peace plan and could resume shortly if demands are met."
+   ],
+   "line": "Iran and the US are negotiating to avert renewed war, with talks possibly resuming soon if Iran's demands are met.",
+   "assembly_score": 8.43
   },
   {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "9e992df8dadee735",
-   "title": "Newsom and Harris Appear Together, With Little Hint of What\u2019s to Come",
+   "slot": "flex",
+   "slot_label": "Flex",
+   "key": "cd893af7a0965f1b",
+   "title": "Trump and Vance rally before midterms as Talarico draws attacks",
    "beat": "national",
-   "publisher_count": 2,
+   "publisher_count": 3,
    "publishers": [
-    "New York Times",
+    "The Guardian",
+    "Al Jazeera",
     "Fox News"
    ],
-   "urls": [
-    "//foxnews.com/opinion/gianno-caldwell-fled-california-steve-hilton-gives-voters-golden-opportunity-stay",
-    "//nytimes.com/2026/11/02/us/elections/newsom-harris-becerra-rally.html"
-   ],
    "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
+    "emotional_load": 2,
+    "explainability": 4,
     "actionability": 3,
     "conversational_currency": 3
    },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.28
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "c03009e342e82ca8",
-   "title": "Petrol prices set to hit record high under Trump on eve of US elections",
-   "beat": "international",
-   "publisher_count": 3,
-   "publishers": [
-    "BBC",
-    "Financial Times",
-    "Al Jazeera"
+   "politician_led": true,
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Trump, Vance and candidates held final rallies on the last day before the US midterms; polls show a tight congressional race.",
+    "John Oliver called MAGA smears of Talarico 'middle school level homophobia'; Paxton urged a sparse Texas rally crowd to stay.",
+    "Talarico praised Frederick Haynes III at a Texas rally; Haynes called ICE the 'new KKK' and urged abolishing it."
    ],
-   "urls": [
-    "//aljazeera.com/news/2026/11/2/how-the-presidents-party-has-fared-in-every-us-midterm-election-since-1946?traffic_source=rss",
-    "//bbc.co.uk/news/articles/c6wyz223j19po?at_campaign=rss&at_medium=RSS",
-    "//ft.com/content/ee2748fb-9f85-4095-b599-526e5a4a6baa?syn-25a6b1a6=1"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.29
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "398f93ec88ae73a2",
-   "title": "Sydney deploys heavily armed police unit after Bondi attack",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "ABC Australia"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-11-02/western-sydney-wanderers-chair-slams-police-over-fan-treatment/107338162",
-    "//aljazeera.com/video/newsfeed/2026/11/2/sydney-deploys-heavily-armed-police-unit-after-bondi-attack?traffic_source=rss"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.55
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "6a6604d26e04a643",
-   "title": "Liga: Yan Diomand\u00e9 and Kylian Mbapp\u00e9 score again for Real Madrid",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "France 24"
-   ],
-   "urls": [
-    "//aljazeera.com/sports/2026/11/2/chinese-state-tv-continues-real-madrid-blackout-after-mbappe-mao-meme-row?traffic_source=rss",
-    "//france24.com/en/tv-shows/sports/20261102-liga-yan-diomand%C3%A9-and-kylian-mbapp%C3%A9-score-again-for-real-madrid"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.02
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "4fd163d4af65f6df",
-   "title": "Final distress call with Learjet pilot captured moments before crash",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "Deutsche Welle"
-   ],
-   "urls": [
-    "//aljazeera.com/video/newsfeed/2026/11/2/final-distress-call-with-learjet-pilot-captured-moments-before-crash?traffic_source=rss",
-    "//dw.com/en/us-nine-killed-in-florida-jet-crash/a-79825921?maca=en-rss-en-all-1573-xml-mrss"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.53
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "031e00e9b288d1c8",
-   "title": "South Korea to pour billions into AI",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "CNBC",
-    "Deutsche Welle"
-   ],
-   "urls": [
-    "//cnbc.com/2026/11/02/south-korea-ai-spending-budget.html",
-    "//dw.com/en/south-korea-to-pour-billions-into-ai/a-79825118?maca=en-rss-en-all-1573-xml-mrss"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -4.26
+   "line": "Trump, Vance and candidates made final campaign pushes before the US midterms, with attacks on Texas Senate candidate James Talarico drawing focus.",
+   "assembly_score": 10.15
   }
  ],
  "excluded_sample": [
   {
-   "title": "Antonelli becomes world champion as Verstappen wins in Mexico",
+   "title": "Investigators probe Florida jet crash that killed 9 people as cockpit audio emerges",
    "why": "triage verdict NO"
   },
   {
-   "title": "Australian batting 'stronger' despite repeat South Africa collapses",
+   "title": "Man completes 31,000-mile walk around the world and returns to mom\u2019s house",
    "why": "triage verdict NO"
   },
   {
-   "title": "Casap, whose AI tools automate dispute and anti-fraud operations for banks, raised a $56M Series B led by Base10 Partners, bringing its total funding to $90M (Jeff John Roberts/Fortune)",
+   "title": "Midterm elections live updates: Trump to deliver remarks, join tele-rallies on Monday",
    "why": "triage verdict NO"
   },
   {
-   "title": "JD Vance is mercilessly torn apart for 'embarrassing' Halloween costume: 'This dude will never president'",
+   "title": "New NYT Poll Has Dems on Tsunami Watch as Republicans Try to Steal Alaska",
    "why": "triage verdict NO"
   },
   {
-   "title": "Borrowed reading: stories from our extended colleagues",
+   "title": "WATCH: A look at the state of the midterm races",
    "why": "triage verdict NO"
   },
   {
-   "title": "Belser, Ritchie Hugh.jpg",
+   "title": "Delusional Trump, 80, Makes Up Polling as Disaster Looms",
    "why": "triage verdict NO"
   },
   {
-   "title": "Becker, Arthur.jpg",
+   "title": "Bill Murray Crashes CNBC Interview With Kevin Hassett to Joke About His Smile",
    "why": "triage verdict NO"
   },
   {
-   "title": "Bickley, Kenneth.jpg",
+   "title": "The Best Street Style Photos From the Spring 2027 Shows in Lagos",
    "why": "triage verdict NO"
   },
   {
-   "title": "Bodison, Bernard Charles.jpg",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Caulder, Alvin.jpg",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Catoe, Jeff.jpg",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Carter, John S.jpg",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Caulder, Sam.jpg",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Chancey, Diane.jpg",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "West Coast Eagles star suffers brutal injury news",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Subscribe to The Crime Desk for an exclusive bonus podcast analysing the key moments from week three of Russell Brand's rape trial",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Canada-India $5.5 billion bank takeover attracts opposition from workers, politicians",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Bidets save you money and reduce waste \u2014 we tested the best options out there",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "50+ products to make your life easier and our planet cleaner",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Mother's Day is around the corner. Here are 50+ thoughtful gifts she'll love",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "A head-to-toe guide of how men should dress this spring, and where they should shop",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "42 of the most useful travel products you can buy on Amazon",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "The 7 best high-yield savings accounts of April 2023",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Composting is an easy way to reduce food waste. Here's how to do it",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "We stopped using aluminum foil for cooking and you should too. Here's what to use instead",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "The beloved Dyson Supersonic hair dryer is at its lowest price ever",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Everything you need to know about Way Day 2023, Wayfair's biggest sale of the year",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "The 2024 presidential alternative many voters will want",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Data analytics provider Hex Technologies, which says it has rebuilt its platform for AI agents, raised a $100M Series D led by Peak XV at a $1.2B valuation (Tim Keary/Forbes)",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "How two warring farmers from Devon - both called Derek - became a global film sensation",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "BTS charms 853,000 fans on Latin American tour",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "F1: Antonelli fa la storia in Messico, \u00e8 campione del mondo 73 anni dopo Ascari",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "How IShowSpeed became YouTube's top livestreamer with 62M+ subscribers, as his 24/7 \"IRL streams\" that last days mingle childlike wonder with teenage mischief (Jon Caramanica/New York Times)",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "NewberryMarcus",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Grand Strand news: A popular chef gets a Michelin honor; more homes planned for Carolina Forest",
+   "title": "Kith Spring 2027 Ready-to-Wear",
    "why": "triage verdict NO"
   }
  ]
