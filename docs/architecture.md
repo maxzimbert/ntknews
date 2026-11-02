@@ -101,7 +101,9 @@ Each story gets its own Backstory page, drafted and edited before publish. Ticke
                                 pairing and origin steps run as before and nothing composed ships
      build_digest.py → build_backstory_pages.py   one static page per composed story: /backstory/s-<story id>/
      graduate_finds.py → export_for_pulse.py      documents the editor approved join the Object Matrix
-                                                  (primary sources only); the pool is rebuilt
+                                                  (primary sources; on T-0114, also news from the 91
+                                                  NTK_SOURCES publishers, marked in column P, Source Kind);
+                                                  the pool is rebuilt
 ```
 
 - **Fingerprints.** Pulse hashes each story's Backstory-relevant fields (`bs_hash`, with edits; `bs_text_hash`,
