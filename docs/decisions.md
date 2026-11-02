@@ -464,6 +464,17 @@ shapes the page. **Day counters are retired everywhere**, reversing "duration le
 found them ineffective wherever they appear. Open: whether a document that ships by default counts as approved
 for the Object Matrix.
 
+**News reports from NTK's approved publishers may carry Backstory milestones and documents, and join the
+Object Matrix, when no primary source will do.** Decided by the editor 2026-11-02, reversing "news never enters
+the matrix" (T-0111, 2026-10-30). The editor's reasoning: much of recent history has no other record yet (no
+archive holds what a sitting president said at a rally last year), and contemporary news accounts are good
+enough for the Congressional Record and for criminal and civil courts. The order holds: a primary source always
+comes first; a news report is a secondary source, disfavoured, used only when no primary source exists, labelled
+as news on the page with the reason, and marked "news" in a 16th matrix column, Source Kind. **Approved means
+the 91 outlets in `NTK_SOURCES` (`netlify/functions/news.js`)**, the Stream's own publisher bar; news from any
+other outlet is refused. Built on T-0114 (not live until that branch ships): Pulse keeps a copy of the list
+(`NTK_PUBLISHERS`), Python reads the original (`editorial/publishers.py`).
+
 ## Open questions, not defaults
 
 These are genuinely unresolved. Don't assume either way.
