@@ -1,12 +1,17 @@
 ---
 id: T-0113
 title: The editor types each story's row in Pulse, and filing it builds the story's Backstory there, scoped from the story's headline, description and Truths
-status: BUILT
+status: DISCARDED
 tags: [pulse, feature]
 anchor: ntk-pulse/pulse.html
 ---
 
 ## What
+
+**Superseded 2026-11-02 by T-0114** (the Backstory contract). Kept: the typed row and the Lineup's row box.
+Reversed: day counters (retired everywhere), the row deciding when a story builds (it now builds after Generate
+Jefferson and proposes its own row), and a row change rebuilding the page (it moves only the shelf and the
+chart). PR 104 folds into T-0114; T-0114's check carries what still holds. This check is left as it was.
 
 Asked for by the editor 2026-10-30: "every story should have a row. I am saying replace row: not set
 (classifier picks) with a row I write such as "crypto" or "crime". so there's still a backstory template that

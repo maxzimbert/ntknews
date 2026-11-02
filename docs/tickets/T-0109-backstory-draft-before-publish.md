@@ -1,12 +1,17 @@
 ---
 id: T-0109
 title: Pulse can run the publish-time Backstory steps as a draft, and publish ships the draft the editor saw
-status: BUILT
+status: DISCARDED
 tags: [pulse, feature]
 anchor: .github/workflows/pulse-publish.yml
 ---
 
 ## What
+
+**Superseded 2026-11-02 by T-0114** (the Backstory contract). The draft no longer ships all-or-nothing and
+nothing is chosen again at publish: each story ships the page built for it in Pulse if its fingerprint still
+matches, and a story not built, or changed since, ships no Backstory. The GitHub first draft and the publish-time
+classifier and origin steps are gone. T-0114's check carries the new rule; this check is left as it was.
 
 Asked for by the editor 2026-10-28, after the morning's publish. Measured on `origin/main` that day:
 `pulse-publish.yml` runs two Backstory steps after Pulse commits the Lineup. `build_pairings.py`

@@ -580,7 +580,6 @@
   .bt-foot { display: flex; justify-content: space-between; align-items: baseline; margin-top: 10px; font-family: 'Overpass', sans-serif; font-size: 13px; }
   .bt-theme { font-weight: 600; color: var(--dark); }
   .bt-cta { font-weight: 600; color: var(--blue); text-decoration: none; }
-  .bt-elapsed { font-family: 'Overpass', sans-serif; font-weight: 700; font-size: 20px; color: var(--dark); margin-top: 10px; }
   /* BSR-CARD-CSS:END */
 
   /* ── Backstory pages inside the app (designs 4C and 4D) ──
@@ -632,6 +631,7 @@
   .bp-dot { display: inline-block; width: 3px; height: 3px; border-radius: 50%; background: currentColor; margin: 0 .6em; vertical-align: middle; }
   .bp-cta { display: inline-block; font: 600 13px 'Overpass', sans-serif; color: var(--dark); text-decoration: none; border: 1px solid var(--dark); padding: 11px 16px; margin-top: 4px; }
   .bp-cta + .bp-src { margin-left: 10px; }
+  .bp-news { font: 600 9px 'Overpass', sans-serif; letter-spacing: .06em; text-transform: uppercase; color: rgba(38,31,35,.6); margin-left: 6px; white-space: nowrap; }
   .bp-obj { display: block; padding: 13px 0; border-top: 1px solid rgba(38,31,35,.2); color: inherit; text-decoration: none; cursor: pointer; }
   .bp-obj.first { border-top: 0; padding-top: 0; }
   .bp-obj .t { font-style: italic; font-size: 16px; margin-bottom: 4px; }
@@ -3431,15 +3431,14 @@ function bsrStoryRow(p, row, when){
   var host = function(u){ try { return new URL(u).hostname.replace(/^www\./, ''); } catch (e) { return ''; } };
   return {
     id: 's-' + p.story_id, story_id: p.story_id, headline: p.headline, story_permalink: p.story_permalink,
-    // a live conflict (Gaza, Ukraine–Russia) keeps its day counter on the story's page: that is its chart (T-0113)
-    // T-0114, the contract: the page's own title, and its contest as the line under it
-    title: c.title || c.scope || row.title, milestone: c.contest || p.headline || '', stratum: row.stratum === 'fire' ? 'fire' : 'story', fire_since: row.stratum === 'fire' ? row.start_date : null, category: row.title,
+    // T-0114, the contract: the page's own title, its contest under it; the row is the shelf (the card's foot)
+    title: c.title || c.scope || row.title, milestone: c.contest || p.headline || '', stratum: 'story', category: row.title,
     pairline: c.here || p.line || '',
     origin: st.year ? { status: 'retrieved', year: st.year, line: st.line } : null,
     // the page closes on "We are here", which the row page draws from start_line (adding its own full stop)
     beginnings: begs, start_line: String(c.here || '').replace(/\.$/, ''), start_date: String(when || new Date().toISOString()).slice(0, 10),   // the year "We are here" is dated by: the publish
     objects: (c.case || []).map(function(o){ return { title: o.title, author: o.author, year: o.year, about: o.about,
-      source: host(o.source_url), source_url: o.source_url, source_kind: o.source_kind }; }),
+      source: host(o.source_url), source_url: o.source_url, source_kind: o.source_kind, why_no_primary: o.why_no_primary }; }),
     // the chart is the category's trend line, drawn as prod draws it (the editor, 2026-10-30)
     indicator: c.chart_removed ? null : (row.indicator || null), stakes: c.stakes || ''
   };
@@ -3459,9 +3458,12 @@ function bsrLoadData(){
   return Promise.all([pub, draft]).then(function(x){
     var d = x[0], dr = x[1], ship = dr.ship || {};
     var composed = {};
-    (dr.stories || []).forEach(function(s){ if (s.composed) composed[s.story_id] = s.composed; });
+    // T-0114: as publish ships it: only a page built to the contract, with We are here as its line
+    (dr.stories || []).forEach(function(s){ if (s.composed && s.composed.v === 2) composed[s.story_id] = s.composed; });
     d.rows = (d.rows || []).filter(function(r){ return r.stratum !== 'provisional'; }).concat(ship.provisional_rows || []);
-    d.todays_pairings = (ship.todays_pairings || []).map(function(p){ return Object.assign({}, p, composed[p.story_id] ? { composed: composed[p.story_id] } : {}); });
+    d.rows.forEach(function(r){ var ind = (ship.row_indicators || {})[r.id]; if (ind) r.indicator = ind; });
+    d.todays_pairings = (ship.todays_pairings || []).filter(function(p){ return composed[p.story_id]; })
+      .map(function(p){ return Object.assign({}, p, { composed: composed[p.story_id], line: composed[p.story_id].here || p.line }); });
     var bar = document.getElementById('bsrDraftBar');
     if (!bar){ bar = document.createElement('div'); bar.id = 'bsrDraftBar';
       bar.style.cssText = 'position:sticky;top:0;z-index:5;background:#DC6550;color:#fff;font:600 13px Overpass,sans-serif;padding:8px 16px;text-align:center';
@@ -3472,18 +3474,6 @@ function bsrLoadData(){
 }
 
 /* BSR-CARD:BEGIN  (Pulse extracts this block; keep it pure: no DOM lookups, no globals but Date) */
-function bsrDaysSince(dateStr){
-  return Math.floor((Date.now() - new Date(dateStr + 'T00:00:00Z')) / 86400000);
-}
-// Approximate, display-only — not calendar-exact, matching the precision
-// the mockup used. Good enough for "how long has this been going on."
-function bsrFormatDuration(days){
-  if (days < 60) return days + (days === 1 ? ' day' : ' days');
-  const years = Math.floor(days / 365.25);
-  const months = Math.floor((days - years * 365.25) / 30.44);
-  if (years >= 1) return years + (years === 1 ? ' yr, ' : ' yrs, ') + months + ' mo';
-  return months + (months === 1 ? ' month' : ' months');
-}
 function bsrYear(dateStr){ return (dateStr || '').slice(0, 4); }
 // First-letter-only — str.charAt/slice, not .toUpperCase() on the whole
 // string, which would also lowercase every other letter and mangle a
@@ -3517,14 +3507,11 @@ function bsrCardHtml(r, href, sIdx){
       : (r.stratum !== 'fire' && r.start_line)
       ? '<div class="bt-label bt-starts">It starts in ' + escBsr(bsrYear(r.start_date)) + '</div>'
         + '<a class="bt-line bt-origin" data-rid="' + escAttr(r.id) + '" href="' + href + '">' + escBsr(bsrCapitalize(r.start_line)) + '.</a>'
-      // T-0092: a category made from the news has no start of its own (its start_date is the day it was
-      // made), so with no origin found it shows nothing here rather than "Running for 0 days".
-      : r.stratum === 'provisional' ? ''
-      : '<div class="bt-label bt-starts">Running for</div>'
-        + '<a class="bt-elapsed bt-line" data-rid="' + escAttr(r.id) + '" href="' + href + '">' + bsrFormatDuration(bsrDaysSince(r.start_date)) + '</a>';
+      // day counters are retired everywhere (the editor, 2026-11-02): with no start, the card shows none
+      : '';
     return '<div class="bt-row">' + today + origin
       + '<div class="bt-mark" aria-hidden="true"><i></i><b></b><i></i></div>'
-      + '<div class="bt-foot"><span class="bt-theme">' + escBsr(r.title) + '</span>'
+      + '<div class="bt-foot"><span class="bt-theme">' + escBsr(r.category || r.title) + '</span>'
       + '<a class="bt-cta" data-rid="' + escAttr(r.id) + '" href="' + href + '">Backstory</a></div></div>';
 }
 /* BSR-CARD:END */
@@ -3622,14 +3609,8 @@ function bpChipHtml(r){
 function bpRowHtml(r){
   var h = '<div class="bp-bar"><button type="button" data-bp="back">← Backstory</button><div class="bp-bar-r">' + bpChipHtml(r) + '<button type="button" data-bp="share" aria-label="Share this backstory">Share</button></div></div>'
     + '<div class="bp-hd"><h1>' + escBsr(r.title) + '</h1><div class="bp-ms">' + escBsr(r.milestone || '') + '</div></div>';
-  if (r.stratum === 'fire') {
-    var since = r.fire_since || r.start_date;      // a story's page keeps its own date for "We are here" (T-0113)
-    h += '<section class="bp-sec" style="text-align:center"><div style="font:700 34px Overpass,sans-serif">' + bsrFormatDuration(bsrDaysSince(since)) + '</div>'
-      + '<div class="bp-src" style="margin-top:8px">SINCE ' + escBsr(since) + '</div></section>';
-  }
-  // T-0099: a live-conflict page keeps its day count on top, and shows its history under it once it has one
-  if (r.stratum !== 'fire' || (r.beginnings || []).length || r.stakes) {
-    if (r.stratum === 'provisional') h += '<section class="bp-sec"><div class="bp-src">New thread. Drafted from today\u2019s reporting.' + (r.indicator ? '' : ' No trend line yet.') + '</div></section>';
+  // day counters are retired everywhere (the editor, 2026-11-02); every page draws its history
+  {
     if (r.stakes) h += '<section class="bp-sec"><p class="bp-stakes">' + escBsr(r.stakes) + '</p></section>';
     if (r.indicator) h += bpIndicator(r.indicator);
     var begs = (r.beginnings || []).map(function(b){
@@ -3643,7 +3624,7 @@ function bpRowHtml(r){
     if (objs.length) {
       h += '<section class="bp-sec"><div class="bp-lab">The case</div>' + objs.map(function(o, i){
         return '<a class="bp-obj' + (i ? '' : ' first') + '" href="' + escAttr(bpPath(r.id, i)) + '" data-bp="obj" data-oi="' + i + '">'
-          + '<div class="t">' + escBsr(o.quote || o.title) + '</div>'
+          + '<div class="t">' + escBsr(o.title) + (o.source_kind === 'news' ? ' <span class="bp-news">news report</span>' : '') + '</div>'
           + '<div class="by">' + escBsr(o.author || r.title) + '<span class="bp-dot"></span>' + escBsr(o.year) + '</div><div class="more">About this</div></a>';
       }).join('') + '</section>';
     }
@@ -3663,13 +3644,12 @@ function bpObjectHtml(r, oi){
     + '<div class="bp-hd obj"><div class="bp-kick">' + escBsr(o.year) + '</div><h1>' + escBsr(o.title) + '</h1><div class="bp-by">' + escBsr(o.author || r.title) + '</div></div>';
   var b = '';
   if (o.about) b += '<p class="bp-ctx" style="margin-bottom:14px">' + escBsr(o.about) + '</p>';
-  (o.context || []).forEach(function(c){ b += '<p class="bp-ctx" style="margin-bottom:14px">' + escBsr(c) + '</p>'; });
-  if (o.quote) b += '<p class="bp-pull">' + escBsr(o.quote) + '</p>';
-  if (o.where_now) b += '<div class="bp-lab">Where it stands now</div><p class="bp-ctx">' + escBsr(o.where_now) + '</p>';
+  // a news report stands in only when no primary source was found, and says so (docs/decisions.md, 2026-11-02)
+  if (o.source_kind === 'news') b += '<div class="bp-src" style="margin-bottom:6px">NEWS REPORT</div><p class="bp-ctx" style="margin-bottom:14px">No primary source was found for this' + (o.why_no_primary ? ': ' + escBsr(String(o.why_no_primary).replace(/\.$/, '')) : '') + '. This is a report written at the time by a publisher NTK reads.</p>';
   b += '<div class="bp-src">SOURCE · ' + escBsr(o.source) + '</div>';
   if (o.source_url) {
     var host = ''; try { host = new URL(o.source_url).hostname.replace(/^www\./, ''); } catch (e) {}
-    b += '<p style="margin-top:14px"><a class="bp-cta" href="' + escAttr(o.source_url) + '" target="_blank" rel="noopener noreferrer">View the primary document</a>' + (host ? '<span class="bp-src">opens ' + escBsr(host) + '</span>' : '') + '</p>';
+    b += '<p style="margin-top:14px"><a class="bp-cta" href="' + escAttr(o.source_url) + '" target="_blank" rel="noopener noreferrer">' + (o.source_kind === 'news' ? 'Read the news report' : 'View the primary document') + '</a>' + (host ? '<span class="bp-src">opens ' + escBsr(host) + '</span>' : '') + '</p>';
   }
   h += '<section class="bp-sec">' + b + '</section>'
     + '<section class="bp-sec bp-dark"><a class="bp-ep first" href="#" data-bp="row"><div class="bp-kick">In the case for ' + escBsr(r.title) + '</div><div class="h">' + escBsr(r.milestone || '') + '</div></a></section>';

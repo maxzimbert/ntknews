@@ -1,12 +1,17 @@
 ---
 id: T-0090
 title: Pulse's Backstory tab shows the Lineup's stories in Lineup order, each with its category
-status: VERIFIED
+status: DISCARDED
 tags: [pulse, feature]
 anchor: ntk-pulse/pulse.html
 ---
 
 ## What
+
+**Superseded 2026-11-02 by T-0114** (the Backstory contract). This check looks for the "none filed" chip. Under the
+contract every story proposes its own row when it is built, so the flag that matters is "not built" (a story with
+Truths and no page ships without one). T-0114's check carries Lineup order and that flag. This check is left as
+it was.
 
 Raised by the editor 2026-10-15. Measured on main that day: the Backstory tab in Pulse has two lists, and
 neither is the Lineup. TODAY'S PAIRINGS (`pairingsHtml`) reads the published `backstory.json`, so it shows

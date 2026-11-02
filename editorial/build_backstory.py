@@ -368,6 +368,9 @@ def main():
         if old and old.get('objects_locked'):
             row['objects'] = old['objects']
             row['objects_locked'] = True
+        # a trend line found and checked in Pulse for a row with none of its own (T-0114) is kept
+        if not row.get('indicator') and old and old.get('indicator_by') == 'pulse' and old.get('indicator'):
+            row['indicator'], row['indicator_by'] = old['indicator'], 'pulse'
         if row.get('indicator') and old and old.get('indicator'):
             for k in ('as_of', 'verified'):
                 if k in old['indicator']:

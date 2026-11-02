@@ -1,12 +1,16 @@
 ---
 id: T-0049
 title: The live Backstory tab never learned the fire/held distinction
-status: VERIFIED
+status: DISCARDED
 tags: [backstory, defect]
 anchor: digest/index.html:3173
 ---
 
 ## What
+
+**Superseded 2026-11-02 (T-0114).** The editor retired day counters everywhere ("wherever they're
+present they are ineffective"; `docs/decisions.md`, the Backstory contract). This ticket's check asserts how
+a counter is drawn, so it no longer applies; the check is left as it was, for the record.
 
 Confirmed 2026-09-28, `grep -n "stratum" digest/index.html` returns
 nothing — the live in-app Backstory tab (`renderBackstoryTab()`,
