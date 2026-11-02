@@ -34,7 +34,7 @@ Jefferson; the editor reviews each one.
 | 6 | It starts in | the card; the marked point on the timeline | A year and one sentence. Never within the last 45 days. |
 | 7 | Milestones | the dated timeline | Three to six, each one sentence of 12 to 25 words, dated by when the event happened. |
 | 8 | We are here | the card's Today line; the end of the timeline | One or two sentences, 12 to 30 words: today's story as the end of the chronology. |
-| 9 | Documents | The case | One primary source per milestone, plus up to two later ones. A link that loads; news only when no primary source will do, and labelled. |
+| 9 | Documents | The case | One primary source per milestone, plus up to two later ones. A link that loads. A primary source first; a news report only when no primary source will do, only from the 91 approved publishers (`NTK_SOURCES`), and labelled. |
 | 10 | About each document | the document's own page | Two to four sentences, at most 70 words: what it is, who made it, when, what it did. |
 
 All text: Advanced Placement register (precise, plain), no dashes, none of the banned phrases
@@ -93,7 +93,8 @@ Read this first; the sections below describe the category-page design it replace
   put what they find, and what the checks vetoed, in front of the editor. Nothing reaches a page until
   approved; a subject is not searched twice in 30 days (T-0111).
 - **The Object Matrix grows only by approval.** "Only things I have approved" (the editor, 2026-10-30). At
-  publish each approved primary source becomes a matrix row; news never does. The research ledger is
+  publish each approved document becomes a matrix row; a news report does too, marked as news, only from an
+  approved publisher (the editor, 2026-11-02; built on T-0114). The research ledger is
   bookkeeping.
 - **Charts stay prod's rule** for this stage: one trend line per category, shown on each story's page. A
   per-story chart was built and parked (T-0112).
