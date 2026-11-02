@@ -467,6 +467,13 @@ conflict's day counter (Gaza, Ukraine–Russia) appear on the pages of the stori
 the editor names needs no objects of its own to exist, since readers see no category page and each story's
 page brings its own; the 2026-10-09 rule that a category with no objects is never published applied to
 category pages and does not bind these.
+**The Backstory contract.** Agreed with the editor 2026-11-02 and written at the top of `docs/backstory.md`:
+Backstory is the history that shows how the digest's news came to be the news; ten components, every one
+scoped from the story's headline, description and Truths, each proposed by the system and reviewed by the
+editor (accept by default, modify by prompt, or remove); the row shelves the story and picks its chart but never
+shapes the page. **Day counters are retired everywhere**, reversing "duration leads" (2026-09-16): the editor
+found them ineffective wherever they appear. Open: whether a document that ships by default counts as approved
+for the Object Matrix.
 
 ## Open questions, not defaults
 
