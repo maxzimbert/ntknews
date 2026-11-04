@@ -1720,11 +1720,14 @@ async function loadCatData(){
   } catch(e){}
   render();
 }
+// The first JSON object in a reply. A model sometimes writes a note after the object, and a note with a brace in it
+// made "first { to last }" unparseable (staging, 2026-11-04: "Unexpected non-whitespace character after JSON"), so
+// each closing brace is tried from the end, and each opening brace in turn.
 function catJson(text){
   const t=String(text).replace(/```json|```/g,'').trim();
-  const a=t.indexOf('{'), b=t.lastIndexOf('}');
-  if (a<0||b<a) throw new Error('the model did not return JSON');
-  return JSON.parse(t.slice(a,b+1));
+  for (let a=t.indexOf('{'); a>=0; a=t.indexOf('{', a+1))
+    for (let b=t.lastIndexOf('}'); b>a; b=t.lastIndexOf('}', b-1)){ try { return JSON.parse(t.slice(a, b+1)); } catch(e){} }
+  throw new Error('the model did not return JSON'+(t?' (it began: "'+t.slice(0,90).replace(/\s+/g,' ')+'")':''));
 }
 function catPoolFor(lenses, subgenres){
   const sg=subgenres||[];
