@@ -1,12 +1,17 @@
 ---
 id: T-0089
 title: Before composing a new automatic category, the publish step files the story under an existing category that fits it
-status: BUILT
+status: DISCARDED
 tags: [backstory, defect]
 anchor: editorial/build_pairings.py
 ---
 
 ## What
+
+**Superseded 2026-11-04 by T-0114** (the Backstory contract). Publish no longer files stories or composes
+categories: `build_pairings.py` and `compose_category.py` are retired and nothing runs them. The row is proposed in
+Pulse from the story and reuses an existing row when the name matches (`bsrRowResolve`, carried in T-0114's
+check). This check still passed only because the retired file is still on disk; it is left as it was.
 
 Measured 2026-10-15 from three publishes of the same lineup. The gas-price story was published with no
 category filed (`backstory_row` empty), so step 5C treated it as a misfit and composed a category from the

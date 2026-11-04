@@ -25,6 +25,10 @@ The Backstory rebuilt against the contract agreed 2026-11-02 (`docs/backstory.md
   milestones, after the matrix and the editor's Are.na library (T-0115), runs one web search on the gaps it named
   and rebuilds once with what it kept. A subject searched in the last 30 days is not searched again; its finds are
   offered and the page is not rebuilt. The review says it searched and why.
+- **The editor's Are.na library** (T-0115, folded in 2026-11-04): Backstory's second tier, after primary documents.
+  T-0115's check covers it.
+- **The review, 2026-11-04.** "Make it a milestone" on every document that is not one; the card readers see sits
+  at the top.
 - **No blank revisions** (2026-11-04). A revise that returns an empty part keeps what was there and tells the editor.
   A directed part that comes back blank on a full build is repaired, not shipped empty. Found on staging: a contest
   revised to "Emphasize what the results say about America now" was saved as "".
@@ -69,6 +73,7 @@ Tickets superseded, each marked DISCARDED with the reason and its check left as 
 - T-0113: rows building the page, and counters on conflict pages.
 - T-0049, T-0092: counter display.
 - T-0046, T-0090: a counter, the publish-time classifier, and the "none filed" chip.
+- T-0089 (2026-11-04): reusing an existing category at publish, a step that no longer runs.
 
 What still held in those (row permalinks, the digest reading Backstory, Lineup order, the typed row) is in the check
 below.

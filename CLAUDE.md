@@ -61,6 +61,7 @@ the app and only two are.
 | `editorial/backstory_draft.py` | At publish, ships each story's Backstory as built and reviewed in Pulse, or none (T-0114). See `docs/architecture.md`, "Backstory: build, review, publish". |
 | `editorial/publishers.py` | NTK's 91 approved publishers, read from `NTK_SOURCES` in `netlify/functions/news.js`: the only outlets a Backstory news report may come from. |
 | `editorial/graduate_finds.py` | At publish, adds the documents the editor added to the Object Matrix (primary sources; news from the approved publishers, marked news in column P) and records them in `editorial/matrix-additions.json`. |
+| `editorial/arena_pull.py`, `export_library.py` | The editor's Are.na library (T-0115): pulled to a local `arena.db`, exported to `ntk-pulse/data/arena-library.json` for Pulse. Backstory's second tier, after primary documents. Refreshed by hand. |
 | `editorial/research-ledger.json` | Written by Pulse: subjects searched and when, research finds, what waits for the editor, rejections. Bookkeeping, not a library of record. |
 | `editorial/build_backstory.py` | Builds `digest/data/backstory.json` from the matrix: eligible objects (linked, not dead), Beginnings, The case. Not run in CI. `build_backstory_pages.py` writes the static pages, including one per composed story at `/backstory/s-<id>/`. |
 | `editorial/check_links.py`, `merge_object_notes.py` | The link checker (writes `object-links-health.json`) and the validator for generated Backstory text (`object-notes.json`). |
