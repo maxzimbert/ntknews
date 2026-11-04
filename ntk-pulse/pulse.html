@@ -5114,6 +5114,14 @@ function bsc2Html(s, d){
   const card=readerCardHtml(Object.assign({}, row, {title:rowT}), {story_id:s.key, line:c.here||'', headline:s.title, origin:c.starts?{status:'retrieved', year:c.starts.year, line:c.starts.line}:null});
   const suggest=c.row && s.rowByEditor && c.row.toLowerCase()!==String(rowT).toLowerCase() ? `<div style="font-size:11.5px;color:var(--dim)">The story itself suggests: <b>${esc(c.row)}</b></div>` : '';
   const tried=((BSR_DRAFT.ship||{}).indicator_tried||{})[s.backstoryRow];
+  const prop=!ind && !c.chart_removed ? bsxChartProposal(s.backstoryRow) : null;
+  const propHtml=prop?`<div style="margin-top:6px;padding:7px 9px;border:1px dashed var(--ink);background:#fffbe8">
+      <div style="font:700 10.5px sans-serif;letter-spacing:.06em;margin-bottom:4px">FOUND, NOT CONFIRMED BY THE CHECK</div>
+      ${catIndicatorSvg(prop)||`<div style="font-size:13px">${esc(prop.label)}: ${esc(prop.then_value)} (${esc(prop.then_year)}) to ${esc(prop.now_value)}</div>`}
+      <div style="font-size:12px;margin-top:3px">Source: <a href="${esc(prop.source_url)}" target="_blank" rel="noopener">${esc(prop.source||prop.source_url)}</a>${prop.as_of?' &middot; '+esc(prop.as_of):''}</div>
+      ${prop.evidence_quote?`<div style="font:italic 12.5px Georgia,serif;margin-top:3px">“${esc(prop.evidence_quote)}”</div>`:''}
+      <div style="font-size:11.5px;color:var(--dim);margin-top:3px">Why the check held it back: ${esc(prop.unverified_reason||'its figures could not be confirmed on the page')}. Open the source; if both figures are there, use it.</div>
+      <button class="mini go bsc2-chart-use" style="margin-top:5px">use this trend line</button></div>`:'';
   const chartMsg=c.chart_removed?'Removed for this story.':tried&&tried.result!=='found'?'Searched '+esc(tried.at)+', no checked trend line: '+esc(String(tried.result).replace(/^No trend line found: /,'').slice(0,200))+'. Revise to search again, saying what to measure if you know.':'No trend line yet for this row. Revise to look for one, saying what to measure if you know.';
   return `<div class="bsr-prev bsc2" data-key="${esc(s.key)}" style="flex-basis:100%;margin:6px 0 2px 26px;padding:8px 10px;border:1px solid var(--ink);background:#faf8f3">
     <div style="font-size:11px;color:var(--dim);margin-bottom:6px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">BACKSTORY &middot; built ${esc(rel(BSR_DRAFT.generated))} ago &middot; everything is accepted unless you change it
@@ -5135,7 +5143,7 @@ function bsc2Html(s, d){
         ${bsc2Card(s,'title', p(bsc2T('title', c.title)), {words:true})}
         ${bsc2Card(s,'contest', p('<i>'+(c.contest?bsc2T('contest', c.contest):'(removed)')+'</i>'), {removable:true, words:!!c.contest})}
         ${bsc2Card(s,'stakes', p(c.stakes?bsc2T('stakes', c.stakes):'(removed)'), {removable:true, words:!!c.stakes})}
-        ${bsc2Card(s,'chart', ind?catIndicatorSvg(ind):`<div style="font-size:12.5px;color:var(--dim);margin-top:4px">${chartMsg}</div>`, {removable:!!ind, hint:'the row’s trend line, shared by every story on it', ph:'what should it measure?'})}
+        ${bsc2Card(s,'chart', ind?catIndicatorSvg(ind):`<div style="font-size:12.5px;color:var(--dim);margin-top:4px">${chartMsg}</div>`+propHtml, {removable:!!ind, hint:'the row’s trend line, shared by every story on it', ph:'what should it measure?'})}
         ${bsc2Card(s,'starts', c.starts?p('<b>'+bsc2T('starts.year', c.starts.year)+'</b> '+bsc2T('starts.line', c.starts.line)):p('(none)'), {words:!!c.starts, hint:'where the history begins'})}
         ${bsc2Card(s,'milestones', begs.map(b=>`<div style="display:flex;gap:10px;margin:5px 0;font-size:14px;align-items:flex-start"><b style="min-width:40px">${esc(b.year)}</b><span style="flex:1">${bsc2T('m:'+b.object_id, b.line)}</span><button class="mini bsc2-rm-item" data-id="${esc(b.object_id)}" style="color:var(--stale)">remove</button></div>`).join('')||'<i style="font-size:12px;color:var(--dim)">none</i>', {words:begs.length>0, hint:begs.length+' of 3 to 6', ph:'or tell me what to change in the milestones'})}
         ${bsc2Card(s,'here', p(bsc2T('here', c.here)), {words:true})}
@@ -5192,6 +5200,7 @@ function bsc2Wire(el, s){
     if (comp==='chart'){ bsxChart(s, note); return; }
     bsrRefreshHashes().then(()=>{ if (ready()) bsxRun([s.key], {modify:{[s.key]:{comp, note, force:!!force}}}); });
   };
+  const cu=box.querySelector('.bsc2-chart-use'); if (cu) cu.addEventListener('click',()=>{ bscBusy(cu); bsxUseChart(s); });
   const df=box.querySelector('.bsc2-dir-force'); if (df) df.addEventListener('click',()=>{
     const note=box.querySelector('.bsc2-dir').value.trim(); if (note) revise('documents', note, df, true); });
   box.querySelectorAll('.bsc2-res-add').forEach(b=>b.addEventListener('click',()=>{
@@ -5236,7 +5245,7 @@ async function bsxFindChart(s, note, auto){
   const comp=((bsrDraftFor(s)||{}).composed)||{}, title=bsrRowTitle(rid);
   const rec=rid.startsWith('p-')?(catEnsureLocal(rid)||{id:rid, title, by:{}}):{id:rid, title, contest:'', by:{}};
   rec.by=rec.by||{}; if (!rec.contest && comp.contest) rec.contest=comp.contest;
-  const prevInd=rec.indicator; rec.indicator=null;
+  const prevInd=rec.indicator; rec.indicator=null; delete rec.indicator_proposal;
   const today=new Date().toISOString().slice(0,10);
   let msg;
   try { msg=await proposeIndicator(rec, (note||'')+(comp.contest?' (The story this is for: '+comp.contest+')':'')); }
@@ -5248,6 +5257,9 @@ async function bsxFindChart(s, note, auto){
     const g=await bsxGet(GH_DRAFT_OUT); const draft=g.data; if (!draft) break;
     const sh=draft.ship=draft.ship||{}; sh.row_indicators=sh.row_indicators||{}; sh.indicator_tried=sh.indicator_tried||{};
     sh.indicator_tried[rid]={at:today, result:found?'found':msg};
+    sh.indicator_proposals=sh.indicator_proposals||{};
+    if (!found && rec.indicator_proposal) sh.indicator_proposals[rid]=Object.assign({}, rec.indicator_proposal, {proposed_at:today});
+    if (found) delete sh.indicator_proposals[rid];
     if (found){
       sh.row_indicators[rid]=rec.indicator;
       (draft.stories||[]).forEach(d=>{ if (d.row && d.row.id===rid) d.row.indicator=rec.indicator;
@@ -5258,6 +5270,30 @@ async function bsxFindChart(s, note, auto){
     if (await bsxPut(GH_DRAFT_OUT, draft, g.sha, 'backstory: trend line for '+title)){ BSR_DRAFT=draft; break; }
   }
   return found?'':msg;
+}
+// A trend line found but not confirmed: in the draft, or (a search before the draft kept them) on this browser's
+// record of a named category.
+function bsxChartProposal(rid){
+  return ((BSR_DRAFT&&BSR_DRAFT.ship||{}).indicator_proposals||{})[rid] || (CATS[rid]&&CATS[rid].indicator_proposal) || null;
+}
+// The editor takes a trend line the check could not confirm, having looked at the source. It goes on the row as the
+// editor's, marked checked by the editor, so no "Unverified" badge shows (the editor's direction wins).
+async function bsxUseChart(s){
+  const rid=s.backstoryRow, pr=bsxChartProposal(rid); if (!pr) return;
+  const ind=Object.assign({}, pr, {verified:true, verified_by:'editor', how_checked:'The editor read the source and took this trend line.'});
+  delete ind.unverified_reason; delete ind.proposed_at;
+  if (rid.startsWith('p-')){ const c=catEnsureLocal(rid); if (c){ c.indicator=ind; c.by=c.by||{}; c.by.indicator='editor'; delete c.indicator_proposal; saveCats(); } }
+  for (let i=0; i<3; i++){
+    const g=await bsxGet(GH_DRAFT_OUT); const draft=g.data; if (!draft) break;
+    const sh=draft.ship=draft.ship||{}; sh.row_indicators=sh.row_indicators||{}; sh.row_indicators[rid]=ind;
+    if (sh.indicator_proposals) delete sh.indicator_proposals[rid];
+    sh.indicator_tried=sh.indicator_tried||{}; sh.indicator_tried[rid]={at:new Date().toISOString().slice(0,10), result:'found'};
+    (draft.stories||[]).forEach(d=>{ if (d.row && d.row.id===rid) d.row.indicator=ind; if (d.story_id===s.key && d.composed) delete d.composed.chart_removed; });
+    (sh.provisional_rows||[]).forEach(r=>{ if (r.id===rid) r.indicator=ind; });
+    ((sh.provisional_store||{}).rows||[]).forEach(r=>{ if (r.id===rid) r.indicator=ind; });
+    if (await bsxPut(GH_DRAFT_OUT, draft, g.sha, 'backstory: the editor took a trend line for '+bsrRowTitle(rid))){ BSR_DRAFT=draft; break; }
+  }
+  render();
 }
 async function bsxChart(s, note){
   if (BSX_BUSY){ alert('A run is going. Ask for the trend line again when it finishes.'); render(); return; }
