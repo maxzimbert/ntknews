@@ -83,10 +83,12 @@ Each story gets its own Backstory page, built and reviewed in Pulse before publi
 
 ```
   Pulse: Generate Jefferson  ──►  the story's Backstory builds itself (or "Build Backstory for every story")
-        │  bsxCompose: Haiku names the history; the library (matrix, approved candidates, this story's research)
-        │  is shortlisted; Sonnet writes the ten components; each is checked against the contract and repaired
-        │  once; the row is proposed from the story and filed (the editor can type another: it moves only the
-        │  shelf and the chart). A row with no trend line gets one search for one (once per row per day).
+        │  bsxCompose: Haiku names the history; the library is shortlisted (matrix, approved candidates, this
+        │  story's research, and at most 10 items from the editor's Are.na library, T-0115); Sonnet writes the ten
+        │  components; each is checked against the contract and repaired once; the row is proposed from the story
+        │  and filed (the editor can type another: it moves only the shelf and the chart). A thin build (fewer
+        │  than 4 milestones) runs one web search on its gaps and rebuilds once. A row with no trend line gets
+        │  one search for one (once per row per day).
         ▼  saved to ntk-pulse/data/backstory-draft.json on the branch Pulse is served from, via the Contents API
   Pulse, the review (under each story's preview)
         │  Direct the research (one web search, then re-choose the history) · results listed, any added to the
@@ -110,6 +112,15 @@ Each story gets its own Backstory page, built and reviewed in Pulse before publi
 - **News reports** may stand in only when no primary source exists, only from `NTK_SOURCES`
   (`netlify/functions/news.js`; Pulse's copy is `NTK_PUBLISHERS`, Python reads the original through
   `editorial/publishers.py`), labelled with the reason.
+- **The editor's Are.na library** (T-0115) is refreshed by hand, never in CI:
+  1. `python3 editorial/arena_pull.py` pulls the editor's channels into `editorial/arena.db` (gitignored). The token
+     is in `~/.config/arena/token`.
+  2. `python3 editorial/export_library.py --fetch-dates` writes `ntk-pulse/data/arena-library.json`. It keeps what
+     can be opened and dated, and flags paywalls.
+  3. Commit the JSON and `editorial/arena-dates.json`.
+
+  Pulse loads the JSON beside the pool. Its items bypass the publisher rule and carry `source_kind: 'library'`, so
+  readers see no label, and they never join the Object Matrix.
 - **The reader app** (`digest/index.html`, `bsrStoryRow`) draws a pairing that carries `composed` as the story's own
   page: title, contest, stakes, chart, timeline, the case; the card's foot names the row. No day counters anywhere.
   `?draft` lays the branch's draft over the published file, showing what publish will ship.
@@ -117,7 +128,7 @@ Each story gets its own Backstory page, built and reviewed in Pulse before publi
   branch, and a prod publish reads only `main`'s draft.
 - **Retired, still on disk for older tickets' checks:** `build_pairings.py` (the classifier), `build_origins.py`,
   `compose_category.py`. Nothing runs them.
-- **Costs.** A build is two or three model calls. Directed research is one web search plus one call (an identical
+- **Costs.** A build is two or three model calls; a thin one adds a web search and a rebuild, once per subject in 30 days. Directed research is one web search plus one call (an identical
   direction within 30 days is skipped unless the editor forces it). A new row's trend line is one web search.
 
 ---

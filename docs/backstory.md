@@ -83,6 +83,19 @@ fields gone from the reader app and static pages; publish shipping each built st
 built, with nothing chosen at publish; the GitHub first-draft path removed. Ticket T-0114, status BUILT, its check
 passing on the branch. Not yet merged to main or run through a real publish.
 
+*Update, 2026-11-04,* same branch, on staging:
+- **The editor's Are.na library (T-0115) is the second tier.** 3,096 items, after primary documents and before
+  news reports and web search. At most 10 go into any shortlist, and a paywalled item ranks below a free one.
+  Readers see no label. The review tags each one "library" and "paywall", and none joins the Object Matrix.
+- **A thin build searches once on its own.** That is a build with fewer than 4 milestones. It runs one web search
+  on the gaps it named and rebuilds once, held to the 30-day subject rule.
+- **No blank revisions.** A revise that returns an empty part keeps the old one and says so.
+- **The review.** "Make it a milestone" sits on any document that is not one. The card readers see sits at the
+  top of the review.
+- **Not changed.** The composer was not broadened to the "long pattern" (the editor's call). Earlier cases reach a
+  page through research or direction.
+- **Why.** The matrix holds almost nothing on elections: 14 of 356 usable documents.
+
 ---
 
 ## Update, 2026-10-28 to 2026-10-30 — each story gets its own page
