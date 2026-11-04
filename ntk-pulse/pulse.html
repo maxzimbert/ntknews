@@ -5175,6 +5175,7 @@ function bsc2Html(s, d){
       <button class="mini bsc2-rebuild">rebuild from scratch</button><button class="mini bsr-prev-close">close</button></div>
     ${bsrStaleNote(d)}
     ${BSR_DRAFT_STATE?`<div style="padding:5px 8px;margin-bottom:6px;border:1px solid var(--ink);font-size:12.5px"><b>${esc(BSR_DRAFT_STATE)}</b></div>`:''}
+    <div style="margin-bottom:10px"><div style="font:700 11px sans-serif;letter-spacing:.06em;margin-bottom:4px">THE CARD READERS SEE</div>${card||'<div style="font-size:11px;color:var(--warn)">The reader\u2019s card could not be loaded.</div>'}</div>
     <div style="border:2px solid var(--ink);background:#fff;padding:9px 11px;margin-bottom:8px">
       <b style="font:700 11px sans-serif;letter-spacing:.06em">DIRECT THE RESEARCH</b>
       <div style="font-size:12px;margin:3px 0 6px">This is how you steer the history: name the laws, cases, events or years it should reach, or what is missing. I search the library and the web for them, then choose the milestones, where it starts and the documents again. Title, contest and stakes stay as they are. The boxes on each part below are for smaller edits.</div>
@@ -5200,7 +5201,6 @@ function bsc2Html(s, d){
         ${(c.notes||[]).length?`<details style="font-size:11.5px;color:var(--dim);margin-top:4px"><summary>${c.notes.length} note(s) from the build</summary>${c.notes.map(n=>'<div>'+esc(n)+'</div>').join('')}</details>`:''}
         <div style="font-size:11px;color:var(--dim);margin-top:4px">${c.usage?esc(c.usage.input_tokens)+' tokens in, '+esc(c.usage.output_tokens)+' out':''}</div>
       </div>
-      <div><div style="font:700 11px sans-serif;letter-spacing:.06em;margin-bottom:4px">THE CARD READERS SEE</div>${card||''}</div>
     </div></div>`;
 }
 function bsxResearchItems(ledger, key, rejected){
