@@ -495,6 +495,26 @@ A part the editor revised by prompt is done as asked and never "repaired" afterw
 kept word for word, through every rebuild. The rules still apply to everything the editor did not touch. Do not
 re-tighten this: an editor who has to fight the checks stops using the loop.
 
+**The editor's Are.na library is Backstory's second tier: no publisher rule, no reader label (T-0115).** Decided by
+the editor 2026-11-04. The 3,096 dated items exported from Are.na rank after primary documents and before news
+reports and web search, at most 10 in any story's shortlist. Every item was chosen by the editor, so the
+91-outlet rule (2026-11-02, above) does not apply to them: about 1,100 come from outlets off that list (New
+Republic, Talking Points Memo, Politico, the Guardian). Readers see no label on them, chosen over "approved
+outlets only" and "allowed, labelled news". This is a deliberate inconsistency: a news report from an approved
+outlet that came from a web search is labelled for readers, while the same kind of report from the editor's
+library is not. Library items never join the Object Matrix, which stays primary sources.
+
+**A thin build searches the web once on its own.** Decided by the editor 2026-11-04, after a midterm story's
+first build came back with one milestone. The matrix holds almost nothing on elections, and a build had no
+search unless the editor directed one. Now a build with fewer than 4 milestones, after the matrix and the
+editor's library, runs one web search on the gaps it named and rebuilds once. A subject searched in the last
+30 days is not searched again. Cost: one web search and one extra build for each thin story. The composer was
+left as it is: the editor declined a broader "long pattern" prompt the same day, so earlier cases still reach a
+page through research or the editor's direction, not by the composer stretching.
+
+**An empty revision is never accepted.** Same date. The editor's words win (above), but a blank is never the
+editor's words: a revise that returns an empty part keeps what was there and says so.
+
 **The editor's loop, as built (T-0114).** Same date, same test. Three levels, in order of reach:
 - *Direct the research*, at the top of the review: the primary way to steer a story's history and to fix a thin
   library. The editor names what the history should reach; the system searches the library and the web, then
