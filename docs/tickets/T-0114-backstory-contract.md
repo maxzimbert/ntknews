@@ -21,6 +21,13 @@ The Backstory rebuilt against the contract agreed 2026-11-02 (`docs/backstory.md
   - *Edit words* lets the editor type the text, with no model call.
   - When the editor directs a part, the editor's words win and nothing repairs them.
 - **The chart.** It is sought automatically, once per row per day.
+- **When the library is thin** (added 2026-11-04, the editor's call). A build that comes back thin, with fewer than 4
+  milestones, after the matrix and the editor's Are.na library (T-0115), runs one web search on the gaps it named
+  and rebuilds once with what it kept. A subject searched in the last 30 days is not searched again; its finds are
+  offered and the page is not rebuilt. The review says it searched and why.
+- **No blank revisions** (2026-11-04). A revise that returns an empty part keeps what was there and tells the editor.
+  A directed part that comes back blank on a full build is repaired, not shipped empty. Found on staging: a contest
+  revised to "Emphasize what the results say about America now" was saved as "".
 - **News reports.** Allowed only from the 91 `NTK_SOURCES` outlets, labelled, and only when no primary source will do.
 - **Publish.** Each story ships the page built for it if its fingerprint still matches; any other story ships with no
   Backstory. Nothing is chosen at publish: `backstory-draft.yml` and the classifier and origin steps are gone.
@@ -66,7 +73,8 @@ Tickets superseded, each marked DISCARDED with the reason and its check left as 
 What still held in those (row permalinks, the digest reading Backstory, Lineup order, the typed row) is in the check
 below.
 
-Cost: a build is two or three Sonnet/Haiku calls. A directed research is one web search plus one call, skipped when
+Cost: a build is two or three Sonnet/Haiku calls; a thin one adds one web search and one rebuild, at most once per
+subject in 30 days. A directed research is one web search plus one call, skipped when
 the same direction was searched in 30 days unless the editor forces it. A new row's trend line is one web search.
 
 ## Check
@@ -89,7 +97,7 @@ def fn(src, name):
 rules = s[s.index('const BSX_RULES'):s.index('};', s.index('const BSX_RULES'))]
 for k in ('row', 'title', 'contest', 'stakes', 'starts', 'milestones', 'here', 'about'):
     if not re.search(r'\b' + k + r'\s*:', rules): bad.append('the composer has no rule for ' + k)
-if 'rowTitle' in fn(s, 'bsxShortlist').split('return ids.map')[1].split('.filter(')[0].replace('rowTitle, terms', ''):
+if 'rowTitle' in fn(s, 'bsxShortlist').split('ranked=ids.map')[1].split('.filter(')[0].replace('rowTitle, terms', ''):
     bad.append("the shortlist lifts the row's own documents")
 if re.search(r'function bsxTerms\([^)]*row', s): bad.append('the history search terms are shaped by the row')
 if 'bsxRun([story.key], {build:true})' not in fn(s, 'generateStory'): bad.append('Generate Jefferson does not build the Backstory')
@@ -101,6 +109,10 @@ if 'bsxApplyText(' not in fn(s, 'bsxRun') or 'bsxApplyPins(' not in fn(s, 'bsxRu
 h = fn(s, 'bsc2Html') + fn(s, 'bsc2Card') + fn(s, 'bsc2ResearchList')
 for want, why in (('DIRECT THE RESEARCH', 'no Direct the research'), ('bsc2-words', 'no edit words'), ('bsc2-res-add', 'research results cannot be added to the page')):
     if want not in h: bad.append('review screen: ' + why)
+# Thin builds search once; a blank revision is never accepted (2026-11-04)
+run = fn(s, 'bsxRun')
+if 'c.thin' not in run or 'bsxResearch(story, key, c.title' not in run: bad.append('a thin build does not search on its own')
+if 'revise_blank' not in rv or 'bsxBlank(' not in fn(s, 'bsxCompose'): bad.append('a blank revision can be accepted')
 # Research results always reach the composer
 if 'edits.pool' not in fn(s, 'bsxCompose'): bad.append("the story's own research is not offered to the composer")
 # Fingerprint: only what the page is built from

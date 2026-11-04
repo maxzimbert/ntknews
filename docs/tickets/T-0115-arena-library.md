@@ -1,7 +1,7 @@
 ---
 id: T-0115
 title: The editor's Are.na library is a source Backstory draws on, after primary documents and before web search, and a reader sees its items like any other object
-status: DECIDED
+status: BUILT
 tags: [backstory, feature]
 anchor: ntk-pulse/pulse.html:4524
 ---
@@ -29,8 +29,9 @@ them private, 4,582 blocks. Measured the same day:
   that library against the story and sends the top 45 to Sonnet. Are.na items are not in it.
 
 Wanted:
-1. `bsxLibrary()` loads `arena-library.json` and adds each item as `kind: 'library'`, with
-   `source_kind` from `catSourceKind` (a news host is labelled news, as now).
+1. `bsxLibrary()` loads `arena-library.json` and adds each item as `kind: 'library'`. Its `source_kind` is
+   `'library'`, never `'news'`: the editor chose every item, so the 91-outlet rule does not apply and readers see
+   no label (the editor, 2026-11-04, choosing this over "approved outlets only" and "allow, labelled news").
 2. **Ranked second.** The shortlist keeps at most 10 library items for a story, so 2,000 clippings
    cannot crowd out 450 primary documents, and the compose prompt says: prefer a primary document; an
    item from the editor's library comes next; a web search only when neither connects. A paywalled
@@ -39,10 +40,15 @@ Wanted:
    each one. On ntknews.org it is a Beginning or an object like any other.
 4. Refresh is by hand: `arena_pull.py`, then `export_library.py --fetch-dates`, then commit the JSON.
 
-**Built so far (2026-11-02, branch `T-0115-arena-library`):** the pull, the search CLI
-(`editorial/arena_search.py`) and the export. Not built: items 1 to 3. They change `bsxLibrary`,
-`bsxShortlist` and the compose prompt, which T-0113 (PR #104, draft) is also changing in seven
-places, so they wait for T-0113 to merge, or are built on top of its branch.
+**Built 2026-11-04 on branch `T-0114-backstory-contract`**, folded into T-0114 because it changes the same
+functions (T-0113 was superseded by T-0114). Items 1 to 3 are in Pulse: `ARENA` loads with the pool; `bsxLibrary`
+adds every item not rejected and not already in the library by URL; `bsxShortlist` scores a paywalled item at 0.85
+and keeps at most 10 library items; the composer sees `[EDITOR'S LIBRARY]` and ranks it after a primary document
+and before a `[NEWS REPORT]`; the review shows "library", "paywall" and "stays in your library" (no Object Matrix
+button: the matrix stays primary sources). Checked with stand-in model replies (12 checks) and in a local Pulse.
+**Unverified against a real build**: no live model has composed from the library yet.
+
+T-0114's automatic search when thin runs after the library, so a story the library carries costs no search.
 
 ## Why
 
@@ -71,6 +77,10 @@ item.
 
 The Are.na v2 user record reports 78 channels, but v3 with the owner's token lists 36. The other 42
 are probably other people's channels the editor has added blocks to. Unverified.
+
+Of the 3,096 items, about 1,100 are from outlets not on the 91-outlet list (New Republic, Talking Points Memo,
+NY Mag, Vice, The Verge, Brookings, Politico, the Guardian), and almost none is a primary source; the export's
+`source_kind: 'document'` on non-news hosts means "not on the news list", not "primary".
 
 ## Check
 
@@ -102,6 +112,19 @@ console.log(JSON.stringify(!!L['arena-1'] && L['arena-1'].kind==='library'));
 r = subprocess.run(['node', '-e', js], capture_output=True, text=True)
 if r.stdout.strip() != 'true':
     bad.append('an Are.na item does not reach the library Pulse composes from, as kind "library"')
+js2 = r"""
+const s=require('fs').readFileSync('ntk-pulse/pulse.html','utf8');
+const grab=n=>{const i=s.indexOf('function '+n+'('); const l=s.slice(i, s.indexOf('\n', i)); return /\}\s*$/.test(l)&&l.split('{').length===l.split('}').length?l:s.slice(i, s.indexOf('\n}\n', i)+2);};
+const stop=s.slice(s.indexOf('const BSX_STOP'), s.indexOf(';\n', s.indexOf('const BSX_STOP'))+2);
+const sl=new Function(stop+grab('bsxToks')+grab('bsxShortlist')+'; return bsxShortlist;')();
+const lib={}; for (let i=0;i<20;i++) lib['a'+i]={title:'midterm wave election '+i, about:'', why:'', author:'', row:'', subgenre:'', lenses:[], categories:new Set(), kind:'library', paywall:i>0};
+for (let i=0;i<5;i++) lib['m'+i]={title:'midterm wave election law '+i, about:'', why:'', author:'', row:'', subgenre:'', lenses:[], categories:new Set(), kind:'matrix'};
+const ids=sl(lib, {headline:'x', lede:''}, null, ['midterm wave election']);
+console.log(ids.filter(i=>lib[i].kind==='library').length+' '+ids.filter(i=>lib[i].kind==='matrix').length+' '+(ids.indexOf('a0')<ids.indexOf('a1')));
+"""
+r = subprocess.run(['node', '-e', js2], capture_output=True, text=True)
+if r.stdout.strip() != '10 5 true':
+    bad.append('the shortlist does not keep at most 10 library items, all primary documents, and a free item ahead of a paywalled one: ' + (r.stdout + r.stderr).strip()[-200:])
 for b in bad: print(b)
 sys.exit(1 if bad else 0)
 PY
