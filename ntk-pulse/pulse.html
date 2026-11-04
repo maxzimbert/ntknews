@@ -2952,7 +2952,14 @@ async function generateStory(story){
   NOTES.genCounter = (NOTES.genCounter||0) + 1; saveNotes();
   story.busy=false; setStatus(story,''); saveLineup(); render();
   // T-0114: with Truths in hand, the story's Backstory builds itself; the editor reviews it on the Backstory tab
-  if (bsxHasTruths(story) && pulseBranch(location) && SETTINGS.ghToken) bsrRefreshHashes().then(()=>bsxRun([story.key], {build:true}));   // queues itself if a run is going
+  if (bsxHasTruths(story) && pulseBranch(location) && SETTINGS.ghToken){
+    setStatus(story, 'Building its Backstory…'); render();
+    bsrRefreshHashes().then(()=>bsxRun([story.key], {build:true})).then(()=>{   // queues itself if a run is going
+      const c=(bsrDraftFor(story)||{}).composed, waiting=(BSX_NEXT||[]).some(n=>n.keys.includes(story.key));
+      if (c && c.v===2) setStatus(story, '');
+      else if (!waiting) setStatus(story, 'Backstory not built: '+(BSR_DRAFT_STATE||'no reason given')+'. Build it from the Backstory tab.', true);
+      render(); });
+  }
 }
 async function reviseSection(story, sectionName, note){
   const arts = activeArts(story);
@@ -5270,7 +5277,8 @@ function bsrStoryPreviewHtml(s){
     <div style="font-size:11px;color:var(--dim);margin-bottom:6px">PREVIEW &middot; this story's Backstory as the reader gets it <button class="mini bsr-prev-close">close</button></div>${inner}</div>`;
   // T-0114: a story ships a Backstory only when one was built for it to the contract
   if (BSR_DRAFT_STATE && bsrRunning()) return box(`<div style="font-size:12.5px"><b>${esc(BSR_DRAFT_STATE)}</b></div>`);
-  return box(`<div style="font-size:12.5px">${bsxHasTruths(s)
+  const lastFail=/^Backstory failed|Not done/.test(BSR_DRAFT_STATE||'') && String(BSR_DRAFT_STATE).includes(String(extractTruthsTags((s.packages||{}).truths||'').headline||s.title||s.key).slice(0,30)) ? `<div style="font-size:12.5px;color:var(--stale);margin-bottom:6px"><b>Last try:</b> ${esc(BSR_DRAFT_STATE)}</div>` : '';
+  return box(lastFail+`<div style="font-size:12.5px">${bsxHasTruths(s)
     ? 'Not built yet. A story without a built Backstory ships without one.'+` <button class="mini go bsc2-build">build this story's Backstory</button>`
     : 'No Truths yet. Generate Jefferson first; the Backstory builds itself after.'}</div>`);
 }
