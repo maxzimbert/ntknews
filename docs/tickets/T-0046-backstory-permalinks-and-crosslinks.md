@@ -103,26 +103,39 @@ test -f editorial/build_backstory_pages.py
 python3 -m py_compile editorial/build_backstory_pages.py
 grep -qE '^import (json|os|re|sys)' editorial/build_backstory_pages.py
 
-# 2. Run it for real against the live data and confirm it writes a real
-# page per row, at the right path, with real OG tags — not a stub.
-python3 editorial/build_backstory_pages.py
+# 2. Run the real generator's main() against the live data and confirm it
+# writes a real page per row, at the right path, with real OG tags — not a
+# stub. It writes into a temp dir, not backstory/: a check must not rewrite
+# tracked files (the elapsed time changes by the month — T-0081).
+OUT=$(mktemp -d "${TMPDIR:-/tmp}/t0046.XXXXXX")
+trap 'rm -rf "$OUT"' EXIT
+OUT="$OUT" python3 - <<'PYEOF'
+import importlib.util, os
+from pathlib import Path
+spec = importlib.util.spec_from_file_location("bbp", "editorial/build_backstory_pages.py")
+bbp = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(bbp)
+bbp.OUT_DIR = Path(os.environ["OUT"])
+bbp.main()
+PYEOF
 
-python3 - <<'PYEOF'
-import json, re, sys
+OUT="$OUT" python3 - <<'PYEOF'
+import json, os, re, sys
 from pathlib import Path
 
+out = Path(os.environ["OUT"])
 data = json.loads(Path("digest/data/backstory.json").read_text())
 rows = data["rows"]
-missing = [r["id"] for r in rows if not (Path("backstory") / r["id"] / "index.html").exists()]
+missing = [r["id"] for r in rows if not (out / r["id"] / "index.html").exists()]
 if missing:
     sys.exit(f"OPEN: {len(missing)} rows have no permalink page, e.g. {missing[0]}")
 
-media = (Path("backstory") / "media" / "index.html").read_text()
+media = (out / "media" / "index.html").read_text()
 assert 'og:title' in media and 'The Media' in media, "permalink page missing real OG tags"
 assert 'canonical' in media.lower() or 'og:url' in media, "permalink page missing a canonical/og:url"
 
 ukr = [r for r in rows if r["stratum"] == "fire"][0]
-ukr_html = (Path("backstory") / ukr["id"] / "index.html").read_text()
+ukr_html = (out / ukr["id"] / "index.html").read_text()
 assert "yrs" in ukr_html or "yr" in ukr_html, "fire-row permalink should show elapsed time, not a bare day count"
 print(f"{len(rows)} permalink pages written, held and fire both render")
 PYEOF
@@ -151,6 +164,7 @@ PYEOF
 ```
 
 Note: this check runs the real generator against the real, current
-`digest/data/backstory.json` and leaves `backstory/` on disk — same as
-running the actual pipeline script. It does not clean up after itself;
-never destructively resets generated output as a side effect of a check.
+`digest/data/backstory.json`, but writes into a temp directory it removes on
+exit. It used to write `backstory/` in place, which made `rot.sh` rewrite
+tracked pages whenever a row's elapsed time ticked over (T-0081). Writing the
+live pages is the pipeline's job (`pulse-publish.yml`), not the check's.
