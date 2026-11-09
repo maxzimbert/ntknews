@@ -3102,6 +3102,8 @@ function publishPreflight(stories){
     if (['truth','prob','poss','lies'].every(f => (s[f] || '').indexOf(INSUFFICIENT) >= 0))
       warn.push(label + ' — every section is [' + INSUFFICIENT + ']');
     if (!s.featuredImage) warn.push(label + ' — no image');
+    // T-0016: without a subject, Expertise credits the story to its section label, silently.
+    if (!(s.subject || '').trim()) warn.push(label + ' — no subject, so Expertise credits it to ' + (s.category || 'its section'));
   });
   const shipping = stories.length - drop.length;
   if (shipping < PUBLISH_MIN || shipping > PUBLISH_MAX)
