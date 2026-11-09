@@ -504,6 +504,12 @@ page through research or the editor's direction, not by the composer stretching.
 **An empty revision is never accepted.** Same date. The editor's words win (above), but a blank is never the
 editor's words: a revise that returns an empty part keeps what was there and says so.
 
+**Staging Pulse and prod Pulse share one browser Lineup.** Left as it is by the editor 2026-11-09. Both are served
+from `maxzimbert.github.io`, so they share `localStorage`: the Lineup, settings and keys, and every story's
+Backstory edits. Drafts and publishing stay apart (staging cannot publish; prod reads only `main`'s draft), but
+clearing or editing the Lineup in one does it in the other. Splitting it (staging-only keys, settings copied once)
+was offered and declined.
+
 **The editor's loop, as built (T-0114).** Same date, same test. Three levels, in order of reach:
 - *Direct the research*, at the top of the review: the primary way to steer a story's history and to fix a thin
   library. The editor names what the history should reach; the system searches the library and the web, then
