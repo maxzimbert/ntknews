@@ -147,7 +147,7 @@ import subprocess
 
 BSX_BANNED = ['this document', 'this reflects', 'underscores', 'highlights', 'serves as', 'a reminder that',
               'pivotal', 'landmark', 'groundbreaking', 'seminal']
-BSX_SHA = '7fba7f0ddc087d97'
+BSX_SHA = '7f2403e16f0a660f'
 
 
 def git_show(ref, path):
