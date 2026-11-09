@@ -29,6 +29,12 @@ where the reader is." Locked as a decision in
 literal text — Registers 1 and 2 are a standard the edited output is held to,
 not a rubric the model is shown.
 
+**Per-surface reading level (decided 2026-10-09, `docs/decisions.md`).** Each surface is held to
+its own reader: **/today middle school, /digest high school, /backstory AP.** The Grade 3-4 and 6-7
+figures below describe headlines and section bodies inside a story; the surface level is the ceiling a
+whole page is read against. The `voice-review` skill (`.claude/skills/voice-review/`) checks published
+copy against this.
+
 **The Escalation Rule, which governs all five:** register only rises with
 depth inside a story. It never falls back down once it's climbed.
 
@@ -36,7 +42,7 @@ depth inside a story. It never falls back down once it's climbed.
 |---|---|---|---|
 | 1 | Headlines, ledes, first sentences | Grade 3-4 | Standard only — not literal prompt text |
 | 2 | Section bodies (Truths/Probabilities/Possibilities/Lies) | Grade 6-7 | Standard only — not literal prompt text |
-| 3 | Backstory standing narrative (the live, empty feature) | Grade 8-10 | **LIVE** — `ntk-pulse/pulse.html:1214`, `makeBackstoryPrompt()` |
+| 3 | Backstory | AP level, for college-educated adults (was Grade 8-10 until the 2026-10-09 decision) | **LIVE** — `bsxComposePrompt()` and the researcher prompts in `ntk-pulse/pulse.html` |
 | 4 | Lifetimes — the 50-year containment essay per Backstory row | — | **WRITTEN, NOT WIRED** — `editorial/prompts/register4-lifetimes.md` |
 | 5A | Backstory classifier — tags a story to a row's sub-genre | — | **LIVE** — `editorial/build_pairings.py`, called from `.github/workflows/pulse-publish.yml:52` |
 | 5B | Pairing lines — one sentence linking today's story to a row | — | **LIVE** — same script, same workflow step |
@@ -318,7 +324,8 @@ something, or someone just telling me what happened?"
 | Rule set | Lives in | Status |
 |---|---|---|
 | Register ladder policy | `docs/decisions.md` | Locked decision, partly unimplemented as prompt text |
-| Register 3 (Backstory narrative) | `ntk-pulse/pulse.html` `makeBackstoryPrompt()` | LIVE |
+| Register 3 (Backstory, AP level) | `ntk-pulse/pulse.html` `bsxComposePrompt()` | LIVE |
+| After-the-fact copy review | `.claude/skills/voice-review/` (T-0104) | EDITOR-TRIGGERED, in a Claude Code session |
 | Register 4 (Lifetimes) | `editorial/prompts/register4-lifetimes.md` | WRITTEN, NOT WIRED |
 | Register 5A/5B (classifier, pairing lines) | `editorial/prompts/*.md`, run by `editorial/build_pairings.py` | LIVE |
 | Candidate selection — ledger | `ntk-pulse/ledger.py` | LIVE |

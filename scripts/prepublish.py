@@ -84,6 +84,11 @@ def main():
                  % (label(s), sum(1 for x in secs if INSUFFICIENT in x), INSUFFICIENT))
         if not s.get('featuredImage'):
             warn('%s: no image' % label(s))
+        # T-0016: subject is what Expertise keys to. Without one, the reader's beats for this story
+        # fall back to the section label ("Nation"), silently. The 2026-10-28 edition shipped one.
+        if not (s.get('subject') or '').strip():
+            warn('%s: no subject; Expertise will credit this story to "%s"'
+                 % (label(s), s.get('category') or 'its section'))
         # Truths only. Measured across the 2026-09-17 and 2026-09-18 editions:
         # Truths carried a citation in 12 of 12 sections, while Probabilities,
         # Possibilities and Lies went uncited in 8, 9 and 5 of 12. Those three

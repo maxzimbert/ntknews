@@ -1,7 +1,7 @@
 ---
 id: T-0104
 title: A voice-review skill checks published Today, Digest and Backstory copy against the house rules
-status: DECIDED
+status: VERIFIED
 tags: [editorial, feature]
 anchor: docs/voice.md
 ---
@@ -17,6 +17,8 @@ State on 2026-10-27: the repo has two project skills, `prepublish` and `ticket`.
 `docs/voice.md` (323 lines) is the rulebook but still gives Backstory as Grade 8-10, which the
 2026-10-09 decision replaced. The skill has to take its levels from the decision, or voice.md has to be
 corrected first.
+
+Verified 2026-11-09: the skill and `scripts/voice_review.py` merged in #106 and were run on the live 2026-10-28 edition (4 findings) and on staging's composed Brand draft (`--staging`, 0 findings; every rule fired on a deliberately broken copy).
 
 ## Why
 

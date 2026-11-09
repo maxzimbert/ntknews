@@ -1,7 +1,7 @@
 ---
 id: T-0108
 title: Links to /today, /digest and frozen editions unfurl with the edition preview card
-status: BUILT
+status: VERIFIED
 tags: [digest, feature]
 anchor: ntk-pulse/build_digest.py:846
 ---
@@ -9,6 +9,8 @@ anchor: ntk-pulse/build_digest.py:846
 ## What
 
 `digest/index.html` is served at /today, /digest, /backstory and /me, and each frozen edition at /digest/<date>/ is a copy of it. Until 2026-10-28 its `<head>` had no Open Graph tags at all, so a copied address-bar link from the app unfurled with no image. It now carries a tag block between `<!-- OG:EDITION -->` markers, which `build_digest.py` rewrites on each publish to point at that day's edition card (`digest/<date>/share/og-edition.jpg`: date, story count, lead headline, lead photo), rendered with the same `share-cards/` renderer as T-0107. If the card does not render, the tags point at the landing page's default `/og-image.png`. Built 2026-10-28 and run against the live lineup in a scratch copy: card rendered (110 KB), live and frozen copies both point at it; with the renderer missing, both fall back to `/og-image.png`. Not yet run in GitHub Actions or seen in a real app's preview (unverified).
+
+Verified 2026-11-09: after the 2026-10-28 publish, ntknews.org/today and /digest/2026-10-28/ both carry `og:image` pointing at `digest/2026-10-28/share/og-edition.jpg`, which serves the edition card (71 KB, read by eye). Not yet seen inside a real app's unfurl.
 
 ## Why
 

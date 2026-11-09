@@ -1,7 +1,7 @@
 ---
 id: T-0016
 title: Expertise is keyed to a section of the paper, not to anything a reader could be expert in
-status: VERIFIED
+status: BUILT
 tags: [pulse, feature]
 anchor: digest/index.html:2597
 ---
@@ -32,6 +32,8 @@ lineup stories use it, the concepts that turned up beneath each, and rename in
 place. Rename is the load-bearing part. With nothing to fold onto, the first
 spelling of a subject becomes canonical, and without a rename the only way to
 fix a bad one would be to edit every story that used it.
+
+Back to BUILT 2026-11-09. The code still holds (draftMeta, folding, the pipeline and the digest's keying all pass). The claim that fails is the last one: the live 2026-10-28 edition shipped the WWE "Ring Boys" story with an empty `subject`, so its beats fall back to the section label, Nation. Nothing at publish warned: neither `publishPreflight()` nor `scripts/prepublish.py` looks at subject. It returns to VERIFIED on the first publish where every story carries one.
 
 ## Why
 
