@@ -68,22 +68,6 @@ def html_esc(s):
             .replace('"', "&quot;"))
 
 
-def elapsed(start_iso, today):
-    """(years, months) between an ISO date and today — matches the
-    arithmetic already live on ntknews.org/backstory (verified against
-    it directly: media's 1987-08-04 start_date produces the same
-    "39 yrs, 1 mo" the live modal shows)."""
-    y_s, m_s, d_s = (int(x) for x in start_iso.split("-"))
-    y = today.year - y_s
-    m = today.month - m_s
-    if today.day < d_s:
-        m -= 1
-    if m < 0:
-        y -= 1
-        m += 12
-    return y, m
-
-
 PAGE_TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -124,6 +108,8 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
   .obj a {{ display:block; text-decoration:none; color:inherit; }}
   .more {{ font-family:'Overpass',sans-serif; font-size:13px; font-weight:600; color:{blue_deep}; margin-top:6px; }}
   .ctx {{ font-size:16px; line-height:1.55; margin-bottom:14px; }}
+  .news {{ font-family:'Overpass',sans-serif; font-size:9px; font-weight:600; letter-spacing:.06em; text-transform:uppercase;
+    color:rgba(38,31,35,.6); margin-left:6px; white-space:nowrap; }}
   .pull {{ font-style:italic; font-size:20px; line-height:1.4; border-top:1px solid {ink}; border-bottom:1px solid {ink}; padding:16px 0; margin:6px 0 18px; }}
   .lab {{ font-family:'Overpass',sans-serif; font-size:13px; font-weight:600; margin-bottom:12px; }}
   .kicker {{ font-family:'Overpass',sans-serif; font-size:10px; font-weight:600;
@@ -134,11 +120,6 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
   .ind svg {{ display:block; width:100%; height:auto; margin:10px 0 4px; }}
   .src {{ font-family:'Overpass',sans-serif; font-size:10px; font-weight:600; letter-spacing:.06em;
     color:rgba(38,31,35,.6); }}
-  .elapsed {{ text-align:center; padding:16px 0 6px; }}
-  .elapsed .num {{ font-family:'Overpass',sans-serif; font-size:42px; font-weight:700; }}
-  .elapsed .unit {{ font-size:18px; font-weight:600; }}
-  .elapsed .since {{ font-family:'Overpass',sans-serif; font-size:10px; font-weight:600;
-    letter-spacing:.1em; text-transform:uppercase; color:rgba(38,31,35,.6); margin-top:8px; }}
   .unverified {{ display:inline-block; border:1px solid {terra}; color:{terra};
     font-family:'Overpass',sans-serif; font-size:10px; font-weight:700; letter-spacing:.08em;
     text-transform:uppercase; padding:3px 6px; border-radius:3px; margin-top:12px; }}
@@ -239,10 +220,6 @@ def indicator_svg(ind):
 def render_held(row):
     parts = []
 
-    if row.get("stratum") == "provisional":
-        # T-0076: a category added from the news, not yet an editorial row.
-        parts.append('<section><div class="src">New thread. Drafted from today\u2019s reporting.' + ('' if row.get("indicator") else ' No trend line yet.') + '</div></section>')
-
     if row.get("stakes"):
         parts.append(f'<section><p class="stakes">{html_esc(row["stakes"])}</p></section>')
 
@@ -282,22 +259,14 @@ def render_held(row):
             # no author field) — fall back to the row title rather than
             # render a dangling " · 1919" with nothing before it.
             by = o.get("author") or row["title"]
-            head = o["quote"] if o.get("quote") else o["title"]
+            news = ' <span class="news">news report</span>' if o.get("source_kind") == "news" else ""
             rows.append(f'<div class="{cls}"><a href="{object_href(row, i)}">'
-                        f'<div class="t">{html_esc(head)}</div>'
+                        f'<div class="t">{html_esc(o["title"])}{news}</div>'
                         f'<div class="by">{html_esc(by)}<span class="dot"></span>{html_esc(o["year"])}</div>'
                         f'<div class="more">About this</div></a></div>')
         parts.append(f'<section><div class="lab">The case</div>{"".join(rows)}</section>')
 
     return "\n".join(parts)
-
-
-def render_fire(row, today):
-    y, m = elapsed(row["start_date"], today)
-    return f"""<section class="elapsed">
-  <div><span class="num">{y}</span> <span class="unit">yrs</span> <span class="num">{m}</span> <span class="unit">mo</span></div>
-  <div class="since">since {row['start_date']}</div>
-</section>"""
 
 
 def render_episodes(row_id, pairings):
@@ -314,9 +283,8 @@ def render_episodes(row_id, pairings):
 
 
 def build_object_page(row, i):
-    """4D. Renders only the fields that exist: today an object carries
-    {title, author, year, source}; context, quote, where_now and source_url
-    appear automatically once T-0045 / T-0048 add them."""
+    """4D. A document's page: what it is (About) and the link. The pull quote, the long context and "where it
+    stands now" are retired (the contract, docs/backstory.md). A news report says it is one, and why."""
     o = row["objects"][i]
     by = o.get("author") or row["title"]
     parts = [f'<div class="kicker">{html_esc(o["year"])}</div>',
@@ -326,23 +294,21 @@ def build_object_page(row, i):
     body = []
     if o.get("about"):
         body.append(f'<p class="ctx">{html_esc(o["about"])}</p>')
-    ctx = o.get("context") or []
-    if ctx:
-        body.append("".join(f'<p class="ctx">{html_esc(c)}</p>' for c in ctx))
-    if o.get("quote"):
-        body.append(f'<p class="pull">{html_esc(o["quote"])}</p>')
-    if o.get("where_now"):
-        body.append(f'<div class="lab">Where it stands now</div><p class="ctx">{html_esc(o["where_now"])}</p>')
+    if o.get("source_kind") == "news":
+        why = str(o.get("why_no_primary") or "").rstrip(".")
+        body.append('<div class="src" style="margin-bottom:6px">News report</div>'
+                    f'<p class="ctx">No primary source was found for this{": " + html_esc(why) if why else ""}. '
+                    'This is a report written at the time by a publisher NTK reads.</p>')
     body.append(f'<div class="src">Source &middot; {html_esc(o["source"])}</div>')
     if o.get("source_url"):
         host = urlparse(o["source_url"]).hostname or ""
         host = host[4:] if host.startswith("www.") else host
-        body.append(f'<p style="margin-top:14px"><a class="cta" href="{html_esc(o["source_url"])}" target="_blank" rel="noopener noreferrer">View the primary document</a>'
+        body.append(f'<p style="margin-top:14px"><a class="cta" href="{html_esc(o["source_url"])}" target="_blank" rel="noopener noreferrer">{"Read the news report" if o.get("source_kind") == "news" else "View the primary document"}</a>'
                     + (f'<span class="src">opens {html_esc(host)}</span>' if host else "") + '</p>')
     sect = f'<section>{"".join(body)}</section>'
     panel = (f'<section class="digest"><a class="ep first" href="/backstory/{row["id"]}/">'
              f'<div class="kicker">In the case for {html_esc(row["title"])}</div>'
-             f'<div class="h">{html_esc(row["milestone"])}</div></a></section>')
+             f'<div class="h">{html_esc(row.get("milestone") or "")}</div></a></section>')
     page = PAGE_TEMPLATE.format(
         row_id=f'{html_esc(row["id"])}/objects/{i + 1}',
         title_esc=html_esc(o["title"]),
@@ -376,11 +342,16 @@ def story_row(p, row, when):
     def host(u):
         h = urlparse(u or "").hostname or ""
         return h[4:] if h.startswith("www.") else h
-    return {"id": f"s-{p['story_id']}", "title": c.get("scope") or row["title"], "milestone": p.get("headline") or "",
-            "stratum": "story", "beginnings": begs, "start_line": str(c.get("here") or "").rstrip("."),
-            "start_date": str(when or date.today().isoformat())[:10], "indicator": ind, "stakes": "",
+    # T-0114, the contract: the page's title, its contest under it, its stakes; no day counter anywhere
+    return {"id": f"s-{p['story_id']}", "title": c.get("title") or c.get("scope") or row["title"],
+            "milestone": c.get("contest") or p.get("headline") or "", "stratum": "story", "category": row["title"],
+            "beginnings": begs, "start_line": str(c.get("here") or "").rstrip("."),
+            "start_date": str(when or date.today().isoformat())[:10],
+            "indicator": None if c.get("chart_removed") else ind, "stakes": c.get("stakes") or "",
             "objects": [{"title": o["title"], "author": o.get("author") or "", "year": o["year"], "about": o.get("about") or "",
-                         "source": host(o.get("source_url")), "source_url": o.get("source_url")} for o in c.get("case") or []]}
+                         "source": host(o.get("source_url")), "source_url": o.get("source_url"),
+                         **({"source_kind": "news", "why_no_primary": o.get("why_no_primary") or ""} if o.get("source_kind") == "news" else {})}
+                        for o in c.get("case") or []]}
 
 
 def build_story_page(srow, p, today):
@@ -389,15 +360,13 @@ def build_story_page(srow, p, today):
 
 
 def build_page(row, pairings, today):
-    # T-0099: a live-conflict page keeps its day count on top, and shows its history under it once it has one
-    body_sections = ((render_fire(row, today) + (render_held(row) if (row.get("beginnings") or row.get("stakes")) else ""))
-                     if row["stratum"] == "fire" else render_held(row))
+    body_sections = render_held(row)          # day counters are retired everywhere (the editor, 2026-11-02)
     episodes = render_episodes(row["id"], pairings)
     body = body_sections + episodes + '<div class="end">— 30 —</div>'
     return PAGE_TEMPLATE.format(
         row_id=html_esc(row["id"]),
         title_esc=html_esc(row["title"]),
-        milestone_esc=html_esc(row["milestone"]),
+        milestone_esc=html_esc(row.get("milestone") or ""),
         canonical_url=f"{BASE_URL}/backstory/{row['id']}/",
         cream=CREAM, ink=INK, blue_deep=BLUE_DEEP, terra=TERRA, amber_deep=AMBER_DEEP, amber=AMBER, logo=LOGO_DATA_URI,
         body=body,

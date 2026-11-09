@@ -25,6 +25,8 @@ from pathlib import Path
 
 import openpyxl
 
+from publishers import is_approved
+
 ROOT = Path(__file__).resolve().parent.parent
 LEDGER = ROOT / "editorial" / "research-ledger.json"
 DONE = ROOT / "editorial" / "matrix-additions.json"
@@ -84,8 +86,10 @@ def main():
             continue
         url = str(f.get("url") or "").strip()
         host = url.split("/")[2].lower() if url.count("/") >= 2 else ""
-        if not url.startswith("http") or f.get("source_kind") == "news" or any(host == n or host.endswith("." + n) for n in NEWS):
-            skipped.append((f.get("title"), "news report or no link: never enters the matrix"))
+        news = f.get("source_kind") == "news" or any(host == n or host.endswith("." + n) for n in NEWS) or is_approved(url)
+        # a news report joins the matrix, marked as news, only from an approved publisher (the editor, 2026-11-02)
+        if not url.startswith("http") or (news and not is_approved(url)):
+            skipped.append((f.get("title"), "no link, or a news report from outside the approved publishers"))
             done["handled"][f["id"]] = {"at": now, "result": "not eligible", "title": f.get("title"), "url": url}
             continue
         if url in have:
@@ -93,7 +97,9 @@ def main():
             done["handled"][f["id"]] = {"at": now, "result": "already in the matrix", "title": f.get("title"), "url": url}
             continue
         ntk_row, theme = row_for(f, data)
-        sh.append(matrix_row(f, ntk_row, theme))
+        if news and sh.cell(row=1, column=16).value != "Source Kind":
+            sh.cell(row=1, column=16).value = "Source Kind"
+        sh.append(matrix_row(f, ntk_row, theme) + (["news"] if news else []))
         have.add(url)
         done["handled"][f["id"]] = {"at": now, "result": "added", "title": f.get("title"), "url": url, "ntk_row": ntk_row}
         added.append((f.get("year"), f.get("title"), ntk_row or "(no fixed row)"))

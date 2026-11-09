@@ -1,12 +1,16 @@
 ---
 id: T-0092
 title: A new category with no origin found shows no "Running for 0 days" on its card
-status: VERIFIED
+status: DISCARDED
 tags: [digest, defect]
 anchor: digest/index.html
 ---
 
 ## What
+
+**Superseded 2026-11-02 (T-0114).** The editor retired day counters everywhere ("wherever they're
+present they are ineffective"; `docs/decisions.md`, the Backstory contract). This ticket's check asserts how
+a counter is drawn, so it no longer applies; the check is left as it was, for the record.
 
 Seen by the editor 2026-10-15 on ntknews.org/backstory: the Cologne robot story's card read RUNNING FOR /
 0 days under the category Robots and Law. Measured that day in the published `backstory.json`: the

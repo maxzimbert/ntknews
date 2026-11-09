@@ -76,48 +76,60 @@ re-enable.
 
 ---
 
-## Backstory: draft, compose, publish (2026-10-30)
+## Backstory: build, review, publish (T-0114, 2026-11-02)
 
-Each story gets its own Backstory page, drafted and edited before publish. Tickets: T-0109 (draft), T-0110
-(per-story page), T-0111 (research and the matrix). Decisions: `docs/decisions.md`, 2026-10-28 and 2026-10-30.
+Each story gets its own Backstory page, built and reviewed in Pulse before publish, to the contract at the top of
+`docs/backstory.md`. Ticket: T-0114 (it supersedes T-0109 and T-0113). Decisions: `docs/decisions.md`, 2026-11-02.
 
 ```
-  Pulse, Backstory tab: "Draft Backstory"
-        │  commits ntk-pulse/data/lineup-draft.json to the branch Pulse is served from
-        ▼     (live Pulse → main; staging Pulse → staging)
-  backstory-draft.yml   the first draft only, on copies of the live files:
-        │   build_pairings.py (classifier, new categories) → build_origins.py ("It starts in")
-        │   → backstory_draft.py make → commits ntk-pulse/data/backstory-draft.json
-        ▼
-  Pulse composes each story's page in the browser (bsxCompose: Haiku names the history, the library is
-  searched, Sonnet picks Beginnings and the case and writes each line; every line is checked), and saves it
-  into backstory-draft.json through the Contents API. Every edit after that (rerun, apply, approve,
-  not for this story, reject, research, outline) runs in Pulse the same way: no workflow run.
-  Research writes editorial/research-ledger.json (searched subjects, finds, waiting items, rejections).
-        │
+  Pulse: Generate Jefferson  ──►  the story's Backstory builds itself (or "Build Backstory for every story")
+        │  bsxCompose: Haiku names the history; the library is shortlisted (matrix, approved candidates, this
+        │  story's research, and at most 10 items from the editor's Are.na library, T-0115); Sonnet writes the ten
+        │  components; each is checked against the contract and repaired once; the row is proposed from the story
+        │  and filed (the editor can type another: it moves only the shelf and the chart). A thin build (fewer
+        │  than 4 milestones) runs one web search on its gaps and rebuilds once. A row with no trend line gets
+        │  one search for one (once per row per day).
+        ▼  saved to ntk-pulse/data/backstory-draft.json on the branch Pulse is served from, via the Contents API
+  Pulse, the review (under each story's preview)
+        │  Direct the research (one web search, then re-choose the history) · results listed, any added to the
+        │  page as found · revise one part by prompt · edit words · remove · also add to the Object Matrix.
+        │  The editor's direction wins: what the editor directed is never repaired. All edits ride on the Lineup
+        │  story (bs_edits) and are laid over every rebuild. Research writes editorial/research-ledger.json.
         ▼  Publish (live Pulse only)
   pulse-publish.yml
-     backstory_draft.py apply   ships the draft if every story's bs_hash still matches it; otherwise the
-                                pairing and origin steps run as before and nothing composed ships
-     build_digest.py → build_backstory_pages.py   one static page per composed story: /backstory/s-<story id>/
-     graduate_finds.py → export_for_pulse.py      documents the editor approved join the Object Matrix
-                                                  (primary sources; on T-0114, also news from the 91
-                                                  NTK_SOURCES publishers, marked in column P, Source Kind);
-                                                  the pool is rebuilt
+     backstory_draft.py apply   each story ships the page built for it if its bs_hash still matches; a story
+                                not built, or changed since, ships no Backstory. Nothing is chosen at publish.
+                                Row trend lines found in Pulse (ship.row_indicators) go onto the rows.
+     build_digest.py → build_backstory_pages.py   one static page per story: /backstory/s-<story id>/
+     graduate_finds.py → export_for_pulse.py      documents the editor added to the Object Matrix join it
+                                                  (primary sources; news from the 91 NTK_SOURCES publishers,
+                                                  marked in column P, Source Kind); the pool is rebuilt
 ```
 
-- **Fingerprints.** Pulse hashes each story's Backstory-relevant fields (`bs_hash`, with edits; `bs_text_hash`,
-  without). Python only compares them. A story whose text changed needs a new first draft; one whose edits
-  changed is recomposed in Pulse.
-- **The reader app** (`digest/index.html`, `bsrStoryRow`) draws a pairing that carries `composed` as the story's
-  own page, with the row page, object pages and the category's trend line. `?draft` lays the branch's current
-  draft over the published file under a "not published" bar: `ntknews.org/backstory?draft=1`, or on staging
-  `…/ntknews-staging/digest/index.html?draft=1#backstory`.
+- **Fingerprints.** Pulse hashes exactly what a page is built from: headline, description, Truths, the row, and the
+  editor's edits (`bs_hash`; `bs_text_hash` without the edits). Python only compares them. An edit to another
+  section, or a trend line found for the row, does not stop a built page from shipping.
+- **News reports** may stand in only when no primary source exists, only from `NTK_SOURCES`
+  (`netlify/functions/news.js`; Pulse's copy is `NTK_PUBLISHERS`, Python reads the original through
+  `editorial/publishers.py`), labelled with the reason.
+- **The editor's Are.na library** (T-0115) is refreshed by hand, never in CI:
+  1. `python3 editorial/arena_pull.py` pulls the editor's channels into `editorial/arena.db` (gitignored). The token
+     is in `~/.config/arena/token`.
+  2. `python3 editorial/export_library.py --fetch-dates` writes `ntk-pulse/data/arena-library.json`. It keeps what
+     can be opened and dated, and flags paywalls.
+  3. Commit the JSON and `editorial/arena-dates.json`.
+
+  Pulse loads the JSON beside the pool. Its items bypass the publisher rule and carry `source_kind: 'library'`, so
+  readers see no label, and they never join the Object Matrix.
+- **The reader app** (`digest/index.html`, `bsrStoryRow`) draws a pairing that carries `composed` as the story's own
+  page: title, contest, stakes, chart, timeline, the case; the card's foot names the row. No day counters anywhere.
+  `?draft` lays the branch's draft over the published file, showing what publish will ship.
 - **Staging never publishes.** Staging Pulse cannot publish; its drafts, ledger and edits live on the `staging`
   branch, and a prod publish reads only `main`'s draft.
-- **Costs.** A first draft costs what the Backstory half of a publish costs; a publish that follows with
-  nothing changed does not spend it again. Composing is two small calls per story. Research and outline lines
-  are one web-search call each, and a subject or line is not searched twice in 30 days.
+- **Retired, still on disk for older tickets' checks:** `build_pairings.py` (the classifier), `build_origins.py`,
+  `compose_category.py`. Nothing runs them.
+- **Costs.** A build is two or three model calls; a thin one adds a web search and a rebuild, once per subject in 30 days. Directed research is one web search plus one call (an identical
+  direction within 30 days is skipped unless the editor forces it). A new row's trend line is one web search.
 
 ---
 

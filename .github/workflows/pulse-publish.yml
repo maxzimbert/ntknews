@@ -33,46 +33,14 @@ jobs:
         with:
           python-version: "3.12"
 
-      # T-0109: when Pulse drafted the Backstory and no story changed since, ship what the editor saw
-      # instead of choosing again (and paying again). Any change, or no draft, and the two Backstory
-      # steps below run as they always have.
-      - name: Use the Backstory draft
+      # T-0114, the contract: each story ships the Backstory the editor built and reviewed in Pulse, or none.
+      # Nothing is chosen at publish (the classifier and origin steps that did are gone). Must run before
+      # "Build digest", which cross-links each story to its pairing (T-0046). continue-on-error: the digest is
+      # the product and Backstory is additive, so a failure here never blocks a publish.
+      - name: Ship the Backstory pages built in Pulse
         id: draft
         continue-on-error: true
         run: python editorial/backstory_draft.py apply --github-output "$GITHUB_OUTPUT"
-
-      # T-0046: must run BEFORE "Build digest" now, not after. build_digest.py
-      # cross-links each story to its paired Backstory row and writes the
-      # real per-story permalink back into digest/data/backstory.json's
-      # todays_pairings — it can only do either if today's pairings already
-      # exist when it runs. continue-on-error deliberately: the digest is
-      # the product and Backstory is additive, so a classifier hiccup or a
-      # spent API budget must never block a publish. A failure here leaves
-      # the previous pairings in place — build_digest.py's cross-link then
-      # finds no match for any of today's stories (yesterday's story keys
-      # never collide with today's) and just publishes without Backstory
-      # links, rather than attaching a wrong one.
-      - name: Build Backstory pairings
-        if: steps.draft.outputs.used != 'true'
-        continue-on-error: true
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: python editorial/build_pairings.py
-
-      # T-0074: find each story's "It starts in" by retrieval (Wikipedia, Wikidata,
-      # the Portal:Current_events day page), then fill provisional rows' start and
-      # Beginnings. Runs after the pairings, which it reads, and before the digest
-      # and pages, which render it. continue-on-error for the same reason as the
-      # pairings step: a failure leaves each card on its row's own "since" line.
-      # openpyxl is for the lens Beginnings, which read the Object Matrix.
-      - name: Find origins
-        if: steps.draft.outputs.used != 'true'
-        continue-on-error: true
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: |
-          python -m pip install --quiet openpyxl
-          python editorial/build_origins.py --apply
 
       # T-0107: what renders each story's link-preview card (share-cards/), which
       # build_digest.py calls per story. continue-on-error for the same reason as
@@ -99,7 +67,8 @@ jobs:
         continue-on-error: true
         run: python editorial/build_backstory_pages.py
 
-      # T-0111: documents the editor approved in Pulse join the Object Matrix (primary sources only), and the pool
+      # T-0111: documents the editor approved in Pulse join the Object Matrix (primary sources; news from the 91
+      # approved publishers, marked as news: docs/decisions.md 2026-11-02), and the pool
       # Pulse searches is rebuilt from it. continue-on-error for the same reason as the Backstory steps above.
       - name: Approved documents join the Object Matrix
         continue-on-error: true

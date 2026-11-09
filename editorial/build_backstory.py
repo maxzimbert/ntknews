@@ -192,7 +192,8 @@ def load_objects():
                               'source': g(10), 'source_url': url, 'day_month': day_month(g(3)),
                               'object_id': oid, '_sort': sort,
                               '_subgenre': g(12) or '', '_row': g(11) or '',
-                              '_theme': g(5) or ''})
+                              '_theme': g(5) or '',
+                              **({'source_kind': 'news'} if str(g(16) or '').strip().lower() == 'news' else {})})
     return by_row
 
 
@@ -367,6 +368,9 @@ def main():
         if old and old.get('objects_locked'):
             row['objects'] = old['objects']
             row['objects_locked'] = True
+        # a trend line found and checked in Pulse for a row with none of its own (T-0114) is kept
+        if not row.get('indicator') and old and old.get('indicator_by') == 'pulse' and old.get('indicator'):
+            row['indicator'], row['indicator_by'] = old['indicator'], 'pulse'
         if row.get('indicator') and old and old.get('indicator'):
             for k in ('as_of', 'verified'):
                 if k in old['indicator']:
@@ -406,14 +410,16 @@ def main():
         row = out['rows'][-1]
         if not row.get('objects_locked'):
             for o in begin:
-                chosen.append({'role': 'beginning', 'row': r['id'], 'row_title': r['title'], 'contest': r['contest'], **{k: o[k] for k in ('object_id', 'title', 'author', 'year', 'day_month', 'source', 'source_url')}})
+                chosen.append({'role': 'beginning', 'row': r['id'], 'row_title': r['title'], 'contest': r['contest'], **{k: o[k] for k in ('object_id', 'title', 'author', 'year', 'day_month', 'source', 'source_url')}, **({'source_kind': 'news'} if o.get('source_kind') == 'news' else {})})
                 n = notes.get(o['object_id']) or {}
                 if n.get('line'):
                     row['beginnings'].append({'year': o['year'], 'line': n['line'], 'object_id': o['object_id']})
             for o in case:
-                chosen.append({'role': 'case', 'row': r['id'], 'row_title': r['title'], 'contest': r['contest'], **{k: o[k] for k in ('object_id', 'title', 'author', 'year', 'day_month', 'source', 'source_url')}})
+                chosen.append({'role': 'case', 'row': r['id'], 'row_title': r['title'], 'contest': r['contest'], **{k: o[k] for k in ('object_id', 'title', 'author', 'year', 'day_month', 'source', 'source_url')}, **({'source_kind': 'news'} if o.get('source_kind') == 'news' else {})})
                 n = notes.get(o['object_id']) or {}
                 d = {k: o[k] for k in ('title', 'author', 'year', 'source', 'source_url', 'object_id')}
+                if o.get('source_kind') == 'news':
+                    d['source_kind'] = 'news'
                 if n.get('about'):
                     d['about'] = n['about']
                 row['objects'].append(d)
