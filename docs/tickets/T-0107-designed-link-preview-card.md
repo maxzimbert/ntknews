@@ -1,7 +1,7 @@
 ---
 id: T-0107
 title: Shared story links unfurl with NTK's designed preview card, not the bare photo
-status: BUILT
+status: VERIFIED
 tags: [digest, feature]
 anchor: ntk-pulse/build_digest.py:797
 ---
@@ -9,6 +9,8 @@ anchor: ntk-pulse/build_digest.py:797
 ## What
 
 When a story link is pasted into iMessage, WhatsApp, Facebook, X, LinkedIn, Slack or email, the app fetches the story page and shows its `og:image`. Until now that was the raw featured photo (or nothing, for stories without one). `build_digest.py` now renders a 1200×630 designed card per story with the `share-cards/` package (`render_cards.py --only og`) into `digest/<date>/<slug>/share/og.jpg` and points `og:image` and `twitter:image` at it. If the card does not render (renderer not installed, a headline that overflows the card at minimum size, over the 300 KB budget), the page falls back to the photo, as before. `pulse-publish.yml` installs jinja2 and Playwright Chromium in a `continue-on-error` step before "Build digest". Built 2026-10-28. Run against the live lineup (5 stories) in a scratch copy: 5 of 5 cards, 57–143 KB each, about 0.5 s per story; with the renderer missing, all 5 fell back to the photo. Not yet run in GitHub Actions, and not yet seen in a real app's unfurl (unverified).
+
+Verified 2026-11-09: the 2026-10-28 publish (GitHub Actions, `ntk-publish-bot`) rendered the cards; on ntknews.org each story page's `og:image` and `twitter:image` point at `share/og.jpg`, which serves a 1200×630 JPEG (70 KB, read by eye). Not yet seen inside a real app's unfurl.
 
 ## Why
 
