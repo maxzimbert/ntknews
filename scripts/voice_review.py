@@ -47,6 +47,8 @@ SPLAINER = [r"\blet'?s break (it|this) down\b", r"\bhere'?s the thing\b", r"\bin
 HEDGE = [r'\bamid (growing )?concerns? (about|over)\b', r'\bin a move that\b', r'\bfor (unspecified|various|undisclosed) reasons\b']
 
 findings = []
+staging_results = []   # per story, for scripts/desk.py: {headline, findings:[(comp, rule, quote, edited)]}
+staging_meta = {}
 long_heads = []   # one finding per edition, not one per story: see SKILL.md
 
 
@@ -179,10 +181,13 @@ def staging(show_text):
     d = json.loads(raw)
     print('voice review of the composed Backstory drafts on origin/staging')
     print('generated %s · rules: BSX_RULES / BSX_STYLE in staging pulse.html, docs/voice.md\n' % d.get('generated'))
+    staging_meta.update(generated=d.get('generated'), rules='ok')
     block = bsx_block(git_show('origin/staging', 'ntk-pulse/pulse.html') or '')
     if block is None:
+        staging_meta['rules'] = 'missing'
         print('!! BSX_RULES not found in staging pulse.html: the counts below have nothing to check against\n')
     elif hashlib.sha256(block.encode()).hexdigest()[:16] != BSX_SHA:
+        staging_meta['rules'] = 'changed'
         print('!! BSX_RULES or BSX_STYLE changed since this script was written. Read the new rules before')
         print('   trusting the counts below, then update BSX_SHA in scripts/voice_review.py.\n')
 
@@ -251,6 +256,7 @@ def staging(show_text):
             for m in re.finditer('—|–|\s-\s', txt):
                 f(comp, 'dash (BSX_STYLE: no dashes)', snip(txt, m.start()))
         g = fk_grade(' '.join(x for _, x in parts))
+        staging_results.append({'headline': head, 'grade': g, 'findings': out})
         print('  reading level %s (AP, reported only)' % ('–' if g is None else '%.1f' % g))
         if not out:
             print('  no mechanical findings')
