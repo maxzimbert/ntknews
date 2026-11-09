@@ -5,6 +5,7 @@ house-rule checks a script can make without judgment. T-0104.
     python3 scripts/voice_review.py                      # the edition already live
     python3 scripts/voice_review.py ~/Downloads/ntk-stories-2026-11-09.json
     python3 scripts/voice_review.py --text               # also print every passage, numbered
+    python3 scripts/voice_review.py --staging            # the composed Backstory drafts on staging
 
 Reads ntk-pulse/data/lineup-publish.json (or the file given, which is what Pulse's
 "download story data" saves) for /today and /digest, and digest/data/backstory.json plus the
@@ -135,9 +136,146 @@ def load(path):
         return None
 
 
+# --- staging: composed per-story Backstory pages (T-0110/T-0114) -------------------------------
+# The contract is BSX_RULES and BSX_STYLE in ntk-pulse/pulse.html on the staging branch. These are
+# the parts of it a script can count. If the contract text changes, the numbers below may be stale,
+# so the hash of the block is checked and a change is reported, never silently trusted.
+import hashlib
+import subprocess
+
+BSX_BANNED = ['this document', 'this reflects', 'underscores', 'highlights', 'serves as', 'a reminder that',
+              'pivotal', 'landmark', 'groundbreaking', 'seminal']
+BSX_SHA = '7fba7f0ddc087d97'
+
+
+def git_show(ref, path):
+    try:
+        return subprocess.run(['git', '-C', str(ROOT), 'show', '%s:%s' % (ref, path)], check=True,
+                              capture_output=True, text=True).stdout
+    except subprocess.CalledProcessError:
+        return None
+
+
+def bsx_block(src):
+    i = src.find('const BSX_RULES')
+    j = src.find('function bsxDocLines', i)
+    return src[i:j] if i >= 0 and j > i else None
+
+
+def words(s):
+    return len(re.findall(r"[A-Za-z0-9][A-Za-z0-9'’.,%$½-]*", s or ''))
+
+
+def sentences(s):
+    s = re.sub(r'\b(St|Mr|Mrs|Ms|Dr|Jr|Sr|U\.S|U\.K|No|vs)\.', lambda m: m.group(0).replace('.', '§'), s or '')
+    return [x for x in re.split(r'(?<=[.!?])\s+(?=[A-Z0-9"“])', s.strip()) if x]
+
+
+def staging(show_text):
+    subprocess.run(['git', '-C', str(ROOT), 'fetch', '-q', 'origin', 'staging'], capture_output=True)
+    raw = git_show('origin/staging', 'ntk-pulse/data/backstory-draft.json')
+    if raw is None:
+        sys.exit('no ntk-pulse/data/backstory-draft.json on origin/staging')
+    d = json.loads(raw)
+    print('voice review of the composed Backstory drafts on origin/staging')
+    print('generated %s · rules: BSX_RULES / BSX_STYLE in staging pulse.html, docs/voice.md\n' % d.get('generated'))
+    block = bsx_block(git_show('origin/staging', 'ntk-pulse/pulse.html') or '')
+    if block is None:
+        print('!! BSX_RULES not found in staging pulse.html: the counts below have nothing to check against\n')
+    elif hashlib.sha256(block.encode()).hexdigest()[:16] != BSX_SHA:
+        print('!! BSX_RULES or BSX_STYLE changed since this script was written. Read the new rules before')
+        print('   trusting the counts below, then update BSX_SHA in scripts/voice_review.py.\n')
+
+    total = 0
+    for st in d.get('stories', []):
+        c = st.get('composed') or {}
+        head = st.get('headline', st.get('story_id'))
+        print('STORY "%s"' % snip(head, width=80))
+        if not c:
+            print('  not composed yet (status: %s)\n' % st.get('status'))
+            continue
+        mod = c.get('modified') or {}
+        out = []
+
+        def f(comp, rule, quote=''):
+            edited = comp in mod
+            out.append((comp, rule, quote, edited))
+
+        title = c.get('title', '')
+        if not 2 <= words(title) <= 6:
+            f('title', 'title is %d words; the rule is 2 to 6' % words(title), title)
+        con = c.get('contest', '')
+        if not con.startswith('Whether'):
+            f('contest', 'contest must begin "Whether"', snip(con))
+        if len(sentences(con)) != 1 or not 12 <= words(con) <= 35:
+            f('contest', 'contest is %d sentence(s), %d words; the rule is one sentence, 12 to 35'
+              % (len(sentences(con)), words(con)), snip(con))
+        stk = c.get('stakes', '')
+        if len(sentences(stk)) != 2 or not 25 <= words(stk) <= 55:
+            f('stakes', 'stakes is %d sentence(s), %d words; the rule is exactly two, 25 to 55'
+              % (len(sentences(stk)), words(stk)), snip(stk))
+        here = c.get('here', '')
+        if not 1 <= len(sentences(here)) <= 2 or not 12 <= words(here) <= 30:
+            f('here', '"We are here" is %d sentence(s), %d words; the rule is one or two, 12 to 30'
+              % (len(sentences(here)), words(here)), snip(here))
+        ms = c.get('beginnings') or []
+        if not 3 <= len(ms) <= 6 and not c.get('thin'):
+            f('milestones', '%d milestones and no "thin" note; the rule is 3 to 6' % len(ms))
+        for b in ms:
+            ln = b.get('line', '')
+            if len(sentences(ln)) != 1 or not 12 <= words(ln) <= 25:
+                f('milestones', 'milestone %s is %d sentence(s), %d words; the rule is one, 12 to 25'
+                  % (b.get('year'), len(sentences(ln)), words(ln)), snip(ln))
+        starts = (c.get('starts') or {}).get('year')
+        if starts and starts == (d.get('generated') or '')[:4]:
+            f('starts', '"It starts in" is this year; the rule is never this year', str(starts))
+        for o in c.get('case') or []:
+            ab = o.get('about', '')
+            n = len(sentences(ab))
+            if ab and (not 2 <= n <= 4 or words(ab) > 70):
+                f('about', 'about for %s is %d sentence(s), %d words; the rule is 2 to 4, at most 70'
+                  % (o.get('year'), n, words(ab)), snip(ab))
+            if re.search(r"\b(editor|library|saved)\b", ab, re.I):
+                f('about', 'about for %s mentions the editor, a library or saving it' % o.get('year'), snip(ab))
+            if o.get('source_kind') == 'news' and not o.get('why_no_primary'):
+                f('documents', 'news report carries a milestone with no reason no primary source would', o.get('title', ''))
+        # banned phrases and dashes, every reader-facing part
+        parts = [('title', title), ('contest', con), ('stakes', stk), ('here', here)]
+        parts += [('milestones', b.get('line', '')) for b in ms]
+        parts += [('about', o.get('about', '')) for o in c.get('case') or []]
+        for comp, txt in parts:
+            low = txt.lower()
+            for ph in BSX_BANNED:
+                for m in re.finditer(r'\b' + re.escape(ph) + r'\b', low):
+                    f(comp, 'banned phrase "%s" (BSX_STYLE)' % ph, snip(txt, m.start()))
+            for m in re.finditer('—|–|\s-\s', txt):
+                f(comp, 'dash (BSX_STYLE: no dashes)', snip(txt, m.start()))
+        g = fk_grade(' '.join(x for _, x in parts))
+        print('  reading level %s (AP, reported only)' % ('–' if g is None else '%.1f' % g))
+        if not out:
+            print('  no mechanical findings')
+        for comp, rule, quote, edited in out:
+            print('  - %s: %s%s' % (comp, rule, '  [EDITOR DIRECTED THIS PART: the rule does not apply]' if edited else ''))
+            if quote:
+                print('    "%s"' % quote)
+        total += sum(1 for o in out if not o[3])
+        if show_text:
+            print('\n  TEXT')
+            for comp, txt in parts:
+                print('  [%s] %s' % (comp, txt))
+            if mod:
+                print('  editor notes: %s' % json.dumps(mod))
+        print()
+    print('%d finding(s) the rules apply to.' % total)
+    print('NOT CHECKED HERE, needs a reader: numbers not in the story or the document line, taking a side,')
+    print('milestones that are not public history, facts beyond the document line, and the AP register itself.')
+
+
 def main():
     args = [a for a in sys.argv[1:] if not a.startswith('--')]
     show_text = '--text' in sys.argv
+    if '--staging' in sys.argv:
+        return staging(show_text)
     path = Path(args[0]).expanduser() if args else LINEUP
     d = load(path)
     if d is None:

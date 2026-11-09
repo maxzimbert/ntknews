@@ -17,7 +17,7 @@ The first voice review (T-0104) of the 2026-10-28 edition found 4 of 5 published
 characters. The punch-up prompt in `pulse.html` and `triage.py` both still say "under 90", and
 `docs/voice.md` asks for two sentences, fact plus consequence, which rarely fit in 90. Nobody had noticed
 because nothing read the output. One of the two rules has to go; until then the review reports it once per
-edition. Also: `docs/voice.md` cites `BSX_RULES` / `BSX_STYLE`, which don't exist in this repo's `pulse.html`.
+edition. (`BSX_RULES` / `BSX_STYLE`, which `docs/voice.md` cites, are on the `staging` branch, not `main` yet.)
 
 
 ## 2026-10-30 — four ways the draft loop lost work without saying so

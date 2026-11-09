@@ -25,6 +25,25 @@ story data in Pulse and passes the file, as with `prepublish`:
 python3 scripts/voice_review.py --text ~/Downloads/ntk-stories-YYYY-MM-DD.json
 ```
 
+### While testing on staging
+
+When Max is trying Backstory changes on staging and nothing new has been published, the live
+edition is old news. Review the composed per-story drafts instead:
+
+```bash
+python3 scripts/voice_review.py --staging --text
+```
+
+It fetches `origin/staging` and reads `ntk-pulse/data/backstory-draft.json`. It counts each composed
+page against `BSX_RULES` / `BSX_STYLE` in staging's `pulse.html`: contest one sentence beginning
+"Whether", 12-35 words; stakes exactly two sentences, 25-55; milestones one sentence, 12-25; "about"
+2-4 sentences, at most 70 words, and never mentioning the editor or a library; the banned phrases; no
+dashes. A part listed in the draft's `modified` (the editor directed it) is marked **EDITOR DIRECTED
+THIS PART: the rule does not apply**. Report those as information, never as breaks. If the script
+says the rules changed since it was written, read the new `BSX_RULES` before trusting its counts.
+
+When asked "which do I review?", default to staging if its draft is newer than the last publish.
+
 Report the script's findings as it gave them. Do not re-run its checks by eye, and do not drop
 any. If you think one is a false positive (a "reveals" in a metaphor, a year that is the story
 itself), keep it in the list and say why in one clause.
