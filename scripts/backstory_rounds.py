@@ -34,7 +34,9 @@ def row(c):
         "left_out": len(c.get("left_out") or []),
         "scope": (c.get("scope") or {}).get("level", "-"),
         "widened": "yes" if c.get("widened") else "-",
-        "searched": "yes" if str(c.get("research") or "").startswith("searched automatically") else "-",
+        # "repeat": thin, but the subject was searched within 30 days, so no web search ran (bsxResearch)
+        "searched": ("repeat" if "already searched" in str(c.get("research") or "") else "yes")
+                    if str(c.get("research") or "").startswith("searched automatically") else "-",
         "review": rv.get("verdict", "-"),
         "held": "HELD" if c.get("held") else ("anyway" if c.get("shipped_anyway") else "-"),
         "blank_notes": sum(1 for o in c.get("case") or [] if o.get("about_flag") and not o.get("about")),
@@ -69,7 +71,7 @@ def main():
             print(f"  {s['story_id']:<18} " + "  ".join(f"{str(r[k]):>10}" for k in cols))
     print("\nper story over all rounds: milestones, searches, held")
     for k, rs in totals.items():
-        print(f"  {k:<18} milestones {[r['milestones'] for r in rs]}  searched {sum(r['searched'] == 'yes' for r in rs)}/{len(rs)}"
+        print(f"  {k:<18} milestones {[r['milestones'] for r in rs]}  searched {sum(r['searched'] == 'yes' for r in rs)}/{len(rs)} (+{sum(r['searched'] == 'repeat' for r in rs)} repeat)"
               f"  held {sum(r['held'] == 'HELD' for r in rs)}/{len(rs)}")
 
 
