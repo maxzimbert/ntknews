@@ -71,6 +71,8 @@ def main():
     a = ap.parse_args()
     if not Path(a.ledger).exists():
         print("no research ledger; nothing to add")
+        if not a.dry_run and not Path(a.done).exists():
+            Path(a.done).write_text(json.dumps({"handled": {}}, indent=1) + "\n")
         return
     ledger = json.loads(Path(a.ledger).read_text())
     done = json.loads(Path(a.done).read_text()) if Path(a.done).exists() else {"handled": {}}
@@ -108,10 +110,12 @@ def main():
     for t, why in skipped:
         print(f"  skip   {str(t)[:60]}: {why}")
     print(f"{len(added)} document(s) added to the Object Matrix, {len(skipped)} skipped")
-    if a.dry_run or not (added or skipped):
+    if a.dry_run:
         return
     if added:
         wb.save(a.matrix)
+    # Always written, even with nothing added: the publish workflow's `git add` names this file,
+    # and a missing path fails the whole commit (2026-11-10, the edition did not ship).
     Path(a.done).write_text(json.dumps(done, indent=1, ensure_ascii=False) + "\n")
 
 
