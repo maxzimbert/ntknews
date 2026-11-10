@@ -97,6 +97,109 @@ function exaPost(body, path='/search') {
   });
 }
 
+// ── Local news on /today (T-0121) ────────────────────────────────────────────
+// What "local news" means here: an outlet based in the reader's city, writing
+// about that city, in the last two days. Measured 2026-11-10 against Los
+// Angeles, Boise and Pittsburgh:
+//   - outlets based there, alone: Variety, Breitbart, wire copy, NFL trades;
+//   - articles tagged as about there, alone: box scores and classifieds, weeks old;
+//   - both filters together: 2, 0 and 0 results (the tagging is too sparse);
+//   - outlets based there AND the city named in the text: the city budget, the
+//     council, local courts. That is the query below.
+// forceMaxDataTimeWindow accepts only 7 or 31, so the old "2" was ignored and
+// items came back three weeks old. dateStart is a real window.
+const LOCAL_MAX = 3, LOCAL_MIN = 2, LOCAL_PER_OUTLET = 2, LOCAL_DAYS = 2;
+const LOCAL_NONNEWS_PATH = /\/(ads?|clasificados|classifieds|marketplace|listings|coupons|directory|jobs|autos|real-?estate)(\/|$|\?)/i;
+// Host as well as path: the ads that reached readers sat on clasificados.laopinion.com.
+const LOCAL_NONNEWS_HOST = /^(clasificados|classifieds|marketplace|listings|coupons|directory|jobs|autos)\./i;
+const localNorm = s => String(s || '').toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim();
+const localYmd = d => d.toISOString().slice(0, 10);
+
+// The place that IS the city: "Los Angeles", or "Boise, Idaho" when the state
+// matches. Never the county, a neighbourhood, or a namesake in another state
+// (the first suggestion for "Los Angeles" is Los Angeles County). No match
+// means no local news, which is better than the wrong place.
+function pickLocation(cands, city, state) {
+  const c = localNorm(city), st = localNorm(state);
+  if (!c) return null;
+  let best = null;
+  (Array.isArray(cands) ? cands : []).forEach(l => {
+    const label = l && l.label && l.label.eng;
+    if (!l || l.type !== 'place' || !l.wikiUri || !label) return;
+    const parts = String(label).split(',').map(localNorm);
+    if (parts[0] !== c) return;
+    const score = parts.length === 1 ? 2 : (st && parts[1] === st ? 3 : 0);
+    if (score && (!best || score > best.score)) best = { score, uri: l.wikiUri, label };
+  });
+  return best ? { uri: best.uri, label: best.label } : null;
+}
+
+// How a headline names the place: the city, the state, or the city's initials
+// ("LA", "L.A."), which are matched case-sensitively so "la" is not a hit.
+function localNames(city, state) {
+  const esc = s => String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const out = [];
+  [city, state].forEach(n => { n = String(n || '').trim(); if (n) out.push(new RegExp('\\b' + esc(n) + '\\b', 'i')); });
+  const words = String(city || '').trim().split(/\s+/).filter(Boolean);
+  if (words.length > 1) out.push(new RegExp('\\b' + words.map(w => esc(w[0].toUpperCase())).join('\\.?') + '\\.?(?![A-Za-z])'));
+  return out;
+}
+
+// From the raw results (newest first) to what a reader sees: nothing older
+// than two days, no classifieds, no repeated headline, headlines that name the
+// place first, at most two from one outlet, at most three in all. Fewer than
+// two is shown as none: the digest ends, and a lone stray link is not a block.
+function pickLocal(results, o) {
+  o = o || {};
+  const now = o.now ? new Date(o.now) : new Date();
+  const cutoff = localYmd(new Date(now.getTime() - LOCAL_DAYS * 86400000));
+  const names = localNames(o.city, o.state);
+  const seenUrl = {}, seenTitle = {}, kept = [];
+  (Array.isArray(results) ? results : []).forEach(a => {
+    const url = String((a && a.url) || ''), title = String((a && a.title) || '').trim(), key = title.toLowerCase();
+    let host = '';
+    try { host = new URL(url).hostname.toLowerCase().replace(/^www\./, ''); } catch (e) { return; }
+    if (!title || seenUrl[url] || seenTitle[key]) return;
+    const date = String(a.date || a.dateTime || '').slice(0, 10);
+    if (!/^\d{4}-\d\d-\d\d$/.test(date) || date < cutoff) return;
+    if (LOCAL_NONNEWS_HOST.test(host) || LOCAL_NONNEWS_PATH.test(url)) return;
+    seenUrl[url] = seenTitle[key] = true;
+    kept.push({ url, title, source: (a.source && a.source.title) || host, host, named: names.some(re => re.test(title)) });
+  });
+  const ranked = kept.filter(a => a.named).concat(kept.filter(a => !a.named));
+  const out = [], per = {};
+  [1, LOCAL_PER_OUTLET].forEach(cap => ranked.forEach(a => {
+    if (out.length < LOCAL_MAX && !out.includes(a) && (per[a.host] || 0) < cap) { out.push(a); per[a.host] = (per[a.host] || 0) + 1; }
+  }));
+  return out.length >= LOCAL_MIN ? out.map(a => ({ url: a.url, title: a.title, source: a.source })) : [];
+}
+
+function localQuery(uri, keywords, now) {
+  return {
+    apiKey: process.env.NEWSAPI_KEY,
+    action: 'getArticles',
+    lang: 'eng',
+    sourceLocationUri: [uri],
+    keyword: keywords,
+    keywordOper: 'or',
+    keywordLoc: 'title,body',
+    dateStart: localYmd(new Date(now.getTime() - LOCAL_DAYS * 86400000)),
+    ignoreCategoryUri: ['news/Sports', 'news/Arts_and_Entertainment'],
+    dataType: ['news'],
+    articlesCount: 50,
+    articlesSortBy: 'date',
+    articlesSortByAsc: false,
+    resultType: 'articles',
+    includeArticleBody: false,
+    includeArticleDate: true,
+    includeSourceInfo: true,
+    isDuplicateFilter: 'skipDuplicates'
+  };
+}
+exports.pickLocation = pickLocation;
+exports.pickLocal = pickLocal;
+exports.localQuery = localQuery;
+
 exports.handler = async (event) => {
   const q = event.queryStringParameters || {};
   const mode = q.mode || 'fetch-by-uri';
@@ -222,6 +325,38 @@ exports.handler = async (event) => {
         body: JSON.stringify({ title: '', description: '', error: e.message })
       };
     }
+  }
+  // Local news for /today (T-0121): one request from the app, the city and the
+  // state by name. Two EventRegistry calls (the place, then the articles); a
+  // third only when the city alone finds fewer than two, widened to the state.
+  // No model call: see the note above LOCAL_KEY in digest/index.html.
+  if (mode === 'local-news') {
+    const hdr = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' };
+    const city = String(q.city || '').trim().slice(0, 80), state = String(q.state || '').trim().slice(0, 80);
+    // Dated editions (digest/<date>/index.html) are frozen copies of the app that still send the old
+    // request (locationUri + filterBy) and read articles.results. They get an empty list, so an old
+    // page shows no local block instead of an error or the old junk.
+    if (!city && q.locationUri) return { statusCode: 200, headers: hdr, body: JSON.stringify({ articles: { results: [] } }) };
+    if (!city) return { statusCode: 400, headers: hdr, body: JSON.stringify({ error: 'city required' }) };
+    const answer = (place, articles, note) => ({ statusCode: 200, headers: hdr, body: JSON.stringify({ place, articles, note }) });
+    const sug = await post('/api/v1/suggestLocationsFast', { apiKey: process.env.NEWSAPI_KEY, prefix: city, source: ['place'], lang: 'eng', count: 10 });
+    let cands = []; try { cands = JSON.parse(sug.body); } catch (e) {}
+    const place = pickLocation(cands, city, state);
+    if (!place) return answer(null, [], 'no location matches the city itself');
+    const now = new Date();
+    const ask = async (keywords) => {
+      const r = await post('/api/v1/article/getArticles', localQuery(place.uri, keywords, now));
+      try { return ((JSON.parse(r.body).articles || {}).results) || []; } catch (e) { return []; }
+    };
+    let results = await ask([city]);
+    let articles = pickLocal(results, { city, state, now });
+    let note = 'city';
+    if (!articles.length && state && localNorm(state) !== localNorm(city)) {
+      results = results.concat(await ask([city, state]));
+      articles = pickLocal(results, { city, state, now });
+      note = 'city or state';
+    }
+    return answer(place.label, articles, note);
   }
   // Separate from EventRegistry — hits api.exa.ai directly.
   // Designed for stories under ~3 hours old that EventRegistry hasn't
@@ -355,43 +490,6 @@ exports.handler = async (event) => {
       lang: 'eng',
       count: 5
     };
-  } else if (mode === 'local-news') {
-    // Today's local-blend feature. sourceLocationUri (outlets based in the
-    // reader's city) and locationUri (articles about an event there) are
-    // separate EventRegistry filter dimensions — combining both in one
-    // call would almost certainly AND-narrow to near-zero results, same
-    // as conceptUri + keyword do elsewhere in this file. The client calls
-    // this mode twice, once per filterBy, and merges/dedupes by URL —
-    // same client-side-dedupe posture as everywhere else in this codebase.
-    const locUri = q.locationUri || '';
-    if (!locUri) {
-      return { statusCode: 400, headers: { 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify({ error: 'locationUri required' }) };
-    }
-    body = {
-      apiKey: process.env.NEWSAPI_KEY,
-      action: 'getArticles',
-      lang: 'eng',
-      articlesCount: Math.min(parseInt(q.articlesCount) || 8, 15),
-      articlesSortBy: 'date',
-      articlesSortByAsc: false,
-      resultType: 'articles',
-      includeArticleBody: false,
-      includeArticleDate: true,
-      includeSourceInfo: true,
-      isDuplicateFilter: 'skipDuplicates',
-      forceMaxDataTimeWindow: 2,
-      // EventRegistry's crawler does not reliably separate reporting from
-      // directory content on a local outlet's own domain — a classifieds
-      // listing on clasificados.laopinion.com surfaced as Los Angeles "local
-      // news" five times under five URLs. This is one layer of defence and
-      // may not be sufficient on its own (the crawler can still bucket such
-      // pages as news); the client also dedupes by exact title, which is the
-      // more reliable signal, since a real story does not publish the
-      // identical headline five times under different links.
-      dataType: ['news'],
-    };
-    if (q.filterBy === 'source') body.sourceLocationUri = [locUri];
-    else body.locationUri = [locUri];
   } else if (mode === 'resolve-concept') {
     // NEW: resolves a person/org/topic name to its EventRegistry concept URI.
     // Use this for stories with no good keyword string to match — named
