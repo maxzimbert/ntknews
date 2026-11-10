@@ -1,8 +1,187 @@
 {
  "_comment": "Started in Pulse (T-0113): stories filed under a row and built in the browser.",
- "generated": "2026-11-10T19:30:36.486Z",
+ "generated": "2026-11-10T19:40:58.319Z",
  "branch": "main",
  "stories": [
+  {
+   "story_id": "78aa026d0c91fe6f",
+   "headline": "Nvidia Lost Hundreds of Billions in Market Value After Its CEO Admitted an Affair With an Alleged Chinese Spy. Shareholders Sued Within Minutes.",
+   "pairing": {
+    "story_id": "78aa026d0c91fe6f",
+    "headline": "Nvidia Lost Hundreds of Billions in Market Value After Its CEO Admitted an Affair With an Alleged Chinese Spy. Shareholders Sued Within Minutes.",
+    "row": "p-chip-export-controls",
+    "line": "Nvidia fell 4.3% Monday after Huang's memo and was down 10% by Tuesday, and a board committee now investigates the chief executive it cannot easily replace.",
+    "subgenre": null,
+    "confidence": 1,
+    "source": "editor",
+    "needs_review": false,
+    "provisional": true
+   },
+   "row": {
+    "id": "p-chip-export-controls",
+    "title": "Chip Export Controls",
+    "stratum": "provisional",
+    "start_date": "2026-11-10",
+    "start_line": "",
+    "stakes": "",
+    "milestone": "",
+    "beginnings": [],
+    "objects": [],
+    "indicator": null,
+    "auto": false
+   },
+   "status": "paired",
+   "composed": {
+    "row": "Chip Export Controls",
+    "title": "The Megaspeed Chip Trail",
+    "contest": "Whether Nvidia's board can credibly investigate a founder it cannot replace, and whether his ties to a buyer of restricted chips justify tighter export rules.",
+    "stakes": "Investors have begun pricing a company without its founder, a loss the Financial Times put near 30% of pre-scandal value, while a shareholder class action tests what Nvidia told them. Lawmakers and the White House must decide whether export limits, long resisted by Huang, now need tightening.",
+    "here": "Nvidia fell 4.3% Monday after Huang's memo and was down 10% by Tuesday, and a board committee now investigates the chief executive it cannot easily replace.",
+    "beginnings": [
+     {
+      "object_id": "custom-nvidia-corp-form-8-k-item-8-01-other-events-date-2025-f21cf8",
+      "year": "2025",
+      "line": "NVIDIA told investors in a filing dated April 15, 2025 that the government had indicated a license requirement addressed a risk involving supercomputers.",
+      "by": "model"
+     },
+     {
+      "object_id": "custom-nvidia-board-to-probe-spying-case-after-ceo-jens-2026-c5e0a4",
+      "year": "2026",
+      "line": "Bloomberg reported that Nvidia's board would look into a spying case after Huang admitted infidelity, with the slide erasing nearly $200 billion.",
+      "by": "model"
+     }
+    ],
+    "case": [
+     {
+      "object_id": "custom-nvidia-corp-form-8-k-item-8-01-other-events-date-2025-f21cf8",
+      "year": "2025",
+      "title": "NVIDIA CORP - Form 8-K (Item 8.01 Other Events, dated April 15, 2025)",
+      "author": "NVIDIA Corporation",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000082/nvda-20250409.htm",
+      "about": "The filing falls under Item 8.01, Other Events. According to NVIDIA, the government indicated the license requirement addresses a risk. That risk is that the covered products may be used in, or sent to, a supercomputer in China.",
+      "about_by": "library",
+      "kind": "found"
+     },
+     {
+      "object_id": "custom-nvidia-board-to-probe-spying-case-after-ceo-jens-2026-c5e0a4",
+      "year": "2026",
+      "title": "Nvidia Board to Probe Spying Case After CEO Jensen Huang Admits Infidelity",
+      "author": "Bloomberg News",
+      "source_url": "https://www.bloomberg.com/news/articles/2026-11-08/nvidia-board-to-probe-spying-case-after-ceo-jensen-huang-admits-infidelity",
+      "about": "The slide erased nearly $200 billion in market valuation, according to the report. Huang made the disclosure in a memo to employees. The title says the Nvidia board will look into a spying case after the CEO admitted infidelity.",
+      "about_by": "library",
+      "kind": "found",
+      "source_kind": "news",
+      "why_no_primary": "The memo and the market move are on record only in contemporary reporting; the memo is not posted in an archive and the stock close is not held in a public filing yet."
+     }
+    ],
+    "starts": {
+     "year": "2025",
+     "line": "NVIDIA told investors in a filing dated April 15, 2025 that the government had indicated a license requirement addressed a risk involving supercomputers.",
+     "object_id": "custom-nvidia-corp-form-8-k-item-8-01-other-events-date-2025-f21cf8"
+    },
+    "thin": "The library lacks the export ban on Chinese buyers, Megaspeed's ownership change and cloud partner naming, the Singapore shell company, and Huang's record lobbying against tighter chip rules.",
+    "why": "Only the 2025 Nvidia filing, the Cotton letter on Megaspeed and the Bloomberg report on the board probe connect to this story; the Cotton letter is the latest public step that put Megaspeed under scrutiny, and the other library items are unrelated or too loosely tied.",
+    "problems": {},
+    "v": 2,
+    "terms": [
+     "securities fraud",
+     "class action lawsuit",
+     "Securities Exchange Act of 1934",
+     "Securities Act of 1933",
+     "Sarbanes-Oxley Act",
+     "export controls",
+     "Export Administration Regulations",
+     "espionage",
+     "Economic Espionage Act",
+     "corporate governance",
+     "fiduciary duty",
+     "insider trading",
+     "shareholder litigation",
+     "Foreign Corrupt Practices Act"
+    ],
+    "shortlist": 16,
+    "notes": [
+     "1 milestone(s) still broke a rule and were left out"
+    ],
+    "usage": {
+     "input_tokens": 13275,
+     "output_tokens": 5751
+    },
+    "model": "claude-sonnet-5-5",
+    "modified": {},
+    "research": "searched automatically because the build was thin: researched \"Nvidia, Megaspeed, and Huang\": 3 new document(s) kept, 1 vetoed by the checks (shown below to approve or leave)",
+    "research_items": [
+     {
+      "id": "custom-letter-to-the-honorable-howard-lutnick-secretary-2025-60f505",
+      "status": "found",
+      "reason": "",
+      "title": "Letter to the Honorable Howard Lutnick, Secretary, Department of Commerce",
+      "author": "Sen. Tom Cotton",
+      "year": "2025",
+      "url": "https://www.cotton.senate.gov/imo/media/doc/101325lutnickletter.pdf",
+      "source": "Office of Senator Tom Cotton, U.S. Senate",
+      "source_kind": "",
+      "why_no_primary": "",
+      "line": "Sen. Tom Cotton wrote to Commerce Secretary Howard Lutnick asking the department to investigate Megaspeed over the possible diversion of American chips to China.",
+      "about": "This is a letter dated October 13, 2025, from a Republican senator to the Commerce Secretary. It cites a news report on Megaspeed, describes it as a spin-off of a Chinese government-owned cloud company, and asks Commerce to look into its ownership and ties to U.S. chip companies.",
+      "direction": "Nvidia, Megaspeed, and Huang",
+      "at": "2026-11-10T19:40:28.752Z"
+     },
+     {
+      "id": "custom-nvidia-corp-form-8-k-item-8-01-other-events-date-2025-f21cf8",
+      "status": "found",
+      "reason": "",
+      "title": "NVIDIA CORP - Form 8-K (Item 8.01 Other Events, dated April 15, 2025)",
+      "author": "NVIDIA Corporation",
+      "year": "2025",
+      "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000082/nvda-20250409.htm",
+      "source": "U.S. Securities and Exchange Commission (EDGAR)",
+      "source_kind": "",
+      "why_no_primary": "",
+      "line": "On April 15, 2025, NVIDIA filed a Form 8-K saying the U.S. government now requires a license for certain covered products.",
+      "about": "The filing falls under Item 8.01, Other Events. According to NVIDIA, the government indicated the license requirement addresses a risk. That risk is that the covered products may be used in, or sent to, a supercomputer in China.",
+      "direction": "Nvidia, Megaspeed, and Huang",
+      "at": "2026-11-10T19:40:28.752Z"
+     },
+     {
+      "id": "custom-nvidia-board-to-probe-spying-case-after-ceo-jens-2026-c5e0a4",
+      "status": "found",
+      "reason": "",
+      "title": "Nvidia Board to Probe Spying Case After CEO Jensen Huang Admits Infidelity",
+      "author": "Bloomberg News",
+      "year": "2026",
+      "url": "https://www.bloomberg.com/news/articles/2026-11-08/nvidia-board-to-probe-spying-case-after-ceo-jensen-huang-admits-infidelity",
+      "source": "Bloomberg",
+      "source_kind": "news",
+      "why_no_primary": "The memo and the market move are on record only in contemporary reporting; the memo is not posted in an archive and the stock close is not held in a public filing yet.",
+      "line": "Nvidia shares slid 4.3% on Monday after Jensen Huang disclosed a romantic relationship to employees in a memo sent on Sunday.",
+      "about": "The slide erased nearly $200 billion in market valuation, according to the report. Huang made the disclosure in a memo to employees. The title says the Nvidia board will look into a spying case after the CEO admitted infidelity.",
+      "direction": "Nvidia, Megaspeed, and Huang",
+      "at": "2026-11-10T19:40:28.752Z"
+     },
+     {
+      "id": "custom-implementation-of-additional-export-controls-cer-2022-b89e1c",
+      "status": "vetoed",
+      "reason": "a number is not in the quote",
+      "title": "Implementation of Additional Export Controls: Certain Advanced Computing and Semiconductor Manufacturing Items; Supercomputer and Semiconductor End Use; Entity List Modification",
+      "author": "Bureau of Industry and Security, U.S. Department of Commerce",
+      "year": "2022",
+      "url": "https://www.federalregister.gov/documents/2022/10/13/2022-21658/implementation-of-additional-export-controls-certain-advanced-computing-and-semiconductor",
+      "source": "Federal Register",
+      "source_kind": "",
+      "why_no_primary": "",
+      "line": "The Commerce Department's Bureau of Industry and Security imposed new export controls on certain advanced computing chips aimed at China.",
+      "about": "This is an interim final rule from the Commerce Department's export control bureau, released October 7, 2022 and printed in the Federal Register on October 13. It changed the Export Administration Regulations to add controls on advanced computing chips and on certain chip manufacturing items.",
+      "direction": "Nvidia, Megaspeed, and Huang",
+      "at": "2026-11-10T19:40:28.752Z"
+     }
+    ]
+   },
+   "bs_hash": "2dd985551fae2d86359fe458978d77cd62ffd9a7de2eb4d2453dc3d319504af6",
+   "bs_text_hash": "a209f21c2220aba03bd937ecab08e41265ef9b69b06a376e742aeb570adf696b",
+   "bs_edits_applied": {}
+  },
   {
    "story_id": "1a478ad3efb3bbfd",
    "headline": "The US Pulled 10 Refueling Tankers Off RAF Mildenhall in a Single Day. Officials Still Can't Say What They Were Running From.",
@@ -946,6 +1125,17 @@
  "ship": {
   "todays_pairings": [
    {
+    "story_id": "78aa026d0c91fe6f",
+    "headline": "Nvidia Lost Hundreds of Billions in Market Value After Its CEO Admitted an Affair With an Alleged Chinese Spy. Shareholders Sued Within Minutes.",
+    "row": "p-chip-export-controls",
+    "line": "Nvidia fell 4.3% Monday after Huang's memo and was down 10% by Tuesday, and a board committee now investigates the chief executive it cannot easily replace.",
+    "subgenre": null,
+    "confidence": 1,
+    "source": "editor",
+    "needs_review": false,
+    "provisional": true
+   },
+   {
     "story_id": "1a478ad3efb3bbfd",
     "headline": "The US Pulled 10 Refueling Tankers Off RAF Mildenhall in a Single Day. Officials Still Can't Say What They Were Running From.",
     "row": "us-israel-iran",
@@ -1000,7 +1190,7 @@
     "provisional": true
    }
   ],
-  "pairings_generated": "2026-11-10T19:30:36.486Z",
+  "pairings_generated": "2026-11-10T19:40:58.319Z",
   "provisional_rows": [
    {
     "id": "p-ai",
@@ -1716,6 +1906,19 @@
    {
     "id": "p-presidential-transitions",
     "title": "Presidential Transitions",
+    "stratum": "provisional",
+    "start_date": "2026-11-10",
+    "start_line": "",
+    "stakes": "",
+    "milestone": "",
+    "beginnings": [],
+    "objects": [],
+    "indicator": null,
+    "auto": false
+   },
+   {
+    "id": "p-chip-export-controls",
+    "title": "Chip Export Controls",
     "stratum": "provisional",
     "start_date": "2026-11-10",
     "start_line": "",
@@ -3344,6 +3547,35 @@
        "story_id": "6c24db2c1b682211",
        "date": "2026-11-10",
        "headline": "Trump Left Biden a Warm Letter in the Oval Office. Then Came Nearly Six Years of Attacks, and a White House Statement Calling Biden \"a Disgrace.\""
+      }
+     ],
+     "contest": "",
+     "stakes": "",
+     "lenses": [],
+     "subgenres": [],
+     "indicator": null,
+     "objects": [],
+     "beginnings": [],
+     "custom_objects": [],
+     "approved_objects": [],
+     "by": {
+      "editor": true
+     },
+     "revisions": [],
+     "start_date": "2026-11-10",
+     "start_line": "",
+     "last_story": "2026-11-10"
+    },
+    {
+     "id": "p-chip-export-controls",
+     "title": "Chip Export Controls",
+     "status": "provisional",
+     "created": "2026-11-10",
+     "stories": [
+      {
+       "story_id": "78aa026d0c91fe6f",
+       "date": "2026-11-10",
+       "headline": "Nvidia Lost Hundreds of Billions in Market Value After Its CEO Admitted an Affair With an Alleged Chinese Spy. Shareholders Sued Within Minutes."
       }
      ],
      "contest": "",
