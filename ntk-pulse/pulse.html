@@ -4549,6 +4549,10 @@ function bscBusy(b){ b.disabled = true; b.textContent = 'sending\u2026'; }
 // categories, origins: the same code publish runs, and its link checks need a server), then Pulse composes
 // each page. Ported from the retired editorial/compose_story.py and research_story.py; the prompts and checks
 // are the same, and research reuses verifyMilestone and the CAT_ text rules above.
+// The code between BSX:BEGIN and BSX:END is run in node with stand-in model replies by
+// scripts/test_pulse_backstory.js (T-0117). It may use the CATS block and the globals POOL, BSR_PUBLISHED,
+// PUBCATS, ARENA, SETTINGS and document; anything else it needs must be passed in.
+/* BSX:BEGIN */
 const BSX_SONNET='claude-sonnet-5-5', BSX_HAIKU='claude-haiku-5-5', BSX_LEDGER='editorial/research-ledger.json';
 const BSX_STOP=new Set(('the a an and or of to in on for by with from at as is was were be been are that this it its into than then over after before about their his her they them he she we our you your not no but who what when where which while has have had will would can could may might more most new says said also one two three year years').split(' '));
 async function bsxModel(model, prompt, maxTok, tools){
@@ -4604,7 +4608,7 @@ function bsxLibrary(draft, ledger){
     byUrl[o.url]=o.id;
     lib[o.id]=Object.assign({about:'', why:'', row:origin, subgenre:'', lenses:[], kind:'found', author:'', title:'', year:''}, o, {year:String(o.year||''), categories:new Set([origin])}); };
   ((POOL&&POOL.objects)||[]).forEach(o=>{ if (o.url && ['live','live-pdf'].includes(o.link_status) && (o.pool==='matrix' || o.approved))
-    add({id:o.id, title:o.title||'', author:o.author||'', year:o.year, url:o.url, about:o.about||'', why:o.why||'', row:o.row||'', subgenre:o.subgenre||'', lenses:o.lenses||[], kind:o.pool==='matrix'?'matrix':'candidate', source_kind:o.source_kind||''}, o.row||''); });
+    add({id:o.id, title:o.title||'', author:o.author||'', year:o.year, url:o.url, about:o.about||'', why:o.why||'', row:o.row||'', subgenre:o.subgenre||'', lenses:o.lenses||[], kind:o.pool==='matrix'?'matrix':'candidate', source_kind:o.source_kind||'', date:o.date||''}, o.row||''); });
   const rows=((BSR_PUBLISHED&&BSR_PUBLISHED.rows)||[]).concat((draft.stories||[]).map(d=>d.row).filter(Boolean));
   rows.forEach(r=>(r.objects||[]).forEach(o=>{ if (o.object_id && lib[o.object_id]){ lib[o.object_id].categories.add(r.title); if (!lib[o.object_id].about) lib[o.object_id].about=o.about||''; }
     else if (o.object_id && o.source_url) add({id:o.object_id, title:o.title||'', author:o.author||'', year:o.year, url:o.source_url, about:o.about||'', kind:'category', source_kind:o.source_kind}, r.title); }));
@@ -4613,7 +4617,7 @@ function bsxLibrary(draft, ledger){
   // editor, so the approved-publisher rule does not apply and readers see no label (the editor, 2026-11-04).
   ((ARENA&&ARENA.objects)||[]).forEach(a=>{ if (!rej.has(a.id) && !byUrl[a.url]) add({id:a.id, title:a.title||'', author:a.source||'', year:a.year, url:a.url, about:'', row:'',
     lenses:a.channels||[], kind:'library', source_kind:'library', paywall:!!a.paywall, date:a.date||''}, "the editor's library"); });
-  ((ledger&&ledger.finds)||[]).forEach(f=>{ if (!rej.has(f.id)) add({id:f.id, title:f.title||'', author:f.author||'', year:f.year, url:f.url, about:f.about||'', why:f.line||'', evidence:f.evidence_quote||'', why_no_primary:f.why_no_primary||'', source_kind:f.source_kind||catSourceKind(f.url)}, 'research: '+String(f.researched_for||'').slice(0,60)); });
+  ((ledger&&ledger.finds)||[]).forEach(f=>{ if (!rej.has(f.id)) add({id:f.id, title:f.title||'', author:f.author||'', year:f.year, url:f.url, about:f.about||'', why:f.line||'', evidence:f.evidence_quote||'', why_no_primary:f.why_no_primary||'', source_kind:f.source_kind||catSourceKind(f.url), date:f.date||''}, 'research: '+String(f.researched_for||'').slice(0,60)); });
   return lib;
 }
 // The documents worth showing the model: by `terms` (the history the story belongs to, named by Haiku: a story's
@@ -4638,18 +4642,49 @@ function bsxShortlist(lib, story, rowTitle, terms, k){
   let nl=0;
   return ranked.filter(x=>lib[x[1]].kind!=='library' || ++nl<=10).slice(0,k).map(x=>x[1]);
 }
+// Three scopes, narrowest first (T-0117). The composer picks one and says why; the other two stay on the page as
+// picks. On 2026-11-10 the billionaire-tax story was built on one wide guess (1892 Populists, Citizens United, the
+// 2017 tax act) and nothing on California or on taxing wealth: one scope, no alternative, no word that it missed.
+const BSX_LEVELS=['narrow','middle','wide'];
 async function bsxTerms(story, steer){
-  const p=`A news story needs its history: the long argument it belongs to. Name that history as 8 to 14 short search terms for a library of primary documents (laws, court cases, treaties, speeches, reports): the specific acts, cases, institutions, events and general subjects a historian would look up. Use the common names ("Citizens United", "campaign finance", "Federal Election Campaign Act", "Knesset", "coalition government"). Not the story's own people or numbers.
+  const p=`A news story needs its history: the long argument it belongs to. Name that history at three scopes, each for a library of primary documents (laws, court cases, treaties, speeches, reports):
+- narrow: the story's own subject (this ballot measure, this company's export case, this base);
+- middle: the policy or institution it belongs to (state wealth taxes, chip export controls, US forces in Britain);
+- wide: the long argument (taxing great fortunes, technology and national security, the American alliance system).
+For each scope: a name of two to six words that says what history it is, never a verdict, and 5 to 10 short search terms: the specific acts, cases, institutions, events and general subjects a historian would look up. Use the common names ("Citizens United", "campaign finance", "Federal Election Campaign Act", "Knesset", "coalition government"). Not the story's own people or numbers.
 
 STORY: ${story.headline}
 SUMMARY: ${story.lede||''}
 DETAIL: ${story.truths.slice(0,1500)}
 ${steer?'THE EDITOR WANTS THIS HISTORY TO COVER: '+steer+'\n':''}
-JSON only: {"terms":["..."]}`;
+JSON only: {"scopes":[{"level":"narrow","name":"...","terms":["..."]},{"level":"middle","name":"...","terms":["..."]},{"level":"wide","name":"...","terms":["..."]}]}`;
   // No row here: the history is named from the story alone. Shown "FILED UNDER: Gaza", a Binance hack was named
   // as Gaza's history and its page became "Gaza's path to blockade" (2026-10-30).
-  const r=await bsxAsk(BSX_HAIKU, p, 400, 'naming the history');
-  return {terms:((r.json.terms)||[]).slice(0,14), usage:r.usage};
+  const r=await bsxAsk(BSX_HAIKU, p, 700, 'naming the history');
+  const scopes=bsxScopes(r.json);
+  return {scopes:scopes, terms:Array.from(new Set([].concat(...scopes.map(s=>s.terms)))).slice(0,24), usage:r.usage};
+}
+// The model's scopes, cleaned: one per level, in order, each with a name and terms. A reply in the old shape
+// ({"terms":[...]}) becomes one middle scope, so a build never fails for want of three.
+function bsxScopes(j){
+  const by={}; (Array.isArray(j&&j.scopes)?j.scopes:[]).forEach((s,i)=>{ const lv=BSX_LEVELS.includes(s&&s.level)?s.level:BSX_LEVELS[i];
+    const terms=((s&&s.terms)||[]).map(t=>String(t).trim()).filter(Boolean).slice(0,10);
+    if (lv && !by[lv] && terms.length) by[lv]={level:lv, name:String(s.name||'').trim().slice(0,80)||terms[0], terms:terms}; });
+  if (!Object.keys(by).length && Array.isArray(j&&j.terms)) by.middle={level:'middle', name:String(j.terms[0]||''), terms:j.terms.slice(0,14)};
+  return BSX_LEVELS.filter(l=>by[l]).map(l=>by[l]);
+}
+// The next wider scope the naming call gave, or null when the page is already on the widest.
+function bsxWider(level, scopes){
+  const have=(scopes||[]).map(s=>s.level), i=BSX_LEVELS.indexOf(level);
+  return BSX_LEVELS.slice(i<0?1:i+1).find(l=>have.includes(l))||null;
+}
+// The library shortlisted for each scope (local, free) and merged: turn by turn, narrow first, at most k in all.
+// Returns {ids, tags: id -> [levels]} so the composer sees which scope each document came from.
+function bsxScopeShortlist(lib, story, scopes, k, only){
+  k=k||45; const use=(scopes||[]).filter(s=>!only || s.level===only), lists=use.map(s=>bsxShortlist(lib, story, null, s.terms, only?k:20));
+  const tags={}; use.forEach((s,i)=>lists[i].forEach(id=>{ (tags[id]=tags[id]||[]).push(s.level); }));
+  const ids=[]; for (let r=0; ids.length<k && lists.some(l=>l.length>r); r++) lists.forEach(l=>{ if (l[r] && !ids.includes(l[r]) && ids.length<k) ids.push(l[r]); });
+  return {ids:ids, tags:tags};
 }
 // ─── The composer, to the contract (docs/backstory.md, "The contract", 2026-11-02; T-0114) ───────────────────
 // Ten components, every one scoped from the story's headline, description and Truths. The row only shelves the
@@ -4661,20 +4696,76 @@ const BSX_RULES = {
   contest:  'the argument this history is about: ONE sentence beginning "Whether", 12 to 35 words.',
   stakes:   'what is at stake and for whom: exactly TWO sentences, 25 to 55 words in all.',
   starts:   '"It starts in": the proximate cause, given by its id: the latest milestone before today that set this story in motion, usually 1 to 11 years back. The earliest milestone opens the timeline; it is not automatically "It starts in". Never this year.',
-  milestones: '3 to 6 dated milestones from the library, in order, each ONE sentence of 12 to 25 words saying what happened, in the past tense, using only facts in its document\'s line. Public history only: laws, rulings, treaties, official acts, public statements and events, never a private person\'s records. Carry each milestone with a primary document where the library has one; next choice, an [EDITOR\'S LIBRARY] item (writing the editor saved); a [NEWS REPORT] may carry a milestone only when neither covers that event.',
+  milestones: '3 to 6 dated milestones from the library, in order, each ONE sentence of 12 to 25 words saying what happened, in the past tense, using only facts in its document\'s line. Public history only: laws, rulings, treaties, official acts, public statements and events, never a private person\'s records. Carry each milestone with a primary document where the library has one; next choice, an [EDITOR\'S LIBRARY] item (writing the editor saved); a [NEWS REPORT] may carry a milestone only when neither covers that event. Each line states the event, with the actor or the event as its subject: never open with an outlet or a document ("Bloomberg reported", "The filing says", "According to"). Nothing dated within 45 days of today\'s story: that is We are here, and such a document may only be a later document.',
   here:     '"We are here": today\'s story as the end of the chronology, one or two sentences, 12 to 30 words.',
   later:    'up to 2 later documents (after "It starts in", before today) that belong in the case; a primary document over an [EDITOR\'S LIBRARY] item, and either over a [NEWS REPORT], on the same event.',
   about:    'for each chosen document with no "what it is" text: two to four sentences, at most 70 words: what it is, who made it and when, what it did. Only facts in its line. For an [EDITOR\'S LIBRARY] item, say what kind of piece it is, which outlet published it and when, and what it reports; never mention the editor, a library, or that anyone saved it: readers see it as any other document.',
 };
 const BSX_STYLE = 'All text: plain and precise, at an Advanced Placement history level; no dashes; never "this document", "this reflects", "underscores", "highlights", "serves as", "a reminder that", "pivotal", "landmark", "groundbreaking", "seminal"; take no side; no number that is not in the story or the document\'s own line.';
-function bsxDocLines(cands, lib){
-  return cands.map(i=>{ const o=lib[i], w=o.about||o.why; return '- '+i+' | '+o.year+' | '+(o.source_kind==='news'?'[NEWS REPORT] ':o.kind==='library'?'[EDITOR\'S LIBRARY] ':'')+o.title.slice(0,110)+' | '+String(o.author).slice(0,50)+(w?' | '+w.slice(0,220):''); }).join('\n')||'(none)';
+function bsxDocLines(cands, lib, tags){
+  return cands.map(i=>{ const o=lib[i], w=o.about||o.why, d=bsxDocDate(o); return '- '+i+' | '+(d||o.year)+' | '+(o.source_kind==='news'?'[NEWS REPORT] ':o.kind==='library'?'[EDITOR\'S LIBRARY] ':'')+o.title.slice(0,110)+' | '+String(o.author).slice(0,50)+(w?' | '+w.slice(0,220):'')+(tags&&tags[i]?' | scope: '+tags[i].join(', '):''); }).join('\n')||'(none)';
+}
+// A document's date, as exact as its record allows: its own date, the date its id starts with (matrix and
+// candidate ids do), or a date in its link (news links usually carry one). '' when only the year is known.
+function bsxDocDate(o){
+  o=o||{}; const iso=s=>{ const m=String(s||'').match(/^(\d{4}-\d\d-\d\d)/); return m?m[1]:''; };
+  const u=String(o.url||o.source_url||'').match(/\/((?:19|20)\d\d)[\/-](0[1-9]|1[0-2])[\/-](0[1-9]|[12]\d|3[01])(?:\/|-|$)/);
+  return iso(o.date) || iso(o.id||o.object_id) || (u?u[1]+'-'+u[2]+'-'+u[3]:'');
+}
+const BSX_HERE_DAYS=45;
+// A milestone within 45 days of the story is not a milestone: that is "We are here" (the contract, row 6). Judged
+// by the exact date where the record has one; a year alone counts only when it is after the story's year.
+function bsxTooRecent(o, storyDate){
+  if (!storyDate) return false;
+  const t=Date.parse(String(storyDate).slice(0,10)), d=bsxDocDate(o);
+  if (d) return Date.parse(d) > t - BSX_HERE_DAYS*86400000;
+  return /^\d{4}/.test(String(o&&o.year||'')) && String(o.year).slice(0,4) > String(storyDate).slice(0,4);
+}
+// A line whose subject is an outlet or a document ("Bloomberg reported…", "The filing says…", "According to…")
+// reports a report instead of stating the event. Three such lines shipped on 2026-11-10. An official who reports
+// to Congress is an event ("Carter reported to Congress"), so the subject is what is tested, not the verb alone.
+const BSX_OUTLETS=['bloomberg','reuters','associated press','the ap','ap news','abc news','cbs news','nbc news','cnn','fox news','msnbc','cnbc','new york times','the times','washington post','wall street journal','politico','axios','the guardian','bbc','npr','pbs','financial times','the atlantic','new yorker','semafor','propublica','los angeles times','usa today','al jazeera','the economist','time magazine','newsweek','the hill','daily mail','the telegraph','the independent','haaretz','times of israel','the intercept','vox','the daily beast','business insider','forbes','afp','agence france','dw','france 24','media','reporters','news reports','press reports','a report','the report','a news'];
+const BSX_DOCNOUN=/\b(filing|filings|report|reports|document|documents|memo|memorandum|letter|statement|ruling|opinion|post|posts|tweet|article|biography|page|record|records|transcript|release|account|interview|story|book|excerpt|archive|website|site|feed|footage|video|profile)\b/i;
+function bsxOpensWithSource(line, o){
+  const t=String(line||'').trim(); if (!t) return false;
+  if (/^(according to|as reported|reports? (say|said|show|showed)|in a report\b|in an? (article|interview|post|report|story)\b)/i.test(t)) return true;
+  const m=t.match(/^(.{0,70}?)\s+(reported|reports|wrote|writes|said|says|stated|states|showed|shows|noted|notes|described|describes|recorded|records|revealed|reveals|found|finds|recounted|recounts|published|publishes|detailed|details|quoted|quotes)\b/i);
+  if (!m) return false;
+  const subj=m[1].toLowerCase(), words=subj.split(/\s+/).length;
+  if (words>7) return false;
+  if (BSX_DOCNOUN.test(subj)) return true;
+  if (BSX_OUTLETS.some(n=>new RegExp('(^|[^a-z])'+n.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'([^a-z]|$)').test(subj))) return true;
+  // the milestone's own news or library document named as the subject, by its outlet
+  if (o && (o.source_kind==='news' || o.kind==='library')){ const a=String(o.author||'').toLowerCase().replace(/[^a-z ]/g,' ').trim().split(/\s+/).filter(w=>w.length>2)[0];
+    if (a && subj.includes(a)) return true; }
+  return false;
+}
+// A note that says nothing a reader cannot see in the title, the author and the date ("…is a case decided by the U.S.
+// Supreme Court. The decision is dated January 21, 2010."). Filler is worse than nothing (T-0117): left blank.
+const BSX_FILLER=new Set(('case cases decided decision decisions dated date dates court courts supreme federal law laws legislation produced issued issues signed published written wrote authored made making created document documents record records page pages text texts item items piece entry title titled called named known measure act acts bill bills statute statutes order orders report reports passed enacted adopted released public official officially government united states congress congressional legislature legislative president presidential agency department office national state states u.s american nation formally formal form version copy original full number volume part section public-law session entitled describes described contains contained gives given shows lists listed concerns concerning relates related regarding about which whose january february march april may june july august september october november december year years day days time century decade period').split(' '));
+function bsxNoteFiller(about, o){
+  const t=String(about||'').trim(); if (!t) return false;
+  const own=new Set(bsxToks([o&&o.title, o&&o.author, o&&o.source, o&&o.year].join(' ')));
+  const fresh=Array.from(new Set(bsxToks(t))).filter(w=>!own.has(w) && !BSX_FILLER.has(w) && !BSX_FILLER.has(w.replace(/s$/,'')) && !/^\d/.test(w));
+  return fresh.length<3;
+}
+// Every rule a milestone line is held to, for one milestone. The editor's lines are held to none.
+function bsxMilestoneProblems(b, lib){
+  if (!b || b.by==='editor') return [];
+  const o=lib[b.object_id]||{}, pr=catTextProblems('milestone '+b.year, b.line, 12, 25, {sentences:1});
+  if (!catNumbersOk(b.line, o.title, o.year, o.about, o.why, o.evidence||'', bsxDocDate(o))) pr.push('milestone '+b.year+': a number is not in its document');
+  if (bsxOpensWithSource(b.line, o)) pr.push('milestone '+b.year+' opens with an outlet or a document as its subject; state the event, with the actor as the subject');
+  return pr;
 }
 function bsxStoryBlock(story){
   return `HEADLINE: ${story.headline}\nDESCRIPTION: ${story.lede||''}\nWHAT IS TRUE (the Truths):\n${story.truths.slice(0,3500)}`;
 }
-function bsxComposePrompt(story, cands, lib, edits, rowNames){
-  const keep=(edits.keep||[]).filter(i=>lib[i]), mod=edits.modify||{};
+function bsxComposePrompt(story, cands, lib, edits, rowNames, sc){
+  sc=sc||{}; const keep=(edits.keep||[]).filter(i=>lib[i]), mod=edits.modify||{};
+  const scopes=sc.scopes||[], forced=sc.scope?scopes.find(s=>s.level===sc.scope):null;
+  const scopeBlock=!scopes.length?'':forced
+    ? `THE SCOPE: build this page on the ${forced.level} scope, "${forced.name}" (${forced.terms.join(', ')}). ${sc.why||''} Set "scope" to "${forced.level}".`
+    : `THREE SCOPES FOR THIS HISTORY (each document below says which it came from):\n${scopes.map(s=>'- '+s.level+': '+s.name+' ('+s.terms.join(', ')+')').join('\n')}\nChoose the ONE scope whose documents best show how today's news came to be, and say why in one sentence ("scope_why"). Prefer the narrowest scope that gives at least 3 connected milestones.`;
   const notes0=Object.entries(mod).filter(([k,v])=>v).map(([k,v])=>'EDITOR NOTE ON '+(k==='documents'?'THE RESEARCH':k.toUpperCase())+': '+v).join('\n');
   const notes=notes0?'THE EDITOR IS DIRECTING THIS PAGE. Where a note asks for something the rules below forbid, do what the note asks.\n'+notes0:'';
   return `You compose one news story's Backstory page for NTK News: the history that shows how today's news came to be the news. The reader is a college-educated adult; write at an Advanced Placement history level. Everything on the page comes from the story itself: its headline, its description and its Truths. Start from what they establish, then reach further back for the milestones and documents that make and defend the chronology.
@@ -4683,15 +4774,17 @@ ${bsxStoryBlock(story)}
 
 EXISTING ROWS (reuse one only if it names the same subject at the same level): ${rowNames.join('; ')||'(none)'}
 
-DOCUMENTS IN THE LIBRARY (id | year | title | author | what it is):
-${bsxDocLines(cands, lib)}
+${scopeBlock}
+
+DOCUMENTS IN THE LIBRARY (id | date or year | title | author | what it is${scopes.length?' | scope':''}):
+${bsxDocLines(cands, lib, sc.tags)}
 
 Write each component to its rule:
 - row: ${BSX_RULES.row}
 - title: ${BSX_RULES.title}
 - contest: ${BSX_RULES.contest}
 - stakes: ${BSX_RULES.stakes}
-- milestones: ${BSX_RULES.milestones} If fewer than 3 truly connect, choose only those and set "thin" to what the library is missing. Never stretch an unrelated document to fill.
+- milestones: ${BSX_RULES.milestones} For each milestone, "ties_to": two to six words copied from the story above (headline, description or Truths) naming the subject, person, place or action it leads to; a milestone that ties to nothing the story says does not belong. If fewer than 3 truly connect, choose only those and set "thin" to what the library is missing. Never stretch an unrelated document to fill.
 - starts: ${BSX_RULES.starts}
 - later: ${BSX_RULES.later}
 - here: ${BSX_RULES.here}
@@ -4701,7 +4794,7 @@ ${edits.research_direction?'The editor pointed this history at: '+edits.research
 ${notes}
 ${BSX_STYLE}
 
-JSON only: {"row":"...","title":"...","contest":"Whether ...","stakes":"...","milestones":[{"id":"...","line":"..."}],"starts":"id of one milestone","later":["id"],"here":"...","about":{"id":"..."},"thin":null,"why":"one sentence on the choices"}`;
+JSON only: {${scopes.length?'"scope":"narrow | middle | wide","scope_why":"one sentence: why this scope",':''}"row":"...","title":"...","contest":"Whether ...","stakes":"...","milestones":[{"id":"...","line":"...","ties_to":"words from the story"}],"starts":"id of one milestone","later":["id"],"here":"...","about":{"id":"..."},"thin":null,"why":"one sentence on the choices"}`;
 }
 // The checks, one per component (the contract's table). Returns {component: [problems]}.
 function bsxCheck(c, story, lib){
@@ -4716,10 +4809,7 @@ function bsxCheck(c, story, lib){
   add('here', catTextProblems('We are here', c.here, 12, 30));
   if (c.here && catSentences(c.here)>2) add('here', ['We are here is more than two sentences']);
   if (c.here && !storyNums(c.here)) add('here', ['a number in We are here is not in the story']);
-  (c.beginnings||[]).forEach(b=>{ const o=lib[b.object_id]||{};
-    const pr=b.by==='editor'?[]:catTextProblems('milestone '+b.year, b.line, 12, 25, {sentences:1});
-    if (b.by!=='editor' && !catNumbersOk(b.line, o.title, o.year, o.about, o.why, o.evidence||'')) pr.push('milestone '+b.year+': a number is not in its document');
-    add('milestones', pr); });
+  (c.beginnings||[]).forEach(b=>add('milestones', bsxMilestoneProblems(b, lib)));
   if ((c.beginnings||[]).length<3 && !c.thin) add('milestones', ['fewer than 3 milestones and no word on what is missing']);
   (c.case||[]).forEach(o=>{ if (!o.about) return; const n=catSentences(o.about);
     const pr=catTextProblems('about '+o.year, o.about, 1, 70); if (n<2||n>4) pr.push('about '+o.year+' is '+n+' sentences, wants 2 to 4');
@@ -4730,17 +4820,27 @@ function bsxCheck(c, story, lib){
   return P;
 }
 // Turn the model's answer into the page: milestones and documents from the shortlist only, dated, in order.
-function bsxShape(r, cands, lib, edits, notes){
-  const off=new Set(edits.off||[]), begs=[];
+// T-0117: a milestone the model chose must name the words in the story it ties to (catTiesOk, the test research
+// finds already pass); one that names nothing is not placed and is kept as "left out" with the reason. One dated
+// within 45 days of the story is not a milestone either; it may stay in the case as a later document. Neither test
+// applies to what the editor picked, wrote or directed (opt.directed: a revise of the milestones or the research).
+function bsxShape(r, cands, lib, edits, notes, story, sc, opt){
+  opt=opt||{}; const off=new Set(edits.off||[]), keepS=new Set(edits.keep||[]), begs=[], left=[], recent=[];
+  const storyText=story?[story.headline, story.lede, story.truths].join(' '):'';
   (r.milestones||r.beginnings||[]).forEach(b=>{
     const i=b.id; if (!cands.includes(i) || off.has(i)){ notes.push(JSON.stringify(i)+' is not in the shortlist; dropped'); return; }
     const o=lib[i]; if (!/^\d{4}/.test(o.year)){ notes.push(o.title.slice(0,40)+' has no year; dropped'); return; }
-    const mine=(edits.lines||{})[i];
-    begs.push({object_id:i, year:o.year.slice(0,4), line:mine||b.line||'', by:mine?'editor':'model'});
+    const mine=(edits.lines||{})[i], tie=String(b.ties_to||'').trim().slice(0,120), y=o.year.slice(0,4);
+    if (story && !mine && !keepS.has(i) && !opt.directed){
+      const out=reason=>left.push({object_id:i, year:y, title:o.title, line:String(b.line||''), ties_to:tie, reason:reason});
+      if (!catTiesOk(tie, storyText)){ out(tie?'it ties to "'+tie+'", which the story does not say':'it names nothing in the story it ties to'); return; }
+      if (bsxTooRecent(o, story.date)){ out('dated within '+BSX_HERE_DAYS+' days of the story: that is We are here, so it stays only as a later document'); recent.push(i); return; }
+    }
+    begs.push(Object.assign({object_id:i, year:y, line:mine||b.line||'', by:mine?'editor':'model'}, tie?{ties_to:tie}:{}));
   });
   begs.sort((a,b)=>a.year.localeCompare(b.year));
   const chosen=new Set(begs.map(b=>b.object_id));
-  const later=(r.later||[]).slice(0,2).filter(i=>cands.includes(i) && !chosen.has(i) && !off.has(i));
+  const later=(r.later||[]).slice(0,2).concat(recent).filter((i,k,a)=>a.indexOf(i)===k && cands.includes(i) && !chosen.has(i) && !off.has(i)).slice(0,2);
   (edits.keep||[]).forEach(i=>{ if (lib[i] && !chosen.has(i) && !later.includes(i) && !off.has(i)) later.push(i); });
   const about=r.about||{};
   const kase=Array.from(new Set(begs.map(b=>b.object_id).concat(later))).map(i=>{ const o=lib[i];
@@ -4752,8 +4852,21 @@ function bsxShape(r, cands, lib, edits, notes){
   const now=String(new Date().getUTCFullYear());      // never this year: a pick from this year falls back to the latest earlier one
   const sb=begs.find(b=>b.object_id===sid && b.year<now) || begs.filter(b=>b.year<now).slice(-1)[0];
   if (sb) starts={year:sb.year, line:sb.line, object_id:sb.object_id};
-  return {row:String(r.row||'').trim(), title:String(r.title||'').trim(), contest:String(r.contest||'').trim(), stakes:String(r.stakes||'').trim(),
-    here:String(r.here||'').trim(), beginnings:begs, case:kase, starts:starts, thin:r.thin||(begs.length>=3?null:'only '+begs.length+' milestone(s) connect'), why:r.why||''};
+  // thin is fewer than three milestones that connect (T-0117), not fewer than three of any kind; what the model
+  // said is missing is kept as the gap either way
+  const out={row:String(r.row||'').trim(), title:String(r.title||'').trim(), contest:String(r.contest||'').trim(), stakes:String(r.stakes||'').trim(),
+    here:String(r.here||'').trim(), beginnings:begs, case:kase, starts:starts,
+    thin:begs.length>=3?null:(r.thin?String(r.thin):'only '+begs.length+' milestone(s) connect to the story'), gaps:begs.length>=3&&r.thin?String(r.thin):null,
+    left_out:left, why:r.why||''};
+  const scopes=(sc&&sc.scopes)||[];
+  if (scopes.length){
+    const lv=(sc.scope && scopes.some(s=>s.level===sc.scope)) ? sc.scope : scopes.some(s=>s.level===r.scope) ? r.scope : (scopes.find(s=>s.level==='middle')||scopes[0]).level;
+    const ch=scopes.find(s=>s.level===lv);
+    out.scope={level:lv, name:ch.name, why:String(r.scope_why||sc.why||'').trim()};
+    out.scope_picks=scopes.filter(s=>s.level!==lv).map(s=>({level:s.level, name:s.name, terms:s.terms}));
+    out.scopes=scopes;
+  }
+  return out;
 }
 // One repair round: the components that broke a rule, with the rule and what broke, rewritten in place.
 async function bsxRepair(c, P, story, cands, lib, addU){
@@ -4780,43 +4893,170 @@ JSON only, with just the parts you rewrote: {${ask.map(k=>'"'+k+'":...').join(',
   } catch(e){}
   return c;
 }
-// After the repair, what still breaks a rule is left out (a milestone, an About text), or kept and noted for the
-// editor when the component cannot be empty (the title, the contest, the stakes, We are here).
+// T-0117: a milestone line that still breaks a rule after the repair gets one more rewrite, of that line alone. If
+// it still breaks the rule it stays on the page, flagged (bsxEnforce); it is never dropped. On 2026-11-10 four
+// chosen milestones were dropped for a sentence, and pages fell below the contract because of it.
+async function bsxReline(c, story, lib, addU){
+  const bad=(c.beginnings||[]).map(b=>({b, pr:bsxMilestoneProblems(b, lib)})).filter(x=>x.pr.length);
+  if (!bad.length) return c;
+  const p=`Rewrite each milestone line below so it keeps to the rule: ONE sentence of 12 to 25 words, in the past tense, saying what happened, with the actor or the event as its subject (never "Bloomberg reported", "The filing says", "According to"). Use only facts in the document's line; no number that is not in it.
+
+${bsxStoryBlock(story)}
+
+${bad.map(x=>{ const o=lib[x.b.object_id]||{}; return '- '+x.b.object_id+' | broke: '+x.pr.join('; ')+' | line now: '+x.b.line+' | document: '+(bsxDocDate(o)||o.year)+' | '+o.title+' | '+String(o.author||'')+' | '+String(o.about||o.why||'').slice(0,220); }).join('\n')}
+${BSX_STYLE}
+
+JSON only, one entry per id: {"<id>":"the new line"}`;
+  try {
+    const r=await bsxAsk(BSX_SONNET, p, 1200, 'rewriting milestone lines'); addU(r.usage);
+    bad.forEach(x=>{ const t=r.json&&r.json[x.b.object_id]; if (typeof t!=='string' || !t.trim()) return;
+      const was=x.b.line; x.b.line=t.trim(); if (bsxMilestoneProblems(x.b, lib).length>x.pr.length) x.b.line=was; });   // never worse
+    if (c.starts){ const b=c.beginnings.find(x=>x.object_id===c.starts.object_id); if (b) c.starts.line=b.line; }
+  } catch(e){}
+  return c;
+}
+// After the repair and the rewrite: a milestone that still breaks a rule is kept and flagged (T-0117); an About
+// text that breaks its rule, or says nothing beyond the title, author and date, is left blank and flagged; a
+// component that cannot be empty (the title, the contest, the stakes, We are here) is kept and noted.
 function bsxEnforce(c, story, lib, notes){
   const keptStart=c.starts&&c.starts.by==='editor'?c.starts:null;
-  const P=bsxCheck(c, story, lib);
-  if (P.milestones){
-    const keep=c.beginnings.filter(b=>{ const pr=b.by==='editor'?[]:catTextProblems('m', b.line, 12, 25, {sentences:1}); const o=lib[b.object_id]||{};
-      return !pr.length && (b.by==='editor' || catNumbersOk(b.line, o.title, o.year, o.about, o.why, o.evidence||'')); });
-    if (keep.length<c.beginnings.length) notes.push((c.beginnings.length-keep.length)+' milestone(s) still broke a rule and were left out');
-    const gone=new Set(c.beginnings.filter(b=>!keep.includes(b)).map(b=>b.object_id));
-    c.beginnings=keep; c.case=c.case.filter(o=>!gone.has(o.object_id));
-    if (c.starts && gone.has(c.starts.object_id)){ const sb=keep.filter(b=>b.year<String(new Date().getUTCFullYear())).slice(-1)[0]; c.starts=sb?{year:sb.year, line:sb.line, object_id:sb.object_id}:null; }
-    if (keep.length<3 && !c.thin) c.thin='only '+keep.length+' milestone(s) kept to the rules';
-  }
-  if (P.about) c.case.forEach(o=>{ if (o.about_by==='model' && (catTextProblems('a', o.about, 1, 70).length || catSentences(o.about)<2 || catSentences(o.about)>4)){ o.about=''; o.about_by=''; } });
+  let flagged=0;
+  (c.beginnings||[]).forEach(b=>{ const pr=bsxMilestoneProblems(b, lib); if (pr.length){ b.flag=pr.join('; '); flagged++; } else delete b.flag; });
+  if (flagged) notes.push(flagged+' milestone(s) still broke a rule after two rewrites; kept and flagged for you');
+  (c.case||[]).forEach(o=>{ if (o.about_by!=='model') return; const src=lib[o.object_id]||{};
+    if (bsxNoteFiller(o.about, {title:o.title, author:o.author, year:o.year, source:src.source})){ o.about=''; o.about_by=''; o.about_flag='its note said nothing beyond the title, author and date, so it is left blank'; return; }
+    if (catTextProblems('a', o.about, 1, 70).length || catSentences(o.about)<2 || catSentences(o.about)>4){ o.about=''; o.about_by=''; o.about_flag='its note broke the length rule after a rewrite, so it is left blank'; } });
+  const blank=(c.case||[]).filter(o=>o.about_flag && !o.about).length; if (blank) notes.push(blank+' document note(s) left blank');
   // a component the editor removed stays empty, and is no problem
   const removed=c._removed||[]; removed.forEach(k=>{ if (k==='chart') c.chart_removed=true; else if (k==='starts') c.starts=null; else c[k]=''; });
   if (keptStart && !removed.includes('starts')) c.starts=keptStart;
-  const left=bsxCheck(c, story, lib); delete left.milestones; delete left.about; removed.forEach(k=>delete left[k]); delete c._removed;
+  const left=bsxCheck(c, story, lib); delete left.about; removed.forEach(k=>delete left[k]); delete c._removed;
   c.problems=left;                                         // shown to the editor on the component
   Object.entries(left).forEach(([k,v])=>notes.push(k+': '+v.join('; ')));
   return c;
 }
-async function bsxCompose(story, pairing, row, lib, edits, rejected, rowNames){
-  const usage={input_tokens:0, output_tokens:0}, notes=[];
+// sc: {scopes, scope, why}. With no scopes the naming call runs (Haiku). A rebuild passes the scopes it already has,
+// so widening or rebuilding after a search costs no second naming call; `scope` forces one of them.
+async function bsxCompose(story, pairing, row, lib, edits, rejected, rowNames, sc){
+  sc=sc||{}; const usage={input_tokens:0, output_tokens:0}, notes=[];
   const addU=u=>{ usage.input_tokens+=u.input_tokens; usage.output_tokens+=u.output_tokens; };
   const off=new Set((edits.off||[]).concat(rejected||[]));
   const keep=(edits.keep||[]).filter(i=>lib[i] && !off.has(i));
-  const t=await bsxTerms(story); addU(t.usage);
+  let scopes=sc.scopes;
+  if (!scopes || !scopes.length){ const t=await bsxTerms(story); addU(t.usage); scopes=t.scopes; }
+  const terms=Array.from(new Set([].concat(...scopes.map(s=>s.terms))));
   const own=(edits.pool||[]).filter(i=>lib[i] && !off.has(i) && !keep.includes(i));     // research done for this story
-  const cands=keep.concat(own, bsxShortlist(lib, story, null, t.terms).filter(i=>!off.has(i) && !keep.includes(i) && !own.includes(i)));
-  const rr=await bsxAsk(BSX_SONNET, bsxComposePrompt(story, cands, lib, edits, rowNames||[]), 3500, 'composing the page'); addU(rr.usage);
-  let c=bsxShape(rr.json, cands, lib, edits, notes); c._removed=edits.removed||[];
+  const sl=scopes.length?bsxScopeShortlist(lib, story, scopes, 45, sc.scope||null):{ids:bsxShortlist(lib, story, null, []), tags:{}};
+  const cands=keep.concat(own, sl.ids.filter(i=>!off.has(i) && !keep.includes(i) && !own.includes(i)));
+  const scx={scopes:scopes, scope:sc.scope||null, why:sc.why||'', tags:sl.tags};
+  const rr=await bsxAsk(BSX_SONNET, bsxComposePrompt(story, cands, lib, edits, rowNames||[], scx), 3500, 'composing the page'); addU(rr.usage);
+  let c=bsxShape(rr.json, cands, lib, edits, notes, story, scx); c._removed=edits.removed||[];
   const P=bsxCheck(c, story, lib); (edits.removed||[]).concat(Object.keys(edits.modify||{}).filter(k=>!bsxBlank(c, k))).forEach(k=>delete P[k]);   // what the editor directed is not repaired, unless it came back blank
   if (Object.keys(P).length) c=await bsxRepair(c, P, story, cands, lib, addU);
+  if (!(edits.modify||{}).milestones) c=await bsxReline(c, story, lib, addU);
   c=bsxEnforce(c, story, lib, notes);
-  return Object.assign(c, {v:2, terms:t.terms, shortlist:cands.length, notes:notes, usage:usage, model:BSX_SONNET, modified:Object.assign({}, edits.modify||{})});
+  if (c.left_out.length) notes.push(c.left_out.length+' chosen milestone(s) left out: '+c.left_out.map(x=>x.year+' '+x.reason).join('; '));
+  return Object.assign(c, {v:2, terms:terms, shortlist:cands.length, notes:notes, usage:usage, model:BSX_SONNET, modified:Object.assign({}, edits.modify||{})});
+}
+const bsxAddUsage=(a, b)=>({input_tokens:((a||{}).input_tokens||0)+((b||{}).input_tokens||0), output_tokens:((a||{}).output_tokens||0)+((b||{}).output_tokens||0)});
+// The build (T-0117). Compose; when thin (fewer than three milestones connect), rebuild once on the next wider
+// scope, from the library, before any web search. Only if that is still thin, one web search through `research`
+// (bsxResearch in Pulse; it keeps the 30-day subject rule) and one rebuild with what it found. `research(c)`
+// returns bsxResearch's answer. Returns the page; c.steps lists what ran, in order, for the editor and the tests.
+async function bsxBuild(story, getLib, edits, rejected, rowNames, research, say){
+  say=say||(()=>{}); const steps=['compose'];
+  let c=await bsxCompose(story, null, null, getLib(), edits, rejected, rowNames), usage=c.usage;
+  if (c.thin){
+    const from=c.scope&&c.scope.level, next=bsxWider(from, c.scopes);
+    if (next){
+      const n0=c.beginnings.length, to=c.scopes.find(s=>s.level===next);
+      say('"'+story.headline.slice(0,50)+'" is thin on the '+from+' scope; rebuilding on the '+next+' one, "'+to.name+'"…');
+      const why='The '+from+' scope connected only '+n0+' milestone'+(n0===1?'':'s')+', so the build widened to this one.';
+      const c2=await bsxCompose(story, null, null, getLib(), edits, rejected, rowNames, {scopes:c.scopes, scope:next, why:why});
+      usage=bsxAddUsage(usage, c2.usage); steps.push('widen:'+next);
+      const wider=c2.beginnings.length>n0;
+      if (wider && c2.scope) c2.scope.why=why+(c2.scope.why && c2.scope.why!==why?' '+c2.scope.why:'');
+      c=wider?c2:c;
+      c.widened={from:from, to:next, milestones:[n0, c2.beginnings.length], kept:wider?'wider':'first'};
+    }
+  }
+  if (c.thin && research){
+    say('"'+story.headline.slice(0,50)+'" is still thin; searching for its history, a minute or two…');
+    steps.push('search');
+    try {
+      const res=await research(c);
+      const fresh=((res&&res.added)||[]).map(f=>f.id).filter(id=>!(edits.pool||[]).includes(id));
+      if (fresh.length){
+        edits.pool=fresh.concat(edits.pool||[]);
+        say('Rebuilding "'+story.headline.slice(0,50)+'" with '+fresh.length+' found document(s)…');
+        const c3=await bsxCompose(story, null, null, getLib(), edits, rejected, rowNames, {scopes:c.scopes});
+        usage=bsxAddUsage(usage, c3.usage); steps.push('rebuild'); c3.widened=c.widened; c=c3;
+      }
+      c.research='searched automatically because the build was thin'+(c.widened?' after widening':'')+': '+((res&&res.note)||'')+(fresh.length?'':'; nothing new, so the page was not rebuilt');
+    } catch(err){ c.research='the automatic search failed: '+err.message; }
+  }
+  c.usage=usage; c.steps=steps;
+  return c;
+}
+// What the editor directed on this page, by component (bs_edits): never repaired, flagged weak or held.
+function bsxDirected(edits){
+  edits=edits||{}; const d=new Set((edits.removed||[]).concat(Object.keys(edits.modify||{})));
+  Object.keys(edits.text||{}).forEach(k=>d.add(k.startsWith('m:')?'milestones':k.startsWith('about:')?'documents':k.split('.')[0]));
+  if ((edits.pins||[]).length || (edits.off||[]).length || (edits.keep||[]).length || (edits.approved||[]).length || edits.research_direction) d.add('milestones');
+  if (d.has('documents')) ['milestones','starts'].forEach(k=>d.add(k));     // directing the research re-chooses both
+  if (d.has('milestones')) d.add('starts');
+  if (d.has('about')) d.add('documents');
+  return d;
+}
+// The build reads its own page (T-0117): one Sonnet call, as the editor would, against the story. `ready`, or
+// `needs you` with up to three concerns, each on one component with the fix it recommends. A failed call says so
+// and holds nothing: the page is judged by the structural tests alone.
+const BSX_REVIEW_PARTS=['scope','title','contest','stakes','starts','milestones','here','documents'];
+async function bsxSelfReview(c, story, addU){
+  const page={scope:c.scope?c.scope.name+' ('+c.scope.level+')':null, title:c.title, contest:c.contest, stakes:c.stakes,
+    starts:c.starts?c.starts.year+': '+c.starts.line:null, milestones:(c.beginnings||[]).map(b=>b.year+': '+b.line),
+    here:c.here, documents:(c.case||[]).map(o=>o.year+' | '+o.title+' | '+(o.author||'')+' | '+(o.source_url||'')+(o.source_kind==='news'?' | news report':'')+' | '+(o.about||'(no note)'))};
+  const p=`You are the editor of NTK News reviewing one Backstory page before it ships. Backstory is the history that shows how today's news came to be the news. Read the page against the story the way a careful editor would: does the scope fit the story; does each milestone connect to what the story reports and lead toward it; does It starts in name the turn that set this story in motion; are the documents primary sources that carry their milestones; would a college-educated reader learn how this came to be.
+
+${bsxStoryBlock(story)}
+
+THE PAGE: ${JSON.stringify(page)}
+
+Answer "ready" when you would ship it as it stands. Otherwise "needs you", with at most three concerns, the most important first. Each concern names ONE component (${BSX_REVIEW_PARTS.join(', ')}), says in one sentence what is wrong, recommends one fix in one sentence, and is "blocking" only when the page should not reach readers as it stands (a wrong scope, milestones that do not lead to the story, a false or empty part).
+
+JSON only: {"verdict":"ready | needs you","concerns":[{"component":"...","concern":"...","fix":"...","blocking":false}]}`;
+  try {
+    const r=await bsxAsk(BSX_SONNET, p, 900, 'reviewing the page'); if (addU) addU(r.usage);
+    const concerns=(Array.isArray(r.json.concerns)?r.json.concerns:[]).filter(x=>x && BSX_REVIEW_PARTS.includes(x.component) && String(x.concern||'').trim())
+      .slice(0,3).map(x=>({component:x.component, concern:String(x.concern).trim(), fix:String(x.fix||'').trim(), blocking:x.blocking===true}));
+    const verdict=/need/i.test(String(r.json.verdict||'')) || concerns.length ? 'needs you' : 'ready';
+    return {verdict:verdict, concerns:concerns, model:BSX_SONNET, usage:r.usage};
+  } catch(e){ return {verdict:'not reviewed', concerns:[], error:String(e.message||e).slice(0,160)}; }
+}
+// A weak page is held (T-0117; the editor, 2026-11-10, chosen over shipping with a warning): fewer than three
+// milestones, no It starts in, a blank title, contest, stakes or We are here, or a blocking concern from the
+// self-review. Nothing the editor directed counts against the page. A held page does not publish until the editor
+// clicks Ship anyway (bs_edits.ship_anyway, which survives a rebuild); backstory_draft.py apply skips it.
+function bsxHold(c, edits){
+  if (!c) return c;
+  edits=edits||{}; const d=bsxDirected(edits), why=[];
+  (c.beginnings||[]).forEach(b=>{ if (b.by==='editor') delete b.flag; });
+  (c.case||[]).forEach(o=>{ if (o.about_by==='editor') delete o.about_flag; });
+  if (c.review && Array.isArray(c.review.concerns)){
+    c.review.concerns=c.review.concerns.filter(x=>!d.has(x.component));
+    if (c.review.verdict==='needs you' && !c.review.concerns.length) c.review.verdict='ready';
+  }
+  const flags=(c.beginnings||[]).filter(b=>b.flag).map(b=>b.flag);
+  if (c.problems){ if (flags.length) c.problems.milestones=flags; else delete c.problems.milestones; d.forEach(k=>delete c.problems[k]); }
+  if ((c.beginnings||[]).length<3 && !d.has('milestones')) why.push('fewer than three milestones ('+(c.beginnings||[]).length+')');
+  if (!c.starts && !d.has('starts')) why.push('no It starts in');
+  ['title','contest','stakes','here'].forEach(k=>{ if (!String(c[k]||'').trim() && !d.has(k)) why.push('no '+(k==='here'?'We are here':k)); });
+  const block=((c.review||{}).concerns||[]).filter(x=>x.blocking);
+  if (c.review && c.review.verdict==='needs you' && block.length) why.push('the self-review found a blocking concern on '+block.map(x=>x.component).join(', '));
+  c.weak=why;
+  if (why.length && !edits.ship_anyway) c.held=true; else delete c.held;
+  if (why.length && edits.ship_anyway) c.shipped_anyway=true; else delete c.shipped_anyway;
+  return c;
 }
 // A text part that came back empty. The editor never directs a blank (a part the editor removed is in edits.removed):
 // on 2026-11-04 a contest revised to "Emphasize what the results say about America now" was saved as "".
@@ -4863,7 +5103,7 @@ JSON only, with just: {${fields.map(f=>'"'+f+'":...').join(',')}}`;
   if (['row','title','contest','stakes','here'].includes(comp)) c[comp]=j[comp].trim();
   if (comp==='about' && j.about && typeof j.about==='object') c.case.forEach(o=>{ const t=j.about[o.object_id]; if (typeof t==='string' && t.trim()){ o.about=t.trim(); o.about_by='editor'; } });
   if (fields.includes('milestones') && Array.isArray(j.milestones)){
-    const sh=bsxShape(Object.assign({}, page, j, {row:c.row, title:c.title, contest:c.contest, stakes:c.stakes, here:c.here}), cands, lib, edits, notes);
+    const sh=bsxShape(Object.assign({}, page, j, {row:c.row, title:c.title, contest:c.contest, stakes:c.stakes, here:c.here}), cands, lib, edits, notes, story, null, {directed:true});
     c.beginnings=sh.beginnings; c.case=sh.case; c.thin=sh.thin;
     c.starts=(prev.starts && prev.starts.by==='editor' && !(edits.removed||[]).includes('starts')) ? prev.starts : sh.starts;   // the editor's start holds
     if (comp==='milestones') c.beginnings.forEach(b=>{ b.by='editor'; });        // written to the editor's direction
@@ -4880,10 +5120,12 @@ JSON only, with just: {${fields.map(f=>'"'+f+'":...').join(',')}}`;
   out=bsxEnforce(out, story, lib, notes);
   if (out.problems){ delete out.problems[comp]; if (comp==='milestones') delete out.problems.starts; }
   out.modified=Object.assign({}, prev.modified||{}, {[comp]:note});
+  if (out.review && Array.isArray(out.review.concerns)) out.review.concerns=out.review.concerns.filter(x=>x.component!==comp && !(comp==='about' && x.component==='documents'));   // that part is now the editor's
   const pu=prev.usage||{};
   out.notes=notes; out.usage={input_tokens:(pu.input_tokens||0)+usage.input_tokens, output_tokens:(pu.output_tokens||0)+usage.output_tokens};
   return out;
 }
+/* BSX:END */
 
 // Research once (T-0111), in the browser. One web-search call fills a thin story's library gap; what passes the
 // checks joins the ledger (editorial/research-ledger.json) and the library for every story; what the checks turn
@@ -5113,7 +5355,7 @@ async function bsxRun(keys, opts){
       const bad=['headline','lede','truth'].filter(k=>/\[Generation failed/.test(String(s[k]||'')));
       if (bad.length) throw new Error('its '+bad.map(k=>k==='truth'?'Truths':k==='lede'?'description':'headline').join(' and ')+' failed to generate: regenerate the story first');
       if (!String(s.truth||'').trim()) throw new Error('it has no Truths yet: Generate Jefferson first');
-      const story={headline:s.headline||'', lede:bsxText(s.lede), truths:bsxText(s.truth)}, edits=Object.assign({}, s.bs_edits||{});
+      const story={headline:s.headline||'', lede:bsxText(s.lede), truths:bsxText(s.truth), date:new Date().toISOString().slice(0,10)}, edits=Object.assign({}, s.bs_edits||{});
       const rej0=new Set(rejected); edits.pool=(ledger.finds||[]).filter(f=>f.story_id===key && !rej0.has(f.id)).map(f=>f.id).reverse();   // newest first; not saved
       const d0=draft && (draft.stories||[]).find(x=>x.story_id===key), prev=(d0&&d0.composed&&d0.composed.v===2)?d0.composed:null;
       (edits.pins||[]).forEach(f=>{ if ((edits.approved||[]).includes(f.id) && !(ledger.finds||[]).some(x=>x.id===f.id||x.url===f.url)){
@@ -5121,7 +5363,7 @@ async function bsxRun(keys, opts){
       bsxApprove(ledger, new Set(edits.approved||[]), key, bsxLibrary(draft||{stories:[]}, ledger));
       if ((edits.approved||[]).length) ledgerChanged=true;
       edits.keep=Array.from(new Set((edits.keep||[]).concat(edits.approved||[])));
-      let c=prev;
+      let c=prev, built=false;
       const m=opts.modify&&opts.modify[key];
       if (opts.refile && prev){ /* the shelf moves; the page stays */ }
       else if (m && prev){
@@ -5136,27 +5378,13 @@ async function bsxRun(keys, opts){
         if (m.comp==='row' && c.row && !L.rowByEditor){ const id=bsrRowResolve(c.row); if (id){ L.backstoryRow=id; saveLineup(); } }
       } else {
         BSR_DRAFT_STATE='Building "'+story.headline.slice(0,50)+'"…'; render();
-        c=await bsxCompose(story, null, null, bsxLibrary(draft||{stories:[]}, ledger), edits, rejected, rowNames);
-        // Thin after the matrix and the editor's library: one web search on the gaps the build named, then one
-        // rebuild (the editor, 2026-11-04). bsxResearch skips a subject searched in the last 30 days and offers
-        // its finds again instead, so this costs a search at most once per subject a month.
-        if (c && c.thin && (c.beginnings||[]).length<4 && !opts.refile){
-          BSR_DRAFT_STATE='"'+story.headline.slice(0,50)+'" is thin; searching for its history, a minute or two…'; render();
-          try {
-            const res=await bsxResearch(story, key, c.title||story.headline, c.thin, c.beginnings.map(b=>({year:b.year, title:b.line})), ledger, rejected, null, false);
-            ledgerChanged=ledgerChanged||!res.repeat;
-            const fresh=(res.added||[]).map(f=>f.id).filter(id=>!(edits.pool||[]).includes(id));
-            if (fresh.length){
-              edits.pool=fresh.concat(edits.pool||[]);
-              BSR_DRAFT_STATE='Rebuilding "'+story.headline.slice(0,50)+'" with '+fresh.length+' found document(s)…'; render();
-              const c2=await bsxCompose(story, null, null, bsxLibrary(draft||{stories:[]}, ledger), edits, rejected, rowNames);
-              const u1=c.usage||{}, u2=c2.usage||{};
-              c2.usage={input_tokens:(u1.input_tokens||0)+(u2.input_tokens||0), output_tokens:(u1.output_tokens||0)+(u2.output_tokens||0)};
-              c=c2;
-            }
-            c.research='searched automatically because the build was thin: '+res.note+(fresh.length?'':'; nothing new, so the page was not rebuilt');
-          } catch(err){ c.research='the automatic search failed: '+err.message; }
-        }
+        // Thin (fewer than three milestones connect): widen once over the library, then, still thin, one web search
+        // on the gaps the build named and one rebuild (T-0117; the search is the editor's, 2026-11-04). bsxResearch
+        // skips a subject searched in the last 30 days and offers its finds again instead.
+        const research=async c0=>{ const res=await bsxResearch(story, key, c0.title||story.headline, c0.thin, c0.beginnings.map(b=>({year:b.year, title:b.line})), ledger, rejected, null, false);
+          ledgerChanged=ledgerChanged||!res.repeat; return res; };
+        c=await bsxBuild(story, ()=>bsxLibrary(draft||{stories:[]}, ledger), edits, rejected, rowNames, opts.refile?null:research, msg=>{ BSR_DRAFT_STATE=msg; render(); });
+        built=true;
       }
       if (m && !c.revise_blank){ const t=Object.assign({}, edits.text||{}), comp=m.comp;
         Object.keys(t).forEach(k=>{ if (k===comp || k.startsWith(comp+'.') || (comp==='milestones' && k.startsWith('m:')) || (comp==='about' && k.startsWith('about:')) || (comp==='documents' && (k.startsWith('m:')||k.startsWith('about:')))) delete t[k]; });
@@ -5166,6 +5394,9 @@ async function bsxRun(keys, opts){
       if (c) bsxApplyPins(c, edits.pins, edits.off);
       if (c) c.research_items=bsxResearchItems(ledger, key, rejected);
       if (c){ bsxApplyText(c, edits.text); Object.keys(edits.modify||{}).forEach(k=>{ if (c.problems) delete c.problems[k]; }); }
+      // the build reads its own page once (one Sonnet call; not on a revise or a refile), then a weak page is held
+      if (c && built){ BSR_DRAFT_STATE='Reviewing "'+story.headline.slice(0,50)+'"…'; render(); c.review=await bsxSelfReview(c, story, u=>{ c.usage=bsxAddUsage(c.usage, u); }); }
+      if (c) bsxHold(c, edits);
       // the row: the editor's if set; otherwise the one the page proposed (an existing row when the name matches)
       if (!L.backstoryRow && c && c.row){ const id=bsrRowResolve(c.row); if (id){ L.backstoryRow=id; L.rowByEditor=false; saveLineup(); } }
       if (!L.backstoryRow) throw new Error('no row could be set');
@@ -5262,7 +5493,7 @@ async function bsxPatch(s, mutate){
   for (let i=0; i<3; i++){
     const g=await bsxGet(GH_DRAFT_OUT); const draft=g.data; if (!draft) return false;
     const d=(draft.stories||[]).find(x=>x.story_id===s.key); if (!d || !d.composed) return false;
-    mutate(d.composed);
+    mutate(d.composed); bsxHold(d.composed, cur.bs_edits||{});   // an edit can make a weak page whole, or ship it anyway
     Object.assign(d, {bs_hash:cur.bs_hash, bs_text_hash:cur.bs_text_hash, bs_edits_applied:cur.bs_edits||{}});
     if (await bsxPut(GH_DRAFT_OUT, draft, g.sha, 'backstory: an edit from Pulse')){ BSR_DRAFT=draft; bsrRefreshHashes(); render(); return true; }
   }
@@ -5297,6 +5528,16 @@ function bsc2Card(s, comp, body, opt){
       ${opt.removable?`<button class="mini bsc2-rm" data-comp="${comp}" style="color:var(--stale)">remove</button>`:''}</div>`}
   </div>`;
 }
+// T-0117, the minimum to inspect: held or shipping anyway, the scope chosen and why, and the self-review as plain
+// text. The picks (other scopes, left-out milestones, one-click fixes) are T-0118.
+function bsc2Verdict(c){
+  const rv=c.review||null, weak=c.weak||[];
+  const held=c.held?`<div style="padding:7px 9px;margin-bottom:6px;border:2px solid var(--stale);background:#fbe3e0;font-size:13px"><b>HELD: this page will not publish.</b> It is weak: ${esc(weak.join('; '))}. Fix it here, or ship it as it stands. <button class="mini go bsc2-ship-anyway" title="publish this page as it stands; this choice is kept through rebuilds">ship anyway</button></div>`
+    : c.shipped_anyway?`<div style="padding:5px 8px;margin-bottom:6px;border:1px solid var(--ink);background:#fbe8d0;font-size:12.5px"><b>Shipping anyway</b>, by your choice, although it is weak: ${esc(weak.join('; '))}. <button class="mini bsc2-hold-again">hold it again</button></div>`:'';
+  const sc=c.scope?`<div style="font-size:12.5px;margin-bottom:3px"><b>Scope:</b> ${esc(c.scope.name)} <span style="color:var(--dim)">(${esc(c.scope.level)})</span>${c.scope.why?'. '+esc(c.scope.why):''}${(c.scope_picks||[]).length?` <span style="color:var(--dim)">Not chosen: ${esc(c.scope_picks.map(p=>p.name+' ('+p.level+')').join('; '))}.</span>`:''}${c.widened?` <span style="color:var(--dim)">Widened from ${esc(c.widened.from)} to ${esc(c.widened.to)}: ${esc(c.widened.milestones.join(' to '))} milestones; kept the ${c.widened.kept==='wider'?'wider':'first'} build.</span>`:''}</div>`:'';
+  const r=rv?`<div style="font-size:12.5px;margin-bottom:6px"><b>Self-review:</b> ${esc(rv.verdict)}${rv.error?' ('+esc(rv.error)+')':''}${(rv.concerns||[]).map(x=>`<div style="margin:2px 0 0 12px">${x.blocking?'<b>blocking</b> ':''}${esc(BSC2_LABEL[x.component]||x.component)}: ${esc(x.concern)}${x.fix?' <i>Fix: '+esc(x.fix)+'</i>':''}</div>`).join('')}</div>`:'';
+  return held+sc+r;
+}
 function bsc2Html(s, d){
   const c=d.composed, rowT=bsrRowTitle(s.backstoryRow), row=d.row||{}, ind=c.chart_removed?null:(bsxRowIndicator(BSR_DRAFT, s.backstoryRow)||row.indicator||null);
   const p=t=>`<div style="font:15px Georgia,serif;margin-top:4px">${t}</div>`;
@@ -5319,6 +5560,7 @@ function bsc2Html(s, d){
       <button class="mini bsc2-rebuild">rebuild from scratch</button><button class="mini bsr-prev-close">close</button></div>
     ${bsrStaleNote(d)}
     ${BSR_DRAFT_STATE?`<div style="padding:5px 8px;margin-bottom:6px;border:1px solid var(--ink);font-size:12.5px"><b>${esc(BSR_DRAFT_STATE)}</b></div>`:''}
+    ${bsc2Verdict(c)}
     <div style="margin-bottom:10px"><div style="font:700 11px sans-serif;letter-spacing:.06em;margin-bottom:4px">THE CARD READERS SEE</div>${card||'<div style="font-size:11px;color:var(--warn)">The reader\u2019s card could not be loaded.</div>'}</div>
     <div style="border:2px solid var(--ink);background:#fff;padding:9px 11px;margin-bottom:8px">
       <b style="font:700 11px sans-serif;letter-spacing:.06em">DIRECT THE RESEARCH</b>
@@ -5337,10 +5579,10 @@ function bsc2Html(s, d){
         ${bsc2Card(s,'stakes', p(c.stakes?bsc2T('stakes', c.stakes):'(removed)'), {removable:true, words:!!c.stakes})}
         ${bsc2Card(s,'chart', ind?catIndicatorSvg(ind):`<div style="font-size:12.5px;color:var(--dim);margin-top:4px">${chartMsg}</div>`+propHtml, {removable:!!ind, hint:'the row’s trend line, shared by every story on it', ph:'what should it measure?'})}
         ${bsc2Card(s,'starts', c.starts?p('<b>'+bsc2T('starts.year', c.starts.year)+'</b> '+bsc2T('starts.line', c.starts.line)):p('(none)'), {words:!!c.starts, hint:'where the history begins'})}
-        ${bsc2Card(s,'milestones', begs.map(b=>`<div style="display:flex;gap:10px;margin:5px 0;font-size:14px;align-items:flex-start"><b style="min-width:40px">${esc(b.year)}</b><span style="flex:1">${bsc2T('m:'+b.object_id, b.line)}</span><button class="mini bsc2-rm-item" data-id="${esc(b.object_id)}" style="color:var(--stale)">remove</button></div>`).join('')||'<i style="font-size:12px;color:var(--dim)">none</i>', {words:begs.length>0, hint:begs.length+' of 3 to 6', ph:'or tell me what to change in the milestones'})}
+        ${bsc2Card(s,'milestones', begs.map(b=>`<div style="display:flex;gap:10px;margin:5px 0;font-size:14px;align-items:flex-start"><b style="min-width:40px">${esc(b.year)}</b><span style="flex:1">${bsc2T('m:'+b.object_id, b.line)}${b.flag?`<span style="display:block;font-size:11.5px;color:var(--stale)">flagged: ${esc(b.flag)}</span>`:''}</span><button class="mini bsc2-rm-item" data-id="${esc(b.object_id)}" style="color:var(--stale)">remove</button></div>`).join('')+((c.left_out||[]).length?`<div style="font-size:11.5px;color:var(--dim);margin-top:4px">Left out by the build: ${c.left_out.map(x=>esc(x.year+' '+String(x.title).slice(0,60)+': '+x.reason)).join('; ')}</div>`:'')||'<i style="font-size:12px;color:var(--dim)">none</i>', {words:begs.length>0, hint:begs.length+' of 3 to 6', ph:'or tell me what to change in the milestones'})}
         ${bsc2Card(s,'here', p(bsc2T('here', c.here)), {words:true})}
         ${bsc2Card(s,'documents', docs.map(o=>`<div style="margin:7px 0;font-size:13.5px"><div style="display:flex;gap:8px;align-items:baseline;flex-wrap:wrap"><b>${esc(o.year)}</b> <a href="${esc(o.source_url||'#')}" target="_blank" rel="noopener"><i>${esc(o.title)}</i></a> <span style="color:var(--dim)">${esc(o.author||'')}</span>${o.source_kind==='news'?` <span class="chip" style="background:#f6e7c8;color:#8a5a12" title="${esc(o.why_no_primary||'a secondary source: no primary source was found for this')}">news report</span>`:''}${o.kind==='library'?' <span class="chip" title="from your Are.na library; readers see no label">library</span>':''}${o.paywall?' <span class="chip" style="color:var(--warn)" title="the outlet meters or walls its pages: a reader may not get in">paywall</span>':''}</div>
-            <div style="font:13px Georgia,serif;margin-top:2px">${bsc2T('about:'+o.object_id, o.about)}${o.about?'':'<span style="color:var(--stale)">No About text yet.</span>'}</div>
+            <div style="font:13px Georgia,serif;margin-top:2px">${bsc2T('about:'+o.object_id, o.about)}${o.about?'':`<span style="color:var(--stale)">No About text yet${o.about_flag?': '+esc(o.about_flag):''}.</span>`}</div>
             <div style="display:flex;gap:5px;margin-top:3px;align-items:center">${o.source_kind==='news'&&!bsxPublisher(o.source_url)?'<span class="chip" title="only news from NTK\u2019s approved publishers enters the Object Matrix">news, outside the approved publishers</span>':o.kind==='library'?'<span class="chip" title="the Object Matrix is primary sources; your library stays its own tier (T-0115)">stays in your library</span>':o.kind==='matrix'?'<span class="chip">already in the Object Matrix</span>':(e.approved||[]).includes(o.object_id)?'<span class="chip">joins the Object Matrix at publish</span>':`<button class="mini bsc2-matrix" data-id="${esc(o.object_id)}" title="It is on this page either way. This also adds it to the Object Matrix, the library every Backstory draws on, when you publish.">also add to the Object Matrix</button>`}${begs.some(b=>b.object_id===o.object_id)?'':`<button class="mini bsc2-to-m" data-id="${esc(o.object_id)}" title="add it to the milestones; I write its line, and the milestones already there stay">make it a milestone</button>`}<button class="mini bsc2-rm-item" data-id="${esc(o.object_id)}" style="color:var(--stale)">remove from page</button></div></div>`).join('')||'<i style="font-size:12px;color:var(--dim)">none</i>', {words:docs.length>0, noModify:false, hint:'every one is on the page; to find others, direct the research above', ph:'or tell me what to change in the About text'})}
         ${(c.notes||[]).length?`<details style="font-size:11.5px;color:var(--dim);margin-top:4px"><summary>${c.notes.length} note(s) from the build</summary>${c.notes.map(n=>'<div>'+esc(n)+'</div>').join('')}</details>`:''}
         <div style="font-size:11px;color:var(--dim);margin-top:4px">${c.usage?esc(c.usage.input_tokens)+' tokens in, '+esc(c.usage.output_tokens)+' out':''}</div>
@@ -5397,6 +5639,9 @@ function bsc2Wire(el, s){
     const have=((((bsrDraftFor(s)||{}).composed)||{}).beginnings||[]).map(x=>x.object_id);
     const before=(bsEdits(s).modify||{}).milestones;          // an earlier direction on the milestones still holds
     revise('milestones', (before?before+' Also: ':'')+'Add the document '+o.object_id+' ("'+o.title+'", '+o.year+') to the milestones, with a line saying what happened or what it reports. Keep every milestone already there: '+have.join(', ')+'.', b); }));
+  // Ship anyway (T-0117): the editor's choice, kept in bs_edits so it survives a rebuild and rides in the fingerprint
+  const sa=box.querySelector('.bsc2-ship-anyway'); if (sa) sa.addEventListener('click',()=>{ const e=bsEdits(s); e.ship_anyway=true; saveLineup(); bscBusy(sa); bsxPatch(s, ()=>{}); });
+  const ha=box.querySelector('.bsc2-hold-again'); if (ha) ha.addEventListener('click',()=>{ const e=bsEdits(s); delete e.ship_anyway; saveLineup(); bscBusy(ha); bsxPatch(s, ()=>{}); });
   const cu=box.querySelector('.bsc2-chart-use'); if (cu) cu.addEventListener('click',()=>{ bscBusy(cu); bsxUseChart(s); });
   const df=box.querySelector('.bsc2-dir-force'); if (df) df.addEventListener('click',()=>{
     const note=box.querySelector('.bsc2-dir').value.trim(); if (note) revise('documents', note, df, true); });
