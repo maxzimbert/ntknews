@@ -536,6 +536,23 @@ the editor's revise on the chart searches again with their words. A line is show
 checked on the publisher's page (prod's rule); one per row, shared by every story on it. Cost: one search per
 new row.
 
+**A weak Backstory page is held until the editor ships it anyway (T-0117).** Decided by the editor 2026-11-10,
+chosen over shipping a weak page with a warning. On 2026-11-10 two pages reached readers with two milestones and
+a third shipped three milestones that did not connect to its story, with no one having chosen that. A page is weak
+when it has fewer than three milestones, no It starts in, a blank title, contest, stakes or We are here, or the
+build's own review raises a concern it marks blocking. A held page does not publish (`backstory_draft.py apply`
+reports "held: weak, not released") until the editor clicks **Ship anyway**, which is kept in the story's edits and
+survives a rebuild. This narrows "doing nothing accepts" (the contract, 2026-11-02) for weak pages only. It does not
+touch the editor's words (2026-11-02): nothing the editor directed, typed or picked counts toward a page being
+weak. The cost the editor accepted: a wrong self-review can hold a good page, and a held page is a story with no
+Backstory, so the hold has to be loud (T-0118's summary).
+
+The same ticket changed what "thin" means for the automatic search (2026-11-04, above): thin is now **fewer than
+three milestones that connect to the story** (each names the story's words it ties to), not fewer than four of any
+kind, and a thin build first rebuilds once on the next wider of three scopes from the library. The web search runs
+only if that is still thin. The 30-day subject rule is unchanged. A milestone line that breaks a rule is no longer
+dropped: it is rewritten once more, then kept and flagged.
+
 ## Open questions, not defaults
 
 These are genuinely unresolved. Don't assume either way.
