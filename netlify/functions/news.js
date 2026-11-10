@@ -134,6 +134,15 @@ function pickLocation(cands, city, state) {
   return best ? { uri: best.uri, label: best.label } : null;
 }
 
+// EventRegistry's suggester leaves some cities out: "Tulsa" offers Tulsa County and New Tulsa, never
+// the city (2026-11-10). Its location ids are Wikipedia addresses, so "City,_State" is tried as the id.
+// A wrong guess matches no outlet, and the reader sees no block.
+function guessLocation(city, state) {
+  const w = s => String(s || '').trim().replace(/\s+/g, '_');
+  if (!w(city) || !w(state)) return null;
+  return { uri: 'http://en.wikipedia.org/wiki/' + w(city) + ',_' + w(state), label: String(city).trim(), guessed: true };
+}
+
 // How a headline names the place: the city, the state, or the city's initials
 // ("LA", "L.A."), which are matched case-sensitively so "la" is not a hit.
 function localNames(city, state) {
@@ -198,6 +207,7 @@ function localQuery(uri, keywords, now) {
 }
 exports.pickLocation = pickLocation;
 exports.pickLocal = pickLocal;
+exports.guessLocation = guessLocation;
 exports.localQuery = localQuery;
 
 exports.handler = async (event) => {
@@ -341,7 +351,7 @@ exports.handler = async (event) => {
     const answer = (place, articles, note) => ({ statusCode: 200, headers: hdr, body: JSON.stringify({ place, articles, note }) });
     const sug = await post('/api/v1/suggestLocationsFast', { apiKey: process.env.NEWSAPI_KEY, prefix: city, source: ['place'], lang: 'eng', count: 10 });
     let cands = []; try { cands = JSON.parse(sug.body); } catch (e) {}
-    const place = pickLocation(cands, city, state);
+    const place = pickLocation(cands, city, state) || guessLocation(city, state);
     if (!place) return answer(null, [], 'no location matches the city itself');
     const now = new Date();
     const ask = async (keywords) => {

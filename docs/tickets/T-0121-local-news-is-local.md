@@ -39,6 +39,8 @@ Built 2026-11-10 on branch `T-0121-local-news`:
 1. `mode=local-news` takes the city and the state by name and does the whole job. `pickLocation` takes
    the suggestion that is the city itself ("Los Angeles", or "Boise, Idaho" when the state matches), never
    a county, a neighbourhood or a namesake. No match means no block.
+   EventRegistry's suggester leaves some cities out ("Tulsa" offers the county and New Tulsa only), so
+   with no match the id is tried as the Wikipedia address "City,_State". A wrong guess returns nothing.
 2. The query is outlets based in the place that name the city, from `dateStart` two days back, without
    the sports and entertainment categories. If that leaves fewer than two, it is asked once more with the
    city or the state.
@@ -49,10 +51,16 @@ Built 2026-11-10 on branch `T-0121-local-news`:
    a cached block of old junk is not shown again.
 5. Dated editions are frozen copies of the app that send the old request. They get an empty list.
 
-**Unverified:** the function has not run against EventRegistry with these exact parameters. The query was
-tested through a different client of the same service, and the selection through `scripts/test_local_news.js`
-on the headlines that came back. The deploy preview is the first real run. Boise loses the Idaho Statesman
-under the keyword filter, cause unknown (possibly its paywall); it shows public radio only.
+**Run on the deploy preview of PR 113, 2026-11-10:**
+
+- Los Angeles: the LA Times on the sheriff's deputy gangs motion, LAist on Little Bangladesh, My News LA.
+- Pittsburgh: TribLIVE on downtown housing and the 2027 city budget.
+- Boise: two Boise State Public Radio items. The Idaho Statesman drops out under the keyword filter, cause
+  unknown (possibly its paywall).
+- Tulsa: nothing, which is how the suggester gap was found. Fixed as above.
+- An old-style request from a dated edition gets an empty list.
+
+**Unverified:** in a browser with real geolocation; any city outside the United States.
 
 ## Why
 

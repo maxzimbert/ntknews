@@ -3,7 +3,7 @@
 // EventRegistry actually returned on 2026-11-10 for Los Angeles, Boise and Pittsburgh.
 //   node scripts/test_local_news.js
 const path = require('path');
-const { pickLocation, pickLocal, localQuery } = require(path.resolve(__dirname, '../netlify/functions/news.js'));
+const { pickLocation, pickLocal, localQuery, guessLocation } = require(path.resolve(__dirname, '../netlify/functions/news.js'));
 let fails = 0;
 const check = (name, ok, detail) => { console.log((ok ? 'ok   ' : 'FAIL ') + name + (ok ? '' : '  ' + JSON.stringify(detail))); if (!ok) fails++; };
 const place = (label, uri) => ({ type: 'place', label: { eng: label }, wikiUri: 'http://en.wikipedia.org/wiki/' + uri });
@@ -23,6 +23,11 @@ r = pickLocation(PITT, 'Pittsburgh', 'Pennsylvania');
 check('place: a namesake in another state is not chosen', r && r.uri.endsWith('/Pittsburgh'), r);
 r = pickLocation([place('Los Angeles County, California', 'x'), place('East Los Angeles, California', 'y')], 'Los Angeles', 'California');
 check('place: with only a county and a neighbourhood on offer, there is no place', r === null, r);
+
+const TULSA = [place('Tulsa County, Oklahoma', 'Tulsa_County,_Oklahoma'), place('New Tulsa, Oklahoma', 'New_Tulsa,_Oklahoma'), place('West Tulsa, Tulsa', 'West_Tulsa,_Tulsa')];
+r = pickLocation(TULSA, 'Tulsa', 'Oklahoma') || guessLocation('Tulsa', 'Oklahoma');
+check('place: a city the suggester leaves out is tried by its own address', r && r.uri === 'http://en.wikipedia.org/wiki/Tulsa,_Oklahoma', r);
+check('place: with no state there is no guess', guessLocation('Tulsa', '') === null);
 
 // What production showed for Los Angeles on 2026-11-10.
 const JUNK = ['2026-10-31', '2026-10-28', '2026-10-27', '2026-10-23', '2026-10-20'].map((d, i) =>
