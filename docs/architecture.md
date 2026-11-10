@@ -83,12 +83,18 @@ Each story gets its own Backstory page, built and reviewed in Pulse before publi
 
 ```
   Pulse: Generate Jefferson  ──►  the story's Backstory builds itself (or "Build Backstory for every story")
-        │  bsxCompose: Haiku names the history; the library is shortlisted (matrix, approved candidates, this
-        │  story's research, and at most 10 items from the editor's Are.na library, T-0115); Sonnet writes the ten
-        │  components; each is checked against the contract and repaired once; the row is proposed from the story
-        │  and filed (the editor can type another: it moves only the shelf and the chart). A thin build (fewer
-        │  than 4 milestones) runs one web search on its gaps and rebuilds once. A row with no trend line gets
-        │  one search for one (once per row per day).
+        │  bsxBuild → bsxCompose: Haiku names the history at three scopes (narrow, middle, wide); the library is
+        │  shortlisted for each (matrix, approved candidates, this story's research, and at most 10 items from the
+        │  editor's Are.na library, T-0115); Sonnet picks one scope and says why, and writes the ten components.
+        │  Each milestone names the story's words it ties to (catTiesOk) or is left out, with the reason; none is
+        │  dated within 45 days of the story. Each part is checked against the contract and repaired once; a
+        │  milestone line still breaking a rule is rewritten once more, then kept and flagged; a filler document
+        │  note is left blank. The row is proposed from the story and filed (the editor can type another: it moves
+        │  only the shelf and the chart). A thin build (fewer than 3 connected milestones) rebuilds once on the next
+        │  wider scope; still thin, one web search on its gaps and one rebuild (T-0117). Then one Sonnet call
+        │  reviews the page: ready, or needs you with up to three concerns. A weak page is held (held: true) until
+        │  the editor clicks Ship anyway (bs_edits.ship_anyway). A row with no trend line gets one search for one
+        │  (once per row per day).
         ▼  saved to ntk-pulse/data/backstory-draft.json on the branch Pulse is served from, via the Contents API
   Pulse, the review (under each story's preview)
         │  Direct the research (one web search, then re-choose the history) · results listed, any added to the
@@ -98,7 +104,9 @@ Each story gets its own Backstory page, built and reviewed in Pulse before publi
         ▼  Publish (live Pulse only)
   pulse-publish.yml
      backstory_draft.py apply   each story ships the page built for it if its bs_hash still matches; a story
-                                not built, or changed since, ships no Backstory. Nothing is chosen at publish.
+                                not built, or changed since, ships no Backstory. A held page ships none
+                                ("held: weak, not released") unless the editor shipped it anyway. Nothing is
+                                chosen at publish.
                                 Row trend lines found in Pulse (ship.row_indicators) go onto the rows.
      build_digest.py → build_backstory_pages.py   one static page per story: /backstory/s-<story id>/
      graduate_finds.py → export_for_pulse.py      documents the editor added to the Object Matrix join it
@@ -128,7 +136,10 @@ Each story gets its own Backstory page, built and reviewed in Pulse before publi
   branch, and a prod publish reads only `main`'s draft.
 - **Retired, still on disk for older tickets' checks:** `build_pairings.py` (the classifier), `build_origins.py`,
   `compose_category.py`. Nothing runs them.
-- **Costs.** A build is two or three model calls; a thin one adds a web search and a rebuild, once per subject in 30 days. Directed research is one web search plus one call (an identical
+- **Costs.** A build is three or four model calls (naming, composing, repair when needed, the self-review; T-0117
+  added the review and a second line rewrite only when a line still breaks a rule). A thin one adds one compose on
+  the wider scope (no second naming call), and only if still thin a web search and a rebuild, once per subject in 30 days.
+  The tests for the build run in node with stand-in replies: `node scripts/test_pulse_backstory.js`. Directed research is one web search plus one call (an identical
   direction within 30 days is skipped unless the editor forces it). A new row's trend line is one web search.
 
 ---

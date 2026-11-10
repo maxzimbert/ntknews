@@ -26,6 +26,9 @@ LINEUP = ROOT / "ntk-pulse" / "data" / "lineup-publish.json"
 BACKSTORY = ROOT / "digest" / "data" / "backstory.json"
 PROVISIONAL = ROOT / "ntk-pulse" / "data" / "provisional-rows.json"
 ORIGINS = ROOT / "editorial" / "origins.json"
+# What a composed page carries for the review in Pulse and readers never see (T-0114, T-0117).
+REVIEW_ONLY = ("notes", "usage", "shortlist", "model", "terms", "research_items", "problems", "scopes", "scope_picks",
+               "left_out", "review", "weak", "held", "shipped_anyway", "steps", "widened", "gaps")
 
 
 def log(msg):
@@ -60,11 +63,16 @@ def apply(args):
         if not st.get("bs_hash") or d.get("bs_hash") != st["bs_hash"]:
             left.append(f"{k}: changed since it was built")
             continue
+        # T-0117: a weak page is held in Pulse until the editor clicks Ship anyway (the editor, 2026-11-10).
+        # Pulse clears `held` when he does; the choice also rides in the edits, so either says ship.
+        if c.get("held") and not (d.get("bs_edits_applied") or {}).get("ship_anyway"):
+            left.append(f"{k}: held: weak, not released ({'; '.join(c.get('weak') or []) or 'weak'})")
+            continue
         p = dict(pairs.get(k) or d.get("pairing") or {})
         if not p.get("row"):
             left.append(f"{k}: no row")
             continue
-        p["composed"] = {kk: v for kk, v in c.items() if kk not in ("notes", "usage", "shortlist", "model", "terms", "research_items", "problems")}
+        p["composed"] = {kk: v for kk, v in c.items() if kk not in REVIEW_ONLY}
         p["line"] = c.get("here") or p.get("line") or ""
         out.append(p)
     if ship.get("provisional_rows") is not None and out:

@@ -1,9 +1,9 @@
 ---
 id: T-0117
 title: The Backstory build chooses a scope, tests that each milestone connects, reviews its own page, and holds a weak one
-status: DECIDED
+status: BUILT
 tags: [backstory, feature]
-anchor: ntk-pulse/pulse.html:4806
+anchor: ntk-pulse/pulse.html:4966
 ---
 
 ## What
@@ -61,6 +61,59 @@ The editor's words still win: nothing the editor directed, typed or picked is re
 Cost: one more Sonnet call per story, about seven a day. Item 4 should cut searches. Whether the total is
 flat is unverified; measure it on the fixtures, three builds each (the 2026-10-09 lesson: one run cannot
 separate a change from run-to-run difference).
+
+## Built, 2026-11-10 (staging only)
+
+On branch `claude/t-0117-backstory-build-decides-3d1bae`, merged into `staging`. Not on `main`; no PR yet.
+
+- `ntk-pulse/pulse.html`: `bsxTerms` names three scopes (`bsxScopes`); the library is shortlisted per scope and
+  merged (`bsxScopeShortlist`); the composer picks one and says why (`scope`, `scope_picks` on the page).
+  `bsxShape` places a model's milestone only when its `ties_to` passes `catTiesOk` and it is not within 45 days of
+  the story; the rest go to `left_out` with the reason. Thin is fewer than three placed. `bsxBuild` widens once
+  before `bsxResearch`. `bsxReline` rewrites a still-broken line once more; `bsxEnforce` flags, never drops, and
+  blanks a filler note (`bsxNoteFiller`). `bsxOpensWithSource` is the new event rule. `bsxSelfReview` is the one
+  Sonnet review call. `bsxHold` sets `held`/`weak` and honours `bs_edits.ship_anyway`; `bsxPatch` re-holds after
+  every edit. The review shows the held box with **ship anyway**, the scope line, the self-review, flags and left out.
+  Picks are not built (T-0118).
+- `editorial/backstory_draft.py apply`: a held page ships nothing and is logged "held: weak, not released"; the
+  review-only fields (`scopes`, `review`, `left_out`, `weak`, `held` and the rest) are not shipped to readers.
+- `scripts/test_pulse_backstory.js`: 19 tests, the BSX block run in node with stand-in replies, on
+  `editorial/fixtures/backstory-2026-11-10.json` (the seven stories and pages at `845a14fb`). Each core test was
+  mutation-checked: disabling the tie test, the widen, the flag, Ship anyway, the editor filter or the 45-day rule
+  each makes its test fail; disabling the hold in Python turns this check back to OPEN.
+- `scripts/backstory_rounds.py`: tabulates build rounds from the draft's commit history on a branch.
+
+Measured, with stand-in replies (machinery, not model quality):
+
+- On the shipped 2026-11-10 pages, `bsxHold` holds exactly Nvidia and the Carter farm (2 milestones each) and
+  nothing else; Hegseth's three editor milestones are not held.
+- `bsxOpensWithSource` flags exactly the 4 shipped lines that open with an outlet or an account (Bloomberg, ABC
+  News, CBS News, "Biden's archived account") out of 25, and not "Carter reported to Congress".
+- `bsxNoteFiller` flags exactly the 2 filler notes (Citizens United, the 2017 tax act) out of all shipped notes.
+- The Bloomberg milestone (link dated 2026-11-08) is not placed for a story of 2026-11-10; a document from
+  2026-09-01 is.
+
+Not measured: whether real builds are better. That needs the editor's key, in staging Pulse.
+
+Cost per build, by call count: naming (Haiku), compose (Sonnet), repair if needed, a second line rewrite only
+when a line still breaks a rule (Sonnet, short), and the self-review (Sonnet, about 2k tokens in). A thin page adds
+one compose on the wider scope with no second naming call; only a page still thin after that searches. Whether the
+total is flat against 2026-11-10 (about 87k in, 30k out for seven builds, 5 of 7 searching) is unverified.
+
+**The before-and-after, for the editor.** Today's Lineup in Pulse is still these seven stories, so they can be
+rebuilt as they are. About five rounds of seven builds, roughly five days of normal build spend.
+
+1. Before (old code, live Pulse, `maxzimbert.github.io/ntknews/ntk-pulse/pulse.html`): Backstory tab, **Build
+   Backstory for every story**, twice. The publish of 2026-11-10 is the third. This writes `main`'s draft; it does
+   not publish, and the next edition's stories replace it.
+2. After (staging Pulse, `maxzimbert.github.io/ntknews-staging/ntk-pulse/pulse.html`): Backstory tab, **Build
+   Backstory for every story**, three times. Writes only the `staging` branch's draft.
+3. Then: `python3 scripts/backstory_rounds.py --branch origin/main --since <time of step 1>` and the same with
+   `origin/staging`, per page: milestones, flagged, left out, widened, searched, review, held, tokens.
+
+Do not click **ship anyway** in staging on a story whose edition is not yet published: staging and live share one
+Lineup, so the choice changes the story's fingerprint and live Pulse's built page stops matching until it is
+rebuilt there. **hold it again** removes the choice and restores the fingerprint.
 
 ## Check
 
