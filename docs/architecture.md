@@ -103,8 +103,9 @@ Each story gets its own Backstory page, built and reviewed in Pulse before publi
         │  story (bs_edits) and are laid over every rebuild. Research writes editorial/research-ledger.json.
         ▼  Publish (live Pulse only)
   pulse-publish.yml
-     backstory_draft.py apply   each story ships the page built for it if its bs_hash still matches; a story
-                                not built, or changed since, ships no Backstory. A held page ships none
+     backstory_draft.py apply   each story ships the page built for it. A story that changed after its page
+                                was built ships that page as last built (T-0122); only a story never built
+                                ships no Backstory. A held page ships none
                                 ("held: weak, not released") unless the editor shipped it anyway. Nothing is
                                 chosen at publish.
                                 Row trend lines found in Pulse (ship.row_indicators) go onto the rows.

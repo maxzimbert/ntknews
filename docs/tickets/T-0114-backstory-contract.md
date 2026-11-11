@@ -150,7 +150,9 @@ def apply(d):
         (('draft', d), ('lineup', 'lineup.json'), ('backstory', 'bs.json'), ('provisional', 'p.json'), ('origins', 'o.json'))], []), capture_output=True)
     return json.load(open(os.path.join(t, 'bs.json')))
 bs = apply('draft.json')
-if [p['story_id'] for p in bs['todays_pairings']] != ['a']: bad.append('publish did not ship exactly the built, unchanged story: ' + str([p['story_id'] for p in bs['todays_pairings']]))
+# 2026-11-10 (T-0122, the editor's rule): a story that changed after its page was built ships that page; only an
+# unbuilt story (c) or one not built to the contract (d) ships none. This line used to expect ['a'] alone.
+if [p['story_id'] for p in bs['todays_pairings']] != ['a', 'b']: bad.append('publish did not ship exactly the built stories: ' + str([p['story_id'] for p in bs['todays_pairings']]))
 elif 'notes' in bs['todays_pairings'][0]['composed'] or bs['todays_pairings'][0]['line'] != 'Here A': bad.append('a shipped page carries build bookkeeping, or its line is not We are here')
 if (bs['rows'][0].get('indicator') or {}).get('label') != 'L': bad.append("a row's trend line found in Pulse did not reach the row")
 if apply('missing.json')['todays_pairings']: bad.append("with no draft, yesterday's pairings stayed")

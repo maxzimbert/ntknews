@@ -3945,13 +3945,7 @@ window.openStoryFromToday = openStoryFromToday;
 // is: a distinctly-styled local news + weather block, cached once per
 // day per browser so a second visit doesn't re-hit geolocation or the
 // API on every load.
-var LOCAL_KEY = 'ntk_local_v1';
-
-// Directory / marketplace sections that EventRegistry's crawler tags as news.
-// Deliberately matched on path, not host: clasificados.laopinion.com is a
-// classifieds subdomain of a real newspaper, and la opinion's actual
-// reporting should still come through.
-var LOCAL_NONNEWS_PATH = /\/(ads?|clasificados|classifieds|marketplace|listings|coupons|directory|jobs|autos|real-?estate)(\/|$|\?)/i;
+var LOCAL_KEY = 'ntk_local_v2';   // v2 (T-0121): a v1 cache may hold classifieds and weeks-old items
 
 function todayDateStamp() {
   var d = new Date();
@@ -4007,7 +4001,7 @@ function renderLocalBlock(data) {
 
   var html = '<div class="today-local">';
   html += '<div class="today-local-head">Near ' + escHtmlSafe(data.city || 'you') + '</div>';
-  html += '<ul class="today-local-list">' + data.articles.slice(0, 5).map(function (a) {
+  html += '<ul class="today-local-list">' + data.articles.slice(0, 3).map(function (a) {
     return '<li><a href="' + escAttrSafe(a.url) + '" target="_blank" rel="noopener">' + escHtmlSafe(a.title) +
       '</a><span class="today-local-src">' + escHtmlSafe(a.source) + '</span></li>';
   }).join('') + '</ul>';
@@ -4062,58 +4056,17 @@ function fetchLocalAndWeather() {
         var weatherPromise = fetch('/.netlify/functions/news?mode=weather&lat=' + lat + '&lon=' + lon)
           .then(function (r) { return r.json(); }).catch(function (e) { console.log('[local] weather fetch failed:', e); return null; });
 
-        // 3. Local news — resolve the city to an EventRegistry location
-        // URI, then two separate calls (source-based, event-based; see
-        // news.js for why these can't be safely combined into one query),
-        // merged and deduped by URL client-side.
+        // 3. Local news (T-0121). One request: the city and the state by
+        // name. The function picks the place that is the city itself, asks
+        // for outlets based there that name it, and returns at most three
+        // headlines from the last two days, or none.
         var articles = [];
         if (city) {
-          var locResp = await fetch('/.netlify/functions/news?mode=resolve-location&q=' + encodeURIComponent(city));
-          var locData = await locResp.json();
-          console.log('[local] raw resolve-location response:', locData);
-          // EventRegistry's suggestLocationsFast returns each match with a
-          // wikiUri field (confirmed against their API schema) — location
-          // URIs are Wikipedia URLs, same shape as concept URIs elsewhere
-          // in this codebase. Reading .uri here was always undefined,
-          // which is why every city looked like "no match" including LA.
-          var locUri = locData && locData[0] && locData[0].wikiUri;
-          console.log('[local] location URI:', locUri || '(none — resolve-location returned no match)');
-          if (locUri) {
-            var results = await Promise.all([
-              fetch('/.netlify/functions/news?mode=local-news&locationUri=' + encodeURIComponent(locUri) + '&filterBy=source')
-                .then(function (r) { return r.json(); }).catch(function (e) { console.log('[local] source-based fetch failed:', e); return null; }),
-              fetch('/.netlify/functions/news?mode=local-news&locationUri=' + encodeURIComponent(locUri) + '&filterBy=event')
-                .then(function (r) { return r.json(); }).catch(function (e) { console.log('[local] event-based fetch failed:', e); return null; })
-            ]);
-            // Three filters, in increasing order of reliability.
-            //
-            // URL dedup alone was never enough: a classifieds listing on
-            // clasificados.laopinion.com appeared five times under five
-            // different URLs with one identical title. EventRegistry's
-            // crawler does not reliably separate reporting from directory
-            // content on a local outlet's own domain.
-            var seen = {}, seenTitle = {};
-            results.forEach(function (resp) {
-              var list = (resp && resp.articles && resp.articles.results) || [];
-              list.forEach(function (a) {
-                if (!a.url || seen[a.url]) return;
-                var title = (a.title || '').trim();
-                // A real story does not publish the identical headline five
-                // times under different links. This is the signal that
-                // actually catches directory content.
-                var tkey = title.toLowerCase();
-                if (!tkey || seenTitle[tkey]) return;
-                // Structural tell, not a domain blocklist: directory and
-                // marketplace sections live under recognisable path segments
-                // on otherwise legitimate news domains, so blocking the host
-                // would throw away that outlet's real reporting too.
-                if (LOCAL_NONNEWS_PATH.test(a.url)) return;
-                seen[a.url] = true;
-                seenTitle[tkey] = true;
-                articles.push({ url: a.url, title: title || 'Untitled', source: (a.source && a.source.title) || 'Unknown' });
-              });
-            });
-          }
+          var localResp = await fetch('/.netlify/functions/news?mode=local-news&city=' + encodeURIComponent(city) +
+            '&state=' + encodeURIComponent(geo.principalSubdivision || ''));
+          var localData = await localResp.json();
+          console.log('[local] place:', (localData && localData.place) || '(none)', '| matched on:', localData && localData.note);
+          articles = (localData && Array.isArray(localData.articles)) ? localData.articles : [];
         }
         console.log('[local] articles found:', articles.length);
 
