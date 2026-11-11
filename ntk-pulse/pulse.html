@@ -3396,13 +3396,14 @@ function bsrDraftStatusText(){
 }
 // The first draft of a Lineup, on GitHub: the classifier, new categories and origins, the same code publish runs.
 // Each story's own page is then composed here, in Pulse (bsxRun); edits never go through GitHub.
-// A draft ships only whole (editorial/backstory_draft.py apply), so one changed story means publish chooses
-// again for all of them. Warned in the publish dialog; never a block.
+// A story that changed after its page was built ships that page as last built (T-0122); rowPreflight says so
+// in the publish dialog. This used to warn that "publish will choose the Backstory again", which stopped being
+// true with T-0114 and hid that the page was about to be dropped (2026-11-10).
 function draftPreflight(stories){
   if (!BSR_DRAFT) return [];
   const have = Object.fromEntries((BSR_DRAFT.stories||[]).map(d => [d.story_id, d.bs_hash]));
   const off = stories.filter(s => have[s.key] !== s.bs_hash);
-  return off.length ? [`Backstory: ${off.length} stor${off.length===1?'y has':'ies have'} changed since the draft (${off.map(s=>'"'+(s.headline||s.key).slice(0,40)+'"').join(', ')}). Publish will choose the Backstory again for every story instead of shipping the draft. Cancel and draft again to ship what you review.`] : [];
+  return [];
 }
 
 async function publishToDigest(){
@@ -5275,7 +5276,7 @@ async function bsxPatch(s, mutate){
 // A story that changed after the draft still shows what the draft chose, under a note: the old "Not filed"
 // text hid the draft's choice entirely (the editor, 2026-10-28).
 function bsrStaleNote(d){
-  return (d.fresh || d.editsPending) ? '' : `<div style="padding:6px 8px;margin-bottom:6px;background:#fbe8d0;font-size:12.5px"><b>This is the last draft, from before this story changed.</b> Click Draft Backstory to see what it gets now. Until then, publish will choose this story's Backstory again.</div>`;
+  return (d.fresh || d.editsPending) ? '' : `<div style="padding:6px 8px;margin-bottom:6px;background:#fbe8d0;font-size:12.5px"><b>This page was built before the story changed.</b> It will publish as it is, so \u201cWe are here\u201d may be a step behind the story. Rebuild it if the history itself moved.</div>`;
 }
 // ─── The review screen, to the contract (T-0114) ───────────────────────────────────────────────────────────────
 // One card per component, in the order the reader meets them. Doing nothing accepts. Modify: the editor's words,
@@ -5557,13 +5558,13 @@ function bsrTagControl(s){
 // Publish check for rows. A warning, not a block: the digest is the product
 // and docs/decisions.md keeps Backstory additive. Pure, so it can be tested.
 function rowPreflight(stories, cats){
-  // T-0114: a story ships the Backstory built for it in Pulse, or none. Say which will go without, before publish.
+  // T-0114, T-0122: a story ships the Backstory built for it in Pulse; only an unbuilt story ships none. Say so before publish.
   const warn = [], none = [], changed = [];
   stories.forEach(s => { const d = (typeof bsrDraftFor === 'function') ? bsrDraftFor({key: s.key}) : null;
     const name = '"' + String(s.headline || s.key).slice(0, 40) + '"';
     if (!d || !d.composed || d.composed.v !== 2) none.push(name); else if (!d.fresh) changed.push(name); });
   if (none.length) warn.push(none.length + ' stor' + (none.length === 1 ? 'y has' : 'ies have') + ' no Backstory built and will ship without one: ' + none.join(', '));
-  if (changed.length) warn.push(changed.length + ' stor' + (changed.length === 1 ? 'y' : 'ies') + ' changed after the Backstory was built and will ship without one unless rebuilt: ' + changed.join(', '));
+  if (changed.length) warn.push(changed.length + ' stor' + (changed.length === 1 ? 'y' : 'ies') + ' changed after the Backstory was built. The page ships as last built, so "We are here" may be behind the story: ' + changed.join(', '));
   return warn;
 }
 
