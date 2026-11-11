@@ -103,8 +103,9 @@ Each story gets its own Backstory page, built and reviewed in Pulse before publi
         │  story (bs_edits) and are laid over every rebuild. Research writes editorial/research-ledger.json.
         ▼  Publish (live Pulse only)
   pulse-publish.yml
-     backstory_draft.py apply   each story ships the page built for it if its bs_hash still matches; a story
-                                not built, or changed since, ships no Backstory. A held page ships none
+     backstory_draft.py apply   each story ships the page built for it. A story that changed after its page
+                                was built ships that page as last built (T-0122); only a story never built
+                                ships no Backstory. A held page ships none
                                 ("held: weak, not released") unless the editor shipped it anyway. Nothing is
                                 chosen at publish.
                                 Row trend lines found in Pulse (ship.row_indicators) go onto the rows.
@@ -139,7 +140,8 @@ Each story gets its own Backstory page, built and reviewed in Pulse before publi
 - **Costs.** A build is three or four model calls (naming, composing, repair when needed, the self-review; T-0117
   added the review and a second line rewrite only when a line still breaks a rule). A thin one adds one compose on
   the wider scope (no second naming call), and only if still thin a web search and a rebuild, once per subject in 30 days.
-  The tests for the build run in node with stand-in replies: `node scripts/test_pulse_backstory.js`. Directed research is one web search plus one call (an identical
+  The tests for the build run in node with stand-in replies: `node scripts/test_pulse_backstory.js`.
+  Directed research is one web search plus one call (an identical
   direction within 30 days is skipped unless the editor forces it). A new row's trend line is one web search.
 
 ---
