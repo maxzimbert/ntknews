@@ -118,6 +118,10 @@ Each story gets its own Backstory page, built and reviewed in Pulse before publi
 - **Fingerprints.** Pulse hashes exactly what a page is built from: headline, description, Truths, the row, and the
   editor's edits (`bs_hash`; `bs_text_hash` without the edits). Python only compares them. An edit to another
   section, or a trend line found for the row, does not stop a built page from shipping.
+- **A story changed after its page was built** (T-0122): the page still ships as last built. Pulse checks it against
+  the revised story on its own, once the text has stopped changing for 20 seconds (one Haiku call, `bsxRefreshHere`):
+  "We are here" is rewritten to follow the news and the rest is kept; if the history itself moved, the page says so
+  and offers a rebuild, which is always the editor's choice. A "We are here" the editor typed is never rewritten.
 - **News reports** may stand in only when no primary source exists, only from `NTK_SOURCES`
   (`netlify/functions/news.js`; Pulse's copy is `NTK_PUBLISHERS`, Python reads the original through
   `editorial/publishers.py`), labelled with the reason.

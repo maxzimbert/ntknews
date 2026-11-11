@@ -116,7 +116,12 @@ for want, why in (('DIRECT THE RESEARCH', 'no Direct the research'), ('bsc2-word
     if want not in h: bad.append('review screen: ' + why)
 # Thin builds search once; a blank revision is never accepted (2026-11-04)
 run = fn(s, 'bsxRun')
-if 'c.thin' not in run or 'bsxResearch(story, key, c.title' not in run: bad.append('a thin build does not search on its own')
+# 2026-11-10 (T-0117): the search moved from bsxRun into bsxBuild, which first widens the scope once over the library.
+# The claim is unchanged: bsxRun hands bsxBuild a search that calls bsxResearch, and bsxBuild runs it on a thin page.
+# This line used to look for both in bsxRun. The widen-before-search order is tested in scripts/test_pulse_backstory.js.
+bb = fn(s, 'bsxBuild')
+if 'bsxResearch(story, key, c0.title' not in run or 'bsxBuild(' not in run or 'if (c.thin && research)' not in bb or 'await research(c)' not in bb:
+    bad.append('a thin build does not search on its own')
 if 'revise_blank' not in rv or 'bsxBlank(' not in fn(s, 'bsxCompose'): bad.append('a blank revision can be accepted')
 # Research results always reach the composer
 if 'edits.pool' not in fn(s, 'bsxCompose'): bad.append("the story's own research is not offered to the composer")

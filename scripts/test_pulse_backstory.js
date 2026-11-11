@@ -14,7 +14,7 @@ const cats = html.match(/\/\* CATS:BEGIN \*\/([\s\S]*?)\/\* CATS:END \*\//), bsx
 if (!cats || !bsx) { console.error('FAIL: the CATS or BSX block was not found in pulse.html'); process.exit(1); }
 if (!/async function bsxModel\(/.test(bsx[1])) { console.error('FAIL: bsxModel is not in the BSX block'); process.exit(1); }
 const NAMES = ['bsxTerms', 'bsxScopes', 'bsxWider', 'bsxScopeShortlist', 'bsxCompose', 'bsxComposePrompt', 'bsxShape', 'bsxCheck', 'bsxEnforce', 'bsxBuild',
-  'bsxSelfReview', 'bsxHold', 'bsxDirected', 'bsxOpensWithSource', 'bsxNoteFiller', 'bsxTooRecent', 'bsxDocDate', 'bsxMilestoneProblems', 'bsxApplyText', 'catTiesOk'];
+  'bsxSelfReview', 'bsxHold', 'bsxRefreshHere', 'bsxDirected', 'bsxOpensWithSource', 'bsxNoteFiller', 'bsxTooRecent', 'bsxDocDate', 'bsxMilestoneProblems', 'bsxApplyText', 'catTiesOk'];
 // The live bsxModel is renamed out of the way; every call reaches the stand-in passed as `bsxModel`.
 // bsxApplyText is outside the block in pulse.html; it is pure, so it is lifted on its own.
 const applyText = html.match(/function bsxApplyText\(c, text\)\{[\s\S]*?\n\}/);
@@ -22,7 +22,7 @@ const src = cats[1] + '\n' + bsx[1].replace('async function bsxModel(', 'async f
 const env = { POOL: { objects: [] }, BSR_PUBLISHED: { rows: [] }, PUBCATS: [], ARENA: { objects: [] }, SETTINGS: { antKey: 'stand-in' }, document: null };
 let REPLY = () => ({}), CALLS = [];
 const kindOf = p => /Name that history/.test(p) ? 'terms' : /You compose one news story/.test(p) ? 'compose' : /broke their rules/.test(p) ? 'repair'
-  : /Rewrite each milestone line/.test(p) ? 'reline' : /reviewing one Backstory page/.test(p) ? 'review' : 'other';
+  : /Rewrite each milestone line/.test(p) ? 'reline' : /reviewing one Backstory page/.test(p) ? 'review' : /has since been revised/.test(p) ? 'change' : 'other';
 const stub = async (model, prompt) => {
   const kind = kindOf(prompt); CALLS.push({ kind, model, prompt });
   const r = REPLY(kind, prompt, CALLS.filter(c => c.kind === kind).length);
@@ -261,5 +261,46 @@ const reset = (fn) => { CALLS = []; REPLY = fn; };
     && e5.beginnings.some(b => b.object_id === POPULIST) && e6.beginnings.length === 1 && !e6.left_out.length && L.bsxDirected({ modify: { documents: 'x' } }).has('starts'),
     { e1: e1.weak, e2: [e2.held, e2.review, e2.problems], ed3: ed3.beginnings.map(b => [b.by, b.flag]), ed4: ed4.weak, e5: e5.beginnings.map(b => b.object_id), e6: e6.left_out });
 
+
+  // ── change: a story revised after its page was built (T-0122, step two) ───────────────────────────────────────
+  // The real case: the Hegseth page said the House must act within two legislative days; the revised story says the
+  // House voted 211 to 204 to refer the articles.
+  const H = byKey[HEG], HP = H.page, rev = Object.assign({ date: DATE }, H.revised);
+  const NEWHERE = 'House Republicans voted 211 to 204 to refer the impeachment articles against Pete Hegseth to committee, ending the push for now.';
+  reset(k => k === 'change' ? { holds: true, here: NEWHERE, why: 'The vote ends this round; the history of impeaching officers still holds.' } : {});
+  let ch = await L.bsxRefreshHere(clone(HP), rev, H.bs_edits);
+  const chCall = CALLS.filter(x => x.kind === 'change');
+  const same = k => JSON.stringify(ch.page[k]) === JSON.stringify(HP[k]);
+  check('change: a revised story refreshes We are here and keeps the milestones',
+    /211 to 204/.test(rev.truths + rev.headline) && /two legislative days/.test(HP.here) && ch.current === true && ch.page.here === NEWHERE && ch.page.change.here_updated
+    && ch.page.change.was === HP.here && ['title', 'contest', 'stakes', 'beginnings', 'case', 'starts'].every(same) && CALLS.length === 1 && chCall[0].model === 'claude-haiku-5-5'
+    && chCall[0].prompt.includes('211 to 204') && chCall[0].prompt.includes('two legislative days') && ch.page.change.usage.input_tokens > 0,
+    { here: ch.page.here, current: ch.current, change: ch.page.change, calls: CALLS.map(x => x.kind) });
+  // a new line that breaks a rule (a number the story does not hold) is not taken, and the page is not called current
+  reset(k => k === 'change' ? { holds: true, here: 'House Republicans voted 300 to 100 to refer the impeachment articles against Pete Hegseth to a committee.' } : {});
+  const chBad = await L.bsxRefreshHere(clone(HP), rev, H.bs_edits);
+  check('change: a new We are here that breaks a rule is not taken, and the page still reads as behind', chBad.page.here === HP.here && !chBad.current && /number/.test(chBad.page.change.kept_because), chBad.page.change);
+  // the editor typed We are here: never rewritten, flagged, the history still checked
+  reset(k => k === 'change' ? { holds: true, here: NEWHERE, why: 'holds' } : {});
+  const typed = 'The House voted on the articles; the editor wrote this line.';
+  const pe = Object.assign(clone(HP), { here: typed });
+  const chE = await L.bsxRefreshHere(pe, rev, Object.assign({}, H.bs_edits, { text: { here: typed } }));
+  const chM = await L.bsxRefreshHere(clone(HP), rev, { modify: { here: 'say where the vote stands' } });
+  check('change: a We are here the editor typed is never rewritten',
+    chE.page.here === typed && chE.page.change.editor_here === true && !chE.page.change.here_updated && chE.current === true
+    && chM.page.here === HP.here && chM.page.change.editor_here === true, { e: chE.page.change, m: chM.page.change });
+  // the history moved: no compose, no rebuild, the page says so and stays as built; a failed call keeps the page
+  reset(k => k === 'change' ? { holds: false, here: NEWHERE, why: 'The story is now about the 2028 race, not the impeachment.' } : k === 'compose' ? page({}) : {});
+  const chX = await L.bsxRefreshHere(clone(HP), rev, H.bs_edits);
+  const kindsX = CALLS.map(x => x.kind);
+  reset(k => k === 'change' ? new Error('overloaded') : {});
+  const chF = await L.bsxRefreshHere(clone(HP), rev, H.bs_edits);
+  const runSrc = html.slice(html.indexOf('async function bsxRun('), html.indexOf('// Remove (no model)'));
+  check('change: a changed story never forces a rebuild',
+    chX.current === false && chX.page.change.moved === true && chX.page.here === HP.here && ['title', 'beginnings', 'case'].every(k => JSON.stringify(chX.page[k]) === JSON.stringify(HP[k]))
+    && kindsX.join() === 'change' && chF.current === false && /overloaded/.test(chF.page.change.error) && chF.page.here === HP.here
+    && !/Rebuild from scratch\.'\); return false/.test(html) && /const changed=bsxStoryChanged\(d0, s\);\s*if \(changed && !opts\.build\)/.test(runSrc)
+    && /We are here\\u201d updated to follow the story/.test(html) && /bsc2-rebuild-changed/.test(html),
+    { x: chX.page.change, kindsX, f: chF.page.change });
   console.log('\n' + fails + ' failed'); process.exit(fails ? 1 : 0);
 })().catch(e => { console.error('FAIL: the tests crashed: ' + (e.stack || e)); process.exit(1); });

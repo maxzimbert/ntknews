@@ -3347,8 +3347,30 @@ async function bsHash(s, cats, withEdits){
 }
 async function bsWithHashes(stories){
   const cats = catsForPublish();
-  for (const s of stories){ s.bs_hash = await bsHash(s, cats, true); s.bs_text_hash = await bsHash(s, cats, false); }
+  for (const s of stories){ s.bs_hash = await bsHash(s, cats, true); s.bs_text_hash = await bsHash(s, cats, false); s.bs_story_hash = await bsxStoryHash(s); }
   return stories;
+}
+// The story alone (headline, description, Truths): what a change check answers to. bs_text_hash also holds the row,
+// and a row change moves the shelf, not the history (T-0122, step two).
+function bsxStoryHash(s){ return sha256hex(JSON.stringify([s.headline||'', s.lede||'', s.truth||''])); }
+// Did the story change after its page was built? A draft from before bs_story_hash falls back to bs_text_hash.
+function bsxStoryChanged(d, s){
+  if (!d || !d.composed || d.composed.v!==2) return false;
+  return d.bs_story_hash ? d.bs_story_hash!==s.bs_story_hash : (!!d.bs_text_hash && d.bs_text_hash!==s.bs_text_hash);
+}
+// When a built story's text changes and then stays put for 20 seconds, Pulse checks the page against it on its own
+// (one Haiku call): a story imported and revised, then published, never waits on the editor opening its review.
+// Once per revised text: the draft records which text was checked (change_checked_for).
+const BSX_WATCH = {}, BSX_SETTLE_MS = 20000;
+function bsxWatchChanged(all){
+  if (!BSR_DRAFT || !pulseBranch(location) || !SETTINGS.ghToken || !SETTINGS.antKey) return;
+  all.forEach(s => { const d=(BSR_DRAFT.stories||[]).find(x=>x.story_id===s.key);
+    if (!bsxStoryChanged(d, s) || d.change_checked_for===s.bs_story_hash) return;
+    const w=BSX_WATCH[s.key]; if (w && w.hash===s.bs_story_hash) return;        // waiting, or already tried this text
+    if (w) clearTimeout(w.timer);
+    BSX_WATCH[s.key]={hash:s.bs_story_hash, timer:setTimeout(()=>{
+      const h=BSR_HASH[s.key]; if (!h || h.story!==s.bs_story_hash) return;     // it changed again: the next pass waits anew
+      bsxRun([s.key], {refresh:true}); }, BSX_SETTLE_MS)}; });
 }
 let BSR_DRAFT = null, BSR_DRAFT_STATE = '', BSR_DRAFT_LOADED = false;
 const BSR_HASH = {};                 // story key -> {full, text}, kept by bsrRefreshHashes
@@ -3359,7 +3381,8 @@ async function bsrRefreshHashes(){
     const all = await bsWithHashes(buildStoryPayload());
     let changed = false;
     all.forEach(s => { const h = BSR_HASH[s.key];
-      if (!h || h.full !== s.bs_hash || h.text !== s.bs_text_hash){ BSR_HASH[s.key] = {full:s.bs_hash, text:s.bs_text_hash}; changed = true; } });
+      if (!h || h.full !== s.bs_hash || h.text !== s.bs_text_hash || h.story !== s.bs_story_hash){ BSR_HASH[s.key] = {full:s.bs_hash, text:s.bs_text_hash, story:s.bs_story_hash}; changed = true; } });
+    bsxWatchChanged(all);
     if (changed && TAB === 'backstory') render();
   } finally { BSR_HASHING = false; }
 }
@@ -5059,6 +5082,43 @@ function bsxHold(c, edits){
   if (why.length && edits.ship_anyway) c.shipped_anyway=true; else delete c.shipped_anyway;
   return c;
 }
+// A story changed after its page was built (T-0122, step two). The editor, 2026-11-10: "backstory didn't need to
+// substantively change. why couldn't it simply look at the digest story and make its own decision?" One Haiku call
+// reads the page against the revised story. Normally only We are here must follow the news: it is rewritten, and
+// title, contest, stakes, milestones and documents are left alone. When the history itself moved, the page says
+// so and the editor decides whether to rebuild; this never rebuilds. A We are here the editor typed is never
+// rewritten. Returns {page, current}: current is true when the page now stands for the revised story.
+async function bsxRefreshHere(prev, story, edits){
+  edits=edits||{}; const c=JSON.parse(JSON.stringify(prev)), at=new Date().toISOString();
+  const editorHere=!!((edits.text||{}).here || (edits.modify||{}).here), removedHere=(edits.removed||[]).includes('here');
+  const page={title:c.title, contest:c.contest, stakes:c.stakes, starts:c.starts?c.starts.year+': '+c.starts.line:null,
+    milestones:(c.beginnings||[]).map(b=>b.year+': '+b.line), here:c.here};
+  const p=`A Backstory page was built for a news story. The story has since been revised. Decide whether the page's history still holds for the revised story.
+
+THE PAGE: ${JSON.stringify(page)}
+
+THE REVISED STORY:
+${bsxStoryBlock(story)}
+
+Usually the history holds and only "We are here" (today's story as the end of the chronology) must follow the news. Then write a new "here": one or two sentences, 12 to 30 words, saying where the revised story stands now, using only facts and numbers the revised story states. Answer "holds": false only when the title, the contest or the milestones no longer fit the revised story (it is now about a different event or argument).
+${BSX_STYLE}
+
+JSON only: {"holds":true,"here":"...","why":"one sentence"}`;
+  let r;
+  try { r=await bsxAsk(BSX_HAIKU, p, 500, 'checking the page against the revised story'); }
+  catch(e){ c.change={at:at, holds:null, error:String(e.message||e).slice(0,160)}; return {page:c, current:false}; }
+  const j=r.json||{}, holds=j.holds!==false, why=String(j.why||'').trim().slice(0,300);
+  c.change={at:at, holds:holds, why:why, usage:r.usage, model:BSX_HAIKU};
+  c.usage=bsxAddUsage(c.usage, r.usage);
+  if (!holds){ c.change.moved=true; return {page:c, current:false}; }
+  if (editorHere || removedHere){ c.change.editor_here=!removedHere; return {page:c, current:true}; }
+  const h=String(j.here||'').trim(), pr=catTextProblems('We are here', h, 12, 30);
+  if (h && catSentences(h)>2) pr.push('We are here is more than two sentences');
+  if (h && !catNumbersOk(h, story.headline, story.lede, story.truths)) pr.push('a number in We are here is not in the story');
+  if (!pr.length){ c.change.was=c.here; c.here=h; c.change.here_updated=true; if (c.problems) delete c.problems.here; }
+  else c.change.kept_because=h?pr.join('; '):'the check gave no new line';
+  return {page:c, current:!!c.change.here_updated};      // a line still behind the story is not called current
+}
 // A text part that came back empty. The editor never directs a blank (a part the editor removed is in edits.removed):
 // on 2026-11-04 a contest revised to "Emphasize what the results say about America now" was saved as "".
 function bsxBlank(c, k){ return ['row','title','contest','stakes','here'].includes(k) && !String(c[k]||'').trim(); }
@@ -5342,7 +5402,7 @@ async function bsxRun(keys, opts){
   opts=opts||{};
   if (!pulseBranch(location)){ alert('This copy of Pulse cannot draft (not the live Pulse or staging Pulse).'); return; }
   if (!SETTINGS.ghToken){ alert('Add a GitHub token in ⚙ first.'); return; }
-  BSX_BUSY=true; BSR_DRAFT_STATE=(opts.modify?'Revising':opts.refile?'Moving':'Building')+' '+keys.length+' stor'+(keys.length===1?'y':'ies')+'…'; render();
+  BSX_BUSY=true; BSR_DRAFT_STATE=(opts.refresh?'Checking':opts.modify?'Revising':opts.refile?'Moving':'Building')+' '+keys.length+' stor'+(keys.length===1?'y':'ies')+'…'; render();
   try {
     let payload=await bsWithHashes(buildStoryPayload()), byKey=Object.fromEntries(payload.map(s=>[s.key,s]));
     let {data:draft}=await bsxGet(GH_DRAFT_OUT);
@@ -5358,15 +5418,25 @@ async function bsxRun(keys, opts){
       if (!String(s.truth||'').trim()) throw new Error('it has no Truths yet: Generate Jefferson first');
       const story={headline:s.headline||'', lede:bsxText(s.lede), truths:bsxText(s.truth), date:new Date().toISOString().slice(0,10)}, edits=Object.assign({}, s.bs_edits||{});
       const rej0=new Set(rejected); edits.pool=(ledger.finds||[]).filter(f=>f.story_id===key && !rej0.has(f.id)).map(f=>f.id).reverse();   // newest first; not saved
-      const d0=draft && (draft.stories||[]).find(x=>x.story_id===key), prev=(d0&&d0.composed&&d0.composed.v===2)?d0.composed:null;
+      const d0=draft && (draft.stories||[]).find(x=>x.story_id===key);
+      let prev=(d0&&d0.composed&&d0.composed.v===2)?d0.composed:null;
       (edits.pins||[]).forEach(f=>{ if ((edits.approved||[]).includes(f.id) && !(ledger.finds||[]).some(x=>x.id===f.id||x.url===f.url)){
         ledger.vetoed=(ledger.vetoed||[]).filter(v=>v.id!==f.id); ledger.finds.push(Object.assign({}, f, {story_id:key, found_by:'search', added_by:'editor'})); ledgerChanged=true; } });
       bsxApprove(ledger, new Set(edits.approved||[]), key, bsxLibrary(draft||{stories:[]}, ledger));
       if ((edits.approved||[]).length) ledgerChanged=true;
       edits.keep=Array.from(new Set((edits.keep||[]).concat(edits.approved||[])));
-      let c=prev, built=false;
+      let c=prev, built=false, current=true;
       const m=opts.modify&&opts.modify[key];
-      if (opts.refile && prev){ /* the shelf moves; the page stays */ }
+      // T-0122, step two: the story changed after this page was built. Anything short of a rebuild first checks the
+      // page against the revised story (one Haiku call): We are here follows the news; if the history itself moved,
+      // the page says so and the rebuild is the editor's to choose. Never a rebuild on its own.
+      const changed=bsxStoryChanged(d0, s);
+      if (changed && !opts.build){
+        BSR_DRAFT_STATE='Checking "'+story.headline.slice(0,50)+'" against the revised story…'; render();
+        const r=await bsxRefreshHere(prev, story, edits); prev=r.page; c=prev; current=r.current;
+      } else if (opts.refresh) continue;                 // never built, or nothing changed: nothing to check
+      if (opts.refresh){ /* checked above; the page is otherwise left as it is */ }
+      else if (opts.refile && prev){ /* the shelf moves; the page stays */ }
       else if (m && prev){
         BSR_DRAFT_STATE='Revising '+m.comp+' on "'+story.headline.slice(0,50)+'"…'+(m.comp==='documents'?' searching first, a minute or two':''); render();
         if (m.comp==='documents'){                       // find what the note asks for, then re-choose
@@ -5401,9 +5471,10 @@ async function bsxRun(keys, opts){
       // the row: the editor's if set; otherwise the one the page proposed (an existing row when the name matches)
       if (!L.backstoryRow && c && c.row){ const id=bsrRowResolve(c.row); if (id){ L.backstoryRow=id; L.rowByEditor=false; saveLineup(); } }
       if (!L.backstoryRow) throw new Error('no row could be set');
-      done[key]={composed:c};
+      done[key]={composed:c, current:current, changed:changed};
     } catch(err){ failed.push('"'+String((byKey[key]||{}).headline||key).slice(0,50)+'": '+err.message); } }
     if (!Object.keys(done).length && failed.length) throw new Error(failed.join(' | '));
+    if (!Object.keys(done).length){ BSR_DRAFT_STATE=''; return; }      // nothing to save (a check with nothing changed)
     if (ledgerChanged){
       for (let i=0; i<2; i++){ if (await bsxPut(BSX_LEDGER, ledger, lsha, 'backstory research: from Pulse')) break;
         const fresh=await bsxLedger(); lsha=fresh.sha; ['subjects','finds','vetoed','candidates'].forEach(k=>{ if (k==='subjects') Object.assign(fresh.ledger.subjects, ledger.subjects); else {
@@ -5416,20 +5487,24 @@ async function bsxRun(keys, opts){
     for (let i=0; i<3 && !ok; i++){
       const g=await bsxGet(GH_DRAFT_OUT); draft=await bsxEnsureEntries(g.data, Object.keys(done), byKey);
       (draft.stories||[]).forEach(d=>{ const x=done[d.story_id]; if (!x) return; const s=byKey[d.story_id];
-        Object.assign(d, {composed:x.composed, bs_hash:s.bs_hash, bs_text_hash:s.bs_text_hash, bs_edits_applied:s.bs_edits||{}});
+        // a page whose history may have moved, or whose check failed, keeps the old fingerprints: it still reads as
+        // changed until the editor rebuilds (T-0122); it ships as last built either way
+        if (x.current) Object.assign(d, {bs_hash:s.bs_hash, bs_text_hash:s.bs_text_hash, bs_story_hash:s.bs_story_hash});
+        Object.assign(d, {composed:x.composed, bs_edits_applied:s.bs_edits||{}});
+        if (x.changed && !(x.composed.change||{}).error) d.change_checked_for=s.bs_story_hash;
         d.pairing.line=x.composed.here; const p=draft.ship.todays_pairings.find(q=>q.story_id===d.story_id); if (p) p.line=x.composed.here; });
       draft.generated=new Date().toISOString(); draft.composed_in='pulse'; draft.contract='2026-11-02';
       ok=await bsxPut(GH_DRAFT_OUT, draft, g.sha, 'backstory: '+Object.keys(done).length+' page(s) from Pulse');
     }
     if (!ok) throw new Error('the draft kept changing under the save; try again');
     BSR_DRAFT=draft; BSX_LED=ledger;
-    if (!opts.modify){ const today=new Date().toISOString().slice(0,10), seen=new Set();
+    if (!opts.modify && !opts.refresh){ const today=new Date().toISOString().slice(0,10), seen=new Set();
       for (const k of Object.keys(done)){ const L=LINEUP.find(x=>x.key===k), rid=L&&L.backstoryRow; if (!rid || seen.has(rid)) continue; seen.add(rid);
         const tried=((BSR_DRAFT.ship||{}).indicator_tried||{})[rid];
         if (bsxRowIndicator(BSR_DRAFT, rid) || (tried && tried.at===today) || done[k].composed.chart_removed) continue;
         BSR_DRAFT_STATE='Looking for a trend line for '+bsrRowTitle(rid)+'\u2026 a minute or so'; render();
         try { await bsxFindChart(L, '', true); } catch(e){ failed.push('trend line for '+bsrRowTitle(rid)+': '+e.message); } } }
-    if (keys.length===1) Object.keys(done).forEach(k=>{ BSR_PREV_OPEN[k]=true; });   // one story: open it for review
+    if (keys.length===1 && !opts.refresh) Object.keys(done).forEach(k=>{ BSR_PREV_OPEN[k]=true; });   // one story: open it for review
     BSR_DRAFT_STATE=failed.length ? 'Done '+Object.keys(done).length+' of '+(Object.keys(done).length+failed.length)+'. Not done: '+failed.join(' | ') : '';
   } catch(e){ BSR_DRAFT_STATE='Backstory failed: '+e.message; }
   finally {
@@ -5495,7 +5570,9 @@ async function bsxPatch(s, mutate){
     const g=await bsxGet(GH_DRAFT_OUT); const draft=g.data; if (!draft) return false;
     const d=(draft.stories||[]).find(x=>x.story_id===s.key); if (!d || !d.composed) return false;
     mutate(d.composed); bsxHold(d.composed, cur.bs_edits||{});   // an edit can make a weak page whole, or ship it anyway
-    Object.assign(d, {bs_hash:cur.bs_hash, bs_text_hash:cur.bs_text_hash, bs_edits_applied:cur.bs_edits||{}});
+    // an edit on a story that changed since its page was built does not make the page current: the check does (T-0122)
+    if (!bsxStoryChanged(d, cur)) Object.assign(d, {bs_hash:cur.bs_hash, bs_text_hash:cur.bs_text_hash, bs_story_hash:cur.bs_story_hash});
+    d.bs_edits_applied=cur.bs_edits||{};
     if (await bsxPut(GH_DRAFT_OUT, draft, g.sha, 'backstory: an edit from Pulse')){ BSR_DRAFT=draft; bsrRefreshHashes(); render(); return true; }
   }
   return false;
@@ -5506,8 +5583,22 @@ async function bsxPatch(s, mutate){
 // a workflow run (the editor, 2026-10-30). Anything that needs choosing (nudges, picks, removals) still runs.
 // A story that changed after the draft still shows what the draft chose, under a note: the old "Not filed"
 // text hid the draft's choice entirely (the editor, 2026-10-28).
+// T-0122, step two: what the change check did, said once. A page whose history may have moved offers the rebuild,
+// which is always the editor's choice.
 function bsrStaleNote(d){
-  return (d.fresh || d.editsPending) ? '' : `<div style="padding:6px 8px;margin-bottom:6px;background:#fbe8d0;font-size:12.5px"><b>This page was built before the story changed.</b> It will publish as it is, so \u201cWe are here\u201d may be a step behind the story. Rebuild it if the history itself moved.</div>`;
+  const ch=(d.composed||{}).change||null, box=(bg, html)=>`<div style="padding:6px 8px;margin-bottom:6px;background:${bg};font-size:12.5px">${html}</div>`;
+  const why=ch&&ch.why?' '+esc(ch.why):'';
+  const rebuild='<button class="mini bsc2-rebuild-changed" title="rebuild this page from the revised story">rebuild</button>';
+  if (ch && ch.moved) return box('#fbe8d0', `<b>The story changed after this page was built, and the history may have moved.</b>${why} It publishes as it is unless you rebuild. ${rebuild}`);
+  if (d.fresh || d.editsPending){
+    if (!ch) return '';
+    if (ch.here_updated) return box('#eef4e8', `<b>The story changed after this page was built.</b> \u201cWe are here\u201d updated to follow the story; the rest of the history holds.${why}`);
+    if (ch.editor_here) return box('#fbe8d0', `<b>The story changed after this page was built.</b> The history holds. Your own \u201cWe are here\u201d was left as you wrote it: check that it still fits.${why}`);
+    return '';
+  }
+  if (ch && ch.error) return box('#fbe8d0', `<b>This page was built before the story changed,</b> and the check against the story failed (${esc(ch.error)}). It publishes as it is. ${rebuild}`);
+  if (ch && ch.kept_because) return box('#fbe8d0', `<b>The story changed after this page was built.</b> The history holds, but the new \u201cWe are here\u201d broke a rule (${esc(ch.kept_because)}), so the old one stands and may be a step behind. Type your own, or ${rebuild}`);
+  return box('#fbe8d0', `<b>This page was built before the story changed.</b> ${SETTINGS.antKey?'Pulse checks it against the story on its own once the story stops changing; until then':'Until it is checked against the story (that needs the Anthropic key in \u2699)'} it publishes as it is, and \u201cWe are here\u201d may be a step behind. ${rebuild}`);
 }
 // ─── The review screen, to the contract (T-0114) ───────────────────────────────────────────────────────────────
 // One card per component, in the order the reader meets them. Doing nothing accepts. Modify: the editor's words,
@@ -5627,12 +5718,12 @@ function bsc2Wire(el, s){
   const box=el.querySelector('.bsc2'); if (!box) return;
   const running=bsrRunning();
   box.querySelectorAll('button').forEach(b=>{ if (running && !b.classList.contains('bsr-prev-close')){ b.disabled=true; b.title='A run is going; this is ready again when it finishes'; } });
-  const ready=()=>{ if ((bsrDraftFor(s)||{}).textFresh===false){ alert('This story changed since its Backstory was built. Rebuild from scratch.'); return false; } return true; };
+  // T-0122, step two: a changed story no longer refuses edits; bsxRun checks the page against the story first
   const revise=(comp, note, btn, force)=>{
     const e=bsEdits(s); e.modify=Object.assign({}, e.modify, {[comp]:note});
     e.removed=(e.removed||[]).filter(k=>k!==comp); saveLineup(); bscBusy(btn);     // revising a removed part brings it back
     if (comp==='chart'){ bsxChart(s, note); return; }
-    bsrRefreshHashes().then(()=>{ if (ready()) bsxRun([s.key], {modify:{[s.key]:{comp, note, force:!!force}}}); });
+    bsrRefreshHashes().then(()=>bsxRun([s.key], {modify:{[s.key]:{comp, note, force:!!force}}}));
   };
   // a document on the page becomes a milestone: the editor's direction, so it holds (one model call writes its line)
   box.querySelectorAll('.bsc2-to-m').forEach(b=>b.addEventListener('click',()=>{
@@ -5670,6 +5761,7 @@ function bsc2Wire(el, s){
   box.querySelectorAll('.bsc2-matrix').forEach(b=>b.addEventListener('click',()=>{
     const e=bsEdits(s); e.approved=Array.from(new Set((e.approved||[]).concat([b.dataset.id]))); saveLineup(); bscBusy(b);
     bsrRefreshHashes().then(()=>bsxRun([s.key], {refile:true})); }));
+  const rc=box.querySelector('.bsc2-rebuild-changed'); if (rc) rc.addEventListener('click',()=>{ bscBusy(rc); bsrRefreshHashes().then(()=>bsxRun([s.key], {build:true})); });
   const rb=box.querySelector('.bsc2-rebuild'); if (rb) rb.addEventListener('click',()=>{
     if (!confirm('Rebuild this story’s Backstory from scratch? Your notes and your own words are kept and applied; what you removed stays removed.')) return;
     bscBusy(rb); bsrRefreshHashes().then(()=>bsxRun([s.key], {build:true})); });
@@ -6573,6 +6665,7 @@ function render(){
   const root=document.getElementById('view');
   try { bsrEnsureRowList(); } catch(e){}                 // T-0113: the row suggestions both tabs share
   if (!BSR_DRAFT_LOADED && TAB==='lineup'){ BSR_DRAFT_LOADED=true; loadBsrDraft().then(d=>{ if (d) render(); }); }   // its draft chips
+  if (BSR_DRAFT && TAB==='lineup') bsrRefreshHashes();       // T-0122: a story revised here is checked against its page
   document.getElementById('notesBadge').textContent = NOTES.items.length ? ' '+NOTES.items.length : '';
   document.getElementById('tab-stream').classList.toggle('on', TAB==='stream');
   document.getElementById('tab-lineup').classList.toggle('on', TAB==='lineup');
