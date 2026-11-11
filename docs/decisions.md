@@ -536,6 +536,16 @@ the editor's revise on the chart searches again with their words. A line is show
 checked on the publisher's page (prod's rule); one per row, shared by every story on it. Cost: one search per
 new row.
 
+**A built Backstory is never stripped from a digest story (2026-11-10, T-0122).** On 2026-11-10 the editor
+revised one story's Truths from an imported report and republished. Publish compared fingerprints, found the story
+had changed since its page was built, and shipped it with no Backstory: the page the editor had built by hand.
+The editor: "backstory didn't need to substantively change … stripping out backstory from a digest item is never
+ok." The T-0114 rule ("a story changed since it was built ships no Backstory") is withdrawn. A built page ships
+as last built; rebuilding is the editor's choice. The accepted cost: "We are here" can be a step behind a story
+edited just before publish. The rule is narrow by the editor's choice the same day: it protects a page that was
+built. A first build the system itself judges weak may still be held until the editor ships it (T-0117), and a
+story never built still ships none. Next: Pulse should judge a change itself and refresh "We are here" alone.
+
 ## Open questions, not defaults
 
 These are genuinely unresolved. Don't assume either way.
