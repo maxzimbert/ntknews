@@ -1,7 +1,7 @@
 ---
 id: T-0121
 title: Local news on /today is from outlets in the reader's city, about that city, from the last two days, or it is not shown
-status: BUILT
+status: VERIFIED
 tags: [digest, defect]
 anchor: netlify/functions/news.js:152
 ---
@@ -59,6 +59,9 @@ Built 2026-11-10 on branch `T-0121-local-news`:
   unknown (possibly its paywall).
 - Tulsa: nothing, which is how the suggester gap was found. Fixed as above.
 - An old-style request from a dated edition gets an empty list.
+
+**Merged 2026-11-10 (PR 113) and checked against production the same day:** Los Angeles returns the LA Times,
+LAist and My News LA.
 
 **Unverified:** in a browser with real geolocation; any city outside the United States.
 
