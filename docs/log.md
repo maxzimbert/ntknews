@@ -11,6 +11,16 @@ funder memo, a hiring brief, or an explanation of how NTK works. Write for a
 stranger.
 
 ---
+## 2026-11-10 — "local news" was two filters, and neither one is local news
+
+The Today tab's local block asked EventRegistry two questions: articles from outlets based in the city, and
+articles tagged as about the city. For Los Angeles, Boise and Pittsburgh the first returned Variety,
+Breitbart and wire copy, and the second returned box scores and classified ads up to three weeks old.
+Asking both at once returned 2, 0 and 0. What worked was outlets based there whose text names the city.
+Two smaller lessons: `forceMaxDataTimeWindow` accepts only 7 or 31 and silently ignores anything else, so a
+"2" in the code read as a two-day window for months; and the app took the first location suggestion, which
+for Los Angeles is the county. Nothing had ever printed what a reader in a real city received (T-0121).
+
 ## 2026-11-09 — the headline length rule is broken by every headline
 
 The first voice review (T-0104) of the 2026-10-28 edition found 4 of 5 published headlines at 121-154
