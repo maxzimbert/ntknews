@@ -81,21 +81,38 @@ re-enable.
 Each story gets its own Backstory page, built and reviewed in Pulse before publish, to the contract at the top of
 `docs/backstory.md`. Ticket: T-0114 (it supersedes T-0109 and T-0113). Decisions: `docs/decisions.md`, 2026-11-02.
 
+**Since T-0123 (2026-11-17, on staging):** the page is no longer built at Generate Jefferson. Opus 5.5 proposes, the
+editor and Opus settle the proposal in a short conversation, and the editor presses Build. Publish stops while any
+story's proposal is unbuilt. The historian's method is `editorial/prompts/backstory-historian.md`, loaded by Pulse.
+
 ```
-  Pulse: Generate Jefferson  ──►  the story's Backstory builds itself (or "Build Backstory for every story")
-        │  bsxCompose: Haiku names the history; the library is shortlisted (matrix, approved candidates, this
-        │  story's research, and at most 10 items from the editor's Are.na library, T-0115); Sonnet writes the ten
-        │  components; each is checked against the contract and repaired once; the row is proposed from the story
-        │  and filed (the editor can type another: it moves only the shelf and the chart). A thin build (fewer
-        │  than 4 milestones) runs one web search on its gaps and rebuilds once. A row with no trend line gets
-        │  one search for one (once per row per day).
+  Pulse: Generate Jefferson  ──►  a proposal for the story, and only that (or "Propose for every story")
+        │  bspPropose: Haiku names the history; the library is shortlisted (matrix, approved candidates, research
+        │  finds, at most 10 items from the editor's Are.na library, T-0115); Opus 5.5 proposes category, contest,
+        │  It starts in, three to six beginnings (a year and a document each), up to two later documents, and one
+        │  line on what the library lacks. A beginning must name the words in the story it ties to (catTiesOk).
+        │  The row is filed from the category. Saved as d.proposal on the story's draft entry; no page (d.composed).
+        ▼
+  Pulse, the conversation (under each story's preview)
+        │  bspTurn: the editor's words, verbatim; one Opus call with web search (up to 3) answers in a sentence or
+        │  two and gives the proposal as it now stands; what changed is worked out from the two proposals. A web
+        │  find enters the proposal only if the search returned its link, it is not Wikipedia or a summary, and
+        │  news is from the 91 publishers; it never enters the Object Matrix or the research ledger. d.chat.
+        ▼  Build (the editor's button, or "Build every proposal")
+        │  bspBuild: Sonnet writes title, stakes, the beginning lines, We are here and the notes; the category,
+        │  contest, It starts in, beginnings and documents stay as agreed and are never repaired. A line that
+        │  breaks its rule is rewritten once more, then kept and flagged, never dropped. A row with no trend line
+        │  gets one search for one (once per row per day). A page built before proposals existed rebuilds the
+        │  old way (bsxCompose, with its thin-build search).
         ▼  saved to ntk-pulse/data/backstory-draft.json on the branch Pulse is served from, via the Contents API
+  Pulse, a story changed after its page was built: Haiku refreshes We are here alone (bsxRefreshHere), or says the
+        history moved and leaves the rebuild to the editor. Each draft entry records its cost by model (bsp_cost).
   Pulse, the review (under each story's preview)
         │  Direct the research (one web search, then re-choose the history) · results listed, any added to the
         │  page as found · revise one part by prompt · edit words · remove · also add to the Object Matrix.
         │  The editor's direction wins: what the editor directed is never repaired. All edits ride on the Lineup
         │  story (bs_edits) and are laid over every rebuild. Research writes editorial/research-ledger.json.
-        ▼  Publish (live Pulse only)
+        ▼  Publish (live Pulse only): stopped, with no way through, while any story's proposal is unbuilt (bspUnbuilt)
   pulse-publish.yml
      backstory_draft.py apply   each story ships the page built for it. A story that changed after its page
                                 was built ships that page as last built (T-0122); only a story never built

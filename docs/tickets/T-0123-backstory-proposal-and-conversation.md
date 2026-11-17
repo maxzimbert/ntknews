@@ -1,9 +1,9 @@
 ---
 id: T-0123
 title: Each story's Backstory starts as a proposal the editor settles in conversation with Opus in Pulse, then is built once
-status: DECIDED
+status: BUILT
 tags: [backstory, feature]
-anchor: ntk-pulse/pulse.html:3104
+anchor: ntk-pulse/pulse.html:5114
 ---
 
 ## What
@@ -52,6 +52,30 @@ this one is a stop.)
 Opus is the editor's choice for the proposal and the conversation: the scope is the part that has been failing,
 and its outputs are short. Its cost runs on every story every day; it is unmeasured, and the build session must
 report it.
+
+## Built (2026-11-17, branch `claude/t-0123-backstory-conversation-3ce370`, on staging only)
+
+Not on `main`; no PR until the editor has inspected it in staging Pulse.
+
+- `editorial/prompts/backstory-historian.md`: the historian's method, loaded by Pulse (`bspHistorian`), distilled from
+  the sources the brief names. The editor's newsletter files were read for method only and are not in the repo.
+- `ntk-pulse/pulse.html`, inside a new `/* BSX:BEGIN */ … /* BSX:END */` block: `BSX_OPUS` (`claude-opus-5-5`, effort
+  `high`; Opus 5.5 rejects thinking off, so `bsxModel` sends effort instead), `bspPropose`, `bspTurn`, `bspShape`,
+  `bspDiff`, `bspBuild`, `bspReline`, `bspUnbuilt`, `bsxRefreshHere`, the screen (`bspHtml`). `bsxRun` gained
+  `propose`, `turn` and `refresh`; `build` writes from the proposal when there is one. `generateStory` proposes.
+  `publishToDigest` stops on `bspUnbuilt` right after `todayPreflight`'s block, with an alert and no confirm.
+- Carried from the T-0117 branch, nothing else: the tie test at proposal and at Build; a milestone flagged, never
+  dropped (`bsxEnforce`, for every build); the changed-story refresh (`ab4a21fa`).
+- Warnings removed from the Backstory screens: thin, "outside the usual rule", paywall, build notes, the "will ship
+  without one" publish warning (now a stop). Kept: a link that does not load (new chip, from the pool's link status)
+  and the story changed since its page was built. The milestone flag is kept in the data (`b.flag`), not shown.
+- T-0114's check line on `generateStory` now requires a proposal and no build (dated in the check).
+
+Measured: `node scripts/test_pulse_conversation.js` passes all 14 lines with stand-in replies, and each line was
+seen to fail when the code it covers was broken (eleven mutations, 2026-11-17). Not measured: any real model reply,
+the real web search, or the cost of a real story; the editor's key is only in his browser. Prompt sizes measured from
+the code and the live pool (356 linked documents): a proposal is about 6,000 input tokens, a turn about 7,500 before
+search results. Each draft entry now records its own cost by model (`bsp_cost`), shown under the proposal.
 
 ## Check
 
