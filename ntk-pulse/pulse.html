@@ -4628,20 +4628,28 @@ const BSX_STOP=new Set(('the a an and or of to in on for by with from at as is w
 async function bsxModel(model, prompt, maxTok, tools){
   if (!SETTINGS.antKey) throw new Error('No Anthropic key: set it in ⚙');
   const think=model===BSX_OPUS ? {output_config:{effort:BSX_OPUS_EFFORT}} : {thinking:{type:model===BSX_SONNET?'between_tools':'disabled'}};
-  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
-    headers:{'Content-Type':'application/json','x-api-key':SETTINGS.antKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-    body:JSON.stringify({model:model,max_tokens:maxTok,...think,
-      ...(tools?{tools:tools}:{}),messages:[{role:'user',content:prompt}]})});
-  const d=await r.json();
-  if (d.error) throw new Error(d.error.message);
-  if (d.stop_reason==='refusal') throw new Error('Refused by the model');
-  let text=''; const urls=[];
-  (d.content||[]).forEach(b=>{
-    if (b.type==='web_search_tool_result' && Array.isArray(b.content)) b.content.forEach(x=>{ if (x.url) urls.push(x.url); });
-    if (b.type==='text'){ text+=b.text||''; (b.citations||[]).forEach(c=>{ if (c.url && !urls.includes(c.url)) urls.push(c.url); }); }
-  });
-  const u=d.usage||{};
-  return {text:text, urls:urls, usage:{input_tokens:u.input_tokens||0, output_tokens:u.output_tokens||0, searches:(u.server_tool_use||{}).web_search_requests||0, model:model}};
+  const messages=[{role:'user',content:prompt}];
+  let text='', usage={input_tokens:0, output_tokens:0, searches:0, model:model}; const urls=[];
+  // A turn with many web searches can pause (stop_reason "pause_turn"): send it back as it stands and the model carries
+  // on where it stopped. Eight continuations at most, so a runaway turn still ends.
+  for (let round=0; round<9; round++){
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':SETTINGS.antKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:model,max_tokens:maxTok,...think,
+        ...(tools?{tools:tools}:{}),messages:messages})});
+    const d=await r.json();
+    if (d.error) throw new Error(d.error.message);
+    if (d.stop_reason==='refusal') throw new Error('Refused by the model');
+    (d.content||[]).forEach(b=>{
+      if (b.type==='web_search_tool_result' && Array.isArray(b.content)) b.content.forEach(x=>{ if (x.url && !urls.includes(x.url)) urls.push(x.url); });
+      if (b.type==='text'){ text+=b.text||''; (b.citations||[]).forEach(c=>{ if (c.url && !urls.includes(c.url)) urls.push(c.url); }); }
+    });
+    const u=d.usage||{};
+    usage=bsxAddUsage(usage, {input_tokens:u.input_tokens||0, output_tokens:u.output_tokens||0, searches:(u.server_tool_use||{}).web_search_requests||0, model:model});
+    if (d.stop_reason!=='pause_turn') break;
+    messages.push({role:'assistant', content:d.content});
+  }
+  return {text:text, urls:urls, usage:usage};
 }
 // Two usages added, keeping the model and the web searches (T-0123 measures cost per story by model).
 function bsxAddUsage(a, b){ a=a||{}; b=b||{}; return {input_tokens:(a.input_tokens||0)+(b.input_tokens||0), output_tokens:(a.output_tokens||0)+(b.output_tokens||0),
@@ -4697,8 +4705,8 @@ function bsxLibrary(draft, ledger){
 // The documents worth showing the model: by `terms` (the history the story belongs to, named by Haiku: a story's
 // own words pulled the 1918 Fourteen Points speech for an Ohio poll that moved six points), rare words shared
 // with the headline, and everything already in the story's category.
-function bsxShortlist(lib, story, rowTitle, terms, k){
-  k=k||45; const ids=Object.keys(lib), f={}, docs={};
+function bsxShortlist(lib, story, rowTitle, terms, k, libCap){
+  k=k||45; libCap=libCap||10; const ids=Object.keys(lib), f={}, docs={};
   ids.forEach(i=>{ const o=lib[i]; f[i]={title:o.title.toLowerCase(), about:(o.about+' '+o.why).toLowerCase(), meta:[o.author,o.row,o.subgenre,(o.lenses||[]).join(' '),Array.from(o.categories).join(' ')].join(' ').toLowerCase()};
     docs[i]=new Set(bsxToks(f[i].title+' '+f[i].about+' '+f[i].meta)); });
   const df={}; ids.forEach(i=>docs[i].forEach(w=>{ df[w]=(df[w]||0)+1; }));
@@ -4714,7 +4722,7 @@ function bsxShortlist(lib, story, rowTitle, terms, k){
     return [s,i]; }).filter(x=>x[0]>0).sort((a,b)=>b[0]-a[0]);
   // at most 10 from the editor's library, so 3,000 clippings cannot crowd out the primary documents (T-0115)
   let nl=0;
-  return ranked.filter(x=>lib[x[1]].kind!=='library' || ++nl<=10).slice(0,k).map(x=>x[1]);
+  return ranked.filter(x=>lib[x[1]].kind!=='library' || ++nl<=libCap).slice(0,k).map(x=>x[1]);
 }
 async function bsxTerms(story, steer){
   const p=`A news story needs its history: the long argument it belongs to. Name that history as 8 to 14 short search terms for a library of primary documents (laws, court cases, treaties, speeches, reports): the specific acts, cases, institutions, events and general subjects a historian would look up. Use the common names ("Citizens United", "campaign finance", "Federal Election Campaign Act", "Knesset", "coalition government"). Not the story's own people or numbers.
@@ -5112,7 +5120,7 @@ function bspDiff(a, b){
   (a.later||[]).forEach(id=>{ if (!(b.later||[]).includes(id) && !bb[id]) out.push('dropped document: '+t(a, id)); });
   return out;
 }
-const BSP_SHAPE='JSON only: {"reply":"one or two sentences to the editor","category":"two to five words","contest":"Whether ...","starts":"YYYY","beginnings":[{"year":"YYYY","id":"a library id, or the id of a document already in the proposal","ties_to":"two to six words copied from the story","asked":false},{"year":"YYYY","found":{"title":"the document\'s exact title","author":"who issued or wrote it","year":"YYYY","source":"the archive or publisher","source_url":"the exact link the search returned","source_kind":"document | news","why_no_primary":"news only: why no primary source would do","evidence_quote":"one sentence copied from that page"},"ties_to":"...","asked":false}],"later":["up to two ids, or {\\"found\\":{...}}"],"lacks":"one line on what the library lacks for this history, or empty"}';
+const BSP_SHAPE='JSON only: {"reply":"one or two sentences to the editor","category":"two to five words","contest":"Whether ...","starts":"YYYY","beginnings":[{"year":"YYYY","id":"a library id, or the id of a document already in the proposal","ties_to":"two to six words copied from the story","asked":false},{"year":"YYYY","found":{"title":"the document\'s exact title","author":"who issued or wrote it","year":"YYYY","source":"the archive or publisher","source_url":"the exact link the search returned","source_kind":"document | news","why_no_primary":"news only: why no primary source would do","evidence_quote":"one sentence copied from that page"},"ties_to":"...","asked":false}],"later":["Objects beyond the documents of the beginnings: up to two ids, or {\\"found\\":{...}}"],"lacks":"one line on what the library lacks for this history, or empty"}';
 // One Opus call on a proposal: the first one (no prev, no message) or a turn of the conversation.
 function bspPrompt(method, story, lib, cands, prev, chat, rowNames, editorRow, message){
   const propDocs=prev?Object.values(prev.docs||{}).map(d=>'- '+d.id+' | '+d.year+' | '+(d.source_kind==='news'?'[NEWS REPORT] ':d.source_kind==='library'?'[EDITOR\'S LIBRARY] ':d.kind==='web'?'[FOUND ON THE WEB] ':'')+String(d.title).slice(0,110)+' | '+String(d.author||'').slice(0,50)).join('\n'):'';
@@ -5127,20 +5135,34 @@ RECENT CATEGORIES (prefer one that already exists at the right breadth): ${(rowN
 ${editorRow?'THE EDITOR FILED THIS STORY UNDER: '+editorRow+'. Keep that category unless the editor says otherwise.\n':''}
 THE LIBRARY (id | year | title | author | what it is). Look here first:
 ${bsxDocLines(cands, lib)}
-${prev?'\nDOCUMENTS ALREADY IN THE PROPOSAL (id | year | title | author):\n'+propDocs+'\n\nTHE PROPOSAL NOW: '+cur+'\n':''}${talk?'\nTHE CONVERSATION SO FAR:\n'+talk+'\n':''}${message?'\nTHE EDITOR NOW SAYS: '+message+'\n\nAnswer the editor in a sentence or two and give the whole proposal as it should now stand, changed as the editor asks. The editor\'s words win over every rule. Search the library first; use web search only when the library lacks the document an event needs, or the editor asks for one. A document you find on the web goes in as "found", with the exact link the search returned. Mark a beginning "asked": true only when the editor asked for it.':'\nPropose this story\'s Backstory: the one scope you judge best. The category, the contest, the year It starts in, three to six beginnings (each a year and the document that defends it, from the library), and up to two later documents. Then one line on what the library lacks for this history, or nothing. Put "reply" as an empty string.'}
+${prev?'\nDOCUMENTS ALREADY IN THE PROPOSAL (id | year | title | author):\n'+propDocs+'\n\nTHE PROPOSAL NOW: '+cur+'\n':''}${talk?'\nTHE CONVERSATION SO FAR:\n'+talk+'\n':''}${message?'\nTHE EDITOR NOW SAYS: '+message+'\n\nAnswer the editor in a sentence or two and give the whole proposal as it should now stand, changed as the editor asks. The editor\'s words win over every rule. Search the library first, including the [EDITOR\'S LIBRARY] items, which are the editor\'s own Are.na saves; use web search when the library lacks the document an event needs, or the editor asks for one. There is no limit on searches: when the editor asks you to find something, keep searching until you find it or are sure no such document exists, and say which. A document you find on the web goes in as "found", with the exact link the search returned. Mark a beginning "asked": true only when the editor asked for it.':'\nPropose this story\'s Backstory: the one scope you judge best. The category, the contest, the year It starts in, three to six beginnings (each a year and the document that defends it, from the library), and up to two more documents for the page\'s Objects (the case) beyond the documents of the beginnings. Then one line on what the library lacks for this history, or nothing. Put "reply" as an empty string.'}
 
 ${BSP_SHAPE}`;
 }
 // The conversation's one model call, and what it returns: the parsed answer, the links any search returned, usage.
 async function bspAsk(prompt, search){
-  return bsxAsk(BSX_OPUS, prompt, 16000, search?'the conversation':'the proposal', search?[{type:'web_search_20260209', name:'web_search', max_uses:3}]:null);
+  // No max_uses: the editor, 2026-11-17, after a turn stopped at three searches: "why is there a limit? I want you to do
+  // what I say." Each search costs $0.01 plus its results as Opus input; bsp_cost records every one.
+  return bsxAsk(BSX_OPUS, prompt, 16000, search?'the conversation':'the proposal', search?[{type:'web_search_20260209', name:'web_search'}]:null);
 }
 // The library shortlist for a proposal or a turn: Haiku names the history's search terms (the editor's words steer
 // them on a turn), then the library is ranked as for a build.
+// On a turn, the editor's Are.na library is also searched on its own with the editor's words, up to 15 more items
+// beyond the usual 10 (the editor, 2026-11-17: "make sure the search is able to look at my are.na files").
 async function bspCands(story, lib, steer, prev){
   const t=await bsxTerms(story, steer);
   const have=prev?(prev.objects||[]).filter(i=>lib[i]):[];
-  return {cands:Array.from(new Set(have.concat(bsxShortlist(lib, story, null, t.terms.concat(steer?[steer]:[]))))), usage:t.usage};
+  const terms=t.terms.concat(steer?[steer]:[]), main=bsxShortlist(lib, story, null, terms);
+  let arena=[];
+  if (steer){ const al={}; Object.keys(lib).forEach(i=>{ if (lib[i].kind==='library') al[i]=lib[i]; });
+    arena=bsxShortlist(al, {headline:steer, lede:''}, null, terms.concat(bsxToks(steer)), 15, 15); }
+  return {cands:Array.from(new Set(have.concat(main, arena))), usage:t.usage};
+}
+// The editor's Are.na library loads in the background when Pulse opens; a proposal or a turn waits for it, so it is
+// never searched before it has arrived.
+async function bspEnsureArena(){
+  if (ARENA) return;
+  try { const r=await fetch('data/arena-library.json'); if (r.ok) ARENA=await r.json(); } catch(e){}
 }
 // Generate Jefferson's Backstory step: the proposal, and only the proposal. Two calls: Haiku (search terms), Opus.
 async function bspPropose(story, lib, rowNames, editorRow){
@@ -5189,7 +5211,7 @@ Contest: ${prop.contest}
 It starts in: ${prop.starts}
 Beginnings (year | id | document | what it is):
 ${begs.map(b=>{ const o=lib[b.object_id]; return '- '+b.year+' | '+b.object_id+' | '+o.title.slice(0,110)+' | '+String(o.author||'').slice(0,50)+((o.about||o.why||o.evidence)?' | '+String(o.about||o.why||o.evidence).slice(0,220):''); }).join('\n')}
-Later documents: ${later.map(i=>i+' | '+lib[i].year+' | '+lib[i].title.slice(0,100)).join('; ')||'(none)'}
+Other Objects (documents beyond the beginnings'): ${later.map(i=>i+' | '+lib[i].year+' | '+lib[i].title.slice(0,100)).join('; ')||'(none)'}
 
 Write:
 - title: ${BSX_RULES.title}
@@ -5505,6 +5527,7 @@ async function bsxRun(keys, opts){
       let prev=(d0&&d0.composed&&d0.composed.v===2)?d0.composed:null;
       // T-0123: the proposal and the conversation. Neither touches the page; Build does.
       if (opts.propose || opts.turn){
+        await bspEnsureArena();
         const lib=bsxLibrary(draft||{stories:[]}, ledger), had=d0&&d0.proposal, chat=(d0&&d0.chat)||[];
         if (opts.propose){
           if (prev) continue;                                              // built: a regenerated story is checked, not re-proposed (T-0122)
@@ -5722,7 +5745,8 @@ function bspProposalHtml(p){
     +row('CONTEST', '<i>'+esc(p.contest||'(none)')+'</i>')
     +row('IT STARTS IN', esc(p.starts||'(none)'))
     +row('BEGINNINGS', (p.beginnings||[]).map(b=>`<div style="margin:3px 0"><b>${esc(b.year)}</b> ${bspDocHtml(p, b.object_id)}${b.ties_to?` <span style="font:11px sans-serif;color:var(--dim)">ties to “${esc(b.ties_to)}”</span>`:''}</div>`).join('')||'<i>none</i>')
-    +row('LATER', (p.later||[]).map(id=>`<div style="margin:3px 0"><b>${esc(((p.docs||{})[id]||{}).year||'')}</b> ${bspDocHtml(p, id)}</div>`).join('')||'<span style="color:var(--dim)">none</span>')
+    // Objects: every document on the page's case, the beginnings' own and the others (the editor, 2026-11-17: "name it Objects")
+    +row('OBJECTS', (p.objects||[]).slice().sort((a,b)=>String(((p.docs||{})[a]||{}).year).localeCompare(String(((p.docs||{})[b]||{}).year))).map(id=>`<div style="margin:3px 0"><b>${esc(((p.docs||{})[id]||{}).year||'')}</b> ${bspDocHtml(p, id)}${(p.beginnings||[]).some(b=>b.object_id===id)?'':' <span style="font:11px sans-serif;color:var(--dim)">not a beginning</span>'}</div>`).join('')||'<span style="color:var(--dim)">none</span>')
     +(p.lacks?`<div style="font-size:12px;color:var(--dim);margin-top:6px">What the library lacks: ${esc(p.lacks)}</div>`:'');
 }
 function bspChatHtml(chat){
