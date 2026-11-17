@@ -1,6 +1,6 @@
 {
  "_comment": "Started in Pulse (T-0113): stories filed under a row and built in the browser.",
- "generated": "2026-11-17T23:36:30.720Z",
+ "generated": "2026-11-17T23:45:13.007Z",
  "branch": "main",
  "stories": [
   {
@@ -33,33 +33,91 @@
    "status": "paired",
    "bsp_cost": {
     "claude-haiku-5-5": {
-     "input_tokens": 799,
-     "output_tokens": 148,
+     "input_tokens": 1703,
+     "output_tokens": 303,
      "searches": 0,
-     "calls": 1
+     "calls": 2
     },
     "claude-opus-5-5": {
-     "input_tokens": 5998,
-     "output_tokens": 2144,
-     "searches": 0,
-     "calls": 1
+     "input_tokens": 105792,
+     "output_tokens": 6545,
+     "searches": 3,
+     "calls": 2
     }
    },
    "proposal": {
     "v": 1,
     "category": "Air Traffic Control",
-    "contest": "Whether the country's air traffic control system needs a large new appropriation to be rebuilt quickly, or whether the FAA must first show it can spend and supervise the money Congress already gave it.",
+    "contest": "Whether the air traffic control system's failures call for a large new appropriation to rebuild it quickly, or whether the FAA must first restore the workforce and the accounting to supervise what Congress already gave it.",
     "starts": "2025",
-    "beginnings": [],
+    "beginnings": [
+     {
+      "year": "1981",
+      "object_id": "web-remarks-and-a-question-and-answer-sessio-1981-1yi3ohj",
+      "ties_to": "the air traffic control system",
+      "asked": true
+     },
+     {
+      "year": "2025",
+      "object_id": "web-letter-to-the-honorable-sean-duffy-secre-2025-1lyx5cn",
+      "ties_to": "an FAA thinned out by DOGE",
+      "asked": true
+     }
+    ],
     "later": [],
-    "objects": [],
-    "docs": {},
-    "lacks": "The library holds nothing on aviation or federal infrastructure, so no beginning is placed yet. The history needs the Federal Aviation Act of 1958, the Airline Deregulation Act of 1978, Reagan's August 1981 statement on the PATCO strike, the 2003 Vision 100 Act that created NextGen, and the 2025 law",
-    "at": "2026-11-17T23:36:30.364Z",
+    "objects": [
+     "web-remarks-and-a-question-and-answer-sessio-1981-1yi3ohj",
+     "web-letter-to-the-honorable-sean-duffy-secre-2025-1lyx5cn"
+    ],
+    "docs": {
+     "web-remarks-and-a-question-and-answer-sessio-1981-1yi3ohj": {
+      "id": "web-remarks-and-a-question-and-answer-sessio-1981-1yi3ohj",
+      "title": "Remarks and a Question-and-Answer Session With Reporters on the Air Traffic Controllers Strike",
+      "author": "Ronald Reagan",
+      "year": "1981",
+      "url": "https://www.reaganlibrary.gov/archives/speech/remarks-and-question-and-answer-session-reporters-air-traffic-controllers-strike",
+      "source": "Ronald Reagan Presidential Library and Museum",
+      "kind": "web",
+      "evidence": "If you actually fire these people, won't it put your air traffic control system in a hole for years to come, since you can't just cook up a controller in -- [inaudible]?",
+      "found_at": "2026-11-17T23:45:12.637Z"
+     },
+     "web-letter-to-the-honorable-sean-duffy-secre-2025-1lyx5cn": {
+      "id": "web-letter-to-the-honorable-sean-duffy-secre-2025-1lyx5cn",
+      "title": "Letter to the Honorable Sean Duffy, Secretary of Transportation, on FAA workforce reductions (March 3, 2025)",
+      "author": "Democratic Members, House Committee on Transportation and Infrastructure",
+      "year": "2025",
+      "url": "https://democrats-transportation.house.gov/imo/media/doc/ti_and_oversight_letter_to_faa.pdf",
+      "source": "House Committee on Transportation and Infrastructure, Democrats",
+      "kind": "web",
+      "evidence": "We are deeply concerned about recent actions taken by the Administration to indiscriminately reduce the size of the federal workforce and the effect of those actions on the federal employees who are critical to ensuring the safety of the national airspace system (NAS).",
+      "found_at": "2026-11-17T23:45:12.638Z"
+     }
+    },
+    "lacks": "The library holds nothing on aviation, and my search limit ran out before I found documents for four parts of the history. (1) The hiring and training shortfall, for which the DOT Inspector General's June 2023 report on controller staffing at critical facilities is the likely document. (2) The unack",
+    "at": "2026-11-17T23:44:18.813Z",
     "model": "claude-opus-5-5",
     "left_out": []
    },
-   "chat": [],
+   "chat": [
+    {
+     "role": "editor",
+     "text": "You need to find beginnings and objects. You can use the DOGE firings. You can use the inability to hire and train FAA operators. You can mention Reagan famously firing the union. You should include theories that this is a cyberattack that's being unacknowledged.",
+     "at": "2026-11-17T23:44:18.813Z"
+    },
+    {
+     "role": "historian",
+     "text": "I added two beginnings you asked for. Reagan's August 3, 1981 remarks on the strike come from the Reagan Library, and the March 2025 House Transportation Democrats' letter on the FAA purge covers the DOGE firings. My search tool hit its limit before I could find a document on controller hiring and training or one on the theory that this was an unacknowledged cyberattack, so neither is placed yet. Both are listed in lacks with the documents I would look for next.",
+     "changed": [
+      "contest rewritten",
+      "added beginning 1981: Remarks and a Question-and-Answer Session With Reporters on the Air Tr",
+      "added beginning 2025: Letter to the Honorable Sean Duffy, Secretary of Transportation, on FA"
+     ],
+     "dropped": [],
+     "searched": 3,
+     "at": "2026-11-17T23:45:12.639Z",
+     "model": "claude-opus-5-5"
+    }
+   ],
    "proposal_story_hash": "91654e67b603bc658e7ba0716f2145f8c680b59c5d7da2baff809e0094f86b0e"
   }
  ],
@@ -77,7 +135,7 @@
     "provisional": true
    }
   ],
-  "pairings_generated": "2026-11-17T23:36:30.720Z",
+  "pairings_generated": "2026-11-17T23:45:13.007Z",
   "provisional_rows": [
    {
     "id": "p-ai",
