@@ -18,18 +18,19 @@ settled before the prose is written, and no conversation. Pulse uses `BSX_SONNET
 
 Wanted, the first ship:
 
-1. At Generate Jefferson, each story gets a **proposal**: category, It starts in, three to six beginnings (year and
-   document), objects, and one line on what the library lacks. Written by Opus 5.5. A first page is built from it at
-   once, so every story has a Backstory.
+1. At Generate Jefferson, each story gets a **proposal**, and only the proposal: category, contest (one "Whether"
+   sentence), It starts in, three to six beginnings (year and document), objects. Under it, one line on what the
+   library lacks. Written by Opus 5.5. No page is written until Build.
 2. Under the proposal, a **conversation** with Opus 5.5. Each turn changes the proposal and says what it changed.
    It searches the library first and the web when needed; what it finds goes into the proposal, never into the
    Object Matrix.
 3. Its method comes from a committed prompt file, `editorial/prompts/backstory-historian.md`, loaded by Pulse.
-4. **Build** rewrites the page from the settled proposal (Sonnet 5.5 for the prose).
-5. The conversation is saved with the draft and survives a reload.
-6. Carried from the T-0117 branch, nothing else: a beginning must connect to the story; a beginning is never
+4. **Build** writes the page from the settled proposal, keeping what was agreed (Sonnet 5.5 for the prose).
+5. **Publish stops** while any story's proposal is unbuilt, naming each one, with no click-through.
+6. The conversation is saved with the draft and survives a reload.
+7. Carried from the T-0117 branch, nothing else: a beginning must connect to the story; a beginning is never
    dropped over sentence length; a changed story refreshes We are here alone.
-7. Two warnings only: a link that does not load, and the story changed since its page was built.
+8. Two warnings only: a link that does not load, and the story changed since its page was built.
 
 ## Why
 
@@ -42,8 +43,11 @@ the judgment where it belongs, before the prose is written.
 Ruled out: T-0117 and T-0118 (holds, verdicts, Ship anyway, three scopes, punch-up picks). The editor: "we've
 overengineered the warnings." Their reasoning stays in those tickets.
 
-Ruled out: a proposal with no page until Build. The editor: "there's no publish with no backstory. Pulse builds
-backstory when Jefferson is generated." The cost is a second build on a story the editor discusses.
+Ruled out: building a first page at Generate Jefferson, beside the proposal. Proposed and corrected the same day; the
+editor: "that's what proposal builds. We hash it out in chat. And then you build off the agreed upon chat." Instead,
+publish stops until every proposal is built, as the editor put it, "much in the same way publish cannot proceed if
+there is no image on a story or there are too few stories." (In today's code those two are click-through warnings;
+this one is a stop.)
 
 Opus is the editor's choice for the proposal and the conversation: the scope is the part that has been failing,
 and its outputs are short. Its cost runs on every story every day; it is unmeasured, and the build session must
@@ -61,13 +65,14 @@ for gone in "Ship anyway" "held: weak"; do
 done
 out=$(node scripts/test_pulse_conversation.js) || { echo "OPEN: the conversation tests fail"; exit 1; }
 for want in \
-  "proposal: Generate Jefferson leaves every story with a proposal and a page built from it" \
-  "proposal: holds a category, It starts in, beginnings, objects and what the library lacks" \
+  "proposal: Generate Jefferson leaves every story with a proposal and no page" \
+  "proposal: holds a category, a contest, It starts in, beginnings and objects" \
+  "publish: an unbuilt proposal stops the publish, with no way through" \
   "proposal: written by the conversation model, Opus" \
   "chat: a turn changes the proposal and says what it changed" \
   "chat: a document found on the web joins the proposal and not the Object Matrix" \
   "chat: the conversation survives a reload" \
-  "build: Build writes the page from the settled proposal" \
+  "build: Build writes the page from the settled proposal and keeps what was agreed" \
   "build: a beginning that names nothing in the story is not placed" \
   "build: a beginning is never dropped for its sentence length" \
   "change: a revised story refreshes We are here and keeps the beginnings" \

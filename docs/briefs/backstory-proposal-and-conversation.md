@@ -25,20 +25,26 @@ due to scoping issues or library issues. But I don't think we have solved that y
 
 Settle the scope and the library **in conversation**, in Pulse, then build the page once.
 
-1. **Generate Jefferson makes a proposal for each story and builds a first page from it.** Every story has a
-   Backstory from that moment on: the editor, 2026-11-17, "there's no publish with no backstory. Pulse builds
-   backstory when Jefferson is generated." The proposal is one scope, the best shot, in this order:
+1. **Generate Jefferson makes a proposal for each story, and only the proposal.** No page is written yet. The
+   editor, 2026-11-17: "that's what proposal builds. We hash it out in chat. And then you build off the agreed upon
+   chat." The proposal is one scope, the best shot, in this order:
    - **Category** (the row), as categories work today;
+   - **Contest**: one sentence beginning "Whether", the argument this history is about. It is what the
+     beginnings must lead to. Added by the editor 2026-11-17: the category is only a shelf and does not shape
+     the page, so without the contest the proposal would settle milestones without settling the question;
    - **It starts in**: a year;
-   - **Beginnings**: three to six, each a year and the document that defends it, no prose;
-   - **Objects**: the documents in the case, beginnings' documents plus up to two later ones;
-   - **What the library lacks**: one line, or nothing.
+   - **Beginnings** (the milestones; one list, two names): three to six, each a year and the document that
+     defends it, no prose;
+   - **Objects**: the documents in the case, beginnings' documents plus up to two later ones.
+
+   Under it, not part of what is agreed: one line on what the library lacks, or nothing.
 2. **A conversation sits under each proposal.** The editor says what is off. Each turn, the assistant answers in
    a sentence or two and changes the proposal. The proposal on screen is always the current state, so the editor
    reads it, not the transcript. "As many chats as it takes to complete the conversation to get backstory right."
 3. **The editor presses Build** when the proposal is settled ("I decide; button I press is fine"). The page is
-   rewritten from the settled proposal: title, contest, stakes, chart, beginning lines, We are here, the notes
-   on each document.
+   written from the settled proposal, with the agreed category, contest, It starts in, beginnings and objects
+   kept as agreed. Build writes the rest: title, stakes, chart, the beginning lines, We are here, the notes on
+   each document.
 4. **After Build**, the editor line edits directly, and directs research and changes. In the first ship that is
    today's controls. In the second, the same conversation carries on after Build and replaces them.
 
@@ -46,6 +52,17 @@ Settle the scope and the library **in conversation**, in Pulse, then build the p
 is most spent (2026-11-10). A good first proposal, accepted by doing nothing, is the main way this saves time. The
 editor expects some back and forth on scope, beginnings and objects; that is the point of the conversation, not a
 failure of it.
+
+**Publish cannot proceed while any story's proposal is unbuilt.** The editor, 2026-11-17: "publish cannot proceed
+if a proposal is unbuilt, much in the same way publish cannot proceed if there is no image on a story or there are
+too few stories in the digest or too many." Build it as a hard stop in `publishToDigest`, beside `todayPreflight`'s
+block, naming each unbuilt story, with no way to click through. Note: in today's code a missing image and a story
+count outside the range are **warnings the editor can click through** (`publishPreflight` feeds a `confirm`), not
+stops. The editor's words describe a stop, and that is what the Backstory rule is. Do not change the image or count
+rules in this work; the editor has been told they are overridable today.
+
+`editorial/backstory_draft.py` keeps its fallback (an unbuilt story ships no Backstory) for a publish that does not
+come through Pulse, and T-0122's rule (a built page is never stripped) is unchanged.
 
 ## The assistant in the conversation
 
@@ -92,8 +109,9 @@ comes up often, "our conversations and proposal work can ensure there's variety 
 
 ## Rules carried over
 
-- **Every story has a Backstory, always.** A story can change without its Backstory changing, and usually will.
-  A built page is never stripped at publish (T-0122, on `main`).
+- **Every story has a Backstory, always.** Publish is stopped until every proposal is built (above). A story can
+  change without its Backstory changing, and usually will. A built page is never stripped at publish (T-0122, on
+  `main`).
 - **When a story changes after its page was built**, Haiku reads the page against the revised story and
   refreshes We are here alone, leaving the rest. If the history itself moved, it says so in one line; rebuilding
   is the editor's choice. This was built on the T-0117 branch (commit `ab4a21fa`); take it from there.
@@ -128,7 +146,7 @@ are replaced by the conversation.
 
 Measure and report; do not guess. Look up current prices for Opus 5.5, Sonnet 5.5 and Haiku 5.5 before reporting.
 
-- **Every story, every day:** one Opus proposal plus today's build calls.
+- **Every story, every day:** one Opus proposal, then one Build.
 - **Each conversation turn:** one Opus call, plus a web search when one runs.
 - **Build:** one or two Sonnet calls.
 - **A changed story:** one Haiku call.

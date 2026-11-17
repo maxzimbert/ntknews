@@ -548,10 +548,11 @@ story never built still ships none. Next: Pulse should judge a change itself and
 
 **Backstory is settled in conversation, then built once (2026-11-17, T-0123).** The editor: "we've overengineered the
 warnings on backstory … we are on the right track that backstory production falls apart due to scoping issues or
-library issues. But I don't think we have solved that yet." At Generate Jefferson, Opus 5.5 proposes one scope (category,
-It starts in, beginnings, objects, what the library lacks) and a first page is built from it, so every story has a
-Backstory. Under each proposal the editor and Opus talk it through, as many turns as it takes; each turn changes the
-proposal. The editor presses Build and the page is rewritten from what was settled. Opus reasons as a historian at full
+library issues. But I don't think we have solved that yet." At Generate Jefferson, Opus 5.5 proposes one scope, and only that: category,
+contest, It starts in, beginnings, objects. No page is written yet. Under each proposal the editor and Opus talk it through, as many turns as it takes; each turn changes the
+proposal. The editor presses Build and the page is written from what was settled.
+Publish cannot proceed while any proposal is unbuilt: a hard stop, unlike the image and story-count warnings, which
+today can be clicked through. This reverses Backstory's standing as additive and never blocking a publish. Opus reasons as a historian at full
 strength ("god mode") but cannot place a document that has not been fetched, and the editor's words still win. T-0117
 (three scopes, self-review, holds, Ship anyway) and T-0118 (picks) are discarded. Warnings are two: a dead link, and a
 story changed since its page was built. Categories stay as they are, with a standing instruction to look at recent ones
