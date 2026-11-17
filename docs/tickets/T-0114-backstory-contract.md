@@ -105,7 +105,10 @@ for k in ('row', 'title', 'contest', 'stakes', 'starts', 'milestones', 'here', '
 if 'rowTitle' in fn(s, 'bsxShortlist').split('ranked=ids.map')[1].split('.filter(')[0].replace('rowTitle, terms', ''):
     bad.append("the shortlist lifts the row's own documents")
 if re.search(r'function bsxTerms\([^)]*row', s): bad.append('the history search terms are shaped by the row')
-if 'bsxRun([story.key], {build:true})' not in fn(s, 'generateStory'): bad.append('Generate Jefferson does not build the Backstory')
+# 2026-11-17 (T-0123, the editor's decision): Generate Jefferson proposes the Backstory and writes no page; the editor
+# presses Build. This line used to require bsxRun([story.key], {build:true}) in generateStory.
+gs = fn(s, 'generateStory')
+if 'bsxRun([story.key], {propose:true})' not in gs or '{build:true}' in gs: bad.append('Generate Jefferson does not propose the Backstory, or builds it')
 # The editor's direction wins
 rv = fn(s, 'bsxRevise')
 if 'the note wins' not in rv or 'delete P[comp]' not in rv: bad.append("a revise does not put the editor's note above the rules")
