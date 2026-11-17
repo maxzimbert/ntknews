@@ -1,7 +1,7 @@
 ---
 id: T-0118
 title: Pulse's Backstory review says which pages need the editor and offers picks, the way punch up does
-status: DECIDED
+status: DISCARDED
 tags: [pulse, feature]
 anchor: ntk-pulse/pulse.html:5300
 ---
@@ -53,6 +53,12 @@ Ruled out: new free-text controls. Direct the research, revise by prompt, edit w
 exist and stay as they are.
 
 The action log is here because the brief's measure, editor decisions per page, cannot be taken without it.
+
+
+## Discarded, 2026-11-17
+
+Never built. Replaced by the conversation in T-0123: instead of up to three picks per part, the editor says what is off
+and the proposal changes. The action log (item 6) is not carried over; T-0120 can take it up if needed.
 
 ## Check
 

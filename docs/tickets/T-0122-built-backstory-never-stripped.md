@@ -30,7 +30,8 @@ Built 2026-11-10 on branch `T-0122-backstory-never-stripped`:
 
 Run against the real Lineup and draft on `main`: 7 of 7 ship.
 
-**Not built here**, handed to the T-0117 work because it changes the same functions: when a story changes,
+**Not built here.** Built on the T-0117 branch (commit `ab4a21fa`) and carried into T-0123 when T-0117 was
+discarded (2026-11-17): when a story changes,
 Pulse judges whether its page still holds and refreshes "We are here" alone, at the cost of one small call
 per changed story. Until then a page can ship with a "We are here" one step behind its story.
 

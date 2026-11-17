@@ -1,5 +1,7 @@
 # Brief for Opus 5.5: Backstory that decides for the editor
 
+**Superseded 2026-11-17** by `docs/briefs/backstory-proposal-and-conversation.md`. T-0117 and T-0118 are discarded. Kept for the evidence of 2026-11-10.
+
 Written 2026-11-10 from a scoping conversation with the editor. Read `CLAUDE.md` first; it wins over this
 file. Then the contract at the top of `docs/backstory.md`, and `docs/architecture.md`, section "Backstory:
 build, review, publish". The history of what was tried is in `docs/briefs/fable-5-2-backstory-and-local-news.md`.

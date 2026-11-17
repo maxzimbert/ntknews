@@ -1,0 +1,40 @@
+---
+id: T-0124
+title: After Build, the same Backstory conversation carries on and replaces Direct the research and revise by prompt
+status: DECIDED
+tags: [backstory, feature]
+anchor: ntk-pulse/pulse.html:5300
+---
+
+## What
+
+The second ship of `docs/briefs/backstory-proposal-and-conversation.md`. Starts only after the editor has inspected
+T-0123 on staging.
+
+After T-0123, a built page still has today's three controls (`bsc2Html`): Direct the research, revise one part by
+prompt, edit words. Wanted: the conversation that settled the proposal carries on under the built page, and asking
+in it does what the first two controls did (research, then re-choose; revise a named part). Edit words stays as it
+is. Then the first two controls are removed.
+
+## Why
+
+The editor, 2026-11-17: "It's one conversation before and, perhaps, one after. As many chats as it takes to complete
+the conversation to get backstory right." One place to talk about a page, instead of three controls with
+different reaches, is simpler to use and to keep. Split from T-0123 so the editor can inspect the proposal and
+conversation sooner.
+
+## Check
+
+```sh
+[ -f scripts/test_pulse_conversation.js ] || { echo "OPEN: scripts/test_pulse_conversation.js does not exist"; exit 1; }
+out=$(node scripts/test_pulse_conversation.js) || { echo "OPEN: the conversation tests fail"; exit 1; }
+for want in \
+  "after: asking for research after Build searches and re-chooses the beginnings" \
+  "after: asking to change one part after Build changes that part alone" \
+  "after: the conversation before and after Build is one thread"
+do
+  echo "$out" | grep -qF "ok   $want" || { echo "OPEN: no passing test: $want"; exit 1; }
+done
+grep -q "DIRECT THE RESEARCH" ntk-pulse/pulse.html && { echo "OPEN: Direct the research is still a separate control"; exit 1; }
+exit 0
+```

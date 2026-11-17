@@ -1,7 +1,7 @@
 ---
 id: T-0117
 title: The Backstory build chooses a scope, tests that each milestone connects, reviews its own page, and holds a weak one
-status: DECIDED
+status: DISCARDED
 tags: [backstory, feature]
 anchor: ntk-pulse/pulse.html:4806
 ---
@@ -61,6 +61,17 @@ The editor's words still win: nothing the editor directed, typed or picked is re
 Cost: one more Sonnet call per story, about seven a day. Item 4 should cut searches. Whether the total is
 flat is unverified; measure it on the fixtures, three builds each (the 2026-10-09 lesson: one run cannot
 separate a change from run-to-run difference).
+
+
+## Discarded, 2026-11-17
+
+Built on branch `claude/t-0117-backstory-build-decides-3d1bae` and merged into `staging` only; never on `main`. The
+editor, inspecting the direction on 2026-11-17: "we've overengineered the warnings on backstory. I think backstory
+broadly might be too complex now." Replaced by T-0123 (a proposal settled in conversation, then one build). Three
+pieces carry over into T-0123 and nothing else: a beginning must connect to the story, a beginning is never dropped
+over sentence length, and a changed story refreshes We are here alone. The holds, verdicts, Ship anyway and the three
+scopes do not come back. The reasoning above is kept because the measurements of 2026-11-10 still describe the
+problem.
 
 ## Check
 
