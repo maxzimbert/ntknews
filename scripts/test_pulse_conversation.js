@@ -32,6 +32,9 @@ const POOL = { objects: [
   doc('m-humphrey', 1978, 'Full Employment and Balanced Growth Act', 'U.S. Congress', 'A federal law that gave the Federal Reserve goals for both employment and stable prices.'),
 ] };
 const POOL_BEFORE = JSON.stringify(POOL);
+// the editor's Are.na library: twelve items the story's terms match, and one only the editor's words reach
+const ARENA_FILE = { objects: Array.from({ length: 12 }, (_, k) => ({ id: 'arena-stock-' + k, title: 'The STOCK Act at ten, part ' + (k + 1), source: 'apnews.com', url: 'https://apnews.com/stock-' + k, year: '2022', channels: ['Congress'] }))
+  .concat([{ id: 'arena-spouses', title: 'Spouses and their trading accounts in the House', source: 'politico.com', url: 'https://www.politico.com/spouses', year: '2021', channels: ['Congress'] }]) };
 const S1 = { key: 's1', title: 'Senate votes to ban stock trading by members of Congress', headline: 'Senate votes to ban stock trading by members of Congress',
   lede: 'Members of Congress and their spouses could no longer trade individual stocks.',
   truth: 'The Senate voted on Tuesday to ban members of Congress and their spouses from trading individual stocks. Supporters said the STOCK Act of 2012 had failed to stop insider trading by lawmakers. The ban now goes to the House.' };
@@ -43,7 +46,7 @@ const LONG = 'Congress passed a sweeping law after the Watergate scandal that re
 const FOUND_URL = 'https://www.govinfo.gov/content/pkg/CRPT-117hrpt/stock-trading-report.pdf';
 const WIKI_URL = 'https://en.wikipedia.org/wiki/STOCK_Act';
 const EDITOR_SAYS = 'Reach back to the 1962 bribery law,  and the contest should be: Who polices lawmakers\u2019 trades?';
-const EDITOR_SAYS_2 = 'Find the House report on stock trading by members of Congress.';
+const EDITOR_SAYS_2 = 'Find the House report on stock trading by members of Congress, and look in my Are.na for spouses trading accounts.';
 const replies = {
   terms: () => ({ terms: ['STOCK Act', 'congressional ethics', 'Ethics in Government Act', 'conflicts of interest', 'Federal Reserve'] }),
   proposeS1: () => ({ reply: '', category: 'Congressional ethics', contest: 'Whether members of Congress can be trusted to police their own conflicts of interest, or whether outside rules must bind them.',
@@ -110,7 +113,11 @@ function world(gh) {
       const body = JSON.parse(init.body); calls.push(body);
       if (body.thinking && body.thinking.type === 'disabled' && body.model === 'claude-opus-5-5') return resp(200, { error: { message: 'thinking disabled is not supported on this model' } });
       const j = route(body), search = (body.tools || []).some(t => t.name === 'web_search');
-      const content = (search ? [{ type: 'web_search_tool_result', content: [{ url: FOUND_URL }, { url: WIKI_URL }] }] : []).concat([{ type: 'text', text: JSON.stringify(j) }]);
+      // the second turn's search runs long: the API pauses it once (pause_turn) after the first search, and Pulse must carry on
+      if (search && /Find the House report/.test(body.messages[0].content) && body.messages.length === 1)
+        return resp(200, { content: [{ type: 'web_search_tool_result', content: [{ url: FOUND_URL }] }], stop_reason: 'pause_turn', usage: { input_tokens: 9000, output_tokens: 100, server_tool_use: { web_search_requests: 1 } } });
+      const paused = body.messages.length > 1;      // the continuation: only what this round searched
+      const content = (search ? [{ type: 'web_search_tool_result', content: paused ? [{ url: WIKI_URL }] : [{ url: FOUND_URL }, { url: WIKI_URL }] }] : []).concat([{ type: 'text', text: JSON.stringify(j) }]);
       return resp(200, { content, stop_reason: 'end_turn', usage: { input_tokens: 9000, output_tokens: 700, server_tool_use: search ? { web_search_requests: 1 } : undefined } });
     }
     const gm = url.match(/^https:\/\/api\.github\.com\/repos\/[^/]+\/[^/]+\/contents\/([^?]+)/);
@@ -123,12 +130,13 @@ function world(gh) {
     }
     if (url.startsWith('../editorial/prompts/')) return resp(200, fs.readFileSync(path.join(root, url.slice(3).split('?')[0]), 'utf8'));
     if (url.startsWith('data/provisional-rows.json')) return resp(200, { rows: [] });
+    if (url.startsWith('data/arena-library.json')) return resp(200, ARENA_FILE);
     throw new Error('unexpected fetch ' + url);
   }
   const LINEUP = [Object.assign({ packages: { truths: S1.truth }, backstoryRow: '', bsEdits: {} }, S1), Object.assign({ packages: { truths: S2.truth }, backstoryRow: '', bsEdits: {} }, S2)];
   const rows = [{ id: 'p-congressional-ethics', title: 'Congressional ethics' }];
   const env = {
-    ...CATS, fetch, console, setTimeout, clearTimeout, LINEUP, POOL, BSR_PUBLISHED: { rows: [] }, ARENA: { objects: [] }, PUBCATS: [], CAT_STYLE_RULES: '',
+    ...CATS, fetch, console, setTimeout, clearTimeout, LINEUP, POOL, BSR_PUBLISHED: { rows: [] }, ARENA: null, PUBCATS: [], CAT_STYLE_RULES: '',
     SETTINGS: { antKey: 'stand-in', ghToken: 'stand-in' }, location: {}, pulseBranch: () => 'staging', GH_REPO: 'maxzimbert/ntknews', GH_DRAFT_OUT: 'ntk-pulse/data/backstory-draft.json',
     TAB: 'backstory', BSR_DRAFT: null, BSR_DRAFT_STATE: '', BSR_PREV_OPEN: {}, BSX_LED: null,
     window: { addEventListener() {} }, document: { createElement: () => { let h = ''; return { set innerHTML(v) { h = String(v || ''); }, get textContent() { return h.replace(/<[^>]+>/g, ' '); } }; } },
@@ -187,17 +195,23 @@ const GH = { 'editorial/research-ledger.json': { data: JSON.parse(JSON.stringify
   await w.L.bsxRun(['s1'], { turn: { s1: { message: EDITOR_SAYS_2 } } });
   e = w.entry('s1'); last = e.chat.slice(-1)[0];
   const found = Object.values(e.proposal.docs).find(d => d.url === FOUND_URL);
-  const turnCall = w.calls.slice(callsBefore).find(c => c.model === 'claude-opus-5-5');
+  const turnCalls = w.calls.slice(callsBefore).filter(c => c.model === 'claude-opus-5-5'), turnCall = turnCalls[0];
+  check('chat: the web search has no cap, and a turn the API pauses carries on without losing what it found',
+    (turnCall.tools || []).every(t => t.max_uses === undefined) && turnCalls.length === 2 && turnCalls[1].messages.length === 2 && turnCalls[1].messages[1].role === 'assistant'
+    && w.entry('s1').chat.slice(-1)[0].searched === 2, { tools: turnCall.tools, rounds: turnCalls.map(c => c.messages.length) });
   check('chat: a document found on the web joins the proposal and not the Object Matrix',
     !!found && found.kind === 'web' && e.proposal.later.includes(found.id) && !Object.values(e.proposal.docs).some(d => d.url === WIKI_URL)
     && last.dropped.length === 2 && last.dropped.some(x => /wikipedia/.test(x.reason)) && last.dropped.some(x => /not one the search returned/.test(x.reason))
-    && (turnCall.tools || []).some(t => t.type === 'web_search_20260209') && last.searched === 1
+    && (turnCall.tools || []).some(t => t.type === 'web_search_20260209')
     && JSON.stringify(GH['editorial/research-ledger.json'].data) === ledgerBefore && JSON.stringify(POOL) === POOL_BEFORE && !JSON.stringify(e.proposal).includes('approved_by'),
     { found, last, ledgerChanged: JSON.stringify(GH['editorial/research-ledger.json'].data) !== ledgerBefore });
   // a reload: a fresh Pulse reads the branch's draft again
   w = world(GH);
   const reread = (await w.L.bsxGet('ntk-pulse/data/backstory-draft.json')).data, re1 = reread.stories.find(d => d.story_id === 's1');
   const page = w.L.bspHtml({ key: 's1' }, re1);
+  const pp = opusCalls[0].messages[0].content, tp = turnCall.messages[0].content, nA = (t) => (t.match(/- arena-/g) || []).length;
+  check("chat: the editor's Are.na library is loaded before any proposal, and a turn searches it with the editor's words",
+    nA(pp) > 0 && nA(pp) <= 10 && tp.includes('- arena-spouses |') && nA(tp) > 10, { proposal: nA(pp), turn: nA(tp), spouses: tp.includes('arena-spouses') });
   check('chat: the conversation survives a reload',
     re1.chat.length === 4 && re1.chat[0].text === EDITOR_SAYS && re1.chat[2].text === EDITOR_SAYS_2 && page.includes('Who polices lawmakers\u2019 trades?')
     && page.includes(w.env.esc(EDITOR_SAYS)) && page.includes('Stock Trading by Members of Congress') && page.includes('bsp-send') && page.includes('bsp-build'), { chat: re1.chat });
