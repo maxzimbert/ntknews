@@ -1,6 +1,6 @@
 {
  "_comment": "Started in Pulse (T-0113): stories filed under a row and built in the browser.",
- "generated": "2026-11-18T00:11:47.135Z",
+ "generated": "2026-11-18T00:16:47.516Z",
  "branch": "main",
  "stories": [
   {
@@ -10,7 +10,7 @@
     "story_id": "0129ad58649038c8",
     "headline": "Nvidia Lost $700 Billion in Market Value in a Week, Then Posted $115.8 Billion in Quarterly Sales. The Board Still Said No to Jensen Huang.",
     "row": "p-chip-export-controls",
-    "line": "",
+    "line": "Today Nvidia's board refused to reinstate Jensen Huang as chief executive even as Washington's officials split over his return and pressed investigations into Megaspeed and chip diversion.",
     "subgenre": null,
     "confidence": 1,
     "source": "editor",
@@ -43,6 +43,12 @@
      "output_tokens": 12669,
      "searches": 18,
      "calls": 2
+    },
+    "claude-sonnet-5-5": {
+     "input_tokens": 7881,
+     "output_tokens": 1679,
+     "searches": 0,
+     "calls": 3
     }
    },
    "proposal": {
@@ -183,7 +189,8 @@
     "lacks": "The library has nothing on CoCom, the 2001 lapse of the Export Administration Act or a board refusing a founder's return; I found the Export Control Reform Act of 2018 (congress.gov) and OpenAI's November 2023 notice of Altman's reinstatement (openai.com) on the web but left them out to keep six beg",
     "at": "2026-11-18T00:09:42.201Z",
     "model": "claude-opus-5-5",
-    "left_out": []
+    "left_out": [],
+    "built_at": "2026-11-18T00:16:47.516Z"
    },
    "chat": [
     {
@@ -211,7 +218,194 @@
      "model": "claude-opus-5-5"
     }
    ],
-   "proposal_story_hash": "fd602a7a7c214c42f9331192c0965ba5e6fa84423e0748f983ec925bcd72414f"
+   "proposal_story_hash": "fd602a7a7c214c42f9331192c0965ba5e6fa84423e0748f983ec925bcd72414f",
+   "bs_hash": "44727fcf0c8a104b3cbaeab89e9682547f4e3da15378c6a8ea1657f92c4950f5",
+   "bs_text_hash": "989cfecd4109e719ef93fea4de083a029d41ff260485b02f43347e04b944dec1",
+   "bs_story_hash": "fd602a7a7c214c42f9331192c0965ba5e6fa84423e0748f983ec925bcd72414f",
+   "composed": {
+    "row": "Chip Export Controls",
+    "title": "Who Governs Nvidia's Chips",
+    "contest": "Whether Nvidia answers first to its shareholders, through a board that hires and refuses its leaders, or to the nation, through a government that licenses where its chips go and now weighs in on who runs it.",
+    "stakes": "Nvidia's shareholders, employees and customers depend on whether the board or the government has the final word over who leads the company. The nation's export-control regime, and Beijing's access to advanced chips, hinge on the same question.",
+    "here": "Today Nvidia's board refused to reinstate Jensen Huang as chief executive even as Washington's officials split over his return and pressed investigations into Megaspeed and chip diversion.",
+    "beginnings": [
+     {
+      "object_id": "web-export-controls-50a-u-s-c-2021-2032-supp-1949-1az6k48",
+      "year": "1949",
+      "line": "In 1949 Congress wrote export controls into law, finding that shipping materials abroad without regard to their military significance could endanger national security.",
+      "by": "model",
+      "ties_to": "now requires licenses for data centers"
+     },
+     {
+      "object_id": "web-h-r-4848-100th-congress-1987-1988-omnibu-1988-1aj5zg4",
+      "year": "1988",
+      "line": "In 1988 Congress passed an omnibus trade act restricting government contracting with Toshiba Machine, Kongsberg and other firms that sent advanced milling machinery to the Soviet Union.",
+      "by": "model",
+      "ties_to": "diverting advanced Nvidia chips",
+      "flag": "milestone 1988 is 27 words, wants 12 to 25"
+     },
+     {
+      "object_id": "2019-08-18-statement-on-the-purpose-of-a-corporation",
+      "year": "2019",
+      "line": "In August 2019 the Business Roundtable released a statement, signed by 181 CEOs, pledging to lead companies for all stakeholders, not shareholders alone.",
+      "by": "model",
+      "ties_to": "shareholders, employees, the company"
+     },
+     {
+      "object_id": "web-council-of-institutional-investors-respo-2019-1j7zf49",
+      "year": "2019",
+      "line": "In 2019 the Council of Institutional Investors answered the Roundtable, warning that accountability to everyone means accountability to no one.",
+      "by": "model",
+      "ties_to": "The one that decides his fate"
+     },
+     {
+      "object_id": "web-nvidia-corp-form-8-k-fy2022-2022-sszo3y",
+      "year": "2022",
+      "line": "In 2022 Nvidia disclosed that the U.S. government would require licenses for covered products, addressing diversion risks involving military end users in China and Russia.",
+      "by": "model",
+      "ties_to": "advanced Nvidia chips to Chinese companies"
+     },
+     {
+      "object_id": "custom-letter-to-the-honorable-howard-lutnick-secretary-2025-60f505",
+      "year": "2025",
+      "line": "On October 13, 2025, Senator Tom Cotton wrote to Commerce Secretary Howard Lutnick, citing a news report that described Megaspeed as a spin-off of a Chinese state-owned cloud company.",
+      "by": "model",
+      "ties_to": "Megaspeed, a Singapore firm",
+      "flag": "milestone 2025 is 29 words, wants 12 to 25"
+     }
+    ],
+    "case": [
+     {
+      "object_id": "web-export-controls-50a-u-s-c-2021-2032-supp-1949-1az6k48",
+      "year": "1949",
+      "title": "Export Controls, 50a U.S.C. §§ 2021-2032 (Suppl. 4 1946).",
+      "author": "U.S. Congress",
+      "source_url": "https://tile.loc.gov/storage-services/service/ll/uscode/uscode1946-01105/uscode1946-011050a058/uscode1946-011050a058.pdf",
+      "about": "",
+      "about_by": "",
+      "kind": "web"
+     },
+     {
+      "object_id": "web-the-social-responsibility-of-business-is-1970-qzhbmn",
+      "year": "1970",
+      "title": "The Social Responsibility of Business Is to Increase Its Profits",
+      "author": "Milton Friedman",
+      "source_url": "https://miltonfriedman.hoover.org/internal/media/dispatcher/215050/full",
+      "about": "This is an essay by Milton Friedman, published in 1970, on the duty of corporations. Its title states the argument: that the social responsibility of business is to increase its profits.",
+      "about_by": "model",
+      "kind": "web"
+     },
+     {
+      "object_id": "web-h-r-4848-100th-congress-1987-1988-omnibu-1988-1aj5zg4",
+      "year": "1988",
+      "title": "H.R.4848 - 100th Congress (1987-1988): Omnibus Trade and Competitiveness Act of 1988",
+      "author": "U.S. Congress",
+      "source_url": "https://www.congress.gov/bill/100th-congress/house-bill/4848",
+      "about": "",
+      "about_by": "",
+      "kind": "web"
+     },
+     {
+      "object_id": "2019-08-18-statement-on-the-purpose-of-a-corporation",
+      "year": "2019",
+      "title": "Statement on the Purpose of a Corporation",
+      "author": "Business Roundtable",
+      "source_url": "https://www.businessroundtable.org/business-roundtable-redefines-the-purpose-of-a-corporation-to-promote-an-economy-that-serves-all-americans",
+      "about": "The Statement on the Purpose of a Corporation was released by the Business Roundtable in August 2019 and signed by 181 CEOs. It says they commit to lead their companies for the benefit of all stakeholders: customers, employees, suppliers, communities and shareholders. It replaced earlier statements that had endorsed shareholder primacy.",
+      "about_by": "library",
+      "kind": "matrix"
+     },
+     {
+      "object_id": "web-council-of-institutional-investors-respo-2019-1j7zf49",
+      "year": "2019",
+      "title": "Council of Institutional Investors Responds to Business Roundtable Statement on Corporate Purpose",
+      "author": "Council of Institutional Investors",
+      "source_url": "https://www.cii.org/aug19_brt_response",
+      "about": "",
+      "about_by": "",
+      "kind": "web"
+     },
+     {
+      "object_id": "web-nvidia-corp-form-8-k-fy2022-2022-sszo3y",
+      "year": "2022",
+      "title": "NVIDIA CORP - Form 8-K - FY2022",
+      "author": "NVIDIA Corporation",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581022000146/nvda-20220826.htm",
+      "about": "",
+      "about_by": "",
+      "kind": "web"
+     },
+     {
+      "object_id": "custom-letter-to-the-honorable-howard-lutnick-secretary-2025-60f505",
+      "year": "2025",
+      "title": "Letter to the Honorable Howard Lutnick, Secretary, Department of Commerce",
+      "author": "Sen. Tom Cotton",
+      "source_url": "https://www.cotton.senate.gov/imo/media/doc/101325lutnickletter.pdf",
+      "about": "This is a letter dated October 13, 2025, from a Republican senator to the Commerce Secretary. It cites a news report on Megaspeed, describes it as a spin-off of a Chinese government-owned cloud company, and asks Commerce to look into its ownership and ties to U.S. chip companies.",
+      "about_by": "library",
+      "kind": "found"
+     },
+     {
+      "object_id": "custom-nvidia-corp-form-8-k-item-8-01-other-events-date-2025-f21cf8",
+      "year": "2025",
+      "title": "NVIDIA CORP - Form 8-K (Item 8.01 Other Events, dated April 15, 2025)",
+      "author": "NVIDIA Corporation",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000082/nvda-20250409.htm",
+      "about": "The filing falls under Item 8.01, Other Events. According to NVIDIA, the government indicated the license requirement addresses a risk. That risk is that the covered products may be used in, or sent to, a supercomputer in China.",
+      "about_by": "library",
+      "kind": "found"
+     }
+    ],
+    "starts": {
+     "year": "2022",
+     "line": "In 2022 Nvidia disclosed that the U.S. government would require licenses for covered products, addressing diversion risks involving military end users in China and Russia.",
+     "object_id": "web-nvidia-corp-form-8-k-fy2022-2022-sszo3y",
+     "by": "agreed"
+    },
+    "thin": null,
+    "left_out": [],
+    "why": "",
+    "problems": {},
+    "v": 2,
+    "built_from": "proposal",
+    "agreed": {
+     "category": "Chip Export Controls",
+     "contest": "Whether Nvidia answers first to its shareholders, through a board that hires and refuses its leaders, or to the nation, through a government that licenses where its chips go and now weighs in on who runs it.",
+     "starts": "2022",
+     "beginnings": [
+      "web-export-controls-50a-u-s-c-2021-2032-supp-1949-1az6k48",
+      "web-h-r-4848-100th-congress-1987-1988-omnibu-1988-1aj5zg4",
+      "2019-08-18-statement-on-the-purpose-of-a-corporation",
+      "web-council-of-institutional-investors-respo-2019-1j7zf49",
+      "web-nvidia-corp-form-8-k-fy2022-2022-sszo3y",
+      "custom-letter-to-the-honorable-howard-lutnick-secretary-2025-60f505"
+     ],
+     "objects": [
+      "web-export-controls-50a-u-s-c-2021-2032-supp-1949-1az6k48",
+      "web-h-r-4848-100th-congress-1987-1988-omnibu-1988-1aj5zg4",
+      "2019-08-18-statement-on-the-purpose-of-a-corporation",
+      "web-council-of-institutional-investors-respo-2019-1j7zf49",
+      "web-nvidia-corp-form-8-k-fy2022-2022-sszo3y",
+      "custom-letter-to-the-honorable-howard-lutnick-secretary-2025-60f505",
+      "web-the-social-responsibility-of-business-is-1970-qzhbmn",
+      "custom-nvidia-corp-form-8-k-item-8-01-other-events-date-2025-f21cf8"
+     ]
+    },
+    "shortlist": 8,
+    "notes": [
+     "contest: contest is 37 words, wants 12 to 35"
+    ],
+    "usage": {
+     "input_tokens": 7881,
+     "output_tokens": 1679,
+     "searches": 0,
+     "model": "claude-sonnet-5-5"
+    },
+    "model": "claude-sonnet-5-5",
+    "modified": {},
+    "research_items": []
+   },
+   "bs_edits_applied": {}
   }
  ],
  "ship": {
@@ -220,7 +414,7 @@
     "story_id": "0129ad58649038c8",
     "headline": "Nvidia Lost $700 Billion in Market Value in a Week, Then Posted $115.8 Billion in Quarterly Sales. The Board Still Said No to Jensen Huang.",
     "row": "p-chip-export-controls",
-    "line": "",
+    "line": "Today Nvidia's board refused to reinstate Jensen Huang as chief executive even as Washington's officials split over his return and pressed investigations into Megaspeed and chip diversion.",
     "subgenre": null,
     "confidence": 1,
     "source": "editor",
@@ -228,7 +422,7 @@
     "provisional": true
    }
   ],
-  "pairings_generated": "2026-11-18T00:11:47.135Z",
+  "pairings_generated": "2026-11-18T00:16:47.516Z",
   "provisional_rows": [
    {
     "id": "p-ai",
