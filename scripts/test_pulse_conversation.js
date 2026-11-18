@@ -302,6 +302,14 @@ const GH = { 'editorial/research-ledger.json': { data: JSON.parse(JSON.stringify
     /bsc2-rm-item/.test(html) && /bsc2-words/.test(html) && /bsc2-mod-go/.test(html) && /class="mini bsc2-rm"/.test(html)
     && fx.objects.length === pa.case.length && fx.beginnings.every(b => b.asked), { objects: fx.objects.length });
 
+  // a page whose documents were found on the web is not in the library; the per-part controls after Build must still
+  // find them (2026-11-18: "Cannot read properties of undefined (reading 'about')" revising It starts in on a page made
+  // only of web finds)
+  const webOn = w.entry('s1').composed.case.filter(o => !POOL.objects.some(x => x.id === o.object_id)).length;
+  for (const comp of ['starts', 'milestones']) await w.L.bsxRun(['s1'], { modify: { s1: { comp, note: comp === 'starts' ? 'It starts in 1962, with the bribery law.' : 'Tighten the milestone lines.' } } });
+  check('after: the per-part controls work on a page whose documents were found on the web',
+    webOn > 0 && !/Backstory failed|Not done/.test(w.env.BSR_DRAFT_STATE) && w.entry('s1').composed.case.length >= webOn, { webOn, state: w.env.BSR_DRAFT_STATE });
+
   // ── change ──────────────────────────────────────────────────────────────────────────────────────────────────
   const before = JSON.parse(JSON.stringify(w.entry('s1').composed));   // the page as it stands after the turns above
   w.env.LINEUP[0].truth = S1.truth.replace('The ban now goes to the House.', 'The ban now goes to the House, where leaders have not scheduled a vote.');
