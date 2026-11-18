@@ -1,6 +1,6 @@
 {
  "_comment": "Started in Pulse (T-0113): stories filed under a row and built in the browser.",
- "generated": "2026-11-18T18:56:02.871Z",
+ "generated": "2026-11-18T23:46:53.651Z",
  "branch": "main",
  "stories": [
   {
@@ -487,6 +487,128 @@
      "arena-9130596"
     ]
    }
+  },
+  {
+   "story_id": "859832379d1b79c2",
+   "headline": "Amazon Paid $8.4 Billion for MGM. Jeff Bezos Now Says He Helped Pick the Next James Bond.",
+   "pairing": {
+    "story_id": "859832379d1b79c2",
+    "headline": "Amazon Paid $8.4 Billion for MGM. Jeff Bezos Now Says He Helped Pick the Next James Bond.",
+    "row": "p-movie-franchise-casting",
+    "line": "",
+    "subgenre": null,
+    "confidence": 1,
+    "source": "editor",
+    "needs_review": false,
+    "provisional": true
+   },
+   "row": {
+    "id": "p-movie-franchise-casting",
+    "title": "Movie Franchise Casting",
+    "stratum": "provisional",
+    "start_date": "2026-11-18",
+    "start_line": "",
+    "stakes": "",
+    "milestone": "",
+    "beginnings": [],
+    "objects": [],
+    "indicator": null,
+    "auto": false
+   },
+   "status": "paired",
+   "bsp_cost": {
+    "claude-haiku-5-5": {
+     "input_tokens": 780,
+     "output_tokens": 152,
+     "searches": 0,
+     "calls": 1
+    },
+    "claude-opus-5-5": {
+     "input_tokens": 4958,
+     "output_tokens": 3069,
+     "searches": 0,
+     "calls": 1
+    }
+   },
+   "proposal": {
+    "v": 1,
+    "category": "Movie Franchise Casting",
+    "contest": "Whether the company that pays for a film franchise should decide its creative direction, or whether that decision belongs to the producers and filmmakers who built it.",
+    "starts": "2022",
+    "beginnings": [
+     {
+      "year": "2019",
+      "object_id": "arena-3771388",
+      "ties_to": "Amazon MGM Studios announced"
+     }
+    ],
+    "later": [],
+    "objects": [
+     "arena-3771388"
+    ],
+    "docs": {
+     "arena-3771388": {
+      "id": "arena-3771388",
+      "title": "How Jeff Bezos Went to Hollywood and Lost Control",
+      "author": "nytimes.com",
+      "year": "2019",
+      "url": "https://www.nytimes.com/2019/03/02/business/jeff-bezos-lauren-sanchez-amazon-hollywood.html",
+      "kind": "library",
+      "about": "",
+      "source_kind": "library"
+     }
+    },
+    "lacks": "The library has no primary documents on Bond's ownership, the studios that held it, or the antitrust rulings behind them, so most beginnings wait under missing until their documents are found.",
+    "missing": [
+     {
+      "year": "1948",
+      "event": "United States v. Paramount Pictures, 334 U.S. 131",
+      "why": "The ruling ended the old studio system and made room for independent producers who owned their own projects and released them through distributors such as United Artists.",
+      "look_for": "The Supreme Court opinion, from the Library of Congress U.S. Reports or Justia's copy of the opinion"
+     },
+     {
+      "year": "1961",
+      "event": "Albert R. Broccoli and Harry Saltzman's Eon Productions signs its Bond deal with United Artists",
+      "why": "The deal set the arrangement this story ends: a family-run production company kept creative control while a studio paid for and distributed the films.",
+      "look_for": "United Artists' 1961 announcement or the Danjaq and United Artists agreement as filed in later litigation"
+     },
+     {
+      "year": "1981",
+      "event": "MGM acquires United Artists after the losses on Heaven's Gate",
+      "why": "The merger moved the studio half of the Bond partnership into MGM, the company Amazon would later buy.",
+      "look_for": "The MGM or Transamerica merger filing with the SEC, or the 1981 corporate announcement"
+     },
+     {
+      "year": "2010",
+      "event": "Metro-Goldwyn-Mayer files for Chapter 11 bankruptcy",
+      "why": "MGM's debt stalled Bond production and left the studio as an asset that private creditors and later Amazon could buy.",
+      "look_for": "MGM's prepackaged Chapter 11 petition in the U.S. Bankruptcy Court for the Southern District of New York"
+     },
+     {
+      "year": "2020",
+      "event": "Federal court terminates the Paramount Decrees at the Justice Department's request",
+      "why": "Ending the 1948 consent decrees took away the last legal limit on how studios and distributors could be combined, before Amazon bid for MGM.",
+      "look_for": "The Justice Department Antitrust Division's motion and the August 2020 order of the Southern District of New York"
+     },
+     {
+      "year": "2022",
+      "event": "Amazon completes its $8.4 billion acquisition of MGM",
+      "why": "The purchase made Amazon the studio partner in Bond, which is the source of Bezos's seat in the casting room.",
+      "look_for": "Amazon's March 17, 2022 announcement that the MGM acquisition had closed, and any FTC statement on its review"
+     },
+     {
+      "year": "2025",
+      "event": "Amazon MGM Studios takes creative control of James Bond from Michael G. Wilson and Barbara Broccoli",
+      "why": "The new arrangement ended the family's control of Bond, which had lasted since 1962, and made Pattinson the first Bond chosen without them.",
+      "look_for": "The February 2025 Amazon MGM Studios announcement of the joint venture, with Broccoli's and Wilson's own statements"
+     }
+    ],
+    "at": "2026-11-18T23:46:53.259Z",
+    "model": "claude-opus-5-5",
+    "left_out": []
+   },
+   "chat": [],
+   "proposal_story_hash": "98189bb956a7d2d49588c3b55aedeb7af0e9445e8c80eddde60e7e682f89235a"
   }
  ],
  "ship": {
@@ -501,9 +623,20 @@
     "source": "editor",
     "needs_review": false,
     "provisional": true
+   },
+   {
+    "story_id": "859832379d1b79c2",
+    "headline": "Amazon Paid $8.4 Billion for MGM. Jeff Bezos Now Says He Helped Pick the Next James Bond.",
+    "row": "p-movie-franchise-casting",
+    "line": "",
+    "subgenre": null,
+    "confidence": 1,
+    "source": "editor",
+    "needs_review": false,
+    "provisional": true
    }
   ],
-  "pairings_generated": "2026-11-18T18:56:02.871Z",
+  "pairings_generated": "2026-11-18T23:46:53.650Z",
   "provisional_rows": [
    {
     "id": "p-ai",
@@ -1298,6 +1431,19 @@
      "evidence_source": "quoted",
      "how_checked": "The search returned this page and the quoted sentence holds both figures. Publish confirms them against the page itself."
     },
+    "auto": false
+   },
+   {
+    "id": "p-movie-franchise-casting",
+    "title": "Movie Franchise Casting",
+    "stratum": "provisional",
+    "start_date": "2026-11-18",
+    "start_line": "",
+    "stakes": "",
+    "milestone": "",
+    "beginnings": [],
+    "objects": [],
+    "indicator": null,
     "auto": false
    }
   ],
@@ -3049,6 +3195,35 @@
       "evidence_source": "quoted",
       "how_checked": "The search returned this page and the quoted sentence holds both figures. Publish confirms them against the page itself."
      },
+     "objects": [],
+     "beginnings": [],
+     "custom_objects": [],
+     "approved_objects": [],
+     "by": {
+      "editor": true
+     },
+     "revisions": [],
+     "start_date": "2026-11-18",
+     "start_line": "",
+     "last_story": "2026-11-18"
+    },
+    {
+     "id": "p-movie-franchise-casting",
+     "title": "Movie Franchise Casting",
+     "status": "provisional",
+     "created": "2026-11-18",
+     "stories": [
+      {
+       "story_id": "859832379d1b79c2",
+       "date": "2026-11-18",
+       "headline": "Amazon Paid $8.4 Billion for MGM. Jeff Bezos Now Says He Helped Pick the Next James Bond."
+      }
+     ],
+     "contest": "",
+     "stakes": "",
+     "lenses": [],
+     "subgenres": [],
+     "indicator": null,
      "objects": [],
      "beginnings": [],
      "custom_objects": [],
