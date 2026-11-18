@@ -7,6 +7,25 @@ This is a working list, not a commitment. Things move.
 
 ---
 
+## Need to know: from a news digest to a need-to-know digest (captured 2026-11-17)
+
+The definition is in `docs/decisions.md` (2026-11-17). Shipped: T-0125, a need-to-know headline option in punch-up.
+Next, roughly in order, each waiting on the one before:
+
+1. **Watch T-0125 in real editions.** If the editor keeps picking the need-to-know headline, change the headline rule
+   in `docs/voice.md` section 3 and Jefferson's `[HEADLINE]`, so the standing truth reaches Truths and Today.
+2. **Standing topics (T-0126, proposed).** A pinned manual cluster as a named topic that collects across days
+   (affordability, corruption, cyber attacks, social media, climate change). The editor: "close but I am not sure
+   it's right." Open: is a topic a cluster at all, and does it live in the browser or the repo.
+3. **Selection.** Assembly's score still rewards newness, and the ledger and triage drop increments. Score on the
+   three need-to-know reasons (holds something up, the record, will be talked about). Not before 1 and 2 show what
+   the editor actually picks.
+4. **The landing page** says in one line why NTK is different.
+5. Later: following a slow topic in conversation, reusing Backstory's `bspTurn` (Opus with web search each turn, the
+   costliest piece).
+
+---
+
 ## Backstory per story: open, not to solve yet (captured 2026-10-28)
 
 The build is T-0109 (draft before publish), T-0110 (compose per story), T-0111 (research once),
