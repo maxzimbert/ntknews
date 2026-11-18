@@ -1,6 +1,6 @@
 {
  "_comment": "Started in Pulse (T-0113): stories filed under a row and built in the browser.",
- "generated": "2026-11-18T23:46:53.651Z",
+ "generated": "2026-11-18T23:47:44.960Z",
  "branch": "main",
  "stories": [
   {
@@ -494,8 +494,8 @@
    "pairing": {
     "story_id": "859832379d1b79c2",
     "headline": "Amazon Paid $8.4 Billion for MGM. Jeff Bezos Now Says He Helped Pick the Next James Bond.",
-    "row": "p-movie-franchise-casting",
-    "line": "",
+    "row": "p-james-bond",
+    "line": "Amazon MGM Studios announced Robert Pattinson as the seventh James Bond, and Jeff Bezos said he was heavily involved in the choice.",
     "subgenre": null,
     "confidence": 1,
     "source": "editor",
@@ -503,8 +503,8 @@
     "provisional": true
    },
    "row": {
-    "id": "p-movie-franchise-casting",
-    "title": "Movie Franchise Casting",
+    "id": "p-james-bond",
+    "title": "James Bond",
     "stratum": "provisional",
     "start_date": "2026-11-18",
     "start_line": "",
@@ -528,6 +528,12 @@
      "output_tokens": 3069,
      "searches": 0,
      "calls": 1
+    },
+    "claude-sonnet-5-5": {
+     "input_tokens": 4059,
+     "output_tokens": 339,
+     "searches": 0,
+     "calls": 2
     }
    },
    "proposal": {
@@ -605,10 +611,84 @@
     ],
     "at": "2026-11-18T23:46:53.259Z",
     "model": "claude-opus-5-5",
-    "left_out": []
+    "left_out": [],
+    "built_at": "2026-11-18T23:47:44.959Z"
    },
-   "chat": [],
-   "proposal_story_hash": "98189bb956a7d2d49588c3b55aedeb7af0e9445e8c80eddde60e7e682f89235a"
+   "chat": [
+    {
+     "role": "build",
+     "text": "Page built from the proposal.",
+     "at": "2026-11-18T23:47:44.959Z"
+    }
+   ],
+   "proposal_story_hash": "98189bb956a7d2d49588c3b55aedeb7af0e9445e8c80eddde60e7e682f89235a",
+   "bs_hash": "67a47d3dc993a4df772aaa0c6e6337ced7db318617722d82efc58c9c5f01a933",
+   "bs_text_hash": "c8e3c8d0271c98ff34d827d0a2c428429a92daf4bd883007ae4aeb109f1e4b85",
+   "bs_story_hash": "98189bb956a7d2d49588c3b55aedeb7af0e9445e8c80eddde60e7e682f89235a",
+   "composed": {
+    "row": "Movie Franchise Casting",
+    "title": "Who Controls Bond",
+    "contest": "Whether the company that pays for a film franchise should decide its creative direction, or whether that decision belongs to the producers and filmmakers who built it.",
+    "stakes": "At stake is whether the owner of a franchise, here Amazon, may shape casting and creative direction, or whether that authority belongs to the producers and filmmakers who built it. Producers, directors, actors and audiences all live with the answer.",
+    "here": "Amazon MGM Studios announced Robert Pattinson as the seventh James Bond, and Jeff Bezos said he was heavily involved in the choice.",
+    "beginnings": [
+     {
+      "object_id": "arena-3771388",
+      "year": "2019",
+      "line": "In 2019, The New York Times reported on how Jeff Bezos went to Hollywood and lost control, an account of his early film business.",
+      "by": "model",
+      "ties_to": "Amazon MGM Studios announced"
+     }
+    ],
+    "case": [
+     {
+      "object_id": "arena-3771388",
+      "year": "2019",
+      "title": "How Jeff Bezos Went to Hollywood and Lost Control",
+      "author": "nytimes.com",
+      "source_url": "https://www.nytimes.com/2019/03/02/business/jeff-bezos-lauren-sanchez-amazon-hollywood.html",
+      "about": "",
+      "about_by": "",
+      "kind": "library",
+      "paywall": true
+     }
+    ],
+    "starts": {
+     "year": "2022",
+     "line": "In 2022, Amazon bought MGM for $8.4 billion, gaining ownership of the studio that held the James Bond franchise.",
+     "object_id": null,
+     "by": "agreed"
+    },
+    "thin": "The library has no primary documents on Bond's ownership, the studios that held it, or the antitrust rulings behind them, so most beginnings wait under missing until their documents are found.",
+    "left_out": [],
+    "why": "",
+    "problems": {},
+    "v": 2,
+    "built_from": "proposal",
+    "agreed": {
+     "category": "Movie Franchise Casting",
+     "contest": "Whether the company that pays for a film franchise should decide its creative direction, or whether that decision belongs to the producers and filmmakers who built it.",
+     "starts": "2022",
+     "beginnings": [
+      "arena-3771388"
+     ],
+     "objects": [
+      "arena-3771388"
+     ]
+    },
+    "shortlist": 1,
+    "notes": [],
+    "usage": {
+     "input_tokens": 4059,
+     "output_tokens": 339,
+     "searches": 0,
+     "model": "claude-sonnet-5-5"
+    },
+    "model": "claude-sonnet-5-5",
+    "modified": {},
+    "research_items": []
+   },
+   "bs_edits_applied": {}
   }
  ],
  "ship": {
@@ -627,8 +707,8 @@
    {
     "story_id": "859832379d1b79c2",
     "headline": "Amazon Paid $8.4 Billion for MGM. Jeff Bezos Now Says He Helped Pick the Next James Bond.",
-    "row": "p-movie-franchise-casting",
-    "line": "",
+    "row": "p-james-bond",
+    "line": "Amazon MGM Studios announced Robert Pattinson as the seventh James Bond, and Jeff Bezos said he was heavily involved in the choice.",
     "subgenre": null,
     "confidence": 1,
     "source": "editor",
@@ -636,7 +716,7 @@
     "provisional": true
    }
   ],
-  "pairings_generated": "2026-11-18T23:46:53.650Z",
+  "pairings_generated": "2026-11-18T23:47:44.959Z",
   "provisional_rows": [
    {
     "id": "p-ai",
@@ -1436,6 +1516,19 @@
    {
     "id": "p-movie-franchise-casting",
     "title": "Movie Franchise Casting",
+    "stratum": "provisional",
+    "start_date": "2026-11-18",
+    "start_line": "",
+    "stakes": "",
+    "milestone": "",
+    "beginnings": [],
+    "objects": [],
+    "indicator": null,
+    "auto": false
+   },
+   {
+    "id": "p-james-bond",
+    "title": "James Bond",
     "stratum": "provisional",
     "start_date": "2026-11-18",
     "start_line": "",
@@ -3210,6 +3303,35 @@
     {
      "id": "p-movie-franchise-casting",
      "title": "Movie Franchise Casting",
+     "status": "provisional",
+     "created": "2026-11-18",
+     "stories": [
+      {
+       "story_id": "859832379d1b79c2",
+       "date": "2026-11-18",
+       "headline": "Amazon Paid $8.4 Billion for MGM. Jeff Bezos Now Says He Helped Pick the Next James Bond."
+      }
+     ],
+     "contest": "",
+     "stakes": "",
+     "lenses": [],
+     "subgenres": [],
+     "indicator": null,
+     "objects": [],
+     "beginnings": [],
+     "custom_objects": [],
+     "approved_objects": [],
+     "by": {
+      "editor": true
+     },
+     "revisions": [],
+     "start_date": "2026-11-18",
+     "start_line": "",
+     "last_story": "2026-11-18"
+    },
+    {
+     "id": "p-james-bond",
+     "title": "James Bond",
      "status": "provisional",
      "created": "2026-11-18",
      "stories": [
