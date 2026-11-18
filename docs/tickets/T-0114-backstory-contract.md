@@ -115,7 +115,9 @@ if 'the note wins' not in rv or 'delete P[comp]' not in rv: bad.append("a revise
 if 'bsxApplyText(' not in fn(s, 'bsxRun') or 'bsxApplyPins(' not in fn(s, 'bsxRun'): bad.append("the editor's typed words or added results do not survive a build")
 # The review screen
 h = fn(s, 'bsc2Html') + fn(s, 'bsc2Card') + fn(s, 'bsc2ResearchList')
-for want, why in (('DIRECT THE RESEARCH', 'no Direct the research'), ('bsc2-words', 'no edit words'), ('bsc2-res-add', 'research results cannot be added to the page')):
+# 2026-11-17 (T-0124): Direct the research is the conversation now (bsp-send on the review screen). This line used to
+# require 'DIRECT THE RESEARCH'. Revise and remove stay, by the editor's word the same day.
+for want, why in (('bsp-send', 'no conversation on the review screen'), ('bsc2-words', 'no edit words'), ('bsc2-mod-go', 'no revise'), ('bsc2-rm', 'no remove'), ('bsc2-res-add', 'research results cannot be added to the page')):
     if want not in h: bad.append('review screen: ' + why)
 # Thin builds search once; a blank revision is never accepted (2026-11-04)
 run = fn(s, 'bsxRun')
