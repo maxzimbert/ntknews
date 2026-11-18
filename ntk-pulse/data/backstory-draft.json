@@ -1,6 +1,6 @@
 {
  "_comment": "Started in Pulse (T-0113): stories filed under a row and built in the browser.",
- "generated": "2026-11-18T23:47:44.960Z",
+ "generated": "2026-11-18T23:51:12.944Z",
  "branch": "main",
  "stories": [
   {
@@ -518,22 +518,22 @@
    "status": "paired",
    "bsp_cost": {
     "claude-haiku-5-5": {
-     "input_tokens": 780,
-     "output_tokens": 152,
-     "searches": 0,
-     "calls": 1
-    },
-    "claude-opus-5-5": {
-     "input_tokens": 4958,
-     "output_tokens": 3069,
-     "searches": 0,
-     "calls": 1
-    },
-    "claude-sonnet-5-5": {
-     "input_tokens": 4059,
-     "output_tokens": 339,
+     "input_tokens": 2007,
+     "output_tokens": 315,
      "searches": 0,
      "calls": 2
+    },
+    "claude-opus-5-5": {
+     "input_tokens": 475085,
+     "output_tokens": 13905,
+     "searches": 26,
+     "calls": 2
+    },
+    "claude-sonnet-5-5": {
+     "input_tokens": 10429,
+     "output_tokens": 1236,
+     "searches": 0,
+     "calls": 5
     }
    },
    "proposal": {
@@ -543,16 +543,53 @@
     "starts": "2022",
     "beginnings": [
      {
+      "year": "1961",
+      "object_id": "web-danjaq-llc-v-sony-corporation-263-f-3d-9-2001-1uduuwc",
+      "ties_to": "family had run the series",
+      "asked": true
+     },
+     {
+      "year": "2010",
+      "object_id": "web-mgm-commences-pre-packaged-chapter-11-ca-2010-v7ykhu",
+      "ties_to": "studios are struggling",
+      "asked": true
+     },
+     {
       "year": "2019",
       "object_id": "arena-3771388",
-      "ties_to": "Amazon MGM Studios announced"
+      "ties_to": "Amazon MGM Studios announced",
+      "asked": true
      }
     ],
     "later": [],
     "objects": [
+     "web-danjaq-llc-v-sony-corporation-263-f-3d-9-2001-1uduuwc",
+     "web-mgm-commences-pre-packaged-chapter-11-ca-2010-v7ykhu",
      "arena-3771388"
     ],
     "docs": {
+     "web-danjaq-llc-v-sony-corporation-263-f-3d-9-2001-1uduuwc": {
+      "id": "web-danjaq-llc-v-sony-corporation-263-f-3d-9-2001-1uduuwc",
+      "title": "Danjaq LLC v. Sony Corporation, 263 F.3d 942 (9th Cir. 2001)",
+      "author": "United States Court of Appeals for the Ninth Circuit",
+      "year": "2001",
+      "url": "https://law.justia.com/cases/federal/appellate-courts/F3/263/942/533765/",
+      "source": "Justia (published opinion of the Ninth Circuit)",
+      "kind": "web",
+      "evidence": "That same year, based on Fleming's transfer to Danjaq of the film and television rights to his novels and Bond stories, Danjaq teamed up with United Artists to produce Bond films.",
+      "found_at": "2026-11-18T23:51:04.754Z"
+     },
+     "web-mgm-commences-pre-packaged-chapter-11-ca-2010-v7ykhu": {
+      "id": "web-mgm-commences-pre-packaged-chapter-11-ca-2010-v7ykhu",
+      "title": "MGM Commences Pre-Packaged Chapter 11 Cases",
+      "author": "Metro-Goldwyn-Mayer Inc.",
+      "year": "2010",
+      "url": "https://www.prnewswire.com/news-releases/mgm-commences-pre-packaged-chapter-11-cases-106612013.html",
+      "source": "PR Newswire",
+      "kind": "web",
+      "evidence": "Metro-Goldwyn-Mayer Inc. (\"MGM\") today announced that it and approximately 160 of its affiliates have filed Chapter 11 cases in the U.S. Bankruptcy Court for the Southern District of New York (the \"Court\") to seek confirmation of their \"pre-packaged\" plan of reorganization (\"Plan\").",
+      "found_at": "2026-11-18T23:51:04.756Z"
+     },
      "arena-3771388": {
       "id": "arena-3771388",
       "title": "How Jeff Bezos Went to Hollywood and Lost Control",
@@ -564,61 +601,88 @@
       "source_kind": "library"
      }
     },
-    "lacks": "The library has no primary documents on Bond's ownership, the studios that held it, or the antitrust rulings behind them, so most beginnings wait under missing until their documents are found.",
-    "missing": [
-     {
-      "year": "1948",
-      "event": "United States v. Paramount Pictures, 334 U.S. 131",
-      "why": "The ruling ended the old studio system and made room for independent producers who owned their own projects and released them through distributors such as United Artists.",
-      "look_for": "The Supreme Court opinion, from the Library of Congress U.S. Reports or Justia's copy of the opinion"
-     },
-     {
-      "year": "1961",
-      "event": "Albert R. Broccoli and Harry Saltzman's Eon Productions signs its Bond deal with United Artists",
-      "why": "The deal set the arrangement this story ends: a family-run production company kept creative control while a studio paid for and distributed the films.",
-      "look_for": "United Artists' 1961 announcement or the Danjaq and United Artists agreement as filed in later litigation"
-     },
+    "lacks": "The library and the open web lack United Artists' June 1961 announcement, the Danjaq and United Artists contract, MGM's 1981 SEC filings and MGM's actual Chapter 11 petition, which sits on PACER.",
+    "missing": [],
+    "at": "2026-11-18T23:48:37.019Z",
+    "model": "claude-opus-5-5",
+    "left_out": [
      {
       "year": "1981",
-      "event": "MGM acquires United Artists after the losses on Heaven's Gate",
-      "why": "The merger moved the studio half of the Bond partnership into MGM, the company Amazon would later buy.",
-      "look_for": "The MGM or Transamerica merger filing with the SEC, or the 1981 corporate announcement"
-     },
-     {
-      "year": "2010",
-      "event": "Metro-Goldwyn-Mayer files for Chapter 11 bankruptcy",
-      "why": "MGM's debt stalled Bond production and left the studio as an asset that private creditors and later Amazon could buy.",
-      "look_for": "MGM's prepackaged Chapter 11 petition in the U.S. Bankruptcy Court for the Southern District of New York"
-     },
-     {
-      "year": "2020",
-      "event": "Federal court terminates the Paramount Decrees at the Justice Department's request",
-      "why": "Ending the 1948 consent decrees took away the last legal limit on how studios and distributors could be combined, before Amazon bid for MGM.",
-      "look_for": "The Justice Department Antitrust Division's motion and the August 2020 order of the Southern District of New York"
+      "title": "MGM to issue more stock to pay for United Artists purchase",
+      "reason": "a news report from a publisher outside NTK’s approved list"
      },
      {
       "year": "2022",
-      "event": "Amazon completes its $8.4 billion acquisition of MGM",
-      "why": "The purchase made Amazon the studio partner in Bond, which is the source of Bezos's seat in the casting room.",
-      "look_for": "Amazon's March 17, 2022 announcement that the MGM acquisition had closed, and any FTC statement on its review"
+      "title": "MGM joins Prime Video and Amazon Studios",
+      "reason": "www.aboutamazon.com is not a primary source"
      },
      {
       "year": "2025",
-      "event": "Amazon MGM Studios takes creative control of James Bond from Michael G. Wilson and Barbara Broccoli",
-      "why": "The new arrangement ended the family's control of Bond, which had lasted since 1962, and made Pattinson the first Bond chosen without them.",
-      "look_for": "The February 2025 Amazon MGM Studios announcement of the joint venture, with Broccoli's and Wilson's own statements"
+      "title": "Amazon MGM Studios announces new joint venture with Michael G. Wilson and Barbara Broccoli",
+      "reason": "www.aboutamazon.com is not a primary source"
+     },
+     {
+      "year": "",
+      "title": "Following Amazon’s MGM Acquisition Close, FTC Warns It May ‘Challenge a Deal at Any Time’",
+      "reason": "a news report from a publisher outside NTK’s approved list"
+     },
+     {
+      "year": "",
+      "title": "Transamerica Corp. has agreed to sell its United Artists...",
+      "reason": "a news report from a publisher outside NTK’s approved list"
      }
     ],
-    "at": "2026-11-18T23:46:53.259Z",
-    "model": "claude-opus-5-5",
-    "left_out": [],
-    "built_at": "2026-11-18T23:47:44.959Z"
+    "built_at": "2026-11-18T23:48:37.019Z"
    },
    "chat": [
     {
      "role": "build",
      "text": "Page built from the proposal.",
      "at": "2026-11-18T23:47:44.959Z"
+    },
+    {
+     "role": "editor",
+     "text": "Find a document for each of these and add it to the beginnings and Objects, as a beginning I asked for: 1961 Albert R. Broccoli and Harry Saltzman's Eon Productions signs its Bond deal with United Artists (look for: United Artists' 1961 announcement or the Danjaq and United Artists agreement as filed in later litigation); 1981 MGM acquires United Artists after the losses on Heaven's Gate (look for: The MGM or Transamerica merger filing with the SEC, or the 1981 corporate announcement); 2010 Metro-Goldwyn-Mayer files for Chapter 11 bankruptcy (look for: MGM's prepackaged Chapter 11 petition in the U.S. Bankruptcy Court for the Southern District of New York); 2022 Amazon completes its $8.4 billion acquisition of MGM (look for: Amazon's March 17, 2022 announcement that the MGM acquisition had closed, and any FTC statement on its review); 2025 Amazon MGM Studios takes creative control of James Bond from Michael G. Wilson and Barbara Broccoli (look for: The February 2025 Amazon MGM Studios announcement of the joint venture, with Broccoli's and Wilson's own statements).",
+     "at": "2026-11-18T23:48:37.019Z"
+    },
+    {
+     "role": "historian",
+     "text": "I placed all five events, but three use stand-ins. For 1961 I used the Ninth Circuit's 2001 account of the deal, because the 1961 announcement and the contract are not online. For 1981 I used UPI's wire report, because MGM's 1981 SEC filings are older than EDGAR. For 2010 I used MGM's own announcement of its filing, because the petition itself is only on PACER. The 2022 and 2025 events have Amazon's own announcements, and the FTC's only statement is the one it gave Variety, now under Objects.",
+     "changed": [
+      "added beginning 1961: Danjaq LLC v. Sony Corporation, 263 F.3d 942 (9th Cir. 2001)",
+      "added beginning 2010: MGM Commences Pre-Packaged Chapter 11 Cases"
+     ],
+     "dropped": [
+      {
+       "year": "1981",
+       "title": "MGM to issue more stock to pay for United Artists purchase",
+       "reason": "a news report from a publisher outside NTK’s approved list"
+      },
+      {
+       "year": "2022",
+       "title": "MGM joins Prime Video and Amazon Studios",
+       "reason": "www.aboutamazon.com is not a primary source"
+      },
+      {
+       "year": "2025",
+       "title": "Amazon MGM Studios announces new joint venture with Michael G. Wilson and Barbara Broccoli",
+       "reason": "www.aboutamazon.com is not a primary source"
+      },
+      {
+       "year": "",
+       "title": "Following Amazon’s MGM Acquisition Close, FTC Warns It May ‘Challenge a Deal at Any Time’",
+       "reason": "a news report from a publisher outside NTK’s approved list"
+      },
+      {
+       "year": "",
+       "title": "Transamerica Corp. has agreed to sell its United Artists...",
+       "reason": "a news report from a publisher outside NTK’s approved list"
+      }
+     ],
+     "searched": 26,
+     "at": "2026-11-18T23:51:12.536Z",
+     "model": "claude-opus-5-5",
+     "after": true
     }
    ],
    "proposal_story_hash": "98189bb956a7d2d49588c3b55aedeb7af0e9445e8c80eddde60e7e682f89235a",
@@ -633,6 +697,21 @@
     "here": "Amazon MGM Studios announced Robert Pattinson as the seventh James Bond, and Jeff Bezos said he was heavily involved in the choice.",
     "beginnings": [
      {
+      "object_id": "web-danjaq-llc-v-sony-corporation-263-f-3d-9-2001-1uduuwc",
+      "year": "1961",
+      "line": "In 2001, the Ninth Circuit Court of Appeals decided the case of Danjaq LLC against Sony Corporation, a legal dispute concerning rights to the James Bond film franchise.",
+      "by": "model",
+      "ties_to": "family had run the series",
+      "flag": "milestone 1961 is 28 words, wants 12 to 25"
+     },
+     {
+      "object_id": "web-mgm-commences-pre-packaged-chapter-11-ca-2010-v7ykhu",
+      "year": "2010",
+      "line": "In 2010, MGM and approximately 160 of its affiliates filed Chapter 11 cases in the U.S. Bankruptcy Court for the Southern District of New York.",
+      "by": "model",
+      "ties_to": "studios are struggling"
+     },
+     {
       "object_id": "arena-3771388",
       "year": "2019",
       "line": "In 2019, The New York Times reported on how Jeff Bezos went to Hollywood and lost control, an account of his early film business.",
@@ -642,13 +721,33 @@
     ],
     "case": [
      {
+      "object_id": "web-danjaq-llc-v-sony-corporation-263-f-3d-9-2001-1uduuwc",
+      "year": "2001",
+      "title": "Danjaq LLC v. Sony Corporation, 263 F.3d 942 (9th Cir. 2001)",
+      "author": "United States Court of Appeals for the Ninth Circuit",
+      "source_url": "https://law.justia.com/cases/federal/appellate-courts/F3/263/942/533765/",
+      "about": "",
+      "about_by": "",
+      "kind": "web"
+     },
+     {
+      "object_id": "web-mgm-commences-pre-packaged-chapter-11-ca-2010-v7ykhu",
+      "year": "2010",
+      "title": "MGM Commences Pre-Packaged Chapter 11 Cases",
+      "author": "Metro-Goldwyn-Mayer Inc.",
+      "source_url": "https://www.prnewswire.com/news-releases/mgm-commences-pre-packaged-chapter-11-cases-106612013.html",
+      "about": "",
+      "about_by": "",
+      "kind": "web"
+     },
+     {
       "object_id": "arena-3771388",
       "year": "2019",
       "title": "How Jeff Bezos Went to Hollywood and Lost Control",
       "author": "nytimes.com",
       "source_url": "https://www.nytimes.com/2019/03/02/business/jeff-bezos-lauren-sanchez-amazon-hollywood.html",
-      "about": "",
-      "about_by": "",
+      "about": "This is a news feature from nytimes.com, published in 2019. Titled \"How Jeff Bezos Went to Hollywood and Lost Control,\" it reports on Bezos's entry into the film business and the limits he met there.",
+      "about_by": "model",
       "kind": "library",
       "paywall": true
      }
@@ -659,7 +758,7 @@
      "object_id": null,
      "by": "agreed"
     },
-    "thin": "The library has no primary documents on Bond's ownership, the studios that held it, or the antitrust rulings behind them, so most beginnings wait under missing until their documents are found.",
+    "thin": null,
     "left_out": [],
     "why": "",
     "problems": {},
@@ -670,17 +769,21 @@
      "contest": "Whether the company that pays for a film franchise should decide its creative direction, or whether that decision belongs to the producers and filmmakers who built it.",
      "starts": "2022",
      "beginnings": [
+      "web-danjaq-llc-v-sony-corporation-263-f-3d-9-2001-1uduuwc",
+      "web-mgm-commences-pre-packaged-chapter-11-ca-2010-v7ykhu",
       "arena-3771388"
      ],
      "objects": [
+      "web-danjaq-llc-v-sony-corporation-263-f-3d-9-2001-1uduuwc",
+      "web-mgm-commences-pre-packaged-chapter-11-ca-2010-v7ykhu",
       "arena-3771388"
      ]
     },
-    "shortlist": 1,
+    "shortlist": 3,
     "notes": [],
     "usage": {
-     "input_tokens": 4059,
-     "output_tokens": 339,
+     "input_tokens": 6370,
+     "output_tokens": 897,
      "searches": 0,
      "model": "claude-sonnet-5-5"
     },
@@ -716,7 +819,7 @@
     "provisional": true
    }
   ],
-  "pairings_generated": "2026-11-18T23:47:44.959Z",
+  "pairings_generated": "2026-11-18T23:51:12.943Z",
   "provisional_rows": [
    {
     "id": "p-ai",
