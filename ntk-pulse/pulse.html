@@ -2616,8 +2616,31 @@ loadCatData();
 // choosing what leads the edition and want options to compare, not just
 // the one the pipeline already committed to. Same guardrail language,
 // same governing principle: compression and selection, never invention.
+/* T-0125: the need-to-know headline. A standing truth the coverage skips because it
+   is not new, then today's fact. Explored with the editor 2026-11-17: the digest read
+   "too incremental and headliney"; each headline stated the event and never why it
+   is need to know (what it holds up, what it adds to the record, why people will
+   talk about it). The first sentence is where spin could get in, hence the rules. */
+const NTK_HEADLINE_RULES =
+  `NEED-TO-KNOW HEADLINE. Also write one headline in NTK's need-to-know shape, two sentences. `+
+  `The first states the standing truth this story lands in: the obvious thing about who or what is involved that the coverage skips because it is not new. What the company makes or holds up, what the office is for, what the tradition is, how long the pattern has run. `+
+  `The second states today's fact, held to every rule above.\n`+
+  `Examples of the shape:\n`+
+  `- "Nvidia Makes the Chips Almost All of AI Runs On. Its CEO Just Admitted an Affair With an Alleged Chinese Spy."\n`+
+  `- "Every President Since Reagan Leaves a Letter for the Next. Trump Wrote Biden a Warm One, Then Spent Six Years Attacking Him."\n`+
+  `- "Only Congress Can Remove a Cabinet Secretary the President Wants to Keep. House Republicans Voted 211 to 204 Not to Try."\n`+
+  `Rules for the first sentence:\n`+
+  `- A reader on either side would agree it is plainly true. A verdict ("X is corrupt," "X is failing") or a contested claim is not a standing truth. Write a fact about role, scale, rule or history.\n`+
+  `- It may come from well-established background knowledge, not only the sources. But no number, date or ranking that is not in the sources. If you are not certain it is true, write a plainer standing truth you are certain of.\n`+
+  `- Present tense. No years as anchors. No em dashes.\n`+
+  `- It must make today's fact matter more. A true sentence that does not change how the second one lands is the wrong one. `+
+  `The weakest kind restates an actor's job ("The FBI Investigates Cybercrime"). Reach for what depends on it, how big it is, how long it has gone on, or the rule or tradition today's fact breaks.\n`+
+  `- Do not reuse an example's wording unless the story is the same one.\n`+
+  `- Some stories have no standing truth that is both certain and makes the news land harder. Then do not force one: return "need_to_know" as an empty string and say why in "basis". An invented or weak first sentence is worse than none.\n`+
+  `Under 140 characters for this headline.\n`+
+  `Also return "basis": one short line for the editor saying what the first sentence rests on, either "in the sources" or "background: " and the fact to check.\n\n`;
 async function punchUpHeadline(story){
-  story.busy = true; story.headlineCandidates = null; setStatus(story, 'Punching up the headline…');
+  story.busy = true; story.headlineCandidates = null; story.headlineNtk = null; setStatus(story, 'Punching up the headline…');
   try {
     // T-0038: pull in the enriched body when it's already been fetched —
     // by punch-up time it usually has. Without it this was reasoning over
@@ -2630,21 +2653,30 @@ async function punchUpHeadline(story){
     }).join('\n');
     const prompt = `${VOICE_REF}\n\n`+
       `Current headline: "${story.title}"\n\nWhat the sources actually say:\n${context}\n\n`+
-      `Write 3 alternative headlines for this story. Most true headlines are written at the flattest level — the administrative fact, not the stakes. Find the sharpest TRUE sentence available, not the first true sentence available.\n\n`+
+      `Write 2 alternative headlines for this story. Most true headlines are written at the flattest level — the administrative fact, not the stakes. Find the sharpest TRUE sentence available, not the first true sentence available.\n\n`+
       `Three moves, in order of how much they help:\n`+
       `- STRONGER VERB. "Switches to," "announces," "reports" are administrative. Reach for the verb that carries the actual weight — "scraps," "ends," "kills," "drops," "blocks" — WHEN the sources genuinely support that verb's force.\n`+
       `- STAKES OVER MECHANISM. Given a choice between how something happened and why it matters, lead with why it matters — provided the "why" is already in the sources, not an inference you're adding.\n`+
       `- CUT THE HEDGE-PHRASE. "Amid concerns about," "in a move that," "for [vague] reasons" soften a headline into safety. If the sources name the actual thing being hedged, name it.\n\n`+
       `THE GUARDRAIL, which governs all three: this is compression and selection, never invention. No superlative ("unprecedented," "historic," "shocking") unless the sources establish it. No rhetorical questions. No manufactured urgency for a story that isn't breaking. If a sharper phrasing would require implying anything not already in the sources, write the plainer version instead — a flat accurate headline always beats a sharp inaccurate one. No wordplay. Under 90 characters each.\n\n`+
-      `Return ONLY a JSON array of exactly 3 strings, no fences: ["headline one","headline two","headline three"]`;
-    const candidates = parseJSON(await ai(prompt, 400));
-    story.headlineCandidates = Array.isArray(candidates) ? candidates.slice(0,3) : [];
+      NTK_HEADLINE_RULES+
+      `Return ONLY JSON, no fences: {"sharper":["headline one","headline two"],"need_to_know":"the need-to-know headline","basis":"in the sources | background: <the fact to check>"}`;
+    const got = parseJSON(await ai(prompt, 600));
+    // T-0125: two sharper headlines, then the need-to-know one, last and labelled.
+    // An old-style array (a model that ignored the shape) still works.
+    const sharper = Array.isArray(got) ? got : (Array.isArray(got?.sharper) ? got.sharper : []);
+    const ntk = (!Array.isArray(got) && typeof got?.need_to_know === 'string') ? got.need_to_know.trim() : '';
+    story.headlineCandidates = sharper.filter(h=>typeof h==='string' && h.trim()).slice(0, ntk ? 2 : 3);
+    const basis = Array.isArray(got) ? '' : String(got?.basis||'').trim();
+    // i = -1: the model found no standing truth worth leading with, and says why.
+    story.headlineNtk = ntk ? {i: story.headlineCandidates.length, basis} : (basis ? {i: -1, basis} : null);
+    if (ntk) story.headlineCandidates.push(ntk);
     setStatus(story, story.headlineCandidates.length ? '' : 'No candidates returned — try again', !story.headlineCandidates.length);
   } catch(e){ setStatus(story, 'Punch-up failed: '+e.message, true); }
   story.busy = false; saveLineup(); render();
 }
 function applyPunchedHeadline(story, text){
-  story.title = text; story.headlineCandidates = null; saveLineup(); render();
+  story.title = text; story.headlineCandidates = null; story.headlineNtk = null; saveLineup(); render();
 }
 
 async function draftMeta(story){
@@ -6352,7 +6384,7 @@ function renderLineup(root){
       (s.slotLabel?`<span class="manual-badge" style="background:#333">${esc(s.slotLabel)}</span>`:'')+
       (s.inEdition===false?`<span class="manual-badge" style="background:var(--stale)">not in today's edition</span>`:'')+
       `<input class="story-title" value="${esc(s.title)}">`+
-      `<button class="mini punch-up" ${s.busy?'disabled':''} title="3 sharper true headlines">punch up</button>`+
+      `<button class="mini punch-up" ${s.busy?'disabled':''} title="2 sharper true headlines and 1 need-to-know headline">punch up</button>`+
       `<button class="mini rm" title="remove">remove</button></div>`+
       (s.syncFailed && !activeArts(s).length ? `<div style="background:var(--stale);color:#fff;font-size:11px;padding:5px 8px;margin-top:4px">`+
         `⚠ no source material — this story's original articles couldn't be found in the current stream, `+
@@ -6367,7 +6399,11 @@ function renderLineup(root){
         `<button class="mini reconnect-accept" style="background:#fff">use this</button>`+
         `<button class="mini reconnect-dismiss" style="background:transparent;color:#fff;border-color:#fff">not this</button></div>` : '')+
       ((s.headlineCandidates && s.headlineCandidates.length) ? `<div class="qres" style="flex-direction:column;align-items:stretch;gap:4px;margin:4px 0">`+
-        s.headlineCandidates.map((h,i)=>`<button class="mini punch-pick" data-i="${i}" style="text-align:left">${esc(h)}</button>`).join('')+
+        s.headlineCandidates.map((h,i)=>(s.headlineNtk && s.headlineNtk.i===i)
+          ? `<button class="mini punch-pick" data-i="${i}" style="text-align:left"><span style="font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim)">need to know · </span>${esc(h)}`+
+            (s.headlineNtk.basis ? `<span style="display:block;font-size:10px;color:var(--dim);margin-top:2px">rests on: ${esc(s.headlineNtk.basis)}</span>` : '')+`</button>`
+          : `<button class="mini punch-pick" data-i="${i}" style="text-align:left">${esc(h)}</button>`).join('')+
+        ((s.headlineNtk && s.headlineNtk.i===-1) ? `<div style="font-size:10px;color:var(--dim)">no need-to-know headline: ${esc(s.headlineNtk.basis)}</div>` : '')+
         `<button class="mini punch-dismiss" style="align-self:flex-start">dismiss</button></div>` : '')+
       `<div class="angle-row"><textarea class="angle" placeholder="Angle — one sharp NTK sentence">${esc(s.angle)}</textarea>`+
       `<button class="mini draft" ${s.busy?'disabled':''}>Step 1 · Draft</button></div>`+
@@ -6527,7 +6563,7 @@ function renderLineup(root){
     el.querySelectorAll('.punch-pick').forEach(btn=>{
       btn.addEventListener('click',()=>applyPunchedHeadline(s, s.headlineCandidates[+btn.dataset.i]));
     });
-    el.querySelector('.punch-dismiss')?.addEventListener('click',()=>{ s.headlineCandidates=null; saveLineup(); render(); });
+    el.querySelector('.punch-dismiss')?.addEventListener('click',()=>{ s.headlineCandidates=null; s.headlineNtk=null; saveLineup(); render(); });
     el.querySelector('.angle').addEventListener('change',e=>{ s.angle=e.target.value; saveLineup(); });
     el.querySelector('.cat').addEventListener('change',e=>{ s.category=e.target.value; s.categoryCustom=''; saveLineup(); render(); });
     el.querySelector('.cat-custom').addEventListener('change',e=>{ s.categoryCustom=e.target.value.trim(); saveLineup(); });

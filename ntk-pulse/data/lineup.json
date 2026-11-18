@@ -1,5 +1,5 @@
 {
- "assembled_at": "2026-11-17T23:23:15.542797+00:00",
+ "assembled_at": "2026-11-18T17:00:29.959664+00:00",
  "slot_plan": "A",
  "displacement": "MANUAL",
  "daytype": "weekday",
@@ -7,42 +7,97 @@
   8,
   10
  ],
- "actual_size": 10,
+ "actual_size": 65,
  "lint_failures": [
   "under 3 fully self-contained items",
   "no item answers 'what do I do with this'"
  ],
- "slots_unfilled": [],
+ "slots_unfilled": [
+  "The group chat"
+ ],
  "stories": [
   {
    "slot": "unavoidable",
    "slot_label": "Unavoidable",
-   "key": "0129ad58649038c8",
-   "title": "Nvidia rules out Jensen Huang's return as CEO as sales grow",
-   "beat": "business",
-   "publisher_count": 21,
+   "key": "9bfc33e967327f6a",
+   "title": "House Democrats nominate Hakeem Jeffries for Speaker, which would make him first Black speaker",
+   "beat": "national",
+   "publisher_count": 17,
    "publishers": [
     "BBC",
-    "Financial Times",
     "NPR",
     "New York Times",
+    "Politico Congress",
     "The Guardian",
+    "Yahoo News",
     "ABC News",
     "Al Jazeera",
-    "Ars Technica",
     "CBS News",
     "CNBC",
-    "Daily Beast",
+    "Deutsche Welle",
+    "Fox News",
     "France 24",
     "NBC News",
-    "Semafor",
     "Talking Points Memo",
+    "Daily Mail",
+    "Memeorandum"
+   ],
+   "scores": {
+    "emotional_load": 1,
+    "explainability": 4,
+    "actionability": 2,
+    "conversational_currency": 3
+   },
+   "politician_led": true,
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "House Democrats formally nominated Hakeem Jeffries for Speaker, a vote that would make him the first Black speaker if the party wins the House.",
+   "assembly_score": 17.59
+  },
+  {
+   "slot": "money_me",
+   "slot_label": "Money & me",
+   "key": "74b926ce1c843400",
+   "title": "Nvidia stops some China chip sales as calls grow for a smuggling probe",
+   "beat": "business",
+   "publisher_count": 7,
+   "publishers": [
+    "Financial Times",
+    "CBS News",
+    "CNBC",
+    "NBC News",
     "TechCrunch",
-    "Techmeme",
+    "The Verge",
+    "Daily Mail"
+   ],
+   "scores": {
+    "emotional_load": 1,
+    "explainability": 3,
+    "actionability": 1,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "Nvidia posted record $115bn sales but its shares fell after earnings, amid a leadership shakeup and a chip-smuggling probe push.",
+   "assembly_score": 6.81
+  },
+  {
+   "slot": "body_mind",
+   "slot_label": "Body & mind",
+   "key": "cb99e6aef1e50fe6",
+   "title": "NASA's Voyager 1 reaches one light-day from Earth, still operating after 49 years",
+   "beat": "science",
+   "publisher_count": 8,
+   "publishers": [
+    "The Guardian",
+    "ABC News",
+    "CBS News",
+    "EarthSky",
+    "Space.com",
     "The Verge",
     "Wired",
-    "ABC Australia",
-    "Yonhap News"
+    "Houston Public Media"
    ],
    "scores": {
     "emotional_load": 1,
@@ -53,97 +108,137 @@
    "politician_led": false,
    "ledger_class": null,
    "new_facts": [],
-   "line": "Nvidia's board says co-founder Jensen Huang will not return as CEO, and the company reported strong sales in its first report without him.",
-   "assembly_score": 17.44
+   "line": "NASA's Voyager 1 probe has reached a distance of one light-day from Earth, still transmitting after 49 years.",
+   "assembly_score": 6.27
   },
   {
-   "slot": "money_me",
-   "slot_label": "Money & me",
-   "key": "78290633f8a81ae1",
-   "title": "Anthropic files for IPO, reportedly targeting higher share price",
-   "beat": "business",
-   "publisher_count": 3,
+   "slot": "work_machines",
+   "slot_label": "Work & machines",
+   "key": "be113688fd9a0b3a",
+   "title": "Officials deny link between cyber attacks and tech outages; Vance cancels schedule",
+   "beat": "tech",
+   "publisher_count": 2,
    "publishers": [
     "CBS News",
+    "CNBC"
+   ],
+   "scores": {
+    "emotional_load": 2,
+    "explainability": 3,
+    "actionability": 2,
+    "conversational_currency": 3
+   },
+   "politician_led": true,
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "Officials say recent outages are not tied to cyber attacks, while the Vance-led response to the disruptions continues.",
+   "assembly_score": 4.83
+  },
+  {
+   "slot": "elsewhere",
+   "slot_label": "Elsewhere, but here",
+   "key": "69c7bfe64ad9e370",
+   "title": "Trump, Xi and Putin meet in China for trilateral talks",
+   "beat": "international",
+   "publisher_count": 16,
+   "publishers": [
+    "BBC",
+    "Financial Times",
+    "New York Times",
+    "Yahoo News",
+    "CBS News",
+    "CNBC",
+    "Daily Beast",
+    "France 24",
+    "NBC News",
     "Semafor",
-    "TechCrunch"
+    "Talking Points Memo",
+    "ABC Australia",
+    "ANSA",
+    "Daily Mail",
+    "Memeorandum",
+    "Yonhap News"
    ],
    "scores": {
     "emotional_load": 2,
     "explainability": 4,
     "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Anthropic is preparing a stock listing at a higher price target, with heavy investor demand despite a tech selloff.",
-   "assembly_score": 5.14
-  },
-  {
-   "slot": "body_mind",
-   "slot_label": "Body & mind",
-   "key": "9ea6cb3a686f5458",
-   "title": "U.S. loses measles elimination status after 25 years",
-   "beat": "health",
-   "publisher_count": 11,
-   "publishers": [
-    "New York Times",
-    "The 74",
-    "ABC News",
-    "CBS News",
-    "CNBC",
-    "Daily Beast",
-    "France 24",
-    "MedPage Today",
-    "The Atlantic",
-    "ABC Australia",
-    "Memeorandum"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 3,
     "conversational_currency": 4
    },
-   "politician_led": false,
+   "politician_led": true,
    "ledger_class": null,
    "new_facts": [],
-   "line": "The U.S. has officially lost its measles elimination status after 25 years, as cases and deaths continue to climb.",
-   "assembly_score": 10.36
+   "line": "Trump, Xi and Putin are meeting together in China, the first such trilateral summit, with no concrete outcomes yet reported.",
+   "assembly_score": 12.36
   },
   {
-   "slot": "work_machines",
-   "slot_label": "Work & machines",
-   "key": "8ab9567a3672458f",
-   "title": "Microsoft 365 outage began in Switzerland, spread via failover, disabled most Exchange servers",
-   "beat": "tech",
-   "publisher_count": 2,
+   "slot": "close",
+   "slot_label": "The close",
+   "key": "58e1b97b705f0887",
+   "title": "Congress moves to probe Nvidia's Huang and Commerce Secretary Lutnick over China chip sales",
+   "beat": "business",
+   "publisher_count": 6,
    "publishers": [
+    "New York Times",
+    "ABC News",
+    "CNBC",
+    "Daily Beast",
     "Techmeme",
-    "Daily Mail"
+    "The New Republic"
    ],
    "scores": {
     "emotional_load": 2,
-    "explainability": 4,
+    "explainability": 3,
     "actionability": 2,
-    "conversational_currency": 3
+    "conversational_currency": 4
+   },
+   "politician_led": true,
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "Congressional Democrats and Republicans are moving to question Nvidia's Jensen Huang and Commerce Secretary Howard Lutnick over alleged chip exports to China and family ties to Nvidia.",
+   "assembly_score": 6.48
+  },
+  {
+   "slot": "unavoidable",
+   "slot_label": "Unavoidable",
+   "key": "1765ab85480b99ef",
+   "title": "US and Iran trade strikes as Strait of Hormuz tanker fire and Gulf attacks escalate",
+   "beat": "international",
+   "publisher_count": 6,
+   "publishers": [
+    "BBC",
+    "Yahoo News",
+    "CBS News",
+    "CNBC",
+    "Fox News",
+    "France 24"
+   ],
+   "scores": {
+    "emotional_load": 4,
+    "explainability": 3,
+    "actionability": 2,
+    "conversational_currency": 5
    },
    "politician_led": false,
    "ledger_class": null,
    "new_facts": [],
-   "line": "A Microsoft 365 outage began in Switzerland and spread through failover systems, leaving most Exchange servers unresponsive.",
-   "assembly_score": 4.88
+   "line": "US and Iran are trading strikes across the Gulf, disrupting Strait of Hormuz shipping and threatening oil supplies.",
+   "assembly_score": 6.29
   },
   {
-   "slot": "group_chat",
-   "slot_label": "The group chat",
-   "key": "b9440eb549a42009",
-   "title": "Pink Creatine and Girlhood Capitalism",
-   "beat": "culture",
-   "publisher_count": 1,
+   "slot": "unavoidable",
+   "slot_label": "Unavoidable",
+   "key": "cd4814f1f1b7893e",
+   "title": "Mary Peltola flips Alaska's Senate seat. And, Nvidia won't reinstate Jensen Huang",
+   "beat": "national",
+   "publisher_count": 6,
    "publishers": [
-    "Casey Lewis (After School)"
+    "NPR",
+    "New York Times",
+    "France 24",
+    "Talking Points Memo",
+    "The New Republic",
+    "Fox 5 DC"
    ],
    "scores": {
     "emotional_load": 3,
@@ -155,21 +250,289 @@
    "ledger_class": null,
    "new_facts": [],
    "line": "",
-   "assembly_score": -0.74
+   "assembly_score": 3.79
   },
   {
-   "slot": "elsewhere",
-   "slot_label": "Elsewhere, but here",
-   "key": "33ff49f4c6798290",
-   "title": "Netanyahu opponents elect Matan Kahana as Knesset speaker",
+   "slot": "flex",
+   "slot_label": "Flex",
+   "key": "97ded72df0846330",
+   "title": "Senate GOP doubts FAA chief Duffy's $50 billion funding request after nationwide flight grounding",
+   "beat": "national",
+   "publisher_count": 4,
+   "publishers": [
+    "New York Times",
+    "CBS News",
+    "Fox 5 DC",
+    "Memeorandum"
+   ],
+   "scores": {
+    "emotional_load": 2,
+    "explainability": 4,
+    "actionability": 2,
+    "conversational_currency": 3
+   },
+   "politician_led": true,
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "The FAA is seeking $50 billion from Congress, and Senate Republicans are skeptical after a nationwide flight grounding.",
+   "assembly_score": 5.39
+  },
+  {
+   "slot": "flex",
+   "slot_label": "Flex",
+   "key": "78b5b0ea43dae57d",
+   "title": "Police investigate death of three-year-old boy after nursery incident",
+   "beat": "national",
+   "publisher_count": 2,
+   "publishers": [
+    "BBC",
+    "Daily Mail"
+   ],
+   "scores": {
+    "emotional_load": 5,
+    "explainability": 5,
+    "actionability": 1,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "A three-year-old boy died after a nursery incident and police have opened an investigation into the circumstances.",
+   "assembly_score": 5.28
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "59934b2034b55481",
+   "title": "Grand Theft Auto VI launches November 19 amid record pre-orders and hype",
+   "beat": "culture",
+   "publisher_count": 10,
+   "publishers": [
+    "BBC",
+    "New York Times",
+    "The Guardian",
+    "Al Jazeera",
+    "CBS News",
+    "Deutsche Welle",
+    "Fox News",
+    "NBC News",
+    "TechCrunch",
+    "Daily Mail"
+   ],
+   "urls": [
+    "//aljazeera.com/economy/2026/11/18/gta-6-everything-you-need-to-know-about-the-highly-anticipated-game?traffic_source=rss",
+    "//bbc.co.uk/news/articles/cw8r75xm8v4po?at_campaign=rss&at_medium=RSS",
+    "//bbc.co.uk/news/videos/cmg4652xzexvo?at_campaign=rss&at_medium=RSS",
+    "//cbsnews.com/news/grand-theft-auto-6-release-date-price-what-to-know",
+    "//dailymail.com/sciencetech/article-16302277/Grand-Theft-Auto-6-location-New-Zealand.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
+    "//dw.com/en/what-makes-grand-theft-auto-vi-more-than-just-a-game/a-79965822?maca=en-rss-en-all-1573-xml-mrss",
+    "//foxnews.com/outkick-sports/gta-vi-promotional-blitz-hits-china-country-where-game-isnt-even-approved-sale",
+    "//nbcnews.com/pop-culture/pop-culture-news/grand-theft-auto-six-release-rockstar-games-what-to-know-rcna609644",
+    "//nytimes.com/2026/11/18/arts/grand-theft-auto-vi-miami-florida.html",
+    "//techcrunch.com/2026/11/18/british-hackers-face-prison-for-gta-6-data-breach-and-crypto-thefts",
+    "//theguardian.com/commentisfree/2026/nov/18/gta-6-grand-theft-auto-vi-rockstar-employees-union-recognition",
+    "//theguardian.com/games/live/2026/nov/18/does-gta-vi-live-up-to-the-hype-our-games-editor-has-played-it-ask-her-anything"
+   ],
+   "scores": {
+    "emotional_load": 1,
+    "explainability": 5,
+    "actionability": 2,
+    "conversational_currency": 5
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "Rockstar's Grand Theft Auto VI releases November 19, with downloads already spiking and pre-orders reportedly around 10 million.",
+   "assembly_score": 5.1
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "be8b727b149731d8",
+   "title": "Anthropic weighs raising IPO price above $80 as investor demand surges",
+   "beat": "business",
+   "publisher_count": 4,
+   "publishers": [
+    "New York Times",
+    "CBS News",
+    "CNBC",
+    "Techmeme"
+   ],
+   "urls": [
+    "//cbsnews.com/news/anthropic-ipo-ai-boom-nasdaq-debut",
+    "//cnbc.com/2026/11/18/anthropic-ipo-ai-offering-price.html",
+    "//nytimes.com/2026/11/18/technology/anthropic-ipo-pricing.html",
+    "//techmeme.com/261118/p34"
+   ],
+   "scores": {
+    "emotional_load": 1,
+    "explainability": 4,
+    "actionability": 2,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "Anthropic, a leading AI company, is preparing a large IPO this week, a key test of investor appetite for the AI boom.",
+   "assembly_score": 3.13
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "a4c7a879cd64bdee",
+   "title": "Ukrainian strike hits Russia's Crimea bridge, cutting a key supply link",
+   "beat": "international",
+   "publisher_count": 4,
+   "publishers": [
+    "BBC",
+    "Al Jazeera",
+    "Techmeme",
+    "Daily Mail"
+   ],
+   "urls": [
+    "//aljazeera.com/news/2026/11/18/crimea-is-turning-into-an-island-how-ukraine-hit-putins-prized-bridge?traffic_source=rss",
+    "//bbc.co.uk/news/videos/ckvg28jy77z5o?at_campaign=rss&at_medium=RSS",
+    "//dailymail.com/news/article-16303337/Video-Putins-ultimate-humiliation-Ukraines-destruction-Crimea-bridge-change-Trumps-mind-dictate-war-ends-says-CHRIS-PLEASANCE.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
+    "//techmeme.com/261118/p33"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 1,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "Ukraine struck the Kerch (Crimea) bridge, a key Russian link, damaging a section of it and disrupting supply routes.",
+   "assembly_score": 2.92
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "058e5f48212687d1",
+   "title": "Trump's FDA pick pulled after reversal; Senate science rejection also reported",
+   "beat": "national",
+   "publisher_count": 3,
+   "publishers": [
+    "Politico Congress",
+    "STAT News",
+    "Daily Beast"
+   ],
+   "urls": [
+    "//politico.com/live-updates/2026/11/18/congress/republican-senator-cancels-vote-trump-nominee-science-foundation-01172544",
+    "//statnews.com/2026/11/18/bill-cassidy-rejects-jim-oneill-lead-national-science-foundation",
+    "//statnews.com/2026/11/18/biotech-news-fda-discloses-reasons-for-rejecting-summit-drug",
+    "//statnews.com/pharmalot/2026/11/18/heidi-overton-fda-nomination-yanked-merck-cancer-drug-setback",
+    "//thedailybeast.com/trump-forced-into-humiliating-u-turn-over-fda-goon-heidi-overton"
+   ],
+   "scores": {
+    "emotional_load": 2,
+    "explainability": 3,
+    "actionability": 1,
+    "conversational_currency": 2
+   },
+   "politician_led": true,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "Trump's nominee to lead the FDA has been withdrawn after an apparent reversal, leaving the agency's leadership pick unsettled.",
+   "assembly_score": 2.23
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "fe4c1daff70c4d33",
+   "title": "Iran strikes Kuwait and Bahrain after US hits Iranian island",
    "beat": "international",
    "publisher_count": 5,
    "publishers": [
-    "Financial Times",
+    "BBC",
+    "Al Jazeera",
+    "CBS News",
+    "Fox News",
+    "France 24"
+   ],
+   "urls": [
+    "//aljazeera.com/news/2026/11/18/kuwait-bahrain-face-new-iran-attacks-after-us-strike-on-qeshm-island?traffic_source=rss",
+    "//bbc.co.uk/news/articles/cw4gn9jeqjq7o?at_campaign=rss&at_medium=RSS",
+    "//cbsnews.com/live-updates/iran-war-us-gulf-retaliation-strikes-strait-of-hormuz",
+    "//foxnews.com/world/iran-targets-us-air-base-kuwait-us-defensive-strikes-criticism-gulf-states",
+    "//france24.com/en/video/20261118-us-strikes-iranian-island-after-tehran-targets-bahrain"
+   ],
+   "scores": {
+    "emotional_load": 4,
+    "explainability": 3,
+    "actionability": 2,
+    "conversational_currency": 4
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "Iran is launching new attacks on Gulf states including Kuwait and Bahrain after US strikes on an Iranian island, raising regional war risk.",
+   "assembly_score": 2.19
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "62cfb00a57ddf5eb",
+   "title": "Trump reportedly frustrated with Vance over Iran war critique",
+   "beat": "national",
+   "publisher_count": 3,
+   "publishers": [
     "New York Times",
-    "The Guardian",
-    "France 24",
-    "ANSA"
+    "Daily Beast",
+    "Memeorandum"
+   ],
+   "urls": [
+    "//memeorandum.com/261118/p49",
+    "//memeorandum.com/261118/p50",
+    "//memeorandum.com/261118/p62",
+    "//nytimes.com/2026/11/18/us/politics/vance-trump-iran-2028-election-rubio.html",
+    "//thedailybeast.com/fox-news-host-says-jd-never-should-have-been-vice-president"
+   ],
+   "scores": {
+    "emotional_load": 2,
+    "explainability": 4,
+    "actionability": 1,
+    "conversational_currency": 3
+   },
+   "politician_led": true,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "Trump is reportedly frustrated with Vice President Vance over his criticism of the Iran war, amid signs of GOP tensions.",
+   "assembly_score": 1.97
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "0e9538ff717c999e",
+   "title": "Intelligence chief says recent outages were not state cyberattacks",
+   "beat": "national",
+   "publisher_count": 4,
+   "publishers": [
+    "Yahoo News",
+    "CBS News",
+    "Daily Beast",
+    "Fox News"
+   ],
+   "urls": [
+    "//abcnews.com/Politics/mullin-faces-congressional-hearing-wake-historic-nationwide-ground/story?id=138226960",
+    "//cbsnews.com/video/full-speech-markwayne-mullin-delivers-opening-remarks-at-house-hearing-on-worldwide-threats",
+    "//foxnews.com/politics/recent-service-outages-not-state-sponsored-attacks-dni-jay-clayton-testifies",
+    "//thedailybeast.com/keystone-kash-ripped-for-skipping-testimony-amid-cyber-chaos",
+    "//thedailybeast.com/trump-goon-melts-down-over-using-private-jet-during-air-chaos"
    ],
    "scores": {
     "emotional_load": 2,
@@ -178,83 +541,212 @@
     "conversational_currency": 3
    },
    "politician_led": true,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
    "ledger_class": null,
    "new_facts": [],
-   "line": "Israel's opposition-backed bloc won the Knesset speaker vote, a setback for Netanyahu ahead of the election.",
-   "assembly_score": 6.86
+   "line": "Officials testified that recent nationwide service outages were not state-sponsored cyberattacks, amid a congressional hearing on threats.",
+   "assembly_score": 1.92
   },
   {
-   "slot": "close",
-   "slot_label": "The close",
-   "key": "5be5e6580bceb1db",
-   "title": "Duffy seeks $50B for FAA after nationwide ground stop; root cause unclear",
-   "beat": "national",
-   "publisher_count": 10,
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "b1c745c102ea9eba",
+   "title": "Nike to give free custom sneakers to US high school valedictorians",
+   "beat": "culture",
+   "publisher_count": 2,
    "publishers": [
-    "Washington Post",
-    "Yahoo News",
-    "ABC News",
-    "CBS News",
-    "CNBC",
+    "Fox News",
+    "Memeorandum"
+   ],
+   "urls": [
+    "//foxnews.com/outkick-sports/nike-promises-free-sneakers-every-high-school-valedictorian-america-viral-request",
+    "//memeorandum.com/261118/p66"
+   ],
+   "scores": {
+    "emotional_load": 1,
+    "explainability": 5,
+    "actionability": 2,
+    "conversational_currency": 3
+   },
+   "politician_led": true,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "Nike will give free custom sneakers to high school valedictorians after a senator-elect asked the company to do so.",
+   "assembly_score": 1.595
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "bd5806ebe2b8edc8",
+   "title": "William and Kate end India tour with meeting with Modi",
+   "beat": "international",
+   "publisher_count": 3,
+   "publishers": [
+    "BBC",
+    "Daily Mail",
+    "Vogue"
+   ],
+   "urls": [
+    "//bbc.co.uk/news/articles/cq62ped2ypy4o?at_campaign=rss&at_medium=RSS",
+    "//dailymail.com/news/royals/article-16302623/William-Kate-meet-Narendra-Modi-New-Delhi-India-tour.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
+    "//vogue.com/article/kate-middleton-shopped-from-brentwood-to-belgravia-for-her-royal-tour-2026-11-18",
+    "//vogue.com/slideshow/kate-middleton-india-royal-tour-2026-fashion"
+   ],
+   "scores": {
+    "emotional_load": 1,
+    "explainability": 4,
+    "actionability": 1,
+    "conversational_currency": 2
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "Prince William and Kate wrapped a royal tour of India, meeting PM Modi and reaffirming UK-India ties.",
+   "assembly_score": 1.38
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "0d6ef6f188dd63d3",
+   "title": "Vance cancels DealBook Summit appearance, citing Washington meetings amid outages",
+   "beat": "national",
+   "publisher_count": 2,
+   "publishers": [
     "Daily Beast",
-    "NBC News",
-    "The New Republic",
-    "Fox 5 Atlanta",
-    "Fox 5 DC"
+    "Memeorandum"
+   ],
+   "urls": [
+    "//memeorandum.com/261118/p55",
+    "//memeorandum.com/261118/p61",
+    "//thedailybeast.com/vance-abruptly-chickens-out-of-on-stage-grilling-about-chaos"
    ],
    "scores": {
     "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 2,
-    "conversational_currency": 4
+    "explainability": 3,
+    "actionability": 1,
+    "conversational_currency": 2
    },
    "politician_led": true,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
    "ledger_class": null,
    "new_facts": [],
-   "line": "A nationwide FAA ground stop was caused by a router failure and repair work, and the Transportation Secretary is asking Congress for $50 billion to fix air travel.",
-   "assembly_score": 8.63
+   "line": "Vice President Vance canceled a scheduled DealBook appearance at the last minute, citing meetings in Washington amid a string of outages.",
+   "assembly_score": 1.345
   },
   {
-   "slot": "unavoidable",
-   "slot_label": "Unavoidable",
-   "key": "f0d05cab03df619d",
-   "title": "Reported Iranian dirty bomb plot in Washington denied by Tehran; Trump says U.S. takes it seriously",
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "ee216d6363525b34",
+   "title": "Five EU nations advance plan to deport asylum seekers to Rwanda",
    "beat": "international",
-   "publisher_count": 6,
+   "publisher_count": 3,
    "publishers": [
-    "BBC",
-    "CNBC",
-    "Fox News",
-    "Daily Mail",
-    "Fox 5 DC",
-    "Memeorandum"
+    "Al Jazeera",
+    "CBS News",
+    "Semafor"
+   ],
+   "urls": [
+    "//aljazeera.com/video/newsfeed/2026/11/18/five-eu-nations-to-deport-migrants-to-rwanda?traffic_source=rss",
+    "//cbsnews.com/news/europe-migrants-eu-5-nations-plan-return-hub-asylum-seekers-rwanda",
+    "//semafor.com/article/11/18/2026/european-countries-aim-to-start-deporting-asylum-seekers-to-rwanda"
    ],
    "scores": {
-    "emotional_load": 3,
+    "emotional_load": 4,
     "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
+    "actionability": 2,
+    "conversational_currency": 3
    },
    "politician_led": true,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
    "ledger_class": null,
    "new_facts": [],
-   "line": "Reports allege Iran plotted a dirty bomb or chemical attack in Washington; Iran denies it, and Trump says the U.S. takes it seriously.",
-   "assembly_score": 6.22
+   "line": "Five EU countries are advancing plans to send asylum seekers to Rwanda for processing and possible deportation.",
+   "assembly_score": 1.29
   },
   {
-   "slot": "unavoidable",
-   "slot_label": "Unavoidable",
-   "key": "99ecaad568acc0fe",
-   "title": "San Diego votes to end Flock camera and smart streetlight contracts",
-   "beat": "national",
-   "publisher_count": 6,
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "c9d77dc731c3f149",
+   "title": "Russell Brand faces transfer and contact ban in prison, minister criticises media coverage",
+   "beat": "culture",
+   "publisher_count": 2,
    "publishers": [
-    "The Guardian",
-    "Al Jazeera",
-    "Ars Technica",
-    "Fox News",
-    "NBC News",
-    "Techmeme"
+    "BBC",
+    "Daily Mail"
+   ],
+   "urls": [
+    "//bbc.co.uk/news/articles/cq702k1w8xd3o?at_campaign=rss&at_medium=RSS",
+    "//dailymail.com/crime-desk/article-16303431/Laura-Gallacher-visits-Russell-Brand-cushy-jail-faces-prison-transfer-ban-speaking-wife-protesting-innocence-message-read-YouTube.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
+    "//dailymail.com/news/article-16302031/Russell-Brand-banned-wife-protesting-innocence-Laura-Gallacher-YouTube.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
+    "//dailymail.com/news/article-16302167/Labours-Lucy-Powell-sparks-confusion-says-Government-look-making-school-uniform-porn-illegal-despite-victims-minister-resisting-ban.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
+   ],
+   "scores": {
+    "emotional_load": 2,
+    "explainability": 3,
+    "actionability": 1,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "Russell Brand, jailed and facing transfer, is barred from contacting his wife while protesting his innocence publicly.",
+   "assembly_score": 1.14
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "4ca12c4022a76247",
+   "title": "Trump's health and age draw scrutiny in Philippines appearance coverage",
+   "beat": "national",
+   "publisher_count": 2,
+   "publishers": [
+    "Daily Beast",
+    "Memeorandum"
+   ],
+   "urls": [
+    "//memeorandum.com/261118/p58",
+    "//thedailybeast.com/needy-trump-80-begs-for-shiny-award-in-weird-speech-in-the-philippines",
+    "//thedailybeast.com/trump-80-derails-in-speech-to-world-leader-talking-xmas",
+    "//thedailybeast.com/trump-80-makes-cringe-blunder-moments-after-philippines-speech",
+    "//thedailybeast.com/trump-80-shakes-hands-with-his-own-cabinet-in-wild-senior-moment"
+   ],
+   "scores": {
+    "emotional_load": 1,
+    "explainability": 3,
+    "actionability": 1,
+    "conversational_currency": 2
+   },
+   "politician_led": true,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": 1.095
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "98fcdbcf171b88e7",
+   "title": "Trump FCC nominee advances as Democrats boycott committee vote",
+   "beat": "national",
+   "publisher_count": 2,
+   "publishers": [
+    "Politico Congress",
+    "Memeorandum"
+   ],
+   "urls": [
+    "//memeorandum.com/261118/p59",
+    "//politico.com/live-updates/2026/11/18/congress/trumps-fcc-pick-advances-despite-democratic-boycott-01172222"
    ],
    "scores": {
     "emotional_load": 2,
@@ -263,54 +755,1260 @@
     "conversational_currency": 2
    },
    "politician_led": true,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
    "ledger_class": null,
    "new_facts": [],
-   "line": "San Diego's city council voted to end contracts for 500-plus Flock and smart streetlight surveillance cameras, which go dark.",
-   "assembly_score": 5.22
+   "line": "A Trump nominee for the Federal Communications Commission advanced in the Senate despite Democrats boycotting the vote.",
+   "assembly_score": 0.89
   },
   {
-   "slot": "flex",
-   "slot_label": "Flex",
-   "key": "448bf69df292661f",
-   "title": "US officials say Iran is digging in, reading GOP election losses as weakness",
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "a7976377cf978e0a",
+   "title": "Holiday flight cancellations: tips for getting rebooked quickly",
+   "beat": "other",
+   "publisher_count": 2,
+   "publishers": [
+    "NPR",
+    "Fox News"
+   ],
+   "urls": [
+    "//foxnews.com/deals/travel-comfort-essentials",
+    "//npr.org/2026/11/18/nx-s1-6045636/got-a-canceled-flight-7-clever-ways-to-get-rebooked-fast"
+   ],
+   "scores": {
+    "emotional_load": 1,
+    "explainability": 5,
+    "actionability": 4,
+    "conversational_currency": 2
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": 0.82
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "19f6a84768d23e33",
+   "title": "Oscar Nominee Florence Pugh Slams Surgery Rumors About \u2018Unrecognizable\u2019 Face",
    "beat": "international",
    "publisher_count": 2,
    "publishers": [
-    "New York Times",
-    "Memeorandum"
+    "Daily Beast",
+    "Daily Mail"
+   ],
+   "urls": [
+    "//dailymail.com/tvshowbiz/article-16302081/Florence-Pugh-fires-surgery-speculation-faces-change.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
+    "//thedailybeast.com/florence-pugh-slams-plastic-surgery-rumors-over-unrecognizable-face"
    ],
    "scores": {
     "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": 0.7
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "5af5fc276eedeb02",
+   "title": "ABC News suspends staff over flawed Trump sons business story",
+   "beat": "national",
+   "publisher_count": 2,
+   "publishers": [
+    "ABC News",
+    "Fox News"
+   ],
+   "urls": [
+    "//abcnews.com/video/41463246",
+    "//foxnews.com/media/abc-news-quietly-suspended-staffers-botched-story-trump-sons-business-dealings"
+   ],
+   "scores": {
+    "emotional_load": 2,
+    "explainability": 3,
+    "actionability": 1,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "ABC News reportedly suspended staffers over a botched story on Trump sons' business dealings, with the outlet's handling still unclear.",
+   "assembly_score": 0.455
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "63ec1aef3da0b8bb",
+   "title": "Charlotte seeks dismissal of lawsuit over Ukrainian refugee's train stabbing death",
+   "beat": "national",
+   "publisher_count": 2,
+   "publishers": [
+    "The Guardian",
+    "Fox News"
+   ],
+   "urls": [
+    "//foxnews.com/us/charlotte-wants-iryna-zarutska-murder-lawsuit-tossed-says-cant-held-responsible",
+    "//theguardian.com/us-news/2026/nov/18/ukrainian-refugee-stabbing-lawsuit"
+   ],
+   "scores": {
+    "emotional_load": 4,
+    "explainability": 3,
+    "actionability": 1,
+    "conversational_currency": 2
+   },
+   "politician_led": true,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "The city of Charlotte is asking a court to dismiss a lawsuit over the fatal stabbing of a Ukrainian refugee on a train, arguing it isn't responsible.",
+   "assembly_score": 0.33
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "4846252fec5087d7",
+   "title": "Senate Democrats split over challenging Chuck Schumer's leadership",
+   "beat": "national",
+   "publisher_count": 2,
+   "publishers": [
+    "France 24",
+    "The New Republic"
+   ],
+   "urls": [
+    "//france24.com/en/video/20261118-senate-leadership-challenge-exposes-divisions-among-democrat",
+    "//newrepublic.com/article/218109/chris-van-hollen-better-leader-chuck-schumer"
+   ],
+   "scores": {
+    "emotional_load": 1,
     "explainability": 4,
-    "actionability": 2,
+    "actionability": 1,
     "conversational_currency": 3
    },
    "politician_led": true,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
    "ledger_class": null,
    "new_facts": [],
-   "line": "US officials say Iran is digging in on its position, believing Republican election losses weaken Trump's leverage.",
-   "assembly_score": 5.22
+   "line": "Some Senate Democrats are pushing to challenge Chuck Schumer's leadership, exposing deep party divisions over who should lead them.",
+   "assembly_score": 0.29
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "186c22e93bf0e197",
+   "title": "Tech outages spark panic-buying surge at Costco, analyst report says",
+   "beat": "business",
+   "publisher_count": 2,
+   "publishers": [
+    "CBS News",
+    "CNBC"
+   ],
+   "urls": [
+    "//cbsnews.com/news/costco-panic-buying-tech-outages-generators",
+    "//cnbc.com/2026/11/18/tech-outage-costco-panic-buying.html"
+   ],
+   "scores": {
+    "emotional_load": 2,
+    "explainability": 4,
+    "actionability": 1,
+    "conversational_currency": 2
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "A report says tech outages are driving panic-buying, with Costco seeing a sales surge as shoppers stockpile goods.",
+   "assembly_score": 0.19
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "8a96d2c402e5a892",
+   "title": "Robert Pattinson reportedly cast as next James Bond",
+   "beat": "culture",
+   "publisher_count": 3,
+   "publishers": [
+    "The Guardian",
+    "Daily Mail",
+    "Vogue"
+   ],
+   "urls": [
+    "//dailymail.com/tvshowbiz/article-16302029/Robert-Pattinsons-secret-weapon-nailing-half-dressed-Sean-Connery-seduction-scene-landed-actor-role-James-Bond.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
+    "//dailymail.com/tvshowbiz/article-16302469/Robert-Pattinson-1-million-audition-coveted-Bond-role.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
+    "//theguardian.com/film/2026/nov/18/james-bond-josh-oconnor-robert-pattinson-denis-villeneuve",
+    "//vogue.com/article/suki-waterhouse-has-been-dropping-james-bond-clues-for-months-2026-11-18"
+   ],
+   "scores": {
+    "emotional_load": 1,
+    "explainability": 5,
+    "actionability": 1,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "Robert Pattinson has reportedly been cast as the next James Bond, with reports citing a large audition fee and a major salary.",
+   "assembly_score": 0.16
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "36fc805b49a93b2d",
+   "title": "Rwanda and DRC: What is holding up the Washington peace process?",
+   "beat": "international",
+   "publisher_count": 2,
+   "publishers": [
+    "Al Jazeera",
+    "Daily Mail"
+   ],
+   "urls": [
+    "//aljazeera.com/news/2026/11/18/rwanda-and-drc-what-is-holding-up-the-washington-peace-process?traffic_source=rss",
+    "//dailymail.com/news/article-16303151/jd-vance-crisis-talks-doomsday-blackout.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": 0.13
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "ed344170b43a5e1a",
+   "title": "Israel delays building contracts for West Bank settlement after UK sanctions",
+   "beat": "international",
+   "publisher_count": 3,
+   "publishers": [
+    "The Guardian",
+    "Al Jazeera",
+    "France 24"
+   ],
+   "urls": [
+    "//aljazeera.com/features/2026/11/18/palestinians-find-refuge-in-ancient-caves-after-israel-demolish-homes?traffic_source=rss",
+    "//aljazeera.com/news/2026/11/18/palestinians-flee-refugee-camp-as-israel-begins-operation-in-central-gaza?traffic_source=rss",
+    "//france24.com/en/video/20261118-israel-begins-new-military-operation-in-gaza",
+    "//theguardian.com/world/2026/nov/18/israel-construction-contracts-e1-west-bank-settlement-uk-sanctions"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": 0.09
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "df7476c00cb8e7d7",
+   "title": "Waymo has stopped its robotaxis from driving on the freeway\u2014here\u2019s why",
+   "beat": "international",
+   "publisher_count": 2,
+   "publishers": [
+    "Ars Technica",
+    "Daily Mail"
+   ],
+   "urls": [
+    "//arstechnica.com/cars/2026/11/waymo-suspends-freeway-driving-after-california-construction-zone-complaint",
+    "//dailymail.com/news/article-16301421/California-imminent-hazard-Waymo-banned.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": 0.05
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "04e0d9d14741b1a2",
+   "title": "Pochettino starts at Manchester United as JJ Gabriel departs",
+   "beat": "culture",
+   "publisher_count": 2,
+   "publishers": [
+    "Al Jazeera",
+    "Daily Mail"
+   ],
+   "urls": [
+    "//aljazeera.com/video/newsfeed/2026/11/18/never-played-already-gone-jj-gabriel-leaves-man-united?traffic_source=rss",
+    "//dailymail.com/sport/football/article-16301915/Mauricio-Pochettino-private-jet-Manchester-promise-Man-City-dominance-city-rivalry-bizarre-declaration-Country-Roads.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
+   ],
+   "scores": {
+    "emotional_load": 1,
+    "explainability": 4,
+    "actionability": 1,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "Mauricio Pochettino has begun his new role as Manchester United manager, while young player JJ Gabriel has left the club without making an appearance.",
+   "assembly_score": -0.02
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "512644a7f89d12f4",
+   "title": "Can the US and Iran sustain a \u2018frozen war\u2019?",
+   "beat": "international",
+   "publisher_count": 2,
+   "publishers": [
+    "Al Jazeera",
+    "Fox News"
+   ],
+   "urls": [
+    "//aljazeera.com/news/2026/11/18/can-the-us-and-iran-sustain-a-frozen?traffic_source=rss",
+    "//aljazeera.com/news/2026/11/18/status-quo-between-us-and-iran-could-break-out-into-war-analysts-warn?traffic_source=rss",
+    "//foxnews.com/world/protesters-call-regime-change-iran-following-deadly-crash-killed-13-oil-gas-workers",
+    "//foxnews.com/world/rare-anti-government-protests-erupt-iran-workers-deaths"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": -0.03
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "3d3e11350b5fac50",
+   "title": "Russian strikes kill at least five in Ukraine as cheap new munitions raise the threat",
+   "beat": "international",
+   "publisher_count": 2,
+   "publishers": [
+    "Al Jazeera",
+    "France 24"
+   ],
+   "urls": [
+    "//aljazeera.com/news/2026/11/18/russian-attacks-on-ukraine-kill-at-least-five-people?traffic_source=rss",
+    "//aljazeera.com/video/newsfeed/2026/11/18/ukraine-mourns-mother-athlete-and-drone-operator-killed-in-russian-strike?traffic_source=rss",
+    "//france24.com/en/europe/20261118-russia-new-low-cost-munitions-threat-ukraine"
+   ],
+   "scores": {
+    "emotional_load": 4,
+    "explainability": 4,
+    "actionability": 1,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "Russian strikes on Ukraine killed at least five people, and Moscow is fielding cheaper munitions that could widen the threat.",
+   "assembly_score": -0.04
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "ec695104f2ea50ad",
+   "title": "The only way out of populism is through it",
+   "beat": "international",
+   "publisher_count": 2,
+   "publishers": [
+    "Financial Times",
+    "Daily Mail"
+   ],
+   "urls": [
+    "//dailymail.com/news/article-16302203/Breaking-Bad-Britain-concerns-Mexican-run-crystal-meth-labs-opening-UK.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
+    "//ft.com/content/e71273dd-2748-4396-bb62-e75307105596?syn-25a6b1a6=1"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": -0.18
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "947aa737424a6d6c",
+   "title": "BBL filler found in heart and lungs after mum died",
+   "beat": "international",
+   "publisher_count": 2,
+   "publishers": [
+    "BBC",
+    "Daily Mail"
+   ],
+   "urls": [
+    "//bbc.co.uk/news/articles/cmrrg02nkpjeo?at_campaign=rss&at_medium=RSS",
+    "//dailymail.com/news/article-16302533/Mother-five-collapsed-died-undergoing-Brazilian-butt-lift-friends-house-inquest-hears.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": -0.21
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "859832379d1b79c2",
+   "title": "Jeff Bezos Says He Was \u2018Heavily Involved\u2019 in Bond Casting",
+   "beat": "national",
+   "publisher_count": 3,
+   "publishers": [
+    "CBS News",
+    "NBC News",
+    "Daily Mail"
+   ],
+   "urls": [
+    "//cbsnews.com/news/jeff-bezos-james-bond-robert-pattinson-heavily-involved-decision-cast",
+    "//dailymail.com/tvshowbiz/article-16301903/Jeff-Bezos-heavily-involved-Bond-casting-process.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
+    "//today.com/video/jeff-bezos-says-he-played-role-in-casting-pattinson-as-bond-273722949667"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": -0.79
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "ded7b6292cd41574",
+   "title": "Carlos Alcaraz beats Daniil Medvedev in ATP Finals tennis group stage \u2013 as it happened",
+   "beat": "international",
+   "publisher_count": 3,
+   "publishers": [
+    "BBC",
+    "The Guardian",
+    "ANSA"
+   ],
+   "urls": [
+    "//ansa.it/sito/notizie/sport/tennis/speciali/atp_finals_2026/2026/11/18/atp-finals-alcaraz-non-fa-sconti-travolto-anche-medvedev_cb57c35a-9243-43d4-b892-f48aacd627b7.html",
+    "//bbc.co.uk/sport/tennis/articles/cmdx1erlpqkxo?at_campaign=rss&at_medium=RSS",
+    "//theguardian.com/sport/live/2026/nov/18/carlos-alcaraz-v-daniil-medvedev-atp-finals-tennis-group-stage-live"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": -0.83
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "9c26f4a95628af16",
+   "title": "8-year-old Haitian boy returns to school after being detained by ICE",
+   "beat": "national",
+   "publisher_count": 3,
+   "publishers": [
+    "The Guardian",
+    "Yahoo News",
+    "Memeorandum"
+   ],
+   "urls": [
+    "//cbsnews.com/news/8-year-old-detained-ice-released-custody",
+    "//memeorandum.com/261118/p46",
+    "//theguardian.com/us-news/2026/nov/18/ice-deportation-flights-csi-deal"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": -0.86
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "f4841bea815a3a87",
+   "title": "How The Verge is picking which Black Friday deals to share",
+   "beat": "national",
+   "publisher_count": 3,
+   "publishers": [
+    "Fox News",
+    "The Verge",
+    "Vogue"
+   ],
+   "urls": [
+    "//foxnews.com/deals/best-black-friday-tech-deals",
+    "//theverge.com/gadgets/1034715/how-the-verge-finds-deals",
+    "//vogue.com/article/leset-black-friday-sale"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": -0.93
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "b59826fd75f30dee",
+   "title": "The Best Books of 2026 So Far",
+   "beat": "national",
+   "publisher_count": 2,
+   "publishers": [
+    "The New Yorker",
+    "Glamour"
+   ],
+   "urls": [
+    "//glamour.com/story/best-sunscreens-for-combination-skin",
+    "//newyorker.com/best-books-2026"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": -1.11
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "4bb745bf3ff56fb7",
+   "title": "US tech outages blamed on rush to fix bugs found by AI",
+   "beat": "international",
+   "publisher_count": 2,
+   "publishers": [
+    "Financial Times",
+    "Daily Beast"
+   ],
+   "urls": [
+    "//ft.com/content/96c565f1-f229-40b6-91e8-7a849ec4b208?syn-25a6b1a6=1",
+    "//thedailybeast.com/obsessed/jimmy-fallon-stunned-by-trumps-bizarrely-casual-crisis-response"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": -1.3
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "138aedbfb49fd6c3",
+   "title": "IEA chief sees no 'credible pathway' back to pre-war normality in the Strait of Hormuz",
+   "beat": "national",
+   "publisher_count": 3,
+   "publishers": [
+    "Al Jazeera",
+    "CBS News",
+    "CNBC"
+   ],
+   "urls": [
+    "//aljazeera.com/news/2026/11/18/us-official-says-hormuz-insurance-hits-64m-is-the-strait-really-open?traffic_source=rss",
+    "//cbsnews.com/video/iran-and-us-trade-strikes-oil-tanker-inferno-ignites-in-strait-of-hormuz",
+    "//cbsnews.com/video/us-iran-tensions-hit-highest-point-in-months",
+    "//cnbc.com/2026/11/18/iea-strait-hormuz-energy-risk.html"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": -1.39
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "1b11d2c31e28be71",
+   "title": "\u2018Just Ridiculous\u2019: A Famed Philosopher Takes on AI Consciousness",
+   "beat": "tech",
+   "publisher_count": 2,
+   "publishers": [
+    "Techmeme",
+    "Wired"
+   ],
+   "urls": [
+    "//techmeme.com/261118/p29",
+    "//wired.com/story/just-ridiculous-a-famed-philosopher-takes-on-ai-consciousness"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": -1.61
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "c769da08df297b89",
+   "title": "Heating bills, chocolate and cat food: What the inflation figures mean for you",
+   "beat": "international",
+   "publisher_count": 2,
+   "publishers": [
+    "BBC",
+    "Daily Mail"
+   ],
+   "urls": [
+    "//bbc.co.uk/news/articles/ckq6eg55n221o?at_campaign=rss&at_medium=RSS",
+    "//dailymail.com/news/article-16301967/Foods-soaring-price-UK-supermarkets-ahead-Christmas.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
+    "//dailymail.com/news/article-16302927/UK-inflation-energy-cost-living-fuel-food.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": -1.63
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "fdd5987318b6b37d",
+   "title": "\u2018A savagely brutal map\u2019: Senate GOP braces for 2028",
+   "beat": "national",
+   "publisher_count": 2,
+   "publishers": [
+    "Politico",
+    "MedPage Today"
+   ],
+   "urls": [
+    "//medpagetoday.com/publichealthpolicy/medicare/123943",
+    "//politico.com/news/2026/11/18/senate-map-2028-bernie-moreno-01170846"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": -1.7
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "0822afe5f156a4b1",
+   "title": "Instagram\u2019s \u2018school safety\u2019 push was also a way to get more teens on the app",
+   "beat": "tech",
+   "publisher_count": 2,
+   "publishers": [
+    "Techmeme",
+    "The Verge"
+   ],
+   "urls": [
+    "//techmeme.com/261118/p28",
+    "//theverge.com/tech/1036517/instagram-school-safety-program-project-gryffindor"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": -1.78
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "24ca5fbbdad0ae90",
+   "title": "Divide and conquer - how maverick Springboks coach Erasmus split the rugby world",
+   "beat": "international",
+   "publisher_count": 3,
+   "publishers": [
+    "BBC",
+    "Al Jazeera",
+    "France 24"
+   ],
+   "urls": [
+    "//aljazeera.com/video/counting-the-cost/2026/11/18/whats-holding-south-africas-economy-back?traffic_source=rss",
+    "//bbc.co.uk/sport/rugby-union/articles/cmvg28v20xy0o?at_campaign=rss&at_medium=RSS",
+    "//france24.com/en/video/20261118-athlete-support-under-spotlight-as-south-africa-swimmer-switches-to-netherlands"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": -1.83
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "41e3b7b273426717",
+   "title": "North Korea completes external works on enrichment facility extension, says IAEA",
+   "beat": "international",
+   "publisher_count": 2,
+   "publishers": [
+    "Deutsche Welle",
+    "France 24"
+   ],
+   "urls": [
+    "//dw.com/en/north-korea-expanded-uranium-enrichment-plant-says-iaea-head/a-79982758?maca=en-rss-en-all-1573-xml-mrss",
+    "//france24.com/en/asia-pacific/20261118-north-korea-completes-external-works-on-enrichment-facility-extension-says-iaea"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": -1.86
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "b08df09c0c70e619",
+   "title": "Spanish court investigates Julio Iglesias over sexual abuse claims",
+   "beat": "international",
+   "publisher_count": 3,
+   "publishers": [
+    "The Guardian",
+    "ANSA",
+    "Daily Mail"
+   ],
+   "urls": [
+    "//ansa.it/sito/notizie/mondo/2026/11/18/spagna-il-tribunale-apre-una-inchiesta-su-julio-iglesias-per-violenza-sessuale_389984b2-c4e7-45ff-bc25-05a9533da6b7.html",
+    "//dailymail.com/news/article-16302577/Julio-Iglesias-investigated-sexual-abuse-complaints-two-former-employees.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
+    "//theguardian.com/world/2026/nov/18/spanish-court-investigates-julio-iglesias-two-women-allegations"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": -1.94
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "799ea8aff04be111",
+   "title": "Ted Lieu is elected House Democratic Caucus chair",
+   "beat": "national",
+   "publisher_count": 2,
+   "publishers": [
+    "Politico Congress",
+    "Memeorandum"
+   ],
+   "urls": [
+    "//memeorandum.com/261118/p47",
+    "//politico.com/live-updates/2026/11/18/congress/ted-lieu-democratic-caucus-chair-01172200"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": -1.95
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "e3ea26f3d14b86e6",
+   "title": "A US court sentences Tyler Robert Buchanan, a 24-year-old British leader of Scattered Spider, to six years in prison for phishing and stealing $11.6M in crypto (Sergiu Gatlan/BleepingComputer)",
+   "beat": "tech",
+   "publisher_count": 2,
+   "publishers": [
+    "Techmeme",
+    "Daily Mail"
+   ],
+   "urls": [
+    "//dailymail.com/news/article-16302735/British-hacker-cyber-attacks-jailed-six-years-admitting-stealing-9m-crypto-US-firms.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
+    "//techmeme.com/261118/p19"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": -2.07
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "038553fd8d9fb6d3",
+   "title": "House Democrat warns 13 Trump allies to save their records for upcoming investigations",
+   "beat": "national",
+   "publisher_count": 2,
+   "publishers": [
+    "NPR",
+    "CBS News"
+   ],
+   "urls": [
+    "//cbsnews.com/news/robert-garcia-letters-trump-house-oversight-and-government-reform-committee-investigations",
+    "//npr.org/2026/11/18/g-s1-154147/robert-garcia-house-democrats-investigations-trump-administration"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": -2.09
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "bbb590995929236e",
+   "title": "Man sentenced to 27 years in prison over foiled plot to kill Trump",
+   "beat": "national",
+   "publisher_count": 2,
+   "publishers": [
+    "Washington Post",
+    "Fox 5 DC"
+   ],
+   "urls": [
+    "//fox5dc.com/news/man-sentenced-over-27-years-iran-linked-plot-assassinate-trump",
+    "//washingtonpost.com/nation/2026/11/18/asif-merchant-sentenced-27-years-over-plot-kill-us-leaders"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": -2.26
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "1bba058cf64e88cc",
+   "title": "SpaceX $40 billion chip financing to stay off balance sheet",
+   "beat": "national",
+   "publisher_count": 2,
+   "publishers": [
+    "Semafor",
+    "Techmeme"
+   ],
+   "urls": [
+    "//semafor.com/article/11/18/2026/spacex-40-billion-chip-financing-to-stay-off-balance-sheet",
+    "//techmeme.com/261118/p24"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": -2.36
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "880becea7fbb4533",
+   "title": "The DOJ\u2019s Latest Legal Hires All Have the Same Red Flag",
+   "beat": "national",
+   "publisher_count": 2,
+   "publishers": [
+    "The New Republic",
+    "Memeorandum"
+   ],
+   "urls": [
+    "//memeorandum.com/261118/p44",
+    "//newrepublic.com/post/218126/doj-latest-legal-hires-red-flag-inexperienced-prosecutors"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": -2.36
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "74c36c5f59129af0",
+   "title": "\u2018I\u2019m heartbroken\u2019: experts dismayed as US loses long-held measles elimination status",
+   "beat": "international",
+   "publisher_count": 2,
+   "publishers": [
+    "The Guardian",
+    "France 24"
+   ],
+   "urls": [
+    "//france24.com/en/video/20261118-why-are-measles-cases-soaring-in-the-us",
+    "//theguardian.com/us-news/2026/nov/18/us-measles-elimination-status-experts"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": -2.51
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "563a620226a77974",
+   "title": "Epstein's Brother Demands Murder Probe After Forensics Bombshell",
+   "beat": "national",
+   "publisher_count": 2,
+   "publishers": [
+    "Daily Beast",
+    "Daily Mail"
+   ],
+   "urls": [
+    "//dailymail.com/news/article-16299691/Jeffrey-Epstein-autopsy-photos-strangled.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
+    "//thedailybeast.com/jeffrey-epsteins-brother-mark-demands-murder-probe-after-forensics-bombshell"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": -2.55
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "d62a189775416f75",
+   "title": "ICJ to rule on Rohingya genocide case: What to expect",
+   "beat": "international",
+   "publisher_count": 2,
+   "publishers": [
+    "Al Jazeera",
+    "Deutsche Welle"
+   ],
+   "urls": [
+    "//aljazeera.com/news/2026/11/18/icj-to-rule-on-rohingya-genocide-case-what-to-expect?traffic_source=rss",
+    "//dw.com/en/icj-to-rule-on-rohingya-genocide-case-against-myanmar-what-to-know/a-79981434?maca=en-rss-en-all-1573-xml-mrss"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": -2.66
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "78b24782d1e059cd",
+   "title": "Feds: Texas man faked veteran status to win $1.6M in federal contracts, sold fake ammunition to US Army",
+   "beat": "national",
+   "publisher_count": 2,
+   "publishers": [
+    "Fox 5 Atlanta",
+    "Fox 5 DC"
+   ],
+   "urls": [
+    "//fox5atlanta.com/news/feds-texas-man-faked-veteran-status-win-1-6m-federal-contracts-sold-fake-ammunition-us-army",
+    "//fox5dc.com/news/feds-texas-man-faked-veteran-status-win-1-6m-federal-contracts-sold-fake-ammunition-us-army"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": -2.77
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "9776d7491306f4a4",
+   "title": "Netflix, Fox and the $2bn bid for the 2030 World Cup that could reshape live sports",
+   "beat": "international",
+   "publisher_count": 2,
+   "publishers": [
+    "The Guardian",
+    "Techmeme"
+   ],
+   "urls": [
+    "//techmeme.com/261118/p20",
+    "//theguardian.com/football/2026/nov/18/netflix-fox-2030-world-cup-television-rights"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": -3.1
+  },
+  {
+   "slot": "promoted",
+   "slot_label": "New",
+   "key": "616c570c369d4844",
+   "title": "Glastonbury 2027 headliners announced after year off for the festival",
+   "beat": "international",
+   "publisher_count": 2,
+   "publishers": [
+    "BBC",
+    "Daily Mail"
+   ],
+   "urls": [
+    "//bbc.co.uk/news/articles/cw8r750jdv73o?at_campaign=rss&at_medium=RSS",
+    "//dailymail.com/tvshowbiz/article-16302005/Glastonbury-2027-line-revealed-Harry-Styles-Sam-Fender-Billie-Eilish.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
+    "//dailymail.com/tvshowbiz/article-16302387/Dont-forget-oldies-Glastonbury-fans-criticise-teenage-girl-headliners-Harry-Styles-fans-left-begging-tickets.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "progress_coded": false,
+   "promotion_path": "corroborated",
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": -3.41
   }
  ],
  "excluded_sample": [
   {
-   "title": "Ranking the top five James Bond movies in honor of Robert Pattinson becoming the new 007",
+   "title": "Grand Theft Auto VI is a grounded love story, a gonzo crime thriller and a gaming triumph",
    "why": "triage verdict NO"
   },
   {
-   "title": "6 e-readers that could make hard book lovers make the switch",
+   "title": "William and Kate reflect on 'enduring' UK-India ties with Modi",
    "why": "triage verdict NO"
   },
   {
-   "title": "Best Early Amazon Black Friday Deals (2026)",
+   "title": "Trump\u2019s Bogus Yalta Moment",
    "why": "triage verdict NO"
   },
   {
-   "title": "Is Robert Pattinson the right choice for James Bond? - The Latest",
+   "title": "Vance Abruptly Chickens Out of On-Stage Grilling About Chaos",
    "why": "triage verdict NO"
   },
   {
-   "title": "William and Kate celebrate Earthshot Prize winners in Mumbai",
+   "title": "Duckett ton & impressive bowlers give England series win",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Never played, already gone. JJ Gabriel leaves Man United",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Costco sees surge in panic buying after tech outages, report says",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Bond role was \u2018Josh O\u2019Connor\u2019s to lose\u2019 but actor pulled out of the running, report suggests",
    "why": "triage verdict NO"
   }
  ]

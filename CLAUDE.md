@@ -17,6 +17,12 @@ Zimbert). Nonprofit posture. Every story is written in four sections —
 reading level. The reader persona is "Jamie": time-poor, news-avoidant,
 assumes most outlets are spinning her.
 
+Since 2026-11-17 the aim is a **need-to-know** digest: for people who want to
+get clear on what's news and how and why it came to be. A story is need to know
+because it holds something up, adds to the historical record, or will be talked
+about, not only because it touches the reader's own life. The card should say
+which: a standing truth first, then today's fact (`docs/decisions.md`).
+
 The product promise is **closure**. The digest ends. There are no unread
 counts and no infinite scroll, on purpose. Sessions-per-day is an anti-metric.
 

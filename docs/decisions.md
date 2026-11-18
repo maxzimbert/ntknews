@@ -572,6 +572,31 @@ editor started T-0124 with: "please make sure I can still remove things, line ed
 is replaced by the conversation; T-0124's plan to remove revise by prompt too is withdrawn. A message after Build that
 changes the history rewrites the page from the changed proposal, keeping everything not asked about.
 
+**NTK is a need-to-know digest, and "need to know" is not personal impact (2026-11-17).** Talked through with the
+editor, after he said the digest "can feel too incremental and headliney instead of powerful 'statements of the
+obvious forcefully' about slow moving constant daily topics", and worried that people "won't try ntk or won't see why
+it's different and better." The aim is to move from a news digest to a need-to-know digest.
+- *For whom*: people who want to get clear on what's news, and how and why it came to be. This is a mission, not a
+  persona; it does not replace the reader rules above.
+- *What qualifies*: a story is need to know because it holds something up (Nvidia, for its place in the economy),
+  because it adds to the historical record (the letters between Trump and Biden: "juicy historical record and this
+  is new info that, as a news and history app, is need to know"), or because people will talk about it (a scandal is
+  "mildly entertaining", and that counts). Reading it as direct impact on the reader's own life was too literal and
+  the editor corrected it: by that test half a good edition fails.
+- *What it found*: the 2026-11-10 lineup mostly passes. The card is what fails. Every headline stated the event, and
+  the "consequence" was the next event, so nothing said why the story is on the list. The fix is a standing truth
+  stated first, the obvious thing the coverage skips because it is not new, then today's fact. That first sentence
+  must be plainly true to a reader on either side: a verdict there is spin.
+- *Payoffs not yet taken*, each its own decision: the headline rule in `docs/voice.md` section 3 and Jefferson's
+  `[HEADLINE]` (if the editor keeps choosing T-0125's option); selection, since assembly's score still rewards
+  newness (`new_facts × 1.5`) and the ledger and triage drop the increments a slow topic is made of; slow topics held
+  across days (T-0126, proposed, which reopens the cross-day memory decision above); Today opening on the edition's
+  standing truths; Lies taking on the lasting lie of a slow topic; the landing page saying in one line why NTK is
+  different. The standing truth is also a one-line Backstory on the card itself, which ties the digest to Backstory's
+  "how it came to be".
+- Built so far: T-0125, a need-to-know option in Pulse's punch-up. The editorial vision is unchanged: the four
+  sections, the register ladder and closure all hold.
+
 ## Open questions, not defaults
 
 These are genuinely unresolved. Don't assume either way.
