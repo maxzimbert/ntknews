@@ -4754,7 +4754,7 @@ const BSX_RULES = {
 };
 const BSX_STYLE = 'All text: plain and precise, at an Advanced Placement history level; no dashes; never "this document", "this reflects", "underscores", "highlights", "serves as", "a reminder that", "pivotal", "landmark", "groundbreaking", "seminal"; take no side; no number that is not in the story or the document\'s own line.';
 function bsxDocLines(cands, lib){
-  return cands.map(i=>{ const o=lib[i], w=o.about||o.why; return '- '+i+' | '+o.year+' | '+(o.source_kind==='news'?'[NEWS REPORT] ':o.kind==='library'?'[EDITOR\'S LIBRARY] ':'')+o.title.slice(0,110)+' | '+String(o.author).slice(0,50)+(w?' | '+w.slice(0,220):''); }).join('\n')||'(none)';
+  return cands.filter(i=>lib[i]).map(i=>{ const o=lib[i], w=o.about||o.why; return '- '+i+' | '+o.year+' | '+(o.source_kind==='news'?'[NEWS REPORT] ':o.kind==='library'?'[EDITOR\'S LIBRARY] ':'')+o.title.slice(0,110)+' | '+String(o.author).slice(0,50)+(w?' | '+w.slice(0,220):''); }).join('\n')||'(none)';
 }
 function bsxStoryBlock(story){
   return `HEADLINE: ${story.headline}\nDESCRIPTION: ${story.lede||''}\nWHAT IS TRUE (the Truths):\n${story.truths.slice(0,3500)}`;
@@ -4819,17 +4819,17 @@ function bsxCheck(c, story, lib){
 function bsxShape(r, cands, lib, edits, notes){
   const off=new Set(edits.off||[]), begs=[];
   (r.milestones||r.beginnings||[]).forEach(b=>{
-    const i=b.id; if (!cands.includes(i) || off.has(i)){ notes.push(JSON.stringify(i)+' is not in the shortlist; dropped'); return; }
+    const i=b.id; if (!cands.includes(i) || off.has(i) || !lib[i]){ notes.push(JSON.stringify(i)+' is not in the shortlist; dropped'); return; }
     const o=lib[i]; if (!/^\d{4}/.test(o.year)){ notes.push(o.title.slice(0,40)+' has no year; dropped'); return; }
     const mine=(edits.lines||{})[i];
     begs.push({object_id:i, year:o.year.slice(0,4), line:mine||b.line||'', by:mine?'editor':'model'});
   });
   begs.sort((a,b)=>a.year.localeCompare(b.year));
   const chosen=new Set(begs.map(b=>b.object_id));
-  const later=(r.later||[]).slice(0,2).filter(i=>cands.includes(i) && !chosen.has(i) && !off.has(i));
+  const later=(r.later||[]).slice(0,2).filter(i=>cands.includes(i) && !chosen.has(i) && !off.has(i) && lib[i]);
   (edits.keep||[]).forEach(i=>{ if (lib[i] && !chosen.has(i) && !later.includes(i) && !off.has(i)) later.push(i); });
   const about=r.about||{};
-  const kase=Array.from(new Set(begs.map(b=>b.object_id).concat(later))).map(i=>{ const o=lib[i];
+  const kase=Array.from(new Set(begs.map(b=>b.object_id).concat(later))).filter(i=>lib[i]).map(i=>{ const o=lib[i];
     return Object.assign({object_id:i, year:o.year.slice(0,4), title:o.title, author:o.author, source_url:o.url,
       about:(edits.abouts||{})[i]||o.about||about[i]||'', about_by:o.about?'library':about[i]?'model':'', kind:o.kind},
       o.source_kind==='news'?{source_kind:'news', why_no_primary:o.why_no_primary||''}:{}, o.paywall?{paywall:true}:{}); });
@@ -5355,6 +5355,18 @@ async function bspAfter(story, prop0, page, chat, lib, edits, message, rowNames,
   const msgs=[{role:'editor', text:message, at:at}, {role:'historian', text:reply, changed:changed, dropped:sh.dropped, searched:r.usage.searches||0, at:new Date().toISOString(), model:BSX_OPUS, after:true}];
   return {page:c, proposal:next, chat:(chat||[]).concat(msgs), cost:cost, parts:Object.keys(parts).filter(k=>rewrote.some(x=>x.includes(k==='here'?'We are here':k))).reduce((o,k)=>(o[k]=parts[k], o), {})};
 }
+// The library, plus this story's own documents: those on its page and those in its proposal. A document found on the
+// web lives only there, never in the Object Matrix, so without this every control after Build that looks a document up
+// by id failed on a page built from web finds (2026-11-18: revising It starts in on the measles page, "Cannot read
+// properties of undefined (reading 'about')").
+function bspLibFor(lib, d){
+  const out=Object.assign({}, lib||{});
+  const add=(id, o)=>{ if (!id || out[id] || !o) return;
+    out[id]=Object.assign({about:'', why:'', author:'', title:'', row:'', subgenre:'', lenses:[], kind:'web'}, o, {id:id, url:o.url||o.source_url||'', year:String(o.year||''), categories:new Set(['this story'])}); };
+  Object.values(((d||{}).proposal||{}).docs||{}).forEach(o=>add(o.id, o));
+  (((d||{}).composed||{}).case||[]).forEach(o=>add(o.object_id, o));
+  return out;
+}
 // Publish stops while any story's proposal is unbuilt (the editor, 2026-11-17: "publish cannot proceed if a proposal
 // is unbuilt"). Every story that would publish needs a page built to the contract. Returns one line per story that
 // has none, naming it and saying why; empty when publish may go on.
@@ -5616,7 +5628,7 @@ async function bsxRun(keys, opts){
       // T-0123: the proposal and the conversation. Neither touches the page; Build does.
       if (opts.propose || (opts.turn && !prev)){
         await bspEnsureArena();
-        const lib=bsxLibrary(draft||{stories:[]}, ledger), had=d0&&d0.proposal, chat=(d0&&d0.chat)||[];
+        const lib=bspLibFor(bsxLibrary(draft||{stories:[]}, ledger), d0), had=d0&&d0.proposal, chat=(d0&&d0.chat)||[];
         if (opts.propose){
           if (prev) continue;                                              // built: a regenerated story is checked, not re-proposed (T-0122)
           if (had && chat.some(m=>m.role==='editor')) continue;           // the editor has talked it through: theirs stands
@@ -5645,7 +5657,7 @@ async function bsxRun(keys, opts){
       } else if (opts.refresh) continue;                 // never built, or nothing changed: nothing to check
       (edits.pins||[]).forEach(f=>{ if ((edits.approved||[]).includes(f.id) && !(ledger.finds||[]).some(x=>x.id===f.id||x.url===f.url)){
         ledger.vetoed=(ledger.vetoed||[]).filter(v=>v.id!==f.id); ledger.finds.push(Object.assign({}, f, {story_id:key, found_by:'search', added_by:'editor'})); ledgerChanged=true; } });
-      bsxApprove(ledger, new Set(edits.approved||[]), key, bsxLibrary(draft||{stories:[]}, ledger));
+      bsxApprove(ledger, new Set(edits.approved||[]), key, bspLibFor(bsxLibrary(draft||{stories:[]}, ledger), d0));
       if ((edits.approved||[]).length) ledgerChanged=true;
       edits.keep=Array.from(new Set((edits.keep||[]).concat(edits.approved||[])));
       let c=prev, buildCost=refreshCost, turnOut=null;
@@ -5656,7 +5668,7 @@ async function bsxRun(keys, opts){
         await bspEnsureArena();
         const msg=String((opts.turn[key]||{}).message||'');
         BSR_DRAFT_STATE='Opus is reading "'+msg.slice(0,60)+'"… the page follows; searching if it needs to, up to a few minutes'; render();
-        const t=await bspAfter(story, (d0&&d0.proposal)||null, prev, (d0&&d0.chat)||[], bsxLibrary(draft||{stories:[]}, ledger), edits, msg, rowNames, rejected);
+        const t=await bspAfter(story, (d0&&d0.proposal)||null, prev, (d0&&d0.chat)||[], bspLibFor(bsxLibrary(draft||{stories:[]}, ledger), d0), edits, msg, rowNames, rejected);
         c=t.page; buildCost=t.cost; turnOut={proposal:t.proposal, chat:t.chat};
         if (t.proposal.category && t.proposal.category!==prev.row){ const id=bsrRowResolve(t.proposal.category); if (id){ L.backstoryRow=id; L.rowByEditor=true; saveLineup(); } }
         // a part rewritten here is the editor's direction, recorded as its revise box records it; typed words for it give way
@@ -5669,7 +5681,7 @@ async function bsxRun(keys, opts){
       }
       else if (opts.build && d0 && d0.proposal){            // T-0123: Build writes the page from what was agreed
         BSR_DRAFT_STATE='Building "'+story.headline.slice(0,50)+'" from its proposal…'; render();
-        c=await bspBuild(story, d0.proposal, bsxLibrary(draft||{stories:[]}, ledger), edits);
+        c=await bspBuild(story, d0.proposal, bspLibFor(bsxLibrary(draft||{stories:[]}, ledger), d0), edits);
         buildCost=c.cost; delete c.cost;
         current=true;
       }
@@ -5680,12 +5692,12 @@ async function bsxRun(keys, opts){
           ledgerChanged=true; prev.research=res.note;
           edits.pool=Array.from(new Set((res.added||[]).map(f=>f.id).concat(edits.pool||[])));
         }
-        c=await bsxRevise(prev, m.comp, m.note, story, bsxLibrary(draft||{stories:[]}, ledger), edits, rejected, rowNames);
+        c=await bsxRevise(prev, m.comp, m.note, story, bspLibFor(bsxLibrary(draft||{stories:[]}, ledger), d0), edits, rejected, rowNames);
         c.research=prev.research||null;
         if (m.comp==='row' && c.row && !L.rowByEditor){ const id=bsrRowResolve(c.row); if (id){ L.backstoryRow=id; saveLineup(); } }
       } else {
         BSR_DRAFT_STATE='Building "'+story.headline.slice(0,50)+'"…'; render();
-        c=await bsxCompose(story, null, null, bsxLibrary(draft||{stories:[]}, ledger), edits, rejected, rowNames);
+        c=await bsxCompose(story, null, null, bspLibFor(bsxLibrary(draft||{stories:[]}, ledger), d0), edits, rejected, rowNames);
         // Thin after the matrix and the editor's library: one web search on the gaps the build named, then one
         // rebuild (the editor, 2026-11-04). bsxResearch skips a subject searched in the last 30 days and offers
         // its finds again instead, so this costs a search at most once per subject a month.
@@ -5698,7 +5710,7 @@ async function bsxRun(keys, opts){
             if (fresh.length){
               edits.pool=fresh.concat(edits.pool||[]);
               BSR_DRAFT_STATE='Rebuilding "'+story.headline.slice(0,50)+'" with '+fresh.length+' found document(s)…'; render();
-              const c2=await bsxCompose(story, null, null, bsxLibrary(draft||{stories:[]}, ledger), edits, rejected, rowNames);
+              const c2=await bsxCompose(story, null, null, bspLibFor(bsxLibrary(draft||{stories:[]}, ledger), d0), edits, rejected, rowNames);
               const u1=c.usage||{}, u2=c2.usage||{};
               c2.usage={input_tokens:(u1.input_tokens||0)+(u2.input_tokens||0), output_tokens:(u1.output_tokens||0)+(u2.output_tokens||0)};
               c=c2;
