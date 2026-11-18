@@ -5072,8 +5072,26 @@ function bspShape(j, lib, story, prev, urls){
   if (!/^\d{4}$/.test(starts) || (+starts>=now && !j.starts_asked)){ const sb=begs.filter(b=>+b.year<now).slice(-1)[0]; starts=sb?sb.year:''; }
   const proposal={v:1, category:String(j.category||(prev&&prev.category)||'').trim().slice(0,60), contest:String(j.contest||(prev&&prev.contest)||'').trim(),
     starts:starts, beginnings:begs, later:later, objects:begs.map(b=>b.object_id).concat(later), docs:docs,
-    lacks:String(j.lacks===undefined?((prev&&prev.lacks)||''):(j.lacks||'')).trim().slice(0,300)};
+    lacks:String(j.lacks===undefined?((prev&&prev.lacks)||''):(j.lacks||'')).trim().slice(0,2000),
+    missing:bspMissing(j.missing===undefined?((prev&&prev.missing)||[]):j.missing, begs, docs)};
   return {proposal:proposal, dropped:dropped};
+}
+// Events the historian would place but has no document for yet, each one the editor can tick to have it found and
+// added (the editor, 2026-11-17: "so I could check a box for those to enter the beginnings and objects"). An event
+// already carried by a beginning is not listed again.
+function bspMissing(list, begs, docs){
+  const placed=(begs||[]).map(b=>b.year+' '+String(((docs||{})[b.object_id]||{}).title||'').toLowerCase());
+  return (Array.isArray(list)?list:[]).map(m=>({year:String((m&&m.year)||'').trim().slice(0,9), event:String((m&&m.event)||'').trim().slice(0,200),
+    why:String((m&&m.why)||'').trim().slice(0,500), look_for:String((m&&m.look_for)||'').trim().slice(0,300)}))
+    .filter(m=>m.event && !placed.some(t=>t.startsWith(m.year+' ') && t.includes(m.event.toLowerCase().slice(0,24)))).slice(0,10);
+}
+// The turn sent when the editor ticks missing events: the editor's request, in words, so it reads in the conversation
+// as what the editor asked for. Each one goes in as a beginning the editor asked for, with its document.
+function bspMissingMessage(missing, picks){
+  const ms=(picks||[]).map(i=>(missing||[])[i]).filter(Boolean);
+  if (!ms.length) return '';
+  return 'Find a document for each of these and add it to the beginnings and Objects, as a beginning I asked for: '
+    +ms.map(m=>(m.year?m.year+' ':'')+m.event+(m.look_for?' (look for: '+m.look_for+')':'')).join('; ')+'.';
 }
 // What a turn changed, said plainly, from the two proposals (not from the model's own account of itself).
 function bspDiff(a, b){
@@ -5088,7 +5106,7 @@ function bspDiff(a, b){
   (a.later||[]).forEach(id=>{ if (!(b.later||[]).includes(id) && !bb[id]) out.push('dropped document: '+t(a, id)); });
   return out;
 }
-const BSP_SHAPE='JSON only: {"reply":"one or two sentences to the editor","category":"two to five words","contest":"Whether ...","starts":"YYYY","beginnings":[{"year":"YYYY","id":"a library id, or the id of a document already in the proposal","ties_to":"two to six words copied from the story","asked":false},{"year":"YYYY","found":{"title":"the document\'s exact title","author":"who issued or wrote it","year":"YYYY","source":"the archive or publisher","source_url":"the exact link the search returned","source_kind":"document | news","why_no_primary":"news only: why no primary source would do","evidence_quote":"one sentence copied from that page"},"ties_to":"...","asked":false}],"later":["Objects beyond the documents of the beginnings: up to two ids, or {\\"found\\":{...}}"],"lacks":"one line on what the library lacks for this history, or empty"}';
+const BSP_SHAPE='JSON only: {"reply":"one or two sentences to the editor","category":"two to five words","contest":"Whether ...","starts":"YYYY","beginnings":[{"year":"YYYY","id":"a library id, or the id of a document already in the proposal","ties_to":"two to six words copied from the story","asked":false},{"year":"YYYY","found":{"title":"the document\'s exact title","author":"who issued or wrote it","year":"YYYY","source":"the archive or publisher","source_url":"the exact link the search returned","source_kind":"document | news","why_no_primary":"news only: why no primary source would do","evidence_quote":"one sentence copied from that page"},"ties_to":"...","asked":false}],"later":["Objects beyond the documents of the beginnings: up to two ids, or {\\"found\\":{...}}"],"lacks":"one line on what the library lacks for this history, or empty","missing":[{"year":"YYYY","event":"the event, named so it can be looked up","why":"one sentence: how it led to today","look_for":"the document that would defend it"}]}';
 // One Opus call on a proposal: the first one (no prev, no message) or a turn of the conversation.
 function bspPrompt(method, story, lib, cands, prev, chat, rowNames, editorRow, message){
   const propDocs=prev?Object.values(prev.docs||{}).map(d=>'- '+d.id+' | '+d.year+' | '+(d.source_kind==='news'?'[NEWS REPORT] ':d.source_kind==='library'?'[EDITOR\'S LIBRARY] ':d.kind==='web'?'[FOUND ON THE WEB] ':'')+String(d.title).slice(0,110)+' | '+String(d.author||'').slice(0,50)).join('\n'):'';
@@ -5103,7 +5121,7 @@ RECENT CATEGORIES (prefer one that already exists at the right breadth): ${(rowN
 ${editorRow?'THE EDITOR FILED THIS STORY UNDER: '+editorRow+'. Keep that category unless the editor says otherwise.\n':''}
 THE LIBRARY (id | year | title | author | what it is). Look here first:
 ${bsxDocLines(cands, lib)}
-${prev?'\nDOCUMENTS ALREADY IN THE PROPOSAL (id | year | title | author):\n'+propDocs+'\n\nTHE PROPOSAL NOW: '+cur+'\n':''}${talk?'\nTHE CONVERSATION SO FAR:\n'+talk+'\n':''}${message?'\nTHE EDITOR NOW SAYS: '+message+'\n\nAnswer the editor in a sentence or two and give the whole proposal as it should now stand, changed as the editor asks. The editor\'s words win over every rule. Search the library first, including the [EDITOR\'S LIBRARY] items, which are the editor\'s own Are.na saves; use web search when the library lacks the document an event needs, or the editor asks for one. There is no limit on searches: when the editor asks you to find something, keep searching until you find it or are sure no such document exists, and say which. A document you find on the web goes in as "found", with the exact link the search returned. Mark a beginning "asked": true only when the editor asked for it.':'\nPropose this story\'s Backstory: the one scope you judge best. The category, the contest, the year It starts in, three to six beginnings (each a year and the document that defends it, from the library), and up to two more documents for the page\'s Objects (the case) beyond the documents of the beginnings. Then one line on what the library lacks for this history, or nothing. Put "reply" as an empty string.'}
+${prev?'\nDOCUMENTS ALREADY IN THE PROPOSAL (id | year | title | author):\n'+propDocs+'\n\nTHE PROPOSAL NOW: '+cur+'\n':''}${talk?'\nTHE CONVERSATION SO FAR:\n'+talk+'\n':''}${message?'\nTHE EDITOR NOW SAYS: '+message+'\n\nAnswer the editor in a sentence or two and give the whole proposal as it should now stand, changed as the editor asks. The editor\'s words win over every rule. Search the library first, including the [EDITOR\'S LIBRARY] items, which are the editor\'s own Are.na saves; use web search when the library lacks the document an event needs, or the editor asks for one. There is no limit on searches: when the editor asks you to find something, keep searching until you find it or are sure no such document exists, and say which. A document you find on the web goes in as "found", with the exact link the search returned. Mark a beginning "asked": true only when the editor asked for it. Under "missing", list the events you would still place but have no document for; drop one from the list once it is placed.':'\nPropose this story\'s Backstory: the one scope you judge best. The category, the contest, the year It starts in, three to six beginnings (each a year and the document that defends it, from the library), and up to two more documents for the page\'s Objects (the case) beyond the documents of the beginnings. Then one line on what the library lacks for this history, or nothing, and under "missing" each event you would place but have no document for yet (the editor can tick them to have them found). Put "reply" as an empty string.'}
 
 ${BSP_SHAPE}`;
 }
@@ -5707,7 +5725,7 @@ function bspDocHtml(p, id){
     +(o.kind==='web'?' <span class="chip" title="found on the web in this conversation: it is in this proposal only, never in the Object Matrix">found on the web</span>':'')
     +(bspDead(id, o.url)?' '+BSP_DEAD:'');
 }
-function bspProposalHtml(p){
+function bspProposalHtml(p, tickable){
   const row=(k, v)=>`<div style="display:flex;gap:10px;margin:4px 0;align-items:baseline"><b style="font:700 10.5px sans-serif;letter-spacing:.06em;min-width:92px">${k}</b><div style="flex:1;font:14px Georgia,serif">${v}</div></div>`;
   return row('CATEGORY', esc(p.category||'(none)'))
     +row('CONTEST', '<i>'+esc(p.contest||'(none)')+'</i>')
@@ -5715,7 +5733,11 @@ function bspProposalHtml(p){
     +row('BEGINNINGS', (p.beginnings||[]).map(b=>`<div style="margin:3px 0"><b>${esc(b.year)}</b> ${bspDocHtml(p, b.object_id)}${b.ties_to?` <span style="font:11px sans-serif;color:var(--dim)">ties to “${esc(b.ties_to)}”</span>`:''}</div>`).join('')||'<i>none</i>')
     // Objects: every document on the page's case, the beginnings' own and the others (the editor, 2026-11-17: "name it Objects")
     +row('OBJECTS', (p.objects||[]).slice().sort((a,b)=>String(((p.docs||{})[a]||{}).year).localeCompare(String(((p.docs||{})[b]||{}).year))).map(id=>`<div style="margin:3px 0"><b>${esc(((p.docs||{})[id]||{}).year||'')}</b> ${bspDocHtml(p, id)}${(p.beginnings||[]).some(b=>b.object_id===id)?'':' <span style="font:11px sans-serif;color:var(--dim)">not a beginning</span>'}</div>`).join('')||'<span style="color:var(--dim)">none</span>')
-    +(p.lacks?`<div style="font-size:12px;color:var(--dim);margin-top:6px">What the library lacks: ${esc(p.lacks)}</div>`:'');
+    +(p.lacks?`<div style="font-size:12.5px;color:var(--dim);margin-top:6px;white-space:pre-wrap">What the library lacks: ${esc(p.lacks)}</div>`:'')
+    +((p.missing||[]).length?`<div style="margin-top:8px;border-top:1px solid var(--rule);padding-top:6px"><b style="font:700 10.5px sans-serif;letter-spacing:.06em">EVENTS WITHOUT A DOCUMENT YET</b>
+      ${tickable?'<div style="font-size:11.5px;color:var(--dim);margin:2px 0 4px">Tick the ones you want, and Opus finds a document for each and adds it to the beginnings and Objects.</div>':''}
+      ${p.missing.map((m,i)=>`<label style="display:flex;gap:7px;align-items:flex-start;margin:5px 0;font-size:13px">${tickable?`<input type="checkbox" class="bsp-miss" data-i="${i}" style="margin-top:3px">`:''}<span><b>${esc(m.year)}</b> ${esc(m.event)}${m.why?`<br><span style="font:12.5px Georgia,serif">${esc(m.why)}</span>`:''}${m.look_for?`<br><span style="font-size:11.5px;color:var(--dim)">look for: ${esc(m.look_for)}</span>`:''}</span></label>`).join('')}
+      ${tickable?'<button class="mini go bsp-miss-go">find documents and add the ticked ones</button>':''}</div>`:'');
 }
 function bspChatHtml(chat){
   return (chat||[]).map(m=>m.role==='editor'
@@ -5736,7 +5758,7 @@ function bspHtml(s, d){
       <button class="mini go bsp-build"${running?' disabled':''} title="Write the page from this proposal, keeping the category, contest, It starts in, beginnings and documents as they stand.">Build</button>
       <button class="mini bsr-prev-close">close</button></div>
     ${BSR_DRAFT_STATE?`<div style="padding:5px 8px;margin-bottom:6px;border:1px solid var(--ink);font-size:12.5px"><b>${esc(BSR_DRAFT_STATE)}</b></div>`:''}
-    <div style="border:1px solid var(--rule);background:#fff;padding:8px 10px">${bspProposalHtml(p)}</div>
+    <div style="border:1px solid var(--rule);background:#fff;padding:8px 10px">${bspProposalHtml(p, !running)}</div>
     <div style="margin-top:8px"><b style="font:700 11px sans-serif;letter-spacing:.06em">TALK IT THROUGH</b>
       <div style="font-size:12px;color:var(--dim);margin:2px 0 4px">Say what is off: the scope, a beginning, a document, the category. Each answer changes the proposal above. If it looks right, press Build.</div>
       ${bspChatHtml(chat)}
@@ -6001,6 +6023,11 @@ function bspWire(el, s){
   if (send) send.addEventListener('click', go);
   if (msg) msg.addEventListener('keydown', e=>{ if (e.key==='Enter' && (e.metaKey||e.ctrlKey)) go(); });
   const b=box.querySelector('.bsp-build'); if (b) b.addEventListener('click',()=>{ bscBusy(b); bsrRefreshHashes().then(()=>bsxRun([s.key], {build:true})); });
+  const mg=box.querySelector('.bsp-miss-go'); if (mg) mg.addEventListener('click',()=>{
+    const picks=[...box.querySelectorAll('.bsp-miss:checked')].map(x=>+x.dataset.i);
+    const m=bspMissingMessage(((bsrDraftFor(s)||{}).proposal||{}).missing, picks);
+    if (!m){ alert('Tick the events you want first.'); return; }
+    bscBusy(mg); bsrRefreshHashes().then(()=>bsxRun([s.key], {turn:{[s.key]:{message:m}}})); });
 }
 function bsrStoryPreviewHtml(s){
   const dr=bsrDraftFor(s);
