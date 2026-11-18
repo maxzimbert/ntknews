@@ -225,8 +225,15 @@ is actually about to lead with:
 - Same three moves (stronger verb / stakes over mechanism / cut the
   hedge-phrase), same guardrail (no superlatives, no rhetorical questions,
   no manufactured urgency, no wordplay, under 90 chars).
-- Returns exactly 3 alternative headlines as a JSON array; the editor picks
-  one or dismisses all three.
+- Returns 3 alternative headlines; the editor picks one or dismisses all
+  three. Since T-0125 (2026-11-17) the third is a **need-to-know** headline:
+  a standing truth the coverage skips because it is not new, then today's
+  fact ("Nvidia Makes the Chips Almost All of AI Runs On. Its Board Just
+  Refused to Take Back the Founder Who Built It."). The first sentence must
+  be plainly true to a reader on either side, carries no number or date not
+  in the sources, and is shown with what it rests on. When no standing
+  truth is both certain and strong, the model says so instead of forcing
+  one. Up to 140 characters; the other two keep 90. `NTK_HEADLINE_RULES`.
 
 ---
 
