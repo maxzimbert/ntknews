@@ -14,7 +14,7 @@ const block = (name) => { const m = html.match(new RegExp('/\\* ' + name + ':BEG
 const fnSrc = (name) => { const m = html.match(new RegExp('(?:^|\\n)((?:async )?function ' + name + '\\([\\s\\S]*?\\n\\})\\n')); if (!m) throw new Error('no function ' + name); return m[1]; };
 const CATS = new Function(block('CATS') + '; return {catTextProblems, catWords, catSentences, catNumbersOk, catTiesOk, catSourceKind, bsxPublisher, NTK_PUBLISHERS, verifyFoundObject, verifyMilestone, CAT_RELATIONS, CAT_DENY};')();
 const BSX = block('BSX');
-const EXPORTS = 'bsxRun, bsxGet, bsxPut, bspShape, bspDiff, bspBuild, bspUnbuilt, bspHtml, bspPropose, bsxRefreshHere, bsxEnforce, bspDollars, BSX_OPUS, BSX_SONNET, BSX_HAIKU';
+const EXPORTS = 'bspMissingMessage, bsxRun, bsxGet, bsxPut, bspShape, bspDiff, bspBuild, bspUnbuilt, bspHtml, bspPropose, bsxRefreshHere, bsxEnforce, bspDollars, BSX_OPUS, BSX_SONNET, BSX_HAIKU';
 
 let fails = 0;
 const check = (name, ok, detail) => { console.log((ok ? 'ok   ' : 'FAIL ') + name + (ok ? '' : '  ' + String(JSON.stringify(detail)).slice(0, 600))); if (!ok) fails++; };
@@ -45,6 +45,8 @@ const S2 = { key: 's2', title: 'The Federal Reserve holds interest rates steady'
 const LONG = 'Congress passed a sweeping law after the Watergate scandal that required senior officials and every member of Congress to disclose their personal finances in detailed public reports filed every single year with ethics offices.';
 const FOUND_URL = 'https://www.govinfo.gov/content/pkg/CRPT-117hrpt/stock-trading-report.pdf';
 const WIKI_URL = 'https://en.wikipedia.org/wiki/STOCK_Act';
+const BANKING_URL = 'https://fraser.stlouisfed.org/title/banking-act-1935-1007';
+const LACKS2 = 'The library has no documents for the events that made this story possible, so they stay out until documents are found. The Banking Act of 1935 moved power over interest rates from the regional banks to the Board in Washington. The Federal Reserve Reform Act of 1977 first wrote maximum employment and stable prices into law, which is the dual mandate the story names today.';
 const EDITOR_SAYS = 'Reach back to the 1962 bribery law,  and the contest should be: Who polices lawmakers\u2019 trades?';
 const EDITOR_SAYS_2 = 'Find the House report on stock trading by members of Congress, and look in my Are.na for spouses trading accounts.';
 const replies = {
@@ -60,7 +62,17 @@ const replies = {
     starts: '1978', beginnings: [
       { year: '1913', id: 'm-fedact', ties_to: 'Federal Reserve', asked: false },
       { year: '1951', id: 'm-accord', ties_to: 'Federal Reserve interest rate', asked: false },
-      { year: '1978', id: 'm-humphrey', ties_to: 'dual mandate for employment', asked: false }], later: [], lacks: '' }),
+      { year: '1978', id: 'm-humphrey', ties_to: 'dual mandate for employment', asked: false }], later: [], lacks: LACKS2,
+    missing: [{ year: '1935', event: 'Banking Act of 1935', why: 'It moved power over interest rates to the Board in Washington.', look_for: 'the act as passed, from FRASER or govinfo' },
+      { year: '1977', event: 'Federal Reserve Reform Act of 1977', why: 'It first wrote the dual mandate into law.', look_for: 'the public law text' },
+      { year: '1913', event: 'Federal Reserve Act', why: 'Already a beginning.', look_for: 'x' }] }),
+  turn3: () => ({ reply: 'Found the Banking Act of 1935 on FRASER and added it as a beginning.', category: 'The Federal Reserve',
+    contest: 'Whether the central bank should answer first for stable prices, or share that duty equally with keeping people at work.', starts: '1978', beginnings: [
+      { year: '1913', id: 'm-fedact', ties_to: 'Federal Reserve', asked: false },
+      { year: '1935', found: { title: 'Banking Act of 1935', author: 'U.S. Congress', year: '1935', source: 'FRASER, Federal Reserve Bank of St. Louis', source_url: BANKING_URL, source_kind: 'document', evidence_quote: 'An Act to provide for the sound, effective, and uninterrupted operation of the banking system.' }, ties_to: 'Federal Reserve interest rate', asked: true },
+      { year: '1951', id: 'm-accord', ties_to: 'Federal Reserve interest rate', asked: false },
+      { year: '1978', id: 'm-humphrey', ties_to: 'dual mandate for employment', asked: false }], later: [], lacks: LACKS2,
+    missing: [{ year: '1977', event: 'Federal Reserve Reform Act of 1977', why: 'It first wrote the dual mandate into law.', look_for: 'the public law text' }] }),
   turn1: () => ({ reply: 'Added the 1962 law, which first made an official\u2019s financial interest a crime, and used your contest.', category: 'Congressional ethics',
     contest: 'Who polices lawmakers\u2019 trades?', starts: '2012', beginnings: [
       { year: '1962', id: 'm-bribery', ties_to: 'conflicts of interest', asked: true },
@@ -94,6 +106,7 @@ function route(body) {
   if (/Name that history as 8 to 14 short search terms/.test(p)) return replies.terms();
   if (/THE EDITOR NOW SAYS: Reach back to the 1962/.test(p)) return replies.turn1();
   if (/THE EDITOR NOW SAYS: Find the House report/.test(p)) return replies.turn2();
+  if (/THE EDITOR NOW SAYS: Find a document for each of these/.test(p)) return replies.turn3();
   if (/Propose this story's Backstory/.test(p)) return /stock trading/.test(p) ? replies.proposeS1() : replies.proposeS2();
   if (/from a proposal the editor has agreed/.test(p)) return replies.buildS1(p);
   if (/These parts of a Backstory page broke their rules/.test(p)) return replies.repair();
@@ -117,7 +130,7 @@ function world(gh) {
       if (search && /Find the House report/.test(body.messages[0].content) && body.messages.length === 1)
         return resp(200, { content: [{ type: 'web_search_tool_result', content: [{ url: FOUND_URL }] }], stop_reason: 'pause_turn', usage: { input_tokens: 9000, output_tokens: 100, server_tool_use: { web_search_requests: 1 } } });
       const paused = body.messages.length > 1;      // the continuation: only what this round searched
-      const content = (search ? [{ type: 'web_search_tool_result', content: paused ? [{ url: WIKI_URL }] : [{ url: FOUND_URL }, { url: WIKI_URL }] }] : []).concat([{ type: 'text', text: JSON.stringify(j) }]);
+      const content = (search ? [{ type: 'web_search_tool_result', content: paused ? [{ url: WIKI_URL }] : [{ url: FOUND_URL }, { url: WIKI_URL }, { url: BANKING_URL }] }] : []).concat([{ type: 'text', text: JSON.stringify(j) }]);
       return resp(200, { content, stop_reason: 'end_turn', usage: { input_tokens: 9000, output_tokens: 700, server_tool_use: search ? { web_search_requests: 1 } : undefined } });
     }
     const gm = url.match(/^https:\/\/api\.github\.com\/repos\/[^/]+\/[^/]+\/contents\/([^?]+)/);
@@ -215,6 +228,19 @@ const GH = { 'editorial/research-ledger.json': { data: JSON.parse(JSON.stringify
   check('chat: the conversation survives a reload',
     re1.chat.length === 4 && re1.chat[0].text === EDITOR_SAYS && re1.chat[2].text === EDITOR_SAYS_2 && page.includes('Who polices lawmakers\u2019 trades?')
     && page.includes(w.env.esc(EDITOR_SAYS)) && page.includes('Stock Trading by Members of Congress') && page.includes('bsp-send') && page.includes('bsp-build'), { chat: re1.chat });
+
+  // missing events: the full text, a list to tick, and a tick becomes a turn that finds and places them
+  const r2 = reread.stories.find(d => d.story_id === 's2'), p2 = r2.proposal, page2 = w.L.bspHtml({ key: 's2' }, r2);
+  const msg = w.L.bspMissingMessage(p2.missing, [0]);
+  check('proposal: what the library lacks is kept whole, and the events without a document are listed to tick',
+    p2.lacks === LACKS2 && p2.missing.length === 2 && !p2.missing.some(m => m.event === 'Federal Reserve Act') && page2.includes(w.env.esc(LACKS2))
+    && (page2.match(/class="bsp-miss"/g) || []).length === 2 && page2.includes('bsp-miss-go'), { lacks: p2.lacks.length, missing: p2.missing });
+  await w.L.bsxRun(['s2'], { turn: { s2: { message: msg } } });
+  const e2t = w.entry('s2'), banking = Object.values(e2t.proposal.docs).find(d => d.url === BANKING_URL);
+  check('chat: ticked events are asked for in one turn, found, placed as beginnings the editor asked for, and leave the list',
+    /^Find a document for each of these/.test(msg) && msg.includes('1935 Banking Act of 1935') && !msg.includes('1977') && e2t.chat[0].text === msg
+    && !!banking && e2t.proposal.beginnings.some(b => b.object_id === banking.id && b.asked && b.year === '1935')
+    && e2t.proposal.missing.length === 1 && e2t.proposal.missing[0].year === '1977', { msg, begs: e2t.proposal.beginnings, missing: e2t.proposal.missing });
 
   // ── build ───────────────────────────────────────────────────────────────────────────────────────────────────
   const prop = re1.proposal, TYPED = 'Who trades on the Hill';
