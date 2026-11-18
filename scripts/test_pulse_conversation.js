@@ -14,7 +14,7 @@ const block = (name) => { const m = html.match(new RegExp('/\\* ' + name + ':BEG
 const fnSrc = (name) => { const m = html.match(new RegExp('(?:^|\\n)((?:async )?function ' + name + '\\([\\s\\S]*?\\n\\})\\n')); if (!m) throw new Error('no function ' + name); return m[1]; };
 const CATS = new Function(block('CATS') + '; return {catTextProblems, catWords, catSentences, catNumbersOk, catTiesOk, catSourceKind, bsxPublisher, NTK_PUBLISHERS, verifyFoundObject, verifyMilestone, CAT_RELATIONS, CAT_DENY};')();
 const BSX = block('BSX');
-const EXPORTS = 'bspMissingMessage, bsxRun, bsxGet, bsxPut, bspShape, bspDiff, bspBuild, bspUnbuilt, bspHtml, bspPropose, bsxRefreshHere, bsxEnforce, bspDollars, BSX_OPUS, BSX_SONNET, BSX_HAIKU';
+const EXPORTS = 'bsxRemove, bsxEditText, bspFromPage, bspMissingMessage, bsxRun, bsxGet, bsxPut, bspShape, bspDiff, bspBuild, bspUnbuilt, bspHtml, bspPropose, bsxRefreshHere, bsxEnforce, bspDollars, BSX_OPUS, BSX_SONNET, BSX_HAIKU';
 
 let fails = 0;
 const check = (name, ok, detail) => { console.log((ok ? 'ok   ' : 'FAIL ') + name + (ok ? '' : '  ' + String(JSON.stringify(detail)).slice(0, 600))); if (!ok) fails++; };
@@ -45,10 +45,12 @@ const S2 = { key: 's2', title: 'The Federal Reserve holds interest rates steady'
 const LONG = 'Congress passed a sweeping law after the Watergate scandal that required senior officials and every member of Congress to disclose their personal finances in detailed public reports filed every single year with ethics offices.';
 const FOUND_URL = 'https://www.govinfo.gov/content/pkg/CRPT-117hrpt/stock-trading-report.pdf';
 const WIKI_URL = 'https://en.wikipedia.org/wiki/STOCK_Act';
+const EXPORT_URL = 'https://www.govinfo.gov/content/pkg/STATUTE-63/export-control-act-1949.pdf';
 const BANKING_URL = 'https://fraser.stlouisfed.org/title/banking-act-1935-1007';
 const LACKS2 = 'The library has no documents for the events that made this story possible, so they stay out until documents are found. The Banking Act of 1935 moved power over interest rates from the regional banks to the Board in Washington. The Federal Reserve Reform Act of 1977 first wrote maximum employment and stable prices into law, which is the dual mandate the story names today.';
 const EDITOR_SAYS = 'Reach back to the 1962 bribery law,  and the contest should be: Who polices lawmakers\u2019 trades?';
 const EDITOR_SAYS_2 = 'Find the House report on stock trading by members of Congress, and look in my Are.na for spouses trading accounts.';
+let BUILDS = 0;   // a later build writes different lines, so a test can tell kept lines from rewritten ones
 const replies = {
   terms: () => ({ terms: ['STOCK Act', 'congressional ethics', 'Ethics in Government Act', 'conflicts of interest', 'Federal Reserve'] }),
   proposeS1: () => ({ reply: '', category: 'Congressional ethics', contest: 'Whether members of Congress can be trusted to police their own conflicts of interest, or whether outside rules must bind them.',
@@ -91,8 +93,8 @@ const replies = {
       { found: { title: 'STOCK Act', author: 'Wikipedia', year: '2012', source_url: WIKI_URL, source_kind: 'document' } },
       { found: { title: 'A report I remember', author: 'Congress', year: '2021', source_url: 'https://www.congress.gov/not-returned-by-the-search', source_kind: 'document' } }],
     lacks: '' }),
-  buildS1: (p) => { const ids = [...p.matchAll(/- (\d{4}) \| (\S+) \|/g)].map(m => m[2]); const lines = {};
-    ids.forEach(id => { lines[id] = id === 'm-ethics' ? LONG : ({ 'm-bribery': 'Congress made it a crime for federal officials to act on matters in which they held a financial interest.', 'm-reform': 'Congress limited the outside income and gifts that its members and senior officials could accept.', 'm-stock': 'Congress barred its members from trading on nonpublic information and required them to report their stock trades.' })[id] || 'Congress acted on the conflicts of interest of its own members in a new federal law.'; });
+  buildS1: (p) => { const ids = [...p.matchAll(/- (\d{4}) \| (\S+) \|/g)].map(m => m[2]); const lines = {}; const again = ++BUILDS > 1 ? 'Once more, ' : '';
+    ids.forEach(id => { lines[id] = id === 'm-ethics' ? LONG : ({ 'm-bribery': 'Congress made it a crime for federal officials to act on matters in which they held a financial interest.', 'm-reform': 'Congress limited the outside income and gifts that its members and senior officials could accept.', 'm-stock': 'Congress barred its members from trading on nonpublic information and required them to report their stock trades.' })[id] || 'Congress acted on the conflicts of interest of its own members in a new federal law.'; if (again && id !== 'm-ethics') lines[id] = again + lines[id].charAt(0).toLowerCase() + lines[id].slice(1); });
     return { title: 'Congress and its own trades', contest: 'Whether the build may rewrite the agreed contest, which it must not do under any circumstances at all.',
       stakes: 'Lawmakers write the rules that govern their own investments, and voters see little of how those rules are kept. Whether the ban becomes law decides who watches the watchers in Congress.',
       lines, starts_line: 'Congress passed the law that first required its members to report their stock trades.', here: 'The Senate has voted to ban stock trading by members of Congress and their spouses, and the House takes it up next.',
@@ -107,6 +109,11 @@ function route(body) {
   if (/THE EDITOR NOW SAYS: Reach back to the 1962/.test(p)) return replies.turn1();
   if (/THE EDITOR NOW SAYS: Find the House report/.test(p)) return replies.turn2();
   if (/THE EDITOR NOW SAYS: Find a document for each of these/.test(p)) return replies.turn3();
+  if (/THE EDITOR NOW SAYS: Reach back to the 1949/.test(p)) { const cur = JSON.parse(p.match(/THE PROPOSAL NOW: (\{.*\})\n/)[1]);
+    return { reply: 'Found the Export Control Act of 1949 and added it as a beginning.', beginnings: cur.beginnings.concat([{ year: '1949', asked: true, ties_to: 'trading by lawmakers',
+      found: { title: 'Export Control Act of 1949', author: 'U.S. Congress', year: '1949', source: 'U.S. Government Publishing Office', source_url: EXPORT_URL, source_kind: 'document', evidence_quote: 'An Act to provide for continuation of authority for the regulation of exports.' } }]) }; }
+  if (/THE EDITOR NOW SAYS: The stakes should be about trust/.test(p)) return { reply: 'Rewrote the stakes around trust.', parts: { stakes: 'about whether voters can trust lawmakers with their own rules' } };
+  if (/Revise ONE part of a Backstory page/.test(p)) return { stakes: 'Voters cannot see how lawmakers trade, so trust rests on rules lawmakers write for themselves. Whether this ban passes decides if that trust is asked for or earned.' };
   if (/Propose this story's Backstory/.test(p)) return /stock trading/.test(p) ? replies.proposeS1() : replies.proposeS2();
   if (/from a proposal the editor has agreed/.test(p)) return replies.buildS1(p);
   if (/These parts of a Backstory page broke their rules/.test(p)) return replies.repair();
@@ -127,10 +134,10 @@ function world(gh) {
       if (body.thinking && body.thinking.type === 'disabled' && body.model === 'claude-opus-5-5') return resp(200, { error: { message: 'thinking disabled is not supported on this model' } });
       const j = route(body), search = (body.tools || []).some(t => t.name === 'web_search');
       // the second turn's search runs long: the API pauses it once (pause_turn) after the first search, and Pulse must carry on
-      if (search && /Find the House report/.test(body.messages[0].content) && body.messages.length === 1)
+      if (search && /THE EDITOR NOW SAYS: Find the House report/.test(body.messages[0].content) && body.messages.length === 1)
         return resp(200, { content: [{ type: 'web_search_tool_result', content: [{ url: FOUND_URL }] }], stop_reason: 'pause_turn', usage: { input_tokens: 9000, output_tokens: 100, server_tool_use: { web_search_requests: 1 } } });
       const paused = body.messages.length > 1;      // the continuation: only what this round searched
-      const content = (search ? [{ type: 'web_search_tool_result', content: paused ? [{ url: WIKI_URL }] : [{ url: FOUND_URL }, { url: WIKI_URL }, { url: BANKING_URL }] }] : []).concat([{ type: 'text', text: JSON.stringify(j) }]);
+      const content = (search ? [{ type: 'web_search_tool_result', content: paused ? [{ url: WIKI_URL }] : [{ url: FOUND_URL }, { url: WIKI_URL }, { url: BANKING_URL }, { url: EXPORT_URL }] }] : []).concat([{ type: 'text', text: JSON.stringify(j) }]);
       return resp(200, { content, stop_reason: 'end_turn', usage: { input_tokens: 9000, output_tokens: 700, server_tool_use: search ? { web_search_requests: 1 } : undefined } });
     }
     const gm = url.match(/^https:\/\/api\.github\.com\/repos\/[^/]+\/[^/]+\/contents\/([^?]+)/);
@@ -266,8 +273,37 @@ const GH = { 'editorial/research-ledger.json': { data: JSON.parse(JSON.stringify
     !tb.beginnings.some(b => b.object_id === 'm-fourteen') && !tb.case.some(o => o.object_id === 'm-fourteen') && tb.left_out.some(x => x.object_id === 'm-fourteen')
     && tb.beginnings.some(b => b.object_id === 'm-bribery') && tb.beginnings.some(b => b.object_id === 'm-stock'), { begs: tb.beginnings.map(b => b.object_id), left: tb.left_out });
 
+  // ── after: the conversation carries on after Build (T-0124) ───────────────────────────────────────────────
+  let pg = w.entry('s1').composed, nBuild = w.calls.length;
+  await w.L.bsxRun(['s1'], { turn: { s1: { message: 'Reach back to the 1949 Export Control Act.' } } });
+  let ea = w.entry('s1'), pa = ea.composed, exp = Object.values(ea.proposal.docs).find(d => d.url === EXPORT_URL);
+  const after1 = w.calls.slice(nBuild);
+  check('after: asking for research after Build searches and re-chooses the beginnings',
+    !!exp && pa.beginnings[0].object_id === exp.id && pa.beginnings[0].year === '1949' && pa.case.some(o => o.object_id === exp.id)
+    && pg.beginnings.every(b => (pa.beginnings.find(x => x.object_id === b.object_id) || {}).line === b.line) && pa.title === pg.title && pa.stakes === pg.stakes && pa.here === pg.here
+    && after1.some(c => (c.tools || []).some(t => t.name === 'web_search')) && after1.some(c => /from a proposal the editor has agreed/.test(c.messages[0].content))
+    && ea.chat.slice(-1)[0].changed.some(x => /added beginning 1949/.test(x)), { begs: pa.beginnings.map(b => b.year + ' ' + b.object_id), changed: ea.chat.slice(-1)[0] });
+  pg = pa; nBuild = w.calls.length;
+  await w.L.bsxRun(['s1'], { turn: { s1: { message: 'The stakes should be about trust in lawmakers.' } } });
+  ea = w.entry('s1'); pa = ea.composed;
+  const after2 = w.calls.slice(nBuild);
+  check('after: asking to change one part after Build changes that part alone',
+    /trust rests on rules/.test(pa.stakes) && pa.title === pg.title && pa.here === pg.here && pa.contest === pg.contest
+    && pa.beginnings.map(b => b.object_id + b.line).join() === pg.beginnings.map(b => b.object_id + b.line).join() && pa.case.length === pg.case.length
+    && !after2.some(c => /from a proposal the editor has agreed/.test(c.messages[0].content)) && (w.env.LINEUP[0].bsEdits.modify || {}).stakes
+    && ea.chat.slice(-1)[0].changed.includes('rewrote the stakes'), { stakes: pa.stakes, changed: ea.chat.slice(-1)[0] });
+  const roles = ea.chat.map(m => m.role).join(','), lastTurn = after2.find(c => c.model === 'claude-opus-5-5').messages[0].content;
+  check('after: the conversation before and after Build is one thread',
+    roles === 'editor,historian,editor,historian,build,editor,historian,editor,historian' && ea.chat[0].text === EDITOR_SAYS
+    && lastTurn.includes('THE CONVERSATION SO FAR') && lastTurn.includes(EDITOR_SAYS) && lastTurn.includes('Reach back to the 1949') && lastTurn.includes('THE PAGE IS BUILT'), roles);
+  // remove, edit words and revise stay after the conversation (the editor, 2026-11-17)
+  const fx = w.L.bspFromPage(pa, ea.proposal);
+  check('after: remove, edit words and revise still work on a page the conversation changed',
+    /bsc2-rm-item/.test(html) && /bsc2-words/.test(html) && /bsc2-mod-go/.test(html) && /class="mini bsc2-rm"/.test(html)
+    && fx.objects.length === pa.case.length && fx.beginnings.every(b => b.asked), { objects: fx.objects.length });
+
   // ── change ──────────────────────────────────────────────────────────────────────────────────────────────────
-  const before = JSON.parse(JSON.stringify(e.composed));
+  const before = JSON.parse(JSON.stringify(w.entry('s1').composed));   // the page as it stands after the turns above
   w.env.LINEUP[0].truth = S1.truth.replace('The ban now goes to the House.', 'The ban now goes to the House, where leaders have not scheduled a vote.');
   await w.L.bsxRun(['s1'], { refresh: true });
   e = w.entry('s1'); const ch = e.composed;
