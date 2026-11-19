@@ -14,6 +14,9 @@ const block = (name) => { const m = html.match(new RegExp('/\\* ' + name + ':BEG
 const fnSrc = (name) => { const m = html.match(new RegExp('(?:^|\\n)((?:async )?function ' + name + '\\([\\s\\S]*?\\n\\})\\n')); if (!m) throw new Error('no function ' + name); return m[1]; };
 const CATS = new Function(block('CATS') + '; return {catDenied, catTextProblems, catWords, catSentences, catNumbersOk, catTiesOk, catSourceKind, bsxPublisher, NTK_PUBLISHERS, verifyFoundObject, verifyMilestone, CAT_RELATIONS, CAT_DENY};')();
 const BSX = block('BSX');
+// the progress jobs (PROG block), real, with an in-memory store and no drawing
+const memStore = () => { const m = {}; return { getItem: k => (k in m ? m[k] : null), setItem: (k, v) => { m[k] = String(v); } }; };
+const progKit = () => { const P = new Function('progTick', block('PROG') + '; return {progStart, progRun, progStep, progDone, progJob, progAt, progLabel, progFrac, PROG};')(() => {}); P.PROG.store = memStore(); return P; };
 const EXPORTS = 'BSP_VER_OPEN, bspChatHtml, bsxRemove, bsxEditText, bspFromPage, bspMissingMessage, bsxRun, bsxGet, bsxPut, bspShape, bspDiff, bspBuild, bspUnbuilt, bspHtml, bspPropose, bsxRefreshHere, bsxEnforce, bspDollars, BSX_OPUS, BSX_SONNET, BSX_HAIKU';
 
 let fails = 0;
@@ -159,8 +162,9 @@ function world(gh) {
   }
   const LINEUP = [Object.assign({ packages: { truths: S1.truth }, backstoryRow: '', bsEdits: {} }, S1), Object.assign({ packages: { truths: S2.truth }, backstoryRow: '', bsEdits: {} }, S2)];
   const rows = [{ id: 'p-congressional-ethics', title: 'Congressional ethics' }];
+  const PK = progKit();
   const env = {
-    ...CATS, fetch, console, setTimeout, clearTimeout, LINEUP, POOL, BSR_PUBLISHED: { rows: [] }, ARENA: null, PUBCATS: [], CAT_STYLE_RULES: '',
+    ...PK, ...CATS, fetch, console, setTimeout, clearTimeout, LINEUP, POOL, BSR_PUBLISHED: { rows: [] }, ARENA: null, PUBCATS: [], CAT_STYLE_RULES: '',
     SETTINGS: { antKey: 'stand-in', ghToken: 'stand-in' }, location: {}, pulseBranch: () => 'staging', GH_REPO: 'maxzimbert/ntknews', GH_DRAFT_OUT: 'ntk-pulse/data/backstory-draft.json',
     TAB: 'backstory', BSR_DRAFT: null, BSR_DRAFT_STATE: '', BSR_PREV_OPEN: {}, BSX_LED: null,
     window: { addEventListener() {} }, document: { createElement: () => { let h = ''; return { set innerHTML(v) { h = String(v || ''); }, get textContent() { return h.replace(/<[^>]+>/g, ' '); } }; } },
@@ -174,7 +178,7 @@ function world(gh) {
   };
   env.bsxStoryChanged = new Function(fnSrc('bsxStoryChanged') + '; return bsxStoryChanged;')();
   const L = new Function('env', 'with (env) {' + BSX + '\n; return {' + EXPORTS + '}; }')(env);
-  return { L, env, calls, ghWrites, draft: () => (gh['ntk-pulse/data/backstory-draft.json'] || {}).data, entry: (k) => (((gh['ntk-pulse/data/backstory-draft.json'] || {}).data || {}).stories || []).find(d => d.story_id === k) || {} };
+  return { L, env, PK, calls, ghWrites, draft: () => (gh['ntk-pulse/data/backstory-draft.json'] || {}).data, entry: (k) => (((gh['ntk-pulse/data/backstory-draft.json'] || {}).data || {}).stories || []).find(d => d.story_id === k) || {} };
 }
 const ledger0 = { subjects: {}, finds: [], series: [], rejected: [], vetoed: [], candidates: [] };
 const GH = { 'editorial/research-ledger.json': { data: JSON.parse(JSON.stringify(ledger0)), sha: '1' } };
@@ -287,6 +291,8 @@ const GH = { 'editorial/research-ledger.json': { data: JSON.parse(JSON.stringify
   w.env.LINEUP[0].bsEdits = { text: { title: TYPED } };
   await w.L.bsxRun(['s1'], { build: true });
   e = w.entry('s1'); const c = e.composed || {};
+  const job = w.PK.PROG.jobs.filter(j => j.where === 'bs:s1').slice(-1)[0];
+  check('progress: Build is one job under the story, and it ends done when the page is written', !!job && job.label === 'Build' && job.state === 'done' && job.i === 1, job);
   check('build: Build writes the page from the settled proposal and keeps what was agreed',
     c.v === 2 && c.built_from === 'proposal' && c.row === prop.category && c.contest === prop.contest && c.starts && c.starts.year === prop.starts
     && c.beginnings.map(b => b.object_id).join() === prop.beginnings.map(b => b.object_id).join() && c.case.map(o => o.object_id).sort().join() === prop.objects.slice().sort().join()

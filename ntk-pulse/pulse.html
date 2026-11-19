@@ -671,7 +671,7 @@ function lockGeneratedImage(story, url){
   };
   img.src = url;
 }
-async function generateStoryImage(story, promptOverride){
+async function generateStoryImageRun(story, promptOverride){
   story.imgBusy = true; story.imgErr = ''; render();
   try {
     const prompt = promptOverride || story.imgGenPrompt || buildImgPrompt(story);
@@ -1141,7 +1141,7 @@ function autoParagraph(text){
   return rechunked.join('\n\n');
 }
 
-async function generateToday(){
+async function generateTodayRun(){
   const block = todayInputBlock();
   if (!block){ alert('No generated stories in the lineup yet — generate story packages first, then Generate Today.'); return; }
   TODAY_OV.busy = true; saveToday(); render();
@@ -2646,7 +2646,7 @@ const NTK_HEADLINE_RULES =
   `- Some stories have no standing truth that is both certain and makes the news land harder. Then do not force one: return "need_to_know" as an empty string and say why in "basis". An invented or weak first sentence is worse than none.\n`+
   `Under 140 characters for this headline.\n`+
   `Also return "basis": one short line for the editor saying what the first sentence rests on, either "in the sources" or "background: " and the fact to check.\n\n`;
-async function punchUpHeadline(story){
+async function punchUpHeadlineRun(story){
   story.busy = true; story.headlineCandidates = null; story.headlineNtk = null; setStatus(story, 'Punching up the headline…');
   try {
     // T-0038: pull in the enriched body when it's already been fetched —
@@ -2724,7 +2724,7 @@ async function draftMeta(story){
 
 /* Enrichment: ER pool search first (real bodies), fetch-url fallback for
    uncovered RSS links (meta/paragraph text), then dedup layers 2+3. */
-async function enrich(story){
+async function enrichRun(story){
   story.busy=true;
   let hadError=false;                 // an actual failure occurred somewhere in this run
   let errMsg='';                      // the real cause — captured separately so the
@@ -3118,10 +3118,12 @@ function cleanSectionText(sec, text){
   return fixBoldSpacing(stripSectionSelfLabel(sec, text||''));
 }
 
-async function generateStory(story){
+async function generateStory(story, parent){
   const arts = activeArts(story);
   if (!arts.length){ setStatus(story,'No active sources — enrich or add URLs first',true); return; }
   story.busy=true;
+  const willPropose = !!(pulseBranch(location) && SETTINGS.ghToken);
+  const pid = progStart('story:'+story.key, 'Generate Jefferson', SECS.map(()=>'section').concat(willPropose?['propose']:[]));
   const artsText = arts.map(a=>
     `TITLE: ${a.title}\nSOURCE: ${a.source}\nURL: ${a.url}\nDATE: ${a.date}\n\n${(a.body||'[body unavailable — headline only]').slice(0,SETTINGS.bodyLen)}`
   ).join('\n\n---\n\n');
@@ -3137,15 +3139,21 @@ async function generateStory(story){
     setStatus(story, story.title.slice(0,40)+' · '+sec+'…');
     try { pkg[sec] = cleanSectionText(sec, await ai(makePrompt(sec, artsText+angleBlock+contextBlock(story)+priorSectionsBlock(pkg)+notesBlock(), []), 2500)); }
     catch(e){ pkg[sec] = '[Generation failed: '+e.message+']'; }
+    progStep(pid); if (parent) progStep(parent);
   }
   story.packages = pkg; story.generatedAt = new Date().toISOString(); story.outOpen = true;
   NOTES.genCounter = (NOTES.genCounter||0) + 1; saveNotes();
   story.busy=false; setStatus(story,''); saveLineup(); render();
   // T-0123: with Truths in hand, Opus proposes the story's Backstory, and only proposes it: no page is written until
   // the editor presses Build on the Backstory tab. Publish stops until every proposal is built.
+  if (!willPropose){ progDone(pid); return; }
+  if (!bsxHasTruths(story)){ progDone(pid, false, 'Truths did not generate'); if (parent) progStep(parent); return; }
   if (bsxHasTruths(story) && pulseBranch(location) && SETTINGS.ghToken){
     setStatus(story, 'Proposing its Backstory…'); render();
-    bsrRefreshHashes().then(()=>bsxRun([story.key], {propose:true})).then(()=>{   // queues itself if a run is going
+    // returned, so Generate all can wait for every proposal; bsxRun finishes this story's progress job (prog)
+    BSX_PROG_FOR[story.key]=pid;      // this story's progress job: the proposal run below finishes it
+    return bsrRefreshHashes().then(()=>bsxRun([story.key], {propose:true})).then(()=>{   // queues itself if a run is going
+      if (parent) progStep(parent);
       const d=bsrDraftFor(story)||{}, waiting=(BSX_NEXT||[]).some(n=>n.keys.includes(story.key));
       if (d.proposal || (d.composed && d.composed.v===2)) setStatus(story, '');
       else if (!waiting) setStatus(story, 'Backstory not proposed: '+(BSR_DRAFT_STATE||'no reason given')+'. Propose it from the Backstory tab.', true);
@@ -3176,7 +3184,13 @@ async function reviseSection(story, sectionName, note){
   story.busy=false; saveLineup(); render();
 }
 async function generateAll(){
-  for (const s of LINEUP) if (!s.packages) await generateStory(s);
+  // one job for the whole click: every section of every story, then every proposal (which run alongside)
+  const todo=LINEUP.filter(s=>!s.packages && activeArts(s).length); if (!todo.length) return;
+  const willPropose=!!(pulseBranch(location) && SETTINGS.ghToken);
+  const pid=progStart('lineup', 'Generate all', [].concat(...todo.map(()=>SECS.map(()=>'section').concat(willPropose?['propose']:[]))), {learn:false});
+  const waits=[];
+  for (const s of todo) if (!s.packages) waits.push(await generateStory(s, pid));
+  await Promise.all(waits); progDone(pid);
 }
 
 let copiedFlag = '';
@@ -3502,6 +3516,9 @@ async function publishToDigest(){
   const stories = all.filter(s => (s.headline || '').trim());
 
   publishStatus = 'Publishing…'; renderPublishStatus();
+  // progress: the job is the click to the edition being live, so it ends when the site build has landed
+  const pubPid = progStart('publish', 'Publish', ['publish']), pubAt = new Date().toISOString();
+  let pubOk = false;
   try {
     const content = storyDataExport(stories);
     const b64 = btoa(unescape(encodeURIComponent(content)));
@@ -3524,10 +3541,20 @@ async function publishToDigest(){
       }),
     });
     if (!putResp.ok){ const t=await putResp.text(); throw new Error('GitHub PUT failed: '+putResp.status+' '+t.slice(0,200)); }
-    publishStatus = 'Published — build running now, usually a minute or two.';
-  } catch(e){ publishStatus = 'Publish failed: '+e.message; }
+    publishStatus = 'Published — build running now, usually a minute or two.'; pubOk = true;
+  } catch(e){ publishStatus = 'Publish failed: '+e.message; progDone(pubPid, false, e.message); }
   renderPublishStatus();
   setTimeout(fetchLastPublished, 45000);   // one check after the build's had time to land
+  if (pubOk) progWatchPublish(pubPid, pubAt);
+}
+// The site build after a publish: watched every 15 seconds until last-published.json is newer than the click.
+function progWatchPublish(pid, since){
+  const t0=Date.now();
+  const look=()=>fetch('data/last-published.json?t='+Date.now()).then(r=>r.ok?r.json():null).catch(()=>null).then(d=>{
+    if (d && d.at && Date.parse(d.at)>Date.parse(since)){ LAST_PUBLISHED=d; progDone(pid); fetchLastPublished(); return; }
+    if (Date.now()-t0>6*60000){ progDone(pid, false, 'the site build has not shown up after 6 minutes: check the Actions tab'); return; }
+    setTimeout(look, 15000); });
+  setTimeout(look, 20000);
 }
 let publishStatus = '';
 function renderPublishStatus(){
@@ -4466,6 +4493,7 @@ function bsrLineupHtml(){
       <button class="mini" id="bsr-build-all"${pulseBranch(location)?'':' disabled'} title="Opus proposes a Backstory for every story with Truths that has none yet. No page is written.">Propose for every story</button>
       <button class="mini go" id="bsr-build-props"${pulseBranch(location)?'':' disabled'} title="Write the page for every story whose proposal is not built yet, from the proposal as it stands.">Build every proposal</button>
       <span style="font-size:12px">${esc(bsrDraftStatusText())}</span>
+      ${progBarHtml('bs:all')}
     </div>
     ${LINEUP.map((s,i)=>{ const cat=s.backstoryRow&&catRecord(s.backstoryRow);
       return `<div class="story bsr-lu" data-key="${esc(s.key)}" style="padding:6px 9px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;${bsxHasTruths(s)&&!((bsrDraftFor(s)||{}).composed||{}).v?'border-color:var(--warn)':''}">
@@ -4478,6 +4506,7 @@ function bsrLineupHtml(){
         <button class="mini bsr-lu-prev"${BSR_PREV_OPEN[s.key]?' style="background:var(--ink);color:#fff"':''}>preview</button>
         ${bsrDraftChip(s)}
         ${bsrPublishedChip(s)}
+        ${progBarHtml('bs:'+s.key)}
         ${BSR_KW_OPEN[s.key]?bsrKwResultsHtml(s):''}
         ${(s.bsPicks||[]).length?bsrPicksHtml(s):''}
         ${BSR_NAMING[s.key]?bsrNamingHtml(s):''}
@@ -4624,6 +4653,134 @@ function bscBusy(b){ b.disabled = true; b.textContent = 'sending\u2026'; }
 // categories, origins: the same code publish runs, and its link checks need a server), then Pulse composes
 // each page. Ported from the retired editorial/compose_story.py and research_story.py; the prompts and checks
 // are the same, and research reuses verifyMilestone and the CAT_ text rules above.
+/* PROG:BEGIN */
+// ─── Progress (2026-11-18): how long until the editor can look at this ────────────────────────────────────────────────
+// The editor: it answers "how long until I can look at this?", so he can decide whether to wait or do something else;
+// it covers the whole job; it sits where he is looking; no steps. One job per click: a bar under the button, plus a
+// thin bar along the top of Pulse while anything runs. Pulse cannot see inside a model call, so a job moves by how long
+// its parts usually take; it learns real timings from the editor's own runs (the last ten of each kind, the median),
+// starting from the guesses below. It never goes backwards, never shows full before the job is done, and says so when
+// a job runs past its usual time instead of sitting at 99%. Tested in node: scripts/test_pulse_progress.js.
+const PROG_DEFAULT_MS={section:25000, propose:70000, turn:120000, build:45000, restore:45000, revise:30000, refile:8000,
+  refresh:10000, today:40000, punch:20000, image:35000, enrich:25000, publish:120000, trend:60000};
+const PROG_LS='ntk-prog-times', PROG_DONE_MS=8000, PROG_FAIL_MS=30000;
+const PROG={jobs:[], seq:0, now:()=>Date.now(), store:null};
+function progStore(){ return PROG.store || (typeof localStorage!=='undefined' ? localStorage : null); }
+function progTimes(){ try { return JSON.parse((progStore()&&progStore().getItem(PROG_LS))||'{}')||{}; } catch(e){ return {}; } }
+function progExpected(kind){
+  const t=(progTimes()[kind]||[]).filter(x=>x>0).sort((a,b)=>a-b);
+  return t.length ? t[Math.floor(t.length/2)] : (PROG_DEFAULT_MS[kind]||30000);
+}
+function progLearn(kind, ms){
+  if (!(ms>500) || !kind) return;
+  try { const all=progTimes(); all[kind]=(all[kind]||[]).concat([Math.round(ms)]).slice(-10); progStore().setItem(PROG_LS, JSON.stringify(all)); } catch(e){}
+}
+// A job: where it shows ("story:<key>", "bs:<key>", "bs:all", "lineup", "today", "publish"), what to call it, and its
+// parts in order. opts.waiting: queued behind another job. opts.learn false: a job whose parts overlap (Generate all),
+// whose timings would mislead. opts.queue: jobs in one queue count each other as "ahead".
+function progStart(where, label, units, opts){
+  opts=opts||{}; const now=PROG.now();
+  const job={id:++PROG.seq, where:where, label:label, units:(units||[]).slice(), i:0, started:now, unitStart:now,
+    state:opts.waiting?'waiting':'running', shown:0, learn:opts.learn!==false, queue:opts.queue||''};
+  job.exp=job.units.map(progExpected);
+  PROG.jobs=PROG.jobs.filter(j=>j.state==='running' || j.state==='waiting' || now-(j.finished||0)<PROG_FAIL_MS).concat([job]);
+  progTick(); return job.id;
+}
+function progJob(id){ return PROG.jobs.find(j=>j.id===id) || null; }
+function progRun(id){ const j=progJob(id); if (j && j.state==='waiting'){ j.state='running'; j.started=j.unitStart=PROG.now(); progTick(); } }
+// One part finished: the bar moves on, and its time is learned.
+function progStep(id){
+  const j=progJob(id); if (!j || j.state==='done' || j.state==='failed') return;
+  if (j.state==='waiting') progRun(id);
+  const now=PROG.now();
+  if (j.i<j.units.length){ if (j.learn) progLearn(j.units[j.i], now-j.unitStart); j.i++; }
+  j.unitStart=now; progTick();
+}
+function progDone(id, ok, msg){
+  const j=progJob(id); if (!j || j.state==='done' || j.state==='failed') return;
+  const now=PROG.now();
+  if (ok!==false && j.state==='running' && j.i<j.units.length && j.learn && j.units.length-j.i===1) progLearn(j.units[j.i], now-j.unitStart);
+  j.state=ok===false?'failed':'done'; j.msg=String(msg||'').slice(0,160); j.finished=now; progTick();
+}
+function progSum(a){ return a.reduce((x,y)=>x+y, 0); }
+// How full the bar is, 0 to 1. Each finished part counts its usual time; the current part fills by elapsed over usual,
+// slowing near its end, so a slow part never shows full. Never goes backwards.
+function progFrac(j, now){
+  if (j.state==='done') return 1;
+  if (j.state==='waiting') return 0;
+  if (j.state==='failed') return j.shown||0;
+  const total=progSum(j.exp)||1, doneW=progSum(j.exp.slice(0, j.i)), cur=j.exp[j.i]||0;
+  const f=cur ? Math.max(0, (now-j.unitStart)/cur) : 0, soft=f<=0.9 ? f : 0.9+0.09*(1-Math.exp(-(f-0.9)*1.5));
+  const frac=Math.min(0.98, (doneW+cur*soft)/total);
+  j.shown=Math.max(j.shown||0, frac);
+  return j.shown;
+}
+function progClock(ms){ const s=Math.max(0, Math.round(ms/1000)); return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); }
+function progAhead(j){ return PROG.jobs.filter(x=>x.id<j.id && x.queue && x.queue===j.queue && (x.state==='running' || x.state==='waiting')).length; }
+// The one line of words under the bar.
+function progLabel(j, now){
+  if (j.state==='done') return 'Done in '+progClock(j.finished-j.started);
+  if (j.state==='failed') return 'Stopped'+(j.msg?': '+j.msg:'');
+  if (j.state==='waiting'){ const n=progAhead(j); return 'Waiting for '+(n<=1?'1 job':n+' jobs')+' ahead'; }
+  const total=progSum(j.exp), el=now-j.started, doneW=progSum(j.exp.slice(0, j.i)), cur=j.exp[j.i]||0;
+  const remaining=Math.max(0, total-doneW-Math.min(now-j.unitStart, cur));
+  if (el>total*1.25 && el-total>15000) return 'Taking longer than usual, still working';
+  if (progFrac(j, now)>=0.85 || remaining<15000) return 'Almost done';
+  if (remaining<60000) return 'Less than a minute left';
+  return 'About '+Math.round(remaining/60000)+' min left';
+}
+function progVisible(j, now){
+  return j.state==='running' || j.state==='waiting' || (j.state==='done' && now-j.finished<PROG_DONE_MS) || (j.state==='failed' && now-j.finished<PROG_FAIL_MS);
+}
+function progAt(where, now){ const js=PROG.jobs.filter(j=>j.where===where && progVisible(j, now)); return js[js.length-1]||null; }
+function progEsc(t){ return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function progInner(where, now){
+  now=now||PROG.now(); const j=progAt(where, now); if (!j) return '';
+  const pct=Math.round(progFrac(j, now)*100), col=j.state==='failed'?'var(--stale)':j.state==='done'?'#2f7d4f':'var(--ink)';
+  const late=/longer than usual/.test(progLabel(j, now));
+  return `<div style="height:5px;background:#e8e3d8;border-radius:3px;overflow:hidden;margin-top:5px"><div style="height:100%;width:${pct}%;background:${col};transition:width .9s linear"></div></div>`
+    +`<div style="display:flex;justify-content:space-between;font-size:11.5px;margin-top:2px;color:${j.state==='failed'?'var(--stale)':j.state==='done'?'#2f7d4f':'var(--dim)'}"><span>${progEsc(j.label)}: ${progEsc(progLabel(j, now))}</span><span>${late?progClock(now-j.started):''}</span></div>`;
+}
+// Where a job's bar goes: a slot that is always drawn, so a bar can appear without redrawing the page.
+function progBarHtml(where){ return `<div class="prog-slot" data-prog="${progEsc(where)}" style="flex-basis:100%">${progInner(where)}</div>`; }
+// The bar along the top of Pulse: while anything runs, the job with the most time left, and how many are running.
+function progGlobal(now){
+  now=now||PROG.now(); const act=PROG.jobs.filter(j=>j.state==='running' || j.state==='waiting');
+  if (!act.length) return null;
+  const left=j=>progSum(j.exp)-progSum(j.exp.slice(0, j.i)), main=act.slice().sort((a,b)=>left(b)-left(a))[0];
+  return {n:act.length, job:main, frac:progFrac(main, now), text:(act.length===1?'1 job running':act.length+' jobs running')+': '+main.label+'. '+progLabel(main, now)};
+}
+/* PROG:END */
+// The long buttons on the Lineup and Today tabs, each one progress job from click to finish.
+async function progWrap(where, label, kind, run, failed){
+  const pid=progStart(where, label, [kind]);
+  try { await run(); const f=failed&&failed(); progDone(pid, !f, f||''); }
+  catch(e){ progDone(pid, false, e.message); throw e; }
+}
+async function generateToday(){ if (TODAY_OV.busy) return; if (!todayInputBlock()) return generateTodayRun(); return progWrap('today', 'Generate Today', 'today', generateTodayRun, ()=>/^\[Generation failed/.test(TODAY_OV.text||'')?'it failed: run it again':''); }
+async function punchUpHeadline(story){ return progWrap('story:'+story.key, 'Punch up', 'punch', ()=>punchUpHeadlineRun(story), ()=>story.err?String(story.status||'it failed'):''); }
+async function enrich(story){ return progWrap('story:'+story.key, 'Enrich', 'enrich', ()=>enrichRun(story), ()=>story.err?String(story.status||'it failed'):''); }
+async function generateStoryImage(story, promptOverride){ return progWrap('story:'+story.key, 'Image', 'image', ()=>generateStoryImageRun(story, promptOverride), ()=>story.imgErr?String(story.imgErr):''); }
+// Drawing the bars, once a second, in place (no page redraw).
+function progTick(){
+  if (typeof document==='undefined' || !document.body) return;
+  const now=PROG.now();
+  document.querySelectorAll('[data-prog]').forEach(el=>{ const h=progInner(el.dataset.prog, now); if (el._h!==h){ el.innerHTML=h; el._h=h; } });
+  let bar=document.getElementById('prog-global'); const g=progGlobal(now);
+  if (!g){ if (bar){ bar.remove(); document.body.style.paddingTop=''; } return; }
+  if (!bar){ bar=document.createElement('div'); bar.id='prog-global';
+    bar.style.cssText='position:fixed;left:0;right:0;top:0;z-index:9998;background:#faf8f3;border-bottom:1px solid var(--ink);font:12px sans-serif;padding:4px 12px;display:flex;gap:10px;align-items:center';
+    document.body.appendChild(bar); document.body.style.paddingTop='28px'; }
+  bar.innerHTML=`<span style="flex:1">${progEsc(g.text)}</span><span style="width:140px;height:5px;background:#e8e3d8;border-radius:3px;overflow:hidden"><span style="display:block;height:100%;width:${Math.round(g.frac*100)}%;background:var(--ink)"></span></span><a href="#" id="prog-go" style="font-size:11.5px">go to it</a>`;
+  const go=bar.querySelector('#prog-go'); if (go) go.onclick=e=>{ e.preventDefault(); progGoTo(g.job.where); };
+}
+function progGoTo(where){
+  const find=()=>document.querySelector('[data-prog="'+where.replace(/"/g,'')+'"]');
+  let el=find();
+  if (!el && typeof TAB!=='undefined'){ TAB=/^bs:/.test(where)?'backstory':'lineup'; if (/^bs:/.test(where) && where!=='bs:all') BSR_PREV_OPEN[where.slice(3)]=true; render(); el=find(); }
+  if (el){ const y=el.getBoundingClientRect().top+window.scrollY-window.innerHeight/2; window.scrollTo(0, Math.max(0, y)); }
+}
+if (typeof window!=='undefined' && !window.__progTicker) window.__progTicker=setInterval(progTick, 1000);
 /* BSX:BEGIN */
 // The Backstory composer, its conversation and its run, from here to BSX:END: tested in node with stand-in replies
 // (scripts/test_pulse_conversation.js). Keep new Backstory logic inside this block so it can be tested.
@@ -5659,9 +5816,9 @@ function bsrShowError(err, where){
 window.addEventListener('error', e=>{ if (typeof TAB!=='undefined' && TAB==='backstory') bsrShowError(e.error||e.message, 'page'); });
 window.addEventListener('unhandledrejection', e=>{ if (typeof TAB!=='undefined' && TAB==='backstory') bsrShowError(e.reason, 'background'); });
 let BSX_NEXT=null;                       // requests made while a run is going: [{keys, opts}], run in order
-function bsxQueue(keys, opts){
+function bsxQueue(keys, opts, resolve){
   // each request runs as asked, in order: a modify must not be folded into a build, or a build into a refile
-  BSX_NEXT=BSX_NEXT||[]; BSX_NEXT.push({keys, opts:opts||{}});
+  BSX_NEXT=BSX_NEXT||[]; BSX_NEXT.push({keys, opts:opts||{}, resolve:resolve||null});
   BSR_DRAFT_STATE=BSR_DRAFT_STATE.replace(/ \u00b7 \d+ more waiting$/, '')+' \u00b7 '+BSX_NEXT.length+' more waiting'; render();
 }
 // The run, one kind per request. T-0123: propose (Generate Jefferson: the proposal only, no page), turn ({key:
@@ -5670,11 +5827,23 @@ function bsxQueue(keys, opts){
 // modify ({key: {comp, note}}: one component revised to the editor's words; documents search first), refile (the
 // row changed: the shelf and the chart move, the history stays) and refresh (the story changed since its page was
 // built: We are here follows it). Each story succeeds or fails on its own.
+// A progress job a coming run finishes, by story: Generate Jefferson's job, whose last part is the proposal run.
+const BSX_PROG_FOR={};
 async function bsxRun(keys, opts){
-  if (BSX_BUSY){ bsxQueue(keys, opts); return; }
   opts=opts||{};
-  if (!pulseBranch(location)){ alert('This copy of Pulse cannot draft (not the live Pulse or staging Pulse).'); return; }
-  if (!SETTINGS.ghToken){ alert('Add a GitHub token in ⚙ first.'); return; }
+  if (!opts.prog && keys.length===1 && BSX_PROG_FOR[keys[0]]){ opts.prog=BSX_PROG_FOR[keys[0]]; delete BSX_PROG_FOR[keys[0]]; }
+  if (!pulseBranch(location)){ alert('This copy of Pulse cannot draft (not the live Pulse or staging Pulse).'); if (opts.prog) progDone(opts.prog, false, 'this copy of Pulse cannot draft'); return; }
+  if (!SETTINGS.ghToken){ alert('Add a GitHub token in ⚙ first.'); if (opts.prog) progDone(opts.prog, false, 'no GitHub token'); return; }
+  // progress (2026-11-18): one job per request, made at the click, so a request queued behind another shows as waiting.
+  // Generate Jefferson passes its own job (opts.prog), whose last part this run is. The automatic change check has none.
+  if (!opts.prog && !opts.refresh){
+    const kind=opts.propose?'propose':opts.turn?'turn':opts.restore?'restore':opts.modify?'revise':opts.refile?'refile':'build';
+    const label={propose:'Propose', turn:'Opus', restore:'Bring back', revise:'Revise', refile:'Move', build:keys.length>1?'Build every proposal':'Build'}[kind];
+    opts.prog=progStart(keys.length===1?'bs:'+keys[0]:'bs:all', label, keys.map(()=>kind), {queue:'bsx', waiting:BSX_BUSY});
+  }
+  // a request made while a run is going waits its turn, and returns only once its own work is done
+  if (BSX_BUSY) return new Promise(res=>bsxQueue(keys, opts, res));
+  if (opts.prog) progRun(opts.prog);
   BSX_BUSY=true; BSR_DRAFT_STATE=(opts.restore?'Bringing back':opts.propose?'Proposing':opts.turn?'Thinking about':opts.refresh?'Checking':opts.modify?'Revising':opts.refile?'Moving':'Building')+' '+keys.length+' stor'+(keys.length===1?'y':'ies')+'…'; render();
   try {
     let payload=await bsWithHashes(buildStoryPayload()), byKey=Object.fromEntries(payload.map(s=>[s.key,s]));
@@ -5814,7 +5983,8 @@ async function bsxRun(keys, opts){
       if (!L.backstoryRow && c && c.row){ const id=bsrRowResolve(c.row); if (id){ L.backstoryRow=id; L.rowByEditor=false; saveLineup(); } }
       if (!L.backstoryRow) throw new Error('no row could be set');
       done[key]=Object.assign({composed:c, current:current, changed:changed, built:!!(opts.build && c), cost:buildCost}, turnOut||{});
-    } catch(err){ failed.push('"'+String((byKey[key]||{}).headline||key).slice(0,50)+'": '+err.message); } }
+    } catch(err){ failed.push('"'+String((byKey[key]||{}).headline||key).slice(0,50)+'": '+err.message); }
+    finally { if (opts.prog) progStep(opts.prog); } }
     if (!Object.keys(done).length && failed.length) throw new Error(failed.join(' | '));
     if (!Object.keys(done).length){ BSR_DRAFT_STATE=''; return; }      // nothing to save (a check with nothing changed, a proposal kept)
     if (ledgerChanged){
@@ -5855,8 +6025,10 @@ async function bsxRun(keys, opts){
     BSR_DRAFT_STATE=failed.length ? 'Done '+Object.keys(done).length+' of '+(Object.keys(done).length+failed.length)+'. Not done: '+failed.join(' | ') : '';
   } catch(e){ BSR_DRAFT_STATE='Backstory failed: '+e.message; }
   finally {
-    BSX_BUSY=false; bsrRefreshHashes(); render();
-    if (BSX_NEXT && BSX_NEXT.length){ const n=BSX_NEXT.shift(); bsrRefreshHashes().then(()=>bsxRun(n.keys, n.opts)); }
+    BSX_BUSY=false;
+    if (opts.prog){ const st=String(BSR_DRAFT_STATE||''); progDone(opts.prog, !/^Backstory failed/.test(st), st.replace(/^Backstory failed: /,'').slice(0,140)); }
+    bsrRefreshHashes(); render();
+    if (BSX_NEXT && BSX_NEXT.length){ const n=BSX_NEXT.shift(); bsrRefreshHashes().then(()=>bsxRun(n.keys, n.opts)).then(()=>{ if (n.resolve) n.resolve(); }); }
   }
 }
 // Remove (no model): an item or a component taken off the page, saved straight into the draft. Items stay off on
@@ -6241,11 +6413,12 @@ async function bsxUseChart(s){
 async function bsxChart(s, note){
   if (BSX_BUSY){ alert('A run is going. Ask for the trend line again when it finishes.'); render(); return; }
   BSR_DRAFT_STATE='Looking for a trend line for '+bsrRowTitle(s.backstoryRow)+'… a minute or so'; BSX_BUSY=true; render();
-  try { BSR_DRAFT_STATE=await bsxFindChart(s, note, false); }
-  catch(e){ BSR_DRAFT_STATE='Trend line search failed: '+e.message; }
+  const pid=progStart('bs:'+s.key, 'Trend line', ['trend'], {queue:'bsx'});
+  try { BSR_DRAFT_STATE=await bsxFindChart(s, note, false); progDone(pid); }
+  catch(e){ BSR_DRAFT_STATE='Trend line search failed: '+e.message; progDone(pid, false, e.message); }
   finally {
     BSX_BUSY=false; render();
-    if (BSX_NEXT && BSX_NEXT.length){ const n=BSX_NEXT.shift(); bsrRefreshHashes().then(()=>bsxRun(n.keys, n.opts)); }
+    if (BSX_NEXT && BSX_NEXT.length){ const n=BSX_NEXT.shift(); bsrRefreshHashes().then(()=>bsxRun(n.keys, n.opts)).then(()=>{ if (n.resolve) n.resolve(); }); }
   }
 }
 function bsrDraftPreviewHtml(s, d){ return bsc2Html(s, d); }
@@ -6437,7 +6610,7 @@ function renderLineup(root){
     <span class="copied">${copiedFlag==='all'?'copied':copiedFlag==='site'?'copied':''}</span>
     <span id="publish-status" style="font-size:10.5px;color:var(--warn)"></span>
     <span id="last-pub" style="font-size:10.5px;color:var(--dim)"></span>
-  </div>`;
+  </div><div style="margin:0 0 6px">${progBarHtml('lineup')}${progBarHtml('today')}${progBarHtml('publish')}</div>`;
   if (Q.open){
     const qp = document.createElement('div'); qp.className='qpanel';
     qp.innerHTML = `<div class="qrow">
@@ -6605,7 +6778,7 @@ function renderLineup(root){
       `<span class="concept-status ${s.conceptChecked?(s.conceptUri?'ok':'miss'):'unchecked'}">`+
         (s.conceptChecked ? (s.conceptUri ? '✓ '+esc(s.conceptMatch||s.conceptEntity) : '✕ no match') : (s.conceptEntity?'unchecked':''))+
       `</span></div>`+
-      `<div class="story-status${s.err?' err':''}">${esc(s.status||'')}</div>`+
+      `<div class="story-status${s.err?' err':''}">${esc(s.status||'')}</div>`+progBarHtml('story:'+s.key)+
       `<div class="ctx-row"><textarea class="wiki-ids" placeholder="Wikipedia IDs, one per line — Page, Page#Section_anchor, or Category:Name (expands to its 15 most recent pages)">${esc(s.wikiIds||'')}</textarea>`+
       `<button class="mini summon" ${s.busy?'disabled':''}>Step 3 · ${s.contextAt?'Re-summon':'Summon context'}</button></div>`+
       `<div><button class="mini primary enr" ${s.busy?'disabled':''}>Step 4 · ${s.enrichedAt?'Re-enrich':'Enrich sources'}</button> `+
@@ -7052,7 +7225,7 @@ function renderToday(root){
       <span style="font-size:11px;color:var(--dim);align-self:center">${n} of ${LINEUP.length} lineup stories have finished Truths — feeds this generation</span>
       <span class="spacer"></span>
       ${TODAY_OV.generatedAt ? `<span style="font-size:11px;color:var(--dim);align-self:center">generated ${rel(TODAY_OV.generatedAt)} ago</span>` : ''}
-    </div>
+    </div>${progBarHtml('today')}
     <div class="ed-head out" style="margin-top:8px">
       <div style="font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">
         Today overview — click the text below to edit the raw draft
