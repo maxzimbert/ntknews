@@ -1493,6 +1493,13 @@ function pickBeginnings(objs, k){
 }
 // Mirror of editorial/categories.py validate(). Returns {clean, problems}.
 const CAT_DENY=['wikipedia.org','amazon.','abebooks.','ebay.','goodreads.','scribd.','studocu.','coursehero.','quizlet.','unz.com'];
+// A refused host, matched on whole names: "amazon." refuses amazon.com and www.amazon.co.uk, not aboutamazon.com
+// (Amazon's own press site, a primary source for Amazon's announcements). It used to match any host containing the
+// text, and on 2026-11-18 refused Amazon's MGM and James Bond announcements.
+function catDenied(host){
+  host=String(host||'').toLowerCase();
+  return CAT_DENY.some(d=>d.endsWith('.') ? (host.startsWith(d) || host.includes('.'+d)) : (host===d || host.endsWith('.'+d)));
+}
 function validateCat(cat, poolBy0, spec, storyTexts, originYear, vocab){
   const problems=[]; const c=Object.assign({}, cat); const by=Object.assign({}, c.by||{}); const poolBy=Object.assign({}, poolBy0);
   if (!(c.id||'').trim() || !(c.title||'').trim()) return {clean:null, problems:['missing id or title']};
@@ -1515,7 +1522,7 @@ function validateCat(cat, poolBy0, spec, storyTexts, originYear, vocab){
   (c.custom_objects||[]).forEach(cu=>{
     const url=(cu.url||'').trim(), host=url.replace(/^https?:\/\/([^\/]+).*$/,'$1').toLowerCase(); let why=null;
     if (!url.startsWith('https://')) why='a link must start with https://';
-    else if (CAT_DENY.some(d=>host.includes(d))) why=host+' is not a primary source';
+    else if (catDenied(host)) why=host+' is not a primary source';
     else if (!/^\d{3,4}$/.test(String(cu.year||''))) why='year must be a number';
     else if (!(cu.title||'').trim()) why='missing title';
     if (why){ problems.push('added object '+cu.title+': '+why); return; }
@@ -1559,7 +1566,7 @@ function validateCat(cat, poolBy0, spec, storyTexts, originYear, vocab){
     const host=String(ind.source_url||'').replace(/^https?:\/\/([^\/]+).*$/,'$1').toLowerCase();
     if (miss.length){ problems.push('indicator is missing '+miss.join(', ')); c.indicator=null; }
     else if (ind.verified!==true){ problems.push('indicator is not verified'); c.indicator=null; }
-    else if (CAT_DENY.some(d=>host.includes(d))){ problems.push('indicator source '+host+' is not a primary source'); c.indicator=null; }
+    else if (catDenied(host)){ problems.push('indicator source '+host+' is not a primary source'); c.indicator=null; }
     else if (ind.verified_by==='system'){
       const ev=(ind.evidence||[]).join(' '); const nums=['then_value','now_value'].map(k=>String(ind[k]).replace(/[^0-9.]/g,''));
       if (!ev || nums.some(n=>n && !ev.includes(n))){ problems.push('indicator: the system\u2019s evidence does not contain both figures'); c.indicator=null; }
@@ -1592,7 +1599,7 @@ function verifyFoundObject(o, search){
   const url=String(o.source_url||'').trim(), host=url.replace(/^https?:\/\/([^\/]+).*$/,'$1').toLowerCase();
   if (!url.startsWith('https://')) return {ok:false, reason:'the link must start with https://'};
   if (!(search.urls||[]).includes(url)) return {ok:false, reason:'the link is not one the search returned'};
-  if (CAT_DENY.some(d=>host.includes(d))) return {ok:false, reason:host+' is not a primary source'};
+  if (catDenied(host)) return {ok:false, reason:host+' is not a primary source'};
   if (!/^\d{3,4}$/.test(String(o.year||''))) return {ok:false, reason:'it has no year'};
   if (!String(o.title||'').trim()) return {ok:false, reason:'it has no title'};
   return {ok:true};
@@ -1604,7 +1611,7 @@ function applySourceEdit(c, oid, f){
   if (!String(f.title||'').trim()) return {ok:false, reason:'it needs a title'};
   if (!/^\d{3,4}$/.test(String(f.year||'').trim())) return {ok:false, reason:'the year must be a number'};
   if (!url.startsWith('https://')) return {ok:false, reason:'the link must start with https://'};
-  if (CAT_DENY.some(d=>host.includes(d))) return {ok:false, reason:host+' is not accepted as a primary source'};
+  if (catDenied(host)) return {ok:false, reason:host+' is not accepted as a primary source'};
   const cid = oid.indexOf('custom-')===0 ? oid : 'custom-'+String(f.title).toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,60);
   if (cid!==oid && (c.objects||[]).some(o=>o.object_id===cid)) return {ok:false, reason:'an object with that title is already in this category'};
   const cu={id:cid,title:String(f.title).trim(),author:String(f.author||'').trim(),year:String(f.year).trim(),
@@ -1642,7 +1649,7 @@ function verifyMilestone(m, urls, storyText, relations){
   const url=String(m.source_url||'').trim(), host=url.replace(/^https?:\/\/([^\/]+).*$/,'$1').toLowerCase(), t=String(m.title||'').trim();
   if (!url.startsWith('https://')) return {ok:false, reason:'link is not https'};
   if (!(urls||[]).includes(url)) return {ok:false, reason:'the link is not one the search returned'};
-  if (CAT_DENY.some(d=>host.includes(d))) return {ok:false, reason:host+' is not a primary source'};
+  if (catDenied(host)) return {ok:false, reason:host+' is not a primary source'};
   if (!/^\d{3,4}$/.test(String(m.year||''))) return {ok:false, reason:'no year'};
   if (!t || !String(m.evidence_quote||'').trim()) return {ok:false, reason:'no title or no quote from the page'};
   if (storyText!=null){
@@ -1667,7 +1674,7 @@ const NTK_PUBLISHERS=['nytimes.com','bloomberg.com','cbc.ca','bbc.com','france24
 function bsxPublisher(url){ const host=String(url||'').replace(/^https?:\/\/([^\/]+).*$/,'$1').toLowerCase(); return NTK_PUBLISHERS.some(d=>host===d||host.endsWith('.'+d)); }
 function catSourceKind(url){
   const host=String(url||'').replace(/^https?:\/\/([^\/]+).*$/,'$1').toLowerCase();
-  if (CAT_DENY.some(d=>host.includes(d))) return 'deny';
+  if (catDenied(host)) return 'deny';
   return CAT_NEWS.some(d=>d.endsWith('.') ? host.includes(d) : (host===d||host.endsWith('.'+d))) || bsxPublisher(url) ? 'news' : 'document';
 }
 // One candidate from a per-topic search. kind: "located" (the document, readable at the link), "news" (a news
@@ -5099,7 +5106,7 @@ function bspShape(j, lib, story, prev, urls){
   begs.sort((a,b)=>a.year.localeCompare(b.year));
   const later=[];
   (Array.isArray(j.later)?j.later:((prev&&prev.later)||[])).forEach(x=>{
-    const r=resolve(typeof x==='string'?{id:x}:x); if (!r.id){ dropped.push({year:'', title:r.title, reason:r.reason}); return; }
+    const r=resolve(typeof x==='string'?{id:x}:x); if (!r.id){ dropped.push({year:String((x&&x.found&&x.found.year)||'').slice(0,4), title:r.title, reason:r.reason}); return; }
     if (begs.some(b=>b.object_id===r.id) || later.includes(r.id) || later.length>=2) return;
     docs[r.id]=r.doc; later.push(r.id);
   });
@@ -5120,6 +5127,19 @@ function bspMissing(list, begs, docs){
   return (Array.isArray(list)?list:[]).map(m=>({year:String((m&&m.year)||'').trim().slice(0,9), event:String((m&&m.event)||'').trim().slice(0,200),
     why:String((m&&m.why)||'').trim().slice(0,500), look_for:String((m&&m.look_for)||'').trim().slice(0,300)}))
     .filter(m=>m.event && !placed.some(t=>t.startsWith(m.year+' ') && t.includes(m.event.toLowerCase().slice(0,24)))).slice(0,10);
+}
+// An event the editor asked for by name that did not end up placed goes back on the list, with why, so nothing the
+// editor asked for silently disappears (2026-11-18: Opus took three ticked events off the list, believing them placed,
+// and Pulse's checks then turned their documents down).
+function bspRestoreMissing(prevMissing, next, dropped, message){
+  const msg=String(message||'').toLowerCase(), placedYears=new Set((next.beginnings||[]).map(b=>b.year));
+  const have=new Set((next.missing||[]).map(m=>m.year+' '+m.event.toLowerCase()));
+  (prevMissing||[]).forEach(m=>{
+    if (!m || !m.event || !msg.includes(m.event.toLowerCase()) || placedYears.has(m.year) || have.has(m.year+' '+m.event.toLowerCase())) return;
+    const d=(dropped||[]).find(x=>x.year===m.year);
+    next.missing=(next.missing||[]).concat([Object.assign({}, m, {not_placed:d?'its document was turned down: '+d.reason:'no document was placed for it'})]);
+  });
+  return next;
 }
 // The turn sent when the editor ticks missing events: the editor's request, in words, so it reads in the conversation
 // as what the editor asked for. Each one goes in as a beginning the editor asked for, with its document.
@@ -5148,6 +5168,18 @@ function bspPrompt(method, story, lib, cands, prev, chat, rowNames, editorRow, m
   const propDocs=prev?Object.values(prev.docs||{}).map(d=>'- '+d.id+' | '+d.year+' | '+(d.source_kind==='news'?'[NEWS REPORT] ':d.source_kind==='library'?'[EDITOR\'S LIBRARY] ':d.kind==='web'?'[FOUND ON THE WEB] ':'')+String(d.title).slice(0,110)+' | '+String(d.author||'').slice(0,50)).join('\n'):'';
   const cur=prev?JSON.stringify({category:prev.category, contest:prev.contest, starts:prev.starts, beginnings:prev.beginnings.map(b=>({year:b.year, id:b.object_id, ties_to:b.ties_to, asked:!!b.asked})), later:prev.later, lacks:prev.lacks}):'';
   const talk=(chat||[]).filter(m=>m.role==='editor'||m.role==='historian').map(m=>(m.role==='editor'?'EDITOR: ':'YOU: ')+m.text+(m.changed&&m.changed.length?' [changed: '+m.changed.join('; ')+']':'')).join('\n');
+  // the checks a web find must pass, said up front, so Opus picks a source that will be placed (2026-11-18: UPI, Variety
+  // and Amazon's own press site were found, then turned down, and the reply said all were placed)
+  const sources=message?`
+SOURCES THE CHECKS ACCEPT. Pulse checks every document you find before it goes in. A primary source passes: the document
+itself, or the copy held by an archive, court, legislature, agency or the organization that issued it. An organization's
+own announcement or press release on its own site is a primary source for what that organization did (aboutamazon.com
+for Amazon, a company's newsroom, a government press office). Refused: Wikipedia, summaries, retail and study pages. A
+news report passes only when no primary source exists, with the reason, and only from these publishers: ${NTK_PUBLISHERS.join(', ')}.
+A report from any other outlet (UPI, Variety and others not listed) is turned down, so look for the same report from a
+listed publisher, or the primary source. Do not tell the editor a document is placed: Pulse decides that after you
+answer, and tells the editor what it turned down.
+`:'';
   const built=page?`
 THE PAGE IS BUILT. As it stands: ${JSON.stringify({title:page.title, stakes:page.stakes, here:page.here, starts:page.starts?page.starts.year+': '+page.starts.line:null, beginnings:(page.beginnings||[]).map(b=>b.year+' '+b.object_id+': '+b.line)})}
 A change to the history (category, contest, It starts in, beginnings, Objects) goes in the proposal as before, and the page is rewritten from it. A request about the title, the stakes or We are here goes under "parts" as a short note of what the editor wants, for example {"parts":{"stakes":"about the chip industry, not trade"}}. Leave out any part the editor did not ask about.
@@ -5161,7 +5193,7 @@ RECENT CATEGORIES (prefer one that already exists at the right breadth): ${(rowN
 ${editorRow?'THE EDITOR FILED THIS STORY UNDER: '+editorRow+'. Keep that category unless the editor says otherwise.\n':''}
 THE LIBRARY (id | year | title | author | what it is). Look here first:
 ${bsxDocLines(cands, lib)}
-${prev?'\nDOCUMENTS ALREADY IN THE PROPOSAL (id | year | title | author):\n'+propDocs+'\n\nTHE PROPOSAL NOW: '+cur+'\n':''}${talk?'\nTHE CONVERSATION SO FAR:\n'+talk+'\n':''}${built}${message?'\nTHE EDITOR NOW SAYS: '+message+'\n\nAnswer the editor in a sentence or two and give the whole proposal as it should now stand, changed as the editor asks. The editor\'s words win over every rule. Search the library first, including the [EDITOR\'S LIBRARY] items, which are the editor\'s own Are.na saves; use web search when the library lacks the document an event needs, or the editor asks for one. There is no limit on searches: when the editor asks you to find something, keep searching until you find it or are sure no such document exists, and say which. A document you find on the web goes in as "found", with the exact link the search returned. Mark a beginning "asked": true only when the editor asked for it. Under "missing", list the events you would still place but have no document for; drop one from the list once it is placed.':'\nPropose this story\'s Backstory: the one scope you judge best. The category, the contest, the year It starts in, three to six beginnings (each a year and the document that defends it, from the library), and up to two more documents for the page\'s Objects (the case) beyond the documents of the beginnings. Then one line on what the library lacks for this history, or nothing, and under "missing" each event you would place but have no document for yet (the editor can tick them to have them found). Put "reply" as an empty string.'}
+${prev?'\nDOCUMENTS ALREADY IN THE PROPOSAL (id | year | title | author):\n'+propDocs+'\n\nTHE PROPOSAL NOW: '+cur+'\n':''}${talk?'\nTHE CONVERSATION SO FAR:\n'+talk+'\n':''}${sources}${built}${message?'\nTHE EDITOR NOW SAYS: '+message+'\n\nAnswer the editor in a sentence or two and give the whole proposal as it should now stand, changed as the editor asks. The editor\'s words win over every rule. Search the library first, including the [EDITOR\'S LIBRARY] items, which are the editor\'s own Are.na saves; use web search when the library lacks the document an event needs, or the editor asks for one. There is no limit on searches: when the editor asks you to find something, keep searching until you find it or are sure no such document exists, and say which. A document you find on the web goes in as "found", with the exact link the search returned. Mark a beginning "asked": true only when the editor asked for it. Under "missing", list the events you would still place but have no document for; drop one from the list once it is placed.':'\nPropose this story\'s Backstory: the one scope you judge best. The category, the contest, the year It starts in, three to six beginnings (each a year and the document that defends it, from the library), and up to two more documents for the page\'s Objects (the case) beyond the documents of the beginnings. Then one line on what the library lacks for this history, or nothing, and under "missing" each event you would place but have no document for yet (the editor can tick them to have them found). Put "reply" as an empty string.'}
 
 ${BSP_SHAPE}`;
 }
@@ -5207,7 +5239,7 @@ async function bspTurn(story, lib, prev, chat, message, rowNames){
   const r=await bspAsk(bspPrompt(method, story, lib, sc.cands, prev, chat, rowNames, '', message), true); cost.push(r.usage);
   const sh=bspShape(r.json, lib, story, prev, r.urls), changed=bspDiff(prev, sh.proposal);
   const reply=String((r.json||{}).reply||'').trim()||(changed.length?'Done.':'I left the proposal as it was.');
-  const next=Object.assign(sh.proposal, {at:at, model:BSX_OPUS, left_out:sh.dropped});
+  const next=bspRestoreMissing((prev||{}).missing, Object.assign(sh.proposal, {at:at, model:BSX_OPUS, left_out:sh.dropped}), sh.dropped, message);
   const msgs=[{role:'editor', text:message, at:at},
     {role:'historian', text:reply, changed:changed, dropped:sh.dropped, searched:r.usage.searches||0, at:new Date().toISOString(), model:BSX_OPUS}];
   return {proposal:next, chat:(chat||[]).concat(msgs), cost:cost};
@@ -5328,7 +5360,7 @@ async function bspAfter(story, prop0, page, chat, lib, edits, message, rowNames,
   const sc=await bspCands(story, lib, message, prev); cost.push(sc.usage);
   const r=await bspAsk(bspPrompt(method, story, lib, sc.cands, prev, chat, rowNames, '', message, page), true); cost.push(r.usage);
   const sh=bspShape(r.json, lib, story, prev, r.urls), hist=bspDiff(prev, sh.proposal), parts=bspParts((r.json||{}).parts);
-  const next=Object.assign(sh.proposal, {at:at, model:BSX_OPUS, left_out:sh.dropped, built_at:at});
+  const next=bspRestoreMissing(prev.missing, Object.assign(sh.proposal, {at:at, model:BSX_OPUS, left_out:sh.dropped, built_at:at}), sh.dropped, message);
   let c=page;
   if (hist.length){
     // a document the editor asks for again comes back, even if it was removed before
@@ -5866,16 +5898,18 @@ function bspProposalHtml(p, tickable){
     +(p.lacks?`<div style="font-size:12.5px;color:var(--dim);margin-top:6px;white-space:pre-wrap">What the library lacks: ${esc(p.lacks)}</div>`:'')
     +((p.missing||[]).length?`<div style="margin-top:8px;border-top:1px solid var(--rule);padding-top:6px"><b style="font:700 10.5px sans-serif;letter-spacing:.06em">EVENTS WITHOUT A DOCUMENT YET</b>
       ${tickable?'<div style="font-size:11.5px;color:var(--dim);margin:2px 0 4px">Tick the ones you want, and Opus finds a document for each and adds it to the beginnings and Objects.</div>':''}
-      ${p.missing.map((m,i)=>`<label style="display:flex;gap:7px;align-items:flex-start;margin:5px 0;font-size:13px">${tickable?`<input type="checkbox" class="bsp-miss" data-i="${i}" style="margin-top:3px">`:''}<span><b>${esc(m.year)}</b> ${esc(m.event)}${m.why?`<br><span style="font:12.5px Georgia,serif">${esc(m.why)}</span>`:''}${m.look_for?`<br><span style="font-size:11.5px;color:var(--dim)">look for: ${esc(m.look_for)}</span>`:''}</span></label>`).join('')}
+      ${p.missing.map((m,i)=>`<label style="display:flex;gap:7px;align-items:flex-start;margin:5px 0;font-size:13px">${tickable?`<input type="checkbox" class="bsp-miss" data-i="${i}" style="margin-top:3px">`:''}<span><b>${esc(m.year)}</b> ${esc(m.event)}${m.why?`<br><span style="font:12.5px Georgia,serif">${esc(m.why)}</span>`:''}${m.look_for?`<br><span style="font-size:11.5px;color:var(--dim)">look for: ${esc(m.look_for)}</span>`:''}${m.not_placed?`<br><span style="font-size:11.5px">not placed last time: ${esc(m.not_placed)}</span>`:''}</span></label>`).join('')}
       ${tickable?'<button class="mini go bsp-miss-go">find documents and add the ticked ones</button>':''}</div>`:'');
 }
 function bspChatHtml(chat){
   return (chat||[]).map(m=>m.role==='build' ? `<div class="bsp-m-build" style="margin:8px 0;font:700 10.5px sans-serif;letter-spacing:.06em;color:var(--dim);border-top:1px solid var(--rule);padding-top:4px">PAGE BUILT &middot; ${esc(rel(m.at))} ago</div>`
     : m.role==='editor'
     ? `<div class="bsp-m-editor" style="margin:6px 0 2px;font-size:13px"><b>You:</b> ${esc(m.text)}</div>`
-    : `<div class="bsp-m-historian" style="margin:2px 0 6px 14px;font-size:13px"><b>Opus:</b> ${esc(m.text)}`
+    : `<div class="bsp-m-historian" style="margin:2px 0 6px 14px;font-size:13px">`
+      +(m.dropped&&m.dropped.length?`<div style="margin-bottom:3px"><b>Pulse turned down ${m.dropped.length} of the documents Opus found</b>, so ${m.dropped.length===1?'it is':'they are'} not on the page. Any event you asked for is back on the tick list.</div>`:'')
+      +`<b>Opus:</b> ${esc(m.text)}`
       +(m.changed&&m.changed.length?`<div style="font-size:12px;color:var(--dim)">Changed: ${esc(m.changed.join('; '))}</div>`:'<div style="font-size:12px;color:var(--dim)">No change to the proposal.</div>')
-      +(m.dropped&&m.dropped.length?`<div style="font-size:12px;color:var(--dim)">Could not place: ${esc(m.dropped.map(x=>(x.year?x.year+' ':'')+x.title+' ('+x.reason+')').join('; '))}</div>`:'')
+      +(m.dropped&&m.dropped.length?`<div style="font-size:12px">Turned down: ${esc(m.dropped.map(x=>(x.year?x.year+' ':'')+x.title+' ('+x.reason+')').join('; '))}</div>`:'')
       +(m.searched?`<div style="font-size:11px;color:var(--dim)">searched the web ${m.searched===1?'once':m.searched+' times'}</div>`:'')+'</div>').join('');
 }
 function bspCostText(d){

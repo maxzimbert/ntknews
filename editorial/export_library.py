@@ -26,7 +26,7 @@ DATES = ROOT / "editorial" / "arena-dates.json"
 OUT = ROOT / "ntk-pulse" / "data" / "arena-library.json"
 
 sys.path.insert(0, str(ROOT / "editorial"))
-from categories import DENY_HOSTS, source_kind  # noqa: E402  (one list of refused and news hosts)
+from categories import DENY_HOSTS, denied, source_kind  # noqa: E402  (one list of refused and news hosts)
 
 GONE = ("buzzfeednews.com", "apps.apple.com", "itunes.apple.com", "podcasts.apple.com", "open.spotify.com", "apple.news", "twitter.com", "x.com", "t.co", "youtube.com", "youtu.be",
         "instagram.com", "facebook.com", "tiktok.com", "bit.ly", "lnkd.in", "flip.it", "google.com")
@@ -103,7 +103,7 @@ def main():
     for bid, title, url, provider, saved, chans in rows:
         u = clean_url(url)
         h = host_of(u)
-        if on(h, DENY_HOSTS) or any(d in h for d in DENY_HOSTS if d.endswith(".")):
+        if denied(h):
             dropped["refused"] += 1; continue
         if on(h, GONE):
             dropped["gone"] += 1; continue
