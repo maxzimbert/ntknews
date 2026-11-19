@@ -14,7 +14,7 @@ const block = (name) => { const m = html.match(new RegExp('/\\* ' + name + ':BEG
 const fnSrc = (name) => { const m = html.match(new RegExp('(?:^|\\n)((?:async )?function ' + name + '\\([\\s\\S]*?\\n\\})\\n')); if (!m) throw new Error('no function ' + name); return m[1]; };
 const CATS = new Function(block('CATS') + '; return {catDenied, catTextProblems, catWords, catSentences, catNumbersOk, catTiesOk, catSourceKind, bsxPublisher, NTK_PUBLISHERS, verifyFoundObject, verifyMilestone, CAT_RELATIONS, CAT_DENY};')();
 const BSX = block('BSX');
-const EXPORTS = 'bspChatHtml, bsxRemove, bsxEditText, bspFromPage, bspMissingMessage, bsxRun, bsxGet, bsxPut, bspShape, bspDiff, bspBuild, bspUnbuilt, bspHtml, bspPropose, bsxRefreshHere, bsxEnforce, bspDollars, BSX_OPUS, BSX_SONNET, BSX_HAIKU';
+const EXPORTS = 'BSP_VER_OPEN, bspChatHtml, bsxRemove, bsxEditText, bspFromPage, bspMissingMessage, bsxRun, bsxGet, bsxPut, bspShape, bspDiff, bspBuild, bspUnbuilt, bspHtml, bspPropose, bsxRefreshHere, bsxEnforce, bspDollars, BSX_OPUS, BSX_SONNET, BSX_HAIKU';
 
 let fails = 0;
 const check = (name, ok, detail) => { console.log((ok ? 'ok   ' : 'FAIL ') + name + (ok ? '' : '  ' + String(JSON.stringify(detail)).slice(0, 600))); if (!ok) fails++; };
@@ -266,6 +266,22 @@ const GH = { 'editorial/research-ledger.json': { data: JSON.parse(JSON.stringify
   check("chat: an organization's own press site is a primary source; a retail page is not",
     amz.proposal.later.length === 1 && !amz.dropped.length && !CATS.catDenied('www.aboutamazon.com') && CATS.catDenied('www.amazon.com') && CATS.catDenied('amazon.co.uk') && CATS.catDenied('en.wikipedia.org'), amz.dropped);
 
+  // earlier versions (2026-11-18): every proposal is kept; a whole version, or one document from it, comes back
+  let v2 = w.entry('s2'), nCalls = w.calls.length;
+  const banked = Object.values(v2.proposal.docs).find(d => d.url === BANKING_URL);
+  check('versions: every proposal and every turn is kept, labelled', v2.versions.length === 3 && v2.versions[0].label === 'First proposal'
+    && /^After: /.test(v2.versions[1].label) && v2.versions[2].proposal.objects.join() === v2.proposal.objects.join(), v2.versions.map(v => v.label));
+  await w.L.bsxRun(['s2'], { restore: { s2: { v: 0 } } });
+  v2 = w.entry('s2');
+  const usedWhole = v2.proposal.objects.join() === v2.versions[0].proposal.objects.join() && !v2.proposal.objects.includes(banked.id);
+  await w.L.bsxRun(['s2'], { restore: { s2: { v: 1, id: banked.id } } });
+  v2 = w.entry('s2'); w.L.BSP_VER_OPEN.s2 = 1;
+  const vpage = w.L.bspHtml({ key: 's2' }, v2);
+  check('versions: before Build, a whole version or one document comes back with no model call',
+    usedWhole && v2.proposal.beginnings.some(b => b.object_id === banked.id && b.year === '1935' && b.asked) && w.calls.length === nCalls && !v2.composed
+    && v2.chat.slice(-2).every(m => m.role === 'restore') && v2.versions.length === 5 && vpage.includes('bsp-ver') && vpage.includes('use this whole version'),
+    { objs: v2.proposal.objects, calls: w.calls.length - nCalls, versions: v2.versions.length });
+
   // ── build ───────────────────────────────────────────────────────────────────────────────────────────────────
   const prop = re1.proposal, TYPED = 'Who trades on the Hill';
   w.env.LINEUP[0].bsEdits = { text: { title: TYPED } };
@@ -326,6 +342,16 @@ const GH = { 'editorial/research-ledger.json': { data: JSON.parse(JSON.stringify
   for (const comp of ['starts', 'milestones']) await w.L.bsxRun(['s1'], { modify: { s1: { comp, note: comp === 'starts' ? 'It starts in 1962, with the bribery law.' : 'Tighten the milestone lines.' } } });
   check('after: the per-part controls work on a page whose documents were found on the web',
     webOn > 0 && !/Backstory failed|Not done/.test(w.env.BSR_DRAFT_STATE) && w.entry('s1').composed.case.length >= webOn, { webOn, state: w.env.BSR_DRAFT_STATE });
+
+  // after Build, a whole earlier version rewrites the page from it and keeps the lines already there; no Opus call
+  let vb = w.entry('s1'); const pageB = vb.composed, nV = w.calls.length, first = vb.versions[1].proposal;   // after the editor's contest
+  await w.L.bsxRun(['s1'], { restore: { s1: { v: 1 } } });
+  vb = w.entry('s1'); const pr = vb.composed, vCalls = w.calls.slice(nV);
+  check('versions: after Build, an earlier version rewrites the page from it and keeps every line already there',
+    pr.beginnings.map(b => b.object_id).join() === first.beginnings.map(b => b.object_id).join()
+    && pr.beginnings.every(b => { const o = pageB.beginnings.find(x => x.object_id === b.object_id); return !o || o.line === b.line; })
+    && pr.title === pageB.title && pr.stakes === pageB.stakes && !vCalls.some(c => c.model === 'claude-opus-5-5') && vCalls.some(c => /from a proposal the editor has agreed/.test(c.messages[0].content)),
+    { begs: pr.beginnings.map(b => b.object_id), calls: vCalls.map(c => c.model) });
 
   // ── change ──────────────────────────────────────────────────────────────────────────────────────────────────
   const before = JSON.parse(JSON.stringify(w.entry('s1').composed));   // the page as it stands after the turns above
