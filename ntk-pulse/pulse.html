@@ -5353,6 +5353,53 @@ function bspParts(p){
   BSP_PARTS.forEach(k=>{ const v=String(p[k]||'').trim(); if (v) out[k]=v.slice(0,600); });
   return out;
 }
+// The page rewritten from a changed proposal, keeping what was not asked about: the title, the stakes, We are here,
+// each line and note already there. Only new beginnings and documents get new words. One Sonnet call.
+async function bspRebuildKeep(story, next, page, lib, edits, cost){
+  // a document the editor asks for again comes back, even if it was removed before
+  const ed=Object.assign({}, edits, {off:(edits.off||[]).filter(i=>!next.objects.includes(i))});
+  const nb=await bspBuild(story, next, lib, ed); (nb.cost||[]).forEach(u=>cost.push(u)); delete nb.cost;
+  BSP_PARTS.forEach(k=>{ nb[k]=page[k]; });
+  nb.beginnings.forEach(b=>{ const o=(page.beginnings||[]).find(x=>x.object_id===b.object_id); if (o){ b.line=o.line; b.by=o.by; if (o.flag) b.flag=o.flag; else delete b.flag; } });
+  nb.case.forEach(o=>{ const p=(page.case||[]).find(x=>x.object_id===o.object_id); if (p && p.about){ o.about=p.about; o.about_by=p.about_by; } });
+  if (nb.starts && page.starts && nb.starts.year===page.starts.year) nb.starts=page.starts;
+  ['chart_removed','modified','change','research'].forEach(k=>{ if (page[k]!==undefined) nb[k]=page[k]; });
+  return nb;
+}
+// ─── Earlier versions (2026-11-18): every proposal is kept, so the editor can bring back what an earlier one had ───
+// The editor: "I wish I could recall some of the things you sent, so I can mix and match and move on." Each proposal
+// and each turn's result is saved on the draft entry (d.versions, newest last, at most 20). From any of them the editor
+// can add back one beginning or document, or take the whole version. No model call before Build; after Build the page
+// is rewritten from the changed proposal, keeping every line already there.
+const BSP_MAX_VERSIONS=20;
+function bspVersion(prop, label){
+  const p=JSON.parse(JSON.stringify(prop||{})); delete p.left_out;
+  return {at:new Date().toISOString(), label:String(label||'').slice(0,80), proposal:p};
+}
+function bspKeepVersions(list, prev, next, label){
+  let v=(list||[]).slice();
+  if (!v.length && prev) v.push(bspVersion(prev, 'Before versions were kept'));
+  v.push(bspVersion(next, label));
+  return v.slice(-BSP_MAX_VERSIONS);
+}
+// One document from an earlier version, back into the current proposal: as a beginning if it was one there (with its
+// year and tie), otherwise as one of the Objects. Nothing else changes.
+function bspAddBack(cur, ver, id){
+  const next=JSON.parse(JSON.stringify(cur||{})), v=ver||{}, doc=(v.docs||{})[id];
+  if (!doc || (next.objects||[]).includes(id)) return next;
+  next.docs=Object.assign({}, next.docs||{}, {[id]:doc});
+  const b=(v.beginnings||[]).find(x=>x.object_id===id);
+  if (b){ next.beginnings=(next.beginnings||[]).concat([Object.assign({}, b, {asked:true})]).sort((a,c)=>String(a.year).localeCompare(String(c.year))); }
+  else next.later=(next.later||[]).concat([id]);
+  next.objects=(next.beginnings||[]).map(x=>x.object_id).concat((next.later||[]).filter(i=>!(next.beginnings||[]).some(x=>x.object_id===i)));
+  next.missing=(next.missing||[]).filter(m=>!(b && m.year===b.year));
+  return next;
+}
+// A whole earlier version, as the current proposal; what the editor asked for stays asked for.
+function bspUseVersion(ver){
+  const next=JSON.parse(JSON.stringify(ver||{}));
+  return next;
+}
 // One turn after Build: Opus answers and gives the proposal as it now stands, plus notes on any part to rewrite. The
 // page follows. Returns {page, proposal, chat, cost, parts}.
 async function bspAfter(story, prop0, page, chat, lib, edits, message, rowNames, rejected){
@@ -5362,18 +5409,7 @@ async function bspAfter(story, prop0, page, chat, lib, edits, message, rowNames,
   const sh=bspShape(r.json, lib, story, prev, r.urls), hist=bspDiff(prev, sh.proposal), parts=bspParts((r.json||{}).parts);
   const next=bspRestoreMissing(prev.missing, Object.assign(sh.proposal, {at:at, model:BSX_OPUS, left_out:sh.dropped, built_at:at}), sh.dropped, message);
   let c=page;
-  if (hist.length){
-    // a document the editor asks for again comes back, even if it was removed before
-    const ed=Object.assign({}, edits, {off:(edits.off||[]).filter(i=>!next.objects.includes(i))});
-    const nb=await bspBuild(story, next, lib, ed); (nb.cost||[]).forEach(u=>cost.push(u)); delete nb.cost;
-    // what was not asked about stays as it was: the title, the stakes, We are here, each line and note already there
-    BSP_PARTS.forEach(k=>{ nb[k]=page[k]; });
-    nb.beginnings.forEach(b=>{ const o=(page.beginnings||[]).find(x=>x.object_id===b.object_id); if (o){ b.line=o.line; b.by=o.by; if (o.flag) b.flag=o.flag; else delete b.flag; } });
-    nb.case.forEach(o=>{ const p=(page.case||[]).find(x=>x.object_id===o.object_id); if (p && p.about){ o.about=p.about; o.about_by=p.about_by; } });
-    if (nb.starts && page.starts && nb.starts.year===page.starts.year) nb.starts=page.starts;
-    ['chart_removed','modified','change','research'].forEach(k=>{ if (page[k]!==undefined) nb[k]=page[k]; });
-    c=nb;
-  }
+  if (hist.length) c=await bspRebuildKeep(story, next, page, lib, edits, cost);
   const rewrote=[];
   for (const k of Object.keys(parts)){
     const before=c.usage||{};
@@ -5639,7 +5675,7 @@ async function bsxRun(keys, opts){
   opts=opts||{};
   if (!pulseBranch(location)){ alert('This copy of Pulse cannot draft (not the live Pulse or staging Pulse).'); return; }
   if (!SETTINGS.ghToken){ alert('Add a GitHub token in ⚙ first.'); return; }
-  BSX_BUSY=true; BSR_DRAFT_STATE=(opts.propose?'Proposing':opts.turn?'Thinking about':opts.refresh?'Checking':opts.modify?'Revising':opts.refile?'Moving':'Building')+' '+keys.length+' stor'+(keys.length===1?'y':'ies')+'…'; render();
+  BSX_BUSY=true; BSR_DRAFT_STATE=(opts.restore?'Bringing back':opts.propose?'Proposing':opts.turn?'Thinking about':opts.refresh?'Checking':opts.modify?'Revising':opts.refile?'Moving':'Building')+' '+keys.length+' stor'+(keys.length===1?'y':'ies')+'…'; render();
   try {
     let payload=await bsWithHashes(buildStoryPayload()), byKey=Object.fromEntries(payload.map(s=>[s.key,s]));
     let {data:draft}=await bsxGet(GH_DRAFT_OUT);
@@ -5658,6 +5694,14 @@ async function bsxRun(keys, opts){
       const d0=draft && (draft.stories||[]).find(x=>x.story_id===key);
       let prev=(d0&&d0.composed&&d0.composed.v===2)?d0.composed:null;
       // T-0123: the proposal and the conversation. Neither touches the page; Build does.
+      // an earlier version, or one document from it, brought back (the editor's own pick: no model call before Build)
+      const rq=opts.restore&&opts.restore[key], rver=rq&&d0&&(d0.versions||[])[rq.v];
+      const restored=rver?(rq.id?bspAddBack(d0.proposal, rver.proposal, rq.id):bspUseVersion(rver.proposal)):null;
+      const rnote=rver?(rq.id?'Added back from an earlier version: '+(((rver.proposal.docs||{})[rq.id]||{}).year||'')+' '+(((rver.proposal.docs||{})[rq.id]||{}).title||rq.id):'Went back to the version "'+rver.label+'"'):'';
+      if (opts.restore && !rver) throw new Error('that earlier version is not on the draft any more');
+      if (opts.restore && !prev){
+        done[key]={proposal:restored, chat:((d0&&d0.chat)||[]).concat([{role:'restore', text:rnote, at:new Date().toISOString()}]), cost:[], label:rnote}; continue;
+      }
       if (opts.propose || (opts.turn && !prev)){
         await bspEnsureArena();
         const lib=bspLibFor(bsxLibrary(draft||{stories:[]}, ledger), d0), had=d0&&d0.proposal, chat=(d0&&d0.chat)||[];
@@ -5668,7 +5712,7 @@ async function bsxRun(keys, opts){
           const pr=await bspPropose(story, lib, rowNames, L.rowByEditor&&L.backstoryRow?bsrRowTitle(L.backstoryRow):'');
           if (!L.backstoryRow && pr.category){ const id=bsrRowResolve(pr.category); if (id){ L.backstoryRow=id; L.rowByEditor=false; saveLineup(); } }
           if (!L.backstoryRow) throw new Error('no row could be set');
-          done[key]={proposal:pr, chat:[], cost:pr.cost}; delete pr.cost; continue;
+          done[key]={proposal:pr, chat:[], cost:pr.cost, label:'First proposal'}; delete pr.cost; continue;
         }
         const msg=String((opts.turn[key]||{}).message||'');
         if (!had) throw new Error('it has no proposal yet: propose it first');
@@ -5676,7 +5720,7 @@ async function bsxRun(keys, opts){
         const t=await bspTurn(story, lib, d0.proposal, chat, msg, rowNames);
         // the category is the editor's to change here, in conversation: the shelf follows it
         if (t.proposal.category && t.proposal.category!==d0.proposal.category){ const id=bsrRowResolve(t.proposal.category); if (id){ L.backstoryRow=id; L.rowByEditor=true; saveLineup(); } }
-        done[key]={proposal:t.proposal, chat:t.chat, cost:t.cost}; continue;
+        done[key]={proposal:t.proposal, chat:t.chat, cost:t.cost, label:'After: \u201c'+msg.slice(0,60)+'\u201d'}; continue;
       }
       // T-0122, step two: the story changed after this page was built. Anything short of a rebuild first checks the
       // page against the revised story (one Haiku call): We are here follows the news; if the history itself moved,
@@ -5696,12 +5740,19 @@ async function bsxRun(keys, opts){
       const m=opts.modify&&opts.modify[key];
       if (opts.refresh){ /* checked above; the page is otherwise left as it is */ }
       else if (opts.refile && prev){ /* the shelf moves; the page stays */ }
+      else if (opts.restore && prev){                       // a version or a document brought back after Build: the page follows
+        BSR_DRAFT_STATE='Bringing it back and rewriting the page, keeping every line already there…'; render();
+        const cost=[]; c=await bspRebuildKeep(story, Object.assign(restored, {built_at:new Date().toISOString()}), prev, bspLibFor(bsxLibrary(draft||{stories:[]}, ledger), d0), edits, cost);
+        buildCost=cost; turnOut={proposal:restored, chat:((d0&&d0.chat)||[]).concat([{role:'restore', text:rnote, at:new Date().toISOString()}]), label:rnote};
+        if (restored.category && restored.category!==prev.row){ const id=bsrRowResolve(restored.category); if (id){ L.backstoryRow=id; L.rowByEditor=true; saveLineup(); } }
+        const E=bsEdits(L), back=(E.off||[]).filter(i=>restored.objects.includes(i)); if (back.length){ E.off=E.off.filter(i=>!back.includes(i)); edits.off=E.off; saveLineup(); }
+      }
       else if (opts.turn && prev){                          // T-0124: the conversation after Build changes the page
         await bspEnsureArena();
         const msg=String((opts.turn[key]||{}).message||'');
         BSR_DRAFT_STATE='Opus is reading "'+msg.slice(0,60)+'"… the page follows; searching if it needs to, up to a few minutes'; render();
         const t=await bspAfter(story, (d0&&d0.proposal)||null, prev, (d0&&d0.chat)||[], bspLibFor(bsxLibrary(draft||{stories:[]}, ledger), d0), edits, msg, rowNames, rejected);
-        c=t.page; buildCost=t.cost; turnOut={proposal:t.proposal, chat:t.chat};
+        c=t.page; buildCost=t.cost; turnOut={proposal:t.proposal, chat:t.chat, label:'After: \u201c'+msg.slice(0,60)+'\u201d'};
         if (t.proposal.category && t.proposal.category!==prev.row){ const id=bsrRowResolve(t.proposal.category); if (id){ L.backstoryRow=id; L.rowByEditor=true; saveLineup(); } }
         // a part rewritten here is the editor's direction, recorded as its revise box records it; typed words for it give way
         const parts=Object.keys(t.parts||{}), E=bsEdits(L);
@@ -5779,7 +5830,7 @@ async function bsxRun(keys, opts){
       const g=await bsxGet(GH_DRAFT_OUT); draft=await bsxEnsureEntries(g.data, Object.keys(done), byKey);
       (draft.stories||[]).forEach(d=>{ const x=done[d.story_id]; if (!x) return; const s=byKey[d.story_id];
         d.bsp_cost=bspAddCost(d.bsp_cost, x.cost);                      // T-0123: what this story's Backstory has cost, by model
-        if (x.proposal){ d.proposal=x.proposal; d.chat=x.chat; d.proposal_story_hash=s.bs_story_hash; }
+        if (x.proposal){ d.versions=bspKeepVersions(d.versions, d.proposal, x.proposal, x.label||''); d.proposal=x.proposal; d.chat=x.chat; d.proposal_story_hash=s.bs_story_hash; }
         if (!x.composed) return;                                          // a proposal: no page yet
         // a page whose history may have moved, or whose check failed, keeps the old fingerprints: it still reads as
         // changed until the editor rebuilds (T-0122); it ships as last built either way
@@ -5902,7 +5953,8 @@ function bspProposalHtml(p, tickable){
       ${tickable?'<button class="mini go bsp-miss-go">find documents and add the ticked ones</button>':''}</div>`:'');
 }
 function bspChatHtml(chat){
-  return (chat||[]).map(m=>m.role==='build' ? `<div class="bsp-m-build" style="margin:8px 0;font:700 10.5px sans-serif;letter-spacing:.06em;color:var(--dim);border-top:1px solid var(--rule);padding-top:4px">PAGE BUILT &middot; ${esc(rel(m.at))} ago</div>`
+  return (chat||[]).map(m=>m.role==='restore' ? `<div class="bsp-m-restore" style="margin:6px 0;font-size:12px;color:var(--dim)">${esc(m.text)}</div>`
+    : m.role==='build' ? `<div class="bsp-m-build" style="margin:8px 0;font:700 10.5px sans-serif;letter-spacing:.06em;color:var(--dim);border-top:1px solid var(--rule);padding-top:4px">PAGE BUILT &middot; ${esc(rel(m.at))} ago</div>`
     : m.role==='editor'
     ? `<div class="bsp-m-editor" style="margin:6px 0 2px;font-size:13px"><b>You:</b> ${esc(m.text)}</div>`
     : `<div class="bsp-m-historian" style="margin:2px 0 6px 14px;font-size:13px">`
@@ -5911,6 +5963,26 @@ function bspChatHtml(chat){
       +(m.changed&&m.changed.length?`<div style="font-size:12px;color:var(--dim)">Changed: ${esc(m.changed.join('; '))}</div>`:'<div style="font-size:12px;color:var(--dim)">No change to the proposal.</div>')
       +(m.dropped&&m.dropped.length?`<div style="font-size:12px">Turned down: ${esc(m.dropped.map(x=>(x.year?x.year+' ':'')+x.title+' ('+x.reason+')').join('; '))}</div>`:'')
       +(m.searched?`<div style="font-size:11px;color:var(--dim)">searched the web ${m.searched===1?'once':m.searched+' times'}</div>`:'')+'</div>').join('');
+}
+// Earlier versions, on screen: a dropdown; the one picked shows under the current proposal with "add back" on each
+// beginning or document the current one lacks, and "use this whole version".
+const BSP_VER_OPEN={};
+function bspVersionsHtml(s, d, enabled){
+  const vs=d.versions||[]; if (vs.length<2) return '';
+  const cur=d.proposal||{}, i=BSP_VER_OPEN[s.key], on=new Set(cur.objects||[]);
+  const opts=vs.map((v,k)=>({v, k})).reverse().map(({v,k})=>`<option value="${k}"${String(i)===String(k)?' selected':''}>${esc(v.label||'Version '+(k+1))} \u00b7 ${esc(rel(v.at))} ago${k===vs.length-1?' (now)':''}</option>`).join('');
+  let shown='';
+  const ver=i!==undefined&&vs[i]?vs[i].proposal:null;
+  if (ver){
+    const row=(id, b)=>{ const o=(ver.docs||{})[id]||{}; return `<div style="display:flex;gap:7px;align-items:baseline;margin:4px 0;font-size:13px"><b>${esc((b&&b.year)||o.year||'')}</b><span style="flex:1"><a href="${esc(o.url||'#')}" target="_blank" rel="noopener"><i>${esc(o.title||id)}</i></a>${b?'':' <span style="font-size:11px;color:var(--dim)">an Object</span>'}</span>`
+      +(on.has(id)?'<span class="chip">in the current one</span>':`<button class="mini bsp-ver-add" data-v="${i}" data-id="${esc(id)}"${enabled?'':' disabled'}>add back</button>`)+'</div>'; };
+    shown=`<div style="border:1px dashed var(--ink);padding:6px 9px;margin-top:6px;background:#fffdf6">
+      <div style="font-size:12px;margin-bottom:4px"><b>${esc(ver.category||'')}</b> &middot; starts ${esc(ver.starts||'')}<br><i style="font:13px Georgia,serif">${esc(ver.contest||'')}</i></div>
+      ${(ver.beginnings||[]).map(b=>row(b.object_id, b)).join('')}${(ver.later||[]).map(id=>row(id, null)).join('')}
+      <button class="mini bsp-ver-use" data-v="${i}"${enabled&&i!==vs.length-1?'':' disabled'} style="margin-top:4px">use this whole version</button>
+      ${(d.composed&&d.composed.v===2)?'<span style="font-size:11px;color:var(--dim)"> The page is rewritten from it, keeping every line already there.</span>':''}</div>`;
+  }
+  return `<div style="margin-top:8px"><select class="bsp-ver" style="font-size:12px"><option value="">Earlier versions (${vs.length})</option>${opts}</select>${shown}</div>`;
 }
 function bspCostText(d){
   const c=d.bsp_cost||{}, n=Object.values(c).reduce((t,a)=>t+a.calls,0); if (!n) return '';
@@ -5923,7 +5995,7 @@ function bspHtml(s, d){
       <button class="mini go bsp-build"${running?' disabled':''} title="Write the page from this proposal, keeping the category, contest, It starts in, beginnings and documents as they stand.">Build</button>
       <button class="mini bsr-prev-close">close</button></div>
     ${BSR_DRAFT_STATE?`<div style="padding:5px 8px;margin-bottom:6px;border:1px solid var(--ink);font-size:12.5px"><b>${esc(BSR_DRAFT_STATE)}</b></div>`:''}
-    <div style="border:1px solid var(--rule);background:#fff;padding:8px 10px">${bspProposalHtml(p, !running)}</div>
+    <div style="border:1px solid var(--rule);background:#fff;padding:8px 10px">${bspProposalHtml(p, !running)}${bspVersionsHtml(s, d, !running)}</div>
     <div style="margin-top:8px"><b style="font:700 11px sans-serif;letter-spacing:.06em">TALK IT THROUGH</b>
       <div style="font-size:12px;color:var(--dim);margin:2px 0 4px">Say what is off: the scope, a beginning, a document, the category. Each answer changes the proposal above. If it looks right, press Build.</div>
       ${bspChatHtml(chat)}
@@ -6000,6 +6072,7 @@ function bsc2Html(s, d){
       <b style="font:700 11px sans-serif;letter-spacing:.06em">TALK IT THROUGH</b>
       <div style="font-size:12px;margin:3px 0 6px">The same conversation as before Build. Ask for anything about this history: reach back to a law or a year, add or drop a document, find what the library lacks, rewrite the title, the stakes or We are here. The page follows each answer. The boxes on each part below still revise, edit words and remove.</div>
       <details${((bp.missing||[]).length)?' open':''} style="font-size:12.5px;margin-bottom:6px"><summary>The proposal this page stands on</summary><div style="border:1px solid var(--rule);padding:6px 9px;margin-top:4px">${bspProposalHtml(bp, !bsrRunning())}</div></details>
+      ${bspVersionsHtml(s, d, !bsrRunning())}
       ${bspChatHtml(d.chat)}
       <div style="display:flex;gap:6px;margin-top:4px"><textarea class="bsp-msg" rows="2" placeholder="e.g. reach back to the 1949 Export Control Act, or: the stakes should be about the chip industry" style="flex:1;min-width:260px"></textarea><button class="mini go bsp-send">send</button></div>
       ${c.revise_note?`<div style="padding:5px 8px;margin:4px 0;background:#fbe8d0;font-size:12.5px">${esc(c.revise_note)}</div>`:''}
@@ -6184,6 +6257,9 @@ function bspWire(el, s){
   if (send) send.addEventListener('click', go);
   if (msg) msg.addEventListener('keydown', e=>{ if (e.key==='Enter' && (e.metaKey||e.ctrlKey)) go(); });
   const b=box.querySelector('.bsp-build'); if (b) b.addEventListener('click',()=>{ bscBusy(b); bsrRefreshHashes().then(()=>bsxRun([s.key], {build:true})); });
+  const vs=box.querySelector('.bsp-ver'); if (vs) vs.addEventListener('change',()=>{ if (vs.value==='') delete BSP_VER_OPEN[s.key]; else BSP_VER_OPEN[s.key]=+vs.value; render(); });
+  box.querySelectorAll('.bsp-ver-add').forEach(b=>b.addEventListener('click',()=>{ bscBusy(b); bsrRefreshHashes().then(()=>bsxRun([s.key], {restore:{[s.key]:{v:+b.dataset.v, id:b.dataset.id}}})); }));
+  const vu=box.querySelector('.bsp-ver-use'); if (vu) vu.addEventListener('click',()=>{ bscBusy(vu); bsrRefreshHashes().then(()=>bsxRun([s.key], {restore:{[s.key]:{v:+vu.dataset.v}}})); });
   const mg=box.querySelector('.bsp-miss-go'); if (mg) mg.addEventListener('click',()=>{
     const picks=[...box.querySelectorAll('.bsp-miss:checked')].map(x=>+x.dataset.i);
     const m=bspMissingMessage(((bsrDraftFor(s)||{}).proposal||{}).missing, picks);
