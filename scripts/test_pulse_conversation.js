@@ -12,9 +12,9 @@ const html = fs.readFileSync(path.join(root, 'ntk-pulse/pulse.html'), 'utf8');
 const block = (name) => { const m = html.match(new RegExp('/\\* ' + name + ':BEGIN \\*/([\\s\\S]*?)/\\* ' + name + ':END \\*/')); if (!m) { console.error('FAIL: ' + name + ' block not found'); process.exit(1); } return m[1]; };
 // a top-level function's source, by name (as T-0114's check reads them)
 const fnSrc = (name) => { const m = html.match(new RegExp('(?:^|\\n)((?:async )?function ' + name + '\\([\\s\\S]*?\\n\\})\\n')); if (!m) throw new Error('no function ' + name); return m[1]; };
-const CATS = new Function(block('CATS') + '; return {catTextProblems, catWords, catSentences, catNumbersOk, catTiesOk, catSourceKind, bsxPublisher, NTK_PUBLISHERS, verifyFoundObject, verifyMilestone, CAT_RELATIONS, CAT_DENY};')();
+const CATS = new Function(block('CATS') + '; return {catDenied, catTextProblems, catWords, catSentences, catNumbersOk, catTiesOk, catSourceKind, bsxPublisher, NTK_PUBLISHERS, verifyFoundObject, verifyMilestone, CAT_RELATIONS, CAT_DENY};')();
 const BSX = block('BSX');
-const EXPORTS = 'bsxRemove, bsxEditText, bspFromPage, bspMissingMessage, bsxRun, bsxGet, bsxPut, bspShape, bspDiff, bspBuild, bspUnbuilt, bspHtml, bspPropose, bsxRefreshHere, bsxEnforce, bspDollars, BSX_OPUS, BSX_SONNET, BSX_HAIKU';
+const EXPORTS = 'bspChatHtml, bsxRemove, bsxEditText, bspFromPage, bspMissingMessage, bsxRun, bsxGet, bsxPut, bspShape, bspDiff, bspBuild, bspUnbuilt, bspHtml, bspPropose, bsxRefreshHere, bsxEnforce, bspDollars, BSX_OPUS, BSX_SONNET, BSX_HAIKU';
 
 let fails = 0;
 const check = (name, ok, detail) => { console.log((ok ? 'ok   ' : 'FAIL ') + name + (ok ? '' : '  ' + String(JSON.stringify(detail)).slice(0, 600))); if (!ok) fails++; };
@@ -46,6 +46,8 @@ const LONG = 'Congress passed a sweeping law after the Watergate scandal that re
 const FOUND_URL = 'https://www.govinfo.gov/content/pkg/CRPT-117hrpt/stock-trading-report.pdf';
 const WIKI_URL = 'https://en.wikipedia.org/wiki/STOCK_Act';
 const EXPORT_URL = 'https://www.govinfo.gov/content/pkg/STATUTE-63/export-control-act-1949.pdf';
+const UPI_URL = 'https://www.upi.com/Archives/1977/11/16/Carter-signs-Fed-reform/123';
+const AMAZON_URL = 'https://www.aboutamazon.com/news/company-news/amazon-and-mgm-have-signed-an-acquisition-agreement';
 const BANKING_URL = 'https://fraser.stlouisfed.org/title/banking-act-1935-1007';
 const LACKS2 = 'The library has no documents for the events that made this story possible, so they stay out until documents are found. The Banking Act of 1935 moved power over interest rates from the regional banks to the Board in Washington. The Federal Reserve Reform Act of 1977 first wrote maximum employment and stable prices into law, which is the dual mandate the story names today.';
 const EDITOR_SAYS = 'Reach back to the 1962 bribery law,  and the contest should be: Who polices lawmakers\u2019 trades?';
@@ -108,6 +110,8 @@ function route(body) {
   if (/Name that history as 8 to 14 short search terms/.test(p)) return replies.terms();
   if (/THE EDITOR NOW SAYS: Reach back to the 1962/.test(p)) return replies.turn1();
   if (/THE EDITOR NOW SAYS: Find the House report/.test(p)) return replies.turn2();
+  if (/THE EDITOR NOW SAYS: Find a document for each of these[^\n]*Reform Act of 1977/.test(p)) return { reply: 'I placed the 1977 law, using the wire report of the signing.', missing: [],
+    later: [{ found: { title: 'Carter signs Federal Reserve reform', author: 'UPI', year: '1977', source_url: UPI_URL, source_kind: 'news', why_no_primary: 'the signing is on record only in wire copy' } }] };
   if (/THE EDITOR NOW SAYS: Find a document for each of these/.test(p)) return replies.turn3();
   if (/THE EDITOR NOW SAYS: Reach back to the 1949/.test(p)) { const cur = JSON.parse(p.match(/THE PROPOSAL NOW: (\{.*\})\n/)[1]);
     return { reply: 'Found the Export Control Act of 1949 and added it as a beginning.', beginnings: cur.beginnings.concat([{ year: '1949', asked: true, ties_to: 'trading by lawmakers',
@@ -137,7 +141,7 @@ function world(gh) {
       if (search && /THE EDITOR NOW SAYS: Find the House report/.test(body.messages[0].content) && body.messages.length === 1)
         return resp(200, { content: [{ type: 'web_search_tool_result', content: [{ url: FOUND_URL }] }], stop_reason: 'pause_turn', usage: { input_tokens: 9000, output_tokens: 100, server_tool_use: { web_search_requests: 1 } } });
       const paused = body.messages.length > 1;      // the continuation: only what this round searched
-      const content = (search ? [{ type: 'web_search_tool_result', content: paused ? [{ url: WIKI_URL }] : [{ url: FOUND_URL }, { url: WIKI_URL }, { url: BANKING_URL }, { url: EXPORT_URL }] }] : []).concat([{ type: 'text', text: JSON.stringify(j) }]);
+      const content = (search ? [{ type: 'web_search_tool_result', content: paused ? [{ url: WIKI_URL }] : [{ url: FOUND_URL }, { url: WIKI_URL }, { url: BANKING_URL }, { url: EXPORT_URL }, { url: UPI_URL }, { url: AMAZON_URL }] }] : []).concat([{ type: 'text', text: JSON.stringify(j) }]);
       return resp(200, { content, stop_reason: 'end_turn', usage: { input_tokens: 9000, output_tokens: 700, server_tool_use: search ? { web_search_requests: 1 } : undefined } });
     }
     const gm = url.match(/^https:\/\/api\.github\.com\/repos\/[^/]+\/[^/]+\/contents\/([^?]+)/);
@@ -248,6 +252,19 @@ const GH = { 'editorial/research-ledger.json': { data: JSON.parse(JSON.stringify
     /^Find a document for each of these/.test(msg) && msg.includes('1935 Banking Act of 1935') && !msg.includes('1977') && e2t.chat[0].text === msg
     && !!banking && e2t.proposal.beginnings.some(b => b.object_id === banking.id && b.asked && b.year === '1935')
     && e2t.proposal.missing.length === 1 && e2t.proposal.missing[0].year === '1977', { msg, begs: e2t.proposal.beginnings, missing: e2t.proposal.missing });
+
+  // 2026-11-18, the Bezos turn: a news report from outside the 91 is turned down and the reply says so, the event goes back
+  // on the tick list, and Opus is shown the rules and the publishers before it searches
+  const msg4 = w.L.bspMissingMessage(w.entry('s2').proposal.missing, [0]), n4 = w.calls.length;
+  await w.L.bsxRun(['s2'], { turn: { s2: { message: msg4 } } });
+  const e4 = w.entry('s2'), last4 = e4.chat.slice(-1)[0], p4 = w.calls.slice(n4).find(c => c.model === 'claude-opus-5-5').messages[0].content;
+  check('chat: what Pulse turns down is said plainly, and an event the editor asked for goes back on the tick list',
+    !Object.values(e4.proposal.docs).some(d => d.url === UPI_URL) && last4.dropped.some(x => /approved list/.test(x.reason))
+    && e4.proposal.missing.some(m => m.year === '1977' && /turned down/.test(m.not_placed || '')) && /Pulse turned down 1 of the documents/.test(w.L.bspChatHtml([last4]))
+    && p4.includes('SOURCES THE CHECKS ACCEPT') && p4.includes('nytimes.com') && p4.includes('aboutamazon.com'), { missing: e4.proposal.missing, dropped: last4.dropped });
+  const amz = w.L.bspShape({ later: [{ found: { title: 'Amazon and MGM have signed an acquisition agreement', author: 'Amazon', year: '2021', source_url: AMAZON_URL, source_kind: 'document' } }] }, {}, { headline: 'h', lede: '', truths: '' }, null, [AMAZON_URL]);
+  check("chat: an organization's own press site is a primary source; a retail page is not",
+    amz.proposal.later.length === 1 && !amz.dropped.length && !CATS.catDenied('www.aboutamazon.com') && CATS.catDenied('www.amazon.com') && CATS.catDenied('amazon.co.uk') && CATS.catDenied('en.wikipedia.org'), amz.dropped);
 
   // ── build ───────────────────────────────────────────────────────────────────────────────────────────────────
   const prop = re1.proposal, TYPED = 'Who trades on the Hill';
