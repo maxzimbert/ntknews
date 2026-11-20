@@ -2646,7 +2646,7 @@ const NTK_HEADLINE_RULES =
   `- Some stories have no standing truth that is both certain and makes the news land harder. Then do not force one: return "need_to_know" as an empty string and say why in "basis". An invented or weak first sentence is worse than none.\n`+
   `Under 140 characters for this headline.\n`+
   `Also return "basis": one short line for the editor saying what the first sentence rests on, either "in the sources" or "background: " and the fact to check.\n\n`;
-async function punchUpHeadlineRun(story){
+async function punchUpHeadline(story){
   story.busy = true; story.headlineCandidates = null; story.headlineNtk = null; setStatus(story, 'Punching up the headline…');
   try {
     // T-0038: pull in the enriched body when it's already been fetched —
@@ -4758,7 +4758,7 @@ async function progWrap(where, label, kind, run, failed){
   catch(e){ progDone(pid, false, e.message); throw e; }
 }
 async function generateToday(){ if (TODAY_OV.busy) return; if (!todayInputBlock()) return generateTodayRun(); return progWrap('today', 'Generate Today', 'today', generateTodayRun, ()=>/^\[Generation failed/.test(TODAY_OV.text||'')?'it failed: run it again':''); }
-async function punchUpHeadline(story){ return progWrap('story:'+story.key, 'Punch up', 'punch', ()=>punchUpHeadlineRun(story), ()=>story.err?String(story.status||'it failed'):''); }
+async function punchUpHeadlineWithProgress(story){ return progWrap('story:'+story.key, 'Punch up', 'punch', ()=>punchUpHeadline(story), ()=>story.err?String(story.status||'it failed'):''); }
 async function enrich(story){ return progWrap('story:'+story.key, 'Enrich', 'enrich', ()=>enrichRun(story), ()=>story.err?String(story.status||'it failed'):''); }
 async function generateStoryImage(story, promptOverride){ return progWrap('story:'+story.key, 'Image', 'image', ()=>generateStoryImageRun(story, promptOverride), ()=>story.imgErr?String(story.imgErr):''); }
 // Drawing the bars, once a second, in place (no page redraw).
@@ -6807,7 +6807,7 @@ function renderLineup(root){
         `<div class="body" data-sec="${x}" title="click to edit">${mdToHtml(esc(s.packages[x]||'')).split(/\n{2,}/).map(p=>p.startsWith('<')?p:'<p>'+p+'</p>').join('')}</div>`).join('')+`</div>`:'');
 
     el.querySelector('.story-title').addEventListener('change',e=>{ s.title=e.target.value; saveLineup(); });
-    el.querySelector('.punch-up').addEventListener('click',()=>punchUpHeadline(s));
+    el.querySelector('.punch-up').addEventListener('click',()=>punchUpHeadlineWithProgress(s));
     el.querySelector('.img-file').addEventListener('change',e=>{
       handleStoryImageUpload(s, e.target.files[0]);
     });
