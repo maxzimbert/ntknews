@@ -1,6 +1,6 @@
 {
  "_comment": "Started in Pulse (T-0113): stories filed under a row and built in the browser.",
- "generated": "2026-11-20T00:10:34.621Z",
+ "generated": "2026-11-20T00:13:23.862Z",
  "branch": "main",
  "stories": [
   {
@@ -10,7 +10,7 @@
     "story_id": "2a7ed7ee18a084fe",
     "headline": "Anthropic Raised $81.3 Billion, More Than SpaceX. Your 401(k) Probably Owns a Piece of It Soon.",
     "row": "p-frontier-ai-oversight",
-    "line": "",
+    "line": "Anthropic has now raised $81.3 billion in its Nasdaq debut, while researchers question whether its safety pitch holds as computing costs and public shareholders shape the company.",
     "subgenre": null,
     "confidence": 1,
     "source": "editor",
@@ -61,6 +61,12 @@
      "output_tokens": 18215,
      "searches": 31,
      "calls": 3
+    },
+    "claude-sonnet-5-5": {
+     "input_tokens": 5843,
+     "output_tokens": 1582,
+     "searches": 0,
+     "calls": 2
     }
    },
    "versions": [
@@ -712,7 +718,8 @@
     "missing": [],
     "at": "2026-11-20T00:09:48.057Z",
     "model": "claude-opus-5-5",
-    "left_out": []
+    "left_out": [],
+    "built_at": "2026-11-20T00:13:23.862Z"
    },
    "chat": [
     {
@@ -759,9 +766,239 @@
      "searched": 10,
      "at": "2026-11-20T00:10:34.198Z",
      "model": "claude-opus-5-5"
+    },
+    {
+     "role": "build",
+     "text": "Page built from the proposal.",
+     "at": "2026-11-20T00:13:23.862Z"
     }
    ],
-   "proposal_story_hash": "15a9f3d5029e7ae52086792687eaa3bd07a0ca0f5d703b1f2b74afec9bd10b16"
+   "proposal_story_hash": "15a9f3d5029e7ae52086792687eaa3bd07a0ca0f5d703b1f2b74afec9bd10b16",
+   "bs_hash": "5c00d74a739b5e4d3a2ea755567f9658b945d143a552c0fd02c49bbdfaae7881",
+   "bs_text_hash": "cf5df7e98d0d1b7b0f6bcceaabd529ee5dc87e22e241faa8bf6cac58d7d5295f",
+   "bs_story_hash": "15a9f3d5029e7ae52086792687eaa3bd07a0ca0f5d703b1f2b74afec9bd10b16",
+   "composed": {
+    "row": "Frontier AI Oversight",
+    "title": "Safety Labs and Computing Costs",
+    "contest": "Whether researchers who left Google's orbit and then OpenAI's to build AI more safely can keep that purpose inside a company funded by Amazon, Google and now public shareholders, or whether the cost of computing sets the terms for every lab that tries.",
+    "stakes": "At stake is whether a safety mission can survive inside a company owned partly by Amazon, Google and public shareholders. Researchers, investors and ordinary savers holding index funds all bear the outcome, as do rival labs facing the same computing costs.",
+    "here": "Anthropic has now raised $81.3 billion in its Nasdaq debut, while researchers question whether its safety pitch holds as computing costs and public shareholders shape the company.",
+    "beginnings": [
+     {
+      "object_id": "web-google-snaps-up-artificial-intelligence-2014-1co4qvx",
+      "year": "2014",
+      "line": "In 2014 a Google spokesman confirmed that Google had acquired the artificial intelligence firm DeepMind, though the company declined to comment on the purchase price.",
+      "by": "model",
+      "ties_to": "Alphabet about 14%"
+     },
+     {
+      "object_id": "web-introducing-openai-2015-17tlml7",
+      "year": "2015",
+      "line": "In 2015 Greg Brockman and Ilya Sutskever introduced OpenAI, stating a goal of benefiting humanity as a whole, unconstrained by financial return.",
+      "by": "model",
+      "ties_to": "the safety pitch"
+     },
+     {
+      "object_id": "web-attention-is-all-you-need-2017-1layl4q",
+      "year": "2017",
+      "line": "In 2017 Ashish Vaswani, Noam Shazeer, Niki Parmar and colleagues published a paper describing models that connect the encoder and decoder through an attention mechanism.",
+      "by": "model",
+      "ties_to": "each Claude model"
+     },
+     {
+      "object_id": "web-improving-language-understanding-with-un-2018-ax7ke6",
+      "year": "2018",
+      "line": "In 2018 OpenAI described an approach to language understanding that combined two existing ideas, transformers and unsupervised pre-training.",
+      "by": "model",
+      "ties_to": "two years of AI progress"
+     },
+     {
+      "object_id": "web-openai-lp-2019-jzxxdn",
+      "year": "2019",
+      "line": "In 2019 OpenAI created OpenAI LP, a capped-profit company meant to increase its investment in compute and talent while keeping its mission's checks and balances.",
+      "by": "model",
+      "ties_to": "Computing costs are the reason"
+     },
+     {
+      "object_id": "web-organizational-update-from-openai-2020-8a4hp8",
+      "year": "2020",
+      "line": "In 2020 OpenAI announced that Dario Amodei, its VP of Research, was leaving the company after nearly five years.",
+      "by": "model",
+      "ties_to": "the seven co-founders"
+     },
+     {
+      "object_id": "web-amazon-and-anthropic-announce-strategic-2023-gqzsk1",
+      "year": "2023",
+      "line": "In 2023 Amazon and Anthropic announced a strategic collaboration in which Amazon would invest up to $4 billion and hold a minority stake in Anthropic.",
+      "by": "model",
+      "ties_to": "Amazon owns about 15%"
+     },
+     {
+      "object_id": "web-anthropic-s-responsible-scaling-policy-2023-1mp705v",
+      "year": "2023",
+      "line": "In 2023 Anthropic published its Responsible Scaling Policy, a series of technical and organizational protocols for managing the risks of developing increasingly capable AI systems.",
+      "by": "model",
+      "ties_to": "its own \"responsible scaling policy\""
+     }
+    ],
+    "case": [
+     {
+      "object_id": "web-google-snaps-up-artificial-intelligence-2014-1co4qvx",
+      "year": "2014",
+      "title": "Google snaps up artificial intelligence firm DeepMind",
+      "author": "Charles Riley, CNN",
+      "source_url": "https://money.cnn.com/2014/01/27/technology/google-deepmind/",
+      "about": "",
+      "about_by": "",
+      "kind": "web",
+      "source_kind": "news",
+      "why_no_primary": "Google issued no release or filing for the purchase; a spokesman confirmed it to reporters, so contemporary reporting is the record."
+     },
+     {
+      "object_id": "web-introducing-openai-2015-17tlml7",
+      "year": "2015",
+      "title": "Introducing OpenAI",
+      "author": "Greg Brockman, Ilya Sutskever, OpenAI",
+      "source_url": "https://openai.com/index/introducing-openai/",
+      "about": "",
+      "about_by": "",
+      "kind": "web"
+     },
+     {
+      "object_id": "web-attention-is-all-you-need-2017-1layl4q",
+      "year": "2017",
+      "title": "Attention Is All You Need",
+      "author": "Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Łukasz Kaiser, Illia Polosukhin (Google Brain and Google Research)",
+      "source_url": "https://arxiv.org/abs/1706.03762",
+      "about": "",
+      "about_by": "",
+      "kind": "web"
+     },
+     {
+      "object_id": "web-improving-language-understanding-with-un-2018-ax7ke6",
+      "year": "2018",
+      "title": "Improving language understanding with unsupervised learning",
+      "author": "OpenAI",
+      "source_url": "https://openai.com/index/language-unsupervised/",
+      "about": "",
+      "about_by": "",
+      "kind": "web"
+     },
+     {
+      "object_id": "web-openai-lp-2019-jzxxdn",
+      "year": "2019",
+      "title": "OpenAI LP",
+      "author": "OpenAI",
+      "source_url": "https://openai.com/index/openai-lp/",
+      "about": "",
+      "about_by": "",
+      "kind": "web"
+     },
+     {
+      "object_id": "web-organizational-update-from-openai-2020-8a4hp8",
+      "year": "2020",
+      "title": "Organizational update from OpenAI",
+      "author": "OpenAI",
+      "source_url": "https://openai.com/index/organizational-update/",
+      "about": "",
+      "about_by": "",
+      "kind": "web"
+     },
+     {
+      "object_id": "web-anthropic-raises-124-million-to-build-mo-2021-16uxig1",
+      "year": "2021",
+      "title": "Anthropic raises $124 million to build more reliable, general AI systems",
+      "author": "Anthropic",
+      "source_url": "https://www.anthropic.com/news/anthropic-raises-124-million-to-build-more-reliable-general-ai-systems",
+      "about": "",
+      "about_by": "",
+      "kind": "web"
+     },
+     {
+      "object_id": "web-amazon-and-anthropic-announce-strategic-2023-gqzsk1",
+      "year": "2023",
+      "title": "Amazon and Anthropic Announce Strategic Collaboration to Advance Generative AI",
+      "author": "Amazon and Anthropic",
+      "source_url": "https://press.aboutamazon.com/2023/9/amazon-and-anthropic-announce-strategic-collaboration-to-advance-generative-ai",
+      "about": "",
+      "about_by": "",
+      "kind": "web"
+     },
+     {
+      "object_id": "web-anthropic-s-responsible-scaling-policy-2023-1mp705v",
+      "year": "2023",
+      "title": "Anthropic's Responsible Scaling Policy",
+      "author": "Anthropic",
+      "source_url": "https://anthropic.com/news/anthropics-responsible-scaling-policy",
+      "about": "",
+      "about_by": "",
+      "kind": "web"
+     },
+     {
+      "object_id": "web-openai-and-elon-musk-2024-1oz0nqa",
+      "year": "2024",
+      "title": "OpenAI and Elon Musk",
+      "author": "OpenAI",
+      "source_url": "https://openai.com/index/openai-elon-musk/",
+      "about": "",
+      "about_by": "",
+      "kind": "web"
+     }
+    ],
+    "starts": {
+     "year": "2014",
+     "line": "In 2014 a Google spokesman confirmed that Google had acquired the artificial intelligence firm DeepMind, though the company declined to comment on the purchase price.",
+     "object_id": "web-google-snaps-up-artificial-intelligence-2014-1co4qvx",
+     "by": "agreed"
+    },
+    "thin": null,
+    "left_out": [],
+    "why": "",
+    "problems": {},
+    "v": 2,
+    "built_from": "proposal",
+    "agreed": {
+     "category": "Frontier AI Oversight",
+     "contest": "Whether researchers who left Google's orbit and then OpenAI's to build AI more safely can keep that purpose inside a company funded by Amazon, Google and now public shareholders, or whether the cost of computing sets the terms for every lab that tries.",
+     "starts": "2014",
+     "beginnings": [
+      "web-google-snaps-up-artificial-intelligence-2014-1co4qvx",
+      "web-introducing-openai-2015-17tlml7",
+      "web-attention-is-all-you-need-2017-1layl4q",
+      "web-improving-language-understanding-with-un-2018-ax7ke6",
+      "web-openai-lp-2019-jzxxdn",
+      "web-organizational-update-from-openai-2020-8a4hp8",
+      "web-amazon-and-anthropic-announce-strategic-2023-gqzsk1",
+      "web-anthropic-s-responsible-scaling-policy-2023-1mp705v"
+     ],
+     "objects": [
+      "web-google-snaps-up-artificial-intelligence-2014-1co4qvx",
+      "web-introducing-openai-2015-17tlml7",
+      "web-attention-is-all-you-need-2017-1layl4q",
+      "web-improving-language-understanding-with-un-2018-ax7ke6",
+      "web-openai-lp-2019-jzxxdn",
+      "web-organizational-update-from-openai-2020-8a4hp8",
+      "web-amazon-and-anthropic-announce-strategic-2023-gqzsk1",
+      "web-anthropic-s-responsible-scaling-policy-2023-1mp705v",
+      "web-anthropic-raises-124-million-to-build-mo-2021-16uxig1",
+      "web-openai-and-elon-musk-2024-1oz0nqa"
+     ]
+    },
+    "shortlist": 10,
+    "notes": [
+     "contest: contest is 43 words, wants 12 to 35"
+    ],
+    "usage": {
+     "input_tokens": 5843,
+     "output_tokens": 1582,
+     "searches": 0,
+     "model": "claude-sonnet-5-5"
+    },
+    "model": "claude-sonnet-5-5",
+    "modified": {},
+    "research_items": []
+   },
+   "bs_edits_applied": {}
   }
  ],
  "ship": {
@@ -770,7 +1007,7 @@
     "story_id": "2a7ed7ee18a084fe",
     "headline": "Anthropic Raised $81.3 Billion, More Than SpaceX. Your 401(k) Probably Owns a Piece of It Soon.",
     "row": "p-frontier-ai-oversight",
-    "line": "",
+    "line": "Anthropic has now raised $81.3 billion in its Nasdaq debut, while researchers question whether its safety pitch holds as computing costs and public shareholders shape the company.",
     "subgenre": null,
     "confidence": 1,
     "source": "editor",
@@ -778,7 +1015,7 @@
     "provisional": true
    }
   ],
-  "pairings_generated": "2026-11-20T00:10:34.620Z",
+  "pairings_generated": "2026-11-20T00:13:23.862Z",
   "provisional_rows": [
    {
     "id": "p-ai",
