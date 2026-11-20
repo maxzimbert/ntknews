@@ -233,7 +233,7 @@ Rules: use only facts that the page states; the line and about may contain no nu
             return "link is not https"
         if url not in urls:
             return "the link is not one the search returned"
-        if any(d in host for d in C.DENY_HOSTS):
+        if C.denied(host):
             return f"{host} is not a primary source"
         if not re.fullmatch(r"\d{3,4}", str(m.get("year") or "")):
             return "no year"

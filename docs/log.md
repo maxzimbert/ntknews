@@ -11,6 +11,12 @@ funder memo, a hiring brief, or an explanation of how NTK works. Write for a
 stranger.
 
 ---
+## 2026-11-18 — "amazon." refused Amazon's own press site
+
+The refused-host list (`CAT_DENY` in Pulse, `DENY_HOSTS` in `editorial/categories.py`) was matched as a substring, so
+"amazon." also refused aboutamazon.com, and the editor's ticked 2022 and 2025 MGM and Bond events were turned down.
+Hosts are now matched on whole names (`catDenied`, `denied`). Check any new deny entry against an organization's own site.
+
 ## 2026-11-10 — "local news" was two filters, and neither one is local news
 
 The Today tab's local block asked EventRegistry two questions: articles from outlets based in the city, and

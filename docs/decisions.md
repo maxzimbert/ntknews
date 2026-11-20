@@ -583,6 +583,20 @@ it's different and better." The aim is to move from a news digest to a need-to-k
 - Built so far: T-0125, a need-to-know option in Pulse's punch-up. The editorial vision is unchanged: the four
   sections, the register ladder and closure all hold.
 
+**The conversation's web search has no cap, and a turn searches the editor's Are.na library with the editor's words
+(2026-11-17, T-0123, on staging).** After a turn ended with "my search tool hit its limit" at three searches, the editor:
+"why is there a limit? I want you to do what I say." The conversation sends web search with no `max_uses`, and a turn
+the API pauses carries on (eight continuations at most, so a runaway still ends). Cost: $0.01 a search plus its
+results as Opus input, recorded per story. The editor also asked that the search reach his Are.na files: a proposal
+waits for the library to load, and on a turn the Are.na library is searched on its own with the editor's words, up to
+15 items beyond the usual 10 (T-0115's cap still holds for the first proposal). Not changed: the after-Build Direct the
+research search (8) and the category editor's (5).
+
+**After Build the conversation carries on; revise, edit words and remove stay (2026-11-17, T-0124, on staging).** The
+editor started T-0124 with: "please make sure I can still remove things, line edit, revise". So only Direct the research
+is replaced by the conversation; T-0124's plan to remove revise by prompt too is withdrawn. A message after Build that
+changes the history rewrites the page from the changed proposal, keeping everything not asked about.
+
 ## Open questions, not defaults
 
 These are genuinely unresolved. Don't assume either way.

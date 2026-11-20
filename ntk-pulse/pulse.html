@@ -671,7 +671,7 @@ function lockGeneratedImage(story, url){
   };
   img.src = url;
 }
-async function generateStoryImage(story, promptOverride){
+async function generateStoryImageRun(story, promptOverride){
   story.imgBusy = true; story.imgErr = ''; render();
   try {
     const prompt = promptOverride || story.imgGenPrompt || buildImgPrompt(story);
@@ -1141,7 +1141,7 @@ function autoParagraph(text){
   return rechunked.join('\n\n');
 }
 
-async function generateToday(){
+async function generateTodayRun(){
   const block = todayInputBlock();
   if (!block){ alert('No generated stories in the lineup yet — generate story packages first, then Generate Today.'); return; }
   TODAY_OV.busy = true; saveToday(); render();
@@ -1493,6 +1493,13 @@ function pickBeginnings(objs, k){
 }
 // Mirror of editorial/categories.py validate(). Returns {clean, problems}.
 const CAT_DENY=['wikipedia.org','amazon.','abebooks.','ebay.','goodreads.','scribd.','studocu.','coursehero.','quizlet.','unz.com'];
+// A refused host, matched on whole names: "amazon." refuses amazon.com and www.amazon.co.uk, not aboutamazon.com
+// (Amazon's own press site, a primary source for Amazon's announcements). It used to match any host containing the
+// text, and on 2026-11-18 refused Amazon's MGM and James Bond announcements.
+function catDenied(host){
+  host=String(host||'').toLowerCase();
+  return CAT_DENY.some(d=>d.endsWith('.') ? (host.startsWith(d) || host.includes('.'+d)) : (host===d || host.endsWith('.'+d)));
+}
 function validateCat(cat, poolBy0, spec, storyTexts, originYear, vocab){
   const problems=[]; const c=Object.assign({}, cat); const by=Object.assign({}, c.by||{}); const poolBy=Object.assign({}, poolBy0);
   if (!(c.id||'').trim() || !(c.title||'').trim()) return {clean:null, problems:['missing id or title']};
@@ -1515,7 +1522,7 @@ function validateCat(cat, poolBy0, spec, storyTexts, originYear, vocab){
   (c.custom_objects||[]).forEach(cu=>{
     const url=(cu.url||'').trim(), host=url.replace(/^https?:\/\/([^\/]+).*$/,'$1').toLowerCase(); let why=null;
     if (!url.startsWith('https://')) why='a link must start with https://';
-    else if (CAT_DENY.some(d=>host.includes(d))) why=host+' is not a primary source';
+    else if (catDenied(host)) why=host+' is not a primary source';
     else if (!/^\d{3,4}$/.test(String(cu.year||''))) why='year must be a number';
     else if (!(cu.title||'').trim()) why='missing title';
     if (why){ problems.push('added object '+cu.title+': '+why); return; }
@@ -1559,7 +1566,7 @@ function validateCat(cat, poolBy0, spec, storyTexts, originYear, vocab){
     const host=String(ind.source_url||'').replace(/^https?:\/\/([^\/]+).*$/,'$1').toLowerCase();
     if (miss.length){ problems.push('indicator is missing '+miss.join(', ')); c.indicator=null; }
     else if (ind.verified!==true){ problems.push('indicator is not verified'); c.indicator=null; }
-    else if (CAT_DENY.some(d=>host.includes(d))){ problems.push('indicator source '+host+' is not a primary source'); c.indicator=null; }
+    else if (catDenied(host)){ problems.push('indicator source '+host+' is not a primary source'); c.indicator=null; }
     else if (ind.verified_by==='system'){
       const ev=(ind.evidence||[]).join(' '); const nums=['then_value','now_value'].map(k=>String(ind[k]).replace(/[^0-9.]/g,''));
       if (!ev || nums.some(n=>n && !ev.includes(n))){ problems.push('indicator: the system\u2019s evidence does not contain both figures'); c.indicator=null; }
@@ -1592,7 +1599,7 @@ function verifyFoundObject(o, search){
   const url=String(o.source_url||'').trim(), host=url.replace(/^https?:\/\/([^\/]+).*$/,'$1').toLowerCase();
   if (!url.startsWith('https://')) return {ok:false, reason:'the link must start with https://'};
   if (!(search.urls||[]).includes(url)) return {ok:false, reason:'the link is not one the search returned'};
-  if (CAT_DENY.some(d=>host.includes(d))) return {ok:false, reason:host+' is not a primary source'};
+  if (catDenied(host)) return {ok:false, reason:host+' is not a primary source'};
   if (!/^\d{3,4}$/.test(String(o.year||''))) return {ok:false, reason:'it has no year'};
   if (!String(o.title||'').trim()) return {ok:false, reason:'it has no title'};
   return {ok:true};
@@ -1604,7 +1611,7 @@ function applySourceEdit(c, oid, f){
   if (!String(f.title||'').trim()) return {ok:false, reason:'it needs a title'};
   if (!/^\d{3,4}$/.test(String(f.year||'').trim())) return {ok:false, reason:'the year must be a number'};
   if (!url.startsWith('https://')) return {ok:false, reason:'the link must start with https://'};
-  if (CAT_DENY.some(d=>host.includes(d))) return {ok:false, reason:host+' is not accepted as a primary source'};
+  if (catDenied(host)) return {ok:false, reason:host+' is not accepted as a primary source'};
   const cid = oid.indexOf('custom-')===0 ? oid : 'custom-'+String(f.title).toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,60);
   if (cid!==oid && (c.objects||[]).some(o=>o.object_id===cid)) return {ok:false, reason:'an object with that title is already in this category'};
   const cu={id:cid,title:String(f.title).trim(),author:String(f.author||'').trim(),year:String(f.year).trim(),
@@ -1642,7 +1649,7 @@ function verifyMilestone(m, urls, storyText, relations){
   const url=String(m.source_url||'').trim(), host=url.replace(/^https?:\/\/([^\/]+).*$/,'$1').toLowerCase(), t=String(m.title||'').trim();
   if (!url.startsWith('https://')) return {ok:false, reason:'link is not https'};
   if (!(urls||[]).includes(url)) return {ok:false, reason:'the link is not one the search returned'};
-  if (CAT_DENY.some(d=>host.includes(d))) return {ok:false, reason:host+' is not a primary source'};
+  if (catDenied(host)) return {ok:false, reason:host+' is not a primary source'};
   if (!/^\d{3,4}$/.test(String(m.year||''))) return {ok:false, reason:'no year'};
   if (!t || !String(m.evidence_quote||'').trim()) return {ok:false, reason:'no title or no quote from the page'};
   if (storyText!=null){
@@ -1667,7 +1674,7 @@ const NTK_PUBLISHERS=['nytimes.com','bloomberg.com','cbc.ca','bbc.com','france24
 function bsxPublisher(url){ const host=String(url||'').replace(/^https?:\/\/([^\/]+).*$/,'$1').toLowerCase(); return NTK_PUBLISHERS.some(d=>host===d||host.endsWith('.'+d)); }
 function catSourceKind(url){
   const host=String(url||'').replace(/^https?:\/\/([^\/]+).*$/,'$1').toLowerCase();
-  if (CAT_DENY.some(d=>host.includes(d))) return 'deny';
+  if (catDenied(host)) return 'deny';
   return CAT_NEWS.some(d=>d.endsWith('.') ? host.includes(d) : (host===d||host.endsWith('.'+d))) || bsxPublisher(url) ? 'news' : 'document';
 }
 // One candidate from a per-topic search. kind: "located" (the document, readable at the link), "news" (a news
@@ -2505,11 +2512,15 @@ function renderBackstory(root){
   catRestoreInputs(_kept);
   // T-0109: the draft and each story's fingerprint arrive asynchronously; each redraws once when it lands.
   const ba=document.getElementById('bsr-build-all'); if (ba) ba.addEventListener('click', ()=>{
-    // every story with Truths is built; the system proposes each one's row, and the editor can change it after
-    const keys=LINEUP.filter(bsxHasTruths).map(x=>x.key), none=LINEUP.length-keys.length;
-    if (!keys.length){ alert('No story has Truths yet. Generate Jefferson first.'); return; }
-    if (none && !confirm(none+' stor'+(none===1?'y has':'ies have')+' no Truths yet and will not be built; a story without a built Backstory ships without one. Build the other '+keys.length+'?')) return;
-    bscBusy(ba); bsrRefreshHashes().then(()=>bsxRun(keys, {build:true})); });
+    // T-0123: every story with Truths and no proposal or page gets a proposal; one already proposed or built is left
+    const keys=LINEUP.filter(x=>bsxHasTruths(x) && !(bsrDraftFor(x)||{}).proposal && !((bsrDraftFor(x)||{}).composed||{}).v).map(x=>x.key);
+    if (!keys.length){ alert('Every story with Truths already has a proposal or a page.'); return; }
+    bscBusy(ba); bsrRefreshHashes().then(()=>bsxRun(keys, {propose:true})); });
+  const bp=document.getElementById('bsr-build-props'); if (bp) bp.addEventListener('click', ()=>{
+    const keys=LINEUP.filter(x=>{ const d=bsrDraftFor(x)||{}; return d.proposal && !(d.composed&&d.composed.v===2); }).map(x=>x.key);
+    if (!keys.length){ alert('No proposal is waiting to be built.'); return; }
+    if (!confirm('Build '+keys.length+' stor'+(keys.length===1?'y':'ies')+' from '+(keys.length===1?'its proposal':'their proposals')+' as they stand?')) return;
+    bscBusy(bp); bsrRefreshHashes().then(()=>bsxRun(keys, {build:true})); });
   if (!BSR_DRAFT_LOADED){ BSR_DRAFT_LOADED=true; loadBsrDraft().then(d=>{ if (d && TAB==='backstory') render(); }); }
   bsrRefreshHashes();
   const hadCard=!!READER_CARD, hadPub=!!BSR_PUBLISHED, previewing=Object.keys(BSR_PREV_OPEN).length>0;
@@ -2713,7 +2724,7 @@ async function draftMeta(story){
 
 /* Enrichment: ER pool search first (real bodies), fetch-url fallback for
    uncovered RSS links (meta/paragraph text), then dedup layers 2+3. */
-async function enrich(story){
+async function enrichRun(story){
   story.busy=true;
   let hadError=false;                 // an actual failure occurred somewhere in this run
   let errMsg='';                      // the real cause — captured separately so the
@@ -3107,10 +3118,12 @@ function cleanSectionText(sec, text){
   return fixBoldSpacing(stripSectionSelfLabel(sec, text||''));
 }
 
-async function generateStory(story){
+async function generateStory(story, parent){
   const arts = activeArts(story);
   if (!arts.length){ setStatus(story,'No active sources — enrich or add URLs first',true); return; }
   story.busy=true;
+  const willPropose = !!(pulseBranch(location) && SETTINGS.ghToken);
+  const pid = progStart('story:'+story.key, 'Generate Jefferson', SECS.map(()=>'section').concat(willPropose?['propose']:[]));
   const artsText = arts.map(a=>
     `TITLE: ${a.title}\nSOURCE: ${a.source}\nURL: ${a.url}\nDATE: ${a.date}\n\n${(a.body||'[body unavailable — headline only]').slice(0,SETTINGS.bodyLen)}`
   ).join('\n\n---\n\n');
@@ -3126,17 +3139,24 @@ async function generateStory(story){
     setStatus(story, story.title.slice(0,40)+' · '+sec+'…');
     try { pkg[sec] = cleanSectionText(sec, await ai(makePrompt(sec, artsText+angleBlock+contextBlock(story)+priorSectionsBlock(pkg)+notesBlock(), []), 2500)); }
     catch(e){ pkg[sec] = '[Generation failed: '+e.message+']'; }
+    progStep(pid); if (parent) progStep(parent);
   }
   story.packages = pkg; story.generatedAt = new Date().toISOString(); story.outOpen = true;
   NOTES.genCounter = (NOTES.genCounter||0) + 1; saveNotes();
   story.busy=false; setStatus(story,''); saveLineup(); render();
-  // T-0114: with Truths in hand, the story's Backstory builds itself; the editor reviews it on the Backstory tab
+  // T-0123: with Truths in hand, Opus proposes the story's Backstory, and only proposes it: no page is written until
+  // the editor presses Build on the Backstory tab. Publish stops until every proposal is built.
+  if (!willPropose){ progDone(pid); return; }
+  if (!bsxHasTruths(story)){ progDone(pid, false, 'Truths did not generate'); if (parent) progStep(parent); return; }
   if (bsxHasTruths(story) && pulseBranch(location) && SETTINGS.ghToken){
-    setStatus(story, 'Building its Backstory…'); render();
-    bsrRefreshHashes().then(()=>bsxRun([story.key], {build:true})).then(()=>{   // queues itself if a run is going
-      const c=(bsrDraftFor(story)||{}).composed, waiting=(BSX_NEXT||[]).some(n=>n.keys.includes(story.key));
-      if (c && c.v===2) setStatus(story, '');
-      else if (!waiting) setStatus(story, 'Backstory not built: '+(BSR_DRAFT_STATE||'no reason given')+'. Build it from the Backstory tab.', true);
+    setStatus(story, 'Proposing its Backstory…'); render();
+    // returned, so Generate all can wait for every proposal; bsxRun finishes this story's progress job (prog)
+    BSX_PROG_FOR[story.key]=pid;      // this story's progress job: the proposal run below finishes it
+    return bsrRefreshHashes().then(()=>bsxRun([story.key], {propose:true})).then(()=>{   // queues itself if a run is going
+      if (parent) progStep(parent);
+      const d=bsrDraftFor(story)||{}, waiting=(BSX_NEXT||[]).some(n=>n.keys.includes(story.key));
+      if (d.proposal || (d.composed && d.composed.v===2)) setStatus(story, '');
+      else if (!waiting) setStatus(story, 'Backstory not proposed: '+(BSR_DRAFT_STATE||'no reason given')+'. Propose it from the Backstory tab.', true);
       render(); });
   }
 }
@@ -3164,7 +3184,13 @@ async function reviseSection(story, sectionName, note){
   story.busy=false; saveLineup(); render();
 }
 async function generateAll(){
-  for (const s of LINEUP) if (!s.packages) await generateStory(s);
+  // one job for the whole click: every section of every story, then every proposal (which run alongside)
+  const todo=LINEUP.filter(s=>!s.packages && activeArts(s).length); if (!todo.length) return;
+  const willPropose=!!(pulseBranch(location) && SETTINGS.ghToken);
+  const pid=progStart('lineup', 'Generate all', [].concat(...todo.map(()=>SECS.map(()=>'section').concat(willPropose?['propose']:[]))), {learn:false});
+  const waits=[];
+  for (const s of todo) if (!s.packages) waits.push(await generateStory(s, pid));
+  await Promise.all(waits); progDone(pid);
 }
 
 let copiedFlag = '';
@@ -3379,8 +3405,30 @@ async function bsHash(s, cats, withEdits){
 }
 async function bsWithHashes(stories){
   const cats = catsForPublish();
-  for (const s of stories){ s.bs_hash = await bsHash(s, cats, true); s.bs_text_hash = await bsHash(s, cats, false); }
+  for (const s of stories){ s.bs_hash = await bsHash(s, cats, true); s.bs_text_hash = await bsHash(s, cats, false); s.bs_story_hash = await bsxStoryHash(s); }
   return stories;
+}
+// The story alone (headline, description, Truths): what a change check answers to. bs_text_hash also holds the row,
+// and a row change moves the shelf, not the history (T-0122, step two; carried into T-0123 from ab4a21fa).
+function bsxStoryHash(s){ return sha256hex(JSON.stringify([s.headline||'', s.lede||'', s.truth||''])); }
+// Did the story change after its page was built? A draft from before bs_story_hash falls back to bs_text_hash.
+function bsxStoryChanged(d, s){
+  if (!d || !d.composed || d.composed.v!==2) return false;
+  return d.bs_story_hash ? d.bs_story_hash!==s.bs_story_hash : (!!d.bs_text_hash && d.bs_text_hash!==s.bs_text_hash);
+}
+// When a built story's text changes and then stays put for 20 seconds, Pulse checks the page against it on its own
+// (one Haiku call): a story imported and revised, then published, never waits on the editor opening its review.
+// Once per revised text: the draft records which text was checked (change_checked_for).
+const BSX_WATCH = {}, BSX_SETTLE_MS = 20000;
+function bsxWatchChanged(all){
+  if (!BSR_DRAFT || !pulseBranch(location) || !SETTINGS.ghToken || !SETTINGS.antKey) return;
+  all.forEach(s => { const d=(BSR_DRAFT.stories||[]).find(x=>x.story_id===s.key);
+    if (!bsxStoryChanged(d, s) || d.change_checked_for===s.bs_story_hash) return;
+    const w=BSX_WATCH[s.key]; if (w && w.hash===s.bs_story_hash) return;        // waiting, or already tried this text
+    if (w) clearTimeout(w.timer);
+    BSX_WATCH[s.key]={hash:s.bs_story_hash, timer:setTimeout(()=>{
+      const h=BSR_HASH[s.key]; if (!h || h.story!==s.bs_story_hash) return;     // it changed again: the next pass waits anew
+      bsxRun([s.key], {refresh:true}); }, BSX_SETTLE_MS)}; });
 }
 let BSR_DRAFT = null, BSR_DRAFT_STATE = '', BSR_DRAFT_LOADED = false;
 const BSR_HASH = {};                 // story key -> {full, text}, kept by bsrRefreshHashes
@@ -3391,7 +3439,8 @@ async function bsrRefreshHashes(){
     const all = await bsWithHashes(buildStoryPayload());
     let changed = false;
     all.forEach(s => { const h = BSR_HASH[s.key];
-      if (!h || h.full !== s.bs_hash || h.text !== s.bs_text_hash){ BSR_HASH[s.key] = {full:s.bs_hash, text:s.bs_text_hash}; changed = true; } });
+      if (!h || h.full !== s.bs_hash || h.text !== s.bs_text_hash || h.story !== s.bs_story_hash){ BSR_HASH[s.key] = {full:s.bs_hash, text:s.bs_text_hash, story:s.bs_story_hash}; changed = true; } });
+    bsxWatchChanged(all);
     if (changed && TAB === 'backstory') render();
   } finally { BSR_HASHING = false; }
 }
@@ -3446,6 +3495,11 @@ async function publishToDigest(){
   if (!SETTINGS.ghToken){ alert('Add a GitHub token in ⚙ first — scoped to contents:write on this repo only.'); return; }
   const tp = todayPreflight(undefined, LINEUP.map(x => x.key));
   if (tp.block.length){ alert('Not published.\n\n' + tp.block.join('\n')); return; }
+  // T-0123: a hard stop, with no way through, while any story's Backstory proposal is unbuilt (the editor,
+  // 2026-11-17). Unlike the image and story-count warnings below, which can be clicked through.
+  await loadBsrDraft();
+  const ub = bspUnbuilt(buildStoryPayload().filter(s => (s.headline || '').trim()), BSR_DRAFT);
+  if (ub.length){ alert('Not published. Every story needs its Backstory built first:\n\n  \u2022 ' + ub.join('\n  \u2022 ') + '\n\nOn the Backstory tab, settle each proposal and press Build.'); return; }
   const all = buildStoryPayload();
   if (!all.length){ alert('Nothing generated yet — nothing to publish.'); return; }
   await bsWithHashes(all);                   // T-0109: publish ships the draft only when these still match it
@@ -3462,6 +3516,9 @@ async function publishToDigest(){
   const stories = all.filter(s => (s.headline || '').trim());
 
   publishStatus = 'Publishing…'; renderPublishStatus();
+  // progress: the job is the click to the edition being live, so it ends when the site build has landed
+  const pubPid = progStart('publish', 'Publish', ['publish']), pubAt = new Date().toISOString();
+  let pubOk = false;
   try {
     const content = storyDataExport(stories);
     const b64 = btoa(unescape(encodeURIComponent(content)));
@@ -3484,10 +3541,20 @@ async function publishToDigest(){
       }),
     });
     if (!putResp.ok){ const t=await putResp.text(); throw new Error('GitHub PUT failed: '+putResp.status+' '+t.slice(0,200)); }
-    publishStatus = 'Published — build running now, usually a minute or two.';
-  } catch(e){ publishStatus = 'Publish failed: '+e.message; }
+    publishStatus = 'Published — build running now, usually a minute or two.'; pubOk = true;
+  } catch(e){ publishStatus = 'Publish failed: '+e.message; progDone(pubPid, false, e.message); }
   renderPublishStatus();
   setTimeout(fetchLastPublished, 45000);   // one check after the build's had time to land
+  if (pubOk) progWatchPublish(pubPid, pubAt);
+}
+// The site build after a publish: watched every 15 seconds until last-published.json is newer than the click.
+function progWatchPublish(pid, since){
+  const t0=Date.now();
+  const look=()=>fetch('data/last-published.json?t='+Date.now()).then(r=>r.ok?r.json():null).catch(()=>null).then(d=>{
+    if (d && d.at && Date.parse(d.at)>Date.parse(since)){ LAST_PUBLISHED=d; progDone(pid); fetchLastPublished(); return; }
+    if (Date.now()-t0>6*60000){ progDone(pid, false, 'the site build has not shown up after 6 minutes: check the Actions tab'); return; }
+    setTimeout(look, 15000); });
+  setTimeout(look, 20000);
 }
 let publishStatus = '';
 function renderPublishStatus(){
@@ -4421,10 +4488,12 @@ function bsrRowResolve(name){
 function bsrLineupHtml(){
   if (!LINEUP.length) return '';
   return `<div style="margin-bottom:14px">
-    <div style="font-size:11px;color:var(--dim);margin-bottom:6px">TODAY'S LINEUP &middot; ${LINEUP.length} &middot; in Lineup order. Each story's Backstory builds itself once it has Truths, and proposes its row; type another row to move it. Open preview to review it.</div>
+    <div style="font-size:11px;color:var(--dim);margin-bottom:6px">TODAY'S LINEUP &middot; ${LINEUP.length} &middot; in Lineup order. Generate Jefferson proposes each story's Backstory; open preview to talk it through, then Build. Publish waits until every proposal is built.</div>
     <div class="bsr-draftbar" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px;padding:7px 9px;border:1px solid var(--ink)">
-      <button class="mini go" id="bsr-build-all"${pulseBranch(location)?'':' disabled'} title="Build every story that has Truths, here in Pulse. A story already built is rebuilt from scratch, with your notes applied.">Build Backstory for every story</button>
+      <button class="mini" id="bsr-build-all"${pulseBranch(location)?'':' disabled'} title="Opus proposes a Backstory for every story with Truths that has none yet. No page is written.">Propose for every story</button>
+      <button class="mini go" id="bsr-build-props"${pulseBranch(location)?'':' disabled'} title="Write the page for every story whose proposal is not built yet, from the proposal as it stands.">Build every proposal</button>
       <span style="font-size:12px">${esc(bsrDraftStatusText())}</span>
+      ${progBarHtml('bs:all')}
     </div>
     ${LINEUP.map((s,i)=>{ const cat=s.backstoryRow&&catRecord(s.backstoryRow);
       return `<div class="story bsr-lu" data-key="${esc(s.key)}" style="padding:6px 9px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;${bsxHasTruths(s)&&!((bsrDraftFor(s)||{}).composed||{}).v?'border-color:var(--warn)':''}">
@@ -4437,6 +4506,7 @@ function bsrLineupHtml(){
         <button class="mini bsr-lu-prev"${BSR_PREV_OPEN[s.key]?' style="background:var(--ink);color:#fff"':''}>preview</button>
         ${bsrDraftChip(s)}
         ${bsrPublishedChip(s)}
+        ${progBarHtml('bs:'+s.key)}
         ${BSR_KW_OPEN[s.key]?bsrKwResultsHtml(s):''}
         ${(s.bsPicks||[]).length?bsrPicksHtml(s):''}
         ${BSR_NAMING[s.key]?bsrNamingHtml(s):''}
@@ -4551,11 +4621,12 @@ function bsrPreviewData(s){
 function bsrDraftChip(s){
   const d = bsrDraftFor(s);
   // T-0114: only a page built to the contract ships; anything else is "not built"
-  if (!d || !d.composed || d.composed.v!==2) return bsxHasTruths(s) ? '<span class="chip" style="background:var(--warn);color:#fff" title="a story without a built Backstory ships without one">not built</span>' : '';
+  if (!d || !d.composed || d.composed.v!==2) return d && d.proposal ? '<span class="chip" style="background:var(--warn);color:#fff" title="publish waits until this proposal is built">proposal, not built</span>'
+    : bsxHasTruths(s) ? '<span class="chip" style="background:var(--warn);color:#fff" title="publish waits until every story has its Backstory built">not built</span>' : '';
   if (d.editsPending) return '<span class="chip" style="background:var(--warn);color:#fff" title="your Backstory edits reach the draft when you apply them">edits not applied</span>';
   if (!d.fresh) return '<span class="chip" style="background:var(--warn);color:#fff" title="the story or its category changed after the draft">changed since draft</span>';
   const c = d.composed;
-  if (c && c.v===2) return `<span class="chip" style="background:var(--ink);color:#fff" title="what publish will ship for this story">backstory: ${esc(c.title||'')} \u00b7 ${(c.beginnings||[]).length} milestones${c.starts&&c.starts.year?' \u00b7 starts '+esc(c.starts.year):''}${c.thin?' \u00b7 thin':''}</span>`;
+  if (c && c.v===2) return `<span class="chip" style="background:var(--ink);color:#fff" title="what publish will ship for this story">backstory: ${esc(c.title||'')} \u00b7 ${(c.beginnings||[]).length} milestones${c.starts&&c.starts.year?' \u00b7 starts '+esc(c.starts.year):''}</span>`;
   if (c && !c.error) return `<span class="chip" style="background:var(--ink);color:#fff" title="what publish will ship for this story">draft: ${esc(c.scope||d.row&&d.row.title||'')} · ${c.beginnings.length} Beginnings${c.starts&&c.starts.year?' · starts '+esc(c.starts.year):''}${c.thin?' · thin':''}</span>`
     + (c.row_fits===false?' <span class="chip" style="background:var(--warn);color:#fff" title="the composer judged the story is not about this row; the page is scoped from the story">row may not fit</span>':'');
   if (!d.pairing || !d.row) return '<span class="chip" style="background:var(--warn);color:#fff">draft: no Backstory</span>';
@@ -4582,25 +4653,171 @@ function bscBusy(b){ b.disabled = true; b.textContent = 'sending\u2026'; }
 // categories, origins: the same code publish runs, and its link checks need a server), then Pulse composes
 // each page. Ported from the retired editorial/compose_story.py and research_story.py; the prompts and checks
 // are the same, and research reuses verifyMilestone and the CAT_ text rules above.
+/* PROG:BEGIN */
+// ─── Progress (2026-11-18): how long until the editor can look at this ────────────────────────────────────────────────
+// The editor: it answers "how long until I can look at this?", so he can decide whether to wait or do something else;
+// it covers the whole job; it sits where he is looking; no steps. One job per click: a bar under the button, plus a
+// thin bar along the top of Pulse while anything runs. Pulse cannot see inside a model call, so a job moves by how long
+// its parts usually take; it learns real timings from the editor's own runs (the last ten of each kind, the median),
+// starting from the guesses below. It never goes backwards, never shows full before the job is done, and says so when
+// a job runs past its usual time instead of sitting at 99%. Tested in node: scripts/test_pulse_progress.js.
+const PROG_DEFAULT_MS={section:25000, propose:70000, turn:120000, build:45000, restore:45000, revise:30000, refile:8000,
+  refresh:10000, today:40000, punch:20000, image:35000, enrich:25000, publish:120000, trend:60000};
+const PROG_LS='ntk-prog-times', PROG_DONE_MS=8000, PROG_FAIL_MS=30000;
+const PROG={jobs:[], seq:0, now:()=>Date.now(), store:null};
+function progStore(){ return PROG.store || (typeof localStorage!=='undefined' ? localStorage : null); }
+function progTimes(){ try { return JSON.parse((progStore()&&progStore().getItem(PROG_LS))||'{}')||{}; } catch(e){ return {}; } }
+function progExpected(kind){
+  const t=(progTimes()[kind]||[]).filter(x=>x>0).sort((a,b)=>a-b);
+  return t.length ? t[Math.floor(t.length/2)] : (PROG_DEFAULT_MS[kind]||30000);
+}
+function progLearn(kind, ms){
+  if (!(ms>500) || !kind) return;
+  try { const all=progTimes(); all[kind]=(all[kind]||[]).concat([Math.round(ms)]).slice(-10); progStore().setItem(PROG_LS, JSON.stringify(all)); } catch(e){}
+}
+// A job: where it shows ("story:<key>", "bs:<key>", "bs:all", "lineup", "today", "publish"), what to call it, and its
+// parts in order. opts.waiting: queued behind another job. opts.learn false: a job whose parts overlap (Generate all),
+// whose timings would mislead. opts.queue: jobs in one queue count each other as "ahead".
+function progStart(where, label, units, opts){
+  opts=opts||{}; const now=PROG.now();
+  const job={id:++PROG.seq, where:where, label:label, units:(units||[]).slice(), i:0, started:now, unitStart:now,
+    state:opts.waiting?'waiting':'running', shown:0, learn:opts.learn!==false, queue:opts.queue||''};
+  job.exp=job.units.map(progExpected);
+  PROG.jobs=PROG.jobs.filter(j=>j.state==='running' || j.state==='waiting' || now-(j.finished||0)<PROG_FAIL_MS).concat([job]);
+  progTick(); return job.id;
+}
+function progJob(id){ return PROG.jobs.find(j=>j.id===id) || null; }
+function progRun(id){ const j=progJob(id); if (j && j.state==='waiting'){ j.state='running'; j.started=j.unitStart=PROG.now(); progTick(); } }
+// One part finished: the bar moves on, and its time is learned.
+function progStep(id){
+  const j=progJob(id); if (!j || j.state==='done' || j.state==='failed') return;
+  if (j.state==='waiting') progRun(id);
+  const now=PROG.now();
+  if (j.i<j.units.length){ if (j.learn) progLearn(j.units[j.i], now-j.unitStart); j.i++; }
+  j.unitStart=now; progTick();
+}
+function progDone(id, ok, msg){
+  const j=progJob(id); if (!j || j.state==='done' || j.state==='failed') return;
+  const now=PROG.now();
+  if (ok!==false && j.state==='running' && j.i<j.units.length && j.learn && j.units.length-j.i===1) progLearn(j.units[j.i], now-j.unitStart);
+  j.state=ok===false?'failed':'done'; j.msg=String(msg||'').slice(0,160); j.finished=now; progTick();
+}
+function progSum(a){ return a.reduce((x,y)=>x+y, 0); }
+// How full the bar is, 0 to 1. Each finished part counts its usual time; the current part fills by elapsed over usual,
+// slowing near its end, so a slow part never shows full. Never goes backwards.
+function progFrac(j, now){
+  if (j.state==='done') return 1;
+  if (j.state==='waiting') return 0;
+  if (j.state==='failed') return j.shown||0;
+  const total=progSum(j.exp)||1, doneW=progSum(j.exp.slice(0, j.i)), cur=j.exp[j.i]||0;
+  const f=cur ? Math.max(0, (now-j.unitStart)/cur) : 0, soft=f<=0.9 ? f : 0.9+0.09*(1-Math.exp(-(f-0.9)*1.5));
+  const frac=Math.min(0.98, (doneW+cur*soft)/total);
+  j.shown=Math.max(j.shown||0, frac);
+  return j.shown;
+}
+function progClock(ms){ const s=Math.max(0, Math.round(ms/1000)); return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); }
+function progAhead(j){ return PROG.jobs.filter(x=>x.id<j.id && x.queue && x.queue===j.queue && (x.state==='running' || x.state==='waiting')).length; }
+// The one line of words under the bar.
+function progLabel(j, now){
+  if (j.state==='done') return 'Done in '+progClock(j.finished-j.started);
+  if (j.state==='failed') return 'Stopped'+(j.msg?': '+j.msg:'');
+  if (j.state==='waiting'){ const n=progAhead(j); return 'Waiting for '+(n<=1?'1 job':n+' jobs')+' ahead'; }
+  const total=progSum(j.exp), el=now-j.started, doneW=progSum(j.exp.slice(0, j.i)), cur=j.exp[j.i]||0;
+  const remaining=Math.max(0, total-doneW-Math.min(now-j.unitStart, cur));
+  if (el>total*1.25 && el-total>15000) return 'Taking longer than usual, still working';
+  if (progFrac(j, now)>=0.85 || remaining<15000) return 'Almost done';
+  if (remaining<60000) return 'Less than a minute left';
+  return 'About '+Math.round(remaining/60000)+' min left';
+}
+function progVisible(j, now){
+  return j.state==='running' || j.state==='waiting' || (j.state==='done' && now-j.finished<PROG_DONE_MS) || (j.state==='failed' && now-j.finished<PROG_FAIL_MS);
+}
+function progAt(where, now){ const js=PROG.jobs.filter(j=>j.where===where && progVisible(j, now)); return js[js.length-1]||null; }
+function progEsc(t){ return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function progInner(where, now){
+  now=now||PROG.now(); const j=progAt(where, now); if (!j) return '';
+  const pct=Math.round(progFrac(j, now)*100), col=j.state==='failed'?'var(--stale)':j.state==='done'?'#2f7d4f':'var(--ink)';
+  const late=/longer than usual/.test(progLabel(j, now));
+  return `<div style="height:5px;background:#e8e3d8;border-radius:3px;overflow:hidden;margin-top:5px"><div style="height:100%;width:${pct}%;background:${col};transition:width .9s linear"></div></div>`
+    +`<div style="display:flex;justify-content:space-between;font-size:11.5px;margin-top:2px;color:${j.state==='failed'?'var(--stale)':j.state==='done'?'#2f7d4f':'var(--dim)'}"><span>${progEsc(j.label)}: ${progEsc(progLabel(j, now))}</span><span>${late?progClock(now-j.started):''}</span></div>`;
+}
+// Where a job's bar goes: a slot that is always drawn, so a bar can appear without redrawing the page.
+function progBarHtml(where){ return `<div class="prog-slot" data-prog="${progEsc(where)}" style="flex-basis:100%">${progInner(where)}</div>`; }
+// The bar along the top of Pulse: while anything runs, the job with the most time left, and how many are running.
+function progGlobal(now){
+  now=now||PROG.now(); const act=PROG.jobs.filter(j=>j.state==='running' || j.state==='waiting');
+  if (!act.length) return null;
+  const left=j=>progSum(j.exp)-progSum(j.exp.slice(0, j.i)), main=act.slice().sort((a,b)=>left(b)-left(a))[0];
+  return {n:act.length, job:main, frac:progFrac(main, now), text:(act.length===1?'1 job running':act.length+' jobs running')+': '+main.label+'. '+progLabel(main, now)};
+}
+/* PROG:END */
+// The long buttons on the Lineup and Today tabs, each one progress job from click to finish.
+async function progWrap(where, label, kind, run, failed){
+  const pid=progStart(where, label, [kind]);
+  try { await run(); const f=failed&&failed(); progDone(pid, !f, f||''); }
+  catch(e){ progDone(pid, false, e.message); throw e; }
+}
+async function generateToday(){ if (TODAY_OV.busy) return; if (!todayInputBlock()) return generateTodayRun(); return progWrap('today', 'Generate Today', 'today', generateTodayRun, ()=>/^\[Generation failed/.test(TODAY_OV.text||'')?'it failed: run it again':''); }
+async function punchUpHeadlineWithProgress(story){ return progWrap('story:'+story.key, 'Punch up', 'punch', ()=>punchUpHeadline(story), ()=>story.err?String(story.status||'it failed'):''); }
+async function enrich(story){ return progWrap('story:'+story.key, 'Enrich', 'enrich', ()=>enrichRun(story), ()=>story.err?String(story.status||'it failed'):''); }
+async function generateStoryImage(story, promptOverride){ return progWrap('story:'+story.key, 'Image', 'image', ()=>generateStoryImageRun(story, promptOverride), ()=>story.imgErr?String(story.imgErr):''); }
+// Drawing the bars, once a second, in place (no page redraw).
+function progTick(){
+  if (typeof document==='undefined' || !document.body) return;
+  const now=PROG.now();
+  document.querySelectorAll('[data-prog]').forEach(el=>{ const h=progInner(el.dataset.prog, now); if (el._h!==h){ el.innerHTML=h; el._h=h; } });
+  let bar=document.getElementById('prog-global'); const g=progGlobal(now);
+  if (!g){ if (bar){ bar.remove(); document.body.style.paddingTop=''; } return; }
+  if (!bar){ bar=document.createElement('div'); bar.id='prog-global';
+    bar.style.cssText='position:fixed;left:0;right:0;top:0;z-index:9998;background:#faf8f3;border-bottom:1px solid var(--ink);font:12px sans-serif;padding:4px 12px;display:flex;gap:10px;align-items:center';
+    document.body.appendChild(bar); document.body.style.paddingTop='28px'; }
+  bar.innerHTML=`<span style="flex:1">${progEsc(g.text)}</span><span style="width:140px;height:5px;background:#e8e3d8;border-radius:3px;overflow:hidden"><span style="display:block;height:100%;width:${Math.round(g.frac*100)}%;background:var(--ink)"></span></span><a href="#" id="prog-go" style="font-size:11.5px">go to it</a>`;
+  const go=bar.querySelector('#prog-go'); if (go) go.onclick=e=>{ e.preventDefault(); progGoTo(g.job.where); };
+}
+function progGoTo(where){
+  const find=()=>document.querySelector('[data-prog="'+where.replace(/"/g,'')+'"]');
+  let el=find();
+  if (!el && typeof TAB!=='undefined'){ TAB=/^bs:/.test(where)?'backstory':'lineup'; if (/^bs:/.test(where) && where!=='bs:all') BSR_PREV_OPEN[where.slice(3)]=true; render(); el=find(); }
+  if (el){ const y=el.getBoundingClientRect().top+window.scrollY-window.innerHeight/2; window.scrollTo(0, Math.max(0, y)); }
+}
+if (typeof window!=='undefined' && !window.__progTicker) window.__progTicker=setInterval(progTick, 1000);
+/* BSX:BEGIN */
+// The Backstory composer, its conversation and its run, from here to BSX:END: tested in node with stand-in replies
+// (scripts/test_pulse_conversation.js). Keep new Backstory logic inside this block so it can be tested.
 const BSX_SONNET='claude-sonnet-5-5', BSX_HAIKU='claude-haiku-5-5', BSX_LEDGER='editorial/research-ledger.json';
+// T-0123: Opus 5.5 writes each story's proposal and talks it through with the editor. One constant, so it can be
+// changed. Opus 5.5 cannot run with thinking off (a 400): effort is its only control, and its default is medium.
+const BSX_OPUS='claude-opus-5-5', BSX_OPUS_EFFORT='high';
 const BSX_STOP=new Set(('the a an and or of to in on for by with from at as is was were be been are that this it its into than then over after before about their his her they them he she we our you your not no but who what when where which while has have had will would can could may might more most new says said also one two three year years').split(' '));
 async function bsxModel(model, prompt, maxTok, tools){
   if (!SETTINGS.antKey) throw new Error('No Anthropic key: set it in ⚙');
-  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
-    headers:{'Content-Type':'application/json','x-api-key':SETTINGS.antKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-    body:JSON.stringify({model:model,max_tokens:maxTok,thinking:{type:model===BSX_SONNET?'between_tools':'disabled'},
-      ...(tools?{tools:tools}:{}),messages:[{role:'user',content:prompt}]})});
-  const d=await r.json();
-  if (d.error) throw new Error(d.error.message);
-  if (d.stop_reason==='refusal') throw new Error('Refused by the model');
-  let text=''; const urls=[];
-  (d.content||[]).forEach(b=>{
-    if (b.type==='web_search_tool_result' && Array.isArray(b.content)) b.content.forEach(x=>{ if (x.url) urls.push(x.url); });
-    if (b.type==='text'){ text+=b.text||''; (b.citations||[]).forEach(c=>{ if (c.url && !urls.includes(c.url)) urls.push(c.url); }); }
-  });
-  const u=d.usage||{};
-  return {text:text, urls:urls, usage:{input_tokens:u.input_tokens||0, output_tokens:u.output_tokens||0}};
+  const think=model===BSX_OPUS ? {output_config:{effort:BSX_OPUS_EFFORT}} : {thinking:{type:model===BSX_SONNET?'between_tools':'disabled'}};
+  const messages=[{role:'user',content:prompt}];
+  let text='', usage={input_tokens:0, output_tokens:0, searches:0, model:model}; const urls=[];
+  // A turn with many web searches can pause (stop_reason "pause_turn"): send it back as it stands and the model carries
+  // on where it stopped. Eight continuations at most, so a runaway turn still ends.
+  for (let round=0; round<9; round++){
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':SETTINGS.antKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:model,max_tokens:maxTok,...think,
+        ...(tools?{tools:tools}:{}),messages:messages})});
+    const d=await r.json();
+    if (d.error) throw new Error(d.error.message);
+    if (d.stop_reason==='refusal') throw new Error('Refused by the model');
+    (d.content||[]).forEach(b=>{
+      if (b.type==='web_search_tool_result' && Array.isArray(b.content)) b.content.forEach(x=>{ if (x.url && !urls.includes(x.url)) urls.push(x.url); });
+      if (b.type==='text'){ text+=b.text||''; (b.citations||[]).forEach(c=>{ if (c.url && !urls.includes(c.url)) urls.push(c.url); }); }
+    });
+    const u=d.usage||{};
+    usage=bsxAddUsage(usage, {input_tokens:u.input_tokens||0, output_tokens:u.output_tokens||0, searches:(u.server_tool_use||{}).web_search_requests||0, model:model});
+    if (d.stop_reason!=='pause_turn') break;
+    messages.push({role:'assistant', content:d.content});
+  }
+  return {text:text, urls:urls, usage:usage};
 }
+// Two usages added, keeping the model and the web searches (T-0123 measures cost per story by model).
+function bsxAddUsage(a, b){ a=a||{}; b=b||{}; return {input_tokens:(a.input_tokens||0)+(b.input_tokens||0), output_tokens:(a.output_tokens||0)+(b.output_tokens||0),
+  searches:(a.searches||0)+(b.searches||0), model:b.model||a.model}; }
 // The answer in a model's reply. Not the first bracket: a reply that quoted a story's "[Generation failed: ...]"
 // marker was parsed from there and failed (2026-10-30). Each opening brace or bracket is tried, outermost first.
 function bsxJson(text, label){
@@ -4618,7 +4835,7 @@ async function bsxAsk(model, prompt, maxTok, label, tools){
   try { return Object.assign(r, {json:bsxJson(r.text, label)}); }
   catch(e){
     const r2=await bsxModel(model, prompt+'\n\nAnswer with the JSON only: no words before or after it.', maxTok, tools);
-    return Object.assign(r2, {json:bsxJson(r2.text, label), usage:{input_tokens:r.usage.input_tokens+r2.usage.input_tokens, output_tokens:r.usage.output_tokens+r2.usage.output_tokens}});
+    return Object.assign(r2, {json:bsxJson(r2.text, label), usage:bsxAddUsage(r.usage, r2.usage)});
   }
 }
 function bsxText(html){ const d=document.createElement('div'); d.innerHTML=html||''; return (d.textContent||'').replace(/\s+/g,' ').trim(); }
@@ -4652,8 +4869,8 @@ function bsxLibrary(draft, ledger){
 // The documents worth showing the model: by `terms` (the history the story belongs to, named by Haiku: a story's
 // own words pulled the 1918 Fourteen Points speech for an Ohio poll that moved six points), rare words shared
 // with the headline, and everything already in the story's category.
-function bsxShortlist(lib, story, rowTitle, terms, k){
-  k=k||45; const ids=Object.keys(lib), f={}, docs={};
+function bsxShortlist(lib, story, rowTitle, terms, k, libCap){
+  k=k||45; libCap=libCap||10; const ids=Object.keys(lib), f={}, docs={};
   ids.forEach(i=>{ const o=lib[i]; f[i]={title:o.title.toLowerCase(), about:(o.about+' '+o.why).toLowerCase(), meta:[o.author,o.row,o.subgenre,(o.lenses||[]).join(' '),Array.from(o.categories).join(' ')].join(' ').toLowerCase()};
     docs[i]=new Set(bsxToks(f[i].title+' '+f[i].about+' '+f[i].meta)); });
   const df={}; ids.forEach(i=>docs[i].forEach(w=>{ df[w]=(df[w]||0)+1; }));
@@ -4669,7 +4886,7 @@ function bsxShortlist(lib, story, rowTitle, terms, k){
     return [s,i]; }).filter(x=>x[0]>0).sort((a,b)=>b[0]-a[0]);
   // at most 10 from the editor's library, so 3,000 clippings cannot crowd out the primary documents (T-0115)
   let nl=0;
-  return ranked.filter(x=>lib[x[1]].kind!=='library' || ++nl<=10).slice(0,k).map(x=>x[1]);
+  return ranked.filter(x=>lib[x[1]].kind!=='library' || ++nl<=libCap).slice(0,k).map(x=>x[1]);
 }
 async function bsxTerms(story, steer){
   const p=`A news story needs its history: the long argument it belongs to. Name that history as 8 to 14 short search terms for a library of primary documents (laws, court cases, treaties, speeches, reports): the specific acts, cases, institutions, events and general subjects a historian would look up. Use the common names ("Citizens United", "campaign finance", "Federal Election Campaign Act", "Knesset", "coalition government"). Not the story's own people or numbers.
@@ -4701,7 +4918,7 @@ const BSX_RULES = {
 };
 const BSX_STYLE = 'All text: plain and precise, at an Advanced Placement history level; no dashes; never "this document", "this reflects", "underscores", "highlights", "serves as", "a reminder that", "pivotal", "landmark", "groundbreaking", "seminal"; take no side; no number that is not in the story or the document\'s own line.';
 function bsxDocLines(cands, lib){
-  return cands.map(i=>{ const o=lib[i], w=o.about||o.why; return '- '+i+' | '+o.year+' | '+(o.source_kind==='news'?'[NEWS REPORT] ':o.kind==='library'?'[EDITOR\'S LIBRARY] ':'')+o.title.slice(0,110)+' | '+String(o.author).slice(0,50)+(w?' | '+w.slice(0,220):''); }).join('\n')||'(none)';
+  return cands.filter(i=>lib[i]).map(i=>{ const o=lib[i], w=o.about||o.why; return '- '+i+' | '+o.year+' | '+(o.source_kind==='news'?'[NEWS REPORT] ':o.kind==='library'?'[EDITOR\'S LIBRARY] ':'')+o.title.slice(0,110)+' | '+String(o.author).slice(0,50)+(w?' | '+w.slice(0,220):''); }).join('\n')||'(none)';
 }
 function bsxStoryBlock(story){
   return `HEADLINE: ${story.headline}\nDESCRIPTION: ${story.lede||''}\nWHAT IS TRUE (the Truths):\n${story.truths.slice(0,3500)}`;
@@ -4766,17 +4983,17 @@ function bsxCheck(c, story, lib){
 function bsxShape(r, cands, lib, edits, notes){
   const off=new Set(edits.off||[]), begs=[];
   (r.milestones||r.beginnings||[]).forEach(b=>{
-    const i=b.id; if (!cands.includes(i) || off.has(i)){ notes.push(JSON.stringify(i)+' is not in the shortlist; dropped'); return; }
+    const i=b.id; if (!cands.includes(i) || off.has(i) || !lib[i]){ notes.push(JSON.stringify(i)+' is not in the shortlist; dropped'); return; }
     const o=lib[i]; if (!/^\d{4}/.test(o.year)){ notes.push(o.title.slice(0,40)+' has no year; dropped'); return; }
     const mine=(edits.lines||{})[i];
     begs.push({object_id:i, year:o.year.slice(0,4), line:mine||b.line||'', by:mine?'editor':'model'});
   });
   begs.sort((a,b)=>a.year.localeCompare(b.year));
   const chosen=new Set(begs.map(b=>b.object_id));
-  const later=(r.later||[]).slice(0,2).filter(i=>cands.includes(i) && !chosen.has(i) && !off.has(i));
+  const later=(r.later||[]).slice(0,2).filter(i=>cands.includes(i) && !chosen.has(i) && !off.has(i) && lib[i]);
   (edits.keep||[]).forEach(i=>{ if (lib[i] && !chosen.has(i) && !later.includes(i) && !off.has(i)) later.push(i); });
   const about=r.about||{};
-  const kase=Array.from(new Set(begs.map(b=>b.object_id).concat(later))).map(i=>{ const o=lib[i];
+  const kase=Array.from(new Set(begs.map(b=>b.object_id).concat(later))).filter(i=>lib[i]).map(i=>{ const o=lib[i];
     return Object.assign({object_id:i, year:o.year.slice(0,4), title:o.title, author:o.author, source_url:o.url,
       about:(edits.abouts||{})[i]||o.about||about[i]||'', about_by:o.about?'library':about[i]?'model':'', kind:o.kind},
       o.source_kind==='news'?{source_kind:'news', why_no_primary:o.why_no_primary||''}:{}, o.paywall?{paywall:true}:{}); });
@@ -4815,18 +5032,19 @@ JSON only, with just the parts you rewrote: {${ask.map(k=>'"'+k+'":...').join(',
 }
 // After the repair, what still breaks a rule is left out (a milestone, an About text), or kept and noted for the
 // editor when the component cannot be empty (the title, the contest, the stakes, We are here).
+function bsxMilestoneProblems(b, lib){
+  if (b.by==='editor') return [];
+  const o=lib[b.object_id]||{}, pr=catTextProblems('milestone '+b.year, b.line, 12, 25, {sentences:1});
+  if (!catNumbersOk(b.line, o.title, o.year, o.about, o.why, o.evidence||'')) pr.push('milestone '+b.year+': a number is not in its document');
+  return pr;
+}
 function bsxEnforce(c, story, lib, notes){
   const keptStart=c.starts&&c.starts.by==='editor'?c.starts:null;
   const P=bsxCheck(c, story, lib);
-  if (P.milestones){
-    const keep=c.beginnings.filter(b=>{ const pr=b.by==='editor'?[]:catTextProblems('m', b.line, 12, 25, {sentences:1}); const o=lib[b.object_id]||{};
-      return !pr.length && (b.by==='editor' || catNumbersOk(b.line, o.title, o.year, o.about, o.why, o.evidence||'')); });
-    if (keep.length<c.beginnings.length) notes.push((c.beginnings.length-keep.length)+' milestone(s) still broke a rule and were left out');
-    const gone=new Set(c.beginnings.filter(b=>!keep.includes(b)).map(b=>b.object_id));
-    c.beginnings=keep; c.case=c.case.filter(o=>!gone.has(o.object_id));
-    if (c.starts && gone.has(c.starts.object_id)){ const sb=keep.filter(b=>b.year<String(new Date().getUTCFullYear())).slice(-1)[0]; c.starts=sb?{year:sb.year, line:sb.line, object_id:sb.object_id}:null; }
-    if (keep.length<3 && !c.thin) c.thin='only '+keep.length+' milestone(s) kept to the rules';
-  }
+  // T-0117, carried into T-0123: a milestone is never dropped over its sentence. One that still breaks a rule after the
+  // repair (and, at Build, one more rewrite: bspReline) stays on the page with the problem kept in b.flag. On
+  // 2026-11-10 four chosen milestones were dropped for a sentence, and pages fell below the contract because of it.
+  (c.beginnings||[]).forEach(b=>{ const pr=bsxMilestoneProblems(b, lib); if (pr.length) b.flag=pr.join('; '); else delete b.flag; });
   if (P.about) c.case.forEach(o=>{ if (o.about_by==='model' && (catTextProblems('a', o.about, 1, 70).length || catSentences(o.about)<2 || catSentences(o.about)>4)){ o.about=''; o.about_by=''; } });
   // a component the editor removed stays empty, and is no problem
   const removed=c._removed||[]; removed.forEach(k=>{ if (k==='chart') c.chart_removed=true; else if (k==='starts') c.starts=null; else c[k]=''; });
@@ -4909,13 +5127,492 @@ JSON only, with just: {${fields.map(f=>'"'+f+'":...').join(',')}}`;
   c._removed=edits.removed||[];
   const P=bsxCheck(c, story, lib); (edits.removed||[]).concat(Object.keys(edits.modify||{})).forEach(k=>delete P[k]);   // what the editor directed is not repaired
   delete P[comp]; if (comp==='documents' || comp==='milestones') delete P.starts;   // what the editor directed is not repaired
+  // T-0123/T-0124: on a page built from a proposal, what was agreed is the editor's, and a revise of another part never
+  // "repairs" it (found 2026-11-17: revising the stakes rewrote an agreed contest that broke the Whether rule)
+  if (prev.built_from==='proposal') ['row','contest','starts'].forEach(k=>delete P[k]);
   let out=Object.keys(P).length?await bsxRepair(c, P, story, cands.length?cands:c.case.map(o=>o.object_id), lib, addU):c;
   out=bsxEnforce(out, story, lib, notes);
   if (out.problems){ delete out.problems[comp]; if (comp==='milestones') delete out.problems.starts; }
+  if (prev.built_from==='proposal') ['contest','row'].forEach(k=>{ if (comp!==k){ out[k]=prev[k]; if (out.problems) delete out.problems[k]; } });
   out.modified=Object.assign({}, prev.modified||{}, {[comp]:note});
   const pu=prev.usage||{};
   out.notes=notes; out.usage={input_tokens:(pu.input_tokens||0)+usage.input_tokens, output_tokens:(pu.output_tokens||0)+usage.output_tokens};
   return out;
+}
+
+// A story changed after its page was built (T-0122, step two; carried from T-0117's branch, ab4a21fa). The editor,
+// 2026-11-10: "backstory didn't need to substantively change. why couldn't it simply look at the digest story and
+// make its own decision?" One Haiku call reads the page against the revised story. Normally only We are here must
+// follow the news: it is rewritten, and title, contest, stakes, milestones and documents are left alone. When the
+// history itself moved, the page says so and the editor decides whether to rebuild; this never rebuilds. A We are
+// here the editor typed is never rewritten. Returns {page, current}: current is true when the page now stands for
+// the revised story.
+async function bsxRefreshHere(prev, story, edits){
+  edits=edits||{}; const c=JSON.parse(JSON.stringify(prev)), at=new Date().toISOString();
+  const editorHere=!!((edits.text||{}).here || (edits.modify||{}).here), removedHere=(edits.removed||[]).includes('here');
+  const page={title:c.title, contest:c.contest, stakes:c.stakes, starts:c.starts?c.starts.year+': '+c.starts.line:null,
+    milestones:(c.beginnings||[]).map(b=>b.year+': '+b.line), here:c.here};
+  const p=`A Backstory page was built for a news story. The story has since been revised. Decide whether the page's history still holds for the revised story.
+
+THE PAGE: ${JSON.stringify(page)}
+
+THE REVISED STORY:
+${bsxStoryBlock(story)}
+
+Usually the history holds and only "We are here" (today's story as the end of the chronology) must follow the news. Then write a new "here": one or two sentences, 12 to 30 words, saying where the revised story stands now, using only facts and numbers the revised story states. Answer "holds": false only when the title, the contest or the milestones no longer fit the revised story (it is now about a different event or argument).
+${BSX_STYLE}
+
+JSON only: {"holds":true,"here":"...","why":"one sentence"}`;
+  let r;
+  try { r=await bsxAsk(BSX_HAIKU, p, 500, 'checking the page against the revised story'); }
+  catch(e){ c.change={at:at, holds:null, error:String(e.message||e).slice(0,160)}; return {page:c, current:false}; }
+  const j=r.json||{}, holds=j.holds!==false, why=String(j.why||'').trim().slice(0,300);
+  c.change={at:at, holds:holds, why:why, usage:r.usage, model:BSX_HAIKU};
+  c.usage=bsxAddUsage(c.usage, r.usage);
+  if (!holds){ c.change.moved=true; return {page:c, current:false}; }
+  if (editorHere || removedHere){ c.change.editor_here=!removedHere; return {page:c, current:true}; }
+  const h=String(j.here||'').trim(), pr=catTextProblems('We are here', h, 12, 30);
+  if (h && catSentences(h)>2) pr.push('We are here is more than two sentences');
+  if (h && !catNumbersOk(h, story.headline, story.lede, story.truths)) pr.push('a number in We are here is not in the story');
+  if (!pr.length){ c.change.was=c.here; c.here=h; c.change.here_updated=true; if (c.problems) delete c.problems.here; }
+  else c.change.kept_because=h?pr.join('; '):'the check gave no new line';
+  return {page:c, current:!!c.change.here_updated};      // a line still behind the story is not called current
+}
+
+// ─── T-0123: each story's Backstory starts as a proposal, settled in conversation with Opus, then built once ─────────
+// docs/briefs/backstory-proposal-and-conversation.md. Generate Jefferson makes the proposal and nothing else: category,
+// contest, It starts in, three to six beginnings (a year and the document that defends it), objects, and one line on
+// what the library lacks. Under it the editor and Opus talk it through; each turn changes the proposal and says what
+// changed. The editor presses Build and Sonnet writes the page from what was agreed. Publish stops while any story's
+// proposal is unbuilt (bspUnbuilt, in publishToDigest). The proposal and the conversation live on the story's draft
+// entry (d.proposal, d.chat), not on the page (d.composed), so nothing of them reaches readers.
+// Built so the Lineup could reuse it: bspAsk takes any subject block, library and current state; only bspShape and
+// the prompt's answer shape are Backstory's own.
+const BSP_METHOD_PATH='editorial/prompts/backstory-historian.md';
+let BSP_METHOD=null;
+// The historian's method, committed in the repo and loaded each session: the text between its two rules.
+async function bspHistorian(){
+  if (BSP_METHOD) return BSP_METHOD;
+  let t='';
+  try { const r=await fetch('../'+BSP_METHOD_PATH+'?t='+Date.now(), {cache:'no-store'}); if (r.ok) t=await r.text(); } catch(e){}
+  if (!/\n---\n/.test(t) && SETTINGS.ghToken && pulseBranch(location)){
+    try { const r=await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${BSP_METHOD_PATH}?ref=${pulseBranch(location)}`,
+      {headers:{'Authorization':'Bearer '+SETTINGS.ghToken, 'Accept':'application/vnd.github.raw+json'}, cache:'no-store'}); if (r.ok) t=await r.text(); } catch(e){}
+  }
+  const part=(t.split(/\n---\n/)[1]||'').trim();
+  if (!part) throw new Error("the historian's method ("+BSP_METHOD_PATH+') could not be loaded');
+  BSP_METHOD=part; return part;
+}
+// A web find's id: stable for its link, so the same document found twice is one document.
+function bspFindId(title, year, url){
+  let h=5381; const u=String(url||''); for (let k=0; k<u.length; k++) h=((h*33)^u.charCodeAt(k))>>>0;
+  return 'web-'+String(title||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,40).replace(/^-+|-+$/g,'')+'-'+(year||'n')+'-'+h.toString(36);
+}
+// A document the web search turned up, checked before it may enter a proposal: a link the search returned (never one
+// written from memory), not Wikipedia or a summary, with a title and a year; news only from the 91 approved
+// publishers, and only with the reason no primary source would do (CLAUDE.md rule 8).
+function bspCheckFind(f, urls){
+  const url=String(f.source_url||f.url||'').trim();
+  const v=verifyFoundObject({source_url:url, year:String(f.year||'').slice(0,4), title:f.title}, {urls:urls||[]});
+  if (!v.ok) return v;
+  const news=String(f.source_kind||'')==='news' || catSourceKind(url)==='news';
+  if (news && !bsxPublisher(url)) return {ok:false, reason:'a news report from a publisher outside NTK’s approved list'};
+  if (news && !String(f.why_no_primary||'').trim()) return {ok:false, reason:'a news report with no reason a primary source would not do'};
+  return {ok:true, news:news};
+}
+function bspDocFromLib(id, o){
+  return Object.assign({id:id, title:o.title||'', author:o.author||'', year:String(o.year||'').slice(0,4), url:o.url||'', kind:o.kind||'', about:o.about||''},
+    o.source_kind==='news'?{source_kind:'news', why_no_primary:o.why_no_primary||''}:{}, o.kind==='library'?{source_kind:'library'}:{});
+}
+// The model's answer, kept to what can be agreed. Every document comes from the library, from the proposal already on
+// screen, or from a checked web find; a beginning names the words in the story it ties to (catTiesOk), unless the
+// editor asked for it. Oldest first. Returns {proposal, dropped: [{year, title, reason}]}.
+function bspShape(j, lib, story, prev, urls){
+  j=j||{}; prev=prev||null;
+  const prevDocs=(prev&&prev.docs)||{}, prevAsked=new Set(((prev&&prev.beginnings)||[]).filter(b=>b.asked).map(b=>b.object_id));
+  const storyText=[story.headline, story.lede, story.truths].join(' '), docs={}, dropped=[], now=new Date().getUTCFullYear();
+  const byUrl=u=>Object.values(prevDocs).find(d=>d.url===u) || (()=>{ const k=Object.keys(lib).find(i=>lib[i].url===u); return k?bspDocFromLib(k, lib[k]):null; })();
+  const resolve=b=>{
+    const f=b&&b.found;
+    if (f && typeof f==='object'){
+      const url=String(f.source_url||f.url||'').trim(), known=url&&byUrl(url);
+      if (known) return {id:known.id, doc:known};
+      const v=bspCheckFind(f, urls);
+      if (!v.ok) return {reason:v.reason, title:String(f.title||url||'').slice(0,90)};
+      const d=Object.assign({id:bspFindId(f.title, String(f.year).slice(0,4), url), title:String(f.title).trim(), author:String(f.author||'').trim(), year:String(f.year).slice(0,4), url:url,
+        source:String(f.source||'').trim(), kind:'web', evidence:String(f.evidence_quote||'').trim().slice(0,400), found_at:new Date().toISOString()},
+        v.news?{source_kind:'news', why_no_primary:String(f.why_no_primary).trim()}:{});
+      return {id:d.id, doc:d};
+    }
+    const id=String((b&&b.id)||b||'').trim();
+    if (prevDocs[id]) return {id:id, doc:prevDocs[id]};
+    if (lib[id]) return {id:id, doc:bspDocFromLib(id, lib[id])};
+    return {reason:'it is not in the library, and no search returned it', title:id};
+  };
+  const begs=[];
+  const list=Array.isArray(j.beginnings)?j.beginnings:((prev&&prev.beginnings)||[]).map(b=>({id:b.object_id, year:b.year, ties_to:b.ties_to, asked:b.asked}));
+  list.forEach(b=>{
+    const r=resolve(b); if (!r.id){ dropped.push({year:String(b.year||''), title:r.title, reason:r.reason}); return; }
+    const year=String(b.year||r.doc.year||'').slice(0,4);
+    if (!/^\d{4}$/.test(year)){ dropped.push({year:'', title:r.doc.title, reason:'it has no year'}); return; }
+    const tie=String(b.ties_to||'').trim().slice(0,120), asked=!!b.asked || prevAsked.has(r.id);
+    if (!asked && !catTiesOk(tie, storyText)){ dropped.push({year:year, title:r.doc.title, reason:tie?'it ties to "'+tie+'", which the story does not say':'it names nothing in the story it ties to'}); return; }
+    if (begs.some(x=>x.object_id===r.id)) return;
+    docs[r.id]=r.doc; begs.push(Object.assign({year:year, object_id:r.id, ties_to:tie}, asked?{asked:true}:{}));
+  });
+  begs.sort((a,b)=>a.year.localeCompare(b.year));
+  const later=[];
+  (Array.isArray(j.later)?j.later:((prev&&prev.later)||[])).forEach(x=>{
+    const r=resolve(typeof x==='string'?{id:x}:x); if (!r.id){ dropped.push({year:String((x&&x.found&&x.found.year)||'').slice(0,4), title:r.title, reason:r.reason}); return; }
+    if (begs.some(b=>b.object_id===r.id) || later.includes(r.id) || later.length>=2) return;
+    docs[r.id]=r.doc; later.push(r.id);
+  });
+  later.sort((a,b)=>String(docs[a].year).localeCompare(String(docs[b].year)));
+  let starts=String(j.starts||(prev&&prev.starts)||'').trim().slice(0,4);
+  if (!/^\d{4}$/.test(starts) || (+starts>=now && !j.starts_asked)){ const sb=begs.filter(b=>+b.year<now).slice(-1)[0]; starts=sb?sb.year:''; }
+  const proposal={v:1, category:String(j.category||(prev&&prev.category)||'').trim().slice(0,60), contest:String(j.contest||(prev&&prev.contest)||'').trim(),
+    starts:starts, beginnings:begs, later:later, objects:begs.map(b=>b.object_id).concat(later), docs:docs,
+    lacks:String(j.lacks===undefined?((prev&&prev.lacks)||''):(j.lacks||'')).trim().slice(0,2000),
+    missing:bspMissing(j.missing===undefined?((prev&&prev.missing)||[]):j.missing, begs, docs)};
+  return {proposal:proposal, dropped:dropped};
+}
+// Events the historian would place but has no document for yet, each one the editor can tick to have it found and
+// added (the editor, 2026-11-17: "so I could check a box for those to enter the beginnings and objects"). An event
+// already carried by a beginning is not listed again.
+function bspMissing(list, begs, docs){
+  const placed=(begs||[]).map(b=>b.year+' '+String(((docs||{})[b.object_id]||{}).title||'').toLowerCase());
+  return (Array.isArray(list)?list:[]).map(m=>({year:String((m&&m.year)||'').trim().slice(0,9), event:String((m&&m.event)||'').trim().slice(0,200),
+    why:String((m&&m.why)||'').trim().slice(0,500), look_for:String((m&&m.look_for)||'').trim().slice(0,300)}))
+    .filter(m=>m.event && !placed.some(t=>t.startsWith(m.year+' ') && t.includes(m.event.toLowerCase().slice(0,24)))).slice(0,10);
+}
+// An event the editor asked for by name that did not end up placed goes back on the list, with why, so nothing the
+// editor asked for silently disappears (2026-11-18: Opus took three ticked events off the list, believing them placed,
+// and Pulse's checks then turned their documents down).
+function bspRestoreMissing(prevMissing, next, dropped, message){
+  const msg=String(message||'').toLowerCase(), placedYears=new Set((next.beginnings||[]).map(b=>b.year));
+  const have=new Set((next.missing||[]).map(m=>m.year+' '+m.event.toLowerCase()));
+  (prevMissing||[]).forEach(m=>{
+    if (!m || !m.event || !msg.includes(m.event.toLowerCase()) || placedYears.has(m.year) || have.has(m.year+' '+m.event.toLowerCase())) return;
+    const d=(dropped||[]).find(x=>x.year===m.year);
+    next.missing=(next.missing||[]).concat([Object.assign({}, m, {not_placed:d?'its document was turned down: '+d.reason:'no document was placed for it'})]);
+  });
+  return next;
+}
+// The turn sent when the editor ticks missing events: the editor's request, in words, so it reads in the conversation
+// as what the editor asked for. Each one goes in as a beginning the editor asked for, with its document.
+function bspMissingMessage(missing, picks){
+  const ms=(picks||[]).map(i=>(missing||[])[i]).filter(Boolean);
+  if (!ms.length) return '';
+  return 'Find a document for each of these and add it to the beginnings and Objects, as a beginning I asked for: '
+    +ms.map(m=>(m.year?m.year+' ':'')+m.event+(m.look_for?' (look for: '+m.look_for+')':'')).join('; ')+'.';
+}
+// What a turn changed, said plainly, from the two proposals (not from the model's own account of itself).
+function bspDiff(a, b){
+  a=a||{beginnings:[], later:[], docs:{}}; const out=[], t=(p,id)=>{ const d=(p.docs||{})[id]||{}; return (d.title||id).slice(0,70); };
+  if ((a.category||'')!==(b.category||'')) out.push(a.category?'category: '+a.category+' → '+b.category:'category: '+b.category);
+  if ((a.contest||'')!==(b.contest||'')) out.push('contest rewritten');
+  if ((a.starts||'')!==(b.starts||'')) out.push('It starts in: '+(a.starts||'none')+' → '+(b.starts||'none'));
+  const ab=Object.fromEntries((a.beginnings||[]).map(x=>[x.object_id,x])), bb=Object.fromEntries((b.beginnings||[]).map(x=>[x.object_id,x]));
+  (b.beginnings||[]).forEach(x=>{ if (!ab[x.object_id]) out.push('added beginning '+x.year+': '+t(b, x.object_id)); else if (ab[x.object_id].year!==x.year) out.push('moved '+t(b, x.object_id)+': '+ab[x.object_id].year+' → '+x.year); });
+  (a.beginnings||[]).forEach(x=>{ if (!bb[x.object_id]) out.push('dropped beginning '+x.year+': '+t(a, x.object_id)); });
+  (b.later||[]).forEach(id=>{ if (!(a.later||[]).includes(id) && !ab[id]) out.push('added document: '+t(b, id)); });
+  (a.later||[]).forEach(id=>{ if (!(b.later||[]).includes(id) && !bb[id]) out.push('dropped document: '+t(a, id)); });
+  return out;
+}
+const BSP_SHAPE='JSON only: {"reply":"one or two sentences to the editor","category":"two to five words","contest":"Whether ...","starts":"YYYY","beginnings":[{"year":"YYYY","id":"a library id, or the id of a document already in the proposal","ties_to":"two to six words copied from the story","asked":false},{"year":"YYYY","found":{"title":"the document\'s exact title","author":"who issued or wrote it","year":"YYYY","source":"the archive or publisher","source_url":"the exact link the search returned","source_kind":"document | news","why_no_primary":"news only: why no primary source would do","evidence_quote":"one sentence copied from that page"},"ties_to":"...","asked":false}],"later":["Objects beyond the documents of the beginnings: up to two ids, or {\\"found\\":{...}}"],"lacks":"one line on what the library lacks for this history, or empty","missing":[{"year":"YYYY","event":"the event, named so it can be looked up","why":"one sentence: how it led to today","look_for":"the document that would defend it"}],"parts":{"title|stakes|here":"after Build only: a note on a part to rewrite"}}';
+// One Opus call on a proposal: the first one (no prev, no message) or a turn of the conversation.
+function bspPrompt(method, story, lib, cands, prev, chat, rowNames, editorRow, message, page){
+  const propDocs=prev?Object.values(prev.docs||{}).map(d=>'- '+d.id+' | '+d.year+' | '+(d.source_kind==='news'?'[NEWS REPORT] ':d.source_kind==='library'?'[EDITOR\'S LIBRARY] ':d.kind==='web'?'[FOUND ON THE WEB] ':'')+String(d.title).slice(0,110)+' | '+String(d.author||'').slice(0,50)).join('\n'):'';
+  const cur=prev?JSON.stringify({category:prev.category, contest:prev.contest, starts:prev.starts, beginnings:prev.beginnings.map(b=>({year:b.year, id:b.object_id, ties_to:b.ties_to, asked:!!b.asked})), later:prev.later, lacks:prev.lacks}):'';
+  const talk=(chat||[]).filter(m=>m.role==='editor'||m.role==='historian').map(m=>(m.role==='editor'?'EDITOR: ':'YOU: ')+m.text+(m.changed&&m.changed.length?' [changed: '+m.changed.join('; ')+']':'')).join('\n');
+  // the checks a web find must pass, said up front, so Opus picks a source that will be placed (2026-11-18: UPI, Variety
+  // and Amazon's own press site were found, then turned down, and the reply said all were placed)
+  const sources=message?`
+SOURCES THE CHECKS ACCEPT. Pulse checks every document you find before it goes in. A primary source passes: the document
+itself, or the copy held by an archive, court, legislature, agency or the organization that issued it. An organization's
+own announcement or press release on its own site is a primary source for what that organization did (aboutamazon.com
+for Amazon, a company's newsroom, a government press office). Refused: Wikipedia, summaries, retail and study pages. A
+news report passes only when no primary source exists, with the reason, and only from these publishers: ${NTK_PUBLISHERS.join(', ')}.
+A report from any other outlet (UPI, Variety and others not listed) is turned down, so look for the same report from a
+listed publisher, or the primary source. Do not tell the editor a document is placed: Pulse decides that after you
+answer, and tells the editor what it turned down.
+`:'';
+  const built=page?`
+THE PAGE IS BUILT. As it stands: ${JSON.stringify({title:page.title, stakes:page.stakes, here:page.here, starts:page.starts?page.starts.year+': '+page.starts.line:null, beginnings:(page.beginnings||[]).map(b=>b.year+' '+b.object_id+': '+b.line)})}
+A change to the history (category, contest, It starts in, beginnings, Objects) goes in the proposal as before, and the page is rewritten from it. A request about the title, the stakes or We are here goes under "parts" as a short note of what the editor wants, for example {"parts":{"stakes":"about the chip industry, not trade"}}. Leave out any part the editor did not ask about.
+`:'';
+  return `${method}
+
+THE STORY
+${bsxStoryBlock(story)}
+
+RECENT CATEGORIES (prefer one that already exists at the right breadth): ${(rowNames||[]).slice(0,80).join('; ')||'(none)'}
+${editorRow?'THE EDITOR FILED THIS STORY UNDER: '+editorRow+'. Keep that category unless the editor says otherwise.\n':''}
+THE LIBRARY (id | year | title | author | what it is). Look here first:
+${bsxDocLines(cands, lib)}
+${prev?'\nDOCUMENTS ALREADY IN THE PROPOSAL (id | year | title | author):\n'+propDocs+'\n\nTHE PROPOSAL NOW: '+cur+'\n':''}${talk?'\nTHE CONVERSATION SO FAR:\n'+talk+'\n':''}${sources}${built}${message?'\nTHE EDITOR NOW SAYS: '+message+'\n\nAnswer the editor in a sentence or two and give the whole proposal as it should now stand, changed as the editor asks. The editor\'s words win over every rule. Search the library first, including the [EDITOR\'S LIBRARY] items, which are the editor\'s own Are.na saves; use web search when the library lacks the document an event needs, or the editor asks for one. There is no limit on searches: when the editor asks you to find something, keep searching until you find it or are sure no such document exists, and say which. A document you find on the web goes in as "found", with the exact link the search returned. Mark a beginning "asked": true only when the editor asked for it. Under "missing", list the events you would still place but have no document for; drop one from the list once it is placed.':'\nPropose this story\'s Backstory: the one scope you judge best. The category, the contest, the year It starts in, three to six beginnings (each a year and the document that defends it, from the library), and up to two more documents for the page\'s Objects (the case) beyond the documents of the beginnings. Then one line on what the library lacks for this history, or nothing, and under "missing" each event you would place but have no document for yet (the editor can tick them to have them found). Put "reply" as an empty string.'}
+
+${BSP_SHAPE}`;
+}
+// The conversation's one model call, and what it returns: the parsed answer, the links any search returned, usage.
+async function bspAsk(prompt, search){
+  // No max_uses: the editor, 2026-11-17, after a turn stopped at three searches: "why is there a limit? I want you to do
+  // what I say." Each search costs $0.01 plus its results as Opus input; bsp_cost records every one.
+  return bsxAsk(BSX_OPUS, prompt, 16000, search?'the conversation':'the proposal', search?[{type:'web_search_20260209', name:'web_search'}]:null);
+}
+// The library shortlist for a proposal or a turn: Haiku names the history's search terms (the editor's words steer
+// them on a turn), then the library is ranked as for a build.
+// On a turn, the editor's Are.na library is also searched on its own with the editor's words, up to 15 more items
+// beyond the usual 10 (the editor, 2026-11-17: "make sure the search is able to look at my are.na files").
+async function bspCands(story, lib, steer, prev){
+  const t=await bsxTerms(story, steer);
+  const have=prev?(prev.objects||[]).filter(i=>lib[i]):[];
+  const terms=t.terms.concat(steer?[steer]:[]), main=bsxShortlist(lib, story, null, terms);
+  let arena=[];
+  if (steer){ const al={}; Object.keys(lib).forEach(i=>{ if (lib[i].kind==='library') al[i]=lib[i]; });
+    arena=bsxShortlist(al, {headline:steer, lede:''}, null, terms.concat(bsxToks(steer)), 15, 15); }
+  return {cands:Array.from(new Set(have.concat(main, arena))), usage:t.usage};
+}
+// The editor's Are.na library loads in the background when Pulse opens; a proposal or a turn waits for it, so it is
+// never searched before it has arrived.
+async function bspEnsureArena(){
+  if (ARENA) return;
+  try { const r=await fetch('data/arena-library.json'); if (r.ok) ARENA=await r.json(); } catch(e){}
+}
+// Generate Jefferson's Backstory step: the proposal, and only the proposal. Two calls: Haiku (search terms), Opus.
+async function bspPropose(story, lib, rowNames, editorRow){
+  const method=await bspHistorian(), cost=[];
+  const sc=await bspCands(story, lib, '', null); cost.push(sc.usage);
+  const r=await bspAsk(bspPrompt(method, story, lib, sc.cands, null, [], rowNames, editorRow, ''), false); cost.push(r.usage);
+  const sh=bspShape(r.json, lib, story, null, r.urls);
+  if (editorRow) sh.proposal.category=editorRow;
+  return Object.assign(sh.proposal, {at:new Date().toISOString(), model:BSX_OPUS, left_out:sh.dropped, cost:cost});
+}
+// One turn of the conversation: the editor's words, verbatim; Opus's answer; the proposal as it now stands; and
+// what changed, worked out from the two proposals. Two calls: Haiku (search terms), Opus (with web search).
+async function bspTurn(story, lib, prev, chat, message, rowNames){
+  const method=await bspHistorian(), cost=[], at=new Date().toISOString();
+  const sc=await bspCands(story, lib, message, prev); cost.push(sc.usage);
+  const r=await bspAsk(bspPrompt(method, story, lib, sc.cands, prev, chat, rowNames, '', message), true); cost.push(r.usage);
+  const sh=bspShape(r.json, lib, story, prev, r.urls), changed=bspDiff(prev, sh.proposal);
+  const reply=String((r.json||{}).reply||'').trim()||(changed.length?'Done.':'I left the proposal as it was.');
+  const next=bspRestoreMissing((prev||{}).missing, Object.assign(sh.proposal, {at:at, model:BSX_OPUS, left_out:sh.dropped}), sh.dropped, message);
+  const msgs=[{role:'editor', text:message, at:at},
+    {role:'historian', text:reply, changed:changed, dropped:sh.dropped, searched:r.usage.searches||0, at:new Date().toISOString(), model:BSX_OPUS}];
+  return {proposal:next, chat:(chat||[]).concat(msgs), cost:cost};
+}
+// Build: the page written from the settled proposal. Sonnet writes the title, the stakes, a line for each beginning,
+// the line for It starts in, We are here and the notes on each document; the category, contest, It starts in,
+// beginnings and objects are kept as agreed and never repaired. A beginning that names nothing in the story (and that
+// the editor did not ask for) is not placed. A line that breaks its rule is rewritten once more, then kept and
+// flagged: never dropped. One Sonnet call, plus one for repairs and one for lines still off, at most.
+async function bspBuild(story, prop, lib0, edits){
+  edits=edits||{}; const notes=[], cost=[], addU=u=>cost.push(u);
+  const lib=Object.assign({}, lib0);
+  Object.values(prop.docs||{}).forEach(d=>{ if (!lib[d.id]) lib[d.id]=Object.assign({about:'', why:'', author:'', row:'', subgenre:'', lenses:[], categories:new Set()}, d, {year:String(d.year||''), kind:d.kind||'web'}); });
+  const off=new Set(edits.off||[]), storyText=[story.headline, story.lede, story.truths].join(' '), left=[];
+  const begs=(prop.beginnings||[]).filter(b=>{ if (off.has(b.object_id) || !lib[b.object_id]) return false;
+    if (!b.asked && !catTiesOk(b.ties_to, storyText)){ left.push({object_id:b.object_id, year:b.year, title:lib[b.object_id].title, ties_to:b.ties_to||'', reason:b.ties_to?'it ties to "'+b.ties_to+'", which the story does not say':'it names nothing in the story it ties to'}); return false; }
+    return true; });
+  const later=(prop.later||[]).filter(i=>!off.has(i) && lib[i] && !begs.some(b=>b.object_id===i));
+  const ids=begs.map(b=>b.object_id).concat(later);
+  const p=`You write one news story's Backstory page for NTK News from a proposal the editor has agreed. The history is settled: keep the category, the contest, the year It starts in, the beginnings and the documents exactly as agreed. Write only the words around them. The reader is a college-educated adult; write at an Advanced Placement history level.
+
+${bsxStoryBlock(story)}
+
+THE AGREED PROPOSAL
+Category: ${prop.category}
+Contest: ${prop.contest}
+It starts in: ${prop.starts}
+Beginnings (year | id | document | what it is):
+${begs.map(b=>{ const o=lib[b.object_id]; return '- '+b.year+' | '+b.object_id+' | '+o.title.slice(0,110)+' | '+String(o.author||'').slice(0,50)+((o.about||o.why||o.evidence)?' | '+String(o.about||o.why||o.evidence).slice(0,220):''); }).join('\n')}
+Other Objects (documents beyond the beginnings'): ${later.map(i=>i+' | '+lib[i].year+' | '+lib[i].title.slice(0,100)).join('; ')||'(none)'}
+
+Write:
+- title: ${BSX_RULES.title}
+- stakes: ${BSX_RULES.stakes}
+- lines: for each beginning, ONE sentence of 12 to 25 words saying what happened that year, in the past tense, using only facts in its document's line.
+- starts_line: one sentence for It starts in (${prop.starts}), when no beginning falls in that year.
+- here: ${BSX_RULES.here}
+- about: ${BSX_RULES.about}
+${BSX_STYLE}
+
+JSON only: {"title":"...","stakes":"...","lines":{"<id>":"..."},"starts_line":"...","here":"...","about":{"<id>":"..."}}`;
+  const r=await bsxAsk(BSX_SONNET, p, 4000, 'building the page from the proposal'); addU(r.usage);
+  const j=r.json||{}, lines=j.lines||{}, about=j.about||{};
+  let c={row:prop.category, title:String(j.title||'').trim(), contest:prop.contest, stakes:String(j.stakes||'').trim(), here:String(j.here||'').trim(),
+    beginnings:begs.map(b=>{ const mine=(edits.lines||{})[b.object_id]; return Object.assign({object_id:b.object_id, year:b.year, line:mine||String(lines[b.object_id]||'').trim(), by:mine?'editor':'model'}, b.ties_to?{ties_to:b.ties_to}:{}); }),
+    case:ids.map(i=>{ const o=lib[i]; return Object.assign({object_id:i, year:String(o.year).slice(0,4), title:o.title, author:o.author, source_url:o.url,
+      about:(edits.abouts||{})[i]||o.about||about[i]||'', about_by:o.about?'library':about[i]?'model':'', kind:o.kind},
+      o.source_kind==='news'?{source_kind:'news', why_no_primary:o.why_no_primary||''}:{}, o.paywall?{paywall:true}:{}); }).sort((a,b)=>a.year.localeCompare(b.year)),
+    starts:null, thin:begs.length>=3?null:(prop.lacks||'only '+begs.length+' beginning(s) connect to the story'), left_out:left, why:''};
+  const sb=c.beginnings.filter(b=>b.year===prop.starts).slice(-1)[0];
+  if (prop.starts) c.starts={year:prop.starts, line:sb?sb.line:String(j.starts_line||'').trim(), object_id:sb?sb.object_id:null, by:'agreed'};
+  c._removed=edits.removed||[];
+  const P=bsxCheck(c, story, lib); ['row','contest','starts'].forEach(k=>delete P[k]);           // agreed: never repaired
+  (edits.removed||[]).concat(Object.keys(edits.modify||{}).filter(k=>!bsxBlank(c, k))).forEach(k=>delete P[k]);
+  if (Object.keys(P).length) c=await bsxRepair(c, P, story, ids, lib, addU);
+  c.contest=prop.contest; c.row=prop.category;                                                 // whatever the repair did
+  c=await bspReline(c, story, lib, addU);
+  if (c.starts && c.starts.object_id){ const b=c.beginnings.find(x=>x.object_id===c.starts.object_id); if (b) c.starts.line=b.line; }
+  c=bsxEnforce(c, story, lib, notes);
+  if (c.problems){ delete c.problems.contest; delete c.problems.row; delete c.problems.starts; }
+  if (left.length) notes.push(left.length+' agreed beginning(s) not placed: they name nothing in the story');
+  const usage=cost.reduce((a,u)=>bsxAddUsage(a,u), {});
+  return Object.assign(c, {v:2, built_from:'proposal', agreed:{category:prop.category, contest:prop.contest, starts:prop.starts, beginnings:(prop.beginnings||[]).map(b=>b.object_id), objects:(prop.objects||[]).slice()},
+    shortlist:ids.length, notes:notes, usage:usage, model:BSX_SONNET, modified:Object.assign({}, edits.modify||{}), cost:cost});
+}
+// A milestone line still breaking a rule after the repair: one more rewrite of that line alone. If it still breaks
+// the rule, bsxEnforce keeps it and flags it. Never worse than it was.
+async function bspReline(c, story, lib, addU){
+  const bad=(c.beginnings||[]).map(b=>({b:b, pr:bsxMilestoneProblems(b, lib)})).filter(x=>x.pr.length);
+  if (!bad.length) return c;
+  const p=`Rewrite each milestone line below so it keeps to the rule: ONE sentence of 12 to 25 words, in the past tense, saying what happened, with the actor or the event as its subject. Use only facts in the document's line; no number that is not in it.
+
+${bsxStoryBlock(story)}
+
+${bad.map(x=>{ const o=lib[x.b.object_id]||{}; return '- '+x.b.object_id+' | broke: '+x.pr.join('; ')+' | line now: '+x.b.line+' | document: '+o.year+' | '+o.title+' | '+String(o.author||'')+' | '+String(o.about||o.why||'').slice(0,220); }).join('\n')}
+${BSX_STYLE}
+
+JSON only, one entry per id: {"<id>":"the new line"}`;
+  try {
+    const r=await bsxAsk(BSX_SONNET, p, 1200, 'rewriting milestone lines'); addU(r.usage);
+    bad.forEach(x=>{ const t=r.json&&r.json[x.b.object_id]; if (typeof t!=='string' || !t.trim()) return;
+      const was=x.b.line; x.b.line=t.trim(); if (bsxMilestoneProblems(x.b, lib).length>x.pr.length) x.b.line=was; });
+  } catch(e){}
+  return c;
+}
+// ─── T-0124: after Build, the same conversation carries on ─────────────────────────────────────────────────────────
+// The editor, 2026-11-17: "one conversation before and, perhaps, one after." A message after Build changes the page:
+// a change to the history (category, contest, It starts in, beginnings, Objects) rewrites the page from the changed
+// proposal, keeping every line, note and part that was not asked about; a request about the title, the stakes or We
+// are here rewrites that part alone, as the part's own revise box does (bsxRevise). Remove, edit words and revise on
+// each part stay (the editor, 2026-11-17: "make sure I can still remove things, line edit, revise"). Direct the
+// research is the conversation now.
+// After Build the page is what stands: the proposal a turn starts from is read off the page, so a revise, a removal
+// or a pin since Build is kept. A page built before proposals existed gets one this way too.
+function bspFromPage(c, prop){
+  prop=prop||{}; const docs=Object.assign({}, prop.docs||{}), on=new Set((c.beginnings||[]).map(b=>b.object_id));
+  (c.case||[]).forEach(o=>{ docs[o.object_id]=Object.assign({}, docs[o.object_id]||{}, {id:o.object_id, title:o.title||'', author:o.author||'', year:String(o.year||'').slice(0,4),
+    url:o.source_url||'', kind:(docs[o.object_id]||{}).kind||o.kind||'', about:o.about||''}, o.source_kind==='news'?{source_kind:'news', why_no_primary:o.why_no_primary||''}:{}); });
+  const old=Object.fromEntries((prop.beginnings||[]).map(b=>[b.object_id, b]));
+  // a beginning on the page is agreed: it was built or placed, so it holds even if its tie no longer reads (asked)
+  const begs=(c.beginnings||[]).map(b=>Object.assign({year:String(b.year).slice(0,4), object_id:b.object_id, ties_to:b.ties_to||(old[b.object_id]||{}).ties_to||'', asked:true}));
+  const later=(c.case||[]).map(o=>o.object_id).filter(i=>!on.has(i));
+  return {v:1, category:c.row||prop.category||'', contest:c.contest||prop.contest||'', starts:(c.starts&&c.starts.year)||prop.starts||'',
+    beginnings:begs, later:later, objects:begs.map(b=>b.object_id).concat(later), docs:docs, lacks:prop.lacks||'', missing:prop.missing||[], at:prop.at||new Date().toISOString()};
+}
+// The parts a message after Build may ask to rewrite alone. Each is a short note in the editor's sense, which the
+// part's revise (bsxRevise) does exactly as asked.
+const BSP_PARTS=['title','stakes','here'];
+function bspParts(p){
+  const out={}; if (!p || typeof p!=='object') return out;
+  BSP_PARTS.forEach(k=>{ const v=String(p[k]||'').trim(); if (v) out[k]=v.slice(0,600); });
+  return out;
+}
+// The page rewritten from a changed proposal, keeping what was not asked about: the title, the stakes, We are here,
+// each line and note already there. Only new beginnings and documents get new words. One Sonnet call.
+async function bspRebuildKeep(story, next, page, lib, edits, cost){
+  // a document the editor asks for again comes back, even if it was removed before
+  const ed=Object.assign({}, edits, {off:(edits.off||[]).filter(i=>!next.objects.includes(i))});
+  const nb=await bspBuild(story, next, lib, ed); (nb.cost||[]).forEach(u=>cost.push(u)); delete nb.cost;
+  BSP_PARTS.forEach(k=>{ nb[k]=page[k]; });
+  nb.beginnings.forEach(b=>{ const o=(page.beginnings||[]).find(x=>x.object_id===b.object_id); if (o){ b.line=o.line; b.by=o.by; if (o.flag) b.flag=o.flag; else delete b.flag; } });
+  nb.case.forEach(o=>{ const p=(page.case||[]).find(x=>x.object_id===o.object_id); if (p && p.about){ o.about=p.about; o.about_by=p.about_by; } });
+  if (nb.starts && page.starts && nb.starts.year===page.starts.year) nb.starts=page.starts;
+  ['chart_removed','modified','change','research'].forEach(k=>{ if (page[k]!==undefined) nb[k]=page[k]; });
+  return nb;
+}
+// ─── Earlier versions (2026-11-18): every proposal is kept, so the editor can bring back what an earlier one had ───
+// The editor: "I wish I could recall some of the things you sent, so I can mix and match and move on." Each proposal
+// and each turn's result is saved on the draft entry (d.versions, newest last, at most 20). From any of them the editor
+// can add back one beginning or document, or take the whole version. No model call before Build; after Build the page
+// is rewritten from the changed proposal, keeping every line already there.
+const BSP_MAX_VERSIONS=20;
+function bspVersion(prop, label){
+  const p=JSON.parse(JSON.stringify(prop||{})); delete p.left_out;
+  return {at:new Date().toISOString(), label:String(label||'').slice(0,80), proposal:p};
+}
+function bspKeepVersions(list, prev, next, label){
+  let v=(list||[]).slice();
+  if (!v.length && prev) v.push(bspVersion(prev, 'Before versions were kept'));
+  v.push(bspVersion(next, label));
+  return v.slice(-BSP_MAX_VERSIONS);
+}
+// One document from an earlier version, back into the current proposal: as a beginning if it was one there (with its
+// year and tie), otherwise as one of the Objects. Nothing else changes.
+function bspAddBack(cur, ver, id){
+  const next=JSON.parse(JSON.stringify(cur||{})), v=ver||{}, doc=(v.docs||{})[id];
+  if (!doc || (next.objects||[]).includes(id)) return next;
+  next.docs=Object.assign({}, next.docs||{}, {[id]:doc});
+  const b=(v.beginnings||[]).find(x=>x.object_id===id);
+  if (b){ next.beginnings=(next.beginnings||[]).concat([Object.assign({}, b, {asked:true})]).sort((a,c)=>String(a.year).localeCompare(String(c.year))); }
+  else next.later=(next.later||[]).concat([id]);
+  next.objects=(next.beginnings||[]).map(x=>x.object_id).concat((next.later||[]).filter(i=>!(next.beginnings||[]).some(x=>x.object_id===i)));
+  next.missing=(next.missing||[]).filter(m=>!(b && m.year===b.year));
+  return next;
+}
+// A whole earlier version, as the current proposal; what the editor asked for stays asked for.
+function bspUseVersion(ver){
+  const next=JSON.parse(JSON.stringify(ver||{}));
+  return next;
+}
+// One turn after Build: Opus answers and gives the proposal as it now stands, plus notes on any part to rewrite. The
+// page follows. Returns {page, proposal, chat, cost, parts}.
+async function bspAfter(story, prop0, page, chat, lib, edits, message, rowNames, rejected){
+  const prev=bspFromPage(page, prop0), method=await bspHistorian(), cost=[], at=new Date().toISOString();
+  const sc=await bspCands(story, lib, message, prev); cost.push(sc.usage);
+  const r=await bspAsk(bspPrompt(method, story, lib, sc.cands, prev, chat, rowNames, '', message, page), true); cost.push(r.usage);
+  const sh=bspShape(r.json, lib, story, prev, r.urls), hist=bspDiff(prev, sh.proposal), parts=bspParts((r.json||{}).parts);
+  const next=bspRestoreMissing(prev.missing, Object.assign(sh.proposal, {at:at, model:BSX_OPUS, left_out:sh.dropped, built_at:at}), sh.dropped, message);
+  let c=page;
+  if (hist.length) c=await bspRebuildKeep(story, next, page, lib, edits, cost);
+  const rewrote=[];
+  for (const k of Object.keys(parts)){
+    const before=c.usage||{};
+    c=await bsxRevise(c, k, parts[k], story, lib, Object.assign({}, edits, {modify:Object.assign({}, edits.modify||{}, {[k]:parts[k]})}), rejected, rowNames);
+    const u=c.usage||{}; cost.push({input_tokens:(u.input_tokens||0)-(before.input_tokens||0), output_tokens:(u.output_tokens||0)-(before.output_tokens||0), model:BSX_SONNET});
+    if (c.revise_blank) { delete c.revise_blank; continue; }
+    rewrote.push('rewrote '+(k==='here'?'We are here':'the '+k));
+  }
+  const changed=hist.concat(rewrote);
+  const reply=String((r.json||{}).reply||'').trim()||(changed.length?'Done.':'I left the page as it was.');
+  const msgs=[{role:'editor', text:message, at:at}, {role:'historian', text:reply, changed:changed, dropped:sh.dropped, searched:r.usage.searches||0, at:new Date().toISOString(), model:BSX_OPUS, after:true}];
+  return {page:c, proposal:next, chat:(chat||[]).concat(msgs), cost:cost, parts:Object.keys(parts).filter(k=>rewrote.some(x=>x.includes(k==='here'?'We are here':k))).reduce((o,k)=>(o[k]=parts[k], o), {})};
+}
+// The library, plus this story's own documents: those on its page and those in its proposal. A document found on the
+// web lives only there, never in the Object Matrix, so without this every control after Build that looks a document up
+// by id failed on a page built from web finds (2026-11-18: revising It starts in on the measles page, "Cannot read
+// properties of undefined (reading 'about')").
+function bspLibFor(lib, d){
+  const out=Object.assign({}, lib||{});
+  const add=(id, o)=>{ if (!id || out[id] || !o) return;
+    out[id]=Object.assign({about:'', why:'', author:'', title:'', row:'', subgenre:'', lenses:[], kind:'web'}, o, {id:id, url:o.url||o.source_url||'', year:String(o.year||''), categories:new Set(['this story'])}); };
+  Object.values(((d||{}).proposal||{}).docs||{}).forEach(o=>add(o.id, o));
+  (((d||{}).composed||{}).case||[]).forEach(o=>add(o.object_id, o));
+  return out;
+}
+// Publish stops while any story's proposal is unbuilt (the editor, 2026-11-17: "publish cannot proceed if a proposal
+// is unbuilt"). Every story that would publish needs a page built to the contract. Returns one line per story that
+// has none, naming it and saying why; empty when publish may go on.
+function bspUnbuilt(stories, draft){
+  const by=Object.fromEntries(((draft&&draft.stories)||[]).map(d=>[d.story_id, d]));
+  return (stories||[]).map(s=>{ const d=by[s.key], name='"'+String(s.headline||s.title||s.key).slice(0,60)+'"';
+    if (d && d.composed && d.composed.v===2) return null;
+    return name+(d&&d.proposal?': its proposal is not built yet':': it has no Backstory proposal yet'); }).filter(Boolean);
+}
+// The cost of a story's Backstory so far, by model, from every call recorded on its draft entry (T-0123 measures it).
+function bspAddCost(acc, list){
+  acc=Object.assign({}, acc||{});
+  (list||[]).forEach(u=>{ if (!u || !u.model) return; const k=u.model, a=acc[k]||{input_tokens:0, output_tokens:0, searches:0, calls:0};
+    acc[k]={input_tokens:a.input_tokens+(u.input_tokens||0), output_tokens:a.output_tokens+(u.output_tokens||0), searches:a.searches+(u.searches||0), calls:a.calls+1}; });
+  return acc;
+}
+// List prices per million tokens, looked up 2026-11-17 (Anthropic first-party): Opus 5.5 $4 in / $20 out, Sonnet 5.5
+// $2 / $10, Haiku 5.5 $0.10 / $0.50 (prompts under 100K tokens); web search $10 per 1,000 searches.
+const BSP_PRICES={'claude-opus-5-5':[4,20], 'claude-sonnet-5-5':[2,10], 'claude-haiku-5-5':[0.1,0.5]};
+function bspDollars(acc){
+  return Object.entries(acc||{}).reduce((t,[m,a])=>{ const p=BSP_PRICES[m]||[0,0]; return t+a.input_tokens*p[0]/1e6+a.output_tokens*p[1]/1e6+(a.searches||0)*0.01; }, 0);
 }
 
 // Research once (T-0111), in the browser. One web-search call fills a thin story's library gap; what passes the
@@ -5119,20 +5816,35 @@ function bsrShowError(err, where){
 window.addEventListener('error', e=>{ if (typeof TAB!=='undefined' && TAB==='backstory') bsrShowError(e.error||e.message, 'page'); });
 window.addEventListener('unhandledrejection', e=>{ if (typeof TAB!=='undefined' && TAB==='backstory') bsrShowError(e.reason, 'background'); });
 let BSX_NEXT=null;                       // requests made while a run is going: [{keys, opts}], run in order
-function bsxQueue(keys, opts){
+function bsxQueue(keys, opts, resolve){
   // each request runs as asked, in order: a modify must not be folded into a build, or a build into a refile
-  BSX_NEXT=BSX_NEXT||[]; BSX_NEXT.push({keys, opts:opts||{}});
+  BSX_NEXT=BSX_NEXT||[]; BSX_NEXT.push({keys, opts:opts||{}, resolve:resolve||null});
   BSR_DRAFT_STATE=BSR_DRAFT_STATE.replace(/ \u00b7 \d+ more waiting$/, '')+' \u00b7 '+BSX_NEXT.length+' more waiting'; render();
 }
-// The run: build (compose all ten components; file the row the story proposed, unless the editor set one),
-// modify ({key: {comp, note}}: one component revised to the editor's words; documents search first) or refile
-// (the row changed: the shelf and the chart move, the history stays). Each story succeeds or fails on its own.
+// The run, one kind per request. T-0123: propose (Generate Jefferson: the proposal only, no page), turn ({key:
+// {message}}: one turn of the conversation, the proposal changed), build (the page written from the settled
+// proposal; a page built before proposals existed, with none, is composed afresh as before). Then, after Build:
+// modify ({key: {comp, note}}: one component revised to the editor's words; documents search first), refile (the
+// row changed: the shelf and the chart move, the history stays) and refresh (the story changed since its page was
+// built: We are here follows it). Each story succeeds or fails on its own.
+// A progress job a coming run finishes, by story: Generate Jefferson's job, whose last part is the proposal run.
+const BSX_PROG_FOR={};
 async function bsxRun(keys, opts){
-  if (BSX_BUSY){ bsxQueue(keys, opts); return; }
   opts=opts||{};
-  if (!pulseBranch(location)){ alert('This copy of Pulse cannot draft (not the live Pulse or staging Pulse).'); return; }
-  if (!SETTINGS.ghToken){ alert('Add a GitHub token in ⚙ first.'); return; }
-  BSX_BUSY=true; BSR_DRAFT_STATE=(opts.modify?'Revising':opts.refile?'Moving':'Building')+' '+keys.length+' stor'+(keys.length===1?'y':'ies')+'…'; render();
+  if (!opts.prog && keys.length===1 && BSX_PROG_FOR[keys[0]]){ opts.prog=BSX_PROG_FOR[keys[0]]; delete BSX_PROG_FOR[keys[0]]; }
+  if (!pulseBranch(location)){ alert('This copy of Pulse cannot draft (not the live Pulse or staging Pulse).'); if (opts.prog) progDone(opts.prog, false, 'this copy of Pulse cannot draft'); return; }
+  if (!SETTINGS.ghToken){ alert('Add a GitHub token in ⚙ first.'); if (opts.prog) progDone(opts.prog, false, 'no GitHub token'); return; }
+  // progress (2026-11-18): one job per request, made at the click, so a request queued behind another shows as waiting.
+  // Generate Jefferson passes its own job (opts.prog), whose last part this run is. The automatic change check has none.
+  if (!opts.prog && !opts.refresh){
+    const kind=opts.propose?'propose':opts.turn?'turn':opts.restore?'restore':opts.modify?'revise':opts.refile?'refile':'build';
+    const label={propose:'Propose', turn:'Opus', restore:'Bring back', revise:'Revise', refile:'Move', build:keys.length>1?'Build every proposal':'Build'}[kind];
+    opts.prog=progStart(keys.length===1?'bs:'+keys[0]:'bs:all', label, keys.map(()=>kind), {queue:'bsx', waiting:BSX_BUSY});
+  }
+  // a request made while a run is going waits its turn, and returns only once its own work is done
+  if (BSX_BUSY) return new Promise(res=>bsxQueue(keys, opts, res));
+  if (opts.prog) progRun(opts.prog);
+  BSX_BUSY=true; BSR_DRAFT_STATE=(opts.restore?'Bringing back':opts.propose?'Proposing':opts.turn?'Thinking about':opts.refresh?'Checking':opts.modify?'Revising':opts.refile?'Moving':'Building')+' '+keys.length+' stor'+(keys.length===1?'y':'ies')+'…'; render();
   try {
     let payload=await bsWithHashes(buildStoryPayload()), byKey=Object.fromEntries(payload.map(s=>[s.key,s]));
     let {data:draft}=await bsxGet(GH_DRAFT_OUT);
@@ -5146,17 +5858,85 @@ async function bsxRun(keys, opts){
       const bad=['headline','lede','truth'].filter(k=>/\[Generation failed/.test(String(s[k]||'')));
       if (bad.length) throw new Error('its '+bad.map(k=>k==='truth'?'Truths':k==='lede'?'description':'headline').join(' and ')+' failed to generate: regenerate the story first');
       if (!String(s.truth||'').trim()) throw new Error('it has no Truths yet: Generate Jefferson first');
-      const story={headline:s.headline||'', lede:bsxText(s.lede), truths:bsxText(s.truth)}, edits=Object.assign({}, s.bs_edits||{});
+      const story={headline:s.headline||'', lede:bsxText(s.lede), truths:bsxText(s.truth), date:new Date().toISOString().slice(0,10)}, edits=Object.assign({}, s.bs_edits||{});
       const rej0=new Set(rejected); edits.pool=(ledger.finds||[]).filter(f=>f.story_id===key && !rej0.has(f.id)).map(f=>f.id).reverse();   // newest first; not saved
-      const d0=draft && (draft.stories||[]).find(x=>x.story_id===key), prev=(d0&&d0.composed&&d0.composed.v===2)?d0.composed:null;
+      const d0=draft && (draft.stories||[]).find(x=>x.story_id===key);
+      let prev=(d0&&d0.composed&&d0.composed.v===2)?d0.composed:null;
+      // T-0123: the proposal and the conversation. Neither touches the page; Build does.
+      // an earlier version, or one document from it, brought back (the editor's own pick: no model call before Build)
+      const rq=opts.restore&&opts.restore[key], rver=rq&&d0&&(d0.versions||[])[rq.v];
+      const restored=rver?(rq.id?bspAddBack(d0.proposal, rver.proposal, rq.id):bspUseVersion(rver.proposal)):null;
+      const rnote=rver?(rq.id?'Added back from an earlier version: '+(((rver.proposal.docs||{})[rq.id]||{}).year||'')+' '+(((rver.proposal.docs||{})[rq.id]||{}).title||rq.id):'Went back to the version "'+rver.label+'"'):'';
+      if (opts.restore && !rver) throw new Error('that earlier version is not on the draft any more');
+      if (opts.restore && !prev){
+        done[key]={proposal:restored, chat:((d0&&d0.chat)||[]).concat([{role:'restore', text:rnote, at:new Date().toISOString()}]), cost:[], label:rnote}; continue;
+      }
+      if (opts.propose || (opts.turn && !prev)){
+        await bspEnsureArena();
+        const lib=bspLibFor(bsxLibrary(draft||{stories:[]}, ledger), d0), had=d0&&d0.proposal, chat=(d0&&d0.chat)||[];
+        if (opts.propose){
+          if (prev) continue;                                              // built: a regenerated story is checked, not re-proposed (T-0122)
+          if (had && chat.some(m=>m.role==='editor')) continue;           // the editor has talked it through: theirs stands
+          BSR_DRAFT_STATE='Proposing the Backstory for "'+story.headline.slice(0,50)+'"…'; render();
+          const pr=await bspPropose(story, lib, rowNames, L.rowByEditor&&L.backstoryRow?bsrRowTitle(L.backstoryRow):'');
+          if (!L.backstoryRow && pr.category){ const id=bsrRowResolve(pr.category); if (id){ L.backstoryRow=id; L.rowByEditor=false; saveLineup(); } }
+          if (!L.backstoryRow) throw new Error('no row could be set');
+          done[key]={proposal:pr, chat:[], cost:pr.cost, label:'First proposal'}; delete pr.cost; continue;
+        }
+        const msg=String((opts.turn[key]||{}).message||'');
+        if (!had) throw new Error('it has no proposal yet: propose it first');
+        BSR_DRAFT_STATE='Opus is reading "'+msg.slice(0,60)+'"… searching if it needs to, up to a minute or two'; render();
+        const t=await bspTurn(story, lib, d0.proposal, chat, msg, rowNames);
+        // the category is the editor's to change here, in conversation: the shelf follows it
+        if (t.proposal.category && t.proposal.category!==d0.proposal.category){ const id=bsrRowResolve(t.proposal.category); if (id){ L.backstoryRow=id; L.rowByEditor=true; saveLineup(); } }
+        done[key]={proposal:t.proposal, chat:t.chat, cost:t.cost, label:'After: \u201c'+msg.slice(0,60)+'\u201d'}; continue;
+      }
+      // T-0122, step two: the story changed after this page was built. Anything short of a rebuild first checks the
+      // page against the revised story (one Haiku call): We are here follows the news; if the history itself moved,
+      // the page says so and the rebuild is the editor's to choose. Never a rebuild on its own.
+      const changed=bsxStoryChanged(d0, s);
+      let current=true, refreshCost=[];
+      if (changed && !opts.build && prev){
+        BSR_DRAFT_STATE='Checking "'+story.headline.slice(0,50)+'" against the revised story…'; render();
+        const r=await bsxRefreshHere(prev, story, edits); prev=r.page; current=r.current; if (r.page.change && r.page.change.usage) refreshCost=[r.page.change.usage];
+      } else if (opts.refresh) continue;                 // never built, or nothing changed: nothing to check
       (edits.pins||[]).forEach(f=>{ if ((edits.approved||[]).includes(f.id) && !(ledger.finds||[]).some(x=>x.id===f.id||x.url===f.url)){
         ledger.vetoed=(ledger.vetoed||[]).filter(v=>v.id!==f.id); ledger.finds.push(Object.assign({}, f, {story_id:key, found_by:'search', added_by:'editor'})); ledgerChanged=true; } });
-      bsxApprove(ledger, new Set(edits.approved||[]), key, bsxLibrary(draft||{stories:[]}, ledger));
+      bsxApprove(ledger, new Set(edits.approved||[]), key, bspLibFor(bsxLibrary(draft||{stories:[]}, ledger), d0));
       if ((edits.approved||[]).length) ledgerChanged=true;
       edits.keep=Array.from(new Set((edits.keep||[]).concat(edits.approved||[])));
-      let c=prev;
+      let c=prev, buildCost=refreshCost, turnOut=null;
       const m=opts.modify&&opts.modify[key];
-      if (opts.refile && prev){ /* the shelf moves; the page stays */ }
+      if (opts.refresh){ /* checked above; the page is otherwise left as it is */ }
+      else if (opts.refile && prev){ /* the shelf moves; the page stays */ }
+      else if (opts.restore && prev){                       // a version or a document brought back after Build: the page follows
+        BSR_DRAFT_STATE='Bringing it back and rewriting the page, keeping every line already there…'; render();
+        const cost=[]; c=await bspRebuildKeep(story, Object.assign(restored, {built_at:new Date().toISOString()}), prev, bspLibFor(bsxLibrary(draft||{stories:[]}, ledger), d0), edits, cost);
+        buildCost=cost; turnOut={proposal:restored, chat:((d0&&d0.chat)||[]).concat([{role:'restore', text:rnote, at:new Date().toISOString()}]), label:rnote};
+        if (restored.category && restored.category!==prev.row){ const id=bsrRowResolve(restored.category); if (id){ L.backstoryRow=id; L.rowByEditor=true; saveLineup(); } }
+        const E=bsEdits(L), back=(E.off||[]).filter(i=>restored.objects.includes(i)); if (back.length){ E.off=E.off.filter(i=>!back.includes(i)); edits.off=E.off; saveLineup(); }
+      }
+      else if (opts.turn && prev){                          // T-0124: the conversation after Build changes the page
+        await bspEnsureArena();
+        const msg=String((opts.turn[key]||{}).message||'');
+        BSR_DRAFT_STATE='Opus is reading "'+msg.slice(0,60)+'"… the page follows; searching if it needs to, up to a few minutes'; render();
+        const t=await bspAfter(story, (d0&&d0.proposal)||null, prev, (d0&&d0.chat)||[], bspLibFor(bsxLibrary(draft||{stories:[]}, ledger), d0), edits, msg, rowNames, rejected);
+        c=t.page; buildCost=t.cost; turnOut={proposal:t.proposal, chat:t.chat, label:'After: \u201c'+msg.slice(0,60)+'\u201d'};
+        if (t.proposal.category && t.proposal.category!==prev.row){ const id=bsrRowResolve(t.proposal.category); if (id){ L.backstoryRow=id; L.rowByEditor=true; saveLineup(); } }
+        // a part rewritten here is the editor's direction, recorded as its revise box records it; typed words for it give way
+        const parts=Object.keys(t.parts||{}), E=bsEdits(L);
+        if (parts.length){ E.modify=Object.assign({}, E.modify, t.parts); const tx=Object.assign({}, E.text||{}); parts.forEach(k=>delete tx[k]); E.text=tx;
+          E.removed=(E.removed||[]).filter(k=>!parts.includes(k)); edits.text=tx; edits.modify=E.modify; edits.removed=E.removed; }
+        // a document the editor asked for again comes off the removed list
+        const back=(E.off||[]).filter(i=>t.proposal.objects.includes(i)); if (back.length){ E.off=E.off.filter(i=>!back.includes(i)); edits.off=E.off; }
+        if (parts.length || back.length) saveLineup();
+      }
+      else if (opts.build && d0 && d0.proposal){            // T-0123: Build writes the page from what was agreed
+        BSR_DRAFT_STATE='Building "'+story.headline.slice(0,50)+'" from its proposal…'; render();
+        c=await bspBuild(story, d0.proposal, bspLibFor(bsxLibrary(draft||{stories:[]}, ledger), d0), edits);
+        buildCost=c.cost; delete c.cost;
+        current=true;
+      }
       else if (m && prev){
         BSR_DRAFT_STATE='Revising '+m.comp+' on "'+story.headline.slice(0,50)+'"…'+(m.comp==='documents'?' searching first, a minute or two':''); render();
         if (m.comp==='documents'){                       // find what the note asks for, then re-choose
@@ -5164,12 +5944,12 @@ async function bsxRun(keys, opts){
           ledgerChanged=true; prev.research=res.note;
           edits.pool=Array.from(new Set((res.added||[]).map(f=>f.id).concat(edits.pool||[])));
         }
-        c=await bsxRevise(prev, m.comp, m.note, story, bsxLibrary(draft||{stories:[]}, ledger), edits, rejected, rowNames);
+        c=await bsxRevise(prev, m.comp, m.note, story, bspLibFor(bsxLibrary(draft||{stories:[]}, ledger), d0), edits, rejected, rowNames);
         c.research=prev.research||null;
         if (m.comp==='row' && c.row && !L.rowByEditor){ const id=bsrRowResolve(c.row); if (id){ L.backstoryRow=id; saveLineup(); } }
       } else {
         BSR_DRAFT_STATE='Building "'+story.headline.slice(0,50)+'"…'; render();
-        c=await bsxCompose(story, null, null, bsxLibrary(draft||{stories:[]}, ledger), edits, rejected, rowNames);
+        c=await bsxCompose(story, null, null, bspLibFor(bsxLibrary(draft||{stories:[]}, ledger), d0), edits, rejected, rowNames);
         // Thin after the matrix and the editor's library: one web search on the gaps the build named, then one
         // rebuild (the editor, 2026-11-04). bsxResearch skips a subject searched in the last 30 days and offers
         // its finds again instead, so this costs a search at most once per subject a month.
@@ -5182,7 +5962,7 @@ async function bsxRun(keys, opts){
             if (fresh.length){
               edits.pool=fresh.concat(edits.pool||[]);
               BSR_DRAFT_STATE='Rebuilding "'+story.headline.slice(0,50)+'" with '+fresh.length+' found document(s)…'; render();
-              const c2=await bsxCompose(story, null, null, bsxLibrary(draft||{stories:[]}, ledger), edits, rejected, rowNames);
+              const c2=await bsxCompose(story, null, null, bspLibFor(bsxLibrary(draft||{stories:[]}, ledger), d0), edits, rejected, rowNames);
               const u1=c.usage||{}, u2=c2.usage||{};
               c2.usage={input_tokens:(u1.input_tokens||0)+(u2.input_tokens||0), output_tokens:(u1.output_tokens||0)+(u2.output_tokens||0)};
               c=c2;
@@ -5202,9 +5982,11 @@ async function bsxRun(keys, opts){
       // the row: the editor's if set; otherwise the one the page proposed (an existing row when the name matches)
       if (!L.backstoryRow && c && c.row){ const id=bsrRowResolve(c.row); if (id){ L.backstoryRow=id; L.rowByEditor=false; saveLineup(); } }
       if (!L.backstoryRow) throw new Error('no row could be set');
-      done[key]={composed:c};
-    } catch(err){ failed.push('"'+String((byKey[key]||{}).headline||key).slice(0,50)+'": '+err.message); } }
+      done[key]=Object.assign({composed:c, current:current, changed:changed, built:!!(opts.build && c), cost:buildCost}, turnOut||{});
+    } catch(err){ failed.push('"'+String((byKey[key]||{}).headline||key).slice(0,50)+'": '+err.message); }
+    finally { if (opts.prog) progStep(opts.prog); } }
     if (!Object.keys(done).length && failed.length) throw new Error(failed.join(' | '));
+    if (!Object.keys(done).length){ BSR_DRAFT_STATE=''; return; }      // nothing to save (a check with nothing changed, a proposal kept)
     if (ledgerChanged){
       for (let i=0; i<2; i++){ if (await bsxPut(BSX_LEDGER, ledger, lsha, 'backstory research: from Pulse')) break;
         const fresh=await bsxLedger(); lsha=fresh.sha; ['subjects','finds','vetoed','candidates'].forEach(k=>{ if (k==='subjects') Object.assign(fresh.ledger.subjects, ledger.subjects); else {
@@ -5217,25 +5999,36 @@ async function bsxRun(keys, opts){
     for (let i=0; i<3 && !ok; i++){
       const g=await bsxGet(GH_DRAFT_OUT); draft=await bsxEnsureEntries(g.data, Object.keys(done), byKey);
       (draft.stories||[]).forEach(d=>{ const x=done[d.story_id]; if (!x) return; const s=byKey[d.story_id];
-        Object.assign(d, {composed:x.composed, bs_hash:s.bs_hash, bs_text_hash:s.bs_text_hash, bs_edits_applied:s.bs_edits||{}});
+        d.bsp_cost=bspAddCost(d.bsp_cost, x.cost);                      // T-0123: what this story's Backstory has cost, by model
+        if (x.proposal){ d.versions=bspKeepVersions(d.versions, d.proposal, x.proposal, x.label||''); d.proposal=x.proposal; d.chat=x.chat; d.proposal_story_hash=s.bs_story_hash; }
+        if (!x.composed) return;                                          // a proposal: no page yet
+        // a page whose history may have moved, or whose check failed, keeps the old fingerprints: it still reads as
+        // changed until the editor rebuilds (T-0122); it ships as last built either way
+        if (x.current) Object.assign(d, {bs_hash:s.bs_hash, bs_text_hash:s.bs_text_hash, bs_story_hash:s.bs_story_hash});
+        Object.assign(d, {composed:x.composed, bs_edits_applied:s.bs_edits||{}});
+        // one thread before and after Build (T-0124): the build is marked in it
+        if (x.built && d.proposal){ d.proposal.built_at=new Date().toISOString(); d.chat=(d.chat||[]).concat([{role:'build', text:'Page built from the proposal.', at:d.proposal.built_at}]); }
+        if (x.changed && !(x.composed.change||{}).error) d.change_checked_for=s.bs_story_hash;
         d.pairing.line=x.composed.here; const p=draft.ship.todays_pairings.find(q=>q.story_id===d.story_id); if (p) p.line=x.composed.here; });
       draft.generated=new Date().toISOString(); draft.composed_in='pulse'; draft.contract='2026-11-02';
       ok=await bsxPut(GH_DRAFT_OUT, draft, g.sha, 'backstory: '+Object.keys(done).length+' page(s) from Pulse');
     }
     if (!ok) throw new Error('the draft kept changing under the save; try again');
     BSR_DRAFT=draft; BSX_LED=ledger;
-    if (!opts.modify){ const today=new Date().toISOString().slice(0,10), seen=new Set();
+    if (opts.build){ const today=new Date().toISOString().slice(0,10), seen=new Set();
       for (const k of Object.keys(done)){ const L=LINEUP.find(x=>x.key===k), rid=L&&L.backstoryRow; if (!rid || seen.has(rid)) continue; seen.add(rid);
         const tried=((BSR_DRAFT.ship||{}).indicator_tried||{})[rid];
         if (bsxRowIndicator(BSR_DRAFT, rid) || (tried && tried.at===today) || done[k].composed.chart_removed) continue;
         BSR_DRAFT_STATE='Looking for a trend line for '+bsrRowTitle(rid)+'\u2026 a minute or so'; render();
         try { await bsxFindChart(L, '', true); } catch(e){ failed.push('trend line for '+bsrRowTitle(rid)+': '+e.message); } } }
-    if (keys.length===1) Object.keys(done).forEach(k=>{ BSR_PREV_OPEN[k]=true; });   // one story: open it for review
+    if (keys.length===1 && !opts.refresh) Object.keys(done).forEach(k=>{ BSR_PREV_OPEN[k]=true; });   // one story: open it for review
     BSR_DRAFT_STATE=failed.length ? 'Done '+Object.keys(done).length+' of '+(Object.keys(done).length+failed.length)+'. Not done: '+failed.join(' | ') : '';
   } catch(e){ BSR_DRAFT_STATE='Backstory failed: '+e.message; }
   finally {
-    BSX_BUSY=false; bsrRefreshHashes(); render();
-    if (BSX_NEXT && BSX_NEXT.length){ const n=BSX_NEXT.shift(); bsrRefreshHashes().then(()=>bsxRun(n.keys, n.opts)); }
+    BSX_BUSY=false;
+    if (opts.prog){ const st=String(BSR_DRAFT_STATE||''); progDone(opts.prog, !/^Backstory failed/.test(st), st.replace(/^Backstory failed: /,'').slice(0,140)); }
+    bsrRefreshHashes(); render();
+    if (BSX_NEXT && BSX_NEXT.length){ const n=BSX_NEXT.shift(); bsrRefreshHashes().then(()=>bsxRun(n.keys, n.opts)).then(()=>{ if (n.resolve) n.resolve(); }); }
   }
 }
 // Remove (no model): an item or a component taken off the page, saved straight into the draft. Items stay off on
@@ -5296,19 +6089,114 @@ async function bsxPatch(s, mutate){
     const g=await bsxGet(GH_DRAFT_OUT); const draft=g.data; if (!draft) return false;
     const d=(draft.stories||[]).find(x=>x.story_id===s.key); if (!d || !d.composed) return false;
     mutate(d.composed);
-    Object.assign(d, {bs_hash:cur.bs_hash, bs_text_hash:cur.bs_text_hash, bs_edits_applied:cur.bs_edits||{}});
+    // an edit on a story that changed since its page was built does not make the page current: the check does (T-0122)
+    if (!bsxStoryChanged(d, cur)) Object.assign(d, {bs_hash:cur.bs_hash, bs_text_hash:cur.bs_text_hash, bs_story_hash:cur.bs_story_hash});
+    d.bs_edits_applied=cur.bs_edits||{};
     if (await bsxPut(GH_DRAFT_OUT, draft, g.sha, 'backstory: an edit from Pulse')){ BSR_DRAFT=draft; bsrRefreshHashes(); render(); return true; }
   }
   return false;
 }
 
+// ─── T-0123: the proposal and its conversation, on screen ──────────────────────────────────────────────────────────
+// The proposal is the current state, so the editor reads it, not the transcript. Under it, the conversation. Build
+// writes the page; after Build the agreed proposal and the conversation stay, folded, above the review.
+// The one warning here is the first of the two Backstory keeps: a document link that does not load.
+function bspDead(id, url){ const o=((POOL&&POOL.objects)||[]).find(x=>x.id===id || (url && x.url===url)); return !!(o && o.link_status==='dead'); }
+const BSP_DEAD='<span class="chip" style="background:#f7dcd6;color:#9a3a25" title="the link checker found this page does not load">link does not load</span>';
+function bspDocHtml(p, id){
+  const o=(p.docs||{})[id]||{id:id, title:id};
+  return `<a href="${esc(o.url||'#')}" target="_blank" rel="noopener"><i>${esc(o.title)}</i></a> <span style="color:var(--dim)">${esc(String(o.author||'').slice(0,60))}</span>`
+    +(o.source_kind==='news'?` <span class="chip" style="background:#f6e7c8;color:#8a5a12" title="${esc(o.why_no_primary||'')}">news report</span>`:'')
+    +(o.kind==='web'?' <span class="chip" title="found on the web in this conversation: it is in this proposal only, never in the Object Matrix">found on the web</span>':'')
+    +(bspDead(id, o.url)?' '+BSP_DEAD:'');
+}
+function bspProposalHtml(p, tickable){
+  const row=(k, v)=>`<div style="display:flex;gap:10px;margin:4px 0;align-items:baseline"><b style="font:700 10.5px sans-serif;letter-spacing:.06em;min-width:92px">${k}</b><div style="flex:1;font:14px Georgia,serif">${v}</div></div>`;
+  return row('CATEGORY', esc(p.category||'(none)'))
+    +row('CONTEST', '<i>'+esc(p.contest||'(none)')+'</i>')
+    +row('IT STARTS IN', esc(p.starts||'(none)'))
+    +row('BEGINNINGS', (p.beginnings||[]).map(b=>`<div style="margin:3px 0"><b>${esc(b.year)}</b> ${bspDocHtml(p, b.object_id)}${b.ties_to?` <span style="font:11px sans-serif;color:var(--dim)">ties to “${esc(b.ties_to)}”</span>`:''}</div>`).join('')||'<i>none</i>')
+    // Objects: every document on the page's case, the beginnings' own and the others (the editor, 2026-11-17: "name it Objects")
+    +row('OBJECTS', (p.objects||[]).slice().sort((a,b)=>String(((p.docs||{})[a]||{}).year).localeCompare(String(((p.docs||{})[b]||{}).year))).map(id=>`<div style="margin:3px 0"><b>${esc(((p.docs||{})[id]||{}).year||'')}</b> ${bspDocHtml(p, id)}${(p.beginnings||[]).some(b=>b.object_id===id)?'':' <span style="font:11px sans-serif;color:var(--dim)">not a beginning</span>'}</div>`).join('')||'<span style="color:var(--dim)">none</span>')
+    +(p.lacks?`<div style="font-size:12.5px;color:var(--dim);margin-top:6px;white-space:pre-wrap">What the library lacks: ${esc(p.lacks)}</div>`:'')
+    +((p.missing||[]).length?`<div style="margin-top:8px;border-top:1px solid var(--rule);padding-top:6px"><b style="font:700 10.5px sans-serif;letter-spacing:.06em">EVENTS WITHOUT A DOCUMENT YET</b>
+      ${tickable?'<div style="font-size:11.5px;color:var(--dim);margin:2px 0 4px">Tick the ones you want, and Opus finds a document for each and adds it to the beginnings and Objects.</div>':''}
+      ${p.missing.map((m,i)=>`<label style="display:flex;gap:7px;align-items:flex-start;margin:5px 0;font-size:13px">${tickable?`<input type="checkbox" class="bsp-miss" data-i="${i}" style="margin-top:3px">`:''}<span><b>${esc(m.year)}</b> ${esc(m.event)}${m.why?`<br><span style="font:12.5px Georgia,serif">${esc(m.why)}</span>`:''}${m.look_for?`<br><span style="font-size:11.5px;color:var(--dim)">look for: ${esc(m.look_for)}</span>`:''}${m.not_placed?`<br><span style="font-size:11.5px">not placed last time: ${esc(m.not_placed)}</span>`:''}</span></label>`).join('')}
+      ${tickable?'<button class="mini go bsp-miss-go">find documents and add the ticked ones</button>':''}</div>`:'');
+}
+function bspChatHtml(chat){
+  return (chat||[]).map(m=>m.role==='restore' ? `<div class="bsp-m-restore" style="margin:6px 0;font-size:12px;color:var(--dim)">${esc(m.text)}</div>`
+    : m.role==='build' ? `<div class="bsp-m-build" style="margin:8px 0;font:700 10.5px sans-serif;letter-spacing:.06em;color:var(--dim);border-top:1px solid var(--rule);padding-top:4px">PAGE BUILT &middot; ${esc(rel(m.at))} ago</div>`
+    : m.role==='editor'
+    ? `<div class="bsp-m-editor" style="margin:6px 0 2px;font-size:13px"><b>You:</b> ${esc(m.text)}</div>`
+    : `<div class="bsp-m-historian" style="margin:2px 0 6px 14px;font-size:13px">`
+      +(m.dropped&&m.dropped.length?`<div style="margin-bottom:3px"><b>Pulse turned down ${m.dropped.length} of the documents Opus found</b>, so ${m.dropped.length===1?'it is':'they are'} not on the page. Any event you asked for is back on the tick list.</div>`:'')
+      +`<b>Opus:</b> ${esc(m.text)}`
+      +(m.changed&&m.changed.length?`<div style="font-size:12px;color:var(--dim)">Changed: ${esc(m.changed.join('; '))}</div>`:'<div style="font-size:12px;color:var(--dim)">No change to the proposal.</div>')
+      +(m.dropped&&m.dropped.length?`<div style="font-size:12px">Turned down: ${esc(m.dropped.map(x=>(x.year?x.year+' ':'')+x.title+' ('+x.reason+')').join('; '))}</div>`:'')
+      +(m.searched?`<div style="font-size:11px;color:var(--dim)">searched the web ${m.searched===1?'once':m.searched+' times'}</div>`:'')+'</div>').join('');
+}
+// Earlier versions, on screen: a dropdown; the one picked shows under the current proposal with "add back" on each
+// beginning or document the current one lacks, and "use this whole version".
+const BSP_VER_OPEN={};
+function bspVersionsHtml(s, d, enabled){
+  const vs=d.versions||[]; if (vs.length<2) return '';
+  const cur=d.proposal||{}, i=BSP_VER_OPEN[s.key], on=new Set(cur.objects||[]);
+  const opts=vs.map((v,k)=>({v, k})).reverse().map(({v,k})=>`<option value="${k}"${String(i)===String(k)?' selected':''}>${esc(v.label||'Version '+(k+1))} \u00b7 ${esc(rel(v.at))} ago${k===vs.length-1?' (now)':''}</option>`).join('');
+  let shown='';
+  const ver=i!==undefined&&vs[i]?vs[i].proposal:null;
+  if (ver){
+    const row=(id, b)=>{ const o=(ver.docs||{})[id]||{}; return `<div style="display:flex;gap:7px;align-items:baseline;margin:4px 0;font-size:13px"><b>${esc((b&&b.year)||o.year||'')}</b><span style="flex:1"><a href="${esc(o.url||'#')}" target="_blank" rel="noopener"><i>${esc(o.title||id)}</i></a>${b?'':' <span style="font-size:11px;color:var(--dim)">an Object</span>'}</span>`
+      +(on.has(id)?'<span class="chip">in the current one</span>':`<button class="mini bsp-ver-add" data-v="${i}" data-id="${esc(id)}"${enabled?'':' disabled'}>add back</button>`)+'</div>'; };
+    shown=`<div style="border:1px dashed var(--ink);padding:6px 9px;margin-top:6px;background:#fffdf6">
+      <div style="font-size:12px;margin-bottom:4px"><b>${esc(ver.category||'')}</b> &middot; starts ${esc(ver.starts||'')}<br><i style="font:13px Georgia,serif">${esc(ver.contest||'')}</i></div>
+      ${(ver.beginnings||[]).map(b=>row(b.object_id, b)).join('')}${(ver.later||[]).map(id=>row(id, null)).join('')}
+      <button class="mini bsp-ver-use" data-v="${i}"${enabled&&i!==vs.length-1?'':' disabled'} style="margin-top:4px">use this whole version</button>
+      ${(d.composed&&d.composed.v===2)?'<span style="font-size:11px;color:var(--dim)"> The page is rewritten from it, keeping every line already there.</span>':''}</div>`;
+  }
+  return `<div style="margin-top:8px"><select class="bsp-ver" style="font-size:12px"><option value="">Earlier versions (${vs.length})</option>${opts}</select>${shown}</div>`;
+}
+function bspCostText(d){
+  const c=d.bsp_cost||{}, n=Object.values(c).reduce((t,a)=>t+a.calls,0); if (!n) return '';
+  return 'This story’s Backstory so far: about $'+bspDollars(c).toFixed(2)+' ('+Object.entries(c).map(([m,a])=>a.calls+' '+m.replace(/^claude-|-\d.*$/g,'')+(a.searches?', '+a.searches+' search'+(a.searches===1?'':'es'):'')).join(', ')+')';
+}
+function bspHtml(s, d){
+  const p=d.proposal, chat=d.chat||[], running=bsrRunning();
+  return `<div class="bsr-prev bsp" data-key="${esc(s.key)}" style="flex-basis:100%;margin:6px 0 2px 26px;padding:8px 10px;border:1px solid var(--ink);background:#faf8f3">
+    <div style="font-size:11px;color:var(--dim);margin-bottom:6px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">BACKSTORY PROPOSAL &middot; ${esc(rel(p.at))} ago &middot; nothing is written until you press Build
+      <button class="mini go bsp-build"${running?' disabled':''} title="Write the page from this proposal, keeping the category, contest, It starts in, beginnings and documents as they stand.">Build</button>
+      <button class="mini bsr-prev-close">close</button></div>
+    ${BSR_DRAFT_STATE?`<div style="padding:5px 8px;margin-bottom:6px;border:1px solid var(--ink);font-size:12.5px"><b>${esc(BSR_DRAFT_STATE)}</b></div>`:''}
+    <div style="border:1px solid var(--rule);background:#fff;padding:8px 10px">${bspProposalHtml(p, !running)}${bspVersionsHtml(s, d, !running)}</div>
+    <div style="margin-top:8px"><b style="font:700 11px sans-serif;letter-spacing:.06em">TALK IT THROUGH</b>
+      <div style="font-size:12px;color:var(--dim);margin:2px 0 4px">Say what is off: the scope, a beginning, a document, the category. Each answer changes the proposal above. If it looks right, press Build.</div>
+      ${bspChatHtml(chat)}
+      <div style="display:flex;gap:6px;margin-top:4px"><textarea class="bsp-msg" rows="2" placeholder="e.g. this starts too late: reach back to the 1971 campaign finance law" style="flex:1;min-width:260px"></textarea><button class="mini go bsp-send"${running?' disabled':''}>send</button></div>
+    </div>
+    <div style="font-size:11px;color:var(--dim);margin-top:4px">${esc(bspCostText(d))}</div></div>`;
+}
+/* BSX:END */
 // Text the editor writes ("keep mine", "keep my line") needs no model, so when it is the only change since the
 // draft, Pulse writes it into backstory-draft.json itself, with the story's new fingerprint, in seconds instead of
 // a workflow run (the editor, 2026-10-30). Anything that needs choosing (nudges, picks, removals) still runs.
 // A story that changed after the draft still shows what the draft chose, under a note: the old "Not filed"
 // text hid the draft's choice entirely (the editor, 2026-10-28).
+// T-0122, step two: what the change check did, said once. A page whose history may have moved offers the rebuild,
+// which is always the editor's choice. This is the second of the two Backstory warnings (T-0123).
 function bsrStaleNote(d){
-  return (d.fresh || d.editsPending) ? '' : `<div style="padding:6px 8px;margin-bottom:6px;background:#fbe8d0;font-size:12.5px"><b>This page was built before the story changed.</b> It will publish as it is, so \u201cWe are here\u201d may be a step behind the story. Rebuild it if the history itself moved.</div>`;
+  const ch=(d.composed||{}).change||null, box=(bg, html)=>`<div style="padding:6px 8px;margin-bottom:6px;background:${bg};font-size:12.5px">${html}</div>`;
+  const why=ch&&ch.why?' '+esc(ch.why):'';
+  const rebuild='<button class="mini bsc2-rebuild-changed" title="rebuild this page from the revised story">rebuild</button>';
+  if (ch && ch.moved) return box('#fbe8d0', `<b>The story changed after this page was built, and the history may have moved.</b>${why} It publishes as it is unless you rebuild. ${rebuild}`);
+  if (d.fresh || d.editsPending){
+    if (!ch) return '';
+    if (ch.here_updated) return box('#eef4e8', `<b>The story changed after this page was built.</b> “We are here” updated to follow the story; the rest of the history holds.${why}`);
+    if (ch.editor_here) return box('#fbe8d0', `<b>The story changed after this page was built.</b> The history holds. Your own “We are here” was left as you wrote it: check that it still fits.${why}`);
+    return '';
+  }
+  if (ch && ch.error) return box('#fbe8d0', `<b>The story changed after this page was built,</b> and the check against the story failed (${esc(ch.error)}). It publishes as it is. ${rebuild}`);
+  if (ch && ch.kept_because) return box('#fbe8d0', `<b>The story changed after this page was built.</b> The history holds, but the new “We are here” broke a rule (${esc(ch.kept_because)}), so the old one stands and may be a step behind. Type your own, or ${rebuild}`);
+  return box('#fbe8d0', `<b>The story changed after this page was built.</b> ${SETTINGS.antKey?'Pulse checks it against the story on its own once the story stops changing; until then':'Until it is checked against the story (that needs the Anthropic key in ⚙)'} it publishes as it is, and “We are here” may be a step behind. ${rebuild}`);
 }
 // ─── The review screen, to the contract (T-0114) ───────────────────────────────────────────────────────────────
 // One card per component, in the order the reader meets them. Doing nothing accepts. Modify: the editor's words,
@@ -5318,12 +6206,11 @@ const BSC2_LABEL={row:'Row', title:'Title', contest:'Contest', stakes:'Stakes', 
 // t(): a piece of text the editor can type over. The card's "edit words" makes them editable; "save" writes them.
 const bsc2T=(k, v, tag)=>`<${tag||'span'} class="bsc2-t" data-k="${esc(k)}">${esc(v||'')}</${tag||'span'}>`;
 function bsc2Card(s, comp, body, opt){
-  opt=opt||{}; const c=(bsrDraftFor(s)||{}).composed||{}, pr=(c.problems||{})[comp]||[], note=(c.modified||{})[comp];
+  opt=opt||{}; const c=(bsrDraftFor(s)||{}).composed||{}, note=(c.modified||{})[comp];
   return `<div class="bsc2-card" data-comp="${comp}" style="border:1px solid var(--rule);background:#fff;padding:8px 10px;margin:7px 0">
     <div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline"><b style="font:700 11px sans-serif;letter-spacing:.06em">${esc(BSC2_LABEL[comp]||comp).toUpperCase()}</b>
       <span style="font-size:11px;color:var(--dim)">${note?'revised to: '+esc(String(note).slice(0,60)):(opt.hint||'')}</span></div>
     ${body}
-    ${pr.length?`<div style="font-size:11.5px;color:var(--dim);margin-top:4px">outside the usual rule: ${esc(pr.join('; '))}</div>`:''}
     ${opt.noModify?'':`<div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap">
       ${opt.words?`<button class="mini bsc2-words" title="type your own words; saved as you write them, no model">edit words</button>`:''}
       <input class="bsc2-mod" data-comp="${comp}" placeholder="${esc(opt.ph||'or tell me what to change')}" style="flex:1;min-width:220px"><button class="mini bsc2-mod-go" data-comp="${comp}">revise</button>
@@ -5333,7 +6220,7 @@ function bsc2Card(s, comp, body, opt){
 function bsc2Html(s, d){
   const c=d.composed, rowT=bsrRowTitle(s.backstoryRow), row=d.row||{}, ind=c.chart_removed?null:(bsxRowIndicator(BSR_DRAFT, s.backstoryRow)||row.indicator||null);
   const p=t=>`<div style="font:15px Georgia,serif;margin-top:4px">${t}</div>`;
-  const begs=(c.beginnings||[]), docs=(c.case||[]), e=bsEdits(s), dirNote=(e.modify||{}).documents||'';
+  const begs=(c.beginnings||[]), docs=(c.case||[]), e=bsEdits(s), bp=bspFromPage(c, d.proposal);
   const card=readerCardHtml(Object.assign({}, row, {title:rowT}), {story_id:s.key, line:c.here||'', headline:s.title, origin:c.starts?{status:'retrieved', year:c.starts.year, line:c.starts.line}:null});
   const suggest=c.row && s.rowByEditor && c.row.toLowerCase()!==String(rowT).toLowerCase() ? `<div style="font-size:11.5px;color:var(--dim)">The story itself suggests: <b>${esc(c.row)}</b></div>` : '';
   const tried=((BSR_DRAFT.ship||{}).indicator_tried||{})[s.backstoryRow];
@@ -5349,17 +6236,19 @@ function bsc2Html(s, d){
   return `<div class="bsr-prev bsc2" data-key="${esc(s.key)}" style="flex-basis:100%;margin:6px 0 2px 26px;padding:8px 10px;border:1px solid var(--ink);background:#faf8f3">
     <div style="font-size:11px;color:var(--dim);margin-bottom:6px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">BACKSTORY &middot; built ${esc(rel(BSR_DRAFT.generated))} ago &middot; everything is accepted unless you change it
       <a class="mini" href="${esc(bscReaderUrl())}" target="_blank" rel="noopener" style="text-decoration:none;border:1px solid var(--ink);padding:2px 8px">open in the reader app</a>
-      <button class="mini bsc2-rebuild">rebuild from scratch</button><button class="mini bsr-prev-close">close</button></div>
+      <button class="mini bsc2-rebuild">${d.proposal?'rebuild from the proposal':'rebuild from scratch'}</button><button class="mini bsr-prev-close">close</button></div>
     ${bsrStaleNote(d)}
     ${BSR_DRAFT_STATE?`<div style="padding:5px 8px;margin-bottom:6px;border:1px solid var(--ink);font-size:12.5px"><b>${esc(BSR_DRAFT_STATE)}</b></div>`:''}
     <div style="margin-bottom:10px"><div style="font:700 11px sans-serif;letter-spacing:.06em;margin-bottom:4px">THE CARD READERS SEE</div>${card||'<div style="font-size:11px;color:var(--warn)">The reader\u2019s card could not be loaded.</div>'}</div>
-    <div style="border:2px solid var(--ink);background:#fff;padding:9px 11px;margin-bottom:8px">
-      <b style="font:700 11px sans-serif;letter-spacing:.06em">DIRECT THE RESEARCH</b>
-      <div style="font-size:12px;margin:3px 0 6px">This is how you steer the history: name the laws, cases, events or years it should reach, or what is missing. I search the library and the web for them, then choose the milestones, where it starts and the documents again. Title, contest and stakes stay as they are. The boxes on each part below are for smaller edits.</div>
-      ${c.thin?`<div style="padding:5px 8px;margin-bottom:6px;background:#fbe8d0;font-size:12.5px"><b>The library is thin here:</b> ${esc(c.thin)}</div>`:''}
-      <div style="display:flex;gap:6px;flex-wrap:wrap"><input class="bsc2-dir" value="${esc(dirNote)}" placeholder="e.g. reach back to the 1971 campaign finance law and the Watergate reforms" style="flex:1;min-width:280px"><button class="mini go bsc2-dir-go">research and re-choose</button></div>
+    <div class="bsp" style="border:2px solid var(--ink);background:#fff;padding:9px 11px;margin-bottom:8px">
+      <b style="font:700 11px sans-serif;letter-spacing:.06em">TALK IT THROUGH</b>
+      <div style="font-size:12px;margin:3px 0 6px">The same conversation as before Build. Ask for anything about this history: reach back to a law or a year, add or drop a document, find what the library lacks, rewrite the title, the stakes or We are here. The page follows each answer. The boxes on each part below still revise, edit words and remove.</div>
+      <details${((bp.missing||[]).length)?' open':''} style="font-size:12.5px;margin-bottom:6px"><summary>The proposal this page stands on</summary><div style="border:1px solid var(--rule);padding:6px 9px;margin-top:4px">${bspProposalHtml(bp, !bsrRunning())}</div></details>
+      ${bspVersionsHtml(s, d, !bsrRunning())}
+      ${bspChatHtml(d.chat)}
+      <div style="display:flex;gap:6px;margin-top:4px"><textarea class="bsp-msg" rows="2" placeholder="e.g. reach back to the 1949 Export Control Act, or: the stakes should be about the chip industry" style="flex:1;min-width:260px"></textarea><button class="mini go bsp-send">send</button></div>
       ${c.revise_note?`<div style="padding:5px 8px;margin:4px 0;background:#fbe8d0;font-size:12.5px">${esc(c.revise_note)}</div>`:''}
-      ${c.research?`<div style="font-size:11.5px;color:var(--dim);margin-top:4px">Last search: ${esc(c.research)}${/already searched/.test(c.research)?` <button class="mini bsc2-dir-force" title="one web search">search again anyway</button>`:''}</div>`:''}
+      ${c.research?`<div style="font-size:11.5px;color:var(--dim);margin-top:4px">Last search: ${esc(c.research)}</div>`:''}
       ${bsc2ResearchList(s, c)}
     </div>
     <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">
@@ -5372,11 +6261,10 @@ function bsc2Html(s, d){
         ${bsc2Card(s,'starts', c.starts?p('<b>'+bsc2T('starts.year', c.starts.year)+'</b> '+bsc2T('starts.line', c.starts.line)):p('(none)'), {words:!!c.starts, hint:'where the history begins'})}
         ${bsc2Card(s,'milestones', begs.map(b=>`<div style="display:flex;gap:10px;margin:5px 0;font-size:14px;align-items:flex-start"><b style="min-width:40px">${esc(b.year)}</b><span style="flex:1">${bsc2T('m:'+b.object_id, b.line)}</span><button class="mini bsc2-rm-item" data-id="${esc(b.object_id)}" style="color:var(--stale)">remove</button></div>`).join('')||'<i style="font-size:12px;color:var(--dim)">none</i>', {words:begs.length>0, hint:begs.length+' of 3 to 6', ph:'or tell me what to change in the milestones'})}
         ${bsc2Card(s,'here', p(bsc2T('here', c.here)), {words:true})}
-        ${bsc2Card(s,'documents', docs.map(o=>`<div style="margin:7px 0;font-size:13.5px"><div style="display:flex;gap:8px;align-items:baseline;flex-wrap:wrap"><b>${esc(o.year)}</b> <a href="${esc(o.source_url||'#')}" target="_blank" rel="noopener"><i>${esc(o.title)}</i></a> <span style="color:var(--dim)">${esc(o.author||'')}</span>${o.source_kind==='news'?` <span class="chip" style="background:#f6e7c8;color:#8a5a12" title="${esc(o.why_no_primary||'a secondary source: no primary source was found for this')}">news report</span>`:''}${o.kind==='library'?' <span class="chip" title="from your Are.na library; readers see no label">library</span>':''}${o.paywall?' <span class="chip" style="color:var(--warn)" title="the outlet meters or walls its pages: a reader may not get in">paywall</span>':''}</div>
+        ${bsc2Card(s,'documents', docs.map(o=>`<div style="margin:7px 0;font-size:13.5px"><div style="display:flex;gap:8px;align-items:baseline;flex-wrap:wrap"><b>${esc(o.year)}</b> <a href="${esc(o.source_url||'#')}" target="_blank" rel="noopener"><i>${esc(o.title)}</i></a> <span style="color:var(--dim)">${esc(o.author||'')}</span>${o.source_kind==='news'?` <span class="chip" style="background:#f6e7c8;color:#8a5a12" title="${esc(o.why_no_primary||'a secondary source: no primary source was found for this')}">news report</span>`:''}${o.kind==='library'?' <span class="chip" title="from your Are.na library; readers see no label">library</span>':''}${bspDead(o.object_id, o.source_url)?' '+BSP_DEAD:''}</div>
             <div style="font:13px Georgia,serif;margin-top:2px">${bsc2T('about:'+o.object_id, o.about)}${o.about?'':'<span style="color:var(--stale)">No About text yet.</span>'}</div>
-            <div style="display:flex;gap:5px;margin-top:3px;align-items:center">${o.source_kind==='news'&&!bsxPublisher(o.source_url)?'<span class="chip" title="only news from NTK\u2019s approved publishers enters the Object Matrix">news, outside the approved publishers</span>':o.kind==='library'?'<span class="chip" title="the Object Matrix is primary sources; your library stays its own tier (T-0115)">stays in your library</span>':o.kind==='matrix'?'<span class="chip">already in the Object Matrix</span>':(e.approved||[]).includes(o.object_id)?'<span class="chip">joins the Object Matrix at publish</span>':`<button class="mini bsc2-matrix" data-id="${esc(o.object_id)}" title="It is on this page either way. This also adds it to the Object Matrix, the library every Backstory draws on, when you publish.">also add to the Object Matrix</button>`}${begs.some(b=>b.object_id===o.object_id)?'':`<button class="mini bsc2-to-m" data-id="${esc(o.object_id)}" title="add it to the milestones; I write its line, and the milestones already there stay">make it a milestone</button>`}<button class="mini bsc2-rm-item" data-id="${esc(o.object_id)}" style="color:var(--stale)">remove from page</button></div></div>`).join('')||'<i style="font-size:12px;color:var(--dim)">none</i>', {words:docs.length>0, noModify:false, hint:'every one is on the page; to find others, direct the research above', ph:'or tell me what to change in the About text'})}
-        ${(c.notes||[]).length?`<details style="font-size:11.5px;color:var(--dim);margin-top:4px"><summary>${c.notes.length} note(s) from the build</summary>${c.notes.map(n=>'<div>'+esc(n)+'</div>').join('')}</details>`:''}
-        <div style="font-size:11px;color:var(--dim);margin-top:4px">${c.usage?esc(c.usage.input_tokens)+' tokens in, '+esc(c.usage.output_tokens)+' out':''}</div>
+            <div style="display:flex;gap:5px;margin-top:3px;align-items:center">${o.source_kind==='news'&&!bsxPublisher(o.source_url)?'<span class="chip" title="only news from NTK\u2019s approved publishers enters the Object Matrix">news, outside the approved publishers</span>':o.kind==='library'?'<span class="chip" title="the Object Matrix is primary sources; your library stays its own tier (T-0115)">stays in your library</span>':o.kind==='matrix'?'<span class="chip">already in the Object Matrix</span>':(e.approved||[]).includes(o.object_id)?'<span class="chip">joins the Object Matrix at publish</span>':`<button class="mini bsc2-matrix" data-id="${esc(o.object_id)}" title="It is on this page either way. This also adds it to the Object Matrix, the library every Backstory draws on, when you publish.">also add to the Object Matrix</button>`}${begs.some(b=>b.object_id===o.object_id)?'':`<button class="mini bsc2-to-m" data-id="${esc(o.object_id)}" title="add it to the milestones; I write its line, and the milestones already there stay">make it a milestone</button>`}<button class="mini bsc2-rm-item" data-id="${esc(o.object_id)}" style="color:var(--stale)">remove from page</button></div></div>`).join('')||'<i style="font-size:12px;color:var(--dim)">none</i>', {words:docs.length>0, noModify:false, hint:'every one is on the page; to find others, ask in the conversation above', ph:'or tell me what to change in the About text'})}
+        <div style="font-size:11px;color:var(--dim);margin-top:4px">${esc(bspCostText(d)||(c.usage?c.usage.input_tokens+' tokens in, '+c.usage.output_tokens+' out':''))}</div>
       </div>
     </div></div>`;
 }
@@ -5413,16 +6301,17 @@ function bsc2ResearchList(s, c){
   </div>`;
 }
 function bsc2Wire(el, s){
-  const bb=el.querySelector('.bsc2-build'); if (bb) bb.addEventListener('click',()=>{ bscBusy(bb); bsrRefreshHashes().then(()=>bsxRun([s.key], {build:true})); });
+  const bb=el.querySelector('.bsc2-build'); if (bb) bb.addEventListener('click',()=>{ bscBusy(bb); bsrRefreshHashes().then(()=>bsxRun([s.key], {propose:true})); });
+  bspWire(el, s);
   const box=el.querySelector('.bsc2'); if (!box) return;
   const running=bsrRunning();
   box.querySelectorAll('button').forEach(b=>{ if (running && !b.classList.contains('bsr-prev-close')){ b.disabled=true; b.title='A run is going; this is ready again when it finishes'; } });
-  const ready=()=>{ if ((bsrDraftFor(s)||{}).textFresh===false){ alert('This story changed since its Backstory was built. Rebuild from scratch.'); return false; } return true; };
+  // T-0122, step two: a changed story no longer refuses edits; bsxRun checks the page against the story first
   const revise=(comp, note, btn, force)=>{
     const e=bsEdits(s); e.modify=Object.assign({}, e.modify, {[comp]:note});
     e.removed=(e.removed||[]).filter(k=>k!==comp); saveLineup(); bscBusy(btn);     // revising a removed part brings it back
     if (comp==='chart'){ bsxChart(s, note); return; }
-    bsrRefreshHashes().then(()=>{ if (ready()) bsxRun([s.key], {modify:{[s.key]:{comp, note, force:!!force}}}); });
+    bsrRefreshHashes().then(()=>bsxRun([s.key], {modify:{[s.key]:{comp, note, force:!!force}}}));
   };
   // a document on the page becomes a milestone: the editor's direction, so it holds (one model call writes its line)
   box.querySelectorAll('.bsc2-to-m').forEach(b=>b.addEventListener('click',()=>{
@@ -5431,8 +6320,6 @@ function bsc2Wire(el, s){
     const before=(bsEdits(s).modify||{}).milestones;          // an earlier direction on the milestones still holds
     revise('milestones', (before?before+' Also: ':'')+'Add the document '+o.object_id+' ("'+o.title+'", '+o.year+') to the milestones, with a line saying what happened or what it reports. Keep every milestone already there: '+have.join(', ')+'.', b); }));
   const cu=box.querySelector('.bsc2-chart-use'); if (cu) cu.addEventListener('click',()=>{ bscBusy(cu); bsxUseChart(s); });
-  const df=box.querySelector('.bsc2-dir-force'); if (df) df.addEventListener('click',()=>{
-    const note=box.querySelector('.bsc2-dir').value.trim(); if (note) revise('documents', note, df, true); });
   box.querySelectorAll('.bsc2-res-add').forEach(b=>b.addEventListener('click',()=>{
     const r=(BSX_LED?bsxResearchItems(BSX_LED, s.key, bsRejected()):(((bsrDraftFor(s)||{}).composed||{}).research_items||[])).find(x=>x.id===b.dataset.id); if (!r) return;
     bscBusy(b); bsxAddResearch(s, {id:r.id, title:r.title, author:r.author, year:r.year, url:r.url, source:r.source, source_kind:r.source_kind,
@@ -5441,9 +6328,6 @@ function bsc2Wire(el, s){
     const comp=b.dataset.comp, note=box.querySelector(`.bsc2-mod[data-comp="${comp}"]`).value.trim();
     if (!note){ alert('Say what to change, then revise.'); return; }
     revise(comp==='documents'?'about':comp, note, b); }));
-  const dg=box.querySelector('.bsc2-dir-go'); if (dg) dg.addEventListener('click',()=>{
-    const note=box.querySelector('.bsc2-dir').value.trim(); if (!note){ alert('Say what the history should reach or what is missing.'); return; }
-    revise('documents', note, dg); });
   // edit words: the card's text becomes editable in place; save writes exactly what was typed
   box.querySelectorAll('.bsc2-words').forEach(b=>b.addEventListener('click',()=>{
     const card=b.closest('.bsc2-card'), ts=[...card.querySelectorAll('.bsc2-t')];
@@ -5457,8 +6341,9 @@ function bsc2Wire(el, s){
   box.querySelectorAll('.bsc2-matrix').forEach(b=>b.addEventListener('click',()=>{
     const e=bsEdits(s); e.approved=Array.from(new Set((e.approved||[]).concat([b.dataset.id]))); saveLineup(); bscBusy(b);
     bsrRefreshHashes().then(()=>bsxRun([s.key], {refile:true})); }));
+  const rc=box.querySelector('.bsc2-rebuild-changed'); if (rc) rc.addEventListener('click',()=>{ bscBusy(rc); bsrRefreshHashes().then(()=>bsxRun([s.key], {build:true})); });
   const rb=box.querySelector('.bsc2-rebuild'); if (rb) rb.addEventListener('click',()=>{
-    if (!confirm('Rebuild this story’s Backstory from scratch? Your notes and your own words are kept and applied; what you removed stays removed.')) return;
+    if (!confirm('Rebuild this story’s Backstory'+((bsrDraftFor(s)||{}).proposal?' from its proposal':' from scratch')+'? Your notes and your own words are kept and applied; what you removed stays removed.')) return;
     bscBusy(rb); bsrRefreshHashes().then(()=>bsxRun([s.key], {build:true})); });
 }
 // Chart: the row's trend line, one per row (prod's rule). After a build, a row with none gets one search (one
@@ -5528,25 +6413,44 @@ async function bsxUseChart(s){
 async function bsxChart(s, note){
   if (BSX_BUSY){ alert('A run is going. Ask for the trend line again when it finishes.'); render(); return; }
   BSR_DRAFT_STATE='Looking for a trend line for '+bsrRowTitle(s.backstoryRow)+'… a minute or so'; BSX_BUSY=true; render();
-  try { BSR_DRAFT_STATE=await bsxFindChart(s, note, false); }
-  catch(e){ BSR_DRAFT_STATE='Trend line search failed: '+e.message; }
+  const pid=progStart('bs:'+s.key, 'Trend line', ['trend'], {queue:'bsx'});
+  try { BSR_DRAFT_STATE=await bsxFindChart(s, note, false); progDone(pid); }
+  catch(e){ BSR_DRAFT_STATE='Trend line search failed: '+e.message; progDone(pid, false, e.message); }
   finally {
     BSX_BUSY=false; render();
-    if (BSX_NEXT && BSX_NEXT.length){ const n=BSX_NEXT.shift(); bsrRefreshHashes().then(()=>bsxRun(n.keys, n.opts)); }
+    if (BSX_NEXT && BSX_NEXT.length){ const n=BSX_NEXT.shift(); bsrRefreshHashes().then(()=>bsxRun(n.keys, n.opts)).then(()=>{ if (n.resolve) n.resolve(); }); }
   }
 }
 function bsrDraftPreviewHtml(s, d){ return bsc2Html(s, d); }
+function bspWire(el, s){
+  const box=el.querySelector('.bsp'); if (!box) return;
+  const send=box.querySelector('.bsp-send'), msg=box.querySelector('.bsp-msg');
+  const go=()=>{ const m=msg.value.trim(); if (!m){ alert('Say what is off, then send.'); return; }
+    bscBusy(send); bsrRefreshHashes().then(()=>bsxRun([s.key], {turn:{[s.key]:{message:m}}})); };
+  if (send) send.addEventListener('click', go);
+  if (msg) msg.addEventListener('keydown', e=>{ if (e.key==='Enter' && (e.metaKey||e.ctrlKey)) go(); });
+  const b=box.querySelector('.bsp-build'); if (b) b.addEventListener('click',()=>{ bscBusy(b); bsrRefreshHashes().then(()=>bsxRun([s.key], {build:true})); });
+  const vs=box.querySelector('.bsp-ver'); if (vs) vs.addEventListener('change',()=>{ if (vs.value==='') delete BSP_VER_OPEN[s.key]; else BSP_VER_OPEN[s.key]=+vs.value; render(); });
+  box.querySelectorAll('.bsp-ver-add').forEach(b=>b.addEventListener('click',()=>{ bscBusy(b); bsrRefreshHashes().then(()=>bsxRun([s.key], {restore:{[s.key]:{v:+b.dataset.v, id:b.dataset.id}}})); }));
+  const vu=box.querySelector('.bsp-ver-use'); if (vu) vu.addEventListener('click',()=>{ bscBusy(vu); bsrRefreshHashes().then(()=>bsxRun([s.key], {restore:{[s.key]:{v:+vu.dataset.v}}})); });
+  const mg=box.querySelector('.bsp-miss-go'); if (mg) mg.addEventListener('click',()=>{
+    const picks=[...box.querySelectorAll('.bsp-miss:checked')].map(x=>+x.dataset.i);
+    const m=bspMissingMessage(((bsrDraftFor(s)||{}).proposal||{}).missing, picks);
+    if (!m){ alert('Tick the events you want first.'); return; }
+    bscBusy(mg); bsrRefreshHashes().then(()=>bsxRun([s.key], {turn:{[s.key]:{message:m}}})); });
+}
 function bsrStoryPreviewHtml(s){
   const dr=bsrDraftFor(s);
   if (dr && dr.composed && dr.composed.v===2) return bsrDraftPreviewHtml(s, dr);
+  if (dr && dr.proposal) return bspHtml(s, dr);                    // T-0123: proposed, not built
   const box=inner=>`<div class="bsr-prev" style="flex-basis:100%;margin:6px 0 2px 26px;padding:8px 10px;border:1px dashed var(--rule);background:#faf8f3">
     <div style="font-size:11px;color:var(--dim);margin-bottom:6px">PREVIEW &middot; this story's Backstory as the reader gets it <button class="mini bsr-prev-close">close</button></div>${inner}</div>`;
   // T-0114: a story ships a Backstory only when one was built for it to the contract
   if (BSR_DRAFT_STATE && bsrRunning()) return box(`<div style="font-size:12.5px"><b>${esc(BSR_DRAFT_STATE)}</b></div>`);
   const lastFail=/^Backstory failed|Not done/.test(BSR_DRAFT_STATE||'') && String(BSR_DRAFT_STATE).includes(String(extractTruthsTags((s.packages||{}).truths||'').headline||s.title||s.key).slice(0,30)) ? `<div style="font-size:12.5px;color:var(--stale);margin-bottom:6px"><b>Last try:</b> ${esc(BSR_DRAFT_STATE)}</div>` : '';
   return box(lastFail+`<div style="font-size:12.5px">${bsxHasTruths(s)
-    ? 'Not built yet. A story without a built Backstory ships without one.'+` <button class="mini go bsc2-build">build this story's Backstory</button>`
-    : 'No Truths yet. Generate Jefferson first; the Backstory builds itself after.'}</div>`);
+    ? 'No proposal yet. Publish waits until every story has its Backstory built.'+` <button class="mini go bsc2-build">propose this story's Backstory</button>`
+    : 'No Truths yet. Generate Jefferson first; it proposes the Backstory after.'}</div>`);
 }
 function bsrKwWire(el, s){
   const kw=el.querySelector('.bsr-lu-kw');
@@ -5591,11 +6495,10 @@ function bsrTagControl(s){
 // and docs/decisions.md keeps Backstory additive. Pure, so it can be tested.
 function rowPreflight(stories, cats){
   // T-0114, T-0122: a story ships the Backstory built for it in Pulse; only an unbuilt story ships none. Say so before publish.
-  const warn = [], none = [], changed = [];
+  const warn = [], changed = [];
   stories.forEach(s => { const d = (typeof bsrDraftFor === 'function') ? bsrDraftFor({key: s.key}) : null;
     const name = '"' + String(s.headline || s.key).slice(0, 40) + '"';
-    if (!d || !d.composed || d.composed.v !== 2) none.push(name); else if (!d.fresh) changed.push(name); });
-  if (none.length) warn.push(none.length + ' stor' + (none.length === 1 ? 'y has' : 'ies have') + ' no Backstory built and will ship without one: ' + none.join(', '));
+    if (d && d.composed && d.composed.v === 2 && !d.fresh) changed.push(name); });   // an unbuilt story never gets here: publish stopped (T-0123)
   if (changed.length) warn.push(changed.length + ' stor' + (changed.length === 1 ? 'y' : 'ies') + ' changed after the Backstory was built. The page ships as last built, so "We are here" may be behind the story: ' + changed.join(', '));
   return warn;
 }
@@ -5707,7 +6610,7 @@ function renderLineup(root){
     <span class="copied">${copiedFlag==='all'?'copied':copiedFlag==='site'?'copied':''}</span>
     <span id="publish-status" style="font-size:10.5px;color:var(--warn)"></span>
     <span id="last-pub" style="font-size:10.5px;color:var(--dim)"></span>
-  </div>`;
+  </div><div style="margin:0 0 6px">${progBarHtml('lineup')}${progBarHtml('today')}${progBarHtml('publish')}</div>`;
   if (Q.open){
     const qp = document.createElement('div'); qp.className='qpanel';
     qp.innerHTML = `<div class="qrow">
@@ -5875,7 +6778,7 @@ function renderLineup(root){
       `<span class="concept-status ${s.conceptChecked?(s.conceptUri?'ok':'miss'):'unchecked'}">`+
         (s.conceptChecked ? (s.conceptUri ? '✓ '+esc(s.conceptMatch||s.conceptEntity) : '✕ no match') : (s.conceptEntity?'unchecked':''))+
       `</span></div>`+
-      `<div class="story-status${s.err?' err':''}">${esc(s.status||'')}</div>`+
+      `<div class="story-status${s.err?' err':''}">${esc(s.status||'')}</div>`+progBarHtml('story:'+s.key)+
       `<div class="ctx-row"><textarea class="wiki-ids" placeholder="Wikipedia IDs, one per line — Page, Page#Section_anchor, or Category:Name (expands to its 15 most recent pages)">${esc(s.wikiIds||'')}</textarea>`+
       `<button class="mini summon" ${s.busy?'disabled':''}>Step 3 · ${s.contextAt?'Re-summon':'Summon context'}</button></div>`+
       `<div><button class="mini primary enr" ${s.busy?'disabled':''}>Step 4 · ${s.enrichedAt?'Re-enrich':'Enrich sources'}</button> `+
@@ -5904,7 +6807,7 @@ function renderLineup(root){
         `<div class="body" data-sec="${x}" title="click to edit">${mdToHtml(esc(s.packages[x]||'')).split(/\n{2,}/).map(p=>p.startsWith('<')?p:'<p>'+p+'</p>').join('')}</div>`).join('')+`</div>`:'');
 
     el.querySelector('.story-title').addEventListener('change',e=>{ s.title=e.target.value; saveLineup(); });
-    el.querySelector('.punch-up').addEventListener('click',()=>punchUpHeadline(s));
+    el.querySelector('.punch-up').addEventListener('click',()=>punchUpHeadlineWithProgress(s));
     el.querySelector('.img-file').addEventListener('change',e=>{
       handleStoryImageUpload(s, e.target.files[0]);
     });
@@ -6322,7 +7225,7 @@ function renderToday(root){
       <span style="font-size:11px;color:var(--dim);align-self:center">${n} of ${LINEUP.length} lineup stories have finished Truths — feeds this generation</span>
       <span class="spacer"></span>
       ${TODAY_OV.generatedAt ? `<span style="font-size:11px;color:var(--dim);align-self:center">generated ${rel(TODAY_OV.generatedAt)} ago</span>` : ''}
-    </div>
+    </div>${progBarHtml('today')}
     <div class="ed-head out" style="margin-top:8px">
       <div style="font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">
         Today overview — click the text below to edit the raw draft
@@ -6364,6 +7267,7 @@ function render(){
   const root=document.getElementById('view');
   try { bsrEnsureRowList(); } catch(e){}                 // T-0113: the row suggestions both tabs share
   if (!BSR_DRAFT_LOADED && TAB==='lineup'){ BSR_DRAFT_LOADED=true; loadBsrDraft().then(d=>{ if (d) render(); }); }   // its draft chips
+  if (BSR_DRAFT && TAB==='lineup') bsrRefreshHashes();       // T-0122: a story revised here is checked against its page
   document.getElementById('notesBadge').textContent = NOTES.items.length ? ' '+NOTES.items.length : '';
   document.getElementById('tab-stream').classList.toggle('on', TAB==='stream');
   document.getElementById('tab-lineup').classList.toggle('on', TAB==='lineup');

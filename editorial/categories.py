@@ -36,6 +36,14 @@ category's lenses (unless the editor put it there) and be dated before the origi
 import re
 
 DENY_HOSTS = ("wikipedia.org", "amazon.", "abebooks.", "ebay.", "goodreads.", "scribd.", "studocu.", "coursehero.", "quizlet.", "unz.com")
+
+
+def denied(host: str) -> bool:
+    """A refused host, matched on whole names, as Pulse's catDenied: "amazon." refuses amazon.com and www.amazon.co.uk,
+    not aboutamazon.com (Amazon's own press site). It used to match any host containing the text (2026-11-18)."""
+    host = (host or "").lower()
+    return any((host.startswith(d) or ("." + d) in host) if d.endswith(".") else (host == d or host.endswith("." + d))
+               for d in DENY_HOSTS)
 NEWS_HOSTS = ("nytimes.com","washingtonpost.com","wsj.com","apnews.com","reuters.com","bloomberg.com","politico.com","cnn.com","nbcnews.com","abcnews.","cbsnews.com","foxnews.com","theguardian.com","bbc.co","bbc.com","npr.org","latimes.com","usatoday.com","theatlantic.com","newyorker.com","time.com","newsweek.com","axios.com","vox.com","businessinsider.com","forbes.com","huffpost.com","thedailybeast.com","nypost.com","nydailynews.com","chicagotribune.com","bostonglobe.com","propublica.org","motherjones.com","slate.com","salon.com","vanityfair.com","rollingstone.com","villagevoice.com","newsday.com","inquirer.com","seattletimes.com","sfchronicle.com","miamiherald.com","pressofatlanticcity.com","nj.com","thehill.com","cnbc.com","msnbc.com","ft.com","economist.com","theintercept.com","buzzfeednews.com","yahoo.com")        # mirrors CAT_NEWS in pulse.html (T-0085)
 
 
@@ -170,7 +178,7 @@ def validate(cat, pool, spec, story_texts, origin_year=None, vocab=None):
         why = None
         if not url.startswith("https://"):
             why = "a link must start with https://"
-        elif any(d in host for d in DENY_HOSTS):
+        elif denied(host):
             why = f"{host} is not a primary source"
         elif not re.fullmatch(r"\d{3,4}", str(cu.get("year") or "")):
             why = "year must be a number"
@@ -260,7 +268,7 @@ def validate(cat, pool, spec, story_texts, origin_year=None, vocab=None):
             problems.append("indicator is missing " + ", ".join(miss)); c["indicator"] = None
         elif ind.get("verified") is not True:
             problems.append("indicator is not verified"); c["indicator"] = None
-        elif any(d in host for d in DENY_HOSTS):
+        elif denied(host):
             problems.append(f"indicator source {host} is not a primary source"); c["indicator"] = None
         elif ind.get("verified_by") == "system":
             ev = " ".join(ind.get("evidence") or [])
