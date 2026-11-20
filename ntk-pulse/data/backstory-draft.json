@@ -1,6 +1,6 @@
 {
  "_comment": "Started in Pulse (T-0113): stories filed under a row and built in the browser.",
- "generated": "2026-11-20T00:04:59.257Z",
+ "generated": "2026-11-20T00:08:24.858Z",
  "branch": "main",
  "stories": [
   {
@@ -9,7 +9,7 @@
    "pairing": {
     "story_id": "2a7ed7ee18a084fe",
     "headline": "Anthropic Raised $81.3 Billion, More Than SpaceX. Your 401(k) Probably Owns a Piece of It Soon.",
-    "row": "p-index-funds-and-retirement",
+    "row": "p-frontier-ai-oversight",
     "line": "",
     "subgenre": null,
     "confidence": 1,
@@ -18,8 +18,8 @@
     "provisional": true
    },
    "row": {
-    "id": "p-index-funds-and-retirement",
-    "title": "Index Funds and Retirement",
+    "id": "p-frontier-ai-oversight",
+    "title": "Frontier AI Oversight",
     "stratum": "provisional",
     "start_date": "2026-11-20",
     "start_line": "",
@@ -27,22 +27,40 @@
     "milestone": "",
     "beginnings": [],
     "objects": [],
-    "indicator": null,
+    "indicator": {
+     "label": "Average transparency score of leading AI developers about their frontier models (out of 100)",
+     "then_value": "58",
+     "then_year": "2024",
+     "now_value": "40",
+     "direction": "worse",
+     "source": "Stanford Center for Research on Foundation Models (Foundation Model Transparency Index)",
+     "source_url": "https://crfm.stanford.edu/fmti/December-2025/paper.pdf",
+     "as_of": "December 2025",
+     "evidence_quote": "The 2024 FMTI reported that transparency was improving, but the 2025 FMTI finds this progress has deteriorated: the average score out of 100 fell from 58 in 2024 to 40 in 2025.",
+     "note": "The Foundation Model Transparency Index scores AI developers on how much they publicly disclose about their models; the average fell from 58 in 2024 to 40 in 2025, with some criteria updated for the 2025 edition.",
+     "verified": true,
+     "verified_by": "system",
+     "evidence": [
+      "The 2024 FMTI reported that transparency was improving, but the 2025 FMTI finds this progress has deteriorated: the average score out of 100 fell from 58 in 2024 to 40 in 2025."
+     ],
+     "evidence_source": "quoted",
+     "how_checked": "The search returned this page and the quoted sentence holds both figures. Publish confirms them against the page itself."
+    },
     "auto": false
    },
    "status": "paired",
    "bsp_cost": {
     "claude-haiku-5-5": {
-     "input_tokens": 826,
-     "output_tokens": 134,
+     "input_tokens": 1740,
+     "output_tokens": 311,
      "searches": 0,
-     "calls": 1
+     "calls": 2
     },
     "claude-opus-5-5": {
-     "input_tokens": 5069,
-     "output_tokens": 5895,
-     "searches": 0,
-     "calls": 1
+     "input_tokens": 224899,
+     "output_tokens": 14894,
+     "searches": 21,
+     "calls": 2
     }
    },
    "versions": [
@@ -144,105 +162,373 @@
       "at": "2026-11-20T00:04:58.810Z",
       "model": "claude-opus-5-5"
      }
+    },
+    {
+     "at": "2026-11-20T00:08:24.858Z",
+     "label": "After: “I was thinking this is more of a history of Anthropic as tol”",
+     "proposal": {
+      "v": 1,
+      "category": "Frontier AI Oversight",
+      "contest": "Whether researchers who left Google's orbit and then OpenAI's to build AI more safely can keep that purpose inside a company funded by Amazon, Google and now public shareholders, or whether the cost of computing sets the terms for every lab that tries.",
+      "starts": "2014",
+      "beginnings": [
+       {
+        "year": "2014",
+        "object_id": "web-google-snaps-up-artificial-intelligence-2014-1co4qvx",
+        "ties_to": "Alphabet about 14%",
+        "asked": true
+       },
+       {
+        "year": "2015",
+        "object_id": "web-introducing-openai-2015-17tlml7",
+        "ties_to": "the safety pitch",
+        "asked": true
+       },
+       {
+        "year": "2019",
+        "object_id": "web-openai-lp-2019-jzxxdn",
+        "ties_to": "Computing costs are the reason",
+        "asked": true
+       },
+       {
+        "year": "2020",
+        "object_id": "web-organizational-update-from-openai-2020-8a4hp8",
+        "ties_to": "the seven co-founders",
+        "asked": true
+       },
+       {
+        "year": "2023",
+        "object_id": "web-amazon-and-anthropic-announce-strategic-2023-gqzsk1",
+        "ties_to": "Amazon owns about 15%"
+       },
+       {
+        "year": "2023",
+        "object_id": "web-anthropic-s-responsible-scaling-policy-2023-1mp705v",
+        "ties_to": "its own \"responsible scaling policy\""
+       }
+      ],
+      "later": [
+       "web-anthropic-raises-124-million-to-build-mo-2021-16uxig1",
+       "web-openai-and-elon-musk-2024-1oz0nqa"
+      ],
+      "objects": [
+       "web-google-snaps-up-artificial-intelligence-2014-1co4qvx",
+       "web-introducing-openai-2015-17tlml7",
+       "web-openai-lp-2019-jzxxdn",
+       "web-organizational-update-from-openai-2020-8a4hp8",
+       "web-amazon-and-anthropic-announce-strategic-2023-gqzsk1",
+       "web-anthropic-s-responsible-scaling-policy-2023-1mp705v",
+       "web-anthropic-raises-124-million-to-build-mo-2021-16uxig1",
+       "web-openai-and-elon-musk-2024-1oz0nqa"
+      ],
+      "docs": {
+       "web-google-snaps-up-artificial-intelligence-2014-1co4qvx": {
+        "id": "web-google-snaps-up-artificial-intelligence-2014-1co4qvx",
+        "title": "Google snaps up artificial intelligence firm DeepMind",
+        "author": "Charles Riley, CNN",
+        "year": "2014",
+        "url": "https://money.cnn.com/2014/01/27/technology/google-deepmind/",
+        "source": "CNN",
+        "kind": "web",
+        "evidence": "A Google spokesman confirmed the acquisition on Monday, but declined to comment on the purchase price.",
+        "found_at": "2026-11-20T00:08:24.453Z",
+        "source_kind": "news",
+        "why_no_primary": "Google issued no release or filing for the purchase; a spokesman confirmed it to reporters, so contemporary reporting is the record."
+       },
+       "web-introducing-openai-2015-17tlml7": {
+        "id": "web-introducing-openai-2015-17tlml7",
+        "title": "Introducing OpenAI",
+        "author": "Greg Brockman, Ilya Sutskever, OpenAI",
+        "year": "2015",
+        "url": "https://openai.com/index/introducing-openai/",
+        "source": "OpenAI",
+        "kind": "web",
+        "evidence": "Our goal is to advance digital intelligence in the way that is most likely to benefit humanity as a whole, unconstrained by a need to generate financial return.",
+        "found_at": "2026-11-20T00:08:24.454Z"
+       },
+       "web-openai-lp-2019-jzxxdn": {
+        "id": "web-openai-lp-2019-jzxxdn",
+        "title": "OpenAI LP",
+        "author": "OpenAI",
+        "year": "2019",
+        "url": "https://openai.com/index/openai-lp/",
+        "source": "OpenAI",
+        "kind": "web",
+        "evidence": "We’ve created OpenAI LP, a new “capped-profit” company that allows us to rapidly increase our investments in compute and talent while including checks and balances to actualize our mission.",
+        "found_at": "2026-11-20T00:08:24.455Z"
+       },
+       "web-organizational-update-from-openai-2020-8a4hp8": {
+        "id": "web-organizational-update-from-openai-2020-8a4hp8",
+        "title": "Organizational update from OpenAI",
+        "author": "OpenAI",
+        "year": "2020",
+        "url": "https://openai.com/index/organizational-update/",
+        "source": "OpenAI",
+        "kind": "web",
+        "evidence": "Today we’re announcing that Dario Amodei, VP of Research, is leaving OpenAI after nearly five years with the company.",
+        "found_at": "2026-11-20T00:08:24.455Z"
+       },
+       "web-amazon-and-anthropic-announce-strategic-2023-gqzsk1": {
+        "id": "web-amazon-and-anthropic-announce-strategic-2023-gqzsk1",
+        "title": "Amazon and Anthropic Announce Strategic Collaboration to Advance Generative AI",
+        "author": "Amazon and Anthropic",
+        "year": "2023",
+        "url": "https://press.aboutamazon.com/2023/9/amazon-and-anthropic-announce-strategic-collaboration-to-advance-generative-ai",
+        "source": "Amazon US Press Center",
+        "kind": "web",
+        "evidence": "Amazon will invest up to $4 billion in Anthropic and have a minority ownership position in the company.",
+        "found_at": "2026-11-20T00:08:24.455Z"
+       },
+       "web-anthropic-s-responsible-scaling-policy-2023-1mp705v": {
+        "id": "web-anthropic-s-responsible-scaling-policy-2023-1mp705v",
+        "title": "Anthropic's Responsible Scaling Policy",
+        "author": "Anthropic",
+        "year": "2023",
+        "url": "https://anthropic.com/news/anthropics-responsible-scaling-policy",
+        "source": "Anthropic",
+        "kind": "web",
+        "evidence": "Today, we’re publishing our Responsible Scaling Policy (RSP) – a series of technical and organizational protocols that we’re adopting to help us manage the risks of developing increasingly capable AI systems.",
+        "found_at": "2026-11-20T00:08:24.457Z"
+       },
+       "web-openai-and-elon-musk-2024-1oz0nqa": {
+        "id": "web-openai-and-elon-musk-2024-1oz0nqa",
+        "title": "OpenAI and Elon Musk",
+        "author": "OpenAI",
+        "year": "2024",
+        "url": "https://openai.com/index/openai-elon-musk/",
+        "source": "OpenAI",
+        "kind": "web",
+        "evidence": "Elon left OpenAI, saying there needed to be a relevant competitor to Google/DeepMind and that he was going to do it himself.",
+        "found_at": "2026-11-20T00:08:24.457Z"
+       },
+       "web-anthropic-raises-124-million-to-build-mo-2021-16uxig1": {
+        "id": "web-anthropic-raises-124-million-to-build-mo-2021-16uxig1",
+        "title": "Anthropic raises $124 million to build more reliable, general AI systems",
+        "author": "Anthropic",
+        "year": "2021",
+        "url": "https://www.anthropic.com/news/anthropic-raises-124-million-to-build-more-reliable-general-ai-systems",
+        "source": "Anthropic",
+        "kind": "web",
+        "evidence": "Anthropic, an AI safety and research company, has raised $124 million in a Series A.",
+        "found_at": "2026-11-20T00:08:24.458Z"
+       }
+      },
+      "lacks": "The library has nothing on DeepMind, OpenAI or Anthropic themselves, so every document here comes from the web.",
+      "missing": [
+       {
+        "year": "2023",
+        "event": "Google's first investment in Anthropic",
+        "why": "It made Alphabet both an owner of Anthropic and its vendor, the double role the story describes on debut day.",
+        "look_for": "Google's or Anthropic's own announcement of the investment and cloud partnership"
+       },
+       {
+        "year": "2025",
+        "event": "OpenAI's recapitalization into a public benefit corporation",
+        "why": "It finished the turn from nonprofit to for-profit that the 2019 capped-profit structure began, and it set the pattern Anthropic's listing now follows.",
+        "look_for": "OpenAI's announcement of the completed recapitalization, or the Delaware or California attorney general's statement on it"
+       }
+      ],
+      "at": "2026-11-20T00:06:28.092Z",
+      "model": "claude-opus-5-5"
+     }
     }
    ],
    "proposal": {
     "v": 1,
-    "category": "Index Funds and Retirement",
-    "contest": "Whether carrying ordinary savers into giant new listings like Anthropic through index funds shares the gains of private growth with them, or hands them risks that founders, early backers and vendors are passing on.",
-    "starts": "2023",
-    "beginnings": [],
+    "category": "Frontier AI Oversight",
+    "contest": "Whether researchers who left Google's orbit and then OpenAI's to build AI more safely can keep that purpose inside a company funded by Amazon, Google and now public shareholders, or whether the cost of computing sets the terms for every lab that tries.",
+    "starts": "2014",
+    "beginnings": [
+     {
+      "year": "2014",
+      "object_id": "web-google-snaps-up-artificial-intelligence-2014-1co4qvx",
+      "ties_to": "Alphabet about 14%",
+      "asked": true
+     },
+     {
+      "year": "2015",
+      "object_id": "web-introducing-openai-2015-17tlml7",
+      "ties_to": "the safety pitch",
+      "asked": true
+     },
+     {
+      "year": "2019",
+      "object_id": "web-openai-lp-2019-jzxxdn",
+      "ties_to": "Computing costs are the reason",
+      "asked": true
+     },
+     {
+      "year": "2020",
+      "object_id": "web-organizational-update-from-openai-2020-8a4hp8",
+      "ties_to": "the seven co-founders",
+      "asked": true
+     },
+     {
+      "year": "2023",
+      "object_id": "web-amazon-and-anthropic-announce-strategic-2023-gqzsk1",
+      "ties_to": "Amazon owns about 15%"
+     },
+     {
+      "year": "2023",
+      "object_id": "web-anthropic-s-responsible-scaling-policy-2023-1mp705v",
+      "ties_to": "its own \"responsible scaling policy\""
+     }
+    ],
     "later": [
-     "arena-8127174",
-     "2024-06-13-regulation-eu-2024-1689-the-ai-act"
+     "web-anthropic-raises-124-million-to-build-mo-2021-16uxig1",
+     "web-openai-and-elon-musk-2024-1oz0nqa"
     ],
     "objects": [
-     "arena-8127174",
-     "2024-06-13-regulation-eu-2024-1689-the-ai-act"
+     "web-google-snaps-up-artificial-intelligence-2014-1co4qvx",
+     "web-introducing-openai-2015-17tlml7",
+     "web-openai-lp-2019-jzxxdn",
+     "web-organizational-update-from-openai-2020-8a4hp8",
+     "web-amazon-and-anthropic-announce-strategic-2023-gqzsk1",
+     "web-anthropic-s-responsible-scaling-policy-2023-1mp705v",
+     "web-anthropic-raises-124-million-to-build-mo-2021-16uxig1",
+     "web-openai-and-elon-musk-2024-1oz0nqa"
     ],
     "docs": {
-     "arena-8127174": {
-      "id": "arena-8127174",
-      "title": "Corporate Insiders Pocket $1 Billion in Rush for Coronavirus Vaccine",
-      "author": "nytimes.com",
-      "year": "2020",
-      "url": "https://www.nytimes.com/2020/07/25/business/coronavirus-vaccine-profits-vaxart.html",
-      "kind": "library",
-      "about": "",
-      "source_kind": "library"
+     "web-google-snaps-up-artificial-intelligence-2014-1co4qvx": {
+      "id": "web-google-snaps-up-artificial-intelligence-2014-1co4qvx",
+      "title": "Google snaps up artificial intelligence firm DeepMind",
+      "author": "Charles Riley, CNN",
+      "year": "2014",
+      "url": "https://money.cnn.com/2014/01/27/technology/google-deepmind/",
+      "source": "CNN",
+      "kind": "web",
+      "evidence": "A Google spokesman confirmed the acquisition on Monday, but declined to comment on the purchase price.",
+      "found_at": "2026-11-20T00:08:24.453Z",
+      "source_kind": "news",
+      "why_no_primary": "Google issued no release or filing for the purchase; a spokesman confirmed it to reporters, so contemporary reporting is the record."
      },
-     "2024-06-13-regulation-eu-2024-1689-the-ai-act": {
-      "id": "2024-06-13-regulation-eu-2024-1689-the-ai-act",
-      "title": "Regulation (EU) 2024/1689 (the AI Act)",
-      "author": "European Parliament and Council",
+     "web-introducing-openai-2015-17tlml7": {
+      "id": "web-introducing-openai-2015-17tlml7",
+      "title": "Introducing OpenAI",
+      "author": "Greg Brockman, Ilya Sutskever, OpenAI",
+      "year": "2015",
+      "url": "https://openai.com/index/introducing-openai/",
+      "source": "OpenAI",
+      "kind": "web",
+      "evidence": "Our goal is to advance digital intelligence in the way that is most likely to benefit humanity as a whole, unconstrained by a need to generate financial return.",
+      "found_at": "2026-11-20T00:08:24.454Z"
+     },
+     "web-openai-lp-2019-jzxxdn": {
+      "id": "web-openai-lp-2019-jzxxdn",
+      "title": "OpenAI LP",
+      "author": "OpenAI",
+      "year": "2019",
+      "url": "https://openai.com/index/openai-lp/",
+      "source": "OpenAI",
+      "kind": "web",
+      "evidence": "We’ve created OpenAI LP, a new “capped-profit” company that allows us to rapidly increase our investments in compute and talent while including checks and balances to actualize our mission.",
+      "found_at": "2026-11-20T00:08:24.455Z"
+     },
+     "web-organizational-update-from-openai-2020-8a4hp8": {
+      "id": "web-organizational-update-from-openai-2020-8a4hp8",
+      "title": "Organizational update from OpenAI",
+      "author": "OpenAI",
+      "year": "2020",
+      "url": "https://openai.com/index/organizational-update/",
+      "source": "OpenAI",
+      "kind": "web",
+      "evidence": "Today we’re announcing that Dario Amodei, VP of Research, is leaving OpenAI after nearly five years with the company.",
+      "found_at": "2026-11-20T00:08:24.455Z"
+     },
+     "web-amazon-and-anthropic-announce-strategic-2023-gqzsk1": {
+      "id": "web-amazon-and-anthropic-announce-strategic-2023-gqzsk1",
+      "title": "Amazon and Anthropic Announce Strategic Collaboration to Advance Generative AI",
+      "author": "Amazon and Anthropic",
+      "year": "2023",
+      "url": "https://press.aboutamazon.com/2023/9/amazon-and-anthropic-announce-strategic-collaboration-to-advance-generative-ai",
+      "source": "Amazon US Press Center",
+      "kind": "web",
+      "evidence": "Amazon will invest up to $4 billion in Anthropic and have a minority ownership position in the company.",
+      "found_at": "2026-11-20T00:08:24.455Z"
+     },
+     "web-anthropic-s-responsible-scaling-policy-2023-1mp705v": {
+      "id": "web-anthropic-s-responsible-scaling-policy-2023-1mp705v",
+      "title": "Anthropic's Responsible Scaling Policy",
+      "author": "Anthropic",
+      "year": "2023",
+      "url": "https://anthropic.com/news/anthropics-responsible-scaling-policy",
+      "source": "Anthropic",
+      "kind": "web",
+      "evidence": "Today, we’re publishing our Responsible Scaling Policy (RSP) – a series of technical and organizational protocols that we’re adopting to help us manage the risks of developing increasingly capable AI systems.",
+      "found_at": "2026-11-20T00:08:24.457Z"
+     },
+     "web-openai-and-elon-musk-2024-1oz0nqa": {
+      "id": "web-openai-and-elon-musk-2024-1oz0nqa",
+      "title": "OpenAI and Elon Musk",
+      "author": "OpenAI",
       "year": "2024",
-      "url": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj",
-      "kind": "category",
-      "about": "This is a regulation adopted by the European Parliament and Council in 2024. It sets rules for the development and use of artificial intelligence systems across the European Union, including requirements based on risk level. It is described as the first comprehensive law on AI now in force in Europe."
+      "url": "https://openai.com/index/openai-elon-musk/",
+      "source": "OpenAI",
+      "kind": "web",
+      "evidence": "Elon left OpenAI, saying there needed to be a relevant competitor to Google/DeepMind and that he was going to do it himself.",
+      "found_at": "2026-11-20T00:08:24.457Z"
+     },
+     "web-anthropic-raises-124-million-to-build-mo-2021-16uxig1": {
+      "id": "web-anthropic-raises-124-million-to-build-mo-2021-16uxig1",
+      "title": "Anthropic raises $124 million to build more reliable, general AI systems",
+      "author": "Anthropic",
+      "year": "2021",
+      "url": "https://www.anthropic.com/news/anthropic-raises-124-million-to-build-more-reliable-general-ai-systems",
+      "source": "Anthropic",
+      "kind": "web",
+      "evidence": "Anthropic, an AI safety and research company, has raised $124 million in a Series A.",
+      "found_at": "2026-11-20T00:08:24.458Z"
      }
     },
-    "lacks": "The library holds nothing on American securities law, retirement saving, index investing or Anthropic's own filings, so no beginning can be placed until the documents below are found.",
+    "lacks": "The library has nothing on DeepMind, OpenAI or Anthropic themselves, so every document here comes from the web.",
     "missing": [
      {
-      "year": "1933",
-      "event": "Securities Act of 1933",
-      "why": "It created the registration statement and prospectus, the S-1 in which Anthropic disclosed both its losses and its own safety threshold, on the theory that full disclosure lets investors judge risk for themselves.",
-      "look_for": "The text of the Securities Act of 1933, Public Law 73-22, from govinfo.gov or the SEC"
-     },
-     {
-      "year": "1978",
-      "event": "Revenue Act of 1978, Section 401(k)",
-      "why": "It created the tax-deferred salary account that became the main way Americans save for retirement and the channel through which index funds now buy new listings.",
-      "look_for": "Public Law 95-600, Section 135, from govinfo.gov or the Congress.gov statutes collection"
-     },
-     {
-      "year": "1976",
-      "event": "Vanguard First Index Investment Trust launched",
-      "why": "It made buying the whole market the ordinary saver's default, so savers own whatever enters the index whether or not anyone chose it; Paul Samuelson's 1974 'Challenge to Judgment' is its paired argument.",
-      "look_for": "The fund's 1976 prospectus or SEC registration, and Samuelson, 'Challenge to Judgment,' Journal of Portfolio Management, 1974"
-     },
-     {
-      "year": "2006",
-      "event": "Pension Protection Act of 2006, automatic enrollment and default investments",
-      "why": "It let employers enroll workers automatically and place their money in default funds, the legal reason the story can say 'Nobody gets asked.'",
-      "look_for": "Public Law 109-280 from govinfo.gov, and the Labor Department's 2007 final rule on qualified default investment alternatives"
-     },
-     {
-      "year": "2012",
-      "event": "JOBS Act raises the shareholder threshold for private companies",
-      "why": "By lifting the holder limit from 500 to 2,000, it let companies like Anthropic grow to a $1.5 trillion valuation before listing, so early gains went to private backers and employees while public savers enter only at the end.",
-      "look_for": "Public Law 112-106, Title V, from govinfo.gov, paired with SEC Commissioner Luis Aguilar's 2012 public statements opposing the bill"
-     },
-     {
       "year": "2023",
-      "event": "Anthropic publishes its Responsible Scaling Policy",
-      "why": "The company's own safety commitment set the threshold it disclosed in its S-1 update, which puts a safety pledge inside a securities filing that index buyers will not read.",
-      "look_for": "Anthropic's Responsible Scaling Policy, September 2023, from anthropic.com"
+      "event": "Google's first investment in Anthropic",
+      "why": "It made Alphabet both an owner of Anthropic and its vendor, the double role the story describes on debut day.",
+      "look_for": "Google's or Anthropic's own announcement of the investment and cloud partnership"
      },
      {
-      "year": "2023",
-      "event": "Amazon and Google investments in Anthropic",
-      "why": "These deals made the two firms both owners and vendors, the arrangement behind 'Amazon owns about 15%' and the compute pledges to AWS and Google.",
-      "look_for": "Amazon's September 2023 announcement of its Anthropic investment and the corresponding Google disclosure or SEC filing"
-     },
-     {
-      "year": "2026",
-      "event": "Nasdaq adopts 'fast entry' rule for the Nasdaq-100",
-      "why": "It shortened the wait before a major new listing joins the index, which moves Anthropic into 401(k) index funds within weeks of its debut.",
-      "look_for": "Nasdaq's May 2026 methodology change notice or the related SEC rule filing"
-     },
-     {
-      "year": "2000",
-      "event": "Nasdaq Composite peak and collapse",
-      "why": "It is the closest parallel for savers holding unprofitable technology stocks at peak prices; it breaks because those firms were small and young, while Anthropic reports $16.3 billion in half-year revenue.",
-      "look_for": "The SEC or Federal Reserve record of the period, such as Alan Greenspan's December 1996 'irrational exuberance' speech as the opening voice"
+      "year": "2025",
+      "event": "OpenAI's recapitalization into a public benefit corporation",
+      "why": "It finished the turn from nonprofit to for-profit that the 2019 capped-profit structure began, and it set the pattern Anthropic's listing now follows.",
+      "look_for": "OpenAI's announcement of the completed recapitalization, or the Delaware or California attorney general's statement on it"
      }
     ],
-    "at": "2026-11-20T00:04:58.810Z",
+    "at": "2026-11-20T00:06:28.092Z",
     "model": "claude-opus-5-5",
     "left_out": []
    },
-   "chat": [],
+   "chat": [
+    {
+     "role": "editor",
+     "text": "I was thinking this is more of a history of Anthropic as told through it's conjunction and divorce from OpenAI and OpenAI's founding as a response to Google's acquisition of DeepMind",
+     "at": "2026-11-20T00:06:28.092Z"
+    },
+    {
+     "role": "historian",
+     "text": "Done. The page now runs from Google's purchase of DeepMind through OpenAI's founding, its capped-profit turn and Amodei's exit, to the Amazon money and the scaling policy in the S-1. I dropped the vaccine-insider piece and the EU AI Act. One caution: the 1915 announcement doesn't name Google. The DeepMind motive is on record in OpenAI's own 2024 post, which I put under later.",
+     "changed": [
+      "category: Index Funds and Retirement → Frontier AI Oversight",
+      "contest rewritten",
+      "It starts in: 2023 → 2014",
+      "added beginning 2014: Google snaps up artificial intelligence firm DeepMind",
+      "added beginning 2015: Introducing OpenAI",
+      "added beginning 2019: OpenAI LP",
+      "added beginning 2020: Organizational update from OpenAI",
+      "added beginning 2023: Amazon and Anthropic Announce Strategic Collaboration to Advance Gener",
+      "added beginning 2023: Anthropic's Responsible Scaling Policy",
+      "added document: Anthropic raises $124 million to build more reliable, general AI syste",
+      "added document: OpenAI and Elon Musk",
+      "dropped document: Corporate Insiders Pocket $1 Billion in Rush for Coronavirus Vaccine",
+      "dropped document: Regulation (EU) 2024/1689 (the AI Act)"
+     ],
+     "dropped": [],
+     "searched": 21,
+     "at": "2026-11-20T00:08:24.458Z",
+     "model": "claude-opus-5-5"
+    }
+   ],
    "proposal_story_hash": "15a9f3d5029e7ae52086792687eaa3bd07a0ca0f5d703b1f2b74afec9bd10b16"
   }
  ],
@@ -251,7 +537,7 @@
    {
     "story_id": "2a7ed7ee18a084fe",
     "headline": "Anthropic Raised $81.3 Billion, More Than SpaceX. Your 401(k) Probably Owns a Piece of It Soon.",
-    "row": "p-index-funds-and-retirement",
+    "row": "p-frontier-ai-oversight",
     "line": "",
     "subgenre": null,
     "confidence": 1,
@@ -260,7 +546,7 @@
     "provisional": true
    }
   ],
-  "pairings_generated": "2026-11-20T00:04:59.256Z",
+  "pairings_generated": "2026-11-20T00:08:24.858Z",
   "provisional_rows": [
    {
     "id": "p-ai",
@@ -1107,6 +1393,37 @@
     "beginnings": [],
     "objects": [],
     "indicator": null,
+    "auto": false
+   },
+   {
+    "id": "p-frontier-ai-oversight",
+    "title": "Frontier AI Oversight",
+    "stratum": "provisional",
+    "start_date": "2026-11-20",
+    "start_line": "",
+    "stakes": "",
+    "milestone": "",
+    "beginnings": [],
+    "objects": [],
+    "indicator": {
+     "label": "Average transparency score of leading AI developers about their frontier models (out of 100)",
+     "then_value": "58",
+     "then_year": "2024",
+     "now_value": "40",
+     "direction": "worse",
+     "source": "Stanford Center for Research on Foundation Models (Foundation Model Transparency Index)",
+     "source_url": "https://crfm.stanford.edu/fmti/December-2025/paper.pdf",
+     "as_of": "December 2025",
+     "evidence_quote": "The 2024 FMTI reported that transparency was improving, but the 2025 FMTI finds this progress has deteriorated: the average score out of 100 fell from 58 in 2024 to 40 in 2025.",
+     "note": "The Foundation Model Transparency Index scores AI developers on how much they publicly disclose about their models; the average fell from 58 in 2024 to 40 in 2025, with some criteria updated for the 2025 edition.",
+     "verified": true,
+     "verified_by": "system",
+     "evidence": [
+      "The 2024 FMTI reported that transparency was improving, but the 2025 FMTI finds this progress has deteriorated: the average score out of 100 fell from 58 in 2024 to 40 in 2025."
+     ],
+     "evidence_source": "quoted",
+     "how_checked": "The search returned this page and the quoted sentence holds both figures. Publish confirms them against the page itself."
+    },
     "auto": false
    }
   ],
@@ -2974,6 +3291,53 @@
      "lenses": [],
      "subgenres": [],
      "indicator": null,
+     "objects": [],
+     "beginnings": [],
+     "custom_objects": [],
+     "approved_objects": [],
+     "by": {
+      "editor": true
+     },
+     "revisions": [],
+     "start_date": "2026-11-20",
+     "start_line": "",
+     "last_story": "2026-11-20"
+    },
+    {
+     "id": "p-frontier-ai-oversight",
+     "title": "Frontier AI Oversight",
+     "status": "provisional",
+     "created": "2026-11-20",
+     "stories": [
+      {
+       "story_id": "2a7ed7ee18a084fe",
+       "date": "2026-11-20",
+       "headline": "Anthropic Raised $81.3 Billion, More Than SpaceX. Your 401(k) Probably Owns a Piece of It Soon."
+      }
+     ],
+     "contest": "",
+     "stakes": "",
+     "lenses": [],
+     "subgenres": [],
+     "indicator": {
+      "label": "Average transparency score of leading AI developers about their frontier models (out of 100)",
+      "then_value": "58",
+      "then_year": "2024",
+      "now_value": "40",
+      "direction": "worse",
+      "source": "Stanford Center for Research on Foundation Models (Foundation Model Transparency Index)",
+      "source_url": "https://crfm.stanford.edu/fmti/December-2025/paper.pdf",
+      "as_of": "December 2025",
+      "evidence_quote": "The 2024 FMTI reported that transparency was improving, but the 2025 FMTI finds this progress has deteriorated: the average score out of 100 fell from 58 in 2024 to 40 in 2025.",
+      "note": "The Foundation Model Transparency Index scores AI developers on how much they publicly disclose about their models; the average fell from 58 in 2024 to 40 in 2025, with some criteria updated for the 2025 edition.",
+      "verified": true,
+      "verified_by": "system",
+      "evidence": [
+       "The 2024 FMTI reported that transparency was improving, but the 2025 FMTI finds this progress has deteriorated: the average score out of 100 fell from 58 in 2024 to 40 in 2025."
+      ],
+      "evidence_source": "quoted",
+      "how_checked": "The search returned this page and the quoted sentence holds both figures. Publish confirms them against the page itself."
+     },
      "objects": [],
      "beginnings": [],
      "custom_objects": [],
