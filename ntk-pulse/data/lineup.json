@@ -1,5 +1,5 @@
 {
- "assembled_at": "2026-11-25T03:25:25.816563+00:00",
+ "assembled_at": "2026-11-25T13:58:26.980369+00:00",
  "slot_plan": "A",
  "displacement": "MANUAL",
  "daytype": "weekday",
@@ -7,60 +7,106 @@
   8,
   10
  ],
- "actual_size": 44,
+ "actual_size": 10,
  "lint_failures": [
-  "under 3 fully self-contained items",
-  "no item answers 'what do I do with this'"
+  "under 3 fully self-contained items"
  ],
  "slots_unfilled": [],
  "stories": [
   {
    "slot": "unavoidable",
    "slot_label": "Unavoidable",
-   "key": "3bad148f39b590ce",
-   "title": "Abrego Garcia agrees to leave US for Spain, ending 20-month deportation fight",
-   "beat": "national",
-   "publisher_count": 10,
+   "key": "0129899ae578ef54",
+   "title": "US proposes new tariffs on 14 trading partners, including China and the EU",
+   "beat": "business",
+   "publisher_count": 9,
    "publishers": [
-    "BBC",
-    "New York Times",
+    "Financial Times",
     "The Guardian",
-    "Washington Post",
-    "Al Jazeera",
+    "Yahoo News",
+    "ABC News",
     "CBS News",
-    "Fox News",
-    "NBC News",
-    "ABC Australia",
+    "CNBC",
+    "Deutsche Welle",
+    "Semafor",
     "Memeorandum"
    ],
    "scores": {
-    "emotional_load": 3,
+    "emotional_load": 2,
     "explainability": 4,
-    "actionability": 1,
+    "actionability": 3,
+    "conversational_currency": 4
+   },
+   "politician_led": true,
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "The US has proposed new tariffs on 14 trading partners, including China, the EU and Brazil, over alleged subsidized production.",
+   "assembly_score": 11.18
+  },
+  {
+   "slot": "money_me",
+   "slot_label": "Money & me",
+   "key": "b54a34c9d40330b7",
+   "title": "Army to detonate five tons of unstable lead explosives in Iowa, lead plume expected",
+   "beat": "national",
+   "publisher_count": 10,
+   "publishers": [
+    "STAT News",
+    "The Guardian",
+    "Washington Post",
+    "Yahoo News",
+    "ABC News",
+    "CBS News",
+    "Deutsche Welle",
+    "France 24",
+    "NBC News",
+    "Fox 5 Atlanta"
+   ],
+   "scores": {
+    "emotional_load": 4,
+    "explainability": 4,
+    "actionability": 4,
     "conversational_currency": 4
    },
    "politician_led": false,
    "ledger_class": null,
    "new_facts": [],
-   "line": "Kilmar Abrego Garcia, wrongly deported earlier, will leave the US for Spain, ending a 20-month legal fight over his removal.",
-   "assembly_score": 6.31
+   "line": "The Army will detonate about five tons of unstable lead azide in Iowa, sending a possible lead-dust plume over nearby residents.",
+   "assembly_score": 10.74
   },
   {
-   "slot": "money_me",
-   "slot_label": "Money & me",
-   "key": "bc222e748d7ee543",
-   "title": "Huawei convicted of trade-secret theft and fraud in New York; racketeering charge acquitted",
-   "beat": "business",
-   "publisher_count": 8,
+   "slot": "body_mind",
+   "slot_label": "Body & mind",
+   "key": "36ea834c7b53afb0",
+   "title": "NASA deliberately crashed into an asteroid. Now scientists are surveying the damage.",
+   "beat": "science",
+   "publisher_count": 2,
    "publishers": [
-    "BBC",
-    "Financial Times",
     "Yahoo News",
-    "Al Jazeera",
-    "CNBC",
-    "Deutsche Welle",
-    "France 24",
-    "The Verge"
+    "EarthSky"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": 4.17
+  },
+  {
+   "slot": "work_machines",
+   "slot_label": "Work & machines",
+   "key": "9b6ed3bdbaada4c8",
+   "title": "Nvidia chips still sold in China despite US ban, with prices climbing",
+   "beat": "tech",
+   "publisher_count": 2,
+   "publishers": [
+    "Techmeme",
+    "Memeorandum"
    ],
    "scores": {
     "emotional_load": 2,
@@ -71,61 +117,14 @@
    "politician_led": false,
    "ledger_class": null,
    "new_facts": [],
-   "line": "A New York jury convicted Chinese tech giant Huawei of fraud, sanctions evasion, and trade-secret theft, though it acquitted on racketeering.",
-   "assembly_score": 5.11
-  },
-  {
-   "slot": "body_mind",
-   "slot_label": "Body & mind",
-   "key": "b7d838463719ca53",
-   "title": "China launches Shenzhou-24 crew to Tiangong, including first foreign astronaut",
-   "beat": "science",
-   "publisher_count": 4,
-   "publishers": [
-    "The Guardian",
-    "CBS News",
-    "Deutsche Welle",
-    "Semafor"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "China launched a three-person crew, including its first foreign astronaut, a Pakistani pilot, to its Tiangong space station.",
-   "assembly_score": 3.32
-  },
-  {
-   "slot": "work_machines",
-   "slot_label": "Work & machines",
-   "key": "fa4eda37765a11e1",
-   "title": "Op-ed argues AI growth and copyright protection can coexist",
-   "beat": "tech",
-   "publisher_count": 1,
-   "publishers": [
-    "Fox News"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A single headline argues Americans need not choose between AI development and copyright owners' rights; no concrete policy or action is reported.",
-   "assembly_score": 3.5
+   "line": "Chinese resellers still openly sell US-restricted Nvidia AI chips, with Blackwell server prices rising past $3 million.",
+   "assembly_score": 4.94
   },
   {
    "slot": "group_chat",
    "slot_label": "The group chat",
    "key": "4fa88a80b0f3e766",
-   "title": "Country singer Ketch Secor urges artists to break silence on assault rifles",
+   "title": "Country musician Ketch Secor urges artists to break silence on assault rifles",
    "beat": "culture",
    "publisher_count": 1,
    "publishers": [
@@ -133,1253 +132,173 @@
    ],
    "scores": {
     "emotional_load": 3,
-    "explainability": 3,
+    "explainability": 4,
     "actionability": 2,
     "conversational_currency": 2
    },
    "politician_led": false,
    "ledger_class": null,
    "new_facts": [],
-   "line": "A country musician whose hometown was touched by the Nashville school shooting is urging other artists to speak out on assault rifles despite fan backlash.",
-   "assembly_score": -1.66
+   "line": "A country musician is urging fellow artists to speak out on gun violence after the Nashville school shooting, despite fear of fan backlash.",
+   "assembly_score": 3.9
   },
   {
    "slot": "elsewhere",
    "slot_label": "Elsewhere, but here",
-   "key": "83d19c2a26c7f53c",
-   "title": "Cunning as a fox! Photographer snaps sweet photo of cubs",
+   "key": "b4d70cf5476729f8",
+   "title": "Leaked Russian data puts military deaths in Ukraine war near 490,000",
    "beat": "international",
-   "publisher_count": 1,
+   "publisher_count": 7,
    "publishers": [
-    "Daily Mail"
+    "Yahoo News",
+    "Al Jazeera",
+    "CBS News",
+    "CNBC",
+    "Deutsche Welle",
+    "Daily Mail",
+    "Memeorandum"
    ],
    "scores": {
-    "emotional_load": 3,
+    "emotional_load": 4,
     "explainability": 3,
-    "actionability": 3,
+    "actionability": 1,
     "conversational_currency": 3
    },
    "politician_led": false,
    "ledger_class": null,
    "new_facts": [],
-   "line": "",
-   "assembly_score": 3.59
+   "line": "Leaked Russian records reportedly show nearly 490,000 Russian military deaths in the Ukraine war, with Ukrainian conscription and strikes continuing.",
+   "assembly_score": 6.55
   },
   {
    "slot": "close",
    "slot_label": "The close",
-   "key": "7b396d8d476723d4",
-   "title": "Trump says he'd pardon Jensen Huang if needed, amid reports he shaped Nvidia's leadership",
+   "key": "0170a0f23e6d5b97",
+   "title": "Nvidia reinstates Jensen Huang as CEO under Trump pressure; Trump held Nvidia stock",
    "beat": "business",
-   "publisher_count": 12,
+   "publisher_count": 8,
    "publishers": [
-    "BBC",
-    "New York Times",
+    "Financial Times",
+    "Al Jazeera",
     "CBS News",
     "CNBC",
     "Daily Beast",
-    "France 24",
-    "NBC News",
-    "Semafor",
+    "Fox News",
     "TechCrunch",
-    "Techmeme",
-    "Daily Mail",
-    "Memeorandum"
+    "Techmeme"
    ],
    "scores": {
     "emotional_load": 2,
     "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 3
+    "actionability": 2,
+    "conversational_currency": 4
    },
    "politician_led": true,
    "ledger_class": null,
    "new_facts": [],
-   "line": "Trump says he would pardon Nvidia CEO Jensen Huang if needed, after reports tied Huang's reinstatement at the company to Trump's intervention.",
-   "assembly_score": 5.02
+   "line": "Nvidia's board reinstated Jensen Huang as CEO after pressure from Trump, who reportedly held millions in Nvidia stock, raising conflict-of-interest questions.",
+   "assembly_score": 7.98
   },
   {
    "slot": "unavoidable",
    "slot_label": "Unavoidable",
-   "key": "b3fe328704e5de17",
-   "title": "Former Sydney police officer found guilty of double murder of Jesse Baird and Luke Davies",
-   "beat": "national",
+   "key": "0c3830a640cdafc9",
+   "title": "Fed's preferred inflation gauge hits 3.8%, pointing to a December rate hike",
+   "beat": "business",
    "publisher_count": 3,
    "publishers": [
-    "BBC",
-    "ABC Australia",
-    "Daily Mail"
+    "New York Times",
+    "Yahoo News",
+    "CNBC"
    ],
    "scores": {
-    "emotional_load": 5,
+    "emotional_load": 2,
     "explainability": 4,
-    "actionability": 1,
+    "actionability": 3,
     "conversational_currency": 4
    },
    "politician_led": false,
    "ledger_class": null,
    "new_facts": [],
-   "line": "A former Sydney police officer was convicted of murdering Jesse Baird and Luke Davies in a jealousy-fuelled killing.",
-   "assembly_score": 4.01
+   "line": "Inflation rose to 3.8% in October, making a Federal Reserve interest rate hike in December likely, which would raise borrowing costs.",
+   "assembly_score": 6.79
   },
   {
    "slot": "unavoidable",
    "slot_label": "Unavoidable",
-   "key": "ef2aace4d0322486",
-   "title": "US President Donald Trump and first lady Melania Trump host the annual Thanksgiving turkey pardoning",
-   "beat": "national",
-   "publisher_count": 7,
+   "key": "1c7487129c627d11",
+   "title": "Houthis claim strikes on Saudi refinery and Riyadh; oil prices rise",
+   "beat": "international",
+   "publisher_count": 5,
    "publishers": [
-    "Post and Courier",
-    "ABC News",
-    "Daily Beast",
-    "Fox News",
-    "ANSA",
-    "Atlanta Black Star",
-    "Memeorandum"
+    "New York Times",
+    "Yahoo News",
+    "Deutsche Welle",
+    "France 24",
+    "Semafor"
    ],
    "scores": {
     "emotional_load": 3,
     "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
+    "actionability": 2,
+    "conversational_currency": 4
    },
    "politician_led": false,
    "ledger_class": null,
    "new_facts": [],
-   "line": "",
-   "assembly_score": 3.6
+   "line": "Houthi forces in Yemen reportedly struck a Saudi refinery and claimed attacks on Riyadh, pushing oil prices higher amid a widening regional war.",
+   "assembly_score": 6.45
   },
   {
    "slot": "flex",
    "slot_label": "Flex",
-   "key": "d35e1972c1d20aee",
-   "title": "Army to detonate 5 tons of toxic lead azide in Iowa, residents brace for lead dust",
+   "key": "c43dfba8f59deab7",
+   "title": "Democrats make southern and downballot gains, then weigh how to use new power",
    "beat": "national",
    "publisher_count": 5,
-   "publishers": [
-    "The Guardian",
-    "ABC News",
-    "CBS News",
-    "Fox 5 Atlanta",
-    "Fox 5 DC"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "The Army plans to detonate nearly 5 tons of lead azide in Iowa, raising fears of a toxic lead dust cloud drifting over nearby residents.",
-   "assembly_score": 4.41
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "ed632e0b8edc4da1",
-   "title": "Kilmar Abrego Garcia leaves U.S. for Spain, ending 20-month deportation fight",
-   "beat": "national",
-   "publisher_count": 8,
-   "publishers": [
-    "BBC",
-    "New York Times",
-    "The Guardian",
-    "Al Jazeera",
-    "Fox News",
-    "NBC News",
-    "ABC Australia",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-11-25/kilmar-abrego-garcia-self-deporting-from-us-to-spain/107424634",
-    "//aljazeera.com/news/2026/11/25/kilmar-abrego-garcia-self-deports-to-spain-after-lengthy-us-legal-battle?traffic_source=rss",
-    "//bbc.co.uk/news/articles/c6808pyy5dl9o?at_campaign=rss&at_medium=RSS",
-    "//foxnews.com/politics/kilmar-abrego-garcia-leave-us-voluntarily-europe-avoiding-forced-deportation",
-    "//memeorandum.com/261124/p142",
-    "//memeorandum.com/261124/p145",
-    "//memeorandum.com/261124/p150",
-    "//memeorandum.com/261124/p156",
-    "//nbcnews.com/news/us-news/kilmar-abrego-garcia-rcna611215",
-    "//nytimes.com/2026/11/24/us/politics/abrego-garcia-leave-deportation.html",
-    "//theguardian.com/us-news/2026/nov/24/kilmar-abrego-garcia-leaves-us"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Kilmar Abrego Garcia, wrongly deported and then fought back in court, is leaving the U.S. for Spain to end his 20-month legal battle.",
-   "assembly_score": 1.29
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "0dce1a19c28646c5",
-   "title": "Meghan Markle's father indicted on child sexual abuse material charges",
-   "beat": "national",
-   "publisher_count": 7,
-   "publishers": [
-    "BBC",
-    "The Guardian",
-    "CBS News",
-    "NBC News",
-    "ANSA",
-    "Daily Mail",
-    "Fox 5 Atlanta"
-   ],
-   "urls": [
-    "//ansa.it/sito/notizie/mondo/2026/11/25/il-padre-di-meghan-incriminato-per-possesso-di-pornografia-infantile_e953748f-0c8a-4f5f-acf9-4aba353eb65b.html",
-    "//bbc.co.uk/news/articles/crwy4egxn592o?at_campaign=rss&at_medium=RSS",
-    "//cbsnews.com/news/thomas-markle-indicted-federal-grand-jury-child-pornography-charges",
-    "//dailymail.com/news/article-16319767/Thomas-Markle-indicted-child-pornography-charges.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//fox5atlanta.com/news/thomas-markle-indicted-meghan-markles-estranged-father-expected-be-transferred-california",
-    "//nbcnews.com/video/thomas-markle-indicted-on-child-sex-abuse-material-charges-274140741786",
-    "//theguardian.com/uk-news/2026/nov/24/thomas-markle-indicted"
-   ],
-   "scores": {
-    "emotional_load": 5,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Meghan Markle's estranged father has been indicted on federal charges of possessing child sexual abuse material.",
-   "assembly_score": 0.16
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "4ca9b01440298044",
-   "title": "Ukrainian drone strike on Russian ship in Benghazi kills two Libyan soldiers",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Deutsche Welle",
-    "France 24"
-   ],
-   "urls": [
-    "//dw.com/en/libya-2-dead-after-ukrainian-attack-on-russian-warship-in-benghazi/a-80042348?maca=en-rss-en-all-1573-xml-mrss",
-    "//france24.com/en/europe/20261125-live-two-libyan-soldiers-killed-in-ukrainian-attack-on-russian-vessels-in-benghazi"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Ukraine's naval drone strike on a Russian warship docked in Benghazi killed two Libyan soldiers, drawing a threatened response from eastern Libya's forces.",
-   "assembly_score": 0.14
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "a030e1436e59ebb5",
-   "title": "China's Xiamen Airlines to buy 50 Boeing jets in $7.4 billion deal",
-   "beat": "business",
-   "publisher_count": 2,
-   "publishers": [
-    "Post and Courier",
-    "CNBC"
-   ],
-   "urls": [
-    "//cnbc.com/2026/11/25/china-xiamen-boeing-deal.html",
-    "//postandcourier.com/file-photo-association-of-asia-pacific-airlines-aapa-70th-assembly-of-presidents-in-kuala-lumpur/image_8e3b5c5f-68fb-4f52-9d5d-b5a5a1887bf4.html",
-    "//postandcourier.com/malaysia-airlines/image_32b23869-8641-4976-89d9-fa96928ecbdd.html"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Xiamen Airlines agreed to buy 50 Boeing jets in a $7.4 billion deal, a sizable order for the aircraft maker.",
-   "assembly_score": -0.24
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "766bb8aedbf1c5ba",
-   "title": "Treasury's FinCEN investigates cyber incident that accessed limited systems",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "Techmeme",
-    "The Verge",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/261124/p152",
-    "//techmeme.com/261124/p48",
-    "//theverge.com/policy/1041957/fincen-treasury-cybersecurity-incident"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 2,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "The Treasury's financial crimes bureau, FinCEN, is investigating a cybersecurity incident that accessed a limited subset of its systems.",
-   "assembly_score": -0.54
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "549c2f4dcd1fde0e",
-   "title": "Two men arrested after break-in at Prince William and Kate's Norfolk home",
-   "beat": "other",
-   "publisher_count": 2,
-   "publishers": [
-    "ABC Australia",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-11-25/kate-and-will-property-break-in-anmer-hall-norfolk-arrest/107423884",
-    "//dailymail.com/news/royals/article-16319745/Migrants-broke-royal-home-william-kate.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Two men were arrested after allegedly breaking into the Norfolk country home of the Prince and Princess of Wales while the family was away.",
-   "assembly_score": -0.56
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "1683344d8c36626f",
-   "title": "Detroit Lions owner Martha Firestone Ford dies at 101",
-   "beat": "culture",
-   "publisher_count": 2,
    "publishers": [
     "New York Times",
-    "Fox News"
-   ],
-   "urls": [
-    "//foxnews.com/outkick-sports/lions-owner-chair-emeritus-martha-firestone-ford-dead-101",
-    "//nytimes.com/2026/11/24/business/martha-firestone-ford-dead.html"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Martha Firestone Ford, longtime owner and chair emeritus of the Detroit Lions, has died at age 101.",
-   "assembly_score": -0.67
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "98ede871a450a728",
-   "title": "DOJ announces record scam crackdown involving more than 800 defendants",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "Yahoo News",
-    "The Bulwark",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/261124/p151",
-    "//newsmax.com/newsfront/todd-blanche-kash-patel-doj/2026/11/24/id/1277447",
-    "//thebulwark.com/p/todd-blanche-cant-keep-his-story"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.79
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "f2e6ae36d31a08b0",
-   "title": "Will the Nvidia fallout kill off Asia\u2019s data centre boom?",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Financial Times",
-    "Al Jazeera"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/11/25/asias-stock-markets-dive-as-doubts-to-swirl-over-ai-boom?traffic_source=rss",
-    "//ft.com/content/e5df32d1-1801-4d81-b2f5-b83e93377c1c?syn-25a6b1a6=1"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.01
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "1a463741b6036678",
-   "title": "Judge orders Fulton County to turn over copies of 2020 ballots to Trump-allied election board",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "NBC News",
-    "Fox 5 Atlanta"
-   ],
-   "urls": [
-    "//fox5atlanta.com/news/judge-orders-fulton-county-hand-over-2020-election-files",
-    "//nbcnews.com/news/us-news/judge-denies-bail-former-penn-state-fraternity-brother-drug-bust-rcna611106",
-    "//nbcnews.com/politics/elections/judge-orders-fulton-county-turn-copies-2020-ballots-ga-election-board-rcna611220"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.12
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "be49b74efc3cfb04",
-   "title": "Search continues for six missing after plane crashes off Mississippi coast",
-   "beat": "national",
-   "publisher_count": 5,
-   "publishers": [
-    "The Guardian",
-    "Yahoo News",
-    "ABC News",
-    "Fox News",
-    "NBC News"
-   ],
-   "urls": [
-    "//abcnews.com/US/plane-carrying-6-people-crashes-off-mississippi-coast/story?id=138427173",
-    "//cnn.com/2026/11/24/us/plane-crash-mississippi-horn-island",
-    "//foxnews.com/us/coast-guard-searching-2-children-4-adults-after-plane-crashes-off-mississippi-coast",
-    "//nbcnews.com/news/us-news/4-adults-2-kids-are-missing-plane-crashes-mississippi-coast-rcna611218",
-    "//theguardian.com/us-news/2026/nov/24/mississippi-plane-crash"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A small plane carrying six people, including two children, crashed off the Mississippi coast and rescue crews are still searching for them.",
-   "assembly_score": -1.5
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "8347a9613b2e7261",
-   "title": "Man killed in Takoma Park alleyway shooting; suspects still at large",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox 5 Atlanta",
-    "Fox 5 DC"
-   ],
-   "urls": [
-    "//fox5atlanta.com/news/man-killed-northwest-atlanta-afternoon-shooting-police-say",
-    "//fox5dc.com/news/man-killed-shooting-after-altercation-takoma-park-alleyway"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 4,
-    "actionability": 2,
-    "conversational_currency": 1
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A man died after a Takoma Park alleyway altercation turned into a shooting; suspects fled and remain unidentified.",
-   "assembly_score": -1.61
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "b1777cb57ecff523",
-   "title": "Trump says he'll meet El-Sayed on a 'Trumpcare' Medicare-for-all rebrand",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//foxnews.com/media/piker-backs-idea-sell-trump-medicare-all-calling-trumpcare",
-    "//memeorandum.com/261124/p149"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump says he'll meet Abdul El-Sayed about a 'Trumpcare' version of Medicare-for-all, after streamer Hasan Piker proposed the rebrand.",
-   "assembly_score": -1.71
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "b34449e45ef92d38",
-   "title": "Pentagon eyes GM for drone production: WSJ",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Semafor",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/261124/p148",
-    "//semafor.com/article/11/24/2026/pentagon-eyes-gm-for-drone-production-wsj"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.96
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "b3c3fdda0265fe3d",
-   "title": "Fort Hood mass shooter makes legal move to stop Pentagon\u2019s firing squad execution",
-   "beat": "national",
-   "publisher_count": 5,
-   "publishers": [
-    "CBS News",
-    "Chris Geidner (Law Dork)",
-    "Fox News",
-    "NBC News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//cbsnews.com/news/nidal-hasan-delay-execution-petition",
-    "//foxnews.com/us/fort-hood-shooter-nidal-hasan-asks-federal-judge-halt-execution",
-    "//lawdork.com/p/nidal-hasan-seeks-stay-of-execution",
-    "//memeorandum.com/261124/p137",
-    "//nbcnews.com/news/us-news/fort-hood-nidal-hasan-firing-squad-execution-rcna611217"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.97
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "a0100f439664a5cb",
-   "title": "Al Gore buys family-owned Carthage Courier in Tennessee hometown",
-   "beat": "other",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "Fox News"
-   ],
-   "urls": [
-    "//foxnews.com/media/al-gore-buys-hometown-tennessee-newspaper-vows-preserve-independent-voice",
-    "//theguardian.com/us-news/2026/nov/24/al-gore-newspaper-tennessee"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Former Vice President Al Gore has bought the family-owned Carthage Courier, a weekly newspaper in his hometown of Carthage, Tennessee.",
-   "assembly_score": -2.01
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "0f0fc12e2eb6c1fe",
-   "title": "Iran developing chemical weapons, Israeli defense minister says",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "CBS News",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//cbsnews.com/live-updates/iran-war-us-trump-blockade-strait-of-hormuz-ship-attacks",
-    "//memeorandum.com/261124/p146"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.21
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "38e7f871277f3117",
-   "title": "UK papers: PIP benefits 'not fit for purpose' and Royal 'security scare'",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/crq5v3g5jq13o?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/news/article-16319847/welfare-whitewash-benefits-reveals-NO-savings-NO-end-PIP-make-taxpayer-bill-RISE.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//dailymail.com/opinion/uk/article-16319883/ROBERT-JENRICK-Labour-spend-cash-benefits.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.26
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "06e3e1964d691295",
-   "title": "Asian markets lose ground as AI fears return",
-   "beat": "tech",
-   "publisher_count": 3,
-   "publishers": [
-    "Financial Times",
-    "CNBC",
-    "Techmeme"
-   ],
-   "urls": [
-    "//cnbc.com/2026/11/25/tech-stocks-softbank-group-advantest-sk-hynix-samsung.html",
-    "//ft.com/content/705eb84c-801d-4a96-b908-e366511e886a?syn-25a6b1a6=1",
-    "//techmeme.com/261124/p47"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.33
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "4d6ceaddf1d1b194",
-   "title": "TikTok 'technical issue' resolved after users report issues with platform",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox 5 Atlanta",
-    "Fox 5 DC"
-   ],
-   "urls": [
-    "//fox5atlanta.com/news/tiktok-users-reporting-issues",
-    "//fox5dc.com/news/tiktok-users-reporting-issues"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.82
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "b7670f6d932be48b",
-   "title": "Gunmen hold dozens hostage in Colombia supermarket",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "CBS News"
-   ],
-   "urls": [
-    "//aljazeera.com/video/newsfeed/2026/11/25/gunmen-hold-dozens-hostage-in-colombia-supermarket?traffic_source=rss",
-    "//cbsnews.com/video/police-negotiating-hostage-takers-supermarket-colombia"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.04
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "19dc311e5afc702c",
-   "title": "Feds offer food, rides and lodging to residents fleeing planned Iowa blast",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Yahoo News",
-    "CBS News"
-   ],
-   "urls": [
-    "//cbsnews.com/video/army-to-blow-up-5-tons-of-toxic-materials-in-iowa-on-wednesday",
-    "//iowacapitaldispatch.com/2026/11/24/feds-have-added-mitigation-strategies-local-aid-ahead-of-lead-azide-detonation"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.11
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "b10ed5ca2171636d",
-   "title": "Iran war live: Saudi-led coalition strikes Yemen\u2019s Hodeidah port",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "Semafor"
-   ],
-   "urls": [
-    "//aljazeera.com/news/liveblog/2026/11/25/iran-war-live-houthis-threaten-saudi-ports-over-coalitions-hodeidah-order?traffic_source=rss",
-    "//semafor.com/article/11/24/2026/saudi-crown-prince-will-come-to-us-for-g20-summit"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.14
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "fa5c76011c3d2d69",
-   "title": "Trump administration weighs targeting Iran's top regime leaders in bid to end war: report",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "Fox News"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/11/25/poll-finds-us-voters-want-government-to-end-iran-war-regardless-of-terms?traffic_source=rss",
-    "//foxnews.com/world/trump-administration-weighs-targeting-irans-top-regime-leaders-bid-end-war-report"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.3
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "05f887d0221c3adc",
-   "title": "Yale\u2019s Sonnenfeld: Nvidia is a \u2018detriment\u2019 to US industrial might \u2014 not a champion",
-   "beat": "tech",
-   "publisher_count": 2,
-   "publishers": [
-    "Daily Beast",
-    "TechCrunch"
-   ],
-   "urls": [
-    "//techcrunch.com/2026/11/24/yales-sonnenfeld-nvidia-is-a-detriment-to-u-s-industrial-might-not-a-champion",
-    "//thedailybeast.com/trump-tells-nvidia-board-hell-pardon-sex-mad-ceo-jensen-huang-michael-wolff"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.35
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "b1d35711734ada27",
-   "title": "Vatican releases Pope Francis' private diary detailing spiritual crisis, encounters with the devil",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "CBS News",
-    "Fox News"
-   ],
-   "urls": [
-    "//cbsnews.com/video/late-pope-francis-diary-reveals-he-had-visions-of-the-devil",
-    "//foxnews.com/world/vatican-releases-pope-francis-private-diary-detailing-spiritual-crisis-encounters-devil"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.46
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "27a4ae4cc6d26a47",
-   "title": "Will there be a White Christmas this year?",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Fox 5 Atlanta"
-   ],
-   "urls": [
-    "//bbc.co.uk/weather/articles/ckdd16vdplpeo?at_campaign=rss&at_medium=RSS",
-    "//fox5atlanta.com/news/coweta-county-christmas-giveaway-deputies-assemble-150-free-bikes"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.48
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "3ae1349c025d8a36",
-   "title": "Russia's own figures show almost 500,000 deaths in war in Ukraine",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Al Jazeera"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/11/24/south-africa-convicts-zimbabwean-who-tried-to-fight-ukraine-for-russia?traffic_source=rss",
-    "//bbc.co.uk/news/articles/cmx27g533zwyo?at_campaign=rss&at_medium=RSS"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.59
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "6cc85d4dddf10093",
-   "title": "Incoming Democratic chairs demand answers from Trump on Huang's reinstatement",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
     "Politico Congress",
+    "The Guardian",
+    "The New Republic",
     "Memeorandum"
    ],
-   "urls": [
-    "//memeorandum.com/261124/p135",
-    "//politico.com/live-updates/2026/11/24/congress/dems-want-nvidia-answers-from-trump-01182684"
-   ],
    "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
+    "emotional_load": 2,
+    "explainability": 4,
+    "actionability": 2,
     "conversational_currency": 3
    },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
+   "politician_led": true,
    "ledger_class": null,
    "new_facts": [],
-   "line": "",
-   "assembly_score": -3.79
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "43cf292a841bc501",
-   "title": "Third of young Brits have never had sex, but many are sexting and watching porn",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/cw0737zzn50mo?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/health/article-16317573/Britain-gone-sex-young-adults-virgins-average-Briton-intimate-just-twice-month-tech-obsessed-Gen-Z-blame-decade-report-uncovers-UK-sex-habits.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.95
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "5a001025fa5e7687",
-   "title": "Bill Maher declares late-night comedy is 'dead' after major political shift",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Daily Beast",
-    "Fox News"
-   ],
-   "urls": [
-    "//foxnews.com/media/bill-maher-declares-late-night-comedy-dead-after-major-political-shift",
-    "//thedailybeast.com/obsessed/bill-maher-70-joins-maga-mob-attack-on-trumps-tv-nemesis-jimmy-kimmel"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -4.0
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "c84df890b2101f5a",
-   "title": "Kalshi daily volume of \u2018perps\u2019 trading begins to top its prediction markets",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "CNBC",
-    "Techmeme"
-   ],
-   "urls": [
-    "//cnbc.com/2026/11/24/kalshi-perps-volume-prediction-markets.html",
-    "//techmeme.com/261124/p45"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -4.77
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "6b1261cca7a4c037",
-   "title": "Arteta says Arsenal need more luck to kill off games",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "The Telegraph"
-   ],
-   "urls": [
-    "//bbc.co.uk/sport/football/articles/c3ewv0kdjlp9o?at_campaign=rss&at_medium=RSS",
-    "//telegraph.co.uk/football/2026/11/24/arsenal-vs-dortmund-live-score-latest-champions-league"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -4.81
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "14d0061a064cb78a",
-   "title": "Has Black Friday lost its identity or evolved to stay relevant? Experts explain",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Fox News",
-    "NBC News"
-   ],
-   "urls": [
-    "//foxnews.com/deals/amazon-aquasonic-black-series-toothbrush-deal",
-    "//nbcnews.com/select/shopping/what-is-black-friday-rcna611184"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -5.11
+   "line": "Democrats gained ground in the South and downballot races, and now face questions about how to use their new Congressional power.",
+   "assembly_score": 6.0
   }
  ],
  "excluded_sample": [
   {
-   "title": "Thomas Markle indicted in Los Angeles over alleged child sexual abuse material",
+   "title": "2 men charged after reported break-in at Prince William and Kate\u2019s country home",
    "why": "triage verdict NO"
   },
   {
-   "title": "Man killed in northwest Atlanta afternoon shooting, police say",
+   "title": "Raheem Sterling avoids jail over reckless driving while using nitrous oxide",
    "why": "triage verdict NO"
   },
   {
-   "title": "The Do-Nothing Republican Congress",
+   "title": "Man and daughter who dumped body in canal jailed",
    "why": "triage verdict NO"
   },
   {
-   "title": "Clemson can\u2019t complete late comeback vs. Washington, falls to 0-2 in Maui Invitational",
+   "title": "\u2018Half price!\u2019 \u2018Only two left!\u2019 How to resist the bargains you just don\u2019t need \u2013 this Black Friday and beyond",
    "why": "triage verdict NO"
   },
   {
-   "title": "From a West Virginia Mountaintop, a Marine\u2019s Mission to Unite a Nation",
+   "title": "Auriemma blasts \u2018immature\u2019 UConn but stays cordial with Staley in first meeting since bust-up",
    "why": "triage verdict NO"
   },
   {
-   "title": "Al Gore buys local, family-owned newspaper in central Tennessee",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "\u2018Nobody Wants This\u2019 star Tovah Feldshuh has \u2018no animosity\u2019 toward co-star despite Israel disagreement",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "James Madison hands Charleston Southern third straight loss",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Bake Off winner crowned after high-stakes final",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Bidets save you money and reduce waste \u2014 we tested the best options out there",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "50+ products to make your life easier and our planet cleaner",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Mother's Day is around the corner. Here are 50+ thoughtful gifts she'll love",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "A head-to-toe guide of how men should dress this spring, and where they should shop",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "The 7 best high-yield savings accounts of April 2023",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Composting is an easy way to reduce food waste. Here's how to do it",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "We stopped using aluminum foil for cooking and you should too. Here's what to use instead",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "The beloved Dyson Supersonic hair dryer is at its lowest price ever",
-   "why": "triage verdict NO"
-  },
-  {
-   "title": "Everything you need to know about Way Day 2023, Wayfair's biggest sale of the year",
+   "title": "Amazon\u2019s $5 deception",
    "why": "triage verdict NO"
   }
  ]
