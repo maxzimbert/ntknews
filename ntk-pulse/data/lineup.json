@@ -1,5 +1,5 @@
 {
- "assembled_at": "2026-11-27T00:33:45.102388+00:00",
+ "assembled_at": "2026-11-27T13:34:25.366457+00:00",
  "slot_plan": "A",
  "displacement": "MANUAL",
  "daytype": "holiday",
@@ -7,995 +7,70 @@
   4,
   6
  ],
- "actual_size": 51,
+ "actual_size": 6,
  "lint_failures": [
-  "no item answers 'what do I do with this'"
+  "under 3 fully self-contained items"
  ],
  "slots_unfilled": [],
  "stories": [
   {
    "slot": "unavoidable",
    "slot_label": "Unavoidable",
-   "key": "ff7155d1aaa93df3",
-   "title": "Trump orders probe of revised GDP data, alleging 'fake' numbers without evidence",
+   "key": "050b0f2a22997b54",
+   "title": "Thanksgiving storms cut power to nearly a million and disrupt holiday travel",
    "beat": "national",
    "publisher_count": 6,
    "publishers": [
+    "NPR",
+    "New York Times",
     "The Guardian",
-    "CBS News",
-    "CNBC",
-    "Daily Beast",
-    "Fox News",
-    "Memeorandum"
+    "Washington Post",
+    "ABC News",
+    "France 24"
    ],
    "scores": {
     "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 1,
+    "explainability": 5,
+    "actionability": 2,
     "conversational_currency": 3
    },
-   "politician_led": true,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump has ordered an investigation into revised third-quarter GDP figures, alleging they were manipulated, without providing evidence.",
-   "assembly_score": 6.59
+   "politician_led": false,
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Half a million without power from Virginia to New York; conditions expected to improve Friday.",
+    "More than 700,000 still without power early Friday; wet snow and freezing rain in parts of East Coast.",
+    "Nearly one million homes without power; thousands of flights delayed; coastal flooding.",
+    "Experts predict record Black Friday spending despite inflation.",
+    "More than 900,000 homes and businesses without power Thursday evening, mostly in East Coast states."
+   ],
+   "line": "A Thanksgiving storm left roughly a million Americans without power and disrupted holiday travel across the East Coast and beyond.",
+   "assembly_score": 15.11
   },
   {
    "slot": "money_me",
    "slot_label": "Money & me",
-   "key": "066703d2c26ccca0",
-   "title": "Visa changes still exclude hospitality backpackers from struggling regional towns",
-   "beat": "business",
+   "key": "c1e2fb98094768e5",
+   "title": "Taxes are due tomorrow; here's how to file for an extension",
+   "beat": "national",
    "publisher_count": 1,
    "publishers": [
-    "ABC Australia"
+    "CNN"
    ],
    "scores": {
-    "emotional_load": 1,
-    "explainability": 3,
-    "actionability": 2,
-    "conversational_currency": 1
+    "emotional_load": 2,
+    "explainability": 5,
+    "actionability": 5,
+    "conversational_currency": 4
    },
    "politician_led": false,
    "ledger_class": null,
    "new_facts": [],
-   "line": "Hospitality work still doesn't count toward Australian working-holiday visa extensions in many regional towns, despite new rule changes.",
-   "assembly_score": 2.74
+   "line": "Federal tax returns are due tomorrow, and filing for an extension is an option for those who need more time.",
+   "assembly_score": 6.64
   },
   {
    "slot": "body_mind",
    "slot_label": "Body & mind",
-   "key": "bed4c6c48e352664",
-   "title": "NHS chief warns of sharp rise in flu hospital admissions",
-   "beat": "health",
-   "publisher_count": 1,
-   "publishers": [
-    "BBC"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 5,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Hospital admissions for flu are rising sharply in the UK, with NHS leadership warning of a severe spike.",
-   "assembly_score": 5.29
-  },
-  {
-   "slot": "work_machines",
-   "slot_label": "Work & machines",
-   "key": "e95cc2c52d3b52c7",
-   "title": "A US judge sentences a Florida man to 47 months in prison for using AI to impersonate Kick streamer N3on, defrauding a memecoin's organizers out of ~$260K (Nathan Grayson/Aftermath)",
-   "beat": "tech",
-   "publisher_count": 1,
-   "publishers": [
-    "Techmeme"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 1.77
-  },
-  {
-   "slot": "group_chat",
-   "slot_label": "The group chat",
-   "key": "aa2729ae2cba9620",
-   "title": "Dame Penelope Keith dies aged 86, leaves \u00a34.5 million estate",
-   "beat": "culture",
-   "publisher_count": 1,
-   "publishers": [
-    "Daily Mail"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Actress Dame Penelope Keith has died aged 86, leaving an estate reported at \u00a34.5 million.",
-   "assembly_score": 4.2
-  },
-  {
-   "slot": "close",
-   "slot_label": "The close",
-   "key": "26e3b24b2669e4b6",
-   "title": "Thanksgiving storm cuts power and floods streets across East Coast",
-   "beat": "national",
-   "publisher_count": 4,
-   "publishers": [
-    "Washington Post",
-    "ABC News",
-    "CBS News",
-    "Memeorandum"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A Thanksgiving Day storm is causing flooding, power outages, flight delays, and water conservation requests across the Mid-Atlantic and East Coast.",
-   "assembly_score": 8.32
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "11a90dfc15348110",
-   "title": "Thanksgiving storm floods East Coast streets and leaves hundreds of thousands without power",
-   "beat": "national",
-   "publisher_count": 8,
-   "publishers": [
-    "BBC",
-    "Washington Post",
-    "Yahoo News",
-    "ABC News",
-    "CBS News",
-    "NBC News",
-    "ABC Australia",
-    "Fox 5 DC"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-11-27/thanksgiving-floods-storms-across-us/107433308",
-    "//abcnews.com/US/new-york-declares-emergency-thanksgiving-storm-threatens-east/story?id=138464273",
-    "//bbc.co.uk/news/articles/ckm2mz3prq77o?at_campaign=rss&at_medium=RSS",
-    "//cbsnews.com/news/thanksgiving-day-storm-northeast-midwest-flooding-power-outages",
-    "//cbsnews.com/video/severe-weather-thanksgiving-hits-us-california-new-york",
-    "//fox5dc.com/weather/super-soaker-thanksgiving-storm-bring-heavy-rain-50-mph-wind-gusts",
-    "//nbcnews.com/nightly-news/video/monster-east-coast-storm-leaves-hundreds-of-thousands-without-power-274244677776",
-    "//washingtonpost.com/nation/2026/11/26/maryland-residents-urged-conserve-water-after-storm-disrupts-power",
-    "//washingtonpost.com/nation/2026/11/26/powerful-thanksgiving-storm-threatens-east-coast-with-floods-damaging-winds",
-    "//yahoo.com/news/weather-news/live/thanksgiving-storms-live-updates-heavy-rains-winds-and-king-tides-batter-coastal-areas-as-severe-weather-threatens-holiday-travel-70-million-face-flooding-150722634.html"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 5,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A Thanksgiving Day storm brought flooding, flight delays, and power outages along the East Coast, with conditions improving by Black Friday.",
-   "assembly_score": 4.4
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "eb3c96ec7511ffe5",
-   "title": "Iowa detonation releases lead; EPA test results expected soon",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "New York Times",
-    "CBS News",
-    "NBC News"
-   ],
-   "urls": [
-    "//cbsnews.com/news/iowa-lead-detonation-epa-testing-results-soon",
-    "//nbcnews.com/nightly-news/video/families-navigate-thanksgiving-after-toxic-chemical-detonation-274245189654",
-    "//nytimes.com/2026/11/26/us/iowa-detonation-family-thanksgiving.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A military-linked detonation in Iowa released toxic lead; the EPA says results are coming, and nearby families are navigating the aftermath.",
-   "assembly_score": 2.013
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "8249a68f1fb5f668",
-   "title": "Black Friday spending in Australia forecast to hit $7 billion despite rate rises",
-   "beat": "business",
-   "publisher_count": 4,
-   "publishers": [
-    "The Guardian",
-    "Wired",
-    "ABC Australia",
-    "Vogue"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-11-27/black-friday-sales/107433526",
-    "//theguardian.com/thefilter-us/2026/nov/26/black-friday-household-essentials-sales-deals",
-    "//vogue.com/article/zara-black-friday-sale-11-26-2026",
-    "//wired.com/story/best-black-friday-deals-11-26-2026"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 4,
-    "actionability": 2,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Australians are expected to spend over $7 billion at Black Friday sales this year, up 5.5% on last year, despite rising interest rates.",
-   "assembly_score": 2.0
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "da0ee2bb9387cfb4",
-   "title": "New Zealand's ruling coalition loses majority, needs minor party to govern",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "ABC Australia"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-11-27/official-results-of-new-zealand-s-national-election-announced/107434326",
-    "//theguardian.com/world/2026/nov/27/new-zealand-nz-election-2026-final-results"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "New Zealand's ruling coalition lost its parliamentary majority in the final election count and now needs a minor party to govern.",
-   "assembly_score": 1.74
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "15078c8b6a4adf35",
-   "title": "Zelensky says US is too focused on Middle East, not pressing Russia hard enough",
-   "beat": "international",
-   "publisher_count": 4,
-   "publishers": [
-    "BBC",
-    "Yahoo News",
-    "France 24",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/c820q9wgrpyyo?at_campaign=rss&at_medium=RSS",
-    "//france24.com/en/trump-urges-putin-to-end-military-aggression-in-europe",
-    "//memeorandum.com/261126/p46",
-    "//yahoo.com/news/articles/trump-says-putin-come-g20-003505934.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump and Zelensky are pressing Russia over Ukraine, while Putin's attendance at the G20 remains undecided.",
-   "assembly_score": 1.62
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "871cc5c5782a7580",
-   "title": "Gift guide roundup and a Thanksgiving politics newsletter",
-   "beat": "other",
-   "publisher_count": 2,
-   "publishers": [
-    "CNN",
-    "Heather Cox Richardson"
-   ],
-   "urls": [
-    "//cnn.com/cnn-underscored/gifts/best-mothers-day-gifts-2023?iid=CNNUnderscoredHPcontainer",
-    "//heathercoxrichardson.substack.com/p/thanksgiving-day-politics-chat-november"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 2,
-    "actionability": 2,
-    "conversational_currency": 1
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 1.48
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "a05b6db20d7bfea3",
-   "title": "Macy's parade postponement leaves marching bands facing costs of up to $700,000",
-   "beat": "culture",
-   "publisher_count": 4,
-   "publishers": [
-    "New York Times",
-    "Yahoo News",
-    "CBS News",
-    "NBC News"
-   ],
-   "urls": [
-    "//cbsnews.com/news/macys-thanksgiving-parade-marching-bands-delay-cost",
-    "//cbsnews.com/video/texas-town-helps-high-school-marching-band-stay-postponed-thanksgiving-day-parade",
-    "//cbsnews.com/video/thanksgiving-day-parade-performers-vow-march-despite-postponement",
-    "//nbcnews.com/nightly-news/video/performers-and-marching-bands-scramble-after-macy-s-thanksgiving-day-parade-delay-274245189694",
-    "//nytimes.com/2026/11/25/nyregion/macys-thanksgiving-day-parade-marching-bands.html",
-    "//yahoo.com/news/us/live/macys-thanksgiving-day-parade-postponed-until-saturday-due-to-severe-weather--follow-live-updates-214611617.html"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 4,
-    "actionability": 2,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Macy's postponed its Thanksgiving Day Parade, leaving marching bands facing large unplanned travel and lodging costs.",
-   "assembly_score": 0.91
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "362bdb945ddf2baf",
-   "title": "Killer frogs and rat-murdering fairies: the macabre cards Victorians sent at Christmas",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "Fox News"
-   ],
-   "urls": [
-    "//foxnews.com/us/georgia-man-accused-killing-wife-dispute-childrens-christmas-presents",
-    "//theguardian.com/uk-news/2026/nov/27/killer-frogs-rat-murdering-fairies-macabre-cards-victorian-christmas"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 0.49
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "8cbcb9fbf2cbf56e",
-   "title": "Universities, schools nationwide use Thanksgiving as chance to promote 'Day of Mourning' and decolonization",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "Fox News"
-   ],
-   "urls": [
-    "//aljazeera.com/video/newsfeed/2026/11/27/americas-thanksgiving-holiday-seen-through-different-eyes?traffic_source=rss",
-    "//foxnews.com/politics/universities-schools-nationwide-use-thanksgiving-chance-promote-day-mourning-decolonization"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 0.23
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "7540010f65c79ce2",
-   "title": "AI reshapes Black Friday shopping",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "CBS News",
-    "Semafor"
-   ],
-   "urls": [
-    "//cbsnews.com/video/inside-visas-effort-protect-your-money-ai-holiday-shopping-scams",
-    "//semafor.com/article/11/26/2026/ai-reshapes-black-friday-shopping"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": 0.12
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "30a3b8d041d30624",
-   "title": "The Obamas visited this Chicago nonprofit ahead of Thanksgiving",
-   "beat": "national",
-   "publisher_count": 4,
-   "publishers": [
-    "Post and Courier",
-    "The Guardian",
-    "ABC News",
-    "Fox News"
-   ],
-   "urls": [
-    "//abcnews.com/Sports/wireStory/bears-te-colston-loveland-carted-off-knee-injury-138471920",
-    "//foxnews.com/outkick-sports/caleb-williams-heroics-bears-thinking-no-1-seed-nfc-playoffs",
-    "//foxnews.com/outkick-sports/trademark-dan-campbell-fourth-down-gamble-backfires-opening-door-stunning-bears-comeback-victory",
-    "//postandcourier.com/nation-world/the-obamas-visited-this-chicago-nonprofit-ahead-of-thanksgiving/article_9a0dcbad-c461-4cf3-852c-cd2d5549f632.html",
-    "//theguardian.com/sport/2026/nov/26/nfl-roundup-thanksgiving-scores-bears-lions-eagles-cowboys-chiefs-bills"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.63
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "64cfe77e6dc6aaf6",
-   "title": "Spain's De Cos chosen as next ECB president",
-   "beat": "international",
-   "publisher_count": 4,
-   "publishers": [
-    "Al Jazeera",
-    "France 24",
-    "Semafor",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/11/27/argentina-bars-central-bank-from-printing-money-to-fund-government-spending?traffic_source=rss",
-    "//france24.com/en/spain-s-de-cos-chosen-as-next-ecb-president",
-    "//memeorandum.com/261126/p39",
-    "//semafor.com/article/11/26/2026/spains-pablo-hernndez-de-cos-poised-to-be-new-ecb-chief"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.77
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "a5a563c2a3a6d766",
-   "title": "Two Italians killed in Kuwait drone attack; Iran denies responsibility",
-   "beat": "international",
-   "publisher_count": 4,
-   "publishers": [
-    "BBC",
-    "Al Jazeera",
-    "CBS News",
-    "Fox News"
-   ],
-   "urls": [
-    "//aljazeera.com/news/liveblog/2026/11/27/iran-war-live-irans-araghchi-calls-deadly-kuwait-attack-suspicious?traffic_source=rss",
-    "//bbc.co.uk/news/articles/c39w9y5dx4k5o?at_campaign=rss&at_medium=RSS",
-    "//cbsnews.com/live-updates/iran-war-us-military-ai-weapons-oil",
-    "//foxnews.com/world/iran-accuses-zelenskyy-false-flag-kuwait-drone-strike-op-get-trumps-attention"
-   ],
-   "scores": {
-    "emotional_load": 4,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 4
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Two Italians died in Kuwait from debris while intercepting drones, which Iran denies sending and Tehran calls suspicious.",
-   "assembly_score": -0.96
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "4249fb0d166b6860",
-   "title": "Cenk Uygur endorses Ro Khanna for 2028 presidential run",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Politico",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/261126/p45",
-    "//politico.com/news/2026/11/26/cenk-uygur-goes-all-in-on-ro-khanna-for-2028-01184321"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 1
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Commentator Cenk Uygur has endorsed Rep. Ro Khanna as a 2028 presidential candidate.",
-   "assembly_score": -1.21
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "5533f073e000b939",
-   "title": "Cricket Australia's sandpapergate probe ends with no sanctions; forum results to be released",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "ABC Australia"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-11-27/sandpapergate-independent-forum-results-to-be-made-public/107433870",
-    "//bbc.co.uk/sport/cricket/articles/cxdd1335nyj0o?at_campaign=rss&at_medium=RSS"
-   ],
-   "scores": {
-    "emotional_load": 1,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.24
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "9fc728089f567d8a",
-   "title": "Israeli strikes kill 16 schoolchildren so far this month, Gaza ministry says",
-   "beat": "international",
-   "publisher_count": 3,
-   "publishers": [
-    "The Guardian",
-    "Al Jazeera",
-    "France 24"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/11/26/israeli-settlers-damage-palestinian-familys-homes-in-west-bank-attack?traffic_source=rss",
-    "//france24.com/en/hamas-weighs-response-after-israel-kills-10-people-in-gaza",
-    "//theguardian.com/world/2026/nov/26/gaza-ministry-schoolchildren-killed-this-month-israel-strikes"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.08
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "eeeb6399f5fb26a4",
-   "title": "Fury 'never received' schizophrenia diagnosis",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//bbc.co.uk/sport/boxing/articles/cwj3klxj10edo?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/sport/boxing/article-16324485/Tyson-Furys-mental-health-assessed-boxing-chiefs-schizophrenia-diagnosis-150m-blockbuster-Cardiff-showdown-Anthony-Joshua-risk.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.29
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "94305b427e5aac0a",
-   "title": "Nvidia hits pause on chip shipments to Southeast Asia",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "Semafor",
-    "TechCrunch",
-    "Memeorandum"
-   ],
-   "urls": [
-    "//memeorandum.com/261126/p40",
-    "//semafor.com/article/11/26/2026/nvidia-halts-chip-shipments-to-southeast-asian-countries",
-    "//techcrunch.com/2026/11/26/nvidia-hits-pause-on-chip-shipments-to-southeast-asia"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.71
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "acda1a966429d0b8",
-   "title": "Strobe Talbott, who helped shape Clinton-era foreign policy, dies at 80",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "Washington Post"
-   ],
-   "urls": [
-    "//theguardian.com/us-news/2026/nov/26/strobe-talbott-time-secretary-of-state-dead",
-    "//washingtonpost.com/obituaries/2026/11/26/strobe-talbott-who-helped-shape-clinton-era-foreign-policy-dies-80"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.84
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "a846899e629fb8a0",
-   "title": "Bournemouth 'allowed to dream' as fans book Europa League final hotels",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "ANSA"
-   ],
-   "urls": [
-    "//ansa.it/sito/notizie/sport/calcio/2026/11/26/europa-league-juventus-omonia-4-1_cb9c81b7-a2f3-4183-98e9-a3d1491cbfaa.html",
-    "//bbc.co.uk/sport/football/articles/cmq5v84vw818o?at_campaign=rss&at_medium=RSS"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.97
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "89f2ff4f0d3301ab",
-   "title": "Steelers owner backs Mike McCarthy and attacks Aaron Rodgers\u2019s \u2018insubordination\u2019",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "Fox News"
-   ],
-   "urls": [
-    "//foxnews.com/outkick-sports/aaron-rodgers-vs-mike-mccarthy-timeline-beloved-super-bowl-duo-descent-baffling-nfl-soap-opera",
-    "//foxnews.com/outkick-sports/kevin-durant-dishes-steelers-coach-mike-mccarthy-alleged-ice-cream-snack-habits-making-nba-history",
-    "//theguardian.com/sport/2026/nov/26/steelers-owner-gives-backing-to-mike-mccarthy-in-row-with-aaron-rodgers"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.38
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "a86263b84440db3b",
-   "title": "Lowry: Jensen Huang and the great Chinese heist",
-   "beat": "tech",
-   "publisher_count": 2,
-   "publishers": [
-    "Post and Courier",
-    "TechCrunch"
-   ],
-   "urls": [
-    "//postandcourier.com/opinion/commentary/nvidia-saga-only-latest-china-theft-from-us/article_1d41f093-99f3-4e23-a66b-e6f7890acf43.html",
-    "//techcrunch.com/2026/11/26/is-alice-huang-a-spy-or-not"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.71
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "a310de02a1917f42",
-   "title": "Egypt detains driver over Cairo fuel tanker fire that killed 31",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "France 24"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/11/26/egypt-detains-driver-over-cairo-fuel-tanker-fire-that-killed-31?traffic_source=rss",
-    "//france24.com/en/nigeria-faces-rising-election-violence-in-run-up-to-vote"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -4.1
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "ab9115c60bf8e38d",
-   "title": "Netflix cuts Tyson Fury schizophrenia claim from documentary after dispute",
-   "beat": "culture",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//bbc.co.uk/sport/boxing/articles/cr62pg3n3p8vo?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/sport/boxing/article-16326089/Netflix-delete-Tyson-Fury-schizophrenia-Paris-Anthony-Joshua-fight.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Netflix removed a Tyson Fury schizophrenia claim from a documentary after his camp disputed it, amid a stalled Anthony Joshua fight.",
-   "assembly_score": 1.45
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "6a84da61ca2b701b",
-   "title": "UK Work and Pensions department takes services offline after cyber incident",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//bbc.co.uk/news/articles/ck1l0e946dqmo?at_campaign=rss&at_medium=RSS",
-    "//dailymail.com/news/article-16326157/Cyber-incident-Department-Work-Pensions-services-taken-offline.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "The UK Department for Work and Pensions has taken services offline after a cyber incident, locking some pensioners out of their accounts.",
-   "assembly_score": 1.41
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "7f5a80ce330c128a",
-   "title": "Zelensky rebukes Trump for calling Putin a 'friend'",
-   "beat": "international",
-   "publisher_count": 5,
-   "publishers": [
-    "The Guardian",
-    "Yahoo News",
-    "Daily Beast",
-    "France 24",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//bbc.com/news/articles/c820q9wgrpyyo?xtor=AL-72-%5Bpartner%5D-%5Byahoo.north.america%5D-%5Bheadline%5D-%5Bnews%5D-%5Bbizdev%5D-%5Bisapi%5D",
-    "//dailymail.com/news/article-16326061/Zelensky-criticises-Trump-calling-Putin-friend-like-saying-youre-friends-Hitler.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//france24.com/en/europe/20261127-live-trump-calls-on-putin-to-end-all-military-aggression-against-europe",
-    "//thedailybeast.com/trump-raises-eyebrows-with-two-word-edit-to-truth-social-post-on-russia-and-ukraine",
-    "//theguardian.com/world/live/2026/nov/27/zelenskyy-putin-trump-comments-russia-ukraine-latest-news-updates"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 2,
-    "conversational_currency": 3
-   },
-   "politician_led": true,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Trump publicly called Putin a friend and urged him to end military aggression against Europe, drawing Zelensky's criticism.",
-   "assembly_score": 0.96
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "bf3ef2791b064834",
-   "title": "Five hospitalised as Marseille and Levski Sofia fans clash before Europa League game",
-   "beat": "culture",
-   "publisher_count": 3,
-   "publishers": [
-    "BBC",
-    "Al Jazeera",
-    "France 24"
-   ],
-   "urls": [
-    "//aljazeera.com/sports/2026/11/27/french-bulgarian-presidents-slam-marseille-violence-five-fans-in-hospital?traffic_source=rss",
-    "//bbc.co.uk/sport/football/articles/c69q8y5x03ywo?at_campaign=rss&at_medium=RSS",
-    "//france24.com/en/france/20261127-five-people-hospitalised-as-levski-sofia-and-marseille-fans-clash-ahead-of-europa-league-game",
-    "//france24.com/en/tv-shows/sports/20261127-lyon-held-and-marseille-pushed-in-mixed-europa-league-night-for-french-clubs"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 4,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Fan clashes before a Europa League match in Sofia left five people hospitalised, and French and Bulgarian leaders have condemned the violence.",
-   "assembly_score": 0.39
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
    "key": "a709bb2b251cd816",
    "title": "Scientists use Grand Theft Auto to model climate change effects",
    "beat": "science",
@@ -1004,9 +79,54 @@
     "The Guardian",
     "Wired"
    ],
-   "urls": [
-    "//theguardian.com/games/2026/nov/27/gta-grand-theft-auto-clones",
-    "//wired.com/story/scientists-use-grand-theft-auto-to-model-the-effects-of-climate-change"
+   "scores": {
+    "emotional_load": 1,
+    "explainability": 4,
+    "actionability": 1,
+    "conversational_currency": 2
+   },
+   "politician_led": false,
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Scientists are using Grand Theft Auto's real-location 3D maps to simulate sea level rise and coastal flooding.",
+    "Indie developers like Eamonn Swayah (Manchester) are building GTA-style games on their home streets, from Helsinki to Istanbul."
+   ],
+   "line": "Researchers are using a video game engine to model climate change effects, with the headlines giving few concrete results.",
+   "assembly_score": 3.27
+  },
+  {
+   "slot": "work_machines",
+   "slot_label": "Work & machines",
+   "key": "cf2fcf49d0baf1d4",
+   "title": "Our Favorite Merino Wool is 30% Off During the Unbound Merino Black Friday Sale (2026)",
+   "beat": "tech",
+   "publisher_count": 1,
+   "publishers": [
+    "Wired"
+   ],
+   "scores": {
+    "emotional_load": 3,
+    "explainability": 3,
+    "actionability": 3,
+    "conversational_currency": 3
+   },
+   "politician_led": false,
+   "ledger_class": null,
+   "new_facts": [],
+   "line": "",
+   "assembly_score": 4.31
+  },
+  {
+   "slot": "group_chat",
+   "slot_label": "The group chat",
+   "key": "820e6024d34e5171",
+   "title": "Macy's Thanksgiving Day Parade postponed; performers scramble to reschedule",
+   "beat": "culture",
+   "publisher_count": 3,
+   "publishers": [
+    "NPR",
+    "Yahoo News",
+    "NBC News"
    ],
    "scores": {
     "emotional_load": 1,
@@ -1015,569 +135,158 @@
     "conversational_currency": 2
    },
    "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "Researchers are using a video game engine to model climate change effects, with the headlines giving few concrete results.",
-   "assembly_score": 0.23
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Macy's Thanksgiving Day Parade postponed to Saturday for the first time because of a storm; Macy's gave an on-record statement.",
+    "Macy's has lost sales for years and is reimagining itself as a higher-end destination."
+   ],
+   "line": "Macy's Thanksgiving Day Parade was postponed, leaving performers and marching bands scrambling to reschedule.",
+   "assembly_score": 7.88
   },
   {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "18028c0bea0f94fd",
-   "title": "SpaceX shares rise 4% as Iran threatens major US tech firms",
-   "beat": "business",
-   "publisher_count": 2,
-   "publishers": [
-    "CNBC",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//cnbc.com/2026/11/27/spacex-shares-musk-donations.html",
-    "//dailymail.com/news/article-16325373/Iran-Thanksgiving-Amazon-Microsoft.html?ito=1490&ns_campaign=1490&ns_mchannel=rss"
-   ],
-   "scores": {
-    "emotional_load": 2,
-    "explainability": 3,
-    "actionability": 1,
-    "conversational_currency": 2
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "SpaceX shares rose 4% in a tech rally, while Iran has publicly threatened major US tech firms including Amazon, Microsoft and SpaceX.",
-   "assembly_score": 0.08
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "050b0f2a22997b54",
-   "title": "Thanksgiving storms cut power to nearly a million and disrupt holiday travel",
+   "slot": "close",
+   "slot_label": "The close",
+   "key": "0492b90c7cf3bf44",
+   "title": "After election losses over costs, some Republicans open to rethinking Trump's tariffs",
    "beat": "national",
-   "publisher_count": 4,
+   "publisher_count": 5,
    "publishers": [
-    "NPR",
-    "The Guardian",
-    "France 24",
-    "NBC News"
-   ],
-   "urls": [
-    "//france24.com/en/americas/20261127-almost-a-million-americans-left-without-power-on-thanksgiving-as-storm-sweeps-east-coast",
-    "//nbcnews.com/news/us-news/much-country-thanksgiving-featured-nasty-weather-rcna611521",
-    "//npr.org/2026/11/27/nx-s1-6047116/morning-news-brief",
-    "//theguardian.com/us-news/2026/nov/27/heavy-rain-wind-flooding-us-thanksgiving"
+    "Washington Post",
+    "ABC News",
+    "Al Jazeera",
+    "CBS News",
+    "Atlanta Black Star"
    ],
    "scores": {
     "emotional_load": 2,
-    "explainability": 5,
+    "explainability": 4,
     "actionability": 2,
     "conversational_currency": 3
    },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "A Thanksgiving storm left roughly a million Americans without power and disrupted holiday travel across the East Coast and beyond.",
-   "assembly_score": 0.02
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "0492b90c7cf3bf44",
-   "title": "Denials soar for \u2018extraordinary ability\u2019 visa in program once used by Melania Trump",
-   "beat": "national",
-   "publisher_count": 3,
-   "publishers": [
-    "Washington Post",
-    "Al Jazeera",
-    "Atlanta Black Star"
+   "politician_led": true,
+   "ledger_class": "DEVELOPMENT",
+   "new_facts": [
+    "Democrats are taking control of Congress and aim to blunt some Trump tariffs as Republicans rethink them.",
+    "Trump says Iran victory comes 'whenever I want it'; gives regime 'a chance to be smart' while threatening new strikes.",
+    "Denials of 'extraordinary ability' visas are soaring, a program once used by Melania Trump.",
+    "Democrats want to end Trump's Iran war; their policy differences from the bipartisan Tehran pressure are questioned.",
+    "Melania Trump publicly told Democrats to focus on caring for the US, not investigating Trump."
    ],
-   "urls": [
-    "//aljazeera.com/news/2026/11/27/democrats-want-to-end-trumps-iran-war-but-how-different-are-they?traffic_source=rss",
-    "//atlantablackstar.com/2026/11/27/melania-trump-tells-democrats-to-focus-on-taking-care-of-the-united-states-and-not-on-investigating-trump",
-    "//washingtonpost.com/business/2026/11/27/trump-administration-has-escalated-denials-einstein-visa"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.02
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "408cd74b10ed61a1",
-   "title": "Chinese shares soar after Beijing signals more support",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Financial Times",
-    "CNBC"
-   ],
-   "urls": [
-    "//cnbc.com/2026/11/27/china-chip-stocks-beijing-market-support.html",
-    "//ft.com/content/fedc6392-ad25-43e4-9d9f-20216cbf331e?syn-25a6b1a6=1"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.04
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "a06fb1564f92e474",
-   "title": "Home Depot Promo Codes: 30% Off in November 2026",
-   "beat": "tech",
-   "publisher_count": 2,
-   "publishers": [
-    "NBC News",
-    "Wired"
-   ],
-   "urls": [
-    "//nbcnews.com/select/shopping/home-depot-black-friday-sale-2026-rcna611447",
-    "//wired.com/story/home-depot-promo-code"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.1
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "a66d486d3418b723",
-   "title": "The Threat to a Sanctuary for Children of North Korean Defectors",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "New York Times",
-    "Yonhap News"
-   ],
-   "urls": [
-    "//en.yna.co.kr/view/AEN20261127002600315",
-    "//en.yna.co.kr/view/AEN20261127003652315",
-    "//en.yna.co.kr/view/AEN20261127004800320",
-    "//en.yna.co.kr/view/AEN20261127004851320",
-    "//en.yna.co.kr/view/AEN20261127004852320",
-    "//en.yna.co.kr/view/AEN20261127005900315",
-    "//en.yna.co.kr/view/AEN20261127006000320",
-    "//en.yna.co.kr/view/AEN20261127006100315",
-    "//en.yna.co.kr/view/AEN20261127006500315",
-    "//en.yna.co.kr/view/AEN20261127006600315",
-    "//en.yna.co.kr/view/AEN20261127006700315",
-    "//en.yna.co.kr/view/AEN20261127006800315",
-    "//en.yna.co.kr/view/AEN20261127006900315",
-    "//en.yna.co.kr/view/AEN20261127007000315",
-    "//en.yna.co.kr/view/AEN20261127007100315",
-    "//en.yna.co.kr/view/AEN20261127007300315",
-    "//en.yna.co.kr/view/AEN20261127007600315",
-    "//en.yna.co.kr/view/AEN20261127008800315",
-    "//nytimes.com/2026/11/27/world/asia/the-threat-to-a-sanctuary-for-children-of-north-korean-defectors.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.12
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "677ef77534886eeb",
-   "title": "Guests Reveal Tacky Details of Trump\u2019s Thanksgiving Bash",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Daily Beast",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16326197/Barron-Trump-spotted-months-rare-appearance-White-House-Thanksgiving-festivities.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//thedailybeast.com/guests-reveal-tacky-details-of-trumps-thanksgiving-bash"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.23
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "be35e264d6e6e97e",
-   "title": "\u2018You can\u2019t stop it\u2019: Indians embrace Pakistani dramas, defying bans",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "France 24"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/11/27/you-cant-stop-it-indians-embrace-pakistani-dramas-defying-bans?traffic_source=rss",
-    "//france24.com/en/tv-shows/press-review/20261127-why-is-india-so-afraid-of-pakistan-s-new-netflix-series"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -0.32
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "7c9ec71838c90677",
-   "title": "Thousands of girls and women report bleeding and miscarriages after French police use of teargas",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16326105/9000-female-activists-report-bleeding-miscarriages-French-police.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//theguardian.com/global-development/2026/nov/27/thousands-of-girls-and-women-report-bleeding-and-miscarriages-after-french-police-use-of-teargas"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.57
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "f48d0ef816067cd5",
-   "title": "Costa Rica denies entry to UN\u2019s Albanese over \u2018links to terrorist acts\u2019",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Al Jazeera",
-    "ANSA"
-   ],
-   "urls": [
-    "//aljazeera.com/news/2026/11/27/costa-rica-denies-entry-to-uns-albanese-over-links-to-terrorist?traffic_source=rss",
-    "//ansa.it/sito/notizie/mondo/2026/11/27/il-costa-rica-respinge-francesca-albanese-relatrice-onu-per-i-territori-palestinesi_a89517c3-d027-4d75-99d6-19f99fa5a15b.html"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.6
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "5de9827b68a457bd",
-   "title": "Putin showed 'restraint' by not using nuclear weapons in Ukraine, Kushner says",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Yahoo News",
-    "France 24"
-   ],
-   "urls": [
-    "//cnn.com/2026/11/26/world/putin-restraint-nuclear-ukraine-kushner-intl",
-    "//france24.com/en/europe/20261127-france-and-germany-push-for-eu-budget-deal-by-year-end-as-far-right-rise-threatens-ukraine-aid"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -1.98
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "bfecc1ebe4c0b58e",
-   "title": "Marine Le Pen: the woman who could break the EU",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "Financial Times",
-    "France 24"
-   ],
-   "urls": [
-    "//france24.com/en/tv-shows/spotlight/20261127-tribal-loyalty-works-on-right-heart-on-the-left-sensitive-to-racism-antisemitism-human-rights",
-    "//ft.com/content/9bbd926e-ccef-4717-9044-48a23c9353ba?syn-25a6b1a6=1"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.13
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "e73309301bf833a8",
-   "title": "Trump Gives Bonkers Thanksgiving Answer to a Deployed Marine",
-   "beat": "national",
-   "publisher_count": 2,
-   "publishers": [
-    "Daily Beast",
-    "Daily Mail"
-   ],
-   "urls": [
-    "//dailymail.com/news/article-16325569/Trump-invites-Marine-ask-Melania-question.html?ito=1490&ns_campaign=1490&ns_mchannel=rss",
-    "//thedailybeast.com/donald-trump-gives-wild-thanksgiving-answer-to-a-deployed-us-marine"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.79
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "a07a9d9c0aff7436",
-   "title": "Inside Saudi Arabia, Houthi attacks test kingdom's image of security",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "Al Jazeera"
-   ],
-   "urls": [
-    "//aljazeera.com/news-analysis/2026/11/27/can-the-mecca-pact-turn-its-collective-defence-promise-into-real-support?traffic_source=rss",
-    "//bbc.co.uk/news/articles/c6ly7jgv7jzdo?at_campaign=rss&at_medium=RSS"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -2.99
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "2c7ac4dceef3e229",
-   "title": "\u2018Systematic assault\u2019: paramedics blocked and attacked by Israeli settlers and soldiers in West Bank",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "Al Jazeera"
-   ],
-   "urls": [
-    "//aljazeera.com/opinions/2026/11/27/western-sanctions-on-israeli-settlers-serve-to-shield-the-israeli-state?traffic_source=rss",
-    "//theguardian.com/world/2026/nov/27/paramedics-blocked-attacked-by-settlers-west-bank"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.1
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "89c1ad7a02ff3e42",
-   "title": "\u2018Take any path and it\u2019s beautiful\u2019: readers\u2019 favourite national and regional parks in Europe",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "The Guardian",
-    "Al Jazeera"
-   ],
-   "urls": [
-    "//aljazeera.com/video/newsfeed/2026/11/27/estonia-closing-land-borders-with-russia-to-keep-out-spies?traffic_source=rss",
-    "//theguardian.com/travel/2026/nov/27/readers-favourite-national-parks-europe"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -3.25
-  },
-  {
-   "slot": "promoted",
-   "slot_label": "New",
-   "key": "4a00250ae60b20c8",
-   "title": "Mushroom murderer Erin Patterson launches last-ditch High Court appeal",
-   "beat": "international",
-   "publisher_count": 2,
-   "publishers": [
-    "BBC",
-    "ABC Australia"
-   ],
-   "urls": [
-    "//abc.net.au/news/2026-11-27/mushroom-killer-erin-patterson-high-court-appeal-bid/107433688",
-    "//bbc.co.uk/news/articles/ck053e1d3ly1o?at_campaign=rss&at_medium=RSS"
-   ],
-   "scores": {
-    "emotional_load": 3,
-    "explainability": 3,
-    "actionability": 3,
-    "conversational_currency": 3
-   },
-   "politician_led": false,
-   "progress_coded": false,
-   "promotion_path": "corroborated",
-   "ledger_class": null,
-   "new_facts": [],
-   "line": "",
-   "assembly_score": -4.36
+   "line": "Republicans facing voter backlash over costs are open to revisiting some Trump tariffs, though a veto would block repeal.",
+   "assembly_score": 13.78
   }
  ],
  "excluded_sample": [
   {
-   "title": "Caleb Williams throws for game-winning TD as Bears stun Lions on Thanksgiving",
+   "title": "22 Best Black Friday Deals Under $100 (2026)",
    "why": "triage verdict NO"
   },
   {
-   "title": "Cenk Uygur goes all in on Ro Khanna for 2028",
+   "title": "England outclass Aussies again to take series lead",
    "why": "triage verdict NO"
   },
   {
-   "title": "Insurance firms' lending down in Q3: data",
+   "title": "Fury cleared to fight Joshua after medical checks",
    "why": "triage verdict NO"
   },
   {
-   "title": "Historic restaurant beloved by Queen Elizabeth to stop serving salmon for first time in 110 years over environmental concerns",
+   "title": "The 7 best high-yield savings accounts of April 2023",
    "why": "triage verdict NO"
   },
   {
-   "title": "Europa Fight League! Marseille hooligans descend on Levski Sofia end after 'Nazi salute' - while Besiktas match is SUSPENDED due to pro-Palestine propaganda... and away fans infiltrate Sunderland",
+   "title": "Hundreds of thousands still without power after storms hit US on Thanksgiving",
+   "why": "ledger: INCREMENT"
+  },
+  {
+   "title": "How to Use Your Leftovers",
    "why": "triage verdict NO"
   },
   {
-   "title": "(URGENT) Seoul stocks open higher amid continued AI jitters",
+   "title": "'A lonely road': Catherine joins cancer support group in new documentary",
    "why": "triage verdict NO"
   },
   {
-   "title": "Killer frogs and rat-murdering fairies: the macabre cards Victorians sent at Christmas",
+   "title": "Bidets save you money and reduce waste \u2014 we tested the best options out there",
    "why": "triage verdict NO"
   },
   {
-   "title": "Aiken community prepares meals for people in need (copy) (copy)",
+   "title": "50+ products to make your life easier and our planet cleaner",
    "why": "triage verdict NO"
   },
   {
-   "title": "Banks' earnings edge up through Sept. on rise in interest income",
+   "title": "Mother's Day is around the corner. Here are 50+ thoughtful gifts she'll love",
    "why": "triage verdict NO"
   },
   {
-   "title": "Joan Collins, 93, exudes timeless glamour as she joins Claudia Winkleman and Emma Thynn at Claridge's Christmas tree party",
+   "title": "A head-to-toe guide of how men should dress this spring, and where they should shop",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "42 of the most useful travel products you can buy on Amazon",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Composting is an easy way to reduce food waste. Here's how to do it",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "We stopped using aluminum foil for cooking and you should too. Here's what to use instead",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "The beloved Dyson Supersonic hair dryer is at its lowest price ever",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "The Weekend Scene: Sculpture Garden Ice Rink, Light Yards, Markoff's Christmas Farm & more, Nov. 27-29",
+   "why": "ledger: INCREMENT"
+  },
+  {
+   "title": "Logan Circle neighbors share strength and honor victims after mass shooting",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Live updates: The best Black Friday deals up to 70% off, handpicked by a shopping expert",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Former Buzzcocks drummer Phil Barker dead after five-year battle with cancer",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Trump Triggers 25th Amendment Calls With Jaw-Dropping Tantrum",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Moment murderer who stabbed his girlfriend to death while she was pregnant with twins buys bleach to wipe key evidence - before he is arrested in cemetery",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Germany star Manuel Neuer, 40, hit with cheating claims as estranged wife suggests goalkeeper was unfaithful while she was pregnant - as he grows closer to physio, 23",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Coleen Rooney arrives in Australia to support husband Wayne with their two sons ahead of the first I'm A Celebrity elimination",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Dorset Christmas market BANS traders from using AI to create products and advertising - after 'Wonka part 2' fiasco saw Cornish event close",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "TVR returns: Iconic British sports car firm to build reborn \u00a3120,000 Griffith at Lotus's Hethel factory",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "'What about the lives of the abused children?': BBC's Nicky Campbell condemns Huw Edwards documentary as fury grows at Channel 4 over 'strange' and 'irresponsible' film",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Jamie Oliver shares hilarious video of 'bonkers' wife Jools on her 52nd birthday as she 'butchers song in kitchen solo'",
+   "why": "triage verdict NO"
+  },
+  {
+   "title": "Katy Perry and Justin Trudeau enjoy ultra-luxe \u00a380,000 overnight Orient Express train from Paris to Venice and book a whole carriage for themselves",
    "why": "triage verdict NO"
   }
  ]
